@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useLivemapStore } from '~/store/livemap';
 
@@ -218,10 +218,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 type="submit"
                                                 class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!meta.valid || !canSubmit"
+                                                :loading="!canSubmit"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.create') }}
                                             </UButton>
                                             <UButton

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
-import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon, LoadingIcon } from 'mdi-vue3';
+import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon } from 'mdi-vue3';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import {
     dispatchStatusToBGColor,
@@ -404,7 +404,11 @@ async function checkup(): Promise<void> {
                                         <ul role="list" class="-mx-1 space-y-0.5">
                                             <div class="inline-flex items-center text-xs font-semibold leading-6">
                                                 {{ $t('common.unit') }}
-                                                <LoadingIcon v-if="!canSubmitUnitStatus" class="ml-1 size-4 animate-spin" />
+                                                <UIcon
+                                                    v-if="!canSubmitUnitStatus"
+                                                    name="i-mdi-loading"
+                                                    class="ml-1 size-4 animate-spin"
+                                                />
                                             </div>
                                             <UnitStatusUpdateModal
                                                 :unit="getOwnUnit"
@@ -452,7 +456,11 @@ async function checkup(): Promise<void> {
                                         <ul role="list" class="-mx-1 space-y-0.5">
                                             <div class="inline-flex items-center text-xs font-semibold leading-6">
                                                 {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                                <LoadingIcon v-if="!canSubmitDispatchStatus" class="ml-1 size-4 animate-spin" />
+                                                <UIcon
+                                                    v-if="!canSubmitDispatchStatus"
+                                                    name="i-mdi-loading"
+                                                    class="ml-1 size-4 animate-spin"
+                                                />
                                             </div>
                                             <li>
                                                 <div class="grid grid-cols-2 gap-0.5">

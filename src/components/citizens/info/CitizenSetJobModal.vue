@@ -12,7 +12,7 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -305,10 +305,8 @@ onBeforeMount(async () => listJobs());
                                         type="submit"
                                         class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                                         :disabled="!meta.valid || !canSubmit"
+                                        :loading="!canSubmit"
                                     >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
                                         {{ $t('common.save') }}
                                     </UButton>
                                 </div>

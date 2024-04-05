@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';

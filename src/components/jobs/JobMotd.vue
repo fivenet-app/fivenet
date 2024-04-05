@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { CancelIcon, ContentSaveIcon, LoadingIcon, PencilIcon } from 'mdi-vue3';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -93,7 +92,8 @@ watch(editing, () => {
             <template v-else>
                 <UTextarea
                     v-model="data.motd"
-                    rows="2"
+                    :rows="2"
+                    :maxrows="6"
                     name="content"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"

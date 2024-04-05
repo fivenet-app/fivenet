@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { useConfirmDialog } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon, TrashCanIcon } from 'mdi-vue3';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import { CheckIcon, ChevronDownIcon, CloseIcon, MinusIcon } from 'mdi-vue3';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -20,6 +19,8 @@ const emit = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -232,15 +233,9 @@ watch(props, () => {
         refresh();
     }
 });
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteRole(id));
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(role!.id)" />
-
     <div class="w-full py-4">
         <div class="px-1 sm:px-2 lg:px-4">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
@@ -249,9 +244,16 @@ onConfirm(async (id) => deleteRole(id));
             <template v-else>
                 <h2 class="text-3xl" :title="`ID: ${role.id}`">
                     {{ role?.jobLabel! }} - {{ role?.jobGradeLabel }} ({{ role.grade }})
-                    <UButton v-if="can('RectorService.DeleteRole')" class="ml-1" @click="reveal()">
-                        <TrashCanIcon class="mx-auto size-5" />
-                    </UButton>
+                    <UButton
+                        v-if="can('RectorService.DeleteRole')"
+                        class="ml-1"
+                        icon="i-mdi-trash-can"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteRole(role!.id),
+                            })
+                        "
+                    />
                 </h2>
                 <UDivider :label="$t('common.permission', 2)" />
                 <div class="flex flex-col gap-4 py-2">

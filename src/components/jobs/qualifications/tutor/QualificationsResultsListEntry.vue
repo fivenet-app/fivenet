@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
-import { TrashCanIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationResult, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { resultStatusToTextColor } from '~/components/jobs/qualifications/helpers';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import type { DeleteQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 defineProps<{
     result: QualificationResult;
@@ -17,6 +15,8 @@ const emits = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 async function deleteQualificationResult(resultId: string): Promise<DeleteQualificationResultResponse> {
     try {
@@ -33,15 +33,10 @@ async function deleteQualificationResult(resultId: string): Promise<DeleteQualif
         throw e;
     }
 }
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-onConfirm(async (resultId: string) => deleteQualificationResult(resultId));
 </script>
 
 <template>
     <tr>
-        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(result.id)" />
-
         <td>
             <CitizenInfoPopover :user="result.user" />
         </td>
@@ -76,10 +71,13 @@ onConfirm(async (resultId: string) => deleteQualificationResult(resultId));
             <UButton
                 v-if="can('QualificationsService.DeleteQualificationResult')"
                 class="flex-initial text-primary-500 hover:text-primary-400"
-                @click="reveal()"
-            >
-                <TrashCanIcon class="size-5 text-primary-500" />
-            </UButton>
+                icon="i-mdi-trash-can"
+                @click="
+                    modal.open(ConfirmModal, {
+                        confirm: async () => deleteQualificationResult(result.id),
+                    })
+                "
+            />
         </td>
     </tr>
 </template>

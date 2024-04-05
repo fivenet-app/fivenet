@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -11,10 +9,21 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     templateId: string;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const modal = useModal();
+
+const notifications = useNotificatorStore();
+
+const { t } = useI18n();
+
+const reqs = ref<undefined | TemplateRequirements>();
 
 const {
     data: template,
@@ -22,14 +31,6 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
-
-const { $grpc } = useNuxtApp();
-
-const notifications = useNotificatorStore();
-
-const { t } = useI18n();
-
-const reqs = ref<undefined | TemplateRequirements>();
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
@@ -166,15 +167,9 @@ const completorStore = useCompletorStore();
 const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
 
 const openPreview = ref(false);
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteTemplate(id));
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(templateId)" />
-
     <TemplatePreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
 
     <div class="m-2">
@@ -185,7 +180,7 @@ onConfirm(async (id) => deleteTemplate(id));
                 <div class="inline-flex sm:flex-auto">
                     <NuxtLink
                         v-if="can('DocStoreService.CreateTemplate')"
-                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId.toString() } }"
+                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
                         class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
                     >
                         {{ $t('common.edit') }}
@@ -201,7 +196,11 @@ onConfirm(async (id) => deleteTemplate(id));
                         v-if="can('DocStoreService.DeleteTemplate')"
                         type="submit"
                         class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                        @click="reveal()"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteTemplate(templateId),
+                            })
+                        "
                     >
                         {{ $t('common.delete') }}
                     </UButton>

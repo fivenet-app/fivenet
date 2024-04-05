@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
 import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
@@ -13,6 +12,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     dispatch: Dispatch;
@@ -24,6 +24,8 @@ defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
@@ -64,10 +66,6 @@ async function deleteDispatch(id: string): Promise<void> {
     }
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => await deleteDispatch(id));
-
 const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
 
 const openAssign = ref(false);
@@ -95,7 +93,11 @@ const openStatus = ref(false);
                             variant="link"
                             icon="i-mdi-trash-can"
                             :title="$t('common.delete')"
-                            @click="reveal()"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteDispatch(dispatch.id),
+                                })
+                            "
                         />
                     </div>
 

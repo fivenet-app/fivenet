@@ -12,7 +12,7 @@ import {
 } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -283,10 +283,8 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                                         type="submit"
                                         class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                                         :disabled="!meta.valid || !canSubmit"
+                                        :loading="!canSubmit"
                                     >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
                                         {{ $t('common.submit') }}
                                     </UButton>
                                 </div>

@@ -216,7 +216,7 @@ const accordionItems = [
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <template v-else-if="error">
             <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
-            <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" />
+            <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" class="mt-2" />
         </template>
         <DataNoDataBlock
             v-else-if="doc === null"

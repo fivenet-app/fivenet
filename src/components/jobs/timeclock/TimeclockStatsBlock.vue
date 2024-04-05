@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AlertCircleIcon, LoadingIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
@@ -68,10 +67,10 @@ onBeforeMount(async () => updateStats());
                         <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
                         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
                             <template v-if="stat.value === undefined">
-                                <LoadingIcon class="size-5 animate-spin" />
+                                <UIcon name="i-mdi-loading" class="size-5 animate-spin" />
                             </template>
                             <template v-else-if="failed">
-                                <AlertCircleIcon class="size-5" />
+                                <UIcon name="i-mdi-alert-circle" class="size-5" />
                             </template>
                             <template v-else>
                                 {{

@@ -212,14 +212,13 @@ const columns = [
                             :searchable="
                                 async (query: string) => {
                                     usersLoading = true;
-                                    return await completorStore
-                                        .completeCitizens({
-                                            search: query,
-                                        })
-                                        .finally(() => (usersLoading = false));
+                                    const users = await completorStore.completeCitizens({
+                                        search: query,
+                                    });
+                                    usersLoading = false;
+                                    return users;
                                 }
                             "
-                            :loading="usersLoading"
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="selectedCitizens ? charsGetDisplayValue(selectedCitizens) : $t('common.user', 2)"

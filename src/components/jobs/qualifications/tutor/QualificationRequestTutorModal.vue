@@ -11,7 +11,7 @@ import {
     TransitionRoot,
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -260,10 +260,8 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                                         type="submit"
                                         class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                                         :disabled="!meta.valid || !canSubmit"
+                                        :loading="!canSubmit"
                                     >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
                                         {{ $t('common.submit') }}
                                     </UButton>
                                 </div>

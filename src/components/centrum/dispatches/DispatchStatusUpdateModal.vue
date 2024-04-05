@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, HoopHouseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { dispatchStatusToBGColor, dispatchStatuses } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -296,10 +296,8 @@ function updateReasonField(value: string): void {
                                                 type="submit"
                                                 class="relative flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!meta.valid || !canSubmit"
+                                                :loading="!canSubmit"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.update') }}
                                             </UButton>
                                             <UButton

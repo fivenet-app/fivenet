@@ -172,15 +172,14 @@ function updateDates(): void {
                                     :search="
                                         async (query: string) => {
                                             usersLoading = true;
-                                            return await completorStore
-                                                .listColleagues({
-                                                    pagination: { offset: 0 },
-                                                    searchName: query,
-                                                })
-                                                .finally(() => (usersLoading = false));
+                                            const colleagues = await completorStore.listColleagues({
+                                                pagination: { offset: 0 },
+                                                searchName: query,
+                                            });
+                                            usersLoading = false;
+                                            return colleagues;
                                         }
                                     "
-                                    :loading="usersLoading"
                                     :search-attributes="['firstname', 'lastname']"
                                     block
                                     :placeholder="

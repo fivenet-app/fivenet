@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { mimes, required, size } from '@vee-validate/rules';
-import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';

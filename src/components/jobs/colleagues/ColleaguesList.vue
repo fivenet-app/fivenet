@@ -118,7 +118,6 @@ const modal = useModal();
                     <div class="mx-auto flex flex-row gap-4">
                         <div class="flex-1">
                             <label for="searchName" class="block text-sm font-medium leading-6">
-                                {{ $t('common.search') }}
                                 {{ $t('common.colleague', 1) }}
                             </label>
                             <div class="relative mt-2">

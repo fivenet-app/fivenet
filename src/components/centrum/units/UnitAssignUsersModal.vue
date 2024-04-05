@@ -11,7 +11,7 @@ import {
     TransitionChild,
     TransitionRoot,
 } from '@headlessui/vue';
-import { CheckIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, CloseIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/store/completor';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -226,16 +226,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             <UButton
                                                 class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!canSubmit"
-                                                :class="[
-                                                    !canSubmit
-                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                        : 'bg-primary-500 hover:bg-primary-400',
-                                                ]"
+                                                :loading="!canSubmit"
                                                 @click="onSubmitThrottle"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.update') }}
                                             </UButton>
                                             <UButton

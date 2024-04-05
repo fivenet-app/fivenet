@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
@@ -173,32 +173,23 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     <UButton
                                         class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                                         :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-error-500 hover:bg-error-400 focus-visible:outline-error-500',
-                                        ]"
+                                        :loading="!canSubmit"
                                         @click="
                                             setFieldValue('reset', true);
                                             onSubmitThrottle($event);
                                         "
                                     >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
                                         {{ $t('common.reset') }}
                                     </UButton>
                                     <UButton
                                         class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
                                         :disabled="!meta.valid || !canSubmit"
+                                        :loading="!canSubmit"
                                         @click="
                                             setFieldValue('reset', false);
                                             onSubmitThrottle($event);
                                         "
                                     >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                        </template>
                                         {{ $t('common.add') }}
                                     </UButton>
                                 </div>

@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
-import { CheckBoldIcon, CloseThickIcon, StarIcon, TrashCanIcon } from 'mdi-vue3';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { requestStatusToTextColor } from '~/components/jobs/qualifications/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import type { DeleteQualificationReqResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 withDefaults(
     defineProps<{
@@ -26,6 +24,8 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const modal = useModal();
+
 async function deleteQualificationRequest(qualificationId: string, userId: number): Promise<DeleteQualificationReqResponse> {
     try {
         const call = $grpc.getQualificationsClient().deleteQualificationReq({
@@ -42,15 +42,10 @@ async function deleteQualificationRequest(qualificationId: string, userId: numbe
         throw e;
     }
 }
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(request.qualificationId, request.userId));
 </script>
 
 <template>
     <tr>
-        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(request)" />
-
         <td>
             <CitizenInfoPopover :user="request.user" />
         </td>
@@ -87,36 +82,36 @@ onConfirm(async (request: QualificationRequest) => deleteQualificationRequest(re
                 :disabled="!canSubmit"
                 class="flex-initial"
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-error-500 hover:text-error-400']"
+                icon="i-mdi-close-thick"
                 @click="$emit('selectedRequestStatus', RequestStatus.DENIED)"
-            >
-                <CloseThickIcon class="size-6" />
-            </UButton>
+            />
             <UButton
                 v-if="request.status !== RequestStatus.ACCEPTED"
                 :disabled="!canSubmit"
                 class="flex-initial"
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-success-500 hover:text-success-400']"
+                icon="i-mdir-check-bold"
                 @click="$emit('selectedRequestStatus', RequestStatus.ACCEPTED)"
-            >
-                <CheckBoldIcon class="size-6" />
-            </UButton>
+            />
             <UButton
                 v-if="request.status === RequestStatus.ACCEPTED"
                 :disabled="!canSubmit"
                 class="flex-initial"
                 :class="[!canSubmit ? 'disabled text-base-500 hover:text-base-400' : 'text-yellow-500 hover:text-yellow-400']"
+                icon="i-mdi-star"
                 @click="$emit('gradeRequest')"
-            >
-                <StarIcon class="size-6" />
-            </UButton>
+            />
             <UButton
                 v-if="can('QualificationsService.DeleteQualificationReq')"
                 :disabled="!canSubmit"
                 class="flex-initial text-primary-400 hover:text-primary-500"
-                @click="reveal()"
-            >
-                <TrashCanIcon class="size-6" />
-            </UButton>
+                icon="i-mdi-trash-can"
+                @click="
+                    modal.open(ConfirmModal, {
+                        confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
+                    })
+                "
+            />
         </td>
     </tr>
 </template>

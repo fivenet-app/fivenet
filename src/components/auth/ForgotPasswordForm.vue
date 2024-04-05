@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { digits, max, min, required } from '@vee-validate/rules';
-import { LoadingIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
@@ -126,10 +125,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     type="submit"
                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
+                    :loading="!canSubmit"
                 >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                    </template>
                     {{ $t('components.auth.forgot_password.submit_button') }}
                 </UButton>
             </div>

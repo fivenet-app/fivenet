@@ -134,7 +134,6 @@ const columns = [
                         <div class="mx-auto flex flex-row gap-4">
                             <div v-if="hideUserSearch !== true" class="flex-1">
                                 <label for="searchName" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.search') }}
                                     {{ $t('common.target') }}
                                 </label>
                                 <div class="relative mt-2">
@@ -144,15 +143,14 @@ const columns = [
                                         :search="
                                             async (query: string) => {
                                                 usersLoading = true;
-                                                return await completorStore
-                                                    .listColleagues({
-                                                        pagination: { offset: 0 },
-                                                        searchName: query,
-                                                    })
-                                                    .finally(() => (usersLoading = false));
+                                                const colleagues = await completorStore.listColleagues({
+                                                    pagination: { offset: 0 },
+                                                    searchName: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
                                             }
                                         "
-                                        :loading="usersLoading"
                                         :search-attributes="['firstname', 'lastname']"
                                         block
                                         :placeholder="
@@ -177,7 +175,6 @@ const columns = [
                             </div>
                             <div class="flex-1">
                                 <label for="types" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.search') }}
                                     {{ $t('common.type') }}
                                 </label>
                                 <div class="relative mt-2">

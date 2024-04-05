@@ -1,11 +1,10 @@
 <script lang="ts" setup>
 import { LPopup } from '@vue-leaflet/vue-leaflet';
-import { useConfirmDialog } from '@vueuse/core';
 import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
+import ConfirmModal from '../partials/ConfirmModal.vue';
 
 defineProps<{
     marker: MarkerMarker;
@@ -16,6 +15,8 @@ defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker } = livemapStore;
@@ -33,15 +34,9 @@ async function deleteMarker(id: string): Promise<void> {
         throw e;
     }
 }
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteMarker(id));
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(marker.info!.id)" />
-
     <LPopup :options="{ closeButton: true }">
         <div class="mb-1 flex items-center gap-2">
             <UButton
@@ -57,7 +52,11 @@ onConfirm(async (id) => deleteMarker(id));
                 :title="$t('common.delete')"
                 variant="link"
                 icon="i-mdi-trash-can"
-                @click="reveal(marker.info!.id)"
+                @click="
+                    modal.open(ConfirmModal, {
+                        confirm: async () => deleteMarker(marker.info!.id),
+                    })
+                "
             >
                 {{ $t('common.delete') }}
             </UButton>

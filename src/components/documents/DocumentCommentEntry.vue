@@ -1,18 +1,11 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog } from '@vueuse/core';
-import { LoadingIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-
-const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
-
-const { activeChar, permissions } = storeToRefs(authStore);
+import ConfirmModal from '../partials/ConfirmModal.vue';
 
 const props = defineProps<{
     comment: Comment;
@@ -22,6 +15,14 @@ const emit = defineEmits<{
     (e: 'update:comment', comment: Comment): void;
     (e: 'deleted', comment: Comment): void;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const modal = useModal();
+
+const authStore = useAuthStore();
+
+const { activeChar, permissions } = storeToRefs(authStore);
 
 const editing = ref(false);
 
@@ -63,10 +64,6 @@ async function deleteComment(id: string): Promise<void> {
     }
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteComment(id));
-
 defineRule('required', required);
 defineRule('min', min);
 defineRule('max', max);
@@ -102,8 +99,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(props.comment.id)" />
-
     <li class="py-2">
         <div v-if="!editing" class="flex space-x-3">
             <div :class="[comment.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
@@ -118,16 +113,26 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
                     <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center">
-                        <TrashCanIcon class="mr-1.5 size-5 shrink-0" />
+                        <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
-                        <UButton v-if="can('DocStoreService.PostComment')" @click="editing = true">
-                            <PencilIcon class="ml-auto mr-2.5 h-auto w-5" />
-                        </UButton>
-                        <UButton v-if="can('DocStoreService.DeleteComment')" @click="reveal()">
-                            <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" />
-                        </UButton>
+                        <UButton
+                            v-if="can('DocStoreService.PostComment')"
+                            variant="link"
+                            icon="i-mdi-pencil"
+                            @click="editing = true"
+                        />
+                        <UButton
+                            v-if="can('DocStoreService.DeleteComment')"
+                            variant="link"
+                            icon="i-mdi-trash-can"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteComment(comment.id),
+                                })
+                            "
+                        />
                     </div>
                 </div>
                 <p class="whitespace-pre-line break-words text-sm">
@@ -176,10 +181,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     type="submit"
                                     class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                     :disabled="!meta.valid || !canSubmit"
+                                    :loading="!canSubmit"
                                 >
-                                    <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                    </template>
                                     {{ $t('common.edit') }}
                                 </UButton>
                             </div>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { CheckIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
@@ -763,10 +763,8 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     type="submit"
                     class="mt-4 flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
+                    :loading="!canSubmit"
                 >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                    </template>
                     {{ templateId ? $t('common.save') : $t('common.create') }}
                 </UButton>
             </div>

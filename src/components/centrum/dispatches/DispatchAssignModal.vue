@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon } from 'mdi-vue3';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -213,16 +213,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             <UButton
                                                 class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!canSubmit"
-                                                :class="[
-                                                    !canSubmit
-                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                        : 'bg-primary-500 hover:bg-primary-400',
-                                                ]"
+                                                :loading="!canSubmit"
                                                 @click="onSubmitThrottle"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.update') }}
                                             </UButton>
                                             <UButton

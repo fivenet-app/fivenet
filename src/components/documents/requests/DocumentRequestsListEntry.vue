@@ -1,13 +1,12 @@
 <script lang="ts" setup>
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { useConfirmDialog } from '@vueuse/core';
-import { CheckBoldIcon, CloseThickIcon, MenuIcon, TrashCanIcon } from 'mdi-vue3';
+import { CheckBoldIcon, CloseThickIcon, MenuIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { DocRequest } from '~~/gen/ts/resources/documents/requests';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     request: DocRequest;
@@ -20,6 +19,8 @@ const emits = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -71,10 +72,6 @@ async function deleteDocumentReq(id: string): Promise<void> {
     }
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteDocumentReq(id));
-
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
     canSubmit.value = false;
@@ -86,8 +83,6 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
 
 <template>
     <li :key="request.id" class="flex justify-between gap-x-6 py-5 transition-colors hover:bg-neutral/5">
-        <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(request.id)" />
-
         <div class="flex min-w-0 gap-x-4 px-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-base font-semibold leading-6 text-gray-100" :title="`${$t('common.id')}: ${request.id}`">
@@ -125,25 +120,17 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
             <div class="flex items-center gap-2">
                 <template v-if="canUpdate && request.accepted === undefined">
                     <UButton
-                        :disabled="!canSubmit"
                         class="flex flex-1 justify-center rounded px-3.5 py-2.5 text-sm font-semibold"
-                        :class="[
-                            !canSubmit
-                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400',
-                        ]"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
                         @click="onSubmitThrottle(true)"
                     >
                         <CheckBoldIcon class="size-5 text-success-400" />
                     </UButton>
                     <UButton
-                        :disabled="!canSubmit"
                         class="flex flex-1 justify-center rounded p-2.5 text-sm font-semibold"
-                        :class="[
-                            !canSubmit
-                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400',
-                        ]"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
                         @click="onSubmitThrottle(false)"
                     >
                         <CloseThickIcon class="size-5 text-error-400" />
@@ -170,17 +157,15 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                                 <UButton
                                     class="inline-flex items-center px-4 py-2 text-sm hover:transition-colors"
                                     :disabled="!canSubmit"
-                                    :class="[
-                                        !canSubmit
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'hover:bg-primary-400',
-                                    ]"
+                                    :loading="!canSubmit"
+                                    icon="i-mdi-trash-can"
                                     @click="
                                         close();
-                                        reveal();
+                                        modal.open(ConfirmModal, {
+                                            confirm: async () => deleteDocumentReq(request.id),
+                                        });
                                     "
                                 >
-                                    <TrashCanIcon class="size-5" />
                                     {{ $t('common.delete') }}
                                 </UButton>
                             </MenuItem>

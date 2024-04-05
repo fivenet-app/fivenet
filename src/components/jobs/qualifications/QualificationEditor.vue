@@ -9,7 +9,7 @@ import {
     ListboxOptions,
 } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import {
@@ -540,12 +540,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 <UButton
                     :disabled="!canEdit || !canDo.access"
                     class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    icon="i-mdi-plus"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addQualificationAccessEntry()"
-                >
-                    <PlusIcon class="size-5" />
-                </UButton>
+                />
             </div>
 
             <div class="my-3">
@@ -627,19 +626,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <div class="flex pb-14">
-                <UButton
-                    type="submit"
-                    :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                    :class="[
-                        !canEdit || !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400',
-                    ]"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" />
-                    </template>
+                <UButton type="submit" block :disabled="!meta.valid || !canEdit || !canSubmit" :loading="!canSubmit">
                     <template v-if="!id">
                         {{ $t('common.create') }}
                     </template>

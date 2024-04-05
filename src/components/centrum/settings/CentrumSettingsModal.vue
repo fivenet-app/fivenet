@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CloseIcon, GroupIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 

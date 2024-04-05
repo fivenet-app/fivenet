@@ -13,7 +13,7 @@ import {
 } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
@@ -522,10 +522,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 type="submit"
                                                 class="relative flex w-full rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
                                                 :disabled="!meta.valid || !canSubmit"
+                                                :loading="!canSubmit"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.create') }}
                                             </UButton>
                                             <UButton

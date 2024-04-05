@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { useConfirmDialog } from '@vueuse/core';
 import {
     AccountIcon,
     AccountSchoolIcon,
@@ -26,16 +25,18 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import { checkQualificationAccess } from '~/components/jobs/qualifications/helpers';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import QualificationRequestUserModal from '~/components/jobs/qualifications/QualificationRequestUserModal.vue';
 import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/jobs/qualifications/tutor/QualificationsResultsList.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     id: string;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const { data, pending, refresh, error } = useLazyAsyncData(`qualification-${props.id}`, () => getQualification(props.id));
 
@@ -74,11 +75,6 @@ const canDo = computed(() => ({
     grade: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.GRADE),
     edit: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.EDIT),
 }));
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-onConfirm(async (id: string) => deleteQualification(id));
-
-const openRequest = ref(false);
 </script>
 
 <template>
@@ -93,15 +89,6 @@ const openRequest = ref(false);
             <DataNoDataBlock v-else-if="!quali" />
 
             <div v-else class="rounded-lg bg-base-700">
-                <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(quali!.id)" />
-
-                <QualificationRequestUserModal
-                    :qualification-id="quali.id"
-                    :open="openRequest"
-                    @close="openRequest = false"
-                    @updated-request="quali.request = $event"
-                />
-
                 <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
                     <div>
                         <div>
@@ -121,7 +108,12 @@ const openRequest = ref(false);
                                         <UButton
                                             v-if="canDo.take"
                                             class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
-                                            @click="openRequest = true"
+                                            @click="
+                                                modal.open(QualificationRequestUserModal, {
+                                                    qualificationId: quali!.id,
+                                                    onUpdatedRequest: ($event) => (quali!.request = $event),
+                                                })
+                                            "
                                         >
                                             <TestTubeIcon class="-ml-0.5 h-auto w-5" />
                                             {{ $t('components.qualifications.take_test') }}
@@ -130,7 +122,12 @@ const openRequest = ref(false);
                                             v-else-if="canDo.request"
                                             class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
                                             :disabled="quali.request?.status === RequestStatus.PENDING"
-                                            @click="openRequest = true"
+                                            @click="
+                                                modal.open(QualificationRequestUserModal, {
+                                                    qualificationId: quali!.id,
+                                                    onUpdatedRequest: ($event) => (quali!.request = $event),
+                                                })
+                                            "
                                         >
                                             <AccountSchoolIcon class="-ml-0.5 h-auto w-5" />
                                             {{ $t('common.request') }}
@@ -150,7 +147,11 @@ const openRequest = ref(false);
                                     <UButton
                                         v-if="can('QualificationsService.DeleteQualification') && canDo.edit"
                                         class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
-                                        @click="reveal(quali.id)"
+                                        @click="
+                                            modal.open(ConfirmModal, {
+                                                confirm: async () => deleteQualification(quali!.id),
+                                            })
+                                        "
                                     >
                                         <TrashCanIcon class="-ml-0.5 h-auto w-5" />
                                         {{ $t('common.delete') }}

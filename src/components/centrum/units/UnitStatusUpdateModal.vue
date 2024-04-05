@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CloseIcon, HoopHouseIcon, LoadingIcon } from 'mdi-vue3';
+import { CloseIcon, HoopHouseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/store/centrum';
@@ -158,12 +158,11 @@ function updateReasonField(value: string): void {
                                                                         :key="item.name"
                                                                         class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
                                                                         :class="[
-                                                                            item.class,
                                                                             field.value == item.status
                                                                                 ? 'disabled bg-base-500 hover:bg-base-400'
                                                                                 : item.status
                                                                                   ? unitStatusToBGColor(item.status)
-                                                                                  : item.class,
+                                                                                  : '',
                                                                             ,
                                                                         ]"
                                                                         :disabled="field.value == item.status"
@@ -297,10 +296,8 @@ function updateReasonField(value: string): void {
                                                 type="submit"
                                                 class="inline-flex w-full items-center rounded-l-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
                                                 :disabled="!meta.valid || !canSubmit"
+                                                :loading="!canSubmit"
                                             >
-                                                <template v-if="!canSubmit">
-                                                    <LoadingIcon class="mr-2 size-5 animate-spin" />
-                                                </template>
                                                 {{ $t('common.update') }}
                                             </UButton>
                                             <UButton
