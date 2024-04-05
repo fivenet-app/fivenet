@@ -37,74 +37,69 @@ function goto(e: Coordinate) {
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('common.dispatch_center')">
-        <template #right>
-            <DisponentsInfo />
-        </template>
-    </UDashboardNavbar>
+    <UDashboardPanel :width="400" :resizable="{ min: 300, max: 500 }">
+        <UDashboardNavbar :title="$t('common.dispatch_center')">
+            <template #right> </template>
+        </UDashboardNavbar>
 
-    <UMain>
-        <div class="relative size-full">
-            <div
-                v-if="error !== undefined || (abort === undefined && !reconnecting)"
-                class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
-            >
-                <DataErrorBlock
-                    v-if="error"
-                    :title="$t('components.centrum.dispatch_center.failed_datastream')"
-                    :retry="startStream"
-                />
-                <DataPendingBlock
-                    v-else-if="abort === undefined && !reconnecting"
-                    :message="$t('components.centrum.dispatch_center.starting_datastream')"
-                />
+        <UMain>
+            <div class="relative size-full">
+                <div
+                    v-if="error !== undefined || (abort === undefined && !reconnecting)"
+                    class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
+                >
+                    <DataErrorBlock
+                        v-if="error"
+                        :title="$t('components.centrum.dispatch_center.failed_datastream')"
+                        :retry="startStream"
+                    />
+                    <DataPendingBlock
+                        v-else-if="abort === undefined && !reconnecting"
+                        :message="$t('components.centrum.dispatch_center.starting_datastream')"
+                    />
+                </div>
+
+                <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
+                    <template #default>
+                        <DispatchesLayer v-if="can('CentrumService.Stream')" :show-all-dispatches="true" @goto="goto($event)" />
+                    </template>
+                </LivemapBase>
             </div>
+        </UMain>
+    </UDashboardPanel>
 
-            <Splitpanes>
-                <Pane min-size="25">
-                    <Splitpanes horizontal>
-                        <Pane size="100">
-                            <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
-                                <template #default>
-                                    <DispatchesLayer
-                                        v-if="can('CentrumService.Stream')"
-                                        :show-all-dispatches="true"
-                                        @goto="goto($event)"
-                                    />
-                                </template>
-                            </LivemapBase>
-                        </Pane>
-                    </Splitpanes>
-                </Pane>
-                <Pane size="65">
-                    <Splitpanes horizontal>
-                        <Pane size="58" min-size="2">
-                            <DispatchList :show-button="true" @goto="goto($event)" />
-                        </Pane>
-                        <Pane size="26" min-size="2">
-                            <UnitList @goto="goto($event)" />
-                        </Pane>
-                        <Pane size="8" min-size="2">
-                            <MarkersList @goto="goto($event)" />
-                        </Pane>
-                        <Pane size="8" min-size="2">
-                            <CentrumFeed :items="feed" @goto="goto($event)" />
-                        </Pane>
-                    </Splitpanes>
-                </Pane>
-            </Splitpanes>
-        </div>
-    </UMain>
+    <UDashboardPanel grow side="right" class="overflow-x-hidden">
+        <UDashboardNavbar>
+            <template #right>
+                <DisponentsInfo />
+            </template>
+        </UDashboardNavbar>
+
+        <Splitpanes class="max-h-[calc(100vh-var(--header-height))] overflow-hidden" horizontal>
+            <Pane size="58" min-size="2">
+                <DispatchList :show-button="true" @goto="goto($event)" />
+            </Pane>
+            <Pane size="26" min-size="2">
+                <UnitList @goto="goto($event)" />
+            </Pane>
+            <Pane size="8" min-size="2">
+                <MarkersList @goto="goto($event)" />
+            </Pane>
+            <Pane size="8" min-size="2">
+                <CentrumFeed :items="feed" @goto="goto($event)" />
+            </Pane>
+        </Splitpanes>
+    </UDashboardPanel>
 </template>
 
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
-    min-width: 3px;
+    min-width: 2px;
     background-color: #898d9b;
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 3px;
+    min-height: 2px;
     background-color: #898d9b;
 }
 </style>

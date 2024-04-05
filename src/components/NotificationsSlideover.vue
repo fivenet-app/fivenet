@@ -11,7 +11,10 @@ const { isNotificationsSlideoverOpen } = useDashboard();
         </template>
 
         <template #footer>
-            <UButtonGroup class="flex w-full">
+            <UButtonGroup class="inline-flex w-full">
+                <UButton color="black" block class="flex-1" @click="isNotificationsSlideoverOpen = false">
+                    {{ $t('common.close', 1) }}
+                </UButton>
                 <UButton
                     block
                     class="flex-1"
@@ -21,9 +24,6 @@ const { isNotificationsSlideoverOpen } = useDashboard();
                     "
                 >
                     {{ $t('components.partials.sidebar_notifications') }}
-                </UButton>
-                <UButton block class="flex-1" color="gray" @click="isNotificationsSlideoverOpen = false">
-                    {{ $t('common.close', 1) }}
                 </UButton>
             </UButtonGroup>
         </template>

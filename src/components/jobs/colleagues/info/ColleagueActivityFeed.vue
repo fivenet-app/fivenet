@@ -125,7 +125,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -203,7 +203,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                 </li>
                             </ul>
 
-                            <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                            <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
                                 <UPagination
                                     v-model="page"
                                     :page-count="data?.pagination?.pageSize ?? 0"

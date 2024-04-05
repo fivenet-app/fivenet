@@ -14,6 +14,8 @@ withDefaults(
 
 const { $grpc } = useNuxtApp();
 
+const modal = useModal();
+
 const centrumStore = useCentrumStore();
 const { getCurrentMode, disponents, isDisponent } = storeToRefs(centrumStore);
 
@@ -36,8 +38,6 @@ const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
 }, 1000);
 
 const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstname} ${u.lastname}`));
-
-const modal = useModal();
 </script>
 
 <template>
@@ -60,23 +60,22 @@ const modal = useModal();
         <template v-if="!hideJoin">
             <UButton
                 v-if="!isDisponent"
-                class="inline-flex items-center justify-center rounded-full"
                 :disabled="!canSubmit"
                 :loading="!canSubmit"
                 icon="i-mdi-location-enter"
                 @click="onSubmitThrottle(true)"
             >
-                <span class="px-1">{{ $t('common.join') }}</span>
+                {{ $t('common.join') }}
             </UButton>
             <UButton
                 v-else
-                class="inline-flex items-center justify-center rounded-full"
                 :disabled="!canSubmit"
                 :loading="!canSubmit"
+                color="amber"
                 icon="i-mdi-location-exit"
                 @click="onSubmitThrottle(false)"
             >
-                <span class="px-1">{{ $t('common.leave') }}</span>
+                {{ $t('common.leave') }}
             </UButton>
         </template>
     </div>

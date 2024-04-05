@@ -90,7 +90,7 @@ const selectedRole = ref<Role | undefined>();
                     <template v-if="can('RectorService.CreateRole')">
                         <div class="sm:flex sm:items-center">
                             <div class="sm:flex-auto">
-                                <form @submit.prevent="createRole()">
+                                <UForm :state="{}">
                                     <div class="mx-auto flex flex-row gap-4">
                                         <div class="flex-1">
                                             <label for="grade" class="block text-sm font-medium leading-6">
@@ -106,7 +106,7 @@ const selectedRole = ref<Role | undefined>();
                                                     <ComboboxButton as="div" class="w-full">
                                                         <ComboboxInput
                                                             autocomplete="off"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             :display-value="
                                                                 (grade: any) =>
                                                                     grade ? `${grade?.label} (${grade?.grade})` : ''
@@ -155,7 +155,6 @@ const selectedRole = ref<Role | undefined>();
                                         </div>
                                         <div class="flex flex-initial flex-col justify-end">
                                             <UButton
-                                                type="submit"
                                                 class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                                 :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
                                                 :class="[
@@ -163,12 +162,13 @@ const selectedRole = ref<Role | undefined>();
                                                         ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
                                                         : 'bg-primary-500 hover:bg-primary-400',
                                                 ]"
+                                                @click="createRole()"
                                             >
                                                 {{ $t('common.create') }}
                                             </UButton>
                                         </div>
                                     </div>
-                                </form>
+                                </UForm>
                             </div>
                         </div>
                     </template>

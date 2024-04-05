@@ -122,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="text"
                                 name="reason"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.reason')"
                                 :label="$t('common.reason')"
                                 @focusin="focusTablet(true)"
@@ -139,7 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="text"
                                 name="requestsType"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.type', 2)"
                                 :label="$t('common.type', 2)"
                                 @focusin="focusTablet(true)"
@@ -148,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <Listbox v-model="selectedRequestType" as="div">
                                     <div class="relative">
                                         <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         >
                                             <span class="block truncate">
                                                 {{
@@ -223,13 +223,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <template #footer>
-                <UButtonGroup>
-                    <UButton block @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
                         v-if="canCreate"
                         block
+                        class="flex-1"
                         :disabled="!meta.valid || !canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle($event)"

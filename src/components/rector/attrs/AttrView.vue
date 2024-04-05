@@ -313,14 +313,14 @@ watch(props, () => {
                                         <div class="my-auto flex max-h-8 flex-initial flex-row">
                                             <UButton
                                                 :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
-                                                class="rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-success-600 data-[active=true]:text-neutral hover:bg-success-600/70"
+                                                class="data-[active=true]:text-neutral rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors hover:bg-success-600/70 data-[active=true]:bg-success-600"
                                                 @click="updatePermissionState(perm.id, true)"
                                             >
                                                 <CheckIcon class="size-5" />
                                             </UButton>
                                             <UButton
                                                 :data-active="permStates.get(perm.id) === undefined || !permStates.get(perm.id)"
-                                                class="rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-error-600 data-[active=true]:text-neutral hover:bg-error-600/70"
+                                                class="data-[active=true]:text-neutral rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors hover:bg-error-600/70 data-[active=true]:bg-error-600"
                                                 @click="updatePermissionState(perm.id, false)"
                                             >
                                                 <CloseIcon class="size-5" />
@@ -337,7 +337,7 @@ watch(props, () => {
                                     />
                                     <div
                                         v-if="idx !== permList.filter((p) => p.category === category).length - 1"
-                                        class="w-full border-t border-neutral/20"
+                                        class="border-neutral/20 w-full border-t"
                                     />
                                 </div>
                             </div>

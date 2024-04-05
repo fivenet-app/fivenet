@@ -102,10 +102,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <USlideover>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UCard
-            class="flex flex-col flex-1"
-            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -133,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 v-for="unit in group.units"
                                                 :key="unit.name"
                                                 :disabled="unit.users.length === 0"
-                                                class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
+                                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
                                                 :class="[
                                                     unitStatusToBGColor(unit.status?.status),
                                                     unit.users.length === 0 ? 'disabled !bg-error-600' : '',
@@ -171,13 +178,15 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </div>
 
             <template #footer>
-                <UButton :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                    {{ $t('common.update') }}
-                </UButton>
-                <UButton @click="isOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                        {{ $t('common.update') }}
+                    </UButton>
+                </UButtonGroup>
             </template>
         </UCard>
-    </USlideover>
+    </UModal>
 </template>

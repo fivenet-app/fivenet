@@ -140,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="theme"
                             :label="$t('common.theme')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             {{ jobProps.theme }}
@@ -149,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="livemapMarkerColor"
                             :label="$t('components.rector.job_props.livemap_marker_color')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <ColorInput v-model="jobProps.livemapMarkerColor" disable-alpha format="hex" position="top" />
@@ -158,7 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="radioFrequency"
                             :label="$t('common.radio_frequency')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UInput
@@ -179,7 +179,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             v-if="jobProps.quickButtons"
                             name="quickButtons"
                             :label="$t('components.rector.job_props.quick_buttons')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <div class="flex flex-col gap-2">
@@ -219,7 +219,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="jobLogo"
                             :label="$t('common.logo')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <div class="flex flex-col">
@@ -268,7 +268,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="discordGuildId"
                             :label="$t('components.rector.job_props.discord_guild_id')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UInput
@@ -298,7 +298,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="statusLog"
                             :label="$t('components.rector.job_props.status_log')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UToggle v-model="jobProps.discordSyncSettings.statusLog">
@@ -315,7 +315,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             v-if="jobProps.discordSyncSettings.statusLog"
                             name="statusLog"
                             :label="`${$t('components.rector.job_props.status_log')} ${$t('components.rector.job_props.status_log_settings.channel_id')}`"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UInput
@@ -334,7 +334,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <UFormGroup
                             name="userInfoSync"
                             :label="$t('components.rector.job_props.user_info_sync')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UToggle v-model="jobProps.discordSyncSettings.userInfoSync">
@@ -350,7 +350,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <UFormGroup
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.user_info_sync_settings.grade_role_format')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UInput
@@ -368,7 +368,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <UFormGroup
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.user_info_sync_settings.employee_role_enabled')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UToggle v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled">
@@ -382,7 +382,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 v-if="jobProps.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled"
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.user_info_sync_settings.employee_role_format')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UInput
@@ -402,7 +402,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <UFormGroup
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_enabled')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UToggle v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled">
@@ -415,7 +415,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <UFormGroup
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_mode')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <USelectMenu
@@ -440,7 +440,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 v-if="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_role_name')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UInput
@@ -460,7 +460,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <UFormGroup
                                 name="userInfoSync"
                                 :label="$t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled')"
-                                class="grid grid-cols-2 gap-2 items-center"
+                                class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
                                 <UToggle v-model="jobProps.discordSyncSettings.jobsAbsence">
@@ -475,7 +475,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     v-if="jobProps.discordSyncSettings.jobsAbsence"
                                     name="userInfoSync"
                                     :label="$t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_name')"
-                                    class="grid grid-cols-2 gap-2 items-center"
+                                    class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
                                     <UInput

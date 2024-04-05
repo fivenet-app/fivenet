@@ -178,14 +178,16 @@ function reset(): void {
                 <h3 class="text-xl font-semibold leading-6">
                     {{ $t('common.summary') }}
                 </h3>
+
                 <DataNoDataBlock
                     v-if="pins.length === 0"
                     :message="$t('components.bodycheckup.no_points')"
                     icon="i-mdi-vector-point-select"
+                    class="mt-2"
                 />
                 <ol v-else>
                     <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
-                        <span class="text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
+                        <span class="mr-1 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
                         <UInput
                             v-model="pin.description"
                             type="text"
@@ -202,8 +204,8 @@ function reset(): void {
                 </ol>
             </div>
 
-            <div class="mt-2 flow-root">
-                <UButtonGroup class="mb-2 w-full">
+            <div class="my-2 flow-root">
+                <UButtonGroup class="inline-flex w-full">
                     <UButton class="flex-1" @click="copyToClipboard()">
                         {{ $t('common.copy') }}
                     </UButton>
@@ -211,9 +213,9 @@ function reset(): void {
                         {{ $t('common.reset') }}
                     </UButton>
                 </UButtonGroup>
-
-                <BMICalculator />
             </div>
+
+            <BMICalculator />
         </div>
     </div>
 </template>

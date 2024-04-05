@@ -36,7 +36,7 @@ const licenses = [
         <UDashboardPanel grow>
             <div class="flex h-full flex-col justify-between">
                 <div>
-                    <div class="hero relative isolate bg-primary-900 px-6 py-20 lg:px-8">
+                    <div class="hero bg-primary-900 relative isolate px-6 py-20 lg:px-8">
                         <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
@@ -50,8 +50,8 @@ const licenses = [
 
                     <div>
                         <div class="mx-auto max-w-6xl px-2">
-                            <div class="mx-auto max-w-7xl divide-y divide-neutral/10">
-                                <dl class="mt-10 space-y-6 divide-y divide-neutral/10">
+                            <div class="divide-neutral/10 mx-auto max-w-7xl divide-y">
+                                <dl class="divide-neutral/10 mt-10 space-y-6 divide-y">
                                     <UAccordion :items="licenses" multiple>
                                         <template #item="{ item: license }">
                                             <ExternalFileHolder :path="license.path" />

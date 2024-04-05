@@ -88,7 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="current-password"
                         :placeholder="$t('components.auth.change_password_modal.current_password')"
                         :label="$t('components.auth.change_password_modal.current_password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="currentPassword" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
@@ -101,7 +101,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="new-password"
                         :placeholder="$t('components.auth.change_password_modal.new_password')"
                         :label="$t('components.auth.change_password_modal.new_password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <PasswordStrengthMeter :input="newPassword" class="mt-2" />
                     <VeeErrorMessage name="newPassword" as="p" class="mt-2 text-sm text-error-400" />
@@ -109,14 +109,14 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </UForm>
 
             <template #footer>
-                <div class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                    <UButton @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
                         {{ $t('components.auth.change_password_modal.change_password') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

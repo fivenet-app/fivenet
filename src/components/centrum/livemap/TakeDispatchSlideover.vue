@@ -113,8 +113,15 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 <template>
     <USlideover>
         <UCard
-            class="flex flex-col flex-1"
-            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -128,77 +135,74 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 
             <div>
                 <div class="flex flex-1 flex-col justify-between">
-                    <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                        <div class="mt-1">
-                            <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
-                                <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
-                                    <DataNoDataBlock
-                                        v-if="dispatches.size === 0"
-                                        icon="i-mdi-car-emergency"
-                                        :type="$t('common.dispatch', 2)"
-                                    />
-                                    <template v-else>
-                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                            <dt class="text-sm font-medium leading-6">
-                                                <div class="flex h-6 items-center">
-                                                    {{ $t('common.search') }}
-                                                </div>
-                                            </dt>
-                                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
-                                                <div class="relative flex items-center">
-                                                    <UInput
-                                                        v-model="queryDispatches"
-                                                        type="text"
-                                                        name="search"
-                                                        :placeholder="$t('common.search')"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </div>
-                                            </dd>
+                    <dl class="divide-neutral/10 divide-y">
+                        <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
+                            <DataNoDataBlock
+                                v-if="dispatches.size === 0"
+                                icon="i-mdi-car-emergency"
+                                :type="$t('common.dispatch', 2)"
+                            />
+                            <template v-else>
+                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt class="text-sm font-medium leading-6">
+                                        <div class="flex h-6 items-center">
+                                            {{ $t('common.search') }}
                                         </div>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <div class="relative flex items-center">
+                                            <UInput
+                                                v-model="queryDispatches"
+                                                type="text"
+                                                name="search"
+                                                :placeholder="$t('common.search')"
+                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </div>
+                                    </dd>
+                                </div>
 
-                                        <TakeDispatchEntry
-                                            v-for="pd in filteredDispatches"
-                                            :key="pd"
-                                            :dispatch="dispatches.get(pd)!"
-                                            :preselected="false"
-                                            @selected="selectDispatch(pd, $event)"
-                                            @goto="$emit('goto', $event)"
-                                        />
-                                    </template>
-                                </template>
+                                <TakeDispatchEntry
+                                    v-for="pd in filteredDispatches"
+                                    :key="pd"
+                                    :dispatch="dispatches.get(pd)!"
+                                    :preselected="false"
+                                    @selected="selectDispatch(pd, $event)"
+                                    @goto="$emit('goto', $event)"
+                                />
+                            </template>
+                        </template>
 
-                                <template v-else>
-                                    <DataNoDataBlock
-                                        v-if="pendingDispatches.length === 0"
-                                        icon="i-mdi-car-emergency"
-                                        :type="$t('common.dispatch', 2)"
-                                    />
-                                    <template v-else>
-                                        <TakeDispatchEntry
-                                            v-for="pd in pendingDispatches"
-                                            :key="pd"
-                                            :dispatch="dispatches.get(pd)!"
-                                            @selected="selectDispatch(pd, $event)"
-                                            @goto="$emit('goto', $event)"
-                                        />
-                                    </template>
-                                </template>
-                            </dl>
-                        </div>
-                    </div>
+                        <template v-else>
+                            <DataNoDataBlock
+                                v-if="pendingDispatches.length === 0"
+                                icon="i-mdi-car-emergency"
+                                :type="$t('common.dispatch', 2)"
+                            />
+                            <template v-else>
+                                <TakeDispatchEntry
+                                    v-for="pd in pendingDispatches"
+                                    :key="pd"
+                                    :dispatch="dispatches.get(pd)!"
+                                    @selected="selectDispatch(pd, $event)"
+                                    @goto="$emit('goto', $event)"
+                                />
+                            </template>
+                        </template>
+                    </dl>
                 </div>
             </div>
 
             <template #footer>
-                <div class="inline-flex w-full">
-                    <UButton @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton class="flex-1" @click="isOpen = false">
                         {{ $t('common.close') }}
                     </UButton>
                     <UButton
-                        class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-success-300 hover:bg-success-100"
+                        class="flex-1"
+                        color="green"
                         :disabled="!canTakeDispatch || !canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
@@ -206,14 +210,15 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         {{ $t('common.accept') }}
                     </UButton>
                     <UButton
-                        class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-error-300 hover:bg-error-100"
+                        class="flex-1"
+                        color="red"
                         :disabled="!canTakeDispatch || !canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                     >
                         {{ $t('common.decline') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </USlideover>

@@ -132,7 +132,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                             <VeeField
                                 name="enabled"
                                 type="checkbox"
-                                class="size-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                                class="text-primary-600 focus:ring-primary-600 size-5 rounded border-gray-300"
                                 :placeholder="$t('common.enabled')"
                                 :label="$t('common.enabled')"
                                 :value="true"
@@ -154,7 +154,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                             >
                                 <select
                                     v-bind="field"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -184,7 +184,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                             >
                                 <select
                                     v-bind="field"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -211,7 +211,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     <VeeField
                                         :name="`unitStatus[${idx}]`"
                                         type="text"
-                                        class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.reason')"
                                         :label="$t('common.reason')"
                                         @focusin="focusTablet(true)"
@@ -239,7 +239,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     <VeeField
                                         :name="`dispatchStatus[${idx}]`"
                                         type="text"
-                                        class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.reason')"
                                         :label="$t('common.reason')"
                                         @focusin="focusTablet(true)"
@@ -261,12 +261,13 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
             </div>
 
             <template #footer>
-                <div class="gap-2 sm:flex">
-                    <UButton class="flex-1" @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
                         v-if="can('CentrumService.UpdateSettings')"
+                        block
                         class="flex-1"
                         :disabled="!meta.valid || !canSubmit"
                         :loading="!canSubmit"
@@ -274,7 +275,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                     >
                         {{ $t('common.update') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

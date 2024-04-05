@@ -135,7 +135,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="text"
                                 name="reason"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.reason')"
                                 :label="$t('common.reason')"
                                 @focusin="focusTablet(true)"
@@ -152,7 +152,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="date"
                                 name="absenceBegin"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.from')"
                                 :label="$t('common.from')"
                                 @focusin="focusTablet(true)"
@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="date"
                                 name="absenceEnd"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.to')"
                                 :label="$t('common.to')"
                                 @focusin="focusTablet(true)"
@@ -182,14 +182,20 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <template #footer>
-                <div class="gap-2 sm:flex">
-                    <UButton class="flex-1" @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
-                    <UButton type="submit" class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
                         {{ $t('common.save') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

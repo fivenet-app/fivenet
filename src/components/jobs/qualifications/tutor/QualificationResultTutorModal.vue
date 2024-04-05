@@ -109,7 +109,7 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                         {{ $t('components.qualifications.request_modal.title') }}
                     </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -131,7 +131,7 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                             <Listbox v-bind="field" as="div">
                                 <div class="relative">
                                     <ListboxButton
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     >
                                         <span class="block truncate">
                                             {{
@@ -200,7 +200,7 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                             name="score"
                             min="0"
                             max="100"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="$t('common.score')"
                             :label="$t('common.score')"
                             @focusin="focusTablet(true)"
@@ -216,7 +216,7 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                         <VeeField
                             as="textarea"
                             name="summary"
-                            class="block h-24 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block h-24 w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="$t('common.summary')"
                             :label="$t('common.summary')"
                             @focusin="focusTablet(true)"
@@ -228,13 +228,20 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
             </div>
 
             <template #footer>
-                <UButton block @click="isOpen = false">
-                    {{ $t('common.close', 1) }}
-                </UButton>
-
-                <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                    {{ $t('common.submit') }}
-                </UButton>
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
+                        {{ $t('common.submit') }}
+                    </UButton>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { AccountIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
+import { AccountIcon, PencilIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
 import UnitAssignUsersSlideover from '~/components/centrum/units/UnitAssignUsersSlideover.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
-import UnitStatusUpdateSlideover from '~/components/centrum/units/UnitStatusUpdateSlideover.vue';
+import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
@@ -27,8 +27,15 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 <template>
     <USlideover>
         <UCard
-            class="flex flex-col flex-1"
-            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -44,7 +51,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                 <div class="flex flex-1 flex-col justify-between">
                     <div class="divide-y divide-gray-200 px-2 sm:px-6">
                         <div class="mt-1">
-                            <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
+                            <dl class="divide-neutral/10 border-neutral/10 divide-y border-b">
                                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.description') }}
@@ -77,10 +84,10 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     </dt>
                                     <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
                                         <UButton
-                                            class="rounded px-2 py-1 text-sm font-semibold shadow-sm hover:bg-neutral/20"
+                                            class="hover:bg-neutral/20 rounded px-2 py-1 text-sm font-semibold shadow-sm"
                                             :class="unitStatusColors"
                                             @click="
-                                                slideover.open(UnitStatusUpdateSlideover, {
+                                                modal.open(UnitStatusUpdateModal, {
                                                     unit: unit,
                                                     status: statusSelected,
                                                 })
@@ -168,17 +175,15 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                         <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                             <UButton
                                                 v-if="can('CentrumService.TakeControl')"
-                                                class="flex flex-row items-center rounded bg-neutral/10 px-2 py-1 text-xs font-semibold shadow-sm hover:bg-neutral/20"
+                                                icon="i-mdi-pencil"
+                                                truncate
                                                 @click="
                                                     slideover.open(UnitAssignUsersSlideover, {
                                                         unit: unit,
                                                     })
                                                 "
                                             >
-                                                <PencilIcon class="size-5" />
-                                                <span class="ml-0.5 truncate">
-                                                    {{ $t('common.assign') }}
-                                                </span>
+                                                {{ $t('common.assign') }}
                                             </UButton>
                                         </span>
                                     </dd>
@@ -192,7 +197,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
             </div>
 
             <template #footer>
-                <UButton @click="isOpen = false">
+                <UButton color="black" block class="flex-1" @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

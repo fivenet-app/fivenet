@@ -84,8 +84,15 @@ const onSubmitThrottle = useThrottleFn(async () => {
 <template>
     <USlideover>
         <UCard
-            class="flex flex-col flex-1"
-            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -108,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             <ComboboxButton as="div">
                                                 <ComboboxInput
                                                     autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :display-value="
                                                         (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
                                                     "
@@ -176,7 +183,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
             <template #footer>
                 <div>
-                    <UButton @click="isOpen = false">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">

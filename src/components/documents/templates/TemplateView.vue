@@ -165,37 +165,42 @@ watch(template, () => {
 const completorStore = useCompletorStore();
 
 const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
-
-const openPreview = ref(false);
 </script>
 
 <template>
-    <TemplatePreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
-
     <div class="m-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
+
         <div v-else-if="template" class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <div class="inline-flex sm:flex-auto">
-                    <NuxtLink
-                        v-if="can('DocStoreService.CreateTemplate')"
-                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
-                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                    >
-                        {{ $t('common.edit') }}
-                    </NuxtLink>
+                <UButtonGroup class="inline-flex w-full">
                     <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
-                        class="ml-4 flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                        @click="openPreview = true"
+                        block
+                        class="flex-1"
+                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
+                    >
+                        {{ $t('common.edit') }}
+                    </UButton>
+                    <UButton
+                        v-if="can('DocStoreService.CreateTemplate')"
+                        block
+                        class="flex-1"
+                        color="black"
+                        @click="
+                            modal.open(TemplatePreviewModal, {
+                                templateId: templateId,
+                            })
+                        "
                     >
                         {{ $t('common.preview') }}
                     </UButton>
                     <UButton
                         v-if="can('DocStoreService.DeleteTemplate')"
-                        type="submit"
-                        class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        block
+                        class="flex-1"
+                        color="red"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteTemplate(templateId),
@@ -204,7 +209,7 @@ const openPreview = ref(false);
                     >
                         {{ $t('common.delete') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </div>
             <div class="sm:flex sm:items-center">
                 <div>
@@ -226,7 +231,7 @@ const openPreview = ref(false);
                             <UInput
                                 type="text"
                                 name="weight"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.weight"
                                 @focusin="focusTablet(true)"
@@ -257,7 +262,7 @@ const openPreview = ref(false);
                             <textarea
                                 rows="4"
                                 name="contentTitle"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.contentTitle"
                                 @focusin="focusTablet(true)"
@@ -273,7 +278,7 @@ const openPreview = ref(false);
                             <UInput
                                 type="text"
                                 name="state"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
                                 @focusin="focusTablet(true)"
@@ -300,7 +305,7 @@ const openPreview = ref(false);
                             <textarea
                                 rows="4"
                                 name="content"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.content"
                                 @focusin="focusTablet(true)"

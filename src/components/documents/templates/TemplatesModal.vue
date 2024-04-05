@@ -202,16 +202,19 @@ async function clipboardDialog(): Promise<void> {
             </template>
 
             <template #footer>
-                <UButtonGroup v-if="template !== undefined && reqs !== undefined && steps.selectClipboard">
-                    <UButton block @click="goBackDialog">
+                <UButtonGroup
+                    v-if="template !== undefined && reqs !== undefined && steps.selectClipboard"
+                    class="inline-flex w-full"
+                >
+                    <UButton color="black" block class="flex-1" @click="goBackDialog">
                         {{ $t('common.go_back') }}
                     </UButton>
-                    <UButton block :disabled="!readyToCreate" @click="clipboardDialog()">
+                    <UButton block class="flex-1" :disabled="!readyToCreate" @click="clipboardDialog()">
                         {{ $t('common.create') }}
                     </UButton>
                 </UButtonGroup>
 
-                <UButton v-else block @click="closeDialog">
+                <UButton v-else color="black" block class="flex-1" @click="closeDialog">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

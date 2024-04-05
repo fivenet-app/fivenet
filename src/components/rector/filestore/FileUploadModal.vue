@@ -4,8 +4,8 @@ import { defineRule } from 'vee-validate';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 
-const props = defineProps<{
-    uploadedFile?: (file: FileInfo) => void;
+const emits = defineEmits<{
+    (e: 'uploaded', file: FileInfo): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -30,8 +30,8 @@ async function uploadFile(values: FormData): Promise<UploadFileResponse> {
             file,
         });
 
-        if (response.file && props.uploadedFile) {
-            props.uploadedFile(response.file);
+        if (response.file) {
+            emits('uploaded', response.file);
         }
 
         isOpen.value = false;
@@ -84,7 +84,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </template>
 
             <div>
-                <form @submit.prevent="onSubmitThrottle">
+                <UForm :state="{}">
                     <div class="my-2 space-y-24">
                         <div class="flex-1">
                             <label for="prefix" class="block text-sm font-medium leading-6">
@@ -93,7 +93,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 v-slot="{ field }"
                                 name="prefix"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.category')"
                                 :label="$t('common.category')"
                                 @focusin="focusTablet(true)"
@@ -101,7 +101,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             >
                                 <select
                                     v-bind="field"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -126,7 +126,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="text"
                                 name="name"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.name')"
                                 :label="$t('common.name')"
                                 @focusin="focusTablet(true)"
@@ -165,16 +165,25 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             </template>
                         </div>
                     </div>
-                    <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                        <UButton @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
-                        <UButton type="submit" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-                    </div>
-                </form>
+                </UForm>
             </div>
+
+            <template #footer>
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton block class="flex-1" color="black" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
+                        {{ $t('common.save') }}
+                    </UButton>
+                </UButtonGroup>
+            </template>
         </UCard>
     </UModal>
 </template>

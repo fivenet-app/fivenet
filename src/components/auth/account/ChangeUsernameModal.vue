@@ -88,7 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="current-username"
                         :placeholder="$t('components.auth.change_username_modal.current_username')"
                         :label="$t('components.auth.change_username_modal.current_username')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="currentUsername" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
@@ -100,21 +100,27 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="new-username"
                         :placeholder="$t('components.auth.change_username_modal.new_username')"
                         :label="$t('components.auth.change_username_modal.new_username')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     />
                     <VeeErrorMessage name="newUsername" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
             </UForm>
 
             <template #footer>
-                <div class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                    <UButton @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
-                    <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
                         {{ $t('components.auth.change_username_modal.change_username') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

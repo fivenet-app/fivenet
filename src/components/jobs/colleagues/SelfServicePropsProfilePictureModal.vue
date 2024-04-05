@@ -134,7 +134,7 @@ const nuiAvailable = ref(isNUIAvailable());
                             class="m-auto"
                             :url="activeChar?.avatar?.url"
                             :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
-                            size="huge"
+                            size="3xl"
                             :no-blur="true"
                         />
                     </div>
@@ -142,11 +142,13 @@ const nuiAvailable = ref(isNUIAvailable());
             </div>
 
             <template #footer>
-                <div class="gap-2 sm:flex">
-                    <UButton @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
+                        block
+                        class="flex-1"
                         :disabled="nuiAvailable || !meta.valid || !canSubmit || !activeChar?.avatar"
                         :loading="!canSubmit"
                         @click="
@@ -156,10 +158,16 @@ const nuiAvailable = ref(isNUIAvailable());
                     >
                         {{ $t('common.reset') }}
                     </UButton>
-                    <UButton type="submit" :disabled="nuiAvailable || !meta.valid || !canSubmit" :loading="!canSubmit">
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="nuiAvailable || !meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
                         {{ $t('common.save') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

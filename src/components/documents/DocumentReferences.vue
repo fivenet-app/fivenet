@@ -65,7 +65,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowCollapseIcon class="size-5 shrink-0 text-accent-200" />
+                                    <ArrowCollapseIcon class="text-accent-200 size-5 shrink-0" />
                                     <span class="flex flex-col truncate text-sm">
                                         <span>
                                             {{ reference.targetDocument?.title
@@ -101,7 +101,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="min-w-full overflow-hidden overflow-x-auto align-middle sm:rounded-lg">
-                            <table class="min-w-full divide-y divide-base-600 border-2 border-gray-600 bg-background">
+                            <table class="bg-background min-w-full divide-y divide-base-600 border-2 border-gray-600">
                                 <thead>
                                     <tr>
                                         <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
@@ -140,7 +140,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                 >
                                                     <span
                                                         v-if="reference.targetDocument?.category"
-                                                        class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                        class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                                     >
                                                         {{ reference.targetDocument?.category?.name }}
                                                     </span>
@@ -166,7 +166,7 @@ async function getDocumentReferences(): Promise<DocumentReference[]> {
                                                 >
                                                     <span
                                                         v-if="reference.sourceDocument?.category"
-                                                        class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                        class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                                     >
                                                         {{ reference.sourceDocument?.category?.name }}
                                                     </span>

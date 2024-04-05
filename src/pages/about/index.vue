@@ -43,7 +43,7 @@ const faqs = [
         <UDashboardPanel>
             <div class="flex flex-col justify-between">
                 <div>
-                    <div class="hero relative isolate bg-primary-900 px-6 py-20 lg:px-8">
+                    <div class="hero bg-primary-900 relative isolate px-6 py-20 lg:px-8">
                         <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
@@ -65,7 +65,7 @@ const faqs = [
                             >
                                 <div class="lg:pr-4">
                                     <div class="lg:max-w-lg">
-                                        <p class="text-base font-semibold leading-7 text-primary-300">
+                                        <p class="text-primary-300 text-base font-semibold leading-7">
                                             {{ $t('components.about.introduction.pre_title') }}
                                         </p>
                                         <h1 class="mt-2 text-3xl font-bold tracking-tight text-gray-300 sm:text-4xl">
@@ -93,7 +93,7 @@ const faqs = [
                                     <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
                                         <ul role="list" class="mt-8 space-y-8 text-gray-300">
                                             <li class="flex gap-x-3">
-                                                <MagnifyIcon class="mt-1 size-5 flex-none text-primary-300" />
+                                                <MagnifyIcon class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_one.title')
@@ -102,7 +102,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <LockIcon class="mt-1 size-5 flex-none text-primary-300" />
+                                                <LockIcon class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_two.title')
@@ -111,7 +111,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <MapIcon class="mt-1 size-5 flex-none text-primary-300" />
+                                                <MapIcon class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_three.title')

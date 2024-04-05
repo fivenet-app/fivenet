@@ -10,7 +10,7 @@ definePageMeta({
     title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,
     permission: 'JobsService.GetColleague',
-    redirect: { name: 'jobs-colleagues-id-activity' },
+    redirect: { name: 'jobs-colleagues-id-actvitiy' },
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-actvitiy'>;
         // Check if the id is made up of digits

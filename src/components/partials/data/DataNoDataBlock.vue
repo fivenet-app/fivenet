@@ -27,7 +27,7 @@ function click() {
             variant="ghost"
             :disabled="!focus"
             :icon="icon"
-            class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+            class="focus:ring-neutral relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-offset-2"
             @click="click()"
         >
             <span class="mt-2 block text-sm font-semibold text-gray-300">

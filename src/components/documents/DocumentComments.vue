@@ -160,9 +160,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <template v-if="can('DocStoreService.PostComment')">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
-                        <form class="relative" @submit.prevent="onSubmitThrottle">
+                        <UForm :state="{}" class="relative">
                             <div
-                                class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2 focus-within:ring-primary-600"
+                                class="focus-within:ring-primary-600 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-500 focus-within:ring-2"
                             >
                                 <label for="comment" class="sr-only">
                                     {{ $t('components.documents.document_comments.add_comment') }}
@@ -195,16 +195,16 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 <div class="flex items-center space-x-5"></div>
                                 <div class="shrink-0">
                                     <UButton
-                                        type="submit"
                                         class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                         :disabled="!meta.valid || !canSubmit"
                                         :loading="!canSubmit"
+                                        @click="onSubmitThrottle"
                                     >
                                         {{ $t('common.post') }}
                                     </UButton>
                                 </div>
                             </div>
-                        </form>
+                        </UForm>
                     </div>
                 </div>
             </template>

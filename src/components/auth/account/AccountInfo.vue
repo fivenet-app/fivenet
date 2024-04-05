@@ -74,7 +74,7 @@ const modal = useModal();
                         <UFormGroup
                             name="version"
                             :label="$t('common.username')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             {{ account.account?.username }}
@@ -83,7 +83,7 @@ const modal = useModal();
                         <UFormGroup
                             name="version"
                             :label="$t('components.auth.account_info.license')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             {{ account.account?.license }}
@@ -92,13 +92,10 @@ const modal = useModal();
                         <UFormGroup
                             name="version"
                             :label="$t('components.auth.account_info.change_username')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <UButton
-                                class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
-                                @click="modal.open(ChangeUsernameModal, {})"
-                            >
+                            <UButton @click="modal.open(ChangeUsernameModal, {})">
                                 {{ $t('components.auth.account_info.change_username_button') }}
                             </UButton>
                         </UFormGroup>
@@ -106,13 +103,10 @@ const modal = useModal();
                         <UFormGroup
                             name="version"
                             :label="$t('components.auth.account_info.change_password')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <UButton
-                                class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold hover:bg-primary-400"
-                                @click="modal.open(ChangePasswordModal, {})"
-                            >
+                            <UButton @click="modal.open(ChangePasswordModal, {})">
                                 {{ $t('components.auth.account_info.change_password_button') }}
                             </UButton>
                         </UFormGroup>

@@ -2,7 +2,7 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useSettingsStore } from '~/store/settings';
 import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
-import FileUploadDialog from '~/components/rector/filestore/FileUploadDialog.vue';
+import FileUploadModal from '~/components/rector/filestore/FileUploadModal.vue';
 import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -110,8 +110,8 @@ const columns = [
                     <UButton
                         block
                         @click="
-                            modal.open(FileUploadDialog, {
-                                uploadedFile: addUploadedFile,
+                            modal.open(FileUploadModal, {
+                                onUploaded: addUploadedFile,
                             })
                         "
                     >
@@ -159,7 +159,7 @@ const columns = [
                     </template>
                 </UTable>
 
-                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
                     <UPagination
                         v-model="page"
                         :page-count="data?.pagination?.pageSize ?? 0"

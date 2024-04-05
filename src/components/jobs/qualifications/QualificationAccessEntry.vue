@@ -187,14 +187,14 @@ watch(selectedAccessRole, () => {
                 type="text"
                 disabled
                 :value="accessTypes[0].name"
-                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <Listbox v-else v-model="selectedAccessType" as="div" :disabled="readOnly">
                 <div class="relative">
                     <ListboxButton
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         :class="readOnly ? 'disabled' : ''"
                     >
                         <span class="block truncate">{{ selectedAccessType?.name }}</span>
@@ -251,7 +251,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(job: any) => job?.label"
                                 :class="readOnly ? 'disabled' : ''"
                                 @change="queryJobRaw = $event.target.value"
@@ -300,7 +300,7 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :class="readOnly ? 'disabled' : ''"
                                 :display-value="(rank: any) => rank?.label"
                                 @change="queryMinimumRankRaw = $event.target.value"
@@ -351,7 +351,7 @@ watch(selectedAccessRole, () => {
                     <ComboboxButton as="div">
                         <ComboboxInput
                             autocomplete="off"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :class="readOnly ? 'disabled' : ''"
                             :display-value="(role: any) => role.label"
                             @change="queryAccessRole = $event.target.value"
@@ -392,7 +392,7 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-if="!readOnly" class="flex-initial">
             <UButton
-                class="rounded-full bg-primary-500 p-1.5 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                class="bg-primary-500 hover:bg-primary-400 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                 @click="$emit('deleteRequest', { id: props.init.id })"
             >
                 <CloseIcon class="size-5" />

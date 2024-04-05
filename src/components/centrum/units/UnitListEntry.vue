@@ -19,7 +19,15 @@ const isBright = computed(() => isColourBright(unitColorHex.value));
 </script>
 
 <template>
-    <li class="col-span-1 flex rounded-md shadow-sm" @click="slideover.open(UnitDetailsSlideover, { unit: unit })">
+    <li
+        class="col-span-1 flex rounded-md shadow-sm"
+        @click="
+            slideover.open(UnitDetailsSlideover, {
+                unit: unit,
+                onGoto: (loc) => $emit('goto', loc),
+            })
+        "
+    >
         <div
             class="flex w-12 shrink-0 items-center justify-center rounded-l-md border-y border-l text-sm font-medium"
             :class="isBright ? 'text-black' : 'text-neutral'"

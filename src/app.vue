@@ -11,9 +11,11 @@ import NotificationProvider from '~/components/partials/notification/Notificatio
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
 const settings = useSettingsStore();
-const { isNUIAvailable, updateAvailable, design } = storeToRefs(settings);
+const { isNUIAvailable, updateAvailable } = storeToRefs(settings);
 
 const route = useRoute();
+
+const toast = useToast();
 
 const { locale: cookieLocale } = useCookieControl();
 
@@ -91,14 +93,18 @@ async function onBeforeEnter(): Promise<void> {
 watch(locale, () => setLocaleGlobally(locale.value));
 
 // NUI message handling
-if (isNUIAvailable.value) {
-    onMounted(async () => window.addEventListener('message', onNUIMessage));
-    onBeforeUnmount(async () => window.removeEventListener('message', onNUIMessage));
-}
+onMounted(async () => {
+    if (isNUIAvailable.value) {
+        window.addEventListener('message', onNUIMessage);
+    }
+});
+onBeforeUnmount(async () => {
+    if (isNUIAvailable.value) {
+        window.removeEventListener('message', onNUIMessage);
+    }
+});
 
-const toast = useToast();
-
-watch(updateAvailable, () => {
+watch(updateAvailable, async () => {
     if (!updateAvailable.value) {
         return;
     }

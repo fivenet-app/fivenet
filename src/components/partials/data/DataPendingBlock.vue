@@ -15,7 +15,7 @@ withDefaults(
 <template>
     <UButton
         disabled
-        class="relative block w-full rounded-lg border-2 border-dotted border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+        class="focus:ring-neutral relative block w-full rounded-lg border-2 border-dotted border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-offset-2"
     >
         <PauseIcon v-if="paused" class="mx-auto size-12" />
         <RefreshIcon v-else class="mx-auto size-12 animate-spin" />

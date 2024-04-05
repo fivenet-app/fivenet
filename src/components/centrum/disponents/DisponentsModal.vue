@@ -37,6 +37,12 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                     <PhoneNumberBlock :number="disponent.phoneNumber" />
                 </UPageCard>
             </UPageGrid>
+
+            <template #footer>
+                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </template>
         </UCard>
     </UModal>
 </template>

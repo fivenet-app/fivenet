@@ -136,7 +136,7 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="name"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.name')"
                                         :label="$t('common.name')"
                                         @focusin="focusTablet(true)"
@@ -151,7 +151,7 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="initials"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.initials')"
                                         :label="$t('common.initials')"
                                         @focusin="focusTablet(true)"
@@ -166,7 +166,7 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="description"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.description')"
                                         :label="$t('common.description')"
                                         @focusin="focusTablet(true)"
@@ -181,7 +181,7 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="attributes"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.attributes', 2)"
                                         :label="$t('common.attributes', 2)"
                                         @focusin="focusTablet(true)"
@@ -190,7 +190,7 @@ onBeforeMount(async () => updateUnitInForm());
                                         <Listbox v-model="selectedAttributes" as="div" nullable multiple>
                                             <div class="relative">
                                                 <ListboxButton
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 >
                                                     <span class="block truncate">
                                                         <template v-if="selectedAttributes.length > 0">
@@ -276,7 +276,7 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="homePostal"
                                         type="text"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
                                         :label="`${$t('common.department')} ${$t('common.postal_code')}`"
                                         @focusin="focusTablet(true)"
@@ -291,11 +291,12 @@ onBeforeMount(async () => updateUnitInForm());
             </div>
 
             <template #footer>
-                <div class="gap-2 sm:flex">
-                    <UButton class="flex-1" @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
+                        block
                         class="flex-1"
                         :loading="!canSubmit"
                         :disabled="!meta.valid || !canSubmit"
@@ -308,7 +309,7 @@ onBeforeMount(async () => updateUnitInForm());
                             {{ $t('components.centrum.units.create_unit') }}
                         </template>
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

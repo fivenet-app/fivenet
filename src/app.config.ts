@@ -39,5 +39,10 @@ export default defineAppConfig({
                 selectedIcon: 'i-mdi-check',
             },
         },
+        card: {
+            footer: {
+                padding: 'px-2 py-3 sm:px-4',
+            },
+        },
     },
 });

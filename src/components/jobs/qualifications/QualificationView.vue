@@ -107,7 +107,7 @@ const canDo = computed(() => ({
                                     <template v-if="!canDo.edit">
                                         <UButton
                                             v-if="canDo.take"
-                                            class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
+                                            class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
                                             @click="
                                                 modal.open(QualificationRequestUserModal, {
                                                     qualificationId: quali!.id,
@@ -120,7 +120,7 @@ const canDo = computed(() => ({
                                         </UButton>
                                         <UButton
                                             v-else-if="canDo.request"
-                                            class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
+                                            class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
                                             :disabled="quali.request?.status === RequestStatus.PENDING"
                                             @click="
                                                 modal.open(QualificationRequestUserModal, {
@@ -139,14 +139,14 @@ const canDo = computed(() => ({
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
                                         }"
-                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
+                                        class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
                                     >
                                         <PencilIcon class="-ml-0.5 h-auto w-5" />
                                         {{ $t('common.edit') }}
                                     </NuxtLink>
                                     <UButton
                                         v-if="can('QualificationsService.DeleteQualification') && canDo.edit"
-                                        class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold hover:bg-primary-400"
+                                        class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
                                         @click="
                                             modal.open(ConfirmModal, {
                                                 confirm: async () => deleteQualification(quali!.id),
@@ -219,7 +219,7 @@ const canDo = computed(() => ({
                                         {{ $t('common.created_by') }}
                                         <CitizenInfoPopover
                                             :user="quali?.creator"
-                                            class="ml-1 font-medium text-primary-600 hover:text-primary-400"
+                                            class="text-primary-600 hover:text-primary-400 ml-1 font-medium"
                                         />
                                     </span>
                                 </div>
@@ -311,7 +311,7 @@ const canDo = computed(() => ({
                             </div>
 
                             <div v-if="quali.result && quali.result.id !== '0'" class="mt-2 w-full">
-                                <Disclosure v-slot="{ open }" as="div" class="w-full border-neutral/20 hover:border-neutral/70">
+                                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70 w-full">
                                     <DisclosureButton
                                         :class="[
                                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -352,7 +352,7 @@ const canDo = computed(() => ({
                             </div>
 
                             <div class="mt-2 w-full">
-                                <Disclosure v-slot="{ open }" as="div" class="w-full border-neutral/20 hover:border-neutral/70">
+                                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70 w-full">
                                     <DisclosureButton
                                         :class="[
                                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
@@ -408,7 +408,7 @@ const canDo = computed(() => ({
                                 <Disclosure
                                     v-slot="{ open }"
                                     as="div"
-                                    class="w-full border-neutral/20 hover:border-neutral/70"
+                                    class="border-neutral/20 hover:border-neutral/70 w-full"
                                     :default-open="true"
                                 >
                                     <DisclosureButton
@@ -436,7 +436,7 @@ const canDo = computed(() => ({
                             </div>
 
                             <div v-if="canDo.grade" class="mt-2 w-full">
-                                <Disclosure v-slot="{ open }" as="div" class="w-full border-neutral/20 hover:border-neutral/70">
+                                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70 w-full">
                                     <DisclosureButton
                                         :class="[
                                             open ? 'rounded-t-lg border-b-0' : 'rounded-lg',

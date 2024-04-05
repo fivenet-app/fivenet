@@ -140,14 +140,14 @@ function addToClipboard(): void {
 
                 <UTabs :items="tabs" class="w-full" :unmount="true">
                     <template #default="{ item, selected }">
-                        <div class="flex items-center gap-2 relative truncate">
-                            <UIcon :name="item.icon" class="w-4 h-4 flex-shrink-0" />
+                        <div class="relative flex items-center gap-2 truncate">
+                            <UIcon :name="item.icon" class="h-4 w-4 flex-shrink-0" />
 
                             <span class="truncate">{{ item.label }}</span>
 
                             <span
                                 v-if="selected"
-                                class="absolute -right-4 w-2 h-2 rounded-full bg-primary-500 dark:bg-primary-400"
+                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 h-2 w-2 rounded-full"
                             />
                         </div>
                     </template>

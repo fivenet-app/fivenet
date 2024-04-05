@@ -14,7 +14,7 @@ definePageMeta({
 </script>
 
 <template>
-    <UCard class="max-w-sm w-full bg-white/75 dark:bg-white/5 backdrop-blur">
+    <UCard class="w-full max-w-sm bg-white/75 backdrop-blur dark:bg-white/5">
         <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
         <RegistrationForm />

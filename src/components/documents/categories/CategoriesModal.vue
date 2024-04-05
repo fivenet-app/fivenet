@@ -149,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     :placeholder="$t('common.category', 1)"
                                     :label="$t('common.category', 1)"
                                     :value="category?.name"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     :placeholder="$t('common.description')"
                                     :label="$t('common.description')"
                                     :value="category?.description"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
@@ -177,25 +177,21 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <template #footer>
-                <UButtonGroup>
-                    <UButton block @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
                         v-if="category !== undefined && can('DocStoreService.DeleteCategory')"
-                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        block
+                        class="flex-1"
                         :disabled="!meta.valid || !canSubmit"
                         :loading="!canSubmit"
                         @click="deleteCategory()"
                     >
                         {{ $t('common.delete') }}
                     </UButton>
-                    <UButton
-                        type="submit"
-                        class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                    >
+                    <UButton block class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
                         {{ category === undefined ? $t('common.create') : $t('common.update') }}
                     </UButton>
                 </UButtonGroup>

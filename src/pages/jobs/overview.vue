@@ -72,7 +72,7 @@ const showRadioFrequency = ref(false);
                                     </p>
 
                                     <UButton
-                                        v-if="true || isNUIAvailable()"
+                                        v-if="isNUIAvailable()"
                                         block
                                         variant="soft"
                                         @click="setRadioFrequency(jobProps.radioFrequency)"

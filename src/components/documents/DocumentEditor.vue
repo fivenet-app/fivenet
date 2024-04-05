@@ -699,7 +699,7 @@ const router = useRouter();
 
 <template>
     <div>
-        <UForm class="p-2" :state="{}" @submit.prevent="onSubmitThrottle">
+        <UForm class="p-2" :state="{}">
             <UDashboardToolbar>
                 <template #left>
                     <UButton @click="router.back()">
@@ -707,7 +707,12 @@ const router = useRouter();
                     </UButton>
                 </template>
                 <template #right>
-                    <UButton type="submit" block :disabled="!meta.valid || !canEdit || !canSubmit" :loading="!canSubmit">
+                    <UButton
+                        block
+                        :disabled="!meta.valid || !canEdit || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
                         <template v-if="!id">
                             {{ $t('common.create') }}
                         </template>
@@ -758,7 +763,7 @@ const router = useRouter();
                                 <ComboboxButton as="div">
                                     <ComboboxInput
                                         autocomplete="off"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :display-value="(category: any) => category?.name"
                                         @change="queryCategories = $event.target.value"
                                         @focusin="focusTablet(true)"
@@ -807,7 +812,7 @@ const router = useRouter();
                         <VeeField
                             name="state"
                             type="text"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :label="`${$t('common.document', 1)} ${$t('common.state')}`"
                             :disabled="!canEdit || !canDo.edit"
@@ -821,7 +826,7 @@ const router = useRouter();
                         <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
                                         {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
@@ -895,7 +900,7 @@ const router = useRouter();
                 </template>
             </div>
 
-            <UButtonGroup v-if="canDo.edit" class="my-2 w-full">
+            <UButtonGroup v-if="canDo.edit" class="my-2 inline-flex w-full">
                 <UButton
                     v-if="canDo.relations"
                     class="flex-1"

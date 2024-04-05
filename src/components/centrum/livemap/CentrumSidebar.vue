@@ -2,7 +2,7 @@
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
 import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon } from 'mdi-vue3';
-import DispatchStatusUpdateSlideover from '~/components/centrum/dispatches/DispatchStatusUpdateSlideover.vue';
+import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import {
     dispatchStatusToBGColor,
     dispatchStatuses,
@@ -11,7 +11,7 @@ import {
     isStatusDispatchCompleted,
 } from '~/components/centrum/helpers';
 import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
-import UnitStatusUpdateSlideover from '~/components/centrum/units/UnitStatusUpdateSlideover.vue';
+import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -26,12 +26,15 @@ import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
 import { useSettingsStore } from '~/store/settings';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
+import DisponentsInfo from '../disponents/DisponentsInfo.vue';
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const slideover = useSlideover();
 
@@ -87,7 +90,7 @@ async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Pr
     }
 
     if (status === undefined) {
-        slideover.open(DispatchStatusUpdateSlideover, {
+        modal.open(DispatchStatusUpdateModal, {
             dispatchId: dispatchId,
             status: status,
         });
@@ -122,7 +125,7 @@ async function updateUtStatus(id: string, status?: StatusUnit): Promise<void> {
             return;
         }
 
-        slideover.open(UnitStatusUpdateSlideover, {
+        modal.open(UnitStatusUpdateModal, {
             unit: getOwnUnit.value,
         });
         return;
@@ -304,257 +307,292 @@ async function checkup(): Promise<void> {
 </script>
 
 <template>
-    <LivemapBase @goto="$emit('goto', $event)">
-        <template v-if="canStream" #default>
-            <DispatchesLayer
-                :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
-                @goto="$emit('goto', $event)"
-            />
+    <UDashboardPanel grow>
+        <UDashboardNavbar :title="$t('common.livemap')">
+            <template #right>
+                <DisponentsInfo :hide-join="true" />
+            </template>
+        </UDashboardNavbar>
 
-            <LControl position="bottomright">
-                <UButton
-                    class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
-                    size="2xs"
-                    :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
-                    @click="open = !open"
-                >
-                    <span v-if="!open" class="inline-flex items-center justify-center">
-                        {{ $t('common.units') }}
-                    </span>
-                </UButton>
-            </LControl>
-        </template>
+        <UMain>
+            <div class="relative size-full">
+                <LivemapBase @goto="$emit('goto', $event)">
+                    <template v-if="canStream" #default>
+                        <DispatchesLayer
+                            :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
+                            @goto="$emit('goto', $event)"
+                        />
 
-        <template v-if="canStream" #afterMap>
-            <div class="lg:inset-y-0 lg:flex lg:flex-col">
-                <!-- Dispatch -->
-
-                <transition
-                    enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
-                    enter-from-class="translate-x-full"
-                    enter-to-class="translate-x-0"
-                    leave-active-class="transform transition ease-in-out duration-100 sm:duration-200"
-                    leave-from-class="translate-x-0"
-                    leave-to-class="translate-x-full"
-                >
-                    <div
-                        v-if="open"
-                        class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-0.5"
-                        :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
-                    >
-                        <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
-                            <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
-                                <li>
-                                    <ul role="list" class="-mx-1 space-y-0.5">
-                                        <li>
-                                            <template v-if="getOwnUnit !== undefined">
-                                                <UButton
-                                                    icon="i-mdi-information-outline"
-                                                    block
-                                                    class="flex flex-col"
-                                                    :class="ownUnitStatus"
-                                                    @click="
-                                                        slideover.open(UnitDetailsSlideover, {
-                                                            unit: getOwnUnit,
-                                                            onGoto: ($event) => $emit('goto', $event),
-                                                        })
-                                                    "
-                                                >
-                                                    <span class="truncate">
-                                                        <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
-                                                        {{ getOwnUnit.name }}</span
-                                                    >
-                                                    <span class="truncate text-sm">
-                                                        <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                                        {{
-                                                            $t(
-                                                                `enums.centrum.StatusUnit.${
-                                                                    StatusUnit[getOwnUnit.status?.status ?? 0]
-                                                                }`,
-                                                            )
-                                                        }}
-                                                    </span>
-                                                </UButton>
-                                            </template>
-                                            <UButton
-                                                variant="soft"
-                                                color="primary"
-                                                size="xs"
-                                                block
-                                                @click="slideover.open(JoinUnitSlideover, {})"
-                                            >
-                                                <template v-if="getOwnUnit === undefined">
-                                                    <InformationOutlineIcon class="size-5" />
-                                                    <span class="mt-1 truncate">{{ $t('common.no_own_unit') }}</span>
-                                                </template>
-                                                <template v-else>
-                                                    <span class="truncate">{{ $t('common.leave_unit') }}</span>
-                                                </template>
-                                            </UButton>
-                                        </li>
-                                    </ul>
-                                </li>
-                                <template v-if="getOwnUnit !== undefined">
-                                    <li>
-                                        <ul role="list" class="-mx-1 space-y-0.5">
-                                            <div class="inline-flex items-center text-xs font-semibold leading-6">
-                                                {{ $t('common.unit') }}
-                                                <UIcon
-                                                    v-if="!canSubmitUnitStatus"
-                                                    name="i-mdi-loading"
-                                                    class="ml-1 size-4 animate-spin"
-                                                />
-                                            </div>
-                                            <li>
-                                                <div class="grid grid-cols-2 gap-0.5">
-                                                    <UButton
-                                                        v-for="item in unitStatuses"
-                                                        :key="item.name"
-                                                        :disabled="!canSubmitUnitStatus"
-                                                        :icon="item.icon"
-                                                        :class="[
-                                                            !canSubmitUnitStatus ? 'disabled' : '',
-                                                            item.status && unitStatusToBGColor(item.status),
-                                                        ]"
-                                                        @click="onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)"
-                                                    >
-                                                        <span class="mt-1">
-                                                            {{
-                                                                item.status
-                                                                    ? $t(
-                                                                          `enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`,
-                                                                      )
-                                                                    : $t(item.name)
-                                                            }}
-                                                        </span>
-                                                    </UButton>
-                                                    <UButton
-                                                        variant="soft"
-                                                        color="primary"
-                                                        size="xs"
-                                                        block
-                                                        class="col-span-2"
-                                                        @click="updateUtStatus(getOwnUnit.id)"
-                                                    >
-                                                        {{ $t('components.centrum.update_unit_status.title') }}
-                                                    </UButton>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <ul role="list" class="-mx-1 space-y-0.5">
-                                            <div class="inline-flex items-center text-xs font-semibold leading-6">
-                                                {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                                <UIcon
-                                                    v-if="!canSubmitDispatchStatus"
-                                                    name="i-mdi-loading"
-                                                    class="ml-1 size-4 animate-spin"
-                                                />
-                                            </div>
-                                            <li>
-                                                <div class="grid grid-cols-2 gap-0.5">
-                                                    <UButton
-                                                        v-for="item in dispatchStatuses.filter(
-                                                            (s) => s.status !== StatusDispatch.CANCELLED,
-                                                        )"
-                                                        :key="item.name"
-                                                        :disabled="!canSubmitDispatchStatus"
-                                                        :icon="item.icon"
-                                                        :class="[
-                                                            !canSubmitDispatchStatus ? 'disabled' : '',
-                                                            item.status && dispatchStatusToBGColor(item.status),
-                                                        ]"
-                                                        @click="onSubmitDispatchStatusThrottle(selectedDispatch, item.status)"
-                                                    >
-                                                        <span class="mt-1">
-                                                            {{
-                                                                item.status
-                                                                    ? $t(
-                                                                          `enums.centrum.StatusDispatch.${
-                                                                              StatusDispatch[item.status ?? 0]
-                                                                          }`,
-                                                                      )
-                                                                    : $t(item.name)
-                                                            }}
-                                                        </span>
-                                                    </UButton>
-                                                    <UButton
-                                                        variant="soft"
-                                                        color="primary"
-                                                        size="xs"
-                                                        block
-                                                        class="col-span-2"
-                                                        @click="updateDspStatus(selectedDispatch)"
-                                                    >
-                                                        {{ $t('components.centrum.update_dispatch_status.title') }}
-                                                    </UButton>
-                                                </div>
-                                            </li>
-                                        </ul>
-                                    </li>
-                                    <li>
-                                        <div class="text-xs font-semibold leading-6">
-                                            {{ $t('common.your_dispatches') }}
-                                        </div>
-                                        <ul role="list" class="-mx-1 mt-1 space-y-0.5">
-                                            <li v-if="getSortedOwnDispatches.length === 0">
-                                                <UButton variant="soft" color="white" icon="i-mdi-car-emergency" block>
-                                                    {{ $t('common.no_assigned_dispatches') }}
-                                                </UButton>
-                                            </li>
-                                            <template v-else>
-                                                <OwnDispatchEntry
-                                                    v-for="id in getSortedOwnDispatches.slice().reverse()"
-                                                    :key="id"
-                                                    v-model:selected-dispatch="selectedDispatch"
-                                                    :dispatch="dispatches.get(id)!"
-                                                    @goto="$emit('goto', $event)"
-                                                />
-                                            </template>
-                                        </ul>
-                                        <div class="flex w-full mb-0.5 mt-1">
-                                            <DispatchStatusBreakdown class="mx-auto" />
-                                        </div>
-                                    </li>
-                                </template>
-                            </ul>
-                        </nav>
-                    </div>
-                </transition>
-
-                <!-- "Take Dispatches" Button -->
-                <template v-if="open && getOwnUnit !== undefined">
-                    <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
-                        <span>
-                            <span v-if="pendingDispatches.length > 0" class="absolute left-0 top-0 -mr-1 -mt-1 flex size-3">
-                                <span
-                                    class="absolute inline-flex size-full animate-ping rounded-full bg-error-400 opacity-75"
-                                ></span>
-                                <span class="relative inline-flex size-3 rounded-full bg-error-500"></span>
-                            </span>
+                        <LControl position="bottomright">
                             <UButton
-                                class="flex size-12 items-center justify-center"
-                                :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
-                                @click="
-                                    slideover.open(TakeDispatchSlideover, {
-                                        onGoto: ($event) => $emit('goto', $event),
-                                    })
-                                "
+                                class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                                size="2xs"
+                                :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
+                                @click="open = !open"
                             >
-                                <CarEmergencyIcon class="h-auto w-10" />
+                                <span v-if="!open" class="inline-flex items-center justify-center">
+                                    {{ $t('common.units') }}
+                                </span>
                             </UButton>
-                        </span>
-                        <UButton
-                            v-if="getOwnUnit.homePostal !== undefined"
-                            class="flex size-12 items-center justify-center rounded-r-full"
-                            @click="setWaypointPLZ(getOwnUnit.homePostal)"
-                        >
-                            <HomeFloorBIcon class="h-auto w-10" />
-                        </UButton>
-                    </span>
-                </template>
+                        </LControl>
+                    </template>
+
+                    <template v-if="canStream" #afterMap>
+                        <div>
+                            <transition
+                                enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
+                                enter-from-class="translate-x-full"
+                                enter-to-class="translate-x-0"
+                                leave-active-class="transform transition ease-in-out duration-100 sm:duration-200"
+                                leave-from-class="translate-x-0"
+                                leave-to-class="translate-x-full"
+                            >
+                                <div
+                                    v-if="open"
+                                    class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-1"
+                                    :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
+                                >
+                                    <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
+                                        <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
+                                            <li>
+                                                <ul role="list" class="-mx-1 space-y-0.5">
+                                                    <li>
+                                                        <template v-if="getOwnUnit !== undefined">
+                                                            <UButton
+                                                                icon="i-mdi-information-outline"
+                                                                block
+                                                                class="flex flex-col"
+                                                                :class="ownUnitStatus"
+                                                                @click="
+                                                                    slideover.open(UnitDetailsSlideover, {
+                                                                        unit: getOwnUnit,
+                                                                        onGoto: ($event) => $emit('goto', $event),
+                                                                    })
+                                                                "
+                                                            >
+                                                                <span class="truncate">
+                                                                    <span class="font-semibold"
+                                                                        >{{ getOwnUnit.initials }}:</span
+                                                                    >
+                                                                    {{ getOwnUnit.name }}</span
+                                                                >
+                                                                <span class="truncate text-sm">
+                                                                    <span class="font-semibold"
+                                                                        >{{ $t('common.status') }}:</span
+                                                                    >
+                                                                    {{
+                                                                        $t(
+                                                                            `enums.centrum.StatusUnit.${StatusUnit[getOwnUnit.status?.status ?? 0]}`,
+                                                                        )
+                                                                    }}
+                                                                </span>
+                                                            </UButton>
+                                                        </template>
+                                                        <UButton
+                                                            variant="soft"
+                                                            color="primary"
+                                                            size="xs"
+                                                            block
+                                                            @click="slideover.open(JoinUnitSlideover, {})"
+                                                        >
+                                                            <template v-if="getOwnUnit === undefined">
+                                                                <InformationOutlineIcon class="size-5" />
+                                                                <span class="mt-1 truncate">{{
+                                                                    $t('common.no_own_unit')
+                                                                }}</span>
+                                                            </template>
+                                                            <template v-else>
+                                                                <span class="truncate">{{ $t('common.leave_unit') }}</span>
+                                                            </template>
+                                                        </UButton>
+                                                    </li>
+                                                </ul>
+                                            </li>
+
+                                            <template v-if="getOwnUnit !== undefined">
+                                                <li>
+                                                    <ul role="list" class="-mx-1 space-y-0.5">
+                                                        <div class="inline-flex items-center text-xs font-semibold leading-6">
+                                                            {{ $t('common.unit') }}
+                                                            <UIcon
+                                                                v-if="!canSubmitUnitStatus"
+                                                                name="i-mdi-loading"
+                                                                class="ml-1 size-4 animate-spin"
+                                                            />
+                                                        </div>
+                                                        <li>
+                                                            <div class="grid grid-cols-2 gap-0.5">
+                                                                <UButton
+                                                                    v-for="item in unitStatuses"
+                                                                    :key="item.name"
+                                                                    :disabled="!canSubmitUnitStatus"
+                                                                    :icon="item.icon"
+                                                                    :class="[
+                                                                        !canSubmitUnitStatus ? 'disabled' : '',
+                                                                        item.status && unitStatusToBGColor(item.status),
+                                                                    ]"
+                                                                    @click="
+                                                                        onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)
+                                                                    "
+                                                                >
+                                                                    <span class="mt-1">
+                                                                        {{
+                                                                            item.status
+                                                                                ? $t(
+                                                                                      `enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`,
+                                                                                  )
+                                                                                : $t(item.name)
+                                                                        }}
+                                                                    </span>
+                                                                </UButton>
+                                                                <UButton
+                                                                    variant="soft"
+                                                                    color="primary"
+                                                                    size="xs"
+                                                                    block
+                                                                    class="col-span-2"
+                                                                    @click="updateUtStatus(getOwnUnit.id)"
+                                                                >
+                                                                    {{ $t('components.centrum.update_unit_status.title') }}
+                                                                </UButton>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>
+                                                    <ul role="list" class="-mx-1 space-y-0.5">
+                                                        <div class="inline-flex items-center text-xs font-semibold leading-6">
+                                                            {{ $t('common.dispatch') }} {{ $t('common.status') }}
+                                                            <UIcon
+                                                                v-if="!canSubmitDispatchStatus"
+                                                                name="i-mdi-loading"
+                                                                class="ml-1 size-4 animate-spin"
+                                                            />
+                                                        </div>
+                                                        <li>
+                                                            <div class="grid grid-cols-2 gap-0.5">
+                                                                <UButton
+                                                                    v-for="item in dispatchStatuses.filter(
+                                                                        (s) => s.status !== StatusDispatch.CANCELLED,
+                                                                    )"
+                                                                    :key="item.name"
+                                                                    :disabled="!canSubmitDispatchStatus"
+                                                                    :icon="item.icon"
+                                                                    :class="[
+                                                                        !canSubmitDispatchStatus ? 'disabled' : '',
+                                                                        item.status && dispatchStatusToBGColor(item.status),
+                                                                    ]"
+                                                                    @click="
+                                                                        onSubmitDispatchStatusThrottle(
+                                                                            selectedDispatch,
+                                                                            item.status,
+                                                                        )
+                                                                    "
+                                                                >
+                                                                    <span class="mt-1">
+                                                                        {{
+                                                                            item.status
+                                                                                ? $t(
+                                                                                      `enums.centrum.StatusDispatch.${
+                                                                                          StatusDispatch[item.status ?? 0]
+                                                                                      }`,
+                                                                                  )
+                                                                                : $t(item.name)
+                                                                        }}
+                                                                    </span>
+                                                                </UButton>
+                                                                <UButton
+                                                                    variant="soft"
+                                                                    color="primary"
+                                                                    size="xs"
+                                                                    block
+                                                                    class="col-span-2"
+                                                                    @click="updateDspStatus(selectedDispatch)"
+                                                                >
+                                                                    {{ $t('components.centrum.update_dispatch_status.title') }}
+                                                                </UButton>
+                                                            </div>
+                                                        </li>
+                                                    </ul>
+                                                </li>
+
+                                                <li>
+                                                    <div class="text-xs font-semibold leading-6">
+                                                        {{ $t('common.your_dispatches') }}
+                                                    </div>
+                                                    <ul role="list" class="-mx-1 space-y-0.5">
+                                                        <li v-if="getSortedOwnDispatches.length === 0">
+                                                            <UButton
+                                                                variant="soft"
+                                                                color="white"
+                                                                icon="i-mdi-car-emergency"
+                                                                block
+                                                            >
+                                                                {{ $t('common.no_assigned_dispatches') }}
+                                                            </UButton>
+                                                        </li>
+                                                        <template v-else>
+                                                            <OwnDispatchEntry
+                                                                v-for="id in getSortedOwnDispatches.slice().reverse()"
+                                                                :key="id"
+                                                                v-model:selected-dispatch="selectedDispatch"
+                                                                :dispatch="dispatches.get(id)!"
+                                                                @goto="$emit('goto', $event)"
+                                                            />
+                                                        </template>
+                                                    </ul>
+                                                </li>
+
+                                                <li>
+                                                    <div class="mb-0.5 mt-1 flex w-full">
+                                                        <DispatchStatusBreakdown class="mx-auto" />
+                                                    </div>
+                                                </li>
+                                            </template>
+                                        </ul>
+                                    </nav>
+                                </div>
+                            </transition>
+
+                            <!-- "Take Dispatches" Button -->
+                            <template v-if="open && getOwnUnit !== undefined">
+                                <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
+                                    <span>
+                                        <span
+                                            v-if="pendingDispatches.length > 0"
+                                            class="absolute left-0 top-0 -mr-1 -mt-1 flex size-3"
+                                        >
+                                            <span
+                                                class="absolute inline-flex size-full animate-ping rounded-full bg-error-400 opacity-75"
+                                            ></span>
+                                            <span class="relative inline-flex size-3 rounded-full bg-error-500"></span>
+                                        </span>
+                                        <UButton
+                                            class="flex size-12 items-center justify-center"
+                                            :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
+                                            @click="
+                                                slideover.open(TakeDispatchSlideover, {
+                                                    onGoto: ($event) => $emit('goto', $event),
+                                                })
+                                            "
+                                        >
+                                            <CarEmergencyIcon class="h-auto w-10" />
+                                        </UButton>
+                                    </span>
+                                    <UButton
+                                        v-if="getOwnUnit.homePostal !== undefined"
+                                        class="flex size-12 items-center justify-center rounded-r-full"
+                                        @click="setWaypointPLZ(getOwnUnit.homePostal)"
+                                    >
+                                        <HomeFloorBIcon class="h-auto w-10" />
+                                    </UButton>
+                                </span>
+                            </template>
+                        </div>
+                    </template>
+                </LivemapBase>
             </div>
-        </template>
-    </LivemapBase>
+        </UMain>
+    </UDashboardPanel>
 </template>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import DispatchAssignSlideover from '~/components/centrum/dispatches//DispatchAssignSlideover.vue';
+import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
-import DispatchStatusUpdateSlideover from '~/components/centrum/dispatches/DispatchStatusUpdateSlideover.vue';
+import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -68,16 +68,16 @@ async function deleteDispatch(id: string): Promise<void> {
 }
 
 const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
-
-const openAssign = ref(false);
-const openStatus = ref(false);
 </script>
 
 <template>
     <USlideover :overlay="false">
         <UCard
             :ui="{
-                body: { base: 'flex-1', padding: 'px-1 py-2 sm:p-2' },
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
                 ring: '',
                 divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
@@ -86,9 +86,11 @@ const openStatus = ref(false);
                 <div class="flex items-center justify-between">
                     <div class="inline-flex items-center">
                         <IDCopyBadge :id="dispatch.id" class="mx-2" prefix="DSP" />
+
                         <p class="max-w-80 truncate" :title="dispatch.message">
                             {{ dispatch.message }}
                         </p>
+
                         <UButton
                             v-if="can('CentrumService.DeleteDispatch')"
                             variant="link"
@@ -106,9 +108,9 @@ const openStatus = ref(false);
                 </div>
             </template>
 
-            <div class="divide-y divide-gray-200 overflow-y-auto">
+            <div class="divide-y divide-gray-200">
                 <div>
-                    <dl class="divide-y divide-neutral/10">
+                    <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.created_at') }}
@@ -186,7 +188,7 @@ const openStatus = ref(false);
                                 <span v-if="dispatch.units.length === 0" class="block">
                                     {{ $t('common.unit', dispatch.units.length) }}
                                 </span>
-                                <div v-else class="rounded-md bg-base-800">
+                                <div v-else class="mb-1 rounded-md bg-base-800">
                                     <ul role="list" class="divide-y divide-gray-200 text-sm font-medium">
                                         <li
                                             v-for="unit in dispatch.units"
@@ -221,19 +223,12 @@ const openStatus = ref(false);
                                     </ul>
                                 </div>
 
-                                <DispatchAssignSlideover
-                                    v-if="openAssign"
-                                    :open="openAssign"
-                                    :dispatch="dispatch"
-                                    @close="openAssign = false"
-                                />
-
                                 <UButtonGroup class="inline-flex">
                                     <UButton
                                         v-if="canDo('TakeControl')"
                                         icon="i-mdi-account-multiple-plus"
                                         truncate
-                                        @click="openAssign = true"
+                                        @click="modal.open(DispatchAssignModal, { dispatch: dispatch })"
                                     >
                                         {{ $t('common.assign') }}
                                     </UButton>
@@ -252,7 +247,7 @@ const openStatus = ref(false);
                 </div>
 
                 <div>
-                    <dl class="divide-y divide-neutral/10">
+                    <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.last_update') }}
@@ -292,17 +287,10 @@ const openStatus = ref(false);
                                 {{ $t('common.status') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
-                                <DispatchStatusUpdateSlideover
-                                    v-if="openStatus"
-                                    :open="openStatus"
-                                    :dispatch-id="dispatch.id"
-                                    @close="openStatus = false"
-                                />
-
                                 <UButton
-                                    class="rounded px-2 py-1 text-sm font-semibold shadow-sm hover:bg-neutral/20"
+                                    class="hover:bg-neutral/20 rounded px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
-                                    @click="openStatus = true"
+                                    @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
                                 >
                                     {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
                                     <span v-if="dispatch.status?.code">
@@ -334,7 +322,7 @@ const openStatus = ref(false);
             </div>
 
             <template #footer>
-                <UButton block @click="isOpen = false">
+                <UButton color="black" block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

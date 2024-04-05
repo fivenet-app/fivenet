@@ -87,7 +87,7 @@ onBeforeMount(async () => await listJobs());
                 <div class="mt-2 flow-root basis-1/3">
                     <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
                         <div class="sm:flex-auto">
-                            <form @submit.prevent="createRole()">
+                            <UForm :state="{}">
                                 <div class="mx-auto flex flex-row gap-4">
                                     <div class="flex-1">
                                         <label for="job" class="block text-sm font-medium leading-6">
@@ -103,7 +103,7 @@ onBeforeMount(async () => await listJobs());
                                                 <ComboboxButton as="div" class="w-full">
                                                     <ComboboxInput
                                                         autocomplete="off"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                         :display-value="
                                                             (job: any) => (job ? `${job?.label} (${job?.name})` : '')
                                                         "
@@ -150,21 +150,12 @@ onBeforeMount(async () => await listJobs());
                                         </Combobox>
                                     </div>
                                     <div class="flex flex-initial flex-col justify-end">
-                                        <UButton
-                                            type="submit"
-                                            class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                            :disabled="selectedJob === null"
-                                            :class="[
-                                                selectedJob === null
-                                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                    : 'bg-primary-500 hover:bg-primary-400',
-                                            ]"
-                                        >
+                                        <UButton :disabled="selectedJob === null" @click="createRole()">
                                             {{ $t('common.create') }}
                                         </UButton>
                                     </div>
                                 </div>
-                            </form>
+                            </UForm>
                         </div>
                     </div>
                     <div class="-my-2 mx-0 overflow-x-auto">

@@ -73,7 +73,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         >
                                             <span
                                                 v-if="relation.document?.category"
-                                                class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                             >
                                                 {{ relation.document?.category?.name }}
                                             </span>
@@ -105,7 +105,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
-                            <table class="w-full divide-y divide-base-400 bg-background">
+                            <table class="bg-background w-full divide-y divide-base-400">
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-left text-sm font-semibold" scope="col">
@@ -142,7 +142,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                             >
                                                 <span
                                                     v-if="relation.document?.category"
-                                                    class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                    class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                                 >
                                                     {{ relation.document?.category?.name }}
                                                 </span>

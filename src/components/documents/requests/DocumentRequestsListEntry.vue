@@ -82,7 +82,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
 </script>
 
 <template>
-    <li :key="request.id" class="flex justify-between gap-x-6 py-5 transition-colors hover:bg-neutral/5">
+    <li :key="request.id" class="hover:bg-neutral/5 flex justify-between gap-x-6 py-5 transition-colors">
         <div class="flex min-w-0 gap-x-4 px-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-base font-semibold leading-6 text-gray-100" :title="`${$t('common.id')}: ${request.id}`">

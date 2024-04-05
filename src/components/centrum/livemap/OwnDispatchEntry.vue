@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { CarEmergencyIcon, MapMarkerIcon } from 'mdi-vue3';
+import { CarEmergencyIcon } from 'mdi-vue3';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -15,40 +15,35 @@ defineEmits<{
     (e: 'update:selectedDispatch', dsp: string | undefined): void;
 }>();
 
-const openDetails = ref(false);
+const slideover = useSlideover();
 </script>
 
 <template>
     <li class="flex flex-row items-center">
-        <DispatchDetailsSlideover
-            :dispatch="dispatch"
-            :open="openDetails"
-            @close="openDetails = false"
-            @goto="$emit('goto', $event)"
-        />
-
-        <div class="mr-1.5 flex flex-col items-center gap-2">
-            <UInput
+        <div class="flex flex-col items-center gap-2">
+            <input
                 :value="dispatch.id"
                 name="active"
                 type="radio"
-                class="size-4 border-gray-300 text-primary-600 focus:ring-primary-600"
+                class="form-radio focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 text-primary-500 dark:text-primary-400 h-4 w-4 border border-gray-300 bg-white focus:ring-0 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:checked:border-transparent dark:checked:bg-current dark:focus-visible:ring-offset-gray-900"
                 :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
 
-            <UButton
-                class="inline-flex items-center text-primary-400 hover:text-primary-600"
-                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-            >
-                <MapMarkerIcon class="size-5" />
-            </UButton>
+            <UButton variant="link" icon="i-mdi-map-marker" @click="$emit('goto', { x: dispatch.x, y: dispatch.y })" />
         </div>
         <UButton
-            class="group my-0.5 flex w-full max-w-full flex-col items-center rounded-md bg-error-700 p-2 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
-            @click="openDetails = true"
+            color="red"
+            :padded="false"
+            class="my-0.5 flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
+            @click="
+                slideover.open(DispatchDetailsSlideover, {
+                    dispatch: dispatch,
+                    onGoto: ($event) => $emit('goto', $event),
+                })
+            "
         >
-            <span class="mb-0.5 flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
+            <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
                 <span class="inline-flex items-center font-bold md:gap-1">
                     <CarEmergencyIcon class="hidden h-3 w-auto md:block" />
                     DSP-{{ dispatch.id }}
@@ -57,7 +52,7 @@ const openDetails = ref(false);
                     <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
                 </span>
             </span>
-            <span class="mb-0.5 flex flex-col place-content-between items-center sm:flex-row sm:gap-1">
+            <span class="mb-0.5 inline-flex flex-col place-content-between items-center sm:flex-row sm:gap-1">
                 <span class="font-semibold">{{ $t('common.status') }}:</span>
                 <span class="line-clamp-2 break-words" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
                     $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
@@ -70,7 +65,7 @@ const openDetails = ref(false);
                         {{ $t('common.anon') }}
                     </template>
                     <template v-else-if="dispatch.creator">
-                        {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
+                        <span class="truncate"> {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }} </span>
                     </template>
                     <template v-else>
                         {{ $t('common.unknown') }}

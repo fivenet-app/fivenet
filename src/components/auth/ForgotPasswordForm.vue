@@ -77,7 +77,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             {{ $t('components.auth.forgot_password.subtitle') }}
         </p>
 
-        <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
+        <UForm :state="{}" class="my-2 space-y-6">
             <div>
                 <label for="registrationToken" class="sr-only">
                     {{ $t('components.auth.forgot_password.registration_token') }}
@@ -92,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="registrationToken"
                         :placeholder="$t('components.auth.forgot_password.registration_token')"
                         :label="$t('components.auth.forgot_password.registration_token')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -111,7 +111,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         autocomplete="current-password"
                         :placeholder="$t('common.password')"
                         :label="$t('common.password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -122,15 +122,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
             <div>
                 <UButton
-                    type="submit"
                     class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
                     :loading="!canSubmit"
+                    @click="onSubmitThrottle"
                 >
                     {{ $t('components.auth.forgot_password.submit_button') }}
                 </UButton>
             </div>
-        </form>
+        </UForm>
 
         <div class="mt-6">
             <UButton

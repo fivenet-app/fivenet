@@ -46,6 +46,7 @@ const dispatchesFiltered = computedAsync(async () =>
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatch: $event,
+                    onGoto: ($event) => $emit('goto', $event),
                 })
             "
             @goto="$emit('goto', $event)"
@@ -66,6 +67,7 @@ const dispatchesFiltered = computedAsync(async () =>
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatch: $event,
+                    onGoto: ($event) => $emit('goto', $event),
                 })
             "
             @goto="$emit('goto', $event)"

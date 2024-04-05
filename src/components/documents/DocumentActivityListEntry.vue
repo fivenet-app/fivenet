@@ -120,7 +120,7 @@ function getDocAtivityIcon(activityType: DocActivityType): string {
                 </div>
                 <p class="inline-flex text-sm text-gray-300">
                     {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" text-class="underline" :user="entry.creator" />
+                    <CitizenInfoPopover class="ml-1" :user="entry.creator" />
                 </p>
             </div>
         </div>
@@ -147,14 +147,14 @@ function getDocAtivityIcon(activityType: DocActivityType): string {
                         </div>
                         <p class="inline-flex text-sm text-gray-300">
                             {{ $t('common.created_by') }}
-                            <CitizenInfoPopover class="ml-1" text-class="underline" :user="entry.creator" />
+                            <CitizenInfoPopover class="ml-1" :user="entry.creator" />
                         </p>
                     </div>
                 </div>
             </template>
 
             <template v-if="entry.activityType === DocActivityType.UPDATED" #item>
-                <div class="p-2 rounded-md bg-background">
+                <div class="bg-background rounded-md p-2">
                     <ActivityDocUpdatedDiff
                         v-if="entry.data?.data.oneofKind === 'updated'"
                         :update="entry.data?.data.updated"

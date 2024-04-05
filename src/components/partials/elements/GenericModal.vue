@@ -42,7 +42,7 @@ defineEmits<{
             </div>
 
             <template #footer>
-                <UButton block @click="$emit('close')">
+                <UButton block class="flex-1" color="black" @click="$emit('close')">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

@@ -271,7 +271,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="authSignupEnabled"
                             :label="$t('components.rector.app_config.auth.sign_up')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UToggle v-model="data.config!.auth!.signupEnabled">
@@ -289,7 +289,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="permsDefaultPerms"
                             :label="$t('components.rector.app_config.perms.default_perms')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <div class="flex flex-col gap-1">
@@ -298,7 +298,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <VeeField
                                             :name="`permsDefault[${idx}].category`"
                                             type="text"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.category')"
                                             :label="$t('common.category')"
                                             :rules="required"
@@ -315,7 +315,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <VeeField
                                             :name="`permsDefault[${idx}].name`"
                                             type="text"
-                                            class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.name')"
                                             :label="$t('common.name')"
                                             :rules="required"
@@ -351,7 +351,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="websiteLinks"
                             :label="$t('components.rector.app_config.website.links.title')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <div class="flex-1">
@@ -361,7 +361,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     type="text"
                                     name="websiteLinksPrivacyPolicy"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="data.config!.website!.links!.privacyPolicy"
                                     :placeholder="$t('common.privacy_policy')"
                                     :label="$t('common.privacy_policy')"
@@ -378,7 +378,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     type="text"
                                     name="websiteLinksImprint"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.imprint')"
                                     :label="$t('common.imprint')"
                                     :value="data.config!.website!.links!.imprint"
@@ -398,7 +398,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="jobInfoUnmployedJob"
                             :label="$t('components.rector.app_config.job_info.unemployed_job')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <div class="flex-1">
@@ -406,7 +406,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     type="text"
                                     name="jobInfoUnemployedName"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="data.config!.jobInfo!.unemployedJob!.name"
                                     :placeholder="$t('common.job')"
                                     :label="$t('common.job')"
@@ -426,7 +426,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     max="99"
                                     :value="data.config!.jobInfo!.unemployedJob!.grade"
                                     name="jobInfoUnemployedGrade"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.rank')"
                                     :label="$t('common.rank')"
                                     @focusin="focusTablet(true)"
@@ -439,7 +439,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="jobInfoPublicJobs"
                             :label="$t('components.rector.app_config.job_info.public_jobs')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <Combobox v-model="data.config!.jobInfo!.publicJobs" as="div" multiple nullable>
@@ -447,7 +447,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <ComboboxButton as="div">
                                         <ComboboxInput
                                             autocomplete="off"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                             :placeholder="$t('common.job', 2)"
                                             @change="queryJobsRaw = $event.target.value"
@@ -498,7 +498,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="jobInfoHiddenJobs"
                             :label="$t('components.rector.app_config.job_info.hidden_jobs')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <Combobox v-model="data.config!.jobInfo!.hiddenJobs" as="div" multiple nullable>
@@ -506,7 +506,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <ComboboxButton as="div">
                                         <ComboboxInput
                                             autocomplete="off"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                             :placeholder="$t('common.job', 2)"
                                             @change="queryJobsRaw = $event.target.value"
@@ -562,13 +562,13 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="userTrackerRefreshTime"
                             :label="$t('components.rector.app_config.user_tracker.refresh_time')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <VeeField
                                 name="userTrackerRefreshTime"
                                 type="text"
-                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :value="
                                     parseFloat(
                                         data.config?.userTracker?.refreshTime?.seconds.toString() +
@@ -587,13 +587,13 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="userTrackerDbRefreshTime"
                             :label="$t('components.rector.app_config.user_tracker.db_refresh_time')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <VeeField
                                 name="userTrackerDbRefreshTime"
                                 type="text"
-                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :value="
                                     parseFloat(
                                         data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
@@ -612,7 +612,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="livemapJobs"
                             :label="$t('components.rector.app_config.user_tracker.livemap_jobs')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <Combobox v-model="data.config!.userTracker!.livemapJobs" as="div" multiple nullable>
@@ -620,7 +620,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <ComboboxButton as="div">
                                         <ComboboxInput
                                             autocomplete="off"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                             :placeholder="$t('common.job', 2)"
                                             @change="queryJobsRaw = $event.target.value"
@@ -676,7 +676,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="discordEnabled"
                             :label="$t('common.enabled')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UToggle v-model="data.config!.discord!.enabled">
@@ -689,13 +689,13 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="discordSyncInterval"
                             :label="$t('components.rector.app_config.discord.sync_interval')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <VeeField
                                 name="discordSyncInterval"
                                 type="text"
-                                class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :value="
                                     parseFloat(
                                         data.config?.discord?.syncInterval?.seconds.toString() +
@@ -714,14 +714,14 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         <UFormGroup
                             name="discordBotInviteUrl"
                             :label="$t('components.rector.app_config.discord.bot_invite_url')"
-                            class="grid grid-cols-2 gap-2 items-center"
+                            class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <VeeField
                                 type="url"
                                 name="discordBotInviteUrl"
                                 :value="data.config!.discord!.inviteUrl"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
                                 :label="$t('components.rector.app_config.discord.bot_invite_url')"
                                 @focusin="focusTablet(true)"

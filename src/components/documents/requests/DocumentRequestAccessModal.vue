@@ -1,16 +1,6 @@
 <script lang="ts" setup>
-import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
-import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -109,7 +99,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                             <VeeField
                                 type="text"
                                 name="reason"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.reason')"
                                 :label="$t('common.reason')"
                                 @focusin="focusTablet(true)"
@@ -126,7 +116,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                             <VeeField
                                 type="text"
                                 name="requestsType"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.type', 2)"
                                 :label="$t('common.type', 2)"
                                 @focusin="focusTablet(true)"
@@ -135,7 +125,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                 <Listbox v-model="selectedAccessLevel" as="div">
                                     <div class="relative">
                                         <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         >
                                             <span class="block truncate">
                                                 {{ $t(`enums.docstore.AccessLevel.${AccessLevel[selectedAccessLevel]}`) }}
@@ -198,14 +188,20 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
             </div>
 
             <template #footer>
-                <div class="flex items-center">
-                    <UButton @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
-                    <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
                         {{ $t('common.request', 2) }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </UModal>

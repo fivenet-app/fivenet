@@ -47,39 +47,28 @@ const grouped = computedAsync(async () => {
 </script>
 
 <template>
-    <div class="h-full overflow-y-auto px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
-            <div class="inline-flex items-center sm:flex-auto">
-                <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
-                    {{ $t('common.units') }}
-                    <UButton
-                        v-if="can('CentrumService.CreateOrUpdateUnit')"
-                        :to="{ name: 'centrum-units' }"
-                        :title="$t('common.units')"
-                        icon="i-mdi-cog"
-                        variant="link"
-                    />
-                </h2>
-            </div>
+    <div class="flex h-full grow flex-col px-1">
+        <div class="flex justify-between">
+            <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
+                {{ $t('common.units') }}
+                <UButton
+                    v-if="can('CentrumService.CreateOrUpdateUnit')"
+                    :to="{ name: 'centrum-units' }"
+                    :title="$t('common.units')"
+                    icon="i-mdi-cog"
+                    variant="link"
+                />
+            </h2>
         </div>
-        <div class="mt-0.5 flow-root">
-            <div class="-mx-2 sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <template v-for="group in grouped" :key="group.key">
-                        <p class="-mb-1.5 text-sm">
-                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
-                        </p>
-                        <ul role="list" class="mt-3 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-1.5 lg:grid-cols-3">
-                            <UnitListEntry
-                                v-for="unit in group.units"
-                                :key="unit.id"
-                                :unit="unit"
-                                @goto="$emit('goto', $event)"
-                            />
-                        </ul>
-                    </template>
-                </div>
-            </div>
+        <div class="@container flex-1 overflow-hidden">
+            <template v-for="group in grouped" :key="group.key">
+                <p class="-mb-1.5 text-sm">
+                    {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                </p>
+                <ul role="list" class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2">
+                    <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" @goto="$emit('goto', $event)" />
+                </ul>
+            </template>
         </div>
     </div>
 </template>

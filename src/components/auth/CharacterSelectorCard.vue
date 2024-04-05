@@ -22,7 +22,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
 </script>
 
 <template>
-    <UCard :key="char.userId" class="min-w-[28rem] mx-4 flex w-full max-w-md flex-col rounded-lg bg-base-800">
+    <UCard :key="char.userId" class="mx-4 flex w-full min-w-[28rem] max-w-md flex-col rounded-lg bg-base-800">
         <template #header>
             <div class="flex">
                 <div class="mx-auto flex flex-row items-center gap-2">
@@ -37,12 +37,12 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             <dd class="mb-2 inline-flex items-center justify-center gap-1">
                 <CharSexBadge :sex="char.sex!" />
                 <span
-                    class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800 truncate"
+                    class="inline-flex items-center truncate rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800"
                     >{{ char.jobLabel }} ({{ char.jobGradeLabel }})</span
                 >
                 <span
                     v-if="lastCharID === char.userId"
-                    class="rounded-full bg-success-100 px-3 py-0.5 text-center text-sm font-medium text-success-800 truncate"
+                    class="truncate rounded-full bg-success-100 px-3 py-0.5 text-center text-sm font-medium text-success-800"
                 >
                     {{ $t('common.last_used') }}
                 </span>

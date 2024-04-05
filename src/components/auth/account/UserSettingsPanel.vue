@@ -53,8 +53,8 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
                 <UColorModeSelect color="gray" />
             </template>
 
-            <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 gap-2 items-center">
-                <USelectMenu v-model="design.ui.primary" :options="colors" disabled>
+            <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+                <USelectMenu v-model="design.ui.primary" :options="colors">
                     <template #label>
                         <span
                             class="h-2 w-2 rounded-full"
@@ -72,7 +72,7 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
             <UFormGroup
                 name="darkModeActive"
                 :label="$t('components.auth.settings_panel.editor_theme.title')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: 'justify-self-end' }"
             >
                 <UToggle v-model="darkModeActive">
@@ -100,7 +100,7 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
             <UFormGroup
                 name="selectedHomepage"
                 :label="$t('components.auth.settings_panel.set_startpage.title')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
             >
                 <USelectMenu
                     v-if="activeChar"
@@ -123,7 +123,7 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
             <UFormGroup
                 name="selectedHomepage"
                 :label="$t('components.auth.settings_panel.set_startpage.title')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
             >
                 <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
                 {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%

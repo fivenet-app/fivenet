@@ -209,7 +209,7 @@ onBeforeMount(async () => {
                                 :name="value"
                                 type="checkbox"
                                 :checked="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                class="my-auto size-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
                                 @click="toggleStringListValue(value)"
                             />
                             <span class="ml-1">{{
@@ -232,7 +232,7 @@ onBeforeMount(async () => {
                                 :name="job.name"
                                 type="checkbox"
                                 :checked="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                class="my-auto size-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
                                 @click="toggleJobListValue(job.name)"
                             />
                             <span class="ml-1">{{ job.label }}</span>
@@ -252,7 +252,7 @@ onBeforeMount(async () => {
                                 :name="job.name"
                                 type="checkbox"
                                 :checked="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                class="my-auto size-4 rounded border-base-300 text-primary-500 focus:ring-primary-500"
+                                class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
                                 @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                             />
                             <span class="my-auto flex-1">{{ job.label }}</span>
@@ -266,7 +266,7 @@ onBeforeMount(async () => {
                             >
                                 <div class="relative">
                                     <ListboxButton
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 disabled:text-neutral/50 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 disabled:text-neutral/50 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 sm:text-sm sm:leading-6"
                                     >
                                         <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
                                         <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">

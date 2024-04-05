@@ -60,10 +60,10 @@ defineProps<{
                     <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium">
                         <span
                             v-if="doc.category"
-                            class="flex flex-initial flex-row gap-1 break-words rounded-full bg-primary-100 px-2 py-1 text-primary-500"
+                            class="bg-primary-100 text-primary-500 flex flex-initial flex-row gap-1 break-words rounded-full px-2 py-1"
                         >
                             <span
-                                class="inline-flex items-center text-xs font-medium text-primary-800"
+                                class="text-primary-800 inline-flex items-center text-xs font-medium"
                                 :title="doc.category.description ?? $t('common.na')"
                             >
                                 {{ doc.category.name }}
@@ -86,7 +86,7 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 text-accent-200">
+                <div class="text-accent-200 flex flex-row gap-2">
                     <div class="flex flex-1 flex-row items-center justify-start">
                         <CitizenInfoPopover :user="doc.creator" />
                     </div>

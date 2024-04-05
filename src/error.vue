@@ -53,7 +53,7 @@ onBeforeMount(() => {
 
         <div class="hero h-full bg-base-900">
             <div class="hero-overlay h-full">
-                <main class="flex size-full mx-auto max-w-3xl text-center">
+                <main class="mx-auto flex size-full max-w-3xl text-center">
                     <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
                         <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 

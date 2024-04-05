@@ -129,6 +129,7 @@ const openUnit = ref(false);
                     @click="
                         slideover.open(UnitDetailsSlideover, {
                             unit: unit,
+                            onGoto: (loc) => $emit('goto', loc),
                         })
                     "
                 >

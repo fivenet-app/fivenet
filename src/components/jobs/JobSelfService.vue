@@ -35,7 +35,7 @@ const modal = useModal();
         </template>
 
         <div class="flex flex-initial flex-col items-center gap-1 md:flex-row">
-            <UButtonGroup class="flex w-full">
+            <UButtonGroup class="inline-flex w-full">
                 <UButton
                     v-if="
                         colleagueSelf?.colleague &&

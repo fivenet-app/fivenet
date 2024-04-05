@@ -73,7 +73,7 @@ watch(
             {{ $t('components.auth.login.title') }}
         </h2>
 
-        <form class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
+        <UForm :state="{}" class="my-2 space-y-6" @submit.prevent="onSubmitThrottle">
             <div>
                 <label for="username" class="sr-only">
                     {{ $t('common.username') }}
@@ -85,7 +85,7 @@ watch(
                         autocomplete="username"
                         :placeholder="$t('common.username')"
                         :label="$t('common.username')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -103,7 +103,7 @@ watch(
                         autocomplete="current-password"
                         :placeholder="$t('common.password')"
                         :label="$t('common.password')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -112,7 +112,7 @@ watch(
             </div>
 
             <div>
-                <UButton type="submit" block :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
+                <UButton block :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
                     {{ $t('common.login') }}
                 </UButton>
             </div>

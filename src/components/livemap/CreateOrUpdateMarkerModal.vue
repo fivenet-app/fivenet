@@ -154,8 +154,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 <template>
     <USlideover>
         <UCard
-            class="flex flex-col flex-1"
-            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -180,7 +187,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 <div class="flex flex-1 flex-col justify-between">
                     <div class="divide-y divide-gray-200 px-2 sm:px-6">
                         <div class="mt-1">
-                            <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
+                            <dl class="divide-neutral/10 border-neutral/10 divide-y border-b">
                                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6">
                                         <label for="name" class="block text-sm font-medium leading-6">
@@ -191,7 +198,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeField
                                             type="text"
                                             name="name"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.name')"
                                             :label="$t('common.name')"
                                             @focusin="focusTablet(true)"
@@ -210,7 +217,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeField
                                             type="text"
                                             name="description"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.description')"
                                             :label="$t('common.description')"
                                             @focusin="focusTablet(true)"
@@ -229,7 +236,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeField
                                             type="datetime-local"
                                             name="expiresAt"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.expires_at')"
                                             :label="$t('common.expires_at')"
                                             @focusin="focusTablet(true)"
@@ -265,7 +272,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         >
                                             <select
                                                 v-bind="field"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             >
@@ -303,7 +310,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             name="circleRadius"
                                             min="5"
                                             max="250"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.radius')"
                                             :label="$t('common.radius')"
                                         />
@@ -330,11 +337,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 <div class="relative">
                                                     <ComboboxButton
                                                         as="div"
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     >
                                                         <ComboboxInput
                                                             autocomplete="off"
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             :placeholder="$t('common.icon')"
                                                             @change="queryIcon = $event.target.value"
                                                             @focusin="focusTablet(true)"
@@ -417,22 +424,28 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             </div>
 
             <template #footer>
-                <UButton
-                    class="inline-flex w-full items-center rounded-l-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                    :disabled="!meta.valid || !canSubmit"
-                    :loading="!canSubmit"
-                    @click="onSubmitThrottle"
-                >
-                    {{ $t('common.create') }}
-                </UButton>
-                <UButton
-                    @click="
-                        $emit('close');
-                        isOpen = false;
-                    "
-                >
-                    {{ $t('common.close', 1) }}
-                </UButton>
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton
+                        color="black"
+                        block
+                        class="flex-1"
+                        @click="
+                            $emit('close');
+                            isOpen = false;
+                        "
+                    >
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton
+                        block
+                        class="flex-1"
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle"
+                    >
+                        {{ $t('common.create') }}
+                    </UButton>
+                </UButtonGroup>
             </template>
         </UCard>
     </USlideover>

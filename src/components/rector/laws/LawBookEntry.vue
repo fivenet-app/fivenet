@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { CancelIcon, ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import LawEntry from '~/components/rector/laws/LawEntry.vue';
@@ -129,7 +128,7 @@ const editing = ref(props.startInEdit);
     <UCard>
         <template #header>
             <div v-if="!editing" class="flex items-center gap-x-2">
-                <UButtonGroup>
+                <UButtonGroup class="inline-flex w-full">
                     <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
                     <UButton
                         variant="link"
@@ -151,19 +150,16 @@ const editing = ref(props.startInEdit);
                     {{ $t('pages.rector.laws.add_new_law') }}
                 </UButton>
             </div>
-            <form v-else class="flex w-full flex-row items-start gap-x-4" @submit.prevent="onSubmitThrottle">
-                <UButton type="submit" :title="$t('common.save')">
-                    <ContentSaveIcon class="size-5" />
-                </UButton>
+            <UForm v-else :state="{}" class="flex w-full flex-row items-start gap-x-4">
+                <UButton :title="$t('common.save')" icon="i-mdi-content-save-icon" @click="onSubmitThrottle" />
                 <UButton
                     :title="$t('common.cancel')"
+                    icon="i-mdi-cancel"
                     @click="
                         editing = false;
                         parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
                     "
-                >
-                    <CancelIcon class="size-5" />
-                </UButton>
+                />
 
                 <div class="flex-initial">
                     <label for="name">
@@ -174,7 +170,7 @@ const editing = ref(props.startInEdit);
                         type="text"
                         :placeholder="$t('common.law_book')"
                         :label="$t('common.law_book')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -189,13 +185,13 @@ const editing = ref(props.startInEdit);
                         type="text"
                         :placeholder="$t('common.description')"
                         :label="$t('common.description')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                 </div>
-            </form>
+            </UForm>
         </template>
 
         <table class="min-w-full divide-y divide-base-600">

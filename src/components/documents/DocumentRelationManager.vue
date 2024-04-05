@@ -138,7 +138,7 @@ function removeRelation(id: string): void {
                         >
                             <div class="absolute right-0 top-0 hidden pr-4 pt-4 sm:block">
                                 <UButton
-                                    class="rounded-md transition-colors hover:text-base-300 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                                    class="focus:ring-primary-500 rounded-md transition-colors hover:text-base-300 focus:ring-2 focus:ring-offset-2"
                                     @click="emit('close')"
                                 >
                                     <span class="sr-only">{{ $t('common.close') }}</span>
@@ -156,7 +156,7 @@ function removeRelation(id: string): void {
                                             :class="[
                                                 selected
                                                     ? 'border-primary-500 text-primary-500'
-                                                    : 'border-transparent text-base-300 hover:border-base-300 hover:text-accent-200',
+                                                    : 'hover:text-accent-200 border-transparent text-base-300 hover:border-base-300',
                                                 'group inline-flex w-full items-center justify-center border-b-2 px-1 py-4 text-sm font-medium transition-colors',
                                             ]"
                                             :aria-current="selected ? 'page' : undefined"
@@ -164,7 +164,7 @@ function removeRelation(id: string): void {
                                             <component
                                                 :is="tab.icon"
                                                 :class="[
-                                                    selected ? 'text-primary-500' : 'text-base-300 group-hover:text-accent-200',
+                                                    selected ? 'text-primary-500' : 'group-hover:text-accent-200 text-base-300',
                                                     '-ml-0.5 mr-2 size-5 transition-colors',
                                                 ]"
                                             />
@@ -248,7 +248,7 @@ function removeRelation(id: string): void {
                                                                                     "
                                                                                 >
                                                                                     <OpenInNewIcon
-                                                                                        class="h-auto w-5 text-primary-500 hover:text-primary-300"
+                                                                                        class="text-primary-500 hover:text-primary-300 h-auto w-5"
                                                                                     />
                                                                                 </NuxtLink>
                                                                             </div>
@@ -410,7 +410,7 @@ function removeRelation(id: string): void {
                                                     v-model="queryCitizens"
                                                     type="text"
                                                     name="name"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"

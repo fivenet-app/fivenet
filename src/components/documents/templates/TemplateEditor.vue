@@ -531,7 +531,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
 
 <template>
     <div class="m-2">
-        <form @submit.prevent="onSubmitThrottle">
+        <UForm :state="{}">
             <UCard class="bg-base-800">
                 <div>
                     <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
@@ -543,7 +543,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             name="weight"
                             min="0"
                             max="4294967295"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :label="$t('common.weight')"
                             :placeholder="$t('common.weight')"
                             @focusin="focusTablet(true)"
@@ -560,7 +560,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             as="textarea"
                             rows="1"
                             name="title"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :label="$t('common.title')"
                             :placeholder="$t('common.title')"
                             @focusin="focusTablet(true)"
@@ -579,7 +579,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="4"
                             name="description"
                             :label="$t('common.description')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -603,13 +603,11 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             @delete-request="removeDocumentAccessEntry($event)"
                         />
                         <UButton
-                            class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            icon="i-mdi-plus"
                             data-te-toggle="tooltip"
                             :title="$t('components.documents.document_editor.add_permission')"
                             @click="addDocumentAccessEntry()"
-                        >
-                            <PlusIcon class="size-5" />
-                        </UButton>
+                        />
                     </div>
                 </div>
             </UCard>
@@ -635,7 +633,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="2"
                             name="contentTitle"
                             :label="$t('common.title')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -652,7 +650,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                                 <ComboboxButton as="div">
                                     <ComboboxInput
                                         autocomplete="off"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :display-value="(category: any) => category?.name"
                                         @change="queryCategories = $event.target.value"
                                         @focusin="focusTablet(true)"
@@ -707,7 +705,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="2"
                             name="contentState"
                             :label="$t('common.state')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -724,7 +722,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="6"
                             name="content"
                             :label="$t('common.template')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -749,7 +747,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         @required-change="updateContentDocumentAccessEntryRequired($event)"
                     />
                     <UButton
-                        class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        class="bg-primary-500 hover:bg-primary-400 rounded-full p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         data-te-toggle="tooltip"
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addContentDocumentAccessEntry()"
@@ -758,9 +756,9 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     </UButton>
                 </div>
             </UCard>
+
             <div>
                 <UButton
-                    type="submit"
                     class="mt-4 flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!meta.valid || !canSubmit"
                     :loading="!canSubmit"
@@ -768,6 +766,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     {{ templateId ? $t('common.save') : $t('common.create') }}
                 </UButton>
             </div>
-        </form>
+        </UForm>
     </div>
 </template>

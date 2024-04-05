@@ -59,13 +59,13 @@ withDefaults(
                     <template v-if="showTargetUser">
                         <div class="inline-flex items-center text-sm text-gray-300">
                             <span class="font-semibold">{{ $t('common.colleague') }}:</span>
-                            <CitizenInfoPopover text-class="underline" :user="activity.targetUser" />
+                            <CitizenInfoPopover :user="activity.targetUser" />
                         </div>
                     </template>
                 </p>
                 <p class="inline-flex items-center text-sm text-gray-300">
                     {{ $t('common.created_by') }}
-                    <CitizenInfoPopover text-class="underline" :user="activity.sourceUser" />
+                    <CitizenInfoPopover :user="activity.sourceUser" />
                 </p>
             </div>
         </div>

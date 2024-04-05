@@ -29,13 +29,12 @@ const { livemap } = storeToRefs(settingsStore);
 
                 <UFormGroup name="livemapMarkerSize" :label="$t('components.livemap.settings.marker_size')">
                     <URange
+                        v-model="livemap.markerSize"
                         name="livemapMarkerSize"
                         class="my-auto h-1.5 w-full cursor-grab rounded-full"
-                        :min="14"
+                        :min="16"
                         :max="30"
                         :step="2"
-                        :value="livemap.markerSize"
-                        @change="livemap.markerSize = parseInt($event)"
                     />
                     <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
                 </UFormGroup>
@@ -60,11 +59,9 @@ const { livemap } = storeToRefs(settingsStore);
             </UForm>
 
             <template #footer>
-                <div class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                    <UButton @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </div>
+                <UButton block class="flex-1" color="black" @click="isOpen = false">
+                    {{ $t('common.close', 1) }}
+                </UButton>
             </template>
         </UCard>
     </UModal>

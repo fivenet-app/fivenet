@@ -30,7 +30,7 @@ defineEmits<{
                     type="checkbox"
                     name="users"
                     data-te-toggle="tooltip"
-                    class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-background hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                    class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -48,7 +48,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -65,7 +65,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -82,7 +82,7 @@ defineEmits<{
                     type="checkbox"
                     name="documents"
                     data-te-toggle="tooltip"
-                    class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-background hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                    class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -100,7 +100,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -117,7 +117,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -134,7 +134,7 @@ defineEmits<{
                     type="checkbox"
                     name="vehicles"
                     data-te-toggle="tooltip"
-                    class="size-8 rounded-md border-0 bg-base-700 text-primary-600 transition-colors hover:bg-background hover:text-primary-500 focus:ring-2 focus:ring-inset focus:ring-base-300"
+                    class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -152,7 +152,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -169,7 +169,7 @@ defineEmits<{
                         min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        class="block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
+                        class="placeholder:text-accent-200 block w-full rounded-r-md border-0 bg-base-700 py-1.5 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:text-base-400 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />

@@ -14,7 +14,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
@@ -92,10 +92,17 @@ function updateReasonField(value: string): void {
 </script>
 
 <template>
-    <USlideover>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UCard
-            class="flex flex-col flex-1"
-            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -112,7 +119,7 @@ function updateReasonField(value: string): void {
                 <div class="flex flex-1 flex-col justify-between">
                     <div class="divide-y divide-gray-200 px-2 sm:px-6">
                         <div class="mt-1">
-                            <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
+                            <dl class="divide-neutral/10 border-neutral/10 divide-y border-b">
                                 <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                                     <dt class="text-sm font-medium leading-6">
                                         <label for="status" class="block text-sm font-medium leading-6">
@@ -131,7 +138,7 @@ function updateReasonField(value: string): void {
                                             <UButton
                                                 v-for="(item, idx) in dispatchStatuses"
                                                 :key="item.name"
-                                                class="group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:bg-primary-100/10 hover:transition-all"
+                                                class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
                                                 :class="[
                                                     idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
                                                     field.value == item.status
@@ -144,7 +151,7 @@ function updateReasonField(value: string): void {
                                                 :disabled="field.value == item.status"
                                                 @click="setFieldValue('status', item.status?.valueOf() ?? 0)"
                                             >
-                                                <UIcon name="item.icon" class="size-5 shrink-0" />
+                                                <UIcon :name="item.icon" class="size-5 shrink-0" />
                                                 <span class="mt-1">
                                                     {{
                                                         item.status
@@ -171,7 +178,7 @@ function updateReasonField(value: string): void {
                                         <VeeField
                                             type="text"
                                             name="code"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.code')"
                                             :label="$t('common.code')"
                                             @focusin="focusTablet(true)"
@@ -190,7 +197,7 @@ function updateReasonField(value: string): void {
                                         <VeeField
                                             type="text"
                                             name="reason"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.reason')"
                                             :label="$t('common.reason')"
                                             @focusin="focusTablet(true)"
@@ -213,7 +220,7 @@ function updateReasonField(value: string): void {
                                     <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
                                         <select
                                             name="dispatchStatus"
-                                            class="mt-1 block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            class="placeholder:text-accent-200 mt-1 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                             @change="updateReasonField(($event.target as HTMLSelectElement).value)"
@@ -236,20 +243,21 @@ function updateReasonField(value: string): void {
             </div>
 
             <template #footer>
-                <div class="inline-flex w-full">
-                    <UButton @click="isOpen = false">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
-                        class="relative flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
+                        block
+                        class="flex-1"
                         :disabled="!meta.valid || !canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle"
                     >
                         {{ $t('common.update') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
-    </USlideover>
+    </UModal>
 </template>

@@ -27,7 +27,7 @@ async function resetLocalStorage(): Promise<void> {
             <UFormGroup
                 name="version"
                 :label="$t('components.debug_info.version')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 {{ settings.version }}
@@ -37,7 +37,7 @@ async function resetLocalStorage(): Promise<void> {
                 v-if="activeChar"
                 name="activeCharId"
                 :label="$t('components.debug_info.active_char_id')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 {{ activeChar.userId }}
@@ -47,7 +47,7 @@ async function resetLocalStorage(): Promise<void> {
                 v-if="activeChar"
                 name="activeCharJob"
                 :label="$t('common.job')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})
@@ -57,7 +57,7 @@ async function resetLocalStorage(): Promise<void> {
                 v-if="getAccessTokenExpiration"
                 name="accessTokenExpiration"
                 :label="$t('components.debug_info.access_token_expiration')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <GenericTime :value="getAccessTokenExpiration" :ago="true" />
@@ -67,7 +67,7 @@ async function resetLocalStorage(): Promise<void> {
             <UFormGroup
                 name="nuiInfo"
                 :label="$t('components.debug_info.nui_info')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
@@ -77,7 +77,7 @@ async function resetLocalStorage(): Promise<void> {
             <UFormGroup
                 name="debugFunctions"
                 :label="$t('components.debug_info.debug_functions')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <UButtonGroup class="flex w-full break-words" orientation="vertical">
@@ -96,7 +96,7 @@ async function resetLocalStorage(): Promise<void> {
             <UFormGroup
                 name="permissions"
                 :label="$t('components.debug_info.perms')"
-                class="grid grid-cols-2 gap-2 items-center"
+                class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
                 <UAccordion

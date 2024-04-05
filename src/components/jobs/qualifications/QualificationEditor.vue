@@ -394,7 +394,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
 <template>
     <div class="m-2">
-        <form @submit.prevent="onSubmitThrottle">
+        <UForm :state="{}">
             <div class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4" :class="!canDo.edit ? 'rounded-b-md' : ''">
                 <div class="flex flex-row gap-2">
                     <div class="max-w-48 shrink">
@@ -406,7 +406,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             type="text"
                             :placeholder="$t('common.abbreviation')"
                             :label="$t('common.abbreviation')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
@@ -423,7 +423,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             type="text"
                             :placeholder="$t('common.title')"
                             :label="$t('common.title')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
@@ -441,7 +441,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             as="textarea"
                             :placeholder="$t('common.description')"
                             :label="$t('common.description')"
-                            class="block h-20 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
+                            class="placeholder:text-accent-200 block h-20 w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
                             :disabled="!canEdit || !canDo.edit"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
@@ -453,7 +453,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         <Listbox v-model="quali.closed" as="div" :disabled="!canEdit || !canDo.edit">
                             <div class="relative">
                                 <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 >
                                     <span class="block truncate">
                                         {{ openclose.find((e) => e.closed === quali.closed.closed)?.label }}</span
@@ -539,7 +539,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 />
                 <UButton
                     :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    class="bg-primary-500 hover:bg-primary-400 rounded-full p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     icon="i-mdi-plus"
                     data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
@@ -563,15 +563,9 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 <UButton
                     class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     :disabled="!canSubmit"
-                    :class="
-                        !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400'
-                    "
+                    icon="i-mdi-plus"
                     @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
-                >
-                    <PlusIcon class="size-5" />
-                </UButton>
+                />
             </div>
 
             <div class="my-3">
@@ -614,7 +608,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 type="text"
                                 :placeholder="$t('common.role')"
                                 :label="$t('common.role')"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :disabled="!canEdit || !canDo.edit"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
@@ -626,7 +620,12 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <div class="flex pb-14">
-                <UButton type="submit" block :disabled="!meta.valid || !canEdit || !canSubmit" :loading="!canSubmit">
+                <UButton
+                    block
+                    :disabled="!meta.valid || !canEdit || !canSubmit"
+                    :loading="!canSubmit"
+                    @click="onSubmitThrottle"
+                >
                     <template v-if="!id">
                         {{ $t('common.create') }}
                     </template>
@@ -635,6 +634,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </template>
                 </UButton>
             </div>
-        </form>
+        </UForm>
     </div>
 </template>

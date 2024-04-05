@@ -52,7 +52,7 @@ const open = ref(false);
                     type="checkbox"
                     name="selected"
                     :checked="checked"
-                    class="size-5 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                    class="text-primary-600 focus:ring-primary-600 size-5 rounded border-gray-300"
                     @change="
                         checked = !checked;
                         $emit('selected', checked);
@@ -76,7 +76,7 @@ const open = ref(false);
         </dt>
         <dd class="mt-1 flex-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
             <ul role="list" class="divide-y divide-base-200 rounded-md border border-base-200">
-                <li class="flex items-center py-3 pl-3 pr-4 text-sm gap-1">
+                <li class="flex items-center gap-1 py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.sent_by') }}:</span>
                     <span>
                         <template v-if="dispatch.anon">
@@ -112,7 +112,7 @@ const open = ref(false);
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
                 </li>
-                <li v-if="dispatch.attributes" class="flex items-center py-3 pl-3 pr-4 text-sm gap-1">
+                <li v-if="dispatch.attributes" class="flex items-center gap-1 py-3 pl-3 pr-4 text-sm">
                     <span class="font-medium">{{ $t('common.attributes', 2) }}:</span>
                     <span>
                         <DispatchAttributes :attributes="dispatch.attributes" />

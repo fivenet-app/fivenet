@@ -34,7 +34,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="border-b border-gray-200 bg-background px-4 py-5 sm:p-6">
+        <div class="bg-background border-b border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-200">
@@ -45,7 +45,7 @@ watch(offset, async () => refresh());
                     <NuxtLink
                         v-if="can('QualificationsService.CreateQualification')"
                         :to="{ name: 'jobs-qualifications-create' }"
-                        class="relative inline-flex items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                        class="bg-primary-500 hover:bg-primary-500 relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
                         {{ $t('components.qualifications.create_new_qualification') }}
                     </NuxtLink>
@@ -75,9 +75,9 @@ watch(offset, async () => refresh());
                 </ul>
             </template>
         </div>
-        <div class="border-t border-gray-200 bg-background px-4 py-5 sm:p-6">
+        <div class="bg-background border-t border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex items-center">
-                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
                     <UPagination
                         v-model="page"
                         :page-count="data?.pagination?.pageSize ?? 0"

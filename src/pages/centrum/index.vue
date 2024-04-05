@@ -12,9 +12,7 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage class="size-full">
-        <UDashboardPanel grow>
-            <DispatchCenter />
-        </UDashboardPanel>
+    <UDashboardPage>
+        <DispatchCenter />
     </UDashboardPage>
 </template>

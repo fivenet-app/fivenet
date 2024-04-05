@@ -69,7 +69,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -106,7 +106,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -115,7 +115,7 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.Job'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <BriefcaseIcon class="size-full text-secondary-400" />
+                <BriefcaseIcon class="text-secondary-400 size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -138,7 +138,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -147,7 +147,7 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.TrafficInfractionPoints'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <TrafficConeIcon class="size-full text-secondary-400" />
+                <TrafficConeIcon class="text-secondary-400 size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -172,7 +172,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -181,7 +181,7 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.MugShot'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <CameraAccountIcon class="size-full text-secondary-400" />
+                <CameraAccountIcon class="text-secondary-400 size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -201,7 +201,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -234,7 +234,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -276,7 +276,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -288,7 +288,7 @@ const props = defineProps<{
                 <ReceiptTextCheckIcon v-if="activity.newValue === '0'" class="size-full text-success-400" />
                 <ReceiptTextRemoveIcon
                     v-else-if="activity.newValue === activity.oldValue"
-                    class="size-full text-secondary-400"
+                    class="text-secondary-400 size-full"
                 />
                 <ReceiptTextPlusIcon v-else class="size-full text-info-400" />
             </div>
@@ -323,7 +323,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>
@@ -352,7 +352,7 @@ const props = defineProps<{
                     </p>
                     <p class="inline-flex text-sm text-gray-300">
                         {{ $t('common.created_by') }}
-                        <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
                 </div>
             </div>

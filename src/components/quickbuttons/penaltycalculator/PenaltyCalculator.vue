@@ -1,10 +1,7 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { ChevronDownIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import LawListEntry from '~/components/quickbuttons/penaltycalculator/LawListEntry.vue';
 import PenaltyStats from '~/components/quickbuttons/penaltycalculator/PenaltyStats.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -67,7 +64,13 @@ const filteredLawBooks = computed(() =>
                 laws,
             };
         })
-        .filter((books) => books.laws.length > 0),
+        .filter((books) => books.laws.length > 0)
+        .map((book) => {
+            return {
+                label: `${book.name}` + (!book.description ? '' : ' - ' + book.description),
+                book: book,
+            };
+        }),
 );
 
 function getNameForLawBookId(id: string): string | undefined {
@@ -155,11 +158,38 @@ watch(props, () => {
         refresh();
     }
 });
+
+const columns = [
+    {
+        key: 'name',
+        label: t('common.law'),
+    },
+    {
+        key: 'fine',
+        label: t('common.fine'),
+    },
+    {
+        key: 'detentionTime',
+        label: t('common.detention_time'),
+    },
+    {
+        key: 'stvoPoints',
+        label: t('common.traffic_infraction_points', 2),
+    },
+    {
+        key: 'description',
+        label: t('common.description'),
+    },
+    {
+        key: 'count',
+        label: t('common.count'),
+    },
+];
 </script>
 
 <template>
     <div class="py-2">
-        <div class="pb-4 sm:flex sm:items-center">
+        <div class="pb-2 sm:flex sm:items-center">
             <div class="sm:flex-auto">
                 <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
                 <DataErrorBlock
@@ -175,94 +205,57 @@ watch(props, () => {
                     class="mt-5"
                 />
 
-                <div v-else class="divide-y divide-neutral/10">
-                    <div class="mt-5">
+                <div v-else>
+                    <div>
                         <UInput
                             v-model="rawQuery"
                             type="text"
                             name="search"
                             :placeholder="$t('common.filter')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
                     </div>
-                    <dl class="mt-5 space-y-2 divide-y divide-neutral/10">
-                        <Disclosure
-                            v-for="lawBook in filteredLawBooks"
-                            v-slot="{ open }"
-                            :key="`${lawBook.id}-${query}`"
-                            as="div"
-                            class="pt-3"
-                            :default-open="query.length > 0"
-                        >
-                            <dt>
-                                <DisclosureButton class="flex w-full items-start justify-between text-left">
-                                    <span class="text-base font-semibold leading-7">
-                                        {{ lawBook.name }}
-                                        <span v-if="lawBook.description">
-                                            {{ ' - ' + lawBook.description }}
-                                        </span>
-                                    </span>
-                                    <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
-                                    </span>
-                                </DisclosureButton>
-                            </dt>
-                            <DisclosurePanel as="dd" class="mt-2 px-4">
-                                <div class="mt-2 flow-root">
-                                    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
-                                        <div class="inline-block min-w-full align-middle sm:px-6 lg:px-8">
-                                            <table class="min-w-full divide-y divide-base-600">
-                                                <thead>
-                                                    <tr>
-                                                        <th
-                                                            scope="col"
-                                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1"
-                                                        >
-                                                            {{ $t('common.crime') }}
-                                                        </th>
-                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                                            {{ $t('common.fine') }}
-                                                        </th>
-                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                                            {{ $t('common.detention_time') }}
-                                                        </th>
-                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                                            {{ $t('common.traffic_infraction_points', 2) }}
-                                                        </th>
-                                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                                            {{ $t('common.description') }}
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
-                                                        >
-                                                            {{ $t('common.count') }}
-                                                        </th>
-                                                    </tr>
-                                                </thead>
-                                                <tbody class="divide-y divide-base-800">
-                                                    <LawListEntry
-                                                        v-for="law in lawBook.laws"
-                                                        :key="law.id"
-                                                        :law="law"
-                                                        :count="selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0"
-                                                        @selected="calculate($event)"
-                                                    />
-                                                </tbody>
-                                            </table>
-                                        </div>
-                                    </div>
+
+                    <dl class="mt-4">
+                        <UAccordion multiple :items="filteredLawBooks">
+                            <template #item="{ item: lawBook }">
+                                <div class="max-w-full">
+                                    <UTable :columns="columns" :rows="lawBook.book.laws">
+                                        <template #name-data="{ row: law }">
+                                            <p class="whitespace-pre-line text-gray-900 dark:text-gray-300">
+                                                {{ law.name }}
+                                            </p>
+                                        </template>
+                                        <template #description-data="{ row: law }">
+                                            <p
+                                                class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-none"
+                                            >
+                                                {{ law.description }}
+                                            </p>
+                                        </template>
+                                        <template #count-data="{ row: law }">
+                                            <USelect
+                                                name="count"
+                                                :options="Array.from(Array(7).keys())"
+                                                :model-value="selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0"
+                                                @change="calculate({ law: law, count: parseInt($event) })"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </template>
+                                    </UTable>
                                 </div>
-                            </DisclosurePanel>
-                        </Disclosure>
+                            </template>
+                        </UAccordion>
                     </dl>
                 </div>
             </div>
         </div>
+
         <UDivider :label="$t('common.result')" />
-        <div class="mt-2 flow-root">
+
+        <div class="flow-root">
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="text-xl">
@@ -279,8 +272,9 @@ watch(props, () => {
                 </div>
             </div>
         </div>
-        <div class="mt-2 flow-root">
-            <UButtonGroup class="w-full">
+
+        <UButtonGroup class="mt-2 inline-flex w-full">
+            <UButtonGroup class="inline-flex w-full">
                 <UButton class="flex-1" @click="copyToClipboard()">
                     {{ $t('common.copy') }}
                 </UButton>
@@ -288,6 +282,6 @@ watch(props, () => {
                     {{ $t('common.reset') }}
                 </UButton>
             </UButtonGroup>
-        </div>
+        </UButtonGroup>
     </div>
 </template>

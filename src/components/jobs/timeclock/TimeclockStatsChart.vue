@@ -57,10 +57,10 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
     <UDashboardCard ref="cardRef" :ui="{ body: { padding: '!pb-3 !px-0' } as any }">
         <template #header>
             <div>
-                <p class="text-sm text-gray-500 dark:text-gray-400 font-medium mb-1">
+                <p class="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ $t('components.jobs.timeclock.Stats.sum') }}
                 </p>
-                <p class="text-3xl text-gray-900 dark:text-white font-semibold">{{ n(total, 'decimal') }} h</p>
+                <p class="text-3xl font-semibold text-gray-900 dark:text-white">{{ n(total, 'decimal') }} h</p>
             </div>
         </template>
 

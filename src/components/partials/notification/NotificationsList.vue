@@ -92,6 +92,7 @@ const canSubmit = ref(true);
                     </div>
                     <div class="flex-initial">
                         <UButton
+                            variant="link"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
                             class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                             :class="
@@ -127,7 +128,7 @@ const canSubmit = ref(true);
                         <li
                             v-for="not in data?.notifications"
                             :key="not.id"
-                            class="relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-700 px-4 py-5 hover:bg-background sm:px-6"
+                            class="hover:bg-background relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-700 px-4 py-5 sm:px-6"
                         >
                             <div class="flex flex-1 gap-x-4">
                                 <div class="min-w-0 flex-auto">
@@ -135,12 +136,13 @@ const canSubmit = ref(true);
                                         <template v-if="not.data && not.data.link">
                                             <!-- @vue-ignore the route should be valid... at least in most cases -->
                                             <UButton
+                                                variant="link"
                                                 :to="not.data.link.to"
+                                                trailing-icon="i-mdi-link-variant"
                                                 class="inline-flex items-center gap-1"
                                                 @click="$emit('clicked')"
                                             >
                                                 {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                                <LinkVariantIcon class="size-5" />
                                             </UButton>
                                         </template>
                                         <span v-else>
@@ -194,7 +196,7 @@ const canSubmit = ref(true);
                     </ul>
                 </template>
 
-                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
                     <UPagination
                         v-model="page"
                         :page-count="data?.pagination?.pageSize ?? 0"

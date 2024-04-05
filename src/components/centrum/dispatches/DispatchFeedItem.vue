@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import {
-    AccountAlertIcon,
     AccountCancelIcon,
     AccountCheckIcon,
     AccountPlusIcon,
@@ -48,7 +47,7 @@ defineEmits<{
         </div>
         <template v-if="item.status === StatusDispatch.NEW">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <UIcon name="i-mdi-new-box" class="size-5 text-primary-600" />
+                <UIcon name="i-mdi-new-box" class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -65,7 +64,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -74,7 +73,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <UIcon name="i-mdi-account-alert" class="size-5 text-primary-600" />
+                <UIcon name="i-mdi-account-alert" class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -92,7 +91,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -101,7 +100,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountPlusIcon class="size-5 text-primary-600" />
+                <AccountPlusIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -119,7 +118,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -128,7 +127,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountRemoveIcon class="size-5 text-primary-600" />
+                <AccountRemoveIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -146,7 +145,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -155,7 +154,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ACCEPTED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountCheckIcon class="size-5 text-primary-600" />
+                <AccountCheckIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -173,7 +172,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -182,7 +181,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_DECLINED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountCancelIcon class="size-5 text-primary-600" />
+                <AccountCancelIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -200,7 +199,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -209,7 +208,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.EN_ROUTE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CarIcon class="size-5 text-primary-600" />
+                <CarIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -227,7 +226,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -236,7 +235,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.ON_SCENE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <MapMarkerIcon class="size-5 text-primary-600" />
+                <MapMarkerIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -253,7 +252,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -262,7 +261,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <HelpIcon class="size-5 text-primary-600" />
+                <HelpIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -280,7 +279,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -289,7 +288,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.COMPLETED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CheckIcon class="size-5 text-primary-600" />
+                <CheckIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -307,7 +306,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -316,7 +315,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CancelIcon class="size-5 text-primary-600" />
+                <CancelIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -334,7 +333,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -343,7 +342,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.ARCHIVED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <ArchiveIcon class="size-5 text-primary-600" />
+                <ArchiveIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -361,7 +360,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
@@ -370,7 +369,7 @@ defineEmits<{
         </template>
         <template v-else>
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <NewBoxIcon class="size-5 text-primary-600" />
+                <NewBoxIcon class="text-primary-600 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -388,7 +387,7 @@ defineEmits<{
                         icon="i-mdi-map-marker"
                         @click="$emit('goto', { x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">

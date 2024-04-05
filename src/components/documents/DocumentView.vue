@@ -324,11 +324,11 @@ const accordionItems = [
                     <div class="mb-2 flex gap-2">
                         <div
                             v-if="doc.category"
-                            class="flex flex-initial flex-row gap-1 rounded-full bg-primary-100 px-2 py-1 text-primary-500"
+                            class="bg-primary-100 text-primary-500 flex flex-initial flex-row gap-1 rounded-full px-2 py-1"
                         >
                             <ShapeIcon class="h-auto w-5" />
                             <span
-                                class="inline-flex items-center text-sm font-medium text-primary-800"
+                                class="text-primary-800 inline-flex items-center text-sm font-medium"
                                 :title="doc.category.description ?? $t('common.na')"
                             >
                                 {{ doc.category.name }}
@@ -376,7 +376,7 @@ const accordionItems = [
                                 {{ $t('common.created_by') }}
                                 <CitizenInfoPopover
                                     :user="doc.creator"
-                                    class="ml-1 font-medium text-primary-600 hover:text-primary-400"
+                                    class="text-primary-600 hover:text-primary-400 ml-1 font-medium"
                                 />
                             </span>
                         </div>
@@ -460,11 +460,11 @@ const accordionItems = [
                                 <div
                                     v-for="entry in access?.users"
                                     :key="entry.id"
-                                    class="flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full bg-secondary-100 px-2 py-1"
+                                    class="bg-secondary-100 flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full px-2 py-1"
                                 >
-                                    <span class="size-2 rounded-full bg-secondary-400" />
+                                    <span class="bg-secondary-400 size-2 rounded-full" />
                                     <span
-                                        class="text-sm font-medium text-secondary-700"
+                                        class="text-secondary-700 text-sm font-medium"
                                         :title="`${$t('common.id')} ${entry.userId}`"
                                     >
                                         {{ entry.user?.firstname }}

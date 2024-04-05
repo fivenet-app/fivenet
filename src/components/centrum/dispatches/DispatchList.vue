@@ -8,8 +8,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
 import DispatchDetailsSlideover from './DispatchDetailsSlideover.vue';
-import DispatchStatusUpdateSlideover from './DispatchStatusUpdateSlideover.vue';
-import DispatchAssignSlideover from './DispatchAssignSlideover.vue';
+import DispatchStatusUpdateModal from './DispatchStatusUpdateModal.vue';
+import DispatchAssignModal from './DispatchAssignModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -31,6 +31,10 @@ defineEmits<{
 }>();
 
 const { t } = useI18n();
+
+const modal = useModal();
+
+const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { getSortedDispatches } = storeToRefs(centrumStore);
@@ -78,8 +82,6 @@ const grouped = computedAsync(async () => {
     return groups;
 });
 
-const slideover = useSlideover();
-
 const columns = [
     {
         key: 'actions',
@@ -122,141 +124,136 @@ const columns = [
 </script>
 
 <template>
-    <div class="h-full overflow-y-auto px-4 sm:px-6 lg:px-8">
-        <div class="sm:flex sm:items-center">
-            <div class="inline-flex items-center sm:flex-auto">
-                <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-gray-100">
-                    {{ $t('common.dispatches') }}
+    <div class="flex size-full grow flex-col px-1">
+        <div class="flex justify-between">
+            <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6">
+                {{ $t('common.dispatches') }}
 
-                    <UButton
-                        v-if="showButton"
-                        :to="{ name: 'centrum-dispatches' }"
-                        :title="$t('common.dispatches')"
-                        icon="i-mdi-archive"
-                        variant="link"
-                    />
-                </h2>
-                <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />
-            </div>
+                <UButton
+                    v-if="showButton"
+                    :to="{ name: 'centrum-dispatches' }"
+                    :title="$t('common.dispatches')"
+                    icon="i-mdi-archive"
+                    variant="link"
+                />
+            </h2>
+            <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />
         </div>
-        <div class="mt-0.5 flow-root">
-            <div class="-mx-2 sm:-mx-6 lg:-mx-8">
-                <div class="inline-block min-w-full py-2 align-middle sm:px-2 lg:px-2">
-                    <template v-for="(group, idx) in grouped" :key="group.key">
-                        <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
-                        <UTable
-                            :columns="columns"
-                            :rows="group.dispatches"
-                            :empty-state="{
-                                icon: 'i-mdi-car-emergency',
-                                label: $t('common.not_found', [$t('common.dispatch', 2)]),
-                            }"
-                            :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
-                        >
-                            <template #actions-data="{ row: dispatch }">
-                                <UButtonGroup>
-                                    <UButton
-                                        v-if="!hideActions"
-                                        variant="link"
-                                        icon="i-mdi-account-multiple-plus"
-                                        :padded="false"
-                                        :title="$t('common.assign')"
-                                        @click="
-                                            slideover.open(DispatchAssignSlideover, {
-                                                dispatch: dispatch,
-                                            })
-                                        "
-                                    />
 
-                                    <UButton
-                                        size="xs"
-                                        variant="link"
-                                        icon="i-mdi-map-marker"
-                                        :title="$t('common.go_to_location')"
-                                        @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-                                    />
+        <div class="flex-1">
+            <template v-for="(group, idx) in grouped" :key="group.key">
+                <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
+                <UTable
+                    :columns="columns"
+                    :rows="group.dispatches"
+                    :empty-state="{
+                        icon: 'i-mdi-car-emergency',
+                        label: $t('common.not_found', [$t('common.dispatch', 2)]),
+                    }"
+                    :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
+                >
+                    <template #actions-data="{ row: dispatch }">
+                        <UButtonGroup class="inline-flex w-full">
+                            <UButton
+                                v-if="!hideActions"
+                                variant="link"
+                                icon="i-mdi-account-multiple-plus"
+                                :padded="false"
+                                :title="$t('common.assign')"
+                                @click="
+                                    modal.open(DispatchAssignModal, {
+                                        dispatch: dispatch,
+                                    })
+                                "
+                            />
 
-                                    <UButton
-                                        v-if="!hideActions"
-                                        variant="link"
-                                        icon="i-mdi-close-octagon"
-                                        :padded="false"
-                                        :title="$t('common.status')"
-                                        @click="
-                                            slideover.open(DispatchStatusUpdateSlideover, {
-                                                dispatchId: dispatch.id,
-                                            })
-                                        "
-                                    />
+                            <UButton
+                                size="xs"
+                                variant="link"
+                                icon="i-mdi-map-marker"
+                                :title="$t('common.go_to_location')"
+                                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                            />
 
-                                    <UButton
-                                        variant="link"
-                                        icon="i-mdi-dots-vertical"
-                                        :padded="false"
-                                        :title="$t('common.detail', 2)"
-                                        @click="
-                                            slideover.open(DispatchDetailsSlideover, {
-                                                dispatch: dispatch,
-                                                onGoto: (loc) => $emit('goto', loc),
-                                            })
-                                        "
-                                    />
-                                </UButtonGroup>
-                            </template>
-                            <template #createdAt-data="{ row: dispatch }">
-                                <GenericTime :value="dispatch.createdAt" type="compact" />
-                            </template>
-                            <template #status-data="{ row: dispatch }">
-                                <span
-                                    :class="[
-                                        dispatchStatusToBGColor(dispatch.status?.status),
-                                        dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : '',
-                                    ]"
-                                >
-                                    {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                                </span>
-                            </template>
-                            <template #postal-data="{ row: dispatch }">
-                                {{ dispatch.postal ?? $t('common.na') }}
-                            </template>
-                            <template #units-data="{ row: dispatch }">
-                                <span v-if="dispatch.units.length === 0" class="italic">{{
-                                    $t('enums.centrum.StatusDispatch.UNASSIGNED')
-                                }}</span>
-                                <span v-else class="grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col">
-                                    <UnitInfoPopover
-                                        v-for="unit in dispatch.units"
-                                        :key="unit.unitId"
-                                        :unit="unit.unit"
-                                        :initials-only="true"
-                                        :badge="true"
-                                        :assignment="unit"
-                                    />
-                                </span>
-                            </template>
-                            <template #creator-data="{ row: dispatch }">
-                                <span v-if="dispatch.anon">
-                                    {{ $t('common.anon') }}
-                                </span>
-                                <span v-else-if="dispatch.creator">
-                                    <CitizenInfoPopover :user="dispatch.creator" :trailing="false" />
-                                </span>
-                                <span v-else>
-                                    {{ $t('common.unknown') }}
-                                </span>
-                            </template>
-                            <template #attributes-data="{ row: dispatch }">
-                                <DispatchAttributes :attributes="dispatch.attributes" />
-                            </template>
-                            <template #message-data="{ row: dispatch }">
-                                <p class="line-clamp-2 hover:line-clamp-6">
-                                    {{ dispatch.message }}
-                                </p>
-                            </template>
-                        </UTable>
+                            <UButton
+                                v-if="!hideActions"
+                                variant="link"
+                                icon="i-mdi-close-octagon"
+                                :padded="false"
+                                :title="$t('common.status')"
+                                @click="
+                                    modal.open(DispatchStatusUpdateModal, {
+                                        dispatchId: dispatch.id,
+                                    })
+                                "
+                            />
+
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-dots-vertical"
+                                :padded="false"
+                                :title="$t('common.detail', 2)"
+                                @click="
+                                    slideover.open(DispatchDetailsSlideover, {
+                                        dispatch: dispatch,
+                                        onGoto: (loc) => $emit('goto', loc),
+                                    })
+                                "
+                            />
+                        </UButtonGroup>
                     </template>
-                </div>
-            </div>
+                    <template #createdAt-data="{ row: dispatch }">
+                        <GenericTime :value="dispatch.createdAt" type="compact" />
+                    </template>
+                    <template #status-data="{ row: dispatch }">
+                        <span
+                            :class="[
+                                dispatchStatusToBGColor(dispatch.status?.status),
+                                dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : '',
+                            ]"
+                        >
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+                        </span>
+                    </template>
+                    <template #postal-data="{ row: dispatch }">
+                        {{ dispatch.postal ?? $t('common.na') }}
+                    </template>
+                    <template #units-data="{ row: dispatch }">
+                        <span v-if="dispatch.units.length === 0" class="italic">{{
+                            $t('enums.centrum.StatusDispatch.UNASSIGNED')
+                        }}</span>
+                        <span v-else class="grid grid-flow-row auto-rows-auto gap-1 sm:grid-flow-col">
+                            <UnitInfoPopover
+                                v-for="unit in dispatch.units"
+                                :key="unit.unitId"
+                                :unit="unit.unit"
+                                :initials-only="true"
+                                :badge="true"
+                                :assignment="unit"
+                            />
+                        </span>
+                    </template>
+                    <template #creator-data="{ row: dispatch }">
+                        <span v-if="dispatch.anon">
+                            {{ $t('common.anon') }}
+                        </span>
+                        <span v-else-if="dispatch.creator">
+                            <CitizenInfoPopover :user="dispatch.creator" :trailing="false" />
+                        </span>
+                        <span v-else>
+                            {{ $t('common.unknown') }}
+                        </span>
+                    </template>
+                    <template #attributes-data="{ row: dispatch }">
+                        <DispatchAttributes :attributes="dispatch.attributes" />
+                    </template>
+                    <template #message-data="{ row: dispatch }">
+                        <p class="line-clamp-2 hover:line-clamp-6">
+                            {{ dispatch.message }}
+                        </p>
+                    </template>
+                </UTable>
+            </template>
         </div>
     </div>
 </template>
