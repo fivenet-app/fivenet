@@ -1,12 +1,15 @@
 <script lang="ts" setup>
-import { SigmaIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationsResultsListEntry from '~/components/jobs/qualifications/tutor/QualificationsResultsListEntry.vue';
+import type {
+    DeleteQualificationResultResponse,
+    ListQualificationsResultsResponse,
+} from '~~/gen/ts/services/qualifications/qualifications';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { resultStatusToTextColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -19,14 +22,22 @@ const props = withDefaults(
     },
 );
 
+const { t } = useI18n();
+
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${page.value}-${props.qualificationId}`,
-    () => listQualificationsResults(props.qualificationId, props.status),
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualifications-results-${page.value}-${props.qualificationId}`, () =>
+    listQualificationsResults(props.qualificationId, props.status),
 );
 
 async function listQualificationsResults(
@@ -51,68 +62,120 @@ async function listQualificationsResults(
 }
 
 watch(offset, async () => refresh());
+
+async function deleteQualificationResult(resultId: string): Promise<DeleteQualificationResultResponse> {
+    try {
+        const call = $grpc.getQualificationsClient().deleteQualificationResult({
+            resultId,
+        });
+        const { response } = await call;
+
+        refresh();
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const columns = [
+    {
+        key: 'citizen',
+        label: t('common.citizen'),
+    },
+    {
+        key: 'status',
+        label: t('common.status'),
+    },
+    {
+        key: 'score',
+        label: t('common.score'),
+    },
+    {
+        key: 'summary',
+        label: t('common.summary'),
+    },
+    {
+        key: 'createdAt',
+        label: t('common.created_at'),
+    },
+    {
+        key: 'creator',
+        label: t('common.creator'),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+    },
+];
 </script>
 
 <template>
     <div class="overflow-hidden">
         <div class="px-1 sm:px-2 lg:px-4">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
             <DataErrorBlock
-                v-else-if="error"
+                v-if="error"
                 :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"
                 :retry="refresh"
             />
-            <DataNoDataBlock
-                v-else-if="data?.results.length === 0"
-                :message="$t('common.not_found', [$t('common.result', 2)])"
-                icon="i-mdi-sigma"
-            />
 
             <template v-else>
-                <GenericTable>
-                    <template #thead>
-                        <tr>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.citizen') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.status') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.score') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.summary') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.created_at') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.creator') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.action', 2) }}
-                            </th>
-                        </tr>
+                <UTable
+                    :loading="loading"
+                    :columns="columns"
+                    :rows="data?.results"
+                    :empty-state="{ icon: 'i-mdi-sigma', label: $t('common.not_found', [$t('common.result', 2)]) }"
+                >
+                    <template #citizen-data="{ row: result }">
+                        <CitizenInfoPopover :user="result.user" />
                     </template>
-                    <template #tbody>
-                        <QualificationsResultsListEntry
-                            v-for="result in data?.results"
-                            :key="`${result.qualificationId}-${result.userId}`"
-                            :result="result"
-                            @delete="refresh()"
+                    <template #status-data="{ row: result }">
+                        <template v-if="result.status !== undefined">
+                            <span class="font-medium" :class="resultStatusToTextColor(result.status)">
+                                <span class="font-semibold">{{
+                                    $t(`enums.qualifications.ResultStatus.${ResultStatus[result.status]}`)
+                                }}</span>
+                            </span>
+                        </template>
+                    </template>
+                    <template #score-data="{ row: result }">
+                        <template v-if="result.score">{{ result.score }}</template>
+                    </template>
+                    <template #summary-data="{ row: result }">
+                        <p v-if="result.summary" class="text-sm">
+                            {{ result.summary }}
+                        </p>
+                    </template>
+                    <template #createdAt-data="{ row: result }">
+                        <GenericTime :value="result.createdAt" />
+                    </template>
+                    <template #creator-data="{ row: result }">
+                        <CitizenInfoPopover v-if="result.creator" :user="result.creator" />
+                    </template>
+                    <template #actions-data="{ row: result }">
+                        <UButton
+                            v-if="can('QualificationsService.DeleteQualificationResult')"
+                            class="flex-initial"
+                            variant="link"
+                            icon="i-mdi-trash-can"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteQualificationResult(result.id),
+                                })
+                            "
                         />
                     </template>
-                </GenericTable>
-            </template>
+                </UTable>
 
-            <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-                <UPagination
-                    v-model="page"
-                    :page-count="data?.pagination?.pageSize ?? 0"
-                    :total="data?.pagination?.totalCount ?? 0"
-                />
-            </div>
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
+                </div>
+            </template>
         </div>
     </div>
 </template>

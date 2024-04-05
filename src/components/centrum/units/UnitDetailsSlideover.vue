@@ -2,23 +2,24 @@
 import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { AccountIcon, CloseIcon, MapMarkerIcon, PencilIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
-import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
+import UnitAssignUsersSlideover from '~/components/centrum/units/UnitAssignUsersSlideover.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
-import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
+import UnitStatusUpdateSlideover from '~/components/centrum/units/UnitStatusUpdateSlideover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import UnitAttributes from '../partials/UnitAttributes.vue';
 
 const props = defineProps<{
-    open: boolean;
     unit: Unit;
     statusSelected?: StatusUnit;
 }>();
 
 defineEmits<{
-    (e: 'close'): void;
     (e: 'goto', loc: Coordinate): void;
 }>();
+
+const { isOpen } = useSlideover();
 
 const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status));
 
@@ -27,8 +28,8 @@ const openStatus = ref(false);
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
+    <TransitionRoot as="template" :show="true">
+        <Dialog as="div" class="relative z-30" @close="isOpen = false">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
@@ -55,7 +56,7 @@ const openStatus = ref(false);
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <UButton
                                                         class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-300 focus:ring-2 focus:ring-neutral"
-                                                        @click="$emit('close')"
+                                                        @click="isOpen = false"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" />
@@ -106,7 +107,7 @@ const openStatus = ref(false);
                                                             <dd
                                                                 class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
                                                             >
-                                                                <UnitStatusUpdateModal
+                                                                <UnitStatusUpdateSlideover
                                                                     :open="openStatus"
                                                                     :unit="unit"
                                                                     :status="statusSelected"
@@ -177,27 +178,7 @@ const openStatus = ref(false);
                                                                 {{ $t('common.attributes', 2) }}
                                                             </dt>
                                                             <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
-                                                                <template
-                                                                    v-if="
-                                                                        unit.attributes !== undefined &&
-                                                                        unit.attributes?.list.length > 0
-                                                                    "
-                                                                >
-                                                                    <span
-                                                                        v-for="attribute in unit.attributes?.list"
-                                                                        :key="attribute"
-                                                                        class="inline-flex items-center rounded-md bg-warn-400/10 px-2 py-1 text-xs font-medium text-warn-400 ring-1 ring-inset ring-warn-400/20"
-                                                                    >
-                                                                        {{
-                                                                            $t(
-                                                                                `components.centrum.units.attributes.${attribute}`,
-                                                                            )
-                                                                        }}
-                                                                    </span>
-                                                                </template>
-                                                                <span v-else>
-                                                                    {{ $t('common.none', [$t('common.attributes', 2)]) }}
-                                                                </span>
+                                                                <UnitAttributes :attributes="unit.attributes" />
                                                             </dd>
                                                         </div>
                                                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -237,7 +218,7 @@ const openStatus = ref(false);
                                                                     </ul>
                                                                 </div>
 
-                                                                <UnitAssignUsersModal
+                                                                <UnitAssignUsersSlideover
                                                                     :open="openAssign"
                                                                     :unit="unit"
                                                                     @close="openAssign = false"
@@ -267,7 +248,7 @@ const openStatus = ref(false);
                                     <div class="flex shrink-0 justify-end p-4">
                                         <UButton
                                             class="w-full rounded-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-200"
-                                            @click="$emit('close')"
+                                            @click="isOpen = false"
                                         >
                                             {{ $t('common.close') }}
                                         </UButton>

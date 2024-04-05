@@ -4,17 +4,14 @@ import { CloseIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
 
-defineProps<{
-    open: boolean;
-}>();
-
 const emit = defineEmits<{
     (e: 'joined', unit: Unit): void;
     (e: 'left'): void;
-    (e: 'close'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
@@ -32,7 +29,7 @@ async function joinOrLeaveUnit(unitId?: string): Promise<void> {
             emit('left');
         }
 
-        emit('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -59,8 +56,8 @@ const filteredUnits = computed(() =>
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
+    <TransitionRoot as="template" :show="true">
+        <Dialog as="div" class="relative z-30" @close="isOpen = false">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
@@ -86,7 +83,7 @@ const filteredUnits = computed(() =>
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <UButton
                                                         class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="$emit('close')"
+                                                        @click="isOpen = false"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" />
@@ -173,7 +170,7 @@ const filteredUnits = computed(() =>
                                             >
                                                 {{ $t('common.leave') }}
                                             </UButton>
-                                            <UButton block @click="$emit('close')">
+                                            <UButton block @click="isOpen = false">
                                                 {{ $t('common.close', 1) }}
                                             </UButton>
                                         </span>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
+import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
@@ -39,7 +39,12 @@ const open = ref(false);
 
 <template>
     <template v-if="selectedDispatch">
-        <DispatchDetails :dispatch="selectedDispatch" :open="open" @close="open = false" @goto="$emit('goto', $event)" />
+        <DispatchDetailsSlideover
+            :dispatch="selectedDispatch"
+            :open="open"
+            @close="open = false"
+            @goto="$emit('goto', $event)"
+        />
     </template>
 
     <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">

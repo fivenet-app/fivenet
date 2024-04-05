@@ -5,6 +5,7 @@ import CentrumSettingsModal from '~/components/centrum/settings/CentrumSettingsM
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import UnitAttributes from '../partials/UnitAttributes.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -117,18 +118,7 @@ const columns = [
                             :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.entry', 2)]) }"
                         >
                             <template #attributes-data="{ row: unit }">
-                                <template v-if="unit.attributes !== undefined && unit.attributes?.list.length > 0">
-                                    <span
-                                        v-for="attribute in unit.attributes?.list"
-                                        :key="attribute"
-                                        class="inline-flex items-center rounded-md bg-warn-400/10 px-2 py-1 text-xs font-medium text-warn-400 ring-1 ring-inset ring-warn-400/20"
-                                    >
-                                        {{ $t(`components.centrum.units.attributes.${attribute}`) }}
-                                    </span>
-                                </template>
-                                <template v-else>
-                                    {{ $t('common.none', [$t('common.attributes', 2)]) }}
-                                </template>
+                                <UnitAttributes :attributes="unit.attributes" />
                             </template>
                             <template #color-data="{ row: unit }">
                                 <ColorInput v-model="unit.color" disabled format="hex" class="h-6" />

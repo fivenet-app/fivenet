@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { AccountIcon, MapMarkerIcon } from 'mdi-vue3';
-import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
+import { AccountIcon } from 'mdi-vue3';
+import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -44,7 +44,7 @@ const open = ref(false);
 
 <template>
     <div class="flex px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-2 sm:px-0">
-        <DispatchDetails :open="open" :dispatch="dispatch" @close="open = false" @goto="$emit('goto', $event)" />
+        <DispatchDetailsSlideover :open="open" :dispatch="dispatch" @close="open = false" @goto="$emit('goto', $event)" />
 
         <dt class="flex-initial text-sm font-medium leading-6">
             <div class="flex h-6 items-center">

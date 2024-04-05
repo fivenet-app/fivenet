@@ -2,7 +2,7 @@
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import { type RGB } from '~/utils/colour';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
-import UnitDetails from '~/components/centrum/units/UnitDetails.vue';
+import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
 
 const props = defineProps<{
     unit: Unit;
@@ -20,7 +20,7 @@ const open = ref(false);
 
 <template>
     <li class="col-span-1 flex rounded-md shadow-sm" @click="open = true">
-        <UnitDetails :open="open" :unit="unit" @close="open = false" @goto="$emit('goto', $event)" />
+        <UnitDetailsSlideover :open="open" :unit="unit" @close="open = false" @goto="$emit('goto', $event)" />
 
         <div
             class="flex w-12 shrink-0 items-center justify-center rounded-l-md border-y border-l text-sm font-medium"

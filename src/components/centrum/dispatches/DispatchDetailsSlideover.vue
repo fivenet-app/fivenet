@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssignModal.vue';
+import DispatchAssignSlideover from '~/components/centrum/dispatches//DispatchAssignSlideover.vue';
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
-import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
+import DispatchStatusUpdateSlideover from '~/components/centrum/dispatches/DispatchStatusUpdateSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -20,12 +20,13 @@ const props = defineProps<{
 
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
-    (e: 'close'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
 
 const modal = useModal();
+
+const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
@@ -101,7 +102,7 @@ const openStatus = ref(false);
                         />
                     </div>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
@@ -219,7 +220,7 @@ const openStatus = ref(false);
                                     </ul>
                                 </div>
 
-                                <DispatchAssignModal
+                                <DispatchAssignSlideover
                                     v-if="openAssign"
                                     :open="openAssign"
                                     :dispatch="dispatch"
@@ -289,7 +290,7 @@ const openStatus = ref(false);
                                 {{ $t('common.status') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
-                                <DispatchStatusUpdateModal
+                                <DispatchStatusUpdateSlideover
                                     v-if="openStatus"
                                     :open="openStatus"
                                     :dispatch-id="dispatch.id"
@@ -331,7 +332,7 @@ const openStatus = ref(false);
             </div>
 
             <template #footer>
-                <UButton block @click="$emit('close')">
+                <UButton block @click="isOpen = false">
                     {{ $t('common.close', 1) }}
                 </UButton>
             </template>

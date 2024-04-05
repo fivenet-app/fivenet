@@ -10,16 +10,13 @@ import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vu
 import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
 import { useSettingsStore } from '~/store/settings';
 
-defineProps<{
-    open: boolean;
-}>();
-
-const emit = defineEmits<{
-    (e: 'close'): void;
+defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
@@ -59,7 +56,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
 
         selectedDispatches.value.length = 0;
 
-        emit('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -116,8 +113,8 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
+    <TransitionRoot as="template" :show="true">
+        <Dialog as="div" class="relative z-30" @close="isOpen = false">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
@@ -143,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <UButton
                                                         class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="$emit('close')"
+                                                        @click="isOpen = false"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" />
@@ -242,7 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             </UButton>
                                             <UButton
                                                 class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="$emit('close')"
+                                                @click="isOpen = false"
                                             >
                                                 {{ $t('common.close') }}
                                             </UButton>

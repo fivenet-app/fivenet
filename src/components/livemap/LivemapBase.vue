@@ -13,7 +13,7 @@ import PlayersLayer from '~/components/livemap/PlayersLayer.vue';
 import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
-import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
+import DispatchCreateOrUpdateSlideover from '~/components/centrum/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -123,7 +123,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 
 <template>
     <div class="relative z-0 size-full">
-        <DispatchCreateOrUpdateModal
+        <DispatchCreateOrUpdateSlideover
             v-if="can('CentrumService.CreateDispatch')"
             :open="openCreateDispatch"
             @close="openCreateDispatch = false"

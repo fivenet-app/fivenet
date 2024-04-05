@@ -182,9 +182,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                 </div>
                                 <div class="flex flex-1 items-center">
                                     <SquareImg
-                                        class="m-auto"
                                         :url="user?.props?.mugShot?.url"
-                                        size="6xl"
+                                        class="m-auto"
+                                        size="3xl"
                                         :alt="$t('common.mug_shot')"
                                         :no-blur="true"
                                     />

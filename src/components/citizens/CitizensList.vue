@@ -242,9 +242,9 @@ const columns = [
                     <ProfilePictureImg
                         :url="citizen.props?.mugShot?.url"
                         :name="`${citizen.firstname} ${citizen.lastname}`"
-                        size="sm"
+                        :alt="$t('common.mug_shot')"
                         :enable-popup="true"
-                        :alt-text="$t('common.mug_shot')"
+                        size="sm"
                         class="mr-2"
                     />
 

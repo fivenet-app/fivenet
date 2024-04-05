@@ -1,14 +1,18 @@
 <script lang="ts" setup>
 import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
-import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
+import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 
 const props = defineProps<{
     dispatchId: string;
 }>();
 
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
+}>();
+
 const { $grpc } = useNuxtApp();
 
-const { isOpen } = useModal();
+const { isOpen } = useSlideover();
 
 const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
 
@@ -31,5 +35,5 @@ watch(props, () => refresh());
 </script>
 
 <template>
-    <DispatchDetails v-if="data?.dispatch" :dispatch="data.dispatch" @goto="$emit('goto', $event)" />
+    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch="data.dispatch" @goto="$emit('goto', $event)" />
 </template>

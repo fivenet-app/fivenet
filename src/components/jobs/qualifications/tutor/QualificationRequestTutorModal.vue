@@ -1,17 +1,7 @@
 <script lang="ts" setup>
-import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
+import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -33,6 +23,8 @@ const emits = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -106,170 +98,128 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="!!request">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.qualifications.request_modal.title') }}
+                    </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-2xl sm:p-6"
-                        >
-                            <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <UButton
-                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    @click="$emit('close')"
-                                >
-                                    <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" />
-                                </UButton>
-                            </div>
-                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.qualifications.request_modal.title') }}
-                            </DialogTitle>
-                            <form @submit.prevent="onSubmitThrottle">
-                                <div class="my-2">
-                                    <div class="flex-1">
-                                        <label for="status" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.status') }}
-                                        </label>
-                                        <VeeField
-                                            v-slot="{ field }"
-                                            as="div"
-                                            name="status"
-                                            :placeholder="$t('common.status')"
-                                            :label="$t('common.status')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        >
-                                            <Listbox v-bind="field" as="div">
-                                                <div class="relative">
-                                                    <ListboxButton
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    >
-                                                        <span class="block truncate">
-                                                            {{
-                                                                $t(
-                                                                    `enums.qualifications.RequestStatus.${RequestStatus[availableStatus.find((t) => t === field.value) ?? 0]}`,
-                                                                )
-                                                            }}
-                                                        </span>
-                                                        <span
-                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                                                        >
-                                                            <ChevronDownIcon class="size-5 text-gray-400" />
-                                                        </span>
-                                                    </ListboxButton>
-
-                                                    <transition
-                                                        leave-active-class="transition duration-100 ease-in"
-                                                        leave-from-class="opacity-100"
-                                                        leave-to-class="opacity-0"
-                                                    >
-                                                        <ListboxOptions
-                                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                        >
-                                                            <ListboxOption
-                                                                v-for="stat in availableStatus"
-                                                                :key="stat"
-                                                                v-slot="{ active, selected }"
-                                                                as="template"
-                                                                :value="stat"
-                                                            >
-                                                                <li
-                                                                    :class="[
-                                                                        active ? 'bg-primary-500' : '',
-                                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                    ]"
-                                                                >
-                                                                    <span
-                                                                        :class="[
-                                                                            selected ? 'font-semibold' : 'font-normal',
-                                                                            'block truncate',
-                                                                        ]"
-                                                                    >
-                                                                        {{
-                                                                            $t(
-                                                                                `enums.qualifications.RequestStatus.${RequestStatus[stat]}`,
-                                                                            )
-                                                                        }}
-                                                                    </span>
-
-                                                                    <span
-                                                                        v-if="selected"
-                                                                        :class="[
-                                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                        ]"
-                                                                    >
-                                                                        <CheckIcon class="size-5" />
-                                                                    </span>
-                                                                </li>
-                                                            </ListboxOption>
-                                                        </ListboxOptions>
-                                                    </transition>
-                                                </div>
-                                            </Listbox>
-                                        </VeeField>
-                                        <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <label for="approverComment" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.message') }}
-                                        </label>
-                                        <VeeField
-                                            as="textarea"
-                                            name="approverComment"
-                                            class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.message')"
-                                            :label="$t('common.message')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="approverComment" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-                                </div>
-                                <div class="absolute bottom-0 left-0 flex w-full">
-                                    <UButton
-                                        class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                                        @click="$emit('close')"
-                                    >
-                                        {{ $t('common.close', 1) }}
-                                    </UButton>
-                                    <UButton
-                                        type="submit"
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                                        :disabled="!meta.valid || !canSubmit"
-                                        :loading="!canSubmit"
-                                    >
-                                        {{ $t('common.submit') }}
-                                    </UButton>
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </TransitionChild>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
                 </div>
+            </template>
+
+            <div>
+                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
+                    <div class="flex-1">
+                        <label for="status" class="block text-sm font-medium leading-6">
+                            {{ $t('common.status') }}
+                        </label>
+                        <VeeField
+                            v-slot="{ field }"
+                            as="div"
+                            name="status"
+                            :placeholder="$t('common.status')"
+                            :label="$t('common.status')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <Listbox v-bind="field" as="div">
+                                <div class="relative">
+                                    <ListboxButton
+                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    >
+                                        <span class="block truncate">
+                                            {{
+                                                $t(
+                                                    `enums.qualifications.RequestStatus.${RequestStatus[availableStatus.find((t) => t === field.value) ?? 0]}`,
+                                                )
+                                            }}
+                                        </span>
+                                        <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
+                                            <ChevronDownIcon class="size-5 text-gray-400" />
+                                        </span>
+                                    </ListboxButton>
+
+                                    <transition
+                                        leave-active-class="transition duration-100 ease-in"
+                                        leave-from-class="opacity-100"
+                                        leave-to-class="opacity-0"
+                                    >
+                                        <ListboxOptions
+                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                        >
+                                            <ListboxOption
+                                                v-for="stat in availableStatus"
+                                                :key="stat"
+                                                v-slot="{ active, selected }"
+                                                as="template"
+                                                :value="stat"
+                                            >
+                                                <li
+                                                    :class="[
+                                                        active ? 'bg-primary-500' : '',
+                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                    ]"
+                                                >
+                                                    <span
+                                                        :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']"
+                                                    >
+                                                        {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[stat]}`) }}
+                                                    </span>
+
+                                                    <span
+                                                        v-if="selected"
+                                                        :class="[
+                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                        ]"
+                                                    >
+                                                        <CheckIcon class="size-5" />
+                                                    </span>
+                                                </li>
+                                            </ListboxOption>
+                                        </ListboxOptions>
+                                    </transition>
+                                </div>
+                            </Listbox>
+                        </VeeField>
+                        <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+
+                    <div class="flex-1">
+                        <label for="approverComment" class="block text-sm font-medium leading-6">
+                            {{ $t('common.message') }}
+                        </label>
+                        <VeeField
+                            as="textarea"
+                            name="approverComment"
+                            class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            :placeholder="$t('common.message')"
+                            :label="$t('common.message')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="approverComment" as="p" class="mt-2 text-sm text-error-400" />
+                    </div>
+                </UForm>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <UButton block @click="isOpen = false">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+
+                <UButton
+                    class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
+                    :disabled="!meta.valid || !canSubmit"
+                    :loading="!canSubmit"
+                    @click="onSubmitThrottle"
+                >
+                    {{ $t('common.submit') }}
+                </UButton>
+            </template>
+        </UCard>
+    </UModal>
 </template>

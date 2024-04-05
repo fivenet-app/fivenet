@@ -2,7 +2,7 @@
 import { LControl } from '@vue-leaflet/vue-leaflet';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
 import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon } from 'mdi-vue3';
-import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
+import DispatchStatusUpdateSlideover from '~/components/centrum/dispatches/DispatchStatusUpdateSlideover.vue';
 import {
     dispatchStatusToBGColor,
     dispatchStatuses,
@@ -10,8 +10,8 @@ import {
     unitStatuses,
     isStatusDispatchCompleted,
 } from '~/components/centrum/helpers';
-import UnitDetails from '~/components/centrum/units/UnitDetails.vue';
-import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
+import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
+import UnitStatusUpdateSlideover from '~/components/centrum/units/UnitStatusUpdateSlideover.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -20,7 +20,7 @@ import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import OwnDispatchEntry from '~/components/centrum/livemap/OwnDispatchEntry.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
-import TakeDispatchModal from '~/components/centrum/livemap/TakeDispatchModal.vue';
+import TakeDispatchSlideover from '~/components/centrum/livemap/TakeDispatchSlideover.vue';
 import { useAuthStore } from '~/store/auth';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import { setWaypointPLZ } from '~/composables/nui';
@@ -54,7 +54,7 @@ const selectedDispatch = ref<string | undefined>();
 const openDispatchStatus = ref(false);
 const openTakeDispatch = ref(false);
 
-const openUnitDetails = ref(false);
+const openUnitDetailsSlideover = ref(false);
 const openUnitStatus = ref(false);
 
 async function updateDispatchStatus(dispatchId: string, status: StatusDispatch): Promise<void> {
@@ -316,14 +316,14 @@ async function checkup(): Promise<void> {
         <template v-if="canStream" #afterMap>
             <div class="lg:inset-y-0 lg:flex lg:flex-col">
                 <!-- Dispatch -->
-                <TakeDispatchModal
+                <TakeDispatchSlideover
                     v-if="getOwnUnit !== undefined"
                     :open="openTakeDispatch"
                     @close="openTakeDispatch = false"
                     @goto="$emit('goto', $event)"
                 />
 
-                <DispatchStatusUpdateModal
+                <DispatchStatusUpdateSlideover
                     v-if="selectedDispatch"
                     :open="openDispatchStatus"
                     :dispatch-id="selectedDispatch"
@@ -354,7 +354,7 @@ async function checkup(): Promise<void> {
                                                     block
                                                     class="flex flex-col"
                                                     :class="ownUnitStatus"
-                                                    @click="openUnitDetails = true"
+                                                    @click="openUnitDetailsSlideover = true"
                                                 >
                                                     <span class="truncate">
                                                         <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
@@ -372,10 +372,10 @@ async function checkup(): Promise<void> {
                                                     </span>
                                                 </UButton>
 
-                                                <UnitDetails
+                                                <UnitDetailsSlideover
                                                     :unit="getOwnUnit"
-                                                    :open="openUnitDetails"
-                                                    @close="openUnitDetails = false"
+                                                    :open="openUnitDetailsSlideover"
+                                                    @close="openUnitDetailsSlideover = false"
                                                     @goto="$emit('goto', $event)"
                                                 />
                                             </template>
@@ -410,7 +410,7 @@ async function checkup(): Promise<void> {
                                                     class="ml-1 size-4 animate-spin"
                                                 />
                                             </div>
-                                            <UnitStatusUpdateModal
+                                            <UnitStatusUpdateSlideover
                                                 :unit="getOwnUnit"
                                                 :open="openUnitStatus"
                                                 @close="openUnitStatus = false"

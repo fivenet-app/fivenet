@@ -114,37 +114,25 @@ const modal = useModal();
     <div class="py-2 pb-4">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <UForm :state="{}" @submit.prevent="refresh()">
-                    <div class="mx-auto flex flex-row gap-4">
-                        <div class="flex-1">
-                            <label for="searchName" class="block text-sm font-medium leading-6">
-                                {{ $t('common.colleague', 1) }}
-                            </label>
-                            <div class="relative mt-2">
-                                <UInput
-                                    v-model="query.name"
-                                    type="text"
-                                    name="searchName"
-                                    :placeholder="$t('common.name')"
-                                    block
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                            </div>
-                        </div>
-                        <div class="flex-initial">
-                            <label for="absent" class="block text-sm font-medium leading-6">
+                <UForm :state="{}" class="flex w-full gap-2" @submit.prevent="refresh()">
+                    <UFormGroup class="flex-1" :label="$t('common.colleague', 1)">
+                        <UInput
+                            v-model="query.name"
+                            type="text"
+                            name="searchName"
+                            :placeholder="$t('common.name')"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+                    <UFormGroup :label="$t('common.absent')">
+                        <UToggle v-model="query.absent">
+                            <span class="sr-only">
                                 {{ $t('common.absent') }}
-                            </label>
-                            <div class="relative mt-3 flex items-center">
-                                <UToggle v-model="query.absent">
-                                    <span class="sr-only">
-                                        {{ $t('common.absent') }}
-                                    </span>
-                                </UToggle>
-                            </div>
-                        </div>
-                    </div>
+                            </span>
+                        </UToggle>
+                    </UFormGroup>
                 </UForm>
             </div>
             <div class="inline-block min-w-full px-1 py-2 align-middle">
@@ -167,7 +155,7 @@ const modal = useModal();
                                 :name="`${colleague.firstname} ${colleague.lastname}`"
                                 size="sm"
                                 :enable-popup="true"
-                                :alt-text="$t('common.mug_shot')"
+                                :alt="$t('common.avatar')"
                                 class="mr-2"
                             />
                             <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
@@ -214,6 +202,7 @@ const modal = useModal();
                             @click="
                                 modal.open(SelfServicePropsAbsenceDateModal, {
                                     userId: colleague.userId,
+                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
                                 })
                             "
                         />

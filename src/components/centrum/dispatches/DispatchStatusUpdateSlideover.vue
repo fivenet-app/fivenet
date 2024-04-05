@@ -9,16 +9,13 @@ import { useCentrumStore } from '~/store/centrum';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
-    open: boolean;
     dispatchId: string;
     status?: StatusDispatch;
 }>();
 
-const emit = defineEmits<{
-    (e: 'close'): void;
-}>();
-
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { settings } = storeToRefs(centrumStore);
@@ -41,9 +38,9 @@ async function updateDispatchStatus(dispatchId: string, values: FormData): Promi
         });
         await call;
 
-        emit('close');
-
         setFieldValue('status', values.status.valueOf());
+
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -88,8 +85,8 @@ function updateReasonField(value: string): void {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
+    <TransitionRoot as="template" :show="true">
+        <Dialog as="div" class="relative z-30" @close="isOpen = false">
             <div class="fixed inset-0" />
 
             <div class="fixed inset-0 overflow-hidden">
@@ -119,7 +116,7 @@ function updateReasonField(value: string): void {
                                                 <div class="ml-3 flex h-7 items-center">
                                                     <UButton
                                                         class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="$emit('close')"
+                                                        @click="isOpen = false"
                                                     >
                                                         <span class="sr-only">{{ $t('common.close') }}</span>
                                                         <CloseIcon class="size-5" />
@@ -302,7 +299,7 @@ function updateReasonField(value: string): void {
                                             </UButton>
                                             <UButton
                                                 class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="$emit('close')"
+                                                @click="isOpen = false"
                                             >
                                                 {{ $t('common.close', 1) }}
                                             </UButton>

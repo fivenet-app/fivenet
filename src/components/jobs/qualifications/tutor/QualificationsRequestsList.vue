@@ -1,14 +1,16 @@
 <script lang="ts" setup>
-import { AccountSchoolIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationsRequestsListEntry from '~/components/jobs/qualifications/tutor/QualificationsRequestsListEntry.vue';
-import { RequestStatus, QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import type {
+    DeleteQualificationReqResponse,
+    ListQualificationRequestsResponse,
+} from '~~/gen/ts/services/qualifications/qualifications';
+import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
 import QualificationResultTutorModal from '~/components/jobs/qualifications/tutor/QualificationResultTutorModal.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { requestStatusToTextColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -21,14 +23,22 @@ const props = withDefaults(
     },
 );
 
+const { t } = useI18n();
+
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${page.value}-${props.qualificationId}`,
-    () => listQualificationsRequests(props.qualificationId),
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualifications-requests-${page.value}-${props.qualificationId}`, () =>
+    listQualificationsRequests(props.qualificationId),
 );
 
 async function listQualificationsRequests(
@@ -54,100 +64,144 @@ async function listQualificationsRequests(
 
 watch(offset, async () => refresh());
 
-const selectedRequestStatus = ref<undefined | RequestStatus>();
-const selectedRequest = ref<undefined | QualificationRequest>();
+async function deleteQualificationRequest(qualificationId: string, userId: number): Promise<DeleteQualificationReqResponse> {
+    try {
+        const call = $grpc.getQualificationsClient().deleteQualificationReq({
+            qualificationId,
+            userId,
+        });
+        const { response } = await call;
 
-const openResultStatus = ref(false);
+        refresh();
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const columns = [
+    {
+        key: 'citizen',
+        label: t('common.citizen'),
+    },
+    {
+        key: 'comment',
+        label: t('common.comment'),
+    },
+    {
+        key: 'status',
+        label: t('common.status'),
+    },
+    {
+        key: 'createdAt',
+        label: t('common.created_at'),
+    },
+    {
+        key: 'approvedAt',
+        label: t('common.approved_at'),
+    },
+    {
+        key: 'approver',
+        label: t('common.approver'),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+    },
+];
 </script>
 
 <template>
     <div class="overflow-hidden">
         <div class="px-1 sm:px-2 lg:px-4">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.request', 2)])"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="data?.requests.length === 0"
-                :message="$t('common.not_found', [$t('common.request', 2)])"
-                icon="i-mdi-account-school"
-            />
+            <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.request', 2)])" :retry="refresh" />
 
             <template v-else>
-                <QualificationRequestTutorModal
-                    v-if="selectedRequest && !openResultStatus"
-                    :request="selectedRequest"
-                    :status="selectedRequestStatus"
-                    @close="selectedRequest = undefined"
-                    @refresh="refresh()"
-                />
-
-                <QualificationResultTutorModal
-                    v-if="selectedRequest"
-                    :open="openResultStatus"
-                    :qualification-id="selectedRequest.qualificationId"
-                    :user-id="selectedRequest.userId"
-                    @close="
-                        selectedRequest = undefined;
-                        openResultStatus = false;
-                    "
-                    @refresh="refresh()"
-                />
-
-                <GenericTable>
-                    <template #thead>
-                        <tr>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.citizen') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.comment') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.status') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.created_at') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.approved_at') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.approver') }}
-                            </th>
-                            <th scope="col" class="whitespace-nowrap p-1 text-left text-sm font-semibold text-gray-100">
-                                {{ $t('common.action', 2) }}
-                            </th>
-                        </tr>
+                <UTable
+                    :loading="loading"
+                    :columns="columns"
+                    :rows="data?.requests"
+                    :empty-state="{ icon: 'i-mdi-account-school', label: $t('common.not_found', [$t('common.request', 2)]) }"
+                >
+                    <template #citizen-data="{ row: request }">
+                        <CitizenInfoPopover :user="request.user" />
                     </template>
-                    <template #tbody>
-                        <QualificationsRequestsListEntry
-                            v-for="request in data?.requests"
-                            :key="`${request.qualificationId}-${request.userId}`"
-                            :request="request"
-                            @selected-request-status="
-                                selectedRequestStatus = $event;
-                                selectedRequest = request;
+                    <template #status-data="{ row: request }">
+                        <span class="font-medium" :class="requestStatusToTextColor(request.status)">
+                            <span class="font-semibold">{{
+                                $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`)
+                            }}</span>
+                        </span>
+                    </template>
+                    <template #createdAt-data="{ row: request }">
+                        <GenericTime :value="request.createdAt" />
+                    </template>
+                    <template #approvedAt-data="{ row: request }">
+                        <GenericTime :value="request.approvedAt" />
+                    </template>
+                    <template #approver-data="{ row: request }">
+                        <CitizenInfoPopover v-if="request.approver" :user="request.approver" />
+                    </template>
+                    <template #actions-data="{ row: request }">
+                        <UButton
+                            v-if="request.status !== RequestStatus.DENIED"
+                            class="flex-initial"
+                            icon="i-mdi-close-thick"
+                            @click="
+                                modal.open(QualificationRequestTutorModal, {
+                                    request: request,
+                                    status: RequestStatus.DENIED,
+                                    onRefresh: refresh,
+                                })
                             "
-                            @grade-request="
-                                selectedRequest = request;
-                                openResultStatus = true;
+                        />
+                        <UButton
+                            v-if="request.status !== RequestStatus.ACCEPTED"
+                            class="flex-initial"
+                            icon="i-mdir-check-bold"
+                            @click="
+                                modal.open(QualificationRequestTutorModal, {
+                                    request: request,
+                                    status: RequestStatus.ACCEPTED,
+                                    onRefresh: refresh,
+                                })
                             "
-                            @delete="refresh()"
+                        />
+                        <UButton
+                            v-if="request.status === RequestStatus.ACCEPTED"
+                            class="flex-initial"
+                            icon="i-mdi-star"
+                            @click="
+                                modal.open(QualificationResultTutorModal, {
+                                    qualificationId: request.qualificationId,
+                                    userId: request.userId,
+                                    onRefresh: refresh,
+                                })
+                            "
+                        />
+                        <UButton
+                            v-if="can('QualificationsService.DeleteQualificationReq')"
+                            class="flex-initial"
+                            icon="i-mdi-trash-can"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
+                                })
+                            "
                         />
                     </template>
-                </GenericTable>
-            </template>
+                </UTable>
 
-            <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
-                <UPagination
-                    v-model="page"
-                    :page-count="data?.pagination?.pageSize ?? 0"
-                    :total="data?.pagination?.totalCount ?? 0"
-                />
-            </div>
+                <div class="flex justify-end px-3 py-3.5 border-t border-gray-200 dark:border-gray-700">
+                    <UPagination
+                        v-model="page"
+                        :page-count="data?.pagination?.pageSize ?? 0"
+                        :total="data?.pagination?.totalCount ?? 0"
+                    />
+                </div>
+            </template>
         </div>
     </div>
 </template>

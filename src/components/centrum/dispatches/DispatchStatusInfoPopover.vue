@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import DispatchDetailsByID from '~/components/centrum/dispatches//DispatchDetailsByID.vue';
+import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//DispatchDetailsByIDSlideover.vue';
 
 defineProps<{
     status: DispatchStatus | undefined;
@@ -20,7 +20,7 @@ const open = ref(false);
         </span>
     </template>
     <template v-else>
-        <DispatchDetailsByID :open="open" :dispatch-id="status.dispatchId" @close="open = false" />
+        <DispatchDetailsByIDSlideover :open="open" :dispatch-id="status.dispatchId" @close="open = false" />
 
         <UPopover>
             <UButton

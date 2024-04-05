@@ -2,7 +2,7 @@
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
 import { MapMarkerIcon } from 'mdi-vue3';
-import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
+import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
@@ -57,7 +57,7 @@ const openUnit = ref(false);
 </script>
 
 <template>
-    <UnitDetails
+    <UnitDetailsSlideover
         v-if="hasUnit && unit !== undefined"
         :unit="unit"
         :open="openUnit"

@@ -8,8 +8,9 @@ import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
-import DispatchDetailsByID from './DispatchDetailsByID.vue';
-import DispatchDetails from './DispatchDetails.vue';
+import DispatchDetailsSlideover from './DispatchDetailsSlideover.vue';
+import DispatchStatusUpdateSlideover from './DispatchStatusUpdateSlideover.vue';
+import DispatchAssignSlideover from './DispatchAssignSlideover.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -79,7 +80,6 @@ const grouped = computedAsync(async () => {
 });
 
 const slideover = useSlideover();
-const modal = useModal();
 
 const columns = [
     {
@@ -163,7 +163,11 @@ const columns = [
                                         icon="i-mdi-account-multiple-plus"
                                         :padded="false"
                                         :title="$t('common.assign')"
-                                        @click="openAssign = true"
+                                        @click="
+                                            slideover.open(DispatchAssignSlideover, {
+                                                dispatch: dispatch,
+                                            })
+                                        "
                                     />
                                     <UButton
                                         variant="link"
@@ -177,7 +181,11 @@ const columns = [
                                         icon="i-mdi-close-octagon"
                                         :padded="false"
                                         :title="$t('common.status')"
-                                        @click="openStatus = true"
+                                        @click="
+                                            slideover.open(DispatchStatusUpdateSlideover, {
+                                                dispatchId: dispatch.id,
+                                            })
+                                        "
                                     />
                                     <UButton
                                         variant="link"
@@ -185,9 +193,8 @@ const columns = [
                                         :padded="false"
                                         :title="$t('common.detail', 2)"
                                         @click="
-                                            slideover.open(DispatchDetails, {
+                                            slideover.open(DispatchDetailsSlideover, {
                                                 dispatch: dispatch,
-                                                onClose: slideover.close,
                                                 onGoto: (loc) => $emit('goto', loc),
                                             })
                                         "

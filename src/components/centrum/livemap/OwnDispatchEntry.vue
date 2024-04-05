@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { CarEmergencyIcon, MapMarkerIcon } from 'mdi-vue3';
-import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
+import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -20,7 +20,12 @@ const openDetails = ref(false);
 
 <template>
     <li class="flex flex-row items-center">
-        <DispatchDetails :dispatch="dispatch" :open="openDetails" @close="openDetails = false" @goto="$emit('goto', $event)" />
+        <DispatchDetailsSlideover
+            :dispatch="dispatch"
+            :open="openDetails"
+            @close="openDetails = false"
+            @goto="$emit('goto', $event)"
+        />
 
         <div class="mr-1.5 flex flex-col items-center gap-2">
             <UInput
