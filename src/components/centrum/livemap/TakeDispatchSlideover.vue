@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { useSound } from '@raffaelesgarro/vue-use-sound';
-import { CloseIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
@@ -113,144 +111,110 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="true">
-        <Dialog as="div" class="relative z-30" @close="isOpen = false">
-            <div class="fixed inset-0" />
+    <USlideover>
+        <UCard
+            class="flex flex-col flex-1"
+            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+        >
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.centrum.take_dispatch.title') }}
+                    </h3>
 
-            <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-xl pl-10 sm:pl-16">
-                        <TransitionChild
-                            as="template"
-                            enter="transform transition ease-in-out duration-100 sm:duration-200"
-                            enter-from="translate-x-full"
-                            enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-100 sm:duration-200"
-                            leave-from="translate-x-0"
-                            leave-to="translate-x-full"
-                        >
-                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
-                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl">
-                                    <div class="h-0 flex-1 overflow-y-auto">
-                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
-                                            <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6">
-                                                    {{ $t('components.centrum.take_dispatch.title') }}
-                                                </DialogTitle>
-                                                <div class="ml-3 flex h-7 items-center">
-                                                    <UButton
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="isOpen = false"
-                                                    >
-                                                        <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" />
-                                                    </UButton>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                </div>
+            </template>
+
+            <div>
+                <div class="flex flex-1 flex-col justify-between">
+                    <div class="divide-y divide-gray-200 px-2 sm:px-6">
+                        <div class="mt-1">
+                            <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
+                                <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
+                                    <DataNoDataBlock
+                                        v-if="dispatches.size === 0"
+                                        icon="i-mdi-car-emergency"
+                                        :type="$t('common.dispatch', 2)"
+                                    />
+                                    <template v-else>
+                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                            <dt class="text-sm font-medium leading-6">
+                                                <div class="flex h-6 items-center">
+                                                    {{ $t('common.search') }}
                                                 </div>
-                                            </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">
-                                                    {{ $t('components.centrum.take_dispatch.subtitle') }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                                                <div class="mt-1">
-                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
-                                                        <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
-                                                            <DataNoDataBlock
-                                                                v-if="dispatches.size === 0"
-                                                                icon="i-mdi-car-emergency"
-                                                                :type="$t('common.dispatch', 2)"
-                                                            />
-                                                            <template v-else>
-                                                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                                    <dt class="text-sm font-medium leading-6">
-                                                                        <div class="flex h-6 items-center">
-                                                                            {{ $t('common.search') }}
-                                                                        </div>
-                                                                    </dt>
-                                                                    <dd
-                                                                        class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                                    >
-                                                                        <div class="relative flex items-center">
-                                                                            <UInput
-                                                                                v-model="queryDispatches"
-                                                                                type="text"
-                                                                                name="search"
-                                                                                :placeholder="$t('common.search')"
-                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                                @focusin="focusTablet(true)"
-                                                                                @focusout="focusTablet(false)"
-                                                                            />
-                                                                        </div>
-                                                                    </dd>
-                                                                </div>
-
-                                                                <TakeDispatchEntry
-                                                                    v-for="pd in filteredDispatches"
-                                                                    :key="pd"
-                                                                    :dispatch="dispatches.get(pd)!"
-                                                                    :preselected="false"
-                                                                    @selected="selectDispatch(pd, $event)"
-                                                                    @goto="$emit('goto', $event)"
-                                                                />
-                                                            </template>
-                                                        </template>
-
-                                                        <template v-else>
-                                                            <DataNoDataBlock
-                                                                v-if="pendingDispatches.length === 0"
-                                                                icon="i-mdi-car-emergency"
-                                                                :type="$t('common.dispatch', 2)"
-                                                            />
-                                                            <template v-else>
-                                                                <TakeDispatchEntry
-                                                                    v-for="pd in pendingDispatches"
-                                                                    :key="pd"
-                                                                    :dispatch="dispatches.get(pd)!"
-                                                                    @selected="selectDispatch(pd, $event)"
-                                                                    @goto="$emit('goto', $event)"
-                                                                />
-                                                            </template>
-                                                        </template>
-                                                    </dl>
+                                            </dt>
+                                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                                <div class="relative flex items-center">
+                                                    <UInput
+                                                        v-model="queryDispatches"
+                                                        type="text"
+                                                        name="search"
+                                                        :placeholder="$t('common.search')"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                        @focusin="focusTablet(true)"
+                                                        @focusout="focusTablet(false)"
+                                                    />
                                                 </div>
-                                            </div>
+                                            </dd>
                                         </div>
-                                    </div>
-                                    <div class="flex shrink-0 justify-end p-4">
-                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <UButton
-                                                class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-success-300 hover:bg-success-100"
-                                                :disabled="!canTakeDispatch || !canSubmit"
-                                                :loading="!canSubmit"
-                                                @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
-                                            >
-                                                {{ $t('common.accept') }}
-                                            </UButton>
-                                            <UButton
-                                                class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-error-300 hover:bg-error-100"
-                                                :disabled="!canTakeDispatch || !canSubmit"
-                                                :loading="!canSubmit"
-                                                @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
-                                            >
-                                                {{ $t('common.decline') }}
-                                            </UButton>
-                                            <UButton
-                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="isOpen = false"
-                                            >
-                                                {{ $t('common.close') }}
-                                            </UButton>
-                                        </span>
-                                    </div>
-                                </form>
-                            </DialogPanel>
-                        </TransitionChild>
+
+                                        <TakeDispatchEntry
+                                            v-for="pd in filteredDispatches"
+                                            :key="pd"
+                                            :dispatch="dispatches.get(pd)!"
+                                            :preselected="false"
+                                            @selected="selectDispatch(pd, $event)"
+                                            @goto="$emit('goto', $event)"
+                                        />
+                                    </template>
+                                </template>
+
+                                <template v-else>
+                                    <DataNoDataBlock
+                                        v-if="pendingDispatches.length === 0"
+                                        icon="i-mdi-car-emergency"
+                                        :type="$t('common.dispatch', 2)"
+                                    />
+                                    <template v-else>
+                                        <TakeDispatchEntry
+                                            v-for="pd in pendingDispatches"
+                                            :key="pd"
+                                            :dispatch="dispatches.get(pd)!"
+                                            @selected="selectDispatch(pd, $event)"
+                                            @goto="$emit('goto', $event)"
+                                        />
+                                    </template>
+                                </template>
+                            </dl>
+                        </div>
                     </div>
                 </div>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <div class="inline-flex w-full">
+                    <UButton @click="isOpen = false">
+                        {{ $t('common.close') }}
+                    </UButton>
+                    <UButton
+                        class="relative inline-flex w-full items-center rounded-l-md bg-success-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-success-300 hover:bg-success-100"
+                        :disabled="!canTakeDispatch || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle(TakeDispatchResp.ACCEPTED)"
+                    >
+                        {{ $t('common.accept') }}
+                    </UButton>
+                    <UButton
+                        class="relative -ml-px inline-flex w-full items-center bg-error-500 px-3 py-2 text-sm font-semibold ring-1 ring-inset ring-error-300 hover:bg-error-100"
+                        :disabled="!canTakeDispatch || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
+                    >
+                        {{ $t('common.decline') }}
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </USlideover>
 </template>

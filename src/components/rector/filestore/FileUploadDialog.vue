@@ -166,18 +166,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         </div>
                     </div>
                     <div class="mt-5 gap-2 sm:mt-4 sm:flex">
-                        <UButton
-                            class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                            @click="isOpen = false"
-                        >
+                        <UButton @click="isOpen = false">
                             {{ $t('common.close', 1) }}
                         </UButton>
-                        <UButton
-                            type="submit"
-                            class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                            :disabled="!meta.valid || !canSubmit"
-                            :loading="!canSubmit"
-                        >
+                        <UButton type="submit" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
                             {{ $t('common.save') }}
                         </UButton>
                     </div>

@@ -97,7 +97,12 @@ const open = ref(false);
                         <span class="font-medium">{{ $t('common.postal') }}:</span>
                         {{ dispatch.postal ?? $t('common.na') }}
                     </span>
-                    <UButton variant="link" icon="i-mdi-map-marker" @click="$emit('goto', { x: dispatch.x, y: dispatch.y })">
+                    <UButton
+                        size="xs"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                    >
                         {{ $t('common.go_to_location') }}
                     </UButton>
                 </li>

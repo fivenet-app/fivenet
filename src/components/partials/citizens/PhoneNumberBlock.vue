@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { PhoneIcon } from 'mdi-vue3';
 import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';

@@ -211,12 +211,7 @@ const availableStatus = [RequestStatus.ACCEPTED, RequestStatus.DENIED, RequestSt
                     {{ $t('common.close', 1) }}
                 </UButton>
 
-                <UButton
-                    class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                    :disabled="!meta.valid || !canSubmit"
-                    :loading="!canSubmit"
-                    @click="onSubmitThrottle"
-                >
+                <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
                     {{ $t('common.submit') }}
                 </UButton>
             </template>

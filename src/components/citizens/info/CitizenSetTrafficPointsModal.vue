@@ -1,22 +1,20 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { CloseIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
-    open: boolean;
     user: User;
 }>();
 
 const emit = defineEmits<{
-    (e: 'close'): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -53,7 +51,7 @@ async function setTrafficPoints(values: FormData): Promise<void> {
             type: 'success',
         });
 
-        emit('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -86,118 +84,86 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
+                    </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left transition-all sm:my-8 sm:max-w-2xl sm:p-6"
-                        >
-                            <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <UButton
-                                    class="rounded-md bg-neutral-50 text-gray-400 hover:text-gray-500 focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    @click="$emit('close')"
-                                >
-                                    <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" />
-                                </UButton>
-                            </div>
-                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
-                            </DialogTitle>
-                            <form @submit.prevent="onSubmitThrottle">
-                                <div class="my-2 space-y-24">
-                                    <div class="flex-1">
-                                        <label for="reason" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.reason') }}
-                                        </label>
-                                        <VeeField
-                                            type="text"
-                                            name="reason"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.reason')"
-                                            :label="$t('common.reason')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-                                </div>
-                                <div class="my-2 space-y-20">
-                                    <div class="flex-1">
-                                        <label for="trafficPoints" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.traffic_infraction_points') }}
-                                        </label>
-                                        <VeeField
-                                            type="text"
-                                            name="trafficPoints"
-                                            min="0"
-                                            max="9999999"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.traffic_infraction_points')"
-                                            :label="$t('common.traffic_infraction_points')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="trafficPoints" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-                                </div>
-                                <div class="absolute bottom-0 left-0 flex w-full">
-                                    <UButton
-                                        class="flex-1 rounded-md bg-neutral-50 px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                                        @click="$emit('close')"
-                                    >
-                                        {{ $t('common.close', 1) }}
-                                    </UButton>
-                                    <UButton
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                                        :disabled="!meta.valid || !canSubmit"
-                                        :loading="!canSubmit"
-                                        @click="
-                                            setFieldValue('reset', true);
-                                            onSubmitThrottle($event);
-                                        "
-                                    >
-                                        {{ $t('common.reset') }}
-                                    </UButton>
-                                    <UButton
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold"
-                                        :disabled="!meta.valid || !canSubmit"
-                                        :loading="!canSubmit"
-                                        @click="
-                                            setFieldValue('reset', false);
-                                            onSubmitThrottle($event);
-                                        "
-                                    >
-                                        {{ $t('common.add') }}
-                                    </UButton>
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </TransitionChild>
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
+            </template>
+
+            <div>
+                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
+                    <div class="my-2 space-y-24">
+                        <div class="flex-1">
+                            <label for="reason" class="block text-sm font-medium leading-6">
+                                {{ $t('common.reason') }}
+                            </label>
+                            <VeeField
+                                type="text"
+                                name="reason"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :placeholder="$t('common.reason')"
+                                :label="$t('common.reason')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                        </div>
+                    </div>
+                    <div class="my-2 space-y-20">
+                        <div class="flex-1">
+                            <label for="trafficPoints" class="block text-sm font-medium leading-6">
+                                {{ $t('common.traffic_infraction_points') }}
+                            </label>
+                            <VeeField
+                                type="text"
+                                name="trafficPoints"
+                                min="0"
+                                max="9999999"
+                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                :placeholder="$t('common.traffic_infraction_points')"
+                                :label="$t('common.traffic_infraction_points')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="trafficPoints" as="p" class="mt-2 text-sm text-error-400" />
+                        </div>
+                    </div>
+                </UForm>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <div class="flex">
+                    <UButton @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="
+                            setFieldValue('reset', true);
+                            onSubmitThrottle($event);
+                        "
+                    >
+                        {{ $t('common.reset') }}
+                    </UButton>
+                    <UButton
+                        :disabled="!meta.valid || !canSubmit"
+                        :loading="!canSubmit"
+                        @click="
+                            setFieldValue('reset', false);
+                            onSubmitThrottle($event);
+                        "
+                    >
+                        {{ $t('common.add') }}
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </UModal>
 </template>

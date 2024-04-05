@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { CogIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
@@ -53,14 +52,13 @@ const grouped = computedAsync(async () => {
             <div class="inline-flex items-center sm:flex-auto">
                 <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
                     {{ $t('common.units') }}
-                    <NuxtLink
+                    <UButton
                         v-if="can('CentrumService.CreateOrUpdateUnit')"
                         :to="{ name: 'centrum-units' }"
                         :title="$t('common.units')"
-                        class="ml-2"
-                    >
-                        <CogIcon class="size-5" />
-                    </NuxtLink>
+                        icon="i-mdi-cog"
+                        variant="link"
+                    />
                 </h2>
             </div>
         </div>

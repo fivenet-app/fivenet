@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ArchiveIcon } from 'mdi-vue3';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -129,14 +128,13 @@ const columns = [
                 <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-gray-100">
                     {{ $t('common.dispatches') }}
 
-                    <NuxtLink
+                    <UButton
                         v-if="showButton"
                         :to="{ name: 'centrum-dispatches' }"
                         :title="$t('common.dispatches')"
-                        class="ml-2"
-                    >
-                        <ArchiveIcon class="size-5" />
-                    </NuxtLink>
+                        icon="i-mdi-archive"
+                        variant="link"
+                    />
                 </h2>
                 <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />
             </div>
@@ -169,12 +167,15 @@ const columns = [
                                             })
                                         "
                                     />
+
                                     <UButton
+                                        size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
                                         :title="$t('common.go_to_location')"
                                         @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
                                     />
+
                                     <UButton
                                         v-if="!hideActions"
                                         variant="link"
@@ -187,6 +188,7 @@ const columns = [
                                             })
                                         "
                                     />
+
                                     <UButton
                                         variant="link"
                                         icon="i-mdi-dots-vertical"

@@ -142,6 +142,7 @@ const openStatus = ref(false);
                                 </span>
                                 <UButton
                                     v-if="dispatch.x && dispatch.y"
+                                    size="xs"
                                     variant="link"
                                     icon="i-mdi-map-marker"
                                     @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
@@ -271,6 +272,7 @@ const openStatus = ref(false);
                                 </span>
                                 <UButton
                                     v-if="dispatch.status?.x && dispatch.status?.y"
+                                    size="xs"
                                     variant="link"
                                     icon="i-mdi-map-marker"
                                     @click="

@@ -1,19 +1,8 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 // eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, CloseIcon } from 'mdi-vue3';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
@@ -21,7 +10,7 @@ import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livem
 import { markerIcons } from '~/components/livemap/helpers';
 
 const props = defineProps<{
-    open: boolean;
+    location?: Coordinate;
 }>();
 
 const emit = defineEmits<{
@@ -30,8 +19,10 @@ const emit = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const { isOpen } = useSlideover();
+
 const livemapStore = useLivemapStore();
-const { location } = storeToRefs(livemapStore);
+const { location: storeLocation } = storeToRefs(livemapStore);
 const { addOrpdateMarkerMarker } = livemapStore;
 
 interface FormData {
@@ -58,8 +49,8 @@ async function createMarker(values: FormData): Promise<void> {
                 jobLabel: '',
                 name: values.name,
                 description: values.description,
-                x: location.value?.x ?? 0,
-                y: location.value?.y ?? 0,
+                x: props.location ? props.location.x : storeLocation.value?.x ?? 0,
+                y: props.location ? props.location.y : storeLocation.value?.y ?? 0,
                 color: color.value,
             },
             expiresAt,
@@ -97,6 +88,7 @@ async function createMarker(values: FormData): Promise<void> {
         }
 
         emit('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -146,8 +138,7 @@ async function setMarker(): Promise<void> {
     });
 }
 
-onBeforeMount(async () => setMarker());
-watch(props, () => setMarker());
+onBeforeMount(() => setMarker());
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(
@@ -161,385 +152,288 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <div class="fixed inset-0" />
+    <USlideover>
+        <UCard
+            class="flex flex-col flex-1"
+            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+        >
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.livemap.create_marker.title') }}
+                    </h3>
 
-            <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
-                        <TransitionChild
-                            as="template"
-                            enter="transform transition ease-in-out duration-100 sm:duration-200"
-                            enter-from="translate-x-full"
-                            enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-100 sm:duration-200"
-                            leave-from="translate-x-0"
-                            leave-to="translate-x-full"
-                        >
-                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
-                                <form
-                                    class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl"
-                                    @submit.prevent="onSubmitThrottle"
+                    <UButton
+                        color="gray"
+                        variant="ghost"
+                        icon="i-mdi-window-close"
+                        class="-my-1"
+                        @click="
+                            $emit('close');
+                            isOpen = false;
+                        "
+                    />
+                </div>
+            </template>
+
+            <div>
+                <div class="flex flex-1 flex-col justify-between">
+                    <div class="divide-y divide-gray-200 px-2 sm:px-6">
+                        <div class="mt-1">
+                            <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
+                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="name" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.name') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <VeeField
+                                            type="text"
+                                            name="name"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.name')"
+                                            :label="$t('common.name')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
+                                    </dd>
+                                </div>
+                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="description" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.description') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <VeeField
+                                            type="text"
+                                            name="description"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.description')"
+                                            :label="$t('common.description')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
+                                    </dd>
+                                </div>
+                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="expiresAt" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.expires_at') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <VeeField
+                                            type="datetime-local"
+                                            name="expiresAt"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.expires_at')"
+                                            :label="$t('common.expires_at')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                        <VeeErrorMessage name="expiresAt" as="p" class="mt-2 text-sm text-error-400" />
+                                    </dd>
+                                </div>
+
+                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="color" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.color') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <ColorInput v-model="color" disable-alpha format="hex" position="top" />
+                                    </dd>
+                                </div>
+                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="markerType" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.marker') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <VeeField
+                                            v-slot="{ field }"
+                                            as="div"
+                                            name="markerType"
+                                            :placeholder="$t('common.marker')"
+                                            :label="$t('common.marker')"
+                                        >
+                                            <select
+                                                v-bind="field"
+                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            >
+                                                <option
+                                                    v-for="mtype in markerTypes"
+                                                    :key="mtype.status"
+                                                    :selected="mtype.selected"
+                                                    :value="mtype.status"
+                                                >
+                                                    {{
+                                                        $t(
+                                                            `enums.livemap.MarkerType.${
+                                                                MarkerType[mtype.status ?? (0 as number)]
+                                                            }`,
+                                                        )
+                                                    }}
+                                                </option>
+                                            </select>
+                                        </VeeField>
+                                        <VeeErrorMessage name="markerType" as="p" class="mt-2 text-sm text-error-400" />
+                                    </dd>
+                                </div>
+                                <div
+                                    v-if="values.markerType === MarkerType.CIRCLE"
+                                    class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
                                 >
-                                    <div class="h-0 flex-1 overflow-y-auto">
-                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
-                                            <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6">
-                                                    {{ $t('components.livemap.create_marker.title') }}
-                                                </DialogTitle>
-
-                                                <div class="ml-3 flex h-7 items-center">
-                                                    <UButton
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="$emit('close')"
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="circleRadius" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.radius') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <VeeField
+                                            type="number"
+                                            name="circleRadius"
+                                            min="5"
+                                            max="250"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            :placeholder="$t('common.radius')"
+                                            :label="$t('common.radius')"
+                                        />
+                                        <VeeErrorMessage name="circleRadius" as="p" class="mt-2 text-sm text-error-400" />
+                                    </dd>
+                                </div>
+                                <div
+                                    v-else-if="values.markerType === MarkerType.ICON"
+                                    class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                                >
+                                    <dt class="text-sm font-medium leading-6">
+                                        <label for="icon" class="block text-sm font-medium leading-6">
+                                            {{ $t('common.icon') }}
+                                        </label>
+                                    </dt>
+                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <VeeField
+                                            as="div"
+                                            name="icon"
+                                            :placeholder="$t('common.icon')"
+                                            :label="$t('common.icon')"
+                                        >
+                                            <Combobox v-model="selectedIcon" as="div" class="mt-2">
+                                                <div class="relative">
+                                                    <ComboboxButton
+                                                        as="div"
+                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     >
-                                                        <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" />
-                                                    </UButton>
-                                                </div>
-                                            </div>
-                                            <div class="mt-1">
-                                                <p class="text-sm text-primary-300">
-                                                    {{ $t('components.livemap.create_marker.subtitle') }}
-                                                </p>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                                                <div class="mt-1">
-                                                    <dl class="divide-y divide-neutral/10 border-b border-neutral/10">
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label for="name" class="block text-sm font-medium leading-6">
-                                                                    {{ $t('common.name') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    type="text"
-                                                                    name="name"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.name')"
-                                                                    :label="$t('common.name')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
-                                                                <VeeErrorMessage
-                                                                    name="name"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="description"
-                                                                    class="block text-sm font-medium leading-6"
-                                                                >
-                                                                    {{ $t('common.description') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    type="text"
-                                                                    name="description"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.description')"
-                                                                    :label="$t('common.description')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
-                                                                <VeeErrorMessage
-                                                                    name="description"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="expiresAt"
-                                                                    class="block text-sm font-medium leading-6"
-                                                                >
-                                                                    {{ $t('common.expires_at') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    type="datetime-local"
-                                                                    name="expiresAt"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.expires_at')"
-                                                                    :label="$t('common.expires_at')"
-                                                                    @focusin="focusTablet(true)"
-                                                                    @focusout="focusTablet(false)"
-                                                                />
-                                                                <VeeErrorMessage
-                                                                    name="expiresAt"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
+                                                        <ComboboxInput
+                                                            autocomplete="off"
+                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                            :placeholder="$t('common.icon')"
+                                                            @change="queryIcon = $event.target.value"
+                                                            @focusin="focusTablet(true)"
+                                                            @focusout="focusTablet(false)"
+                                                        />
 
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label for="color" class="block text-sm font-medium leading-6">
-                                                                    {{ $t('common.color') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
+                                                        <span
+                                                            class="pointer-events-none absolute inset-y-0 right-0 flex pr-2 pt-4"
+                                                        >
+                                                            <ChevronDownIcon class="size-5 text-gray-400" />
+                                                        </span>
+
+                                                        <span class="mt-1 inline-flex items-center truncate">
+                                                            <UIcon
+                                                                v-if="selectedIcon"
+                                                                :name="selectedIcon"
+                                                                class="mr-1 size-5"
+                                                                :style="{ color: color }"
+                                                            />
+                                                            {{ (selectedIcon ?? 'N/A').replace('Icon', '') }}
+                                                        </span>
+                                                    </ComboboxButton>
+
+                                                    <transition
+                                                        leave-active-class="transition duration-100 ease-in"
+                                                        leave-from-class="opacity-100"
+                                                        leave-to-class="opacity-0"
+                                                    >
+                                                        <ComboboxOptions
+                                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                                        >
+                                                            <ComboboxOption
+                                                                v-for="icon in markerIcons.filter((icon) =>
+                                                                    icon.includes(queryIcon),
+                                                                )"
+                                                                v-slot="{ active, selected }"
+                                                                :key="icon"
+                                                                as="template"
+                                                                :value="icon"
                                                             >
-                                                                <ColorInput
-                                                                    v-model="color"
-                                                                    disable-alpha
-                                                                    format="hex"
-                                                                    position="top"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="markerType"
-                                                                    class="block text-sm font-medium leading-6"
+                                                                <li
+                                                                    :class="[
+                                                                        active ? 'bg-primary-500' : '',
+                                                                        'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                                    ]"
                                                                 >
-                                                                    {{ $t('common.marker') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    v-slot="{ field }"
-                                                                    as="div"
-                                                                    name="markerType"
-                                                                    :placeholder="$t('common.marker')"
-                                                                    :label="$t('common.marker')"
-                                                                >
-                                                                    <select
-                                                                        v-bind="field"
-                                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                        @focusin="focusTablet(true)"
-                                                                        @focusout="focusTablet(false)"
+                                                                    <span
+                                                                        :class="[
+                                                                            selected ? 'font-semibold' : 'font-normal',
+                                                                            'inline-flex items-center truncate',
+                                                                        ]"
                                                                     >
-                                                                        <option
-                                                                            v-for="mtype in markerTypes"
-                                                                            :key="mtype.status"
-                                                                            :selected="mtype.selected"
-                                                                            :value="mtype.status"
-                                                                        >
-                                                                            {{
-                                                                                $t(
-                                                                                    `enums.livemap.MarkerType.${
-                                                                                        MarkerType[
-                                                                                            mtype.status ?? (0 as number)
-                                                                                        ]
-                                                                                    }`,
-                                                                                )
-                                                                            }}
-                                                                        </option>
-                                                                    </select>
-                                                                </VeeField>
-                                                                <VeeErrorMessage
-                                                                    name="markerType"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div
-                                                            v-if="values.markerType === MarkerType.CIRCLE"
-                                                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                                                        >
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label
-                                                                    for="circleRadius"
-                                                                    class="block text-sm font-medium leading-6"
-                                                                >
-                                                                    {{ $t('common.radius') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    type="number"
-                                                                    name="circleRadius"
-                                                                    min="5"
-                                                                    max="250"
-                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                    :placeholder="$t('common.radius')"
-                                                                    :label="$t('common.radius')"
-                                                                />
-                                                                <VeeErrorMessage
-                                                                    name="circleRadius"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                        <div
-                                                            v-else-if="values.markerType === MarkerType.ICON"
-                                                            class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
-                                                        >
-                                                            <dt class="text-sm font-medium leading-6">
-                                                                <label for="icon" class="block text-sm font-medium leading-6">
-                                                                    {{ $t('common.icon') }}
-                                                                </label>
-                                                            </dt>
-                                                            <dd
-                                                                class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0"
-                                                            >
-                                                                <VeeField
-                                                                    as="div"
-                                                                    name="icon"
-                                                                    :placeholder="$t('common.icon')"
-                                                                    :label="$t('common.icon')"
-                                                                >
-                                                                    <Combobox v-model="selectedIcon" as="div" class="mt-2">
-                                                                        <div class="relative">
-                                                                            <ComboboxButton
-                                                                                as="div"
-                                                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                            >
-                                                                                <ComboboxInput
-                                                                                    autocomplete="off"
-                                                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                                    :placeholder="$t('common.icon')"
-                                                                                    @change="queryIcon = $event.target.value"
-                                                                                    @focusin="focusTablet(true)"
-                                                                                    @focusout="focusTablet(false)"
-                                                                                />
+                                                                        <UIcon :name="icon" class="mr-1 size-5" />
+                                                                        {{ icon.replace('i-mdi-', '') }}
+                                                                    </span>
 
-                                                                                <span
-                                                                                    class="pointer-events-none absolute inset-y-0 right-0 flex pr-2 pt-4"
-                                                                                >
-                                                                                    <ChevronDownIcon
-                                                                                        class="size-5 text-gray-400"
-                                                                                    />
-                                                                                </span>
-
-                                                                                <span
-                                                                                    class="mt-1 inline-flex items-center truncate"
-                                                                                >
-                                                                                    <UIcon
-                                                                                        v-if="selectedIcon"
-                                                                                        :name="selectedIcon"
-                                                                                        class="mr-1 size-5"
-                                                                                        :style="{ color: color }"
-                                                                                    />
-                                                                                    {{
-                                                                                        (selectedIcon ?? 'N/A').replace(
-                                                                                            'Icon',
-                                                                                            '',
-                                                                                        )
-                                                                                    }}
-                                                                                </span>
-                                                                            </ComboboxButton>
-
-                                                                            <transition
-                                                                                leave-active-class="transition duration-100 ease-in"
-                                                                                leave-from-class="opacity-100"
-                                                                                leave-to-class="opacity-0"
-                                                                            >
-                                                                                <ComboboxOptions
-                                                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                                                >
-                                                                                    <ComboboxOption
-                                                                                        v-for="icon in markerIcons.filter(
-                                                                                            (icon) => icon.includes(queryIcon),
-                                                                                        )"
-                                                                                        v-slot="{ active, selected }"
-                                                                                        :key="icon"
-                                                                                        as="template"
-                                                                                        :value="icon"
-                                                                                    >
-                                                                                        <li
-                                                                                            :class="[
-                                                                                                active ? 'bg-primary-500' : '',
-                                                                                                'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                                            ]"
-                                                                                        >
-                                                                                            <span
-                                                                                                :class="[
-                                                                                                    selected
-                                                                                                        ? 'font-semibold'
-                                                                                                        : 'font-normal',
-                                                                                                    'inline-flex items-center truncate',
-                                                                                                ]"
-                                                                                            >
-                                                                                                <UIcon
-                                                                                                    :name="icon"
-                                                                                                    class="mr-1 size-5"
-                                                                                                />
-                                                                                                {{ icon.replace('i-mdi-', '') }}
-                                                                                            </span>
-
-                                                                                            <span
-                                                                                                v-if="selected"
-                                                                                                :class="[
-                                                                                                    active
-                                                                                                        ? 'text-neutral'
-                                                                                                        : 'text-primary-500',
-                                                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                                                ]"
-                                                                                            >
-                                                                                                <CheckIcon class="size-5" />
-                                                                                            </span>
-                                                                                        </li>
-                                                                                    </ComboboxOption>
-                                                                                </ComboboxOptions>
-                                                                            </transition>
-                                                                        </div>
-                                                                    </Combobox>
-                                                                </VeeField>
-                                                                <VeeErrorMessage
-                                                                    name="icon"
-                                                                    as="p"
-                                                                    class="mt-2 text-sm text-error-400"
-                                                                />
-                                                            </dd>
-                                                        </div>
-                                                    </dl>
+                                                                    <span
+                                                                        v-if="selected"
+                                                                        :class="[
+                                                                            active ? 'text-neutral' : 'text-primary-500',
+                                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                                        ]"
+                                                                    >
+                                                                        <CheckIcon class="size-5" />
+                                                                    </span>
+                                                                </li>
+                                                            </ComboboxOption>
+                                                        </ComboboxOptions>
+                                                    </transition>
                                                 </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex shrink-0 justify-end p-4">
-                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <UButton
-                                                type="submit"
-                                                class="relative flex w-full rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
-                                                :disabled="!meta.valid || !canSubmit"
-                                                :loading="!canSubmit"
-                                            >
-                                                {{ $t('common.create') }}
-                                            </UButton>
-                                            <UButton
-                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="$emit('close')"
-                                            >
-                                                {{ $t('common.close', 1) }}
-                                            </UButton>
-                                        </span>
-                                    </div>
-                                </form>
-                            </DialogPanel>
-                        </TransitionChild>
+                                            </Combobox>
+                                        </VeeField>
+                                        <VeeErrorMessage name="icon" as="p" class="mt-2 text-sm text-error-400" />
+                                    </dd>
+                                </div>
+                            </dl>
+                        </div>
                     </div>
                 </div>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <UButton
+                    class="inline-flex w-full items-center rounded-l-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
+                    :disabled="!meta.valid || !canSubmit"
+                    :loading="!canSubmit"
+                    @click="onSubmitThrottle"
+                >
+                    {{ $t('common.create') }}
+                </UButton>
+                <UButton
+                    @click="
+                        $emit('close');
+                        isOpen = false;
+                    "
+                >
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </template>
+        </UCard>
+    </USlideover>
 </template>

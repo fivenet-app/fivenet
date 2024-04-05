@@ -14,6 +14,8 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const slideover = useSlideover();
+
 const centrumStore = useCentrumStore();
 const { dispatches, ownDispatches } = storeToRefs(centrumStore);
 
@@ -32,21 +34,9 @@ const dispatchesFiltered = computedAsync(async () =>
                 (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
     ),
 );
-
-const selectedDispatch = ref<Dispatch | undefined>();
-const open = ref(false);
 </script>
 
 <template>
-    <template v-if="selectedDispatch">
-        <DispatchDetailsSlideover
-            :dispatch="selectedDispatch"
-            :open="open"
-            @close="open = false"
-            @goto="$emit('goto', $event)"
-        />
-    </template>
-
     <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in ownDispatches"
@@ -54,8 +44,9 @@ const open = ref(false);
             :dispatch="dispatches.get(dispatch)!"
             :size="livemap.markerSize"
             @selected="
-                selectedDispatch = $event;
-                open = true;
+                slideover.open(DispatchDetailsSlideover, {
+                    dispatch: $event,
+                })
             "
             @goto="$emit('goto', $event)"
         />
@@ -73,8 +64,9 @@ const open = ref(false);
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="
-                selectedDispatch = $event;
-                open = true;
+                slideover.open(DispatchDetailsSlideover, {
+                    dispatch: $event,
+                })
             "
             @goto="$emit('goto', $event)"
         />

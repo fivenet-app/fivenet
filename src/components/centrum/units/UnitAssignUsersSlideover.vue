@@ -1,17 +1,6 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
-import { CheckIcon, CloseIcon } from 'mdi-vue3';
+import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
+import { CheckIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/store/completor';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -93,155 +82,108 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="true">
-        <Dialog as="div" class="relative z-30" @close="isOpen = false">
-            <div class="fixed inset-0" />
+    <USlideover>
+        <UCard
+            class="flex flex-col flex-1"
+            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+        >
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{ unit.initials }})
+                    </h3>
 
-            <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
-                        <TransitionChild
-                            as="template"
-                            enter="transform transition ease-in-out duration-100 sm:duration-200"
-                            enter-from="translate-x-full"
-                            enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-100 sm:duration-200"
-                            leave-from="translate-x-0"
-                            leave-to="translate-x-full"
-                        >
-                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
-                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl">
-                                    <div class="h-0 flex-1 overflow-y-auto">
-                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
-                                            <div class="flex items-center justify-between">
-                                                <DialogTitle class="text-base font-semibold leading-6">
-                                                    {{ $t('components.centrum.assign_unit.title') }}: {{ unit.name }} ({{
-                                                        unit.initials
-                                                    }})
-                                                </DialogTitle>
-                                                <div class="ml-3 flex h-7 items-center">
-                                                    <UButton
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="isOpen = false"
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                </div>
+            </template>
+
+            <div>
+                <div class="flex flex-1 flex-col justify-between">
+                    <div class="divide-y divide-gray-200 px-2 sm:px-6">
+                        <div class="mt-1">
+                            <div class="my-2 space-y-24">
+                                <div class="flex-1">
+                                    <Combobox v-model="selectedCitizens" as="div" multiple nullable>
+                                        <div class="relative">
+                                            <ComboboxButton as="div">
+                                                <ComboboxInput
+                                                    autocomplete="off"
+                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                    :display-value="
+                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
+                                                    "
+                                                    :placeholder="$t('common.citizen', 2)"
+                                                    @change="queryCitizens = $event.target.value"
+                                                    @focusin="focusTablet(true)"
+                                                    @focusout="focusTablet(false)"
+                                                />
+                                            </ComboboxButton>
+
+                                            <ComboboxOptions
+                                                v-if="entriesCitizens.length > 0"
+                                                class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
+                                            >
+                                                <ComboboxOption
+                                                    v-for="user in entriesCitizens"
+                                                    v-slot="{ active, selected }"
+                                                    :key="user?.userId"
+                                                    :value="user"
+                                                    as="char"
+                                                >
+                                                    <li
+                                                        :class="[
+                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
+                                                            active ? 'bg-primary-500' : '',
+                                                        ]"
                                                     >
-                                                        <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" />
-                                                    </UButton>
-                                                </div>
-                                            </div>
+                                                        <span :class="['block truncate', selected && 'font-semibold']">
+                                                            {{ user?.firstname }}
+                                                            {{ user?.lastname }}
+                                                        </span>
+
+                                                        <span
+                                                            v-if="selected"
+                                                            :class="[
+                                                                active ? 'text-neutral' : 'text-primary-500',
+                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
+                                                            ]"
+                                                        >
+                                                            <CheckIcon class="size-5" />
+                                                        </span>
+                                                    </li>
+                                                </ComboboxOption>
+                                            </ComboboxOptions>
                                         </div>
-                                        <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                                                <div class="mt-1">
-                                                    <div class="my-2 space-y-24">
-                                                        <div class="flex-1">
-                                                            <Combobox v-model="selectedCitizens" as="div" multiple nullable>
-                                                                <div class="relative">
-                                                                    <ComboboxButton as="div">
-                                                                        <ComboboxInput
-                                                                            autocomplete="off"
-                                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                            :display-value="
-                                                                                (chars: any) =>
-                                                                                    chars
-                                                                                        ? charsGetDisplayValue(chars)
-                                                                                        : $t('common.na')
-                                                                            "
-                                                                            :placeholder="$t('common.citizen', 2)"
-                                                                            @change="queryCitizens = $event.target.value"
-                                                                            @focusin="focusTablet(true)"
-                                                                            @focusout="focusTablet(false)"
-                                                                        />
-                                                                    </ComboboxButton>
+                                    </Combobox>
 
-                                                                    <ComboboxOptions
-                                                                        v-if="entriesCitizens.length > 0"
-                                                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                                    >
-                                                                        <ComboboxOption
-                                                                            v-for="user in entriesCitizens"
-                                                                            v-slot="{ active, selected }"
-                                                                            :key="user?.userId"
-                                                                            :value="user"
-                                                                            as="char"
-                                                                        >
-                                                                            <li
-                                                                                :class="[
-                                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                                    active ? 'bg-primary-500' : '',
-                                                                                ]"
-                                                                            >
-                                                                                <span
-                                                                                    :class="[
-                                                                                        'block truncate',
-                                                                                        selected && 'font-semibold',
-                                                                                    ]"
-                                                                                >
-                                                                                    {{ user?.firstname }}
-                                                                                    {{ user?.lastname }}
-                                                                                </span>
-
-                                                                                <span
-                                                                                    v-if="selected"
-                                                                                    :class="[
-                                                                                        active
-                                                                                            ? 'text-neutral'
-                                                                                            : 'text-primary-500',
-                                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                                    ]"
-                                                                                >
-                                                                                    <CheckIcon class="size-5" />
-                                                                                </span>
-                                                                            </li>
-                                                                        </ComboboxOption>
-                                                                    </ComboboxOptions>
-                                                                </div>
-                                                            </Combobox>
-
-                                                            <div class="mt-4 overflow-hidden rounded-md bg-base-800">
-                                                                <ul
-                                                                    role="list"
-                                                                    class="divide-y divide-gray-200 text-sm font-medium text-gray-100"
-                                                                >
-                                                                    <li
-                                                                        v-for="user in selectedCitizens"
-                                                                        :key="user.userId"
-                                                                        class="inline-flex items-center px-6 py-4"
-                                                                    >
-                                                                        <CitizenInfoPopover :user="user" />
-                                                                    </li>
-                                                                </ul>
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <div class="flex shrink-0 justify-end p-4">
-                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <UButton
-                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
-                                                :disabled="!canSubmit"
-                                                :loading="!canSubmit"
-                                                @click="onSubmitThrottle"
+                                    <div class="mt-4 overflow-hidden rounded-md bg-base-800">
+                                        <ul role="list" class="divide-y divide-gray-200 text-sm font-medium text-gray-100">
+                                            <li
+                                                v-for="user in selectedCitizens"
+                                                :key="user.userId"
+                                                class="inline-flex items-center px-6 py-4"
                                             >
-                                                {{ $t('common.update') }}
-                                            </UButton>
-                                            <UButton
-                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="isOpen = false"
-                                            >
-                                                {{ $t('common.close', 1) }}
-                                            </UButton>
-                                        </span>
+                                                <CitizenInfoPopover :user="user" />
+                                            </li>
+                                        </ul>
                                     </div>
-                                </form>
-                            </DialogPanel>
-                        </TransitionChild>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <div>
+                    <UButton @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+                    <UButton :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                        {{ $t('common.update') }}
+                    </UButton>
+                </div>
+            </template>
+        </UCard>
+    </USlideover>
 </template>

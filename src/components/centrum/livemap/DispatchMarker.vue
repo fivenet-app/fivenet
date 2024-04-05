@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { BellIcon, CarEmergencyIcon } from 'mdi-vue3';
+import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -68,7 +68,12 @@ const zIndexOffset = computed(() => {
         <LPopup :options="{ closeButton: true }">
             <div class="mb-1 flex items-center gap-2">
                 <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
-                <UButton :title="$t('common.detail', 2)" icon="i-mdi-car-emergency" @click="selected(dispatch.id)">
+                <UButton
+                    :title="$t('common.detail', 2)"
+                    variant="link"
+                    icon="i-mdi-car-emergency"
+                    @click="selected(dispatch.id)"
+                >
                     {{ $t('common.detail', 2) }}
                 </UButton>
             </div>

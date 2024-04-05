@@ -28,6 +28,8 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const slideover = useSlideover();
+
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -57,14 +59,6 @@ const openUnit = ref(false);
 </script>
 
 <template>
-    <UnitDetailsSlideover
-        v-if="hasUnit && unit !== undefined"
-        :unit="unit"
-        :open="openUnit"
-        @close="openUnit = false"
-        @goto="$emit('goto', $event)"
-    />
-
     <LMarker
         :key="`user_${marker.info!.id}`"
         :lat-lng="[marker.info!.y, marker.info!.x]"
@@ -103,18 +97,22 @@ const openUnit = ref(false);
                     v-if="marker.info?.x && marker.info?.y"
                     variant="link"
                     icon="i-mdi-map-marker"
+                    :padded="false"
                     @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
                 >
                     {{ $t('common.mark') }}
                 </UButton>
+
                 <UButton
                     v-if="can('CitizenStoreService.ListCitizens')"
                     variant="link"
                     icon="i-mdi-account"
+                    :padded="false"
                     :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
                 >
                     {{ $t('common.profile') }}
                 </UButton>
+
                 <PhoneNumberBlock
                     v-if="marker.user?.phoneNumber"
                     :number="marker.user?.phoneNumber"
@@ -122,7 +120,18 @@ const openUnit = ref(false);
                     :show-label="true"
                     width="w-4"
                 />
-                <UButton v-if="hasUnit" variant="link" icon="i-mdi-group" @click="openUnit = true">
+
+                <UButton
+                    v-if="hasUnit && unit"
+                    variant="link"
+                    icon="i-mdi-group"
+                    :padded="false"
+                    @click="
+                        slideover.open(UnitDetailsSlideover, {
+                            unit: unit,
+                        })
+                    "
+                >
                     {{ $t('common.unit') }}
                 </UButton>
             </div>

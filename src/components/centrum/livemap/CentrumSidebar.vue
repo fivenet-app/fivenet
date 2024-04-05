@@ -19,7 +19,7 @@ import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import OwnDispatchEntry from '~/components/centrum/livemap/OwnDispatchEntry.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
-import JoinUnitModal from '~/components/centrum/livemap/JoinUnitModal.vue';
+import JoinUnitSlideover from '~/components/centrum/livemap/JoinUnitSlideover.vue';
 import TakeDispatchSlideover from '~/components/centrum/livemap/TakeDispatchSlideover.vue';
 import { useAuthStore } from '~/store/auth';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
@@ -32,6 +32,8 @@ defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const slideover = useSlideover();
 
 const authStore = useAuthStore();
 const { jobProps } = storeToRefs(authStore);
@@ -50,12 +52,13 @@ const canStream = can('CentrumService.Stream');
 
 const joinUnitOpen = ref(false);
 
-const selectedDispatch = ref<string | undefined>();
-const openDispatchStatus = ref(false);
-const openTakeDispatch = ref(false);
+watch(joinUnitOpen, () => {
+    if (!joinUnitOpen.value) {
+        slideover.close();
+    }
+});
 
-const openUnitDetailsSlideover = ref(false);
-const openUnitStatus = ref(false);
+const selectedDispatch = ref<string | undefined>();
 
 async function updateDispatchStatus(dispatchId: string, status: StatusDispatch): Promise<void> {
     try {
@@ -84,7 +87,10 @@ async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Pr
     }
 
     if (status === undefined) {
-        openDispatchStatus.value = true;
+        slideover.open(DispatchStatusUpdateSlideover, {
+            dispatchId: dispatchId,
+            status: status,
+        });
         return;
     }
 
@@ -112,7 +118,13 @@ async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
 
 async function updateUtStatus(id: string, status?: StatusUnit): Promise<void> {
     if (status === undefined) {
-        openUnitStatus.value = true;
+        if (!getOwnUnit.value) {
+            return;
+        }
+
+        slideover.open(UnitStatusUpdateSlideover, {
+            unit: getOwnUnit.value,
+        });
         return;
     }
 
@@ -316,19 +328,6 @@ async function checkup(): Promise<void> {
         <template v-if="canStream" #afterMap>
             <div class="lg:inset-y-0 lg:flex lg:flex-col">
                 <!-- Dispatch -->
-                <TakeDispatchSlideover
-                    v-if="getOwnUnit !== undefined"
-                    :open="openTakeDispatch"
-                    @close="openTakeDispatch = false"
-                    @goto="$emit('goto', $event)"
-                />
-
-                <DispatchStatusUpdateSlideover
-                    v-if="selectedDispatch"
-                    :open="openDispatchStatus"
-                    :dispatch-id="selectedDispatch"
-                    @close="openDispatchStatus = false"
-                />
 
                 <transition
                     enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
@@ -354,7 +353,12 @@ async function checkup(): Promise<void> {
                                                     block
                                                     class="flex flex-col"
                                                     :class="ownUnitStatus"
-                                                    @click="openUnitDetailsSlideover = true"
+                                                    @click="
+                                                        slideover.open(UnitDetailsSlideover, {
+                                                            unit: getOwnUnit,
+                                                            onGoto: ($event) => $emit('goto', $event),
+                                                        })
+                                                    "
                                                 >
                                                     <span class="truncate">
                                                         <span class="font-semibold">{{ getOwnUnit.initials }}:</span>
@@ -371,20 +375,13 @@ async function checkup(): Promise<void> {
                                                         }}
                                                     </span>
                                                 </UButton>
-
-                                                <UnitDetailsSlideover
-                                                    :unit="getOwnUnit"
-                                                    :open="openUnitDetailsSlideover"
-                                                    @close="openUnitDetailsSlideover = false"
-                                                    @goto="$emit('goto', $event)"
-                                                />
                                             </template>
                                             <UButton
                                                 variant="soft"
                                                 color="primary"
                                                 size="xs"
                                                 block
-                                                @click="joinUnitOpen = true"
+                                                @click="slideover.open(JoinUnitSlideover, {})"
                                             >
                                                 <template v-if="getOwnUnit === undefined">
                                                     <InformationOutlineIcon class="size-5" />
@@ -394,8 +391,6 @@ async function checkup(): Promise<void> {
                                                     <span class="truncate">{{ $t('common.leave_unit') }}</span>
                                                 </template>
                                             </UButton>
-
-                                            <JoinUnitModal :open="joinUnitOpen" @close="joinUnitOpen = false" />
                                         </li>
                                     </ul>
                                 </li>
@@ -410,11 +405,6 @@ async function checkup(): Promise<void> {
                                                     class="ml-1 size-4 animate-spin"
                                                 />
                                             </div>
-                                            <UnitStatusUpdateSlideover
-                                                :unit="getOwnUnit"
-                                                :open="openUnitStatus"
-                                                @close="openUnitStatus = false"
-                                            />
                                             <li>
                                                 <div class="grid grid-cols-2 gap-0.5">
                                                     <UButton
@@ -546,7 +536,11 @@ async function checkup(): Promise<void> {
                             <UButton
                                 class="flex size-12 items-center justify-center"
                                 :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
-                                @click="openTakeDispatch = true"
+                                @click="
+                                    slideover.open(TakeDispatchSlideover, {
+                                        onGoto: ($event) => $emit('goto', $event),
+                                    })
+                                "
                             >
                                 <CarEmergencyIcon class="h-auto w-10" />
                             </UButton>

@@ -12,16 +12,14 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const slideover = useSlideover();
+
 const unitColorHex = computed(() => hexToRgb(props.unit.color) ?? ({ r: 0, g: 0, b: 0 } as RGB));
 const isBright = computed(() => isColourBright(unitColorHex.value));
-
-const open = ref(false);
 </script>
 
 <template>
-    <li class="col-span-1 flex rounded-md shadow-sm" @click="open = true">
-        <UnitDetailsSlideover :open="open" :unit="unit" @close="open = false" @goto="$emit('goto', $event)" />
-
+    <li class="col-span-1 flex rounded-md shadow-sm" @click="slideover.open(UnitDetailsSlideover, { unit: unit })">
         <div
             class="flex w-12 shrink-0 items-center justify-center rounded-l-md border-y border-l text-sm font-medium"
             :class="isBright ? 'text-black' : 'text-neutral'"

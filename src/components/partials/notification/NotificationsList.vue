@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { BellIcon, CheckIcon, LinkVariantIcon } from 'mdi-vue3';
+import { LinkVariantIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -134,14 +134,14 @@ const canSubmit = ref(true);
                                     <p class="py-2 pr-3 text-sm font-medium">
                                         <template v-if="not.data && not.data.link">
                                             <!-- @vue-ignore the route should be valid... at least in most cases -->
-                                            <NuxtLink
+                                            <UButton
                                                 :to="not.data.link.to"
                                                 class="inline-flex items-center gap-1"
                                                 @click="$emit('clicked')"
                                             >
                                                 {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                                 <LinkVariantIcon class="size-5" />
-                                            </NuxtLink>
+                                            </UButton>
                                         </template>
                                         <span v-else>
                                             {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
@@ -182,16 +182,11 @@ const canSubmit = ref(true);
                                 <UButton
                                     v-if="!not.readAt"
                                     class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :class="
-                                        !canSubmit
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400'
-                                    "
                                     :disabled="!canSubmit"
+                                    icon="i-mdi-check"
                                     @click="markRead(not.id).finally(timeoutFn)"
                                 >
                                     <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                                    <CheckIcon class="size-5 text-gray-300" />
                                 </UButton>
                                 <span v-else class="size-5"></span>
                             </div>

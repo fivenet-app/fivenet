@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { Dialog, DialogPanel, DialogTitle, TransitionChild, TransitionRoot } from '@headlessui/vue';
-import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon, CloseIcon } from 'mdi-vue3';
+import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon } from 'mdi-vue3';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -103,133 +102,82 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="true">
-        <Dialog as="div" class="relative z-30" @close="isOpen = false">
-            <div class="fixed inset-0" />
+    <USlideover>
+        <UCard
+            class="flex flex-col flex-1"
+            :ui="{ body: { base: 'flex-1' }, ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }"
+        >
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('components.centrum.assign_dispatch.title') }}:
+                        <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
+                    </h3>
 
-            <div class="fixed inset-0 overflow-hidden">
-                <div class="absolute inset-0 overflow-hidden">
-                    <div class="pointer-events-none fixed inset-y-0 right-0 flex max-w-2xl pl-10 sm:pl-16">
-                        <TransitionChild
-                            as="template"
-                            enter="transform transition ease-in-out duration-100 sm:duration-200"
-                            enter-from="translate-x-full"
-                            enter-to="translate-x-0"
-                            leave="transform transition ease-in-out duration-100 sm:duration-200"
-                            leave-from="translate-x-0"
-                            leave-to="translate-x-full"
-                        >
-                            <DialogPanel class="pointer-events-auto w-screen max-w-3xl">
-                                <form class="flex h-full flex-col divide-y divide-gray-200 bg-primary-900 shadow-xl">
-                                    <div class="h-0 flex-1 overflow-y-auto">
-                                        <div class="bg-primary-700 px-4 py-6 sm:px-6">
-                                            <div class="flex items-center justify-between">
-                                                <DialogTitle class="inline-flex text-base font-semibold leading-6">
-                                                    {{ $t('components.centrum.assign_dispatch.title') }}:
-                                                    <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
-                                                </DialogTitle>
-                                                <div class="ml-3 flex h-7 items-center">
-                                                    <UButton
-                                                        class="rounded-md bg-gray-100 text-gray-500 hover:text-gray-400 focus:ring-2 focus:ring-neutral"
-                                                        @click="isOpen = false"
-                                                    >
-                                                        <span class="sr-only">{{ $t('common.close') }}</span>
-                                                        <CloseIcon class="size-5" />
-                                                    </UButton>
-                                                </div>
-                                            </div>
-                                        </div>
-                                        <div class="flex flex-1 flex-col justify-between">
-                                            <div class="divide-y divide-gray-200 px-2">
-                                                <div class="mt-1">
-                                                    <div class="my-2 space-y-24">
-                                                        <div class="flex-1">
-                                                            <template v-for="group in grouped" :key="group.key">
-                                                                <p class="text-sm">
-                                                                    {{
-                                                                        $t(
-                                                                            `enums.centrum.StatusUnit.${
-                                                                                StatusUnit[group.status]
-                                                                            }`,
-                                                                        )
-                                                                    }}
-                                                                </p>
-                                                                <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
-                                                                    <UButton
-                                                                        v-for="unit in group.units"
-                                                                        :key="unit.name"
-                                                                        :disabled="unit.users.length === 0"
-                                                                        class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
-                                                                        :class="[
-                                                                            unitStatusToBGColor(unit.status?.status),
-                                                                            unit.users.length === 0
-                                                                                ? 'disabled !bg-error-600'
-                                                                                : '',
-                                                                        ]"
-                                                                        @click="selectUnit(unit)"
-                                                                    >
-                                                                        <CheckIcon
-                                                                            v-if="
-                                                                                selectedUnits?.findIndex(
-                                                                                    (u) => u && u === unit.id,
-                                                                                ) > -1
-                                                                            "
-                                                                            class="size-5"
-                                                                        />
-                                                                        <CheckboxBlankOutlineIcon
-                                                                            v-else-if="unit.users.length > 0"
-                                                                            class="size-5"
-                                                                        />
-                                                                        <CancelIcon v-else class="size-5" />
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                </div>
+            </template>
 
-                                                                        <div
-                                                                            class="ml-0.5 flex w-full flex-col place-items-start"
-                                                                        >
-                                                                            <span class="font-bold">
-                                                                                {{ unit.initials }}
-                                                                            </span>
-                                                                            <span class="text-xs">
-                                                                                {{ unit.name }}
-                                                                            </span>
-                                                                            <span class="mt-1 text-xs">
-                                                                                <span class="block">
-                                                                                    {{ $t('common.member', unit.users.length) }}
-                                                                                </span>
-                                                                            </span>
-                                                                        </div>
-                                                                    </UButton>
-                                                                </div>
-                                                            </template>
-                                                        </div>
-                                                    </div>
+            <div>
+                <div class="flex flex-1 flex-col justify-between">
+                    <div class="divide-y divide-gray-200 px-2">
+                        <div class="mt-1">
+                            <div class="my-2 space-y-24">
+                                <div class="flex-1">
+                                    <template v-for="group in grouped" :key="group.key">
+                                        <p class="text-sm">
+                                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                                        </p>
+                                        <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
+                                            <UButton
+                                                v-for="unit in group.units"
+                                                :key="unit.name"
+                                                :disabled="unit.users.length === 0"
+                                                class="inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:bg-primary-100/10 hover:transition-all"
+                                                :class="[
+                                                    unitStatusToBGColor(unit.status?.status),
+                                                    unit.users.length === 0 ? 'disabled !bg-error-600' : '',
+                                                ]"
+                                                @click="selectUnit(unit)"
+                                            >
+                                                <CheckIcon
+                                                    v-if="selectedUnits?.findIndex((u) => u && u === unit.id) > -1"
+                                                    class="size-5"
+                                                />
+                                                <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
+                                                <CancelIcon v-else class="size-5" />
+
+                                                <div class="ml-0.5 flex w-full flex-col place-items-start">
+                                                    <span class="font-bold">
+                                                        {{ unit.initials }}
+                                                    </span>
+                                                    <span class="text-xs">
+                                                        {{ unit.name }}
+                                                    </span>
+                                                    <span class="mt-1 text-xs">
+                                                        <span class="block">
+                                                            {{ $t('common.member', unit.users.length) }}
+                                                        </span>
+                                                    </span>
                                                 </div>
-                                            </div>
+                                            </UButton>
                                         </div>
-                                    </div>
-                                    <div class="flex shrink-0 justify-end p-4">
-                                        <span class="isolate inline-flex w-full rounded-md pr-4 shadow-sm">
-                                            <UButton
-                                                class="relative inline-flex w-full items-center rounded-l-md px-3.5 py-2.5 text-sm font-semibold"
-                                                :disabled="!canSubmit"
-                                                :loading="!canSubmit"
-                                                @click="onSubmitThrottle"
-                                            >
-                                                {{ $t('common.update') }}
-                                            </UButton>
-                                            <UButton
-                                                class="relative -ml-px inline-flex w-full items-center rounded-r-md bg-neutral-50 px-3 py-2 text-sm font-semibold text-gray-900 ring-1 ring-inset ring-gray-300 hover:bg-gray-200 hover:text-gray-900"
-                                                @click="isOpen = false"
-                                            >
-                                                {{ $t('common.close', 1) }}
-                                            </UButton>
-                                        </span>
-                                    </div>
-                                </form>
-                            </DialogPanel>
-                        </TransitionChild>
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </Dialog>
-    </TransitionRoot>
+
+            <template #footer>
+                <UButton :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                    {{ $t('common.update') }}
+                </UButton>
+                <UButton @click="isOpen = false">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </template>
+        </UCard>
+    </USlideover>
 </template>
