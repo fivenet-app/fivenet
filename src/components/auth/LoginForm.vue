@@ -116,7 +116,7 @@ watch(
                     {{ $t('common.login') }}
                 </UButton>
             </div>
-        </form>
+        </UForm>
 
         <div class="my-4 space-y-2">
             <template v-if="!isNUIAvailable">

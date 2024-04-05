@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { max, min, numeric, required } from '@vee-validate/rules';
-import { CheckIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
@@ -640,61 +638,25 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
                     </div>
                 </div>
-                <div>
-                    <label for="contentCategory" class="mt-2 block text-sm font-medium">
-                        {{ $t('common.category') }}
-                    </label>
-                    <div>
-                        <Combobox v-model="selectedCategory" as="div" nullable>
-                            <div class="relative">
-                                <ComboboxButton as="div">
-                                    <ComboboxInput
-                                        autocomplete="off"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :display-value="(category: any) => category?.name"
-                                        @change="queryCategories = $event.target.value"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </ComboboxButton>
 
-                                <ComboboxOptions
-                                    v-if="entriesCategories.length > 0"
-                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                >
-                                    <ComboboxOption
-                                        v-for="category in entriesCategories"
-                                        v-slot="{ active, selected }"
-                                        :key="category.id"
-                                        :value="category"
-                                        as="category"
-                                    >
-                                        <li
-                                            :class="[
-                                                'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                active ? 'bg-primary-500' : '',
-                                            ]"
-                                        >
-                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                {{ category.name }}
-                                            </span>
+                <UFormGroup class="flex-1" :label="$t('common.category', 1)">
+                    <UInputMenu
+                        v-model="selectedCategory"
+                        option-attribute="name"
+                        :search-attributes="['name']"
+                        block
+                        nullable
+                        :search="completorStore.completeDocumentCategories"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    >
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                    </UInputMenu>
+                </UFormGroup>
 
-                                            <span
-                                                v-if="selected"
-                                                :class="[
-                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                ]"
-                                            >
-                                                <CheckIcon class="size-5" />
-                                            </span>
-                                        </li>
-                                    </ComboboxOption>
-                                </ComboboxOptions>
-                            </div>
-                        </Combobox>
-                    </div>
-                </div>
                 <div>
                     <label for="contentState" class="mt-2 block text-sm font-medium">
                         {{ $t('common.content') }} {{ $t('common.state') }}
@@ -747,13 +709,11 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         @required-change="updateContentDocumentAccessEntryRequired($event)"
                     />
                     <UButton
-                        class="bg-primary-500 hover:bg-primary-400 rounded-full p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                         data-te-toggle="tooltip"
+                        icon="i-mdi-plus"
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addContentDocumentAccessEntry()"
-                    >
-                        <PlusIcon class="size-5" />
-                    </UButton>
+                    />
                 </div>
             </UCard>
 

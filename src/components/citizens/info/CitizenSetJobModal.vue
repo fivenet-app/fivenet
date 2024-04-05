@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -23,10 +21,10 @@ const { isOpen } = useModal();
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
+
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const queryJob = ref<string>('');
 const selectedJob = ref<undefined | Job>();
 const selectedJobGrade = ref<undefined | JobGrade>();
 
@@ -34,16 +32,6 @@ watch(jobs, () => {
     selectedJob.value = jobs.value.find((j) => j.name === props.user.job);
     selectedJobGrade.value = selectedJob.value?.grades.find((g) => g.grade === props.user.jobGrade);
 });
-
-const filteredJobs = computed(() =>
-    jobs.value.filter(
-        (j) =>
-            j.name.toLowerCase().includes(queryJob.value.toLowerCase()) ||
-            j.label.toLowerCase().includes(queryJob.value.toLowerCase()),
-    ),
-);
-
-const queryJobGrade = ref<string>('');
 
 interface FormData {
     reason: string;
@@ -128,134 +116,45 @@ onBeforeMount(async () => listJobs());
             </template>
 
             <div>
-                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="reason" class="block text-sm font-medium leading-6">
-                                {{ $t('common.reason') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="reason"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :placeholder="$t('common.reason')"
-                                :label="$t('common.reason')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                    <div class="my-2">
-                        <div class="flex-1">
-                            <label for="job" class="block text-sm font-medium leading-6">
-                                {{ $t('common.job') }}
-                            </label>
-                            <Combobox v-model="selectedJob" as="div" nullable>
-                                <div class="relative">
-                                    <ComboboxButton as="div">
-                                        <ComboboxInput
-                                            autocomplete="off"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :display-value="(job: any) => job.label"
-                                            @change="queryJob = $event.target.value"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </ComboboxButton>
+                <UForm :state="{}">
+                    <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')">
+                        <VeeField
+                            type="text"
+                            name="reason"
+                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            :placeholder="$t('common.reason')"
+                            :label="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                        <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                    </UFormGroup>
 
-                                    <ComboboxOptions
-                                        v-if="filteredJobs"
-                                        class="absolute z-20 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ComboboxOption
-                                            v-for="job in filteredJobs"
-                                            :key="job.name"
-                                            v-slot="{ active, selected }"
-                                            :value="job"
-                                            as="char"
-                                        >
-                                            <li
-                                                :class="[
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                    active ? 'bg-primary-500' : '',
-                                                ]"
-                                            >
-                                                <span :class="['block truncate', selected && 'font-semibold']">
-                                                    {{ job.label }}
-                                                </span>
+                    <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
+                        <USelectMenu v-model="selectedJob" :options="jobs" by="label">
+                            <template #label>
+                                <template v-if="selectedJob">
+                                    <span class="truncate">{{ selectedJob?.label }} ({{ selectedJob.name }})</span>
+                                </template>
+                            </template>
+                            <template #option="{ option: job }">
+                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
 
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ComboboxOption>
-                                    </ComboboxOptions>
-                                </div>
-                            </Combobox>
-                        </div>
-                        <div class="flex-1">
-                            <label for="jobGrade" class="block text-sm font-medium leading-6">
-                                {{ $t('common.job_grade') }}
-                            </label>
-                            <Combobox v-model="selectedJobGrade" as="div">
-                                <div class="relative">
-                                    <ComboboxButton as="div">
-                                        <ComboboxInput
-                                            autocomplete="off"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :display-value="(grade: any) => grade?.label ?? 'N/A'"
-                                            @change="queryJobGrade = $event.target.value"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </ComboboxButton>
-
-                                    <ComboboxOptions
-                                        v-if="selectedJob"
-                                        class="absolute z-20 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ComboboxOption
-                                            v-for="grade in selectedJob?.grades.filter((g) =>
-                                                g.label.toLowerCase().includes(queryJobGrade.toLowerCase()),
-                                            )"
-                                            :key="grade.grade"
-                                            v-slot="{ active, selected }"
-                                            :value="grade"
-                                            as="char"
-                                        >
-                                            <li
-                                                :class="[
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                    active ? 'bg-primary-500' : '',
-                                                ]"
-                                            >
-                                                <span :class="['block truncate', selected && 'font-semibold']">
-                                                    {{ grade.label }}
-                                                </span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ComboboxOption>
-                                    </ComboboxOptions>
-                                </div>
-                            </Combobox>
-                        </div>
-                    </div>
+                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
+                        <USelectMenu v-model="selectedJobGrade" :options="selectedJob?.grades" by="grade">
+                            <template #label>
+                                <template v-if="selectedJobGrade">
+                                    <span class="truncate">{{ selectedJobGrade?.label }} ({{ selectedJobGrade?.grade }})</span>
+                                </template>
+                            </template>
+                            <template #option="{ option: jobGrade }">
+                                <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
                 </UForm>
             </div>
 

@@ -47,8 +47,11 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const clipboardStore = useClipboardStore();
+
 const completorStore = useCompletorStore();
+
 const documentStore = useDocumentEditorStore();
+
 const notifications = useNotificatorStore();
 
 const { t } = useI18n();
@@ -757,55 +760,22 @@ const router = useRouter();
                 </UFormGroup>
 
                 <div class="flex flex-row gap-2">
-                    <UFormGroup name="category" :label="$t('common.category')" class="flex-1">
-                        <Combobox v-model="selectedCategory" as="div" :disabled="!canEdit || !canDo.edit" nullable>
-                            <div class="relative">
-                                <ComboboxButton as="div">
-                                    <ComboboxInput
-                                        autocomplete="off"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :display-value="(category: any) => category?.name"
-                                        @change="queryCategories = $event.target.value"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </ComboboxButton>
-
-                                <ComboboxOptions
-                                    v-if="entriesCategories.length > 0"
-                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                >
-                                    <ComboboxOption
-                                        v-for="category in entriesCategories"
-                                        :key="category.id"
-                                        v-slot="{ active, selected }"
-                                        :value="category"
-                                        as="category"
-                                    >
-                                        <li
-                                            :class="[
-                                                'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                active ? 'bg-primary-500' : '',
-                                            ]"
-                                        >
-                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                {{ category.name }}
-                                            </span>
-
-                                            <span
-                                                v-if="selected"
-                                                :class="[
-                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                ]"
-                                            >
-                                                <CheckIcon class="size-5" />
-                                            </span>
-                                        </li>
-                                    </ComboboxOption>
-                                </ComboboxOptions>
-                            </div>
-                        </Combobox>
+                    <UFormGroup class="flex-1" :label="$t('common.category', 1)">
+                        <UInputMenu
+                            v-model="selectedCategory"
+                            option-attribute="name"
+                            :search-attributes="['name']"
+                            block
+                            nullable
+                            :search="completorStore.completeDocumentCategories"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                        </UInputMenu>
                     </UFormGroup>
 
                     <UFormGroup name="state" :label="$t('common.state')" class="flex-1">

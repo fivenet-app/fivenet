@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -39,15 +37,14 @@ async function getRoles(): Promise<Role[]> {
 const job = ref<Job | undefined>();
 watchOnce(roles, async () => (job.value = await getJobByName(activeChar.value!.job)));
 
-const selectedJobGrade = ref<JobGrade | null>(null);
-const queryJobGradeRaw = ref('');
-const queryJobGrade = computed(() => queryJobGradeRaw.value.toLowerCase());
+const selectedJobGrade = ref<JobGrade | undefined>(undefined);
+
 const availableJobGrades = computed(
     () => job.value?.grades.filter((g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1) ?? [],
 );
 
 async function createRole(): Promise<void> {
-    if (selectedJobGrade.value === null || selectedJobGrade.value.grade <= 0) {
+    if (selectedJobGrade.value === undefined || selectedJobGrade.value.grade <= 0) {
         return;
     }
 
@@ -91,77 +88,25 @@ const selectedRole = ref<Role | undefined>();
                         <div class="sm:flex sm:items-center">
                             <div class="sm:flex-auto">
                                 <UForm :state="{}">
-                                    <div class="mx-auto flex flex-row gap-4">
-                                        <div class="flex-1">
-                                            <label for="grade" class="block text-sm font-medium leading-6">
-                                                {{ $t('common.job_grade') }}
-                                            </label>
-                                            <Combobox
-                                                v-model="selectedJobGrade"
-                                                as="div"
-                                                class="relative mt-2 flex w-full items-center"
-                                                nullable
-                                            >
-                                                <div class="relative w-full">
-                                                    <ComboboxButton as="div" class="w-full">
-                                                        <ComboboxInput
-                                                            autocomplete="off"
-                                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                            :display-value="
-                                                                (grade: any) =>
-                                                                    grade ? `${grade?.label} (${grade?.grade})` : ''
-                                                            "
-                                                            @change="queryJobGradeRaw = $event.target.value"
-                                                            @focusin="focusTablet(true)"
-                                                            @focusout="focusTablet(false)"
-                                                        />
-                                                    </ComboboxButton>
-
-                                                    <ComboboxOptions
-                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                    >
-                                                        <ComboboxOption
-                                                            v-for="grade in availableJobGrades.filter((g) =>
-                                                                g.label.toLowerCase().includes(queryJobGrade),
-                                                            )"
-                                                            v-slot="{ active, selected }"
-                                                            :key="grade.grade"
-                                                            :value="grade"
+                                    <div class="flex flex-row gap-2">
+                                        <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
+                                            <USelectMenu v-model="selectedJobGrade" :options="availableJobGrades" by="grade">
+                                                <template #label>
+                                                    <template v-if="selectedJobGrade">
+                                                        <span class="truncate"
+                                                            >{{ selectedJobGrade?.label }} ({{ selectedJobGrade?.grade }})</span
                                                         >
-                                                            <li
-                                                                :class="[
-                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                    active ? 'bg-primary-500' : '',
-                                                                ]"
-                                                            >
-                                                                <span :class="['block truncate', selected && 'font-semibold']">
-                                                                    {{ grade.label }} ({{ grade.grade }})
-                                                                </span>
+                                                    </template>
+                                                </template>
+                                                <template #option="{ option: jobGrade }">
+                                                    <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                                                </template>
+                                            </USelectMenu>
+                                        </UFormGroup>
 
-                                                                <span
-                                                                    v-if="selected"
-                                                                    :class="[
-                                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                    ]"
-                                                                >
-                                                                    <CheckIcon class="size-5" />
-                                                                </span>
-                                                            </li>
-                                                        </ComboboxOption>
-                                                    </ComboboxOptions>
-                                                </div>
-                                            </Combobox>
-                                        </div>
                                         <div class="flex flex-initial flex-col justify-end">
                                             <UButton
-                                                class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                                :disabled="selectedJobGrade === null || selectedJobGrade!.grade <= 0"
-                                                :class="[
-                                                    selectedJobGrade === null || selectedJobGrade!.grade <= 0
-                                                        ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                        : 'bg-primary-500 hover:bg-primary-400',
-                                                ]"
+                                                :disabled="selectedJobGrade === undefined || selectedJobGrade!.grade <= 0"
                                                 @click="createRole()"
                                             >
                                                 {{ $t('common.create') }}

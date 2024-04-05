@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { CheckIcon } from 'mdi-vue3';
 import AttrView from '~/components/rector/attrs/AttrView.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -35,9 +33,8 @@ async function getRoles(): Promise<Role[]> {
     }
 }
 
-const selectedJob = ref<Job | null>(null);
-const queryJobRaw = ref('');
-const queryJob = computed(() => queryJobRaw.value.toLowerCase());
+const selectedJob = ref<Job | undefined>(undefined);
+
 const availableJobs = computed(
     () => jobs.value?.filter((j) => (roles.value?.findIndex((r) => r.job === j.name) ?? -1) === -1) ?? [],
 );
@@ -89,68 +86,23 @@ onBeforeMount(async () => await listJobs());
                         <div class="sm:flex-auto">
                             <UForm :state="{}">
                                 <div class="mx-auto flex flex-row gap-4">
-                                    <div class="flex-1">
-                                        <label for="job" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.job') }}
-                                        </label>
-                                        <Combobox
-                                            v-model="selectedJob"
-                                            as="div"
-                                            class="relative mt-2 flex w-full items-center"
-                                            nullable
-                                        >
-                                            <div class="relative w-full">
-                                                <ComboboxButton as="div" class="w-full">
-                                                    <ComboboxInput
-                                                        autocomplete="off"
-                                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        :display-value="
-                                                            (job: any) => (job ? `${job?.label} (${job?.name})` : '')
-                                                        "
-                                                        @change="queryJobRaw = $event.target.value"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </ComboboxButton>
-
-                                                <ComboboxOptions
-                                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                >
-                                                    <ComboboxOption
-                                                        v-for="job in availableJobs.filter((g) =>
-                                                            g.label.toLowerCase().includes(queryJob),
-                                                        )"
-                                                        :key="job.name"
-                                                        v-slot="{ active, selected }"
-                                                        :value="job"
+                                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
+                                        <USelectMenu v-model="selectedJob" :options="availableJobs" by="label">
+                                            <template #label>
+                                                <template v-if="selectedJob">
+                                                    <span class="truncate"
+                                                        >{{ selectedJob?.label }} ({{ selectedJob.name }})</span
                                                     >
-                                                        <li
-                                                            :class="[
-                                                                'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                active ? 'bg-primary-500' : '',
-                                                            ]"
-                                                        >
-                                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                                {{ job.label }} ({{ job.name }})
-                                                            </span>
+                                                </template>
+                                            </template>
+                                            <template #option="{ option: job }">
+                                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                            </template>
+                                        </USelectMenu>
+                                    </UFormGroup>
 
-                                                            <span
-                                                                v-if="selected"
-                                                                :class="[
-                                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                ]"
-                                                            >
-                                                                <CheckIcon class="size-5" />
-                                                            </span>
-                                                        </li>
-                                                    </ComboboxOption>
-                                                </ComboboxOptions>
-                                            </div>
-                                        </Combobox>
-                                    </div>
                                     <div class="flex flex-initial flex-col justify-end">
-                                        <UButton :disabled="selectedJob === null" @click="createRole()">
+                                        <UButton :disabled="selectedJob === undefined" @click="createRole()">
                                             {{ $t('common.create') }}
                                         </UButton>
                                     </div>

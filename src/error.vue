@@ -11,6 +11,8 @@ const props = defineProps<{
     error: Error | Object;
 }>();
 
+const route = useRoute();
+
 const buttonDisabled = ref(true);
 
 function handleError(url?: string): void {
@@ -42,7 +44,7 @@ function startButtonTimer(): void {
     setTimeout(() => (buttonDisabled.value = false), 2000);
 }
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     startButtonTimer();
 });
 </script>
@@ -99,7 +101,7 @@ onBeforeMount(() => {
                                 {{ $t('common.home') }}
                             </UButton>
 
-                            <UButton :disabled="buttonDisabled" size="xl" @click="handleError(useRoute().fullPath)">
+                            <UButton :disabled="buttonDisabled" size="xl" @click="handleError(route.fullPath)">
                                 {{ $t('common.retry') }}
                             </UButton>
 

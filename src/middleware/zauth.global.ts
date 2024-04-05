@@ -25,7 +25,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             if (lastCharID.value > 0) {
                 const { setActiveChar, setPermissions, setJobProps } = authStore;
                 try {
-                    await authStore.chooseCharacter(authStore.lastCharID);
+                    await authStore.chooseCharacter(authStore.lastCharID, redirect.toString());
                 } catch (e) {
                     setActiveChar(null);
                     setPermissions([]);

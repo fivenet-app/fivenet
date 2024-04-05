@@ -124,7 +124,7 @@ export const useAuthStore = defineStore('auth', {
                 throw e;
             }
         },
-        async chooseCharacter(charId?: number): Promise<void> {
+        async chooseCharacter(charId?: number, redirect?: string): Promise<void> {
             if (charId === undefined) {
                 charId = this.lastCharID;
             }
@@ -146,9 +146,8 @@ export const useAuthStore = defineStore('auth', {
                 this.setPermissions(response.permissions);
                 this.setJobProps(response.jobProps);
 
-                const route = useRoute();
-                if (route.query.redirect !== undefined) {
-                    const path = route.query.redirect?.toString() || '/overview';
+                if (redirect !== undefined) {
+                    const path = redirect || '/overview';
                     const url = new URL('https://example.com' + path);
                     // @ts-ignore the route should be valid, as we test it against a valid URL list
                     await navigateTo({
