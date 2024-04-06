@@ -24,7 +24,7 @@ const route = useRoute('jobs-qualifications-id-edit');
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.qualifications.edit.title')"> </UDashboardNavbar>
 
-            <QualificationEditor :id="route.params.id" />
+            <QualificationEditor :qualification-id="route.params.id" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

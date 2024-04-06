@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { max, min, required } from '@vee-validate/rules';
-import { ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { type TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';
@@ -27,7 +26,7 @@ import { checkDocAccess } from '~/components/documents/helpers';
 import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
-    id?: string;
+    documentId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -87,18 +86,16 @@ const access = ref<
 const docAccess = ref<DocumentAccess>();
 const docCreator = ref<UserShort | undefined>();
 
-const relationManagerShow = ref<boolean>(false);
+const openRelationManager = ref<boolean>(false);
 const relationManagerData = ref<Map<string, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
 watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
-const referenceManagerShow = ref<boolean>(false);
+const openReferenceManager = ref<boolean>(false);
 const referenceManagerData = ref<Map<string, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 
-const entriesCategories = ref<Category[]>([]);
-const queryCategories = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
 
 const templateId = ref<undefined | string>();
@@ -169,9 +166,9 @@ onMounted(async () => {
 
             return;
         }
-    } else if (props.id) {
+    } else if (props.documentId) {
         try {
-            const req = { documentId: props.id };
+            const req = { documentId: props.documentId };
             const call = $grpc.getDocStoreClient().getDocument(req);
             const { response } = await call;
             const document = response.document;
@@ -256,7 +253,7 @@ onMounted(async () => {
         const id = i.toString();
         referenceManagerData.value.set(id, {
             id,
-            sourceDocumentId: props.id ?? '0',
+            sourceDocumentId: props.documentId ?? '0',
             targetDocumentId: doc.id!,
             targetDocument: getDocument(doc),
             creatorId: activeChar.value!.userId,
@@ -268,7 +265,7 @@ onMounted(async () => {
         const id = i.toString();
         relationManagerData.value.set(id, {
             id,
-            documentId: props.id ?? '0',
+            documentId: props.documentId ?? '0',
             targetUserId: user.userId!,
             targetUser: getUser(user),
             sourceUserId: activeChar.value!.userId,
@@ -278,8 +275,6 @@ onMounted(async () => {
     });
 
     canEdit.value = true;
-
-    findCategories();
 });
 
 const saving = ref(false);
@@ -303,12 +298,6 @@ async function saveToStore(values: FormData): Promise<void> {
     }, 1250);
 }
 
-async function findCategories(): Promise<void> {
-    entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
-    if (selectedCategory.value && entriesCategories.value.findIndex((c) => c.id === selectedCategory.value?.id) !== 0)
-        entriesCategories.value.push(selectedCategory.value);
-}
-
 const changed = ref(false);
 
 defineRule('required', required);
@@ -329,10 +318,10 @@ const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(async (values): Promise<void> => {
     let prom: Promise<void>;
-    if (props.id === undefined) {
+    if (props.documentId === undefined) {
         prom = createDocument(values, doc.value.closed.closed);
     } else {
-        prom = updateDocument(props.id, values, doc.value.closed.closed);
+        prom = updateDocument(props.documentId, values, doc.value.closed.closed);
     }
 
     await prom.finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -367,11 +356,6 @@ watchDebounced(
         maxWait: 3500,
     },
 );
-
-watchDebounced(queryCategories, async () => findCategories(), {
-    debounce: 600,
-    maxWait: 1400,
-});
 
 const accessTypes = [
     { id: 0, name: t('common.citizen', 2) },
@@ -664,11 +648,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
 const canDo = computed(() => ({
     edit:
-        props.id === undefined
+        props.documentId === undefined
             ? true
             : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
     access:
-        props.id === undefined
+        props.documentId === undefined
             ? true
             : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
     references: can('DocStoreService.AddDocumentReference'),
@@ -705,7 +689,7 @@ const router = useRouter();
                         :loading="!canSubmit"
                         @click="onSubmitThrottle"
                     >
-                        <template v-if="!id">
+                        <template v-if="!documentId">
                             {{ $t('common.create') }}
                         </template>
                         <template v-else>
@@ -717,15 +701,15 @@ const router = useRouter();
 
             <DocumentRelationManager
                 v-model="relationManagerData"
-                :open="relationManagerShow"
-                :document="id"
-                @close="relationManagerShow = false"
+                :open="openRelationManager"
+                :document="documentId"
+                @close="openRelationManager = false"
             />
             <DocumentReferenceManager
                 v-model="referenceManagerData"
-                :open="referenceManagerShow"
-                :document-id="id"
-                @close="referenceManagerShow = false"
+                :open="openReferenceManager"
+                :document-id="documentId"
+                @close="openReferenceManager = false"
             />
 
             <div class="flex flex-col gap-2">
@@ -825,7 +809,7 @@ const router = useRouter();
                     class="flex-1"
                     :disabled="!canEdit || !canDo.edit"
                     icon="i-mdi-account-multiple"
-                    @click="relationManagerShow = true"
+                    @click="openRelationManager = true"
                 >
                     {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
                 </UButton>
@@ -834,7 +818,7 @@ const router = useRouter();
                     class="flex-1"
                     :disabled="!canEdit || !canDo.edit"
                     icon="i-mdi-file-document"
-                    @click="referenceManagerShow = true"
+                    @click="openReferenceManager = true"
                 >
                     {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
                 </UButton>

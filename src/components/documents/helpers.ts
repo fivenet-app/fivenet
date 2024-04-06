@@ -1,6 +1,8 @@
+import type { ButtonColor } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export function checkDocAccess(
@@ -90,4 +92,64 @@ function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, pe
     }
 
     return false;
+}
+
+// Document Refernces
+
+export function refToIcon(ref: DocReference): string {
+    switch (ref) {
+        case DocReference.LINKED:
+            return 'i-mdi-link';
+        case DocReference.SOLVES:
+            return 'i-mdi-check';
+        case DocReference.CLOSES:
+            return 'i-mdi-close-box';
+        case DocReference.DEPRECATES:
+            return 'i-mdi-lock-clock';
+        default:
+            return 'i-mdi-question-mark';
+    }
+}
+
+export function refToColor(ref: DocReference): ButtonColor {
+    switch (ref) {
+        case DocReference.LINKED:
+            return 'blue';
+        case DocReference.SOLVES:
+            return 'green';
+        case DocReference.CLOSES:
+            return 'red';
+        case DocReference.DEPRECATES:
+            return 'amber';
+        default:
+            return 'black';
+    }
+}
+
+// Document Relations
+
+export function relationToIcon(ref: DocRelation): string {
+    switch (ref) {
+        case DocRelation.MENTIONED:
+            return 'i-mdi-at';
+        case DocRelation.TARGETS:
+            return 'i-mdi-target';
+        case DocRelation.CAUSED:
+            return 'i-mdi-source-commit-start';
+        default:
+            return 'i-mdi-question-mark';
+    }
+}
+
+export function relationToColor(ref: DocRelation): ButtonColor {
+    switch (ref) {
+        case DocRelation.MENTIONED:
+            return 'blue';
+        case DocRelation.TARGETS:
+            return 'amber';
+        case DocRelation.CAUSED:
+            return 'red';
+        default:
+            return 'black';
+    }
 }

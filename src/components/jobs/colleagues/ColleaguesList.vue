@@ -25,7 +25,7 @@ const query = ref<{
 });
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const {
     data,
@@ -114,7 +114,7 @@ const modal = useModal();
     <div class="py-2 pb-4">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <UForm :state="{}" class="flex w-full gap-2" @submit.prevent="refresh()">
+                <UForm :state="{}" class="flex w-full gap-2">
                     <UFormGroup class="flex-1" :label="$t('common.colleague', 1)">
                         <UInput
                             v-model="query.name"
@@ -126,6 +126,7 @@ const modal = useModal();
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
+
                     <UFormGroup :label="$t('common.absent')">
                         <UToggle v-model="query.absent">
                             <span class="sr-only">

@@ -21,7 +21,7 @@ import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 
 const props = defineProps<{
-    id?: string;
+    qualificationId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -84,10 +84,10 @@ const access = ref<
 const qualiAccess = ref<QualificationAccess>();
 
 onMounted(async () => {
-    if (props.id) {
+    if (props.qualificationId) {
         try {
             const call = $grpc.getQualificationsClient().getQualification({
-                qualificationId: props.id,
+                qualificationId: props.qualificationId,
             });
             const { response } = await call;
 
@@ -213,7 +213,7 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
 async function updateQualification(values: FormData): Promise<UpdateQualificationResponse> {
     const req = {
         qualification: {
-            id: props.id!,
+            id: props.qualificationId!,
             job: '',
             weight: 0,
             closed: quali.value.closed.closed,
@@ -245,7 +245,7 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
 
             req.qualification.access.jobs.push({
                 id: '0',
-                qualificationId: props.id!,
+                qualificationId: props.qualificationId!,
                 job: entry.values.job,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
@@ -289,7 +289,7 @@ const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
 
 const canSubmit = ref(true);
 const onSubmit = handleSubmit(async (values): Promise<any> => {
-    if (props.id === undefined) {
+    if (props.qualificationId === undefined) {
         await createQualification(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
     } else {
         await updateQualification(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -375,7 +375,7 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
         return;
     }
 
-    quali.value.requirements[idx].qualificationId = props.id ?? '0';
+    quali.value.requirements[idx].qualificationId = props.qualificationId ?? '0';
     quali.value.requirements[idx].targetQualificationId = qualification.id;
 }
 
@@ -488,10 +488,9 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     @delete-request="removeQualificationAccessEntry($event)"
                 />
                 <UButton
+                    :ui="{ rounded: 'rounded-full' }"
                     :disabled="!canEdit || !canDo.access"
-                    class="bg-primary-500 hover:bg-primary-400 rounded-full p-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     icon="i-mdi-plus"
-                    data-te-toggle="tooltip"
                     :title="$t('components.documents.document_editor.add_permission')"
                     @click="addQualificationAccessEntry()"
                 />
@@ -511,7 +510,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 />
 
                 <UButton
-                    class="mt-2 rounded-full p-1.5 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                    :ui="{ rounded: 'rounded-full' }"
                     :disabled="!canSubmit"
                     icon="i-mdi-plus"
                     @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
@@ -563,7 +562,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     :loading="!canSubmit"
                     @click="onSubmitThrottle"
                 >
-                    <template v-if="!id">
+                    <template v-if="!qualificationId">
                         {{ $t('common.create') }}
                     </template>
                     <template v-else>

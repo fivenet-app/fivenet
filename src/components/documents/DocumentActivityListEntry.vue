@@ -1,26 +1,5 @@
 <script lang="ts" setup>
-import {
-    AccountMultipleIcon,
-    ChevronDownIcon,
-    CommentEditIcon,
-    CommentPlusIcon,
-    DeleteCircleIcon,
-    DeleteCircleOutlineIcon,
-    FileAccountIcon,
-    FileMultipleIcon,
-    FileSwapOutlineIcon,
-    HelpIcon,
-    LockCheckIcon,
-    LockIcon,
-    LockOpenIcon,
-    LockOpenOutlineIcon,
-    LockPlusOutlineIcon,
-    LockQuestionIcon,
-    NewBoxIcon,
-    RefreshCircleIcon,
-    TrashCanIcon,
-    UpdateIcon,
-} from 'mdi-vue3';
+import { ChevronDownIcon } from 'mdi-vue3';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';

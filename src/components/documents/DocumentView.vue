@@ -199,17 +199,18 @@ const accordionItems = [
 
 <template>
     <div>
-        <UDashboardNavbar>
-            <template #left>
-                {{ $t('pages.documents.id.title') }}
-            </template>
+        <UDashboardNavbar :title="$t('pages.documents.id.title')">
             <template #right>
-                <IDCopyBadge
-                    :id="doc?.id ?? documentId"
-                    prefix="DOC"
-                    :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                    :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                />
+                <UButtonGroup>
+                    <IDCopyBadge
+                        :id="doc?.id ?? documentId"
+                        prefix="DOC"
+                        :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                        :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                    />
+
+                    <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
+                </UButtonGroup>
             </template>
         </UDashboardNavbar>
 
@@ -494,8 +495,6 @@ const accordionItems = [
             </UCard>
         </template>
     </div>
-
-    <AddToButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />
 </template>
 
 <style scoped>

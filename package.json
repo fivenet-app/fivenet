@@ -58,7 +58,8 @@
         "v-calendar": "^3.1.2",
         "vee-validate": "4.12.6",
         "vue-color-input": "1.0.8",
-        "vue-json-pretty": "2.4.0"
+        "vue-json-pretty": "2.4.0",
+        "zod": "^3.22.4"
     },
     "devDependencies": {
         "@dargmuesli/nuxt-cookie-control": "8.1.0",

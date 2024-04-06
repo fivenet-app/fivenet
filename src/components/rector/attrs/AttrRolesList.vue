@@ -85,7 +85,7 @@ onBeforeMount(async () => await listJobs());
                     <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
                         <div class="sm:flex-auto">
                             <UForm :state="{}">
-                                <div class="mx-auto flex flex-row gap-4">
+                                <div class="flex flex-row gap-2">
                                     <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
                                         <USelectMenu v-model="selectedJob" :options="availableJobs" by="label">
                                             <template #label>

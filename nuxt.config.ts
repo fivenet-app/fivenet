@@ -139,16 +139,18 @@ export default defineNuxtConfig({
         locales: [
             {
                 name: 'English',
+                dir: 'ltr',
+                isCatchallLocale: true,
                 code: 'en',
                 iso: 'en',
-                file: 'en-US.json',
+                files: ['en-US.json'],
                 icon: 'i-flagpack-gb-ukm',
             },
             {
                 name: 'German',
                 code: 'de',
                 iso: 'de',
-                file: 'de-DE.json',
+                files: ['de-DE.json'],
                 icon: 'i-flagpack-de',
             },
         ],

@@ -4,7 +4,6 @@ import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citize
 import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { BulletinBoardIcon } from 'mdi-vue3';
 
 const { $grpc } = useNuxtApp();
 
@@ -13,7 +12,7 @@ const props = defineProps<{
 }>();
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${page.value}`, () =>
     listUserActivity(),

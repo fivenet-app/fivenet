@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { FingerprintIcon } from 'mdi-vue3';
 import { type TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -38,10 +37,11 @@ function click(): void {
 
 <template>
     <UButton
-        class="inline-flex flex-initial flex-row items-center gap-1 rounded-full bg-gray-600 px-2 py-1"
-        @click.prevent="click"
+        :ui="{ round: 'rounded-md' }"
+        :icon="hideIcon === undefined || !hideIcon ? 'i-mdi-fingerprint' : undefined"
+        class="break-keep"
+        @click="click"
     >
-        <FingerprintIcon v-if="hideIcon === undefined || !hideIcon" class="h-auto w-5" />
-        <span class="break-keep text-sm font-medium">{{ prefix }}-{{ id }}</span>
+        {{ prefix }}-{{ id }}
     </UButton>
 </template>

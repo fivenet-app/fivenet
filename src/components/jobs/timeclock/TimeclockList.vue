@@ -43,7 +43,7 @@ const query = ref<{
 const usersLoading = ref(false);
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
@@ -165,7 +165,7 @@ function updateDates(): void {
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
                     <UForm :state="{}" @submit.prevent="refresh()">
-                        <div class="mx-auto flex flex-row gap-4">
+                        <div class="flex flex-row gap-2">
                             <UFormGroup v-if="canAccessAll" class="flex-1" :label="$t('common.colleague', 2)">
                                 <UInputMenu
                                     v-model="query.user"

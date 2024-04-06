@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { TicketIcon } from 'mdi-vue3';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -13,7 +12,7 @@ const props = defineProps<{
 const { $grpc } = useNuxtApp();
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () =>
     listDocumentActivity(),

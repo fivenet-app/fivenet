@@ -1,8 +1,7 @@
 <script lang="ts" setup>
-import { InformationSlabCircleIcon } from 'mdi-vue3';
 import { type RoutesNamedLocations } from '@typed-router';
 
-type Hint = { id: string; keyboard?: boolean; link?: RoutesNamedLocations };
+type Hint = { id: string; keyboard?: boolean; to?: RoutesNamedLocations };
 
 const hints = shuffle([
     {
@@ -11,36 +10,41 @@ const hints = shuffle([
     },
     {
         id: 'startpage',
-        link: { name: 'settings' },
+        to: { name: 'settings' },
     },
     {
         id: 'documenteditor',
-        link: { name: 'settings' },
+        to: { name: 'settings' },
     },
 ] as Hint[]);
 </script>
 
 <template>
-    <UCard>
+    <UCard
+        :ui="{
+            body: { padding: 'px-2 py-3 sm:p-4' },
+            header: { padding: 'px-2 py-3 sm:p-4' },
+            footer: { padding: 'px-2 py-2 sm:p-4' },
+        }"
+    >
         <template #header>
-            <div class="inline-flex items-center">
-                <InformationSlabCircleIcon class="size-7" />
-                <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
-            </div>
+            <UIcon name="i-mdi-information-slab-circle" class="size-6" />
+            <strong class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
         </template>
 
-        <UCarousel :items="hints" :ui="{ item: 'basis-full' }" arrows class="mx-auto">
+        <UCarousel :items="hints" :ui="{ item: 'basis-full' }" arrows>
             <template #default="{ item: hint }">
-                <div class="mx-2 mb-4 flex items-center gap-1 text-base">
+                <div class="mx-auto mb-2 flex items-center gap-1 text-base">
                     <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }}</span>
-                    <div class="self-end">
+
+                    <template v-if="hint.keyboard || hint.to">
                         <UKbd v-if="hint.keyboard" size="md">
                             {{ $t(`components.hints.${hint.id}.keyboard`) }}
                         </UKbd>
-                        <UButton v-else-if="hint.link" variant="link" :to="hint.link" class="underline">
+                        <UButton v-else-if="hint.to" variant="link" :to="hint.to">
                             {{ $t('components.hints.click_me') }}
                         </UButton>
-                    </div>
+                    </template>
                 </div>
             </template>
 

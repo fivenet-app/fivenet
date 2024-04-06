@@ -27,7 +27,7 @@ const selectedUsersIds = computed(() =>
 );
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `jobs-colleague-${selectedUsersIds.value.join(',')}-${page.value}`,
@@ -114,7 +114,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
             >
                 <div class="sm:flex-auto">
                     <form @submit.prevent="refresh()">
-                        <div class="mx-auto flex flex-row gap-4">
+                        <div class="flex flex-row gap-2">
                             <div class="flex-1">
                                 <label for="selectedUsers" class="block text-sm font-medium leading-6">
                                     {{ $t('common.colleague', 1) }}

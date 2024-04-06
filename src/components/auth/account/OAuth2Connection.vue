@@ -40,11 +40,7 @@ const modal = useModal();
         <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
             <div v-if="account !== undefined" class="flex items-center justify-between">
                 <div class="inline-flex items-center gap-4">
-                    <img
-                        :src="account.avatar"
-                        alt="Avatar"
-                        class="size-10 rounded-full bg-base-800 fill-base-300 ring-2 hover:transition-colors"
-                    />
+                    <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" />
 
                     <span class="text-left" :title="`ID: ${account.externalId}`">
                         {{ account.username }}

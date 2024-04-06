@@ -602,7 +602,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         />
                         <UButton
                             icon="i-mdi-plus"
-                            data-te-toggle="tooltip"
                             :title="$t('components.documents.document_editor.add_permission')"
                             @click="addDocumentAccessEntry()"
                         />
@@ -709,7 +708,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         @required-change="updateContentDocumentAccessEntryRequired($event)"
                     />
                     <UButton
-                        data-te-toggle="tooltip"
                         icon="i-mdi-plus"
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addContentDocumentAccessEntry()"

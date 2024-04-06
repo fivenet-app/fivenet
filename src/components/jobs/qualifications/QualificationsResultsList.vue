@@ -22,7 +22,7 @@ const props = withDefaults(
 const { $grpc } = useNuxtApp();
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `qualifications-results-${page.value}-${props.qualificationId}-${props.userId}`,

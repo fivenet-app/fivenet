@@ -233,7 +233,6 @@ watch(selectedAccessRole, () => {
                 :disabled="readOnly"
                 :title="$t('common.require')"
                 name="required"
-                data-te-toggle="tooltip"
                 :class="readOnly ? 'disabled' : ''"
             />
         </div>

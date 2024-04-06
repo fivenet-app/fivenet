@@ -26,7 +26,7 @@ const openclose: OpenClose[] = [
 ];
 
 const query = ref<{
-    id?: string;
+    documentIds?: string;
     title?: string;
     creator?: UserShort;
     from?: Date;
@@ -40,7 +40,7 @@ const queryClosed = ref<OpenClose>(openclose[0]);
 const usersLoading = ref(false);
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
 
@@ -61,8 +61,8 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     if (query.value.creator) {
         req.creatorIds.push(query.value.creator.userId);
     }
-    if (query.value.id) {
-        const id = query.value.id.trim().replaceAll('-', '').replace(/\D/g, '');
+    if (query.value.documentIds) {
+        const id = query.value.documentIds.trim().replaceAll('-', '').replace(/\D/g, '');
         if (id.length > 0) {
             req.documentIds.push(id);
         }
@@ -130,7 +130,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                         <div class="flex flex-row flex-wrap gap-1">
                             <UFormGroup class="flex-1" :label="`${$t('common.document')} ${$t('common.id')}`">
                                 <UInput
-                                    v-model="query.id"
+                                    v-model="query.documentIds"
                                     type="text"
                                     name="search"
                                     placeholder="DOC-..."

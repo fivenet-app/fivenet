@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import DocumentList from '~/components/documents/DocumentList.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 
@@ -37,7 +36,6 @@ const modal = useModal();
             </UDashboardNavbar>
 
             <DocumentList />
-            <ClipboardButton />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

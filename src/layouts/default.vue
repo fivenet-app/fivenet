@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { DashboardSidebarLink } from '@nuxt/ui-pro/types';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
+import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import { useAuthStore } from '~/store/auth';
@@ -305,9 +306,16 @@ const groups = [
 
 const modal = useModal();
 
+const router = useRouter();
+
 const quickAccessButtons = computed<DashboardSidebarLink[]>(
     () =>
         [
+            {
+                label: t('common.clipboard'),
+                icon: 'i-mdi-clipboard-list-outline',
+                click: () => modal.open(ClipboardModal, {}),
+            },
             jobProps.value?.quickButtons?.penaltyCalculator
                 ? {
                       label: t('components.penaltycalculator.title'),

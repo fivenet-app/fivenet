@@ -43,7 +43,7 @@ function goto(e: Coordinate) {
         </UDashboardNavbar>
 
         <UMain>
-            <div class="relative size-full">
+            <div class="relative z-0 size-full">
                 <div
                     v-if="error !== undefined || (abort === undefined && !reconnecting)"
                     class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"

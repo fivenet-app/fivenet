@@ -13,7 +13,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const features = [
+const items = [
     {
         title: `${t('common.citizen', 2)} ${t('common.search')}`,
         description: t('pages.overview.features.citizens'),
@@ -76,7 +76,7 @@ const features = [
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.overview')"> </UDashboardNavbar>
 
-            <CardsList class="mt-2" :items="features" />
+            <CardsList class="mt-2" :items="items" />
 
             <FiveNetHints class="m-2" />
         </UDashboardPanel>

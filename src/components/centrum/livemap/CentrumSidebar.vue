@@ -315,7 +315,7 @@ async function checkup(): Promise<void> {
         </UDashboardNavbar>
 
         <UMain>
-            <div class="relative size-full">
+            <div class="relative z-0 size-full">
                 <LivemapBase @goto="$emit('goto', $event)">
                     <template v-if="canStream" #default>
                         <DispatchesLayer

@@ -284,7 +284,7 @@ const accordionCategories = computed(() =>
                                     :key="perm.id"
                                     class="flex flex-col gap-2"
                                 >
-                                    <div class="flex flex-row gap-4">
+                                    <div class="flex flex-row gap-2">
                                         <div class="my-auto flex flex-1 flex-col">
                                             <span :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}

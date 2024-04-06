@@ -123,6 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             icon="i-mdi-pencil"
                             @click="editing = true"
                         />
+
                         <UButton
                             v-if="can('DocStoreService.DeleteComment')"
                             variant="link"
@@ -140,52 +141,35 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 </p>
             </div>
         </div>
+
         <template v-else>
             <div v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
                     <UForm :state="{}" class="relative">
-                        <div
-                            class="focus-within:ring-primary-600 overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2"
-                        >
-                            <label for="comment" class="sr-only">
-                                {{ $t('components.documents.document_comment_entry.edit_comment') }}
-                            </label>
+                        <div>
                             <VeeField
+                                v-slot="{ handleChange, value }"
                                 ref="commentInput"
-                                as="textarea"
                                 rows="3"
                                 name="comment"
                                 :label="$t('common.comment')"
-                                :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
                                 class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
-                            />
-
-                            <!-- Spacer element to match the height of the toolbar -->
-                            <div class="py-2">
-                                <!-- Matches height of button in toolbar (1px border + 36px content height) -->
-                                <div class="py-px">
-                                    <div class="h-9" />
-                                    <div class="ml-2">
-                                        <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-                                </div>
-                            </div>
+                            >
+                                <UTextarea
+                                    :placeholder="$t('components.documents.document_comments.add_comment')"
+                                    :model-value="value"
+                                    @change="handleChange"
+                                />
+                            </VeeField>
+                            <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
                         </div>
 
-                        <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
-                            <div class="flex items-center space-x-5"></div>
-                            <div class="shrink-0">
-                                <UButton
-                                    class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :disabled="!meta.valid || !canSubmit"
-                                    :loading="!canSubmit"
-                                    @click="onSubmitThrottle"
-                                >
-                                    {{ $t('common.edit') }}
-                                </UButton>
-                            </div>
+                        <div class="mt-2 shrink-0">
+                            <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                                {{ $t('common.edit') }}
+                            </UButton>
                         </div>
                     </UForm>
                 </div>

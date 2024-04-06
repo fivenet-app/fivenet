@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { AccountAlertIcon, AccountCancelIcon, LicenseIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
-import CitizenSetJobModal from '~/components/citizens/info/CitizenSetJobModal.vue';
+import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
-import CitizenSetTrafficPointsModal from '~/components/citizens/info/CitizenSetTrafficPointsModal.vue';
-import CitizenSetWantedModal from '~/components/citizens/info/CitizenSetWantedModal.vue';
+import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/CitizenSetTrafficPointsModal.vue';
+import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { useNotificatorStore } from '~/store/notificator';
-import CitizenSetMugShotModal from '~/components/citizens/info/CitizenSetMugShotModal.vue';
+import CitizenSetMugShotModal from '~/components/citizens/info/props/CitizenSetMugShotModal.vue';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 
 const props = defineProps<{

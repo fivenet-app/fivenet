@@ -44,7 +44,7 @@ const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstnam
     <div class="flex w-full items-center justify-items-center gap-2">
         <UButton
             :icon="getCurrentMode !== CentrumMode.AUTO_ROUND_ROBIN ? 'i-mdi-monitor' : 'i-mdi-robot'"
-            :color="getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'primary' : disponents.length === 0 ? 'amber' : 'green'"
+            :color="getCurrentMode === CentrumMode.AUTO_ROUND_ROBIN ? 'gray' : disponents.length === 0 ? 'amber' : 'green'"
             truncate
             :title="disponentsNames"
             @click="modal.open(DisponentsModal, {})"

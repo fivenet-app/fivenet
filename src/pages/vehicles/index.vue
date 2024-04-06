@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import VehiclesList from '~/components/vehicles/VehiclesList.vue';
 
 useHead({
@@ -18,7 +17,6 @@ definePageMeta({
             <UDashboardNavbar :title="$t('pages.vehicles.title')"> </UDashboardNavbar>
 
             <VehiclesList />
-            <ClipboardButton />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

@@ -24,8 +24,8 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
 <template>
     <UCard :key="char.userId" class="mx-4 flex w-full min-w-[28rem] max-w-md flex-col rounded-lg bg-base-800">
         <template #header>
-            <div class="flex">
-                <div class="mx-auto flex flex-row items-center gap-2">
+            <div class="flex flex-col">
+                <div class="mx-auto inline-flex items-center gap-2">
                     <ProfilePictureImg :url="char.avatar?.url" :name="`${char.firstname} ${char.lastname}`" :no-blur="true" />
 
                     <h2 class="text-center text-2xl font-medium">{{ char.firstname }} {{ char.lastname }}</h2>
@@ -34,19 +34,17 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
         </template>
 
         <dl class="flex grow flex-col justify-between text-center">
-            <dd class="mb-2 inline-flex items-center justify-center gap-1">
+            <dd class="mb-1 flex items-center justify-center gap-2">
                 <CharSexBadge :sex="char.sex!" />
-                <span
-                    class="inline-flex items-center truncate rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800"
-                    >{{ char.jobLabel }} ({{ char.jobGradeLabel }})</span
-                >
-                <span
-                    v-if="lastCharID === char.userId"
-                    class="truncate rounded-full bg-success-100 px-3 py-0.5 text-center text-sm font-medium text-success-800"
-                >
+
+                <UBadge v-if="lastCharID === char.userId" class="flex-initial" size="md" variant="subtle">
                     {{ $t('common.last_used') }}
-                </span>
+                </UBadge>
             </dd>
+            <dt class="text-sm font-medium">
+                {{ $t('common.job') }}
+            </dt>
+            <dd class="text-sm text-gray-300">{{ char.jobLabel }} ({{ char.jobGradeLabel }})</dd>
             <dt class="text-sm font-medium">
                 {{ $t('common.date_of_birth') }}
             </dt>

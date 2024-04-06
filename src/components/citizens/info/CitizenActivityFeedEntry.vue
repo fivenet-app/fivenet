@@ -45,14 +45,14 @@ const props = defineProps<{
                             </template>
                         </span>
                         <span class="font-semibold">
-                            <NuxtLink
+                            <UButton
                                 :to="{
                                     name: 'documents-id',
                                     params: { id: activity.newValue !== '' ? activity.newValue : activity.oldValue },
                                 }"
                             >
                                 {{ $t('common.document', 1) }}
-                            </NuxtLink>
+                            </UButton>
                         </span>
                         <IDCopyBadge :id="activity.newValue !== '' ? activity.newValue : activity.oldValue" prefix="DOC" />
                     </h3>

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import ClipboardButton from '~/components/clipboard/ClipboardButton.vue';
 import DocumentEditor from '~/components/documents/DocumentEditor.vue';
 
 useHead({
@@ -18,8 +17,6 @@ definePageMeta({
             <UDashboardNavbar :title="$t('pages.documents.create.title')"> </UDashboardNavbar>
 
             <DocumentEditor />
-
-            <ClipboardButton />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

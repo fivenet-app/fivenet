@@ -15,7 +15,7 @@ const props = defineProps<{
 }>();
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${page.value}`, () =>
     listUserDocuments(),

@@ -31,7 +31,7 @@ const showRadioFrequency = ref(false);
                         <div class="flex flex-row gap-2">
                             <UCard class="flex-1">
                                 <template #header>
-                                    <div class="flex flex-row gap-4">
+                                    <div class="flex flex-row gap-2">
                                         <SquareImg
                                             v-if="jobProps && jobProps.logoUrl"
                                             :url="jobProps?.logoUrl.url"

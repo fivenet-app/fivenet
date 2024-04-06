@@ -13,7 +13,7 @@ definePageMeta({
     permission: 'RectorService.GetRoles',
 });
 
-const features = [
+const items = [
     {
         title: t('components.rector.job_props.job_properties'),
         description: t('pages.rector.features.properties'),
@@ -71,7 +71,7 @@ const features = [
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.control_panel')"> </UDashboardNavbar>
 
-            <CardsList :items="features" />
+            <CardsList class="mt-2" :items="items" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

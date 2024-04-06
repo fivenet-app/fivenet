@@ -33,7 +33,7 @@ const query = ref<{ plate: string; model?: string; user_id?: number }>({
 });
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data: data, pending: loading, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
 

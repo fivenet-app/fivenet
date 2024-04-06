@@ -29,7 +29,7 @@ const query = ref<{ postal?: string; id: string }>({
 });
 
 const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * page.value : 0));
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
 
@@ -99,7 +99,7 @@ onBeforeUnmount(() => {
                                     <div class="border-neutral/20 border-b-2 pb-2 sm:flex sm:items-center">
                                         <div class="sm:flex-auto">
                                             <UForm :state="{}" @submit.prevent="refresh()">
-                                                <div class="mx-auto flex flex-row gap-4">
+                                                <div class="flex flex-row gap-2">
                                                     <div class="flex-1">
                                                         <label for="search" class="block text-sm font-medium leading-6">
                                                             {{ $t('common.postal') }}
