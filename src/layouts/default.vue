@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { DashboardSidebarLink } from '@nuxt/ui-pro/types';
+import type { Group } from '#ui/types';
 import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
@@ -97,7 +98,7 @@ const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })
                     to: '/jobs/qualifications',
                     permission: 'JobsConductService.ListConductEntries' as Perms,
                 },
-            ].filter((l) => l.permission === undefined || can(l.permission)),
+            ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
         },
         {
             label: t('common.livemap'),
@@ -302,35 +303,34 @@ const groups = [
             }
         },
     },
-];
+] as Group[];
 
 const modal = useModal();
 
-const router = useRouter();
-
-const quickAccessButtons = computed<DashboardSidebarLink[]>(
-    () =>
-        [
-            {
-                label: t('common.clipboard'),
-                icon: 'i-mdi-clipboard-list-outline',
-                click: () => modal.open(ClipboardModal, {}),
-            },
-            jobProps.value?.quickButtons?.penaltyCalculator
-                ? {
-                      label: t('components.penaltycalculator.title'),
-                      icon: 'i-mdi-calculator',
-                      click: () => modal.open(PenaltyCalculatorModal, {}),
-                  }
-                : undefined,
-            jobProps.value?.quickButtons?.bodyCheckup
-                ? {
-                      label: t('components.bodycheckup.title'),
-                      icon: 'i-mdi-human',
-                      click: () => modal.open(BodyCheckupModal, {}),
-                  }
-                : undefined,
-        ].filter((c) => c !== undefined) as DashboardSidebarLink[],
+const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
+    [
+        activeChar.value
+            ? {
+                  label: t('common.clipboard'),
+                  icon: 'i-mdi-clipboard-list-outline',
+                  click: () => modal.open(ClipboardModal, {}),
+              }
+            : undefined,
+        jobProps.value?.quickButtons?.penaltyCalculator
+            ? {
+                  label: t('components.penaltycalculator.title'),
+                  icon: 'i-mdi-calculator',
+                  click: () => modal.open(PenaltyCalculatorModal, {}),
+              }
+            : undefined,
+        jobProps.value?.quickButtons?.bodyCheckup
+            ? {
+                  label: t('components.bodycheckup.title'),
+                  icon: 'i-mdi-human',
+                  click: () => modal.open(BodyCheckupModal, {}),
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
 

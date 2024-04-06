@@ -59,14 +59,14 @@ const modal = useModal();
                     {{ $t('common.disconnect') }}
                 </UButton>
             </div>
-            <div v-else>
+            <div v-else class="flex flex-row-reverse">
                 <template v-if="isNUIAvailable()">
                     <p class="ml-4 text-end text-sm">
                         {{ $t('system.not_supported_on_tablet.title') }}
                     </p>
                 </template>
                 <template v-else>
-                    <OAuth2ConnectButton :provider="provider" />
+                    <OAuth2ConnectButton class="self-end" :provider="provider" />
                 </template>
             </div>
         </dd>

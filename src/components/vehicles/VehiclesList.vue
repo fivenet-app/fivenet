@@ -100,31 +100,33 @@ function addToClipboard(vehicle: Vehicle): void {
     });
 }
 
-const columns = [
-    {
-        key: 'plate',
-        label: t('common.plate'),
-    },
-    {
-        key: 'model',
-        label: t('common.model'),
-    },
-    {
-        key: 'type',
-        label: t('common.type'),
-    },
-    !props.hideOwner
-        ? {
-              key: 'owner',
-              label: t('common.owner'),
-          }
-        : undefined,
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
-].filter((c) => c !== undefined);
+const columns = computed(() =>
+    [
+        {
+            key: 'plate',
+            label: t('common.plate'),
+        },
+        {
+            key: 'model',
+            label: t('common.model'),
+        },
+        {
+            key: 'type',
+            label: t('common.type'),
+        },
+        !props.hideOwner
+            ? {
+                  key: 'owner',
+                  label: t('common.owner'),
+              }
+            : undefined,
+        {
+            key: 'actions',
+            label: t('common.action', 2),
+            sortable: false,
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 </script>
 
 <template>
