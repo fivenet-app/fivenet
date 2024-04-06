@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -122,64 +120,32 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >
-                                <Listbox v-model="selectedAccessLevel" as="div">
-                                    <div class="relative">
-                                        <ListboxButton
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        >
-                                            <span class="block truncate">
-                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[selectedAccessLevel]}`) }}
-                                            </span>
-                                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="size-5 text-gray-400" />
-                                            </span>
-                                        </ListboxButton>
-
-                                        <transition
-                                            leave-active-class="transition duration-100 ease-in"
-                                            leave-from-class="opacity-100"
-                                            leave-to-class="opacity-0"
-                                        >
-                                            <ListboxOptions
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ListboxOption
-                                                    v-for="level in accessLevels"
-                                                    :key="level"
-                                                    v-slot="{ active, selected }"
-                                                    as="template"
-                                                    :value="level"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            active ? 'bg-primary-500' : '',
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                        ]"
-                                                    >
-                                                        <span
-                                                            :class="[
-                                                                selected ? 'font-semibold' : 'font-normal',
-                                                                'block truncate',
-                                                            ]"
-                                                        >
-                                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[level]}`, 2) }}
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ListboxOption>
-                                            </ListboxOptions>
-                                        </transition>
-                                    </div>
-                                </Listbox>
+                                <USelectMenu
+                                    v-model="selectedAccessLevel"
+                                    :options="accessLevels"
+                                    :placeholder="
+                                        selectedAccessLevel
+                                            ? $t(`enums.docstore.AccessLevel.${AccessLevel[selectedAccessLevel]}`)
+                                            : $t('common.na')
+                                    "
+                                >
+                                    <template #label>
+                                        <span v-if="selectedAccessLevel" class="truncate">{{
+                                            $t(`enums.docstore.AccessLevel.${AccessLevel[selectedAccessLevel]}`)
+                                        }}</span>
+                                    </template>
+                                    <template #option="{ option }">
+                                        <span class="truncate">{{
+                                            $t(`enums.docstore.AccessLevel.${AccessLevel[option]}`)
+                                        }}</span>
+                                    </template>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                                    </template>
+                                </USelectMenu>
                             </VeeField>
                             <VeeErrorMessage name="requestsType" as="p" class="mt-2 text-sm text-error-400" />
                         </div>

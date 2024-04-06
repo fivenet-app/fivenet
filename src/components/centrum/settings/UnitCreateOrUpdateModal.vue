@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -180,80 +178,26 @@ onBeforeMount(async () => updateUnitInForm());
                                     </label>
                                     <VeeField
                                         name="attributes"
-                                        type="text"
                                         class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.attributes', 2)"
                                         :label="$t('common.attributes', 2)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
-                                        <Listbox v-model="selectedAttributes" as="div" nullable multiple>
-                                            <div class="relative">
-                                                <ListboxButton
-                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                >
-                                                    <span class="block truncate">
-                                                        <template v-if="selectedAttributes.length > 0">
-                                                            <span v-for="attr in selectedAttributes" :key="attr" class="mr-1">
-                                                                {{ $t(`components.centrum.units.attributes.${attr}`) }}
-                                                            </span>
-                                                        </template>
-                                                        <template v-else>
-                                                            {{ $t('common.none_selected') }}
-                                                        </template>
-                                                    </span>
-                                                    <span
-                                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                                                    >
-                                                        <ChevronDownIcon class="size-5 text-gray-400" />
-                                                    </span>
-                                                </ListboxButton>
-
-                                                <transition
-                                                    leave-active-class="transition duration-100 ease-in"
-                                                    leave-from-class="opacity-100"
-                                                    leave-to-class="opacity-0"
-                                                >
-                                                    <ListboxOptions
-                                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                    >
-                                                        <ListboxOption
-                                                            v-for="attr in availableAttributes"
-                                                            :key="attr"
-                                                            v-slot="{ active, selected }"
-                                                            as="template"
-                                                            :value="attr"
-                                                        >
-                                                            <li
-                                                                :class="[
-                                                                    active ? 'bg-primary-500' : '',
-                                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                                ]"
-                                                            >
-                                                                <span
-                                                                    :class="[
-                                                                        selected ? 'font-semibold' : 'font-normal',
-                                                                        'block truncate',
-                                                                    ]"
-                                                                >
-                                                                    {{ $t(`components.centrum.units.attributes.${attr}`) }}
-                                                                </span>
-
-                                                                <span
-                                                                    v-if="selected"
-                                                                    :class="[
-                                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                    ]"
-                                                                >
-                                                                    <CheckIcon class="size-5" />
-                                                                </span>
-                                                            </li>
-                                                        </ListboxOption>
-                                                    </ListboxOptions>
-                                                </transition>
-                                            </div>
-                                        </Listbox>
+                                        <USelectMenu
+                                            v-model="selectedAttributes"
+                                            multiple
+                                            nullable
+                                            :options="availableAttributes"
+                                            :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
+                                        >
+                                            <template #option-empty="{ query: search }">
+                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                            </template>
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                                            </template>
+                                        </USelectMenu>
                                     </VeeField>
                                     <VeeErrorMessage name="attributes" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>

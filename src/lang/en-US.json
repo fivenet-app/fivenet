@@ -936,7 +936,8 @@
         "language": "Language | Languages",
         "query_not_found": "not found.",
         "file": "File | Files",
-        "entry": "Entry | Entries"
+        "entry": "Entry | Entries",
+        "qualification": "Qualification | Qualifications"
     },
     "notifications": {
         "clipboard": {

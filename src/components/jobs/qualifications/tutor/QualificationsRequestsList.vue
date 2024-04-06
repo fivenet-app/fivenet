@@ -147,8 +147,9 @@ const columns = [
                     <template #actions-data="{ row: request }">
                         <UButton
                             v-if="request.status !== RequestStatus.DENIED"
-                            class="flex-initial"
+                            variant="link"
                             icon="i-mdi-close-thick"
+                            color="red"
                             @click="
                                 modal.open(QualificationRequestTutorModal, {
                                     request: request,
@@ -159,8 +160,9 @@ const columns = [
                         />
                         <UButton
                             v-if="request.status !== RequestStatus.ACCEPTED"
-                            class="flex-initial"
-                            icon="i-mdir-check-bold"
+                            variant="link"
+                            icon="i-mdi-check-bold"
+                            color="green"
                             @click="
                                 modal.open(QualificationRequestTutorModal, {
                                     request: request,
@@ -171,8 +173,9 @@ const columns = [
                         />
                         <UButton
                             v-if="request.status === RequestStatus.ACCEPTED"
-                            class="flex-initial"
+                            variant="link"
                             icon="i-mdi-star"
+                            color="amber"
                             @click="
                                 modal.open(QualificationResultTutorModal, {
                                     qualificationId: request.qualificationId,
@@ -183,7 +186,7 @@ const columns = [
                         />
                         <UButton
                             v-if="can('QualificationsService.DeleteQualificationReq')"
-                            class="flex-initial"
+                            variant="link"
                             icon="i-mdi-trash-can"
                             @click="
                                 modal.open(ConfirmModal, {

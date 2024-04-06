@@ -1,15 +1,5 @@
 <script lang="ts" setup>
-import {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-} from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, PlusIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
 import {
@@ -450,59 +440,19 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </div>
                     <div class="min-w-32">
                         <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
-                        <Listbox v-model="quali.closed" as="div" :disabled="!canEdit || !canDo.edit">
-                            <div class="relative">
-                                <ListboxButton
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                >
-                                    <span class="block truncate">
-                                        {{ openclose.find((e) => e.closed === quali.closed.closed)?.label }}</span
-                                    >
-                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="size-5 text-gray-400" />
-                                    </span>
-                                </ListboxButton>
-
-                                <transition
-                                    leave-active-class="transition duration-100 ease-in"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <ListboxOptions
-                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ListboxOption
-                                            v-for="st in openclose"
-                                            :key="st.closed.toString()"
-                                            v-slot="{ active, selected }"
-                                            as="template"
-                                            :value="st"
-                                        >
-                                            <li
-                                                :class="[
-                                                    active ? 'bg-primary-500' : '',
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                ]"
-                                            >
-                                                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                                    st.label
-                                                }}</span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ListboxOption>
-                                    </ListboxOptions>
-                                </transition>
-                            </div>
-                        </Listbox>
+                        <USelectMenu
+                            v-model="quali.closed"
+                            :options="openclose"
+                            :placeholder="quali.closed ? quali.closed.label : $t('common.na')"
+                            :disabled="!canEdit || !canDo.edit"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                            </template>
+                        </USelectMenu>
                     </div>
                 </div>
             </div>
@@ -573,22 +523,9 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     {{ $t('common.discord') }}
                 </h2>
 
-                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70">
-                    <DisclosureButton
-                        :class="[
-                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                        ]"
-                    >
-                        <span class="inline-flex items-center text-base font-semibold leading-7">
-                            {{ $t('common.discord') }}
-                        </span>
-                        <span class="ml-6 flex h-7 items-center">
-                            <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']" />
-                        </span>
-                    </DisclosureButton>
-                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                        <div class="mx-4 pb-2">
+                <UAccordion :items="[{ slot: 'discord', label: $t('common.discord') }]">
+                    <template #discord>
+                        <div>
                             <VeeField v-slot="{ handleInput }" name="discordSettingsSyncEnabled">
                                 <div class="flex items-center">
                                     <UToggle :disabled="!canEdit || !canDo.edit" @update:model-value="handleInput($event)">
@@ -596,7 +533,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             {{ $t('common.enabled') }}
                                         </span>
                                     </UToggle>
-                                    <span class="ml-3 text-sm font-medium text-gray-300">{{ $t('common.enabled') }}</span>
+                                    <span class="ml-3 text-sm font-medium">{{ $t('common.enabled') }}</span>
                                 </div>
                             </VeeField>
 
@@ -615,8 +552,8 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             />
                             <VeeErrorMessage name="discordSettingsRoleName" as="p" class="mt-2 text-sm text-error-400" />
                         </div>
-                    </DisclosurePanel>
-                </Disclosure>
+                    </template>
+                </UAccordion>
             </div>
 
             <div class="flex pb-14">

@@ -1,17 +1,6 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-} from '@headlessui/vue';
 import { max, min, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon, ContentSaveIcon } from 'mdi-vue3';
+import { ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import { type TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';
@@ -793,59 +782,19 @@ const router = useRouter();
                     </UFormGroup>
 
                     <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
-                        <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
-                            <div class="relative">
-                                <ListboxButton
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                >
-                                    <span class="block truncate">
-                                        {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
-                                    >
-                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="size-5 text-gray-400" />
-                                    </span>
-                                </ListboxButton>
-
-                                <transition
-                                    leave-active-class="transition duration-100 ease-in"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <ListboxOptions
-                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ListboxOption
-                                            v-for="st in openclose"
-                                            :key="st.closed.toString()"
-                                            v-slot="{ active, selected }"
-                                            as="template"
-                                            :value="st"
-                                        >
-                                            <li
-                                                :class="[
-                                                    active ? 'bg-primary-500' : '',
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                ]"
-                                            >
-                                                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                                    st.label
-                                                }}</span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ListboxOption>
-                                    </ListboxOptions>
-                                </transition>
-                            </div>
-                        </Listbox>
+                        <USelectMenu
+                            v-model="doc.closed"
+                            :options="openclose"
+                            :placeholder="doc.closed ? doc.closed.label : $t('common.na')"
+                            :disabled="!canEdit || !canDo.edit"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                            </template>
+                        </USelectMenu>
                     </UFormGroup>
                 </div>
             </div>
@@ -864,7 +813,7 @@ const router = useRouter();
 
                 <template v-if="saving">
                     <div class="flex animate-pulse justify-center">
-                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" />
+                        <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
                         <span>{{ $t('common.save', 2) }}...</span>
                     </div>
                 </template>

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { CheckBoldIcon, CloseThickIcon, MenuIcon } from 'mdi-vue3';
+import { MenuIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -118,24 +118,26 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                 </div>
             </div>
             <div class="flex items-center gap-2">
-                <template v-if="canUpdate && request.accepted === undefined">
+                <UButtonGroup v-if="canUpdate && request.accepted === undefined" class="inline-flex w-full">
                     <UButton
-                        class="flex flex-1 justify-center rounded px-3.5 py-2.5 text-sm font-semibold"
+                        class="flex-1"
+                        block
+                        color="green"
+                        icon="i-mdi-check-bold"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(true)"
-                    >
-                        <CheckBoldIcon class="size-5 text-success-400" />
-                    </UButton>
+                    />
                     <UButton
-                        class="flex flex-1 justify-center rounded p-2.5 text-sm font-semibold"
+                        class="flex-1"
+                        block
+                        color="red"
+                        icon="i-mdi-close-thick"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(false)"
-                    >
-                        <CloseThickIcon class="size-5 text-error-400" />
-                    </UButton>
-                </template>
+                    />
+                </UButtonGroup>
 
                 <Menu v-if="canDelete" as="div" class="relative flex-none">
                     <MenuButton class="block text-gray-300 hover:text-gray-100">

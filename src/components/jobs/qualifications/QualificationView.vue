@@ -1,20 +1,13 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
 import {
     AccountIcon,
-    AccountSchoolIcon,
     CalendarEditIcon,
     CalendarIcon,
     CalendarRemoveIcon,
-    ChevronDownIcon,
     ListStatusIcon,
     LockIcon,
     LockOpenVariantIcon,
     MailIcon,
-    PencilIcon,
-    SigmaIcon,
-    TestTubeIcon,
-    TrashCanIcon,
 } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -29,10 +22,13 @@ import QualificationRequestUserModal from '~/components/jobs/qualifications/Qual
 import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/jobs/qualifications/tutor/QualificationsResultsList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import type { AccordionItem } from '#ui/types';
 
 const props = defineProps<{
     id: string;
 }>();
+
+const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
 
@@ -75,6 +71,17 @@ const canDo = computed(() => ({
     grade: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.GRADE),
     edit: checkQualificationAccess(quali.value?.access, quali.value?.creator, AccessLevel.EDIT),
 }));
+
+const accordionItems = computed(() => {
+    return [
+        quali.value?.result && parseInt(quali.value?.result.id) > 0
+            ? { slot: 'result', label: t('common.result', 1), icon: 'i-mdi-list-status' }
+            : undefined,
+        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock' },
+        { slot: 'requests', label: t('common.request', 2), icon: 'i-mdi-account-school' },
+        { slot: 'results', label: t('common.result', 2), icon: 'i-mdi-sigma' },
+    ].filter((item) => item !== undefined) as AccordionItem[];
+});
 </script>
 
 <template>
@@ -107,7 +114,7 @@ const canDo = computed(() => ({
                                     <template v-if="!canDo.edit">
                                         <UButton
                                             v-if="canDo.take"
-                                            class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
+                                            icon="i-mdi-test-tube"
                                             @click="
                                                 modal.open(QualificationRequestUserModal, {
                                                     qualificationId: quali!.id,
@@ -115,13 +122,13 @@ const canDo = computed(() => ({
                                                 })
                                             "
                                         >
-                                            <TestTubeIcon class="-ml-0.5 h-auto w-5" />
                                             {{ $t('components.qualifications.take_test') }}
                                         </UButton>
+
                                         <UButton
                                             v-else-if="canDo.request"
-                                            class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
                                             :disabled="quali.request?.status === RequestStatus.PENDING"
+                                            icon="i-mdi-account-school"
                                             @click="
                                                 modal.open(QualificationRequestUserModal, {
                                                     qualificationId: quali!.id,
@@ -129,31 +136,30 @@ const canDo = computed(() => ({
                                                 })
                                             "
                                         >
-                                            <AccountSchoolIcon class="-ml-0.5 h-auto w-5" />
                                             {{ $t('common.request') }}
                                         </UButton>
                                     </template>
-                                    <NuxtLink
+
+                                    <UButton
                                         v-if="can('QualificationsService.UpdateQualification') && canDo.edit"
                                         :to="{
                                             name: 'jobs-qualifications-id-edit',
                                             params: { id: quali.id },
                                         }"
-                                        class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
+                                        icon="i-mdi-pencil"
                                     >
-                                        <PencilIcon class="-ml-0.5 h-auto w-5" />
                                         {{ $t('common.edit') }}
-                                    </NuxtLink>
+                                    </UButton>
+
                                     <UButton
                                         v-if="can('QualificationsService.DeleteQualification') && canDo.edit"
-                                        class="bg-primary-500 hover:bg-primary-400 inline-flex items-center gap-x-1.5 rounded-md px-3 py-2 text-sm font-semibold"
+                                        icon="i-mdi-trash-can"
                                         @click="
                                             modal.open(ConfirmModal, {
                                                 confirm: async () => deleteQualification(quali!.id),
                                             })
                                         "
                                     >
-                                        <TrashCanIcon class="-ml-0.5 h-auto w-5" />
                                         {{ $t('common.delete') }}
                                     </UButton>
                                 </div>
@@ -310,156 +316,64 @@ const canDo = computed(() => ({
                                 </div>
                             </div>
 
-                            <div v-if="quali.result && quali.result.id !== '0'" class="mt-2 w-full">
-                                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70 w-full">
-                                    <DisclosureButton
-                                        :class="[
-                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                        ]"
-                                    >
-                                        <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <ListStatusIcon class="mr-2 h-auto w-5" />
-                                            {{ $t('common.result') }}
-                                        </span>
-                                        <span class="ml-6 flex h-7 items-center">
-                                            <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            />
-                                        </span>
-                                    </DisclosureButton>
-                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                        <div class="mx-4 flex flex-col gap-1 pb-2">
-                                            <div>
-                                                <span class="font-semibold">{{ $t('common.result') }}:</span>
-                                                {{
-                                                    $t(
-                                                        `enums.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`,
-                                                    )
-                                                }}
+                            <UAccordion :items="accordionItems" multiple>
+                                <template v-if="quali.result && quali.result.id !== '0'" #result>
+                                    <div class="flex flex-col gap-1">
+                                        <div>
+                                            <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                            {{
+                                                $t(
+                                                    `enums.qualifications.ResultStatus.${ResultStatus[quali.result?.status ?? 0]}`,
+                                                )
+                                            }}
+                                        </div>
+                                        <div>
+                                            <span class="font-semibold">{{ $t('common.summary') }}:</span>
+                                            {{ quali.result?.summary }}
+                                        </div>
+                                        <div class="inline-flex gap-1">
+                                            <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                            <CitizenInfoPopover :user="quali.result?.creator" />
+                                        </div>
+                                    </div>
+                                </template>
+                                <template #access>
+                                    <div class="flex flex-row flex-wrap gap-1">
+                                        <DataNoDataBlock
+                                            v-if="!quali.access || quali.access?.jobs.length === 0"
+                                            icon="i-mdi-file-search"
+                                            :message="$t('common.not_found', [$t('common.access', 2)])"
+                                        />
+
+                                        <template v-else>
+                                            <div
+                                                v-for="entry in quali.access?.jobs"
+                                                :key="entry.id"
+                                                class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
+                                            >
+                                                <span class="size-2 rounded-full bg-info-500" />
+                                                <span class="text-sm font-medium text-info-800"
+                                                    >{{ entry.jobLabel
+                                                    }}<span
+                                                        v-if="entry.minimumGrade > 0"
+                                                        :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                                    >
+                                                        ({{ entry.jobGradeLabel }})</span
+                                                    >
+                                                    -
+                                                    {{ $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                                </span>
                                             </div>
-                                            <div>
-                                                <span class="font-semibold">{{ $t('common.summary') }}:</span>
-                                                {{ quali.result?.summary }}
-                                            </div>
-                                            <div class="inline-flex gap-1">
-                                                <span class="font-semibold">{{ $t('common.created_by') }}:</span>
-                                                <CitizenInfoPopover :user="quali.result?.creator" />
-                                            </div>
-                                        </div>
-                                    </DisclosurePanel>
-                                </Disclosure>
-                            </div>
-
-                            <div class="mt-2 w-full">
-                                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70 w-full">
-                                    <DisclosureButton
-                                        :class="[
-                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                        ]"
-                                    >
-                                        <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <LockIcon class="mr-2 h-auto w-5" />
-                                            {{ $t('common.access') }}
-                                        </span>
-                                        <span class="ml-6 flex h-7 items-center">
-                                            <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            />
-                                        </span>
-                                    </DisclosureButton>
-                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                        <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
-                                            <DataNoDataBlock
-                                                v-if="!quali.access || quali.access?.jobs.length === 0"
-                                                icon="i-mdi-file-search"
-                                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                                            />
-
-                                            <template v-else>
-                                                <div
-                                                    v-for="entry in quali.access?.jobs"
-                                                    :key="entry.id"
-                                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                                >
-                                                    <span class="size-2 rounded-full bg-info-500" />
-                                                    <span class="text-sm font-medium text-info-800"
-                                                        >{{ entry.jobLabel
-                                                        }}<span
-                                                            v-if="entry.minimumGrade > 0"
-                                                            :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                                        >
-                                                            ({{ entry.jobGradeLabel }})</span
-                                                        >
-                                                        -
-                                                        {{
-                                                            $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`)
-                                                        }}
-                                                    </span>
-                                                </div>
-                                            </template>
-                                        </div>
-                                    </DisclosurePanel>
-                                </Disclosure>
-                            </div>
-
-                            <div v-if="canDo.grade" class="mt-2 w-full">
-                                <Disclosure
-                                    v-slot="{ open }"
-                                    as="div"
-                                    class="border-neutral/20 hover:border-neutral/70 w-full"
-                                    :default-open="true"
-                                >
-                                    <DisclosureButton
-                                        :class="[
-                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                        ]"
-                                    >
-                                        <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <AccountSchoolIcon class="mr-2 h-auto w-5" />
-                                            {{ $t('common.request', 2) }}
-                                        </span>
-                                        <span class="ml-6 flex h-7 items-center">
-                                            <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            />
-                                        </span>
-                                    </DisclosureButton>
-                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                        <div class="mx-4 pb-2">
-                                            <QualificationsRequestsList :qualification-id="quali.id" />
-                                        </div>
-                                    </DisclosurePanel>
-                                </Disclosure>
-                            </div>
-
-                            <div v-if="canDo.grade" class="mt-2 w-full">
-                                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 hover:border-neutral/70 w-full">
-                                    <DisclosureButton
-                                        :class="[
-                                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                        ]"
-                                    >
-                                        <span class="inline-flex items-center text-base font-semibold leading-7">
-                                            <SigmaIcon class="mr-2 h-auto w-5" />
-                                            {{ $t('common.result', 2) }}
-                                        </span>
-                                        <span class="ml-6 flex h-7 items-center">
-                                            <ChevronDownIcon
-                                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            />
-                                        </span>
-                                    </DisclosureButton>
-                                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                        <div class="mx-4 pb-2">
-                                            <QualificationsResultsList :qualification-id="quali.id" />
-                                        </div>
-                                    </DisclosurePanel>
-                                </Disclosure>
-                            </div>
+                                        </template>
+                                    </div>
+                                </template>
+                                <template v-if="canDo.grade" #requests>
+                                    <QualificationsRequestsList :qualification-id="quali.id" />
+                                </template>
+                                <template v-if="canDo.grade" #results>
+                                    <QualificationsResultsList :qualification-id="quali.id" />
+                                </template>
+                            </UAccordion>
                         </div>
                     </div>
                 </div>

@@ -1,14 +1,4 @@
 <script lang="ts" setup>
-import {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-} from '@headlessui/vue';
-import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
 import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
@@ -211,28 +201,9 @@ onBeforeMount(async () => {
 
 <template>
     <div v-if="attribute">
-        <Disclosure
-            v-slot="{ open }"
-            as="div"
-            :class="[disabled ? 'border-neutral/10 text-base-300' : 'border-neutral/20 hover:border-neutral/70']"
-        >
-            <DisclosureButton
-                :disabled="disabled"
-                :class="[
-                    open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                    disabled ? 'cursor-not-allowed' : '',
-                    'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                ]"
-            >
-                <span class="text-base leading-7 transition-colors">
-                    {{ $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }}
-                </span>
-                <span class="ml-6 flex h-7 items-center">
-                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
-                </span>
-            </DisclosureButton>
-            <DisclosurePanel class="-mt-2 rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors">
-                <div class="mx-auto my-2 flex max-w-4xl flex-col gap-2">
+        <UAccordion :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]">
+            <template #item>
+                <div class="flex flex-col gap-2">
                     <div
                         v-if="
                             currentValue.validValues.oneofKind === 'stringList' &&
@@ -250,11 +221,9 @@ onBeforeMount(async () => {
                                 :key="value"
                                 class="flex flex-initial flex-row flex-nowrap"
                             >
-                                <UInput
-                                    :id="value"
+                                <UCheckbox
                                     :name="value"
-                                    type="checkbox"
-                                    :checked="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
+                                    :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
                                     class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
                                     @click="toggleStringListValue(value)"
                                 />
@@ -286,11 +255,9 @@ onBeforeMount(async () => {
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap"
                             >
-                                <UInput
-                                    :id="job.name"
+                                <UCheckbox
                                     :name="job.name"
-                                    type="checkbox"
-                                    :checked="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
+                                    :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
                                     class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
                                     @click="toggleJobListValue(job.name)"
                                 />
@@ -320,88 +287,36 @@ onBeforeMount(async () => {
                                 :key="job.name"
                                 class="flex flex-initial flex-row flex-nowrap gap-2"
                             >
-                                <UInput
-                                    :id="job.name"
+                                <UCheckbox
                                     :name="job.name"
-                                    type="checkbox"
-                                    :checked="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
+                                    :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
                                     class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
                                     @change="toggleJobGradeValue(job, ($event.target as any).checked)"
                                 />
                                 <span class="my-auto flex-1">{{ job.label }}</span>
-                                <Listbox
-                                    as="div"
-                                    class="flex-1"
-                                    :model-value="jobGrades.get(job.name)"
-                                    :disabled="!currentValue.validValues.jobGradeList?.jobs[job.name]"
+
+                                <USelectMenu
                                     @update:model-value="updateJobGradeValue(job, $event)"
+                                    nullable
+                                    :options="job.grades"
+                                    :search-attributes="['label']"
+                                    by="grade"
+                                    :placeholder="jobGrades.has(job.name) ? jobGrades.get(job.name)?.label : $t('common.na')"
                                 >
-                                    <div class="relative">
-                                        <ListboxButton
-                                            class="placeholder:text-accent-200 disabled:text-neutral/50 block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left focus:ring-2 focus:ring-inset focus:ring-base-300 disabled:cursor-not-allowed disabled:bg-base-800 sm:text-sm sm:leading-6"
-                                        >
-                                            <span class="block truncate">{{ jobGrades.get(job.name)?.label }}</span>
-                                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="size-5 text-gray-400" />
-                                            </span>
-                                        </ListboxButton>
-
-                                        <transition
-                                            leave-active-class="transition duration-100 ease-in"
-                                            leave-from-class="opacity-100"
-                                            leave-to-class="opacity-0"
-                                        >
-                                            <ListboxOptions
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ListboxOption
-                                                    v-for="grade in job.grades.filter(
-                                                        (g) =>
-                                                            maxValues &&
-                                                            maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                            maxValues.validValues.jobGradeList.jobs[job.name] + 1 > g.grade,
-                                                    )"
-                                                    :key="grade.grade"
-                                                    v-slot="{ active, selected }"
-                                                    as="template"
-                                                    :value="grade"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            active ? 'bg-primary-500' : '',
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                        ]"
-                                                    >
-                                                        <span
-                                                            :class="[
-                                                                selected ? 'font-semibold' : 'font-normal',
-                                                                'block truncate',
-                                                            ]"
-                                                        >
-                                                            {{ grade.label }}
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ListboxOption>
-                                            </ListboxOptions>
-                                        </transition>
-                                    </div>
-                                </Listbox>
+                                    <template #option="{ option: grade }">
+                                        {{ grade?.label }}
+                                    </template>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
+                                </USelectMenu>
                             </div>
                         </template>
                     </div>
                     <div v-else>{{ currentValue.validValues.oneofKind }} {{ validValues }}</div>
                 </div>
-            </DisclosurePanel>
-        </Disclosure>
+            </template>
+        </UAccordion>
     </div>
 </template>

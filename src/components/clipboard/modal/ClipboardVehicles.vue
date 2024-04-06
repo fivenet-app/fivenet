@@ -140,7 +140,6 @@ watch(props, (newVal) => {
                         <UCheckbox
                             :key="item.plate"
                             v-model="selected"
-                            type="checkbox"
                             name="selected"
                             :checked="selected.includes(item)"
                             :value="item"

@@ -9,109 +9,127 @@ import type { Perms } from '~~/gen/ts/perms';
 const authStore = useAuthStore();
 const { activeChar, jobProps } = storeToRefs(authStore);
 
-// Use client date to show any event overlays
-const now = new Date();
-const showSnowflakes = now.getMonth() + 1 === 12 && now.getDate() >= 21 && now.getDate() <= 26;
-
 const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
-const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })[]>(() => [
-    {
-        label: t('common.overview'),
-        icon: 'i-mdi-home-outline',
-        to: '/overview',
-        tooltip: {
-            text: t('common.overview'),
-            shortcuts: ['G', 'H'],
-        },
-    },
-    {
-        label: t('common.citizen'),
-        icon: 'i-mdi-account-multiple-outline',
-        to: '/citizens',
-        badge: '4',
-        tooltip: {
-            text: t('common.citizen'),
-            shortcuts: ['G', 'C'],
-        },
-        permission: 'CitizenStoreService.ListCitizens' as Perms,
-    },
-    {
-        label: t('common.vehicle'),
-        icon: 'i-mdi-car-outline',
-        to: '/vehicles',
-        tooltip: {
-            text: t('common.vehicle'),
-            shortcuts: ['G', 'V'],
-        },
-        permission: 'DMVService.ListVehicles' as Perms,
-    },
-    {
-        label: t('common.document'),
-        icon: 'i-mdi-file-document-box-multiple-outline',
-        to: '/documents',
-        tooltip: {
-            text: t('common.document'),
-            shortcuts: ['G', 'D'],
-        },
-        permission: 'DocStoreService.ListDocuments' as Perms,
-    },
-    {
-        label: t('common.job'),
-        icon: 'i-mdi-briefcase-outline',
-        to: '/jobs/overview',
-        tooltip: {
-            text: t('common.job'),
-            shortcuts: ['G', 'J'],
-        },
-        permission: 'JobsService.ListColleagues' as Perms,
-        defaultOpen: false,
-        children: [
-            {
-                label: t('common.overview'),
-                to: '/jobs/overview',
+const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })[]>(() =>
+    [
+        {
+            label: t('common.overview'),
+            icon: 'i-mdi-home-outline',
+            to: '/overview',
+            tooltip: {
+                text: t('common.overview'),
+                shortcuts: ['G', 'H'],
             },
-            {
-                label: t('common.colleague', 2),
-                to: '/jobs/colleagues',
+        },
+        {
+            label: t('common.citizen'),
+            icon: 'i-mdi-account-multiple-outline',
+            to: '/citizens',
+            tooltip: {
+                text: t('common.citizen'),
+                shortcuts: ['G', 'C'],
             },
-        ],
-    },
-    {
-        label: t('common.livemap'),
-        icon: 'i-mdi-map-outline',
-        to: '/livemap',
-        tooltip: {
-            text: t('common.livemap'),
-            shortcuts: ['G', 'M'],
+            permission: 'CitizenStoreService.ListCitizens' as Perms,
         },
-        permission: 'LivemapperService.Stream' as Perms,
-    },
-    {
-        label: t('common.dispatch_center'),
-        icon: 'i-mdi-car-emergency',
-        to: '/centrum',
-        tooltip: {
-            text: t('common.dispatch_center'),
-            shortcuts: ['G', 'W'],
+        {
+            label: t('common.vehicle'),
+            icon: 'i-mdi-car-outline',
+            to: '/vehicles',
+            tooltip: {
+                text: t('common.vehicle'),
+                shortcuts: ['G', 'V'],
+            },
+            permission: 'DMVService.ListVehicles' as Perms,
         },
-        permission: 'CentrumService.TakeControl' as Perms,
-    },
-    {
-        label: t('common.control_panel'),
-        icon: 'i-mdi-cog',
-        to: '/rector',
-        tooltip: {
-            text: t('common.control_panel'),
-            shortcuts: ['G', 'P'],
+        {
+            label: t('common.document'),
+            icon: 'i-mdi-file-document-box-multiple-outline',
+            to: '/documents',
+            tooltip: {
+                text: t('common.document'),
+                shortcuts: ['G', 'D'],
+            },
+            permission: 'DocStoreService.ListDocuments' as Perms,
         },
-        permission: 'RectorService.GetJobProps' as Perms,
-    },
-]);
+        {
+            label: t('common.job'),
+            icon: 'i-mdi-briefcase-outline',
+            to: '/jobs/overview',
+            tooltip: {
+                text: t('common.job'),
+                shortcuts: ['G', 'J'],
+            },
+            permission: 'JobsService.ListColleagues' as Perms,
+            defaultOpen: false,
+            children: [
+                {
+                    label: t('common.overview'),
+                    to: '/jobs/overview',
+                },
+                {
+                    label: t('common.colleague', 2),
+                    to: '/jobs/colleagues',
+                    permission: 'JobsService.ListColleagues' as Perms,
+                },
+                {
+                    label: t('common.activity'),
+                    to: '/jobs/activity',
+                    permission: 'JobsService.ListColleagueActivity' as Perms,
+                },
+                {
+                    label: t('common.colleague', 2),
+                    to: '/jobs/timeclock',
+                    permission: 'JobsTimeclockService.ListTimeclock' as Perms,
+                },
+                {
+                    label: t('common.qualification', 2),
+                    to: '/jobs/qualifications',
+                    permission: 'QualificationsService.ListQualifications' as Perms,
+                },
+                {
+                    label: t('common.conduct_register', 2),
+                    to: '/jobs/qualifications',
+                    permission: 'JobsConductService.ListConductEntries' as Perms,
+                },
+            ].filter((l) => l.permission === undefined || can(l.permission)),
+        },
+        {
+            label: t('common.livemap'),
+            icon: 'i-mdi-map-outline',
+            to: '/livemap',
+            tooltip: {
+                text: t('common.livemap'),
+                shortcuts: ['G', 'M'],
+            },
+            permission: 'LivemapperService.Stream' as Perms,
+        },
+        {
+            label: t('common.dispatch_center'),
+            icon: 'i-mdi-car-emergency',
+            to: '/centrum',
+            tooltip: {
+                text: t('common.dispatch_center'),
+                shortcuts: ['G', 'W'],
+            },
+            permission: 'CentrumService.TakeControl' as Perms,
+        },
+        {
+            label: t('common.control_panel'),
+            icon: 'i-mdi-cog',
+            to: '/rector',
+            tooltip: {
+                text: t('common.control_panel'),
+                shortcuts: ['G', 'P'],
+            },
+            permission: 'RectorService.GetJobProps' as Perms,
+        },
+    ].filter((l) => l.permission === undefined || can(l.permission)),
+);
 
 const footerLinks = [
     {
@@ -322,7 +340,7 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(
                     <UDashboardSearchButton />
                 </template>
 
-                <UDashboardSidebarLinks :links="links.filter((l) => l.permission === undefined || can(l.permission))" />
+                <UDashboardSidebarLinks :links="links" />
 
                 <template v-if="quickAccessButtons.length > 0">
                     <UDivider />
@@ -346,7 +364,7 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(
         </UDashboardPanel>
 
         <!-- Events -->
-        <LazyPartialsEventsSnowflakesContainer v-if="showSnowflakes" />
+        <LazyPartialsEventsLayer />
 
         <div class="w-full max-w-full overflow-y-auto">
             <slot />

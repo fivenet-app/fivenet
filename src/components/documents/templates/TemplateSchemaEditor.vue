@@ -25,9 +25,8 @@ defineEmits<{
                 {{ $t('common.citizen', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <UInput
+                <UCheckbox
                     v-model="modelValue.users.req"
-                    type="checkbox"
                     name="users"
                     data-te-toggle="tooltip"
                     class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300"
@@ -77,9 +76,8 @@ defineEmits<{
                 {{ $t('common.document', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <UInput
+                <UCheckbox
                     v-model="modelValue.documents.req"
-                    type="checkbox"
                     name="documents"
                     data-te-toggle="tooltip"
                     class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300"
@@ -129,9 +127,8 @@ defineEmits<{
                 {{ $t('common.vehicle', 2) }}
             </label>
             <div class="relative flex items-center gap-1">
-                <UInput
+                <UCheckbox
                     v-model="modelValue.vehicles.req"
-                    type="checkbox"
                     name="vehicles"
                     data-te-toggle="tooltip"
                     class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-2 focus:ring-inset focus:ring-base-300"

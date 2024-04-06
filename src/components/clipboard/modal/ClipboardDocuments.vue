@@ -134,10 +134,9 @@ watch(props, async (newVal) => {
                         </UButton>
                     </template>
                     <template v-else>
-                        <UInput
+                        <UCheckbox
                             :key="item.id"
                             v-model="selected"
-                            type="checkbox"
                             name="selected"
                             :checked="selected.includes(item)"
                             :value="item"

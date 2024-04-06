@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { ChevronDownIcon, LicenseIcon, LockIcon, MagnifyIcon, MapIcon } from 'mdi-vue3';
 import '~/assets/css/herofull-pattern.css';
 
 const { t } = useI18n();
@@ -93,7 +91,7 @@ const faqs = [
                                     <div class="max-w-xl text-base leading-7 text-gray-100 lg:max-w-lg">
                                         <ul role="list" class="mt-8 space-y-8 text-gray-300">
                                             <li class="flex gap-x-3">
-                                                <MagnifyIcon class="text-primary-300 mt-1 size-5 flex-none" />
+                                                <UIcon name="i-mdi-magnify" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_one.title')
@@ -102,7 +100,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <LockIcon class="text-primary-300 mt-1 size-5 flex-none" />
+                                                <UIcon name="i-mdi-lock" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_two.title')
@@ -111,7 +109,7 @@ const faqs = [
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
-                                                <MapIcon class="text-primary-300 mt-1 size-5 flex-none" />
+                                                <UIcon name="i-mdi-map" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
                                                     <strong class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_three.title')

@@ -48,15 +48,11 @@ const open = ref(false);
 
         <dt class="flex-initial text-sm font-medium leading-6">
             <div class="flex h-6 items-center">
-                <UInput
-                    type="checkbox"
+                <UCheckbox
+                    v-model="checked"
                     name="selected"
-                    :checked="checked"
                     class="text-primary-600 focus:ring-primary-600 size-5 rounded border-gray-300"
-                    @change="
-                        checked = !checked;
-                        $emit('selected', checked);
-                    "
+                    @change="$emit('selected', checked)"
                 />
                 <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" :hide-icon="true" />
             </div>
