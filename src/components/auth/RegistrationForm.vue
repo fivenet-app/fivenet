@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-// eslint-disable-next-line camelcase
-import { alpha_dash, digits, max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -10,15 +9,26 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificatorStore();
 
 const accountError = ref('');
-const curPassword = ref('');
 
-interface FormData {
-    registrationToken: number;
-    username: string;
-    password: string;
-}
+const schema = z.object({
+    registrationToken: z.string().length(6),
+    username: z
+        .string()
+        .min(3)
+        .max(24)
+        .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
+    password: z.string().min(6).max(70),
+});
 
-async function createAccount(values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    registrationToken: '',
+    username: '',
+    password: '',
+});
+
+async function createAccount(values: Schema): Promise<void> {
     try {
         await $grpc.getUnAuthClient().createAccount({
             regToken: values.registrationToken.toString(),
@@ -40,119 +50,76 @@ async function createAccount(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('digits', digits);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('alpha_dash', alpha_dash);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        registrationToken: { required: true, digits: 6 },
-        username: { required: true, min: 3, max: 24, alpha_dash: true },
-        password: { required: true, min: 6, max: 70 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await createAccount(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createAccount(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <div>
         <h2 class="pb-4 text-center text-3xl">
-            {{ $t('components.auth.registration_form.title') }}
+            {{ $t('components.auth.RegistrationForm.title') }}
         </h2>
 
         <p class="pb-4 text-sm">
-            {{ $t('components.auth.registration_form.subtitle') }}
+            {{ $t('components.auth.RegistrationForm.subtitle') }}
         </p>
 
-        <UForm :state="{}" class="my-2 space-y-6">
-            <div>
-                <label for="registrationToken" class="sr-only">
-                    {{ $t('components.auth.registration_form.registration_token') }}
-                </label>
-                <div>
-                    <VeeField
-                        name="registrationToken"
-                        type="text"
-                        inputmode="numeric"
-                        aria-describedby="hint"
-                        pattern="[0-9]*"
-                        autocomplete="registrationToken"
-                        :placeholder="$t('components.auth.registration_form.registration_token')"
-                        :label="$t('components.auth.registration_form.registration_token')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-lg sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="registrationToken" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
-            </div>
-            <div>
-                <label for="username" class="sr-only">
-                    {{ $t('common.username') }}
-                </label>
-                <div>
-                    <VeeField
-                        name="username"
-                        type="text"
-                        autocomplete="username"
-                        :placeholder="$t('common.username')"
-                        :label="$t('common.username')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="username" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
-            </div>
-            <div>
-                <label for="password" class="sr-only">
-                    {{ $t('common.password') }}
-                </label>
-                <div>
-                    <VeeField
-                        v-model:model-value="curPassword"
-                        name="password"
-                        type="password"
-                        autocomplete="current-password"
-                        :placeholder="$t('common.password')"
-                        :label="$t('common.password')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <PasswordStrengthMeter :input="curPassword" class="mt-2" />
-                    <VeeErrorMessage name="password" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
-            </div>
+        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+            <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+                <UInput
+                    v-model="state.registrationToken"
+                    type="text"
+                    inputmode="numeric"
+                    aria-describedby="hint"
+                    pattern="[0-9]*"
+                    autocomplete="registrationToken"
+                    :placeholder="$t('components.auth.ForgotPassword.registration_token')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+            </UFormGroup>
 
-            <div>
-                <UButton block :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                    {{ $t('components.auth.registration_form.submit_button') }}
-                </UButton>
-            </div>
+            <UFormGroup name="username" :label="$t('common.username')">
+                <UInput
+                    v-model="state.username"
+                    type="text"
+                    autocomplete="username"
+                    :placeholder="$t('common.username')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+            </UFormGroup>
+
+            <UFormGroup name="password" :label="$t('common.password')">
+                <UInput
+                    v-model="state.password"
+                    type="password"
+                    autocomplete="current-password"
+                    :placeholder="$t('common.password')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+                <PasswordStrengthMeter :input="state.password" class="mt-2" />
+            </UFormGroup>
+
+            <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+                {{ $t('components.auth.RegistrationForm.submit_button') }}
+            </UButton>
         </UForm>
 
         <div class="mt-6">
-            <UButton :to="{ name: 'auth-login' }" block>
-                {{ $t('components.auth.registration_form.back_to_login_button') }}
+            <UButton block :to="{ name: 'auth-login' }">
+                {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>
         </div>
 
         <UAlert
             v-if="accountError"
-            :title="$t('components.auth.registration_form.create_error')"
+            class="mt-2"
+            :title="$t('components.auth.RegistrationForm.create_error')"
             :message="accountError.startsWith('errors.') ? $t(accountError) : accountError"
             color="red"
         />

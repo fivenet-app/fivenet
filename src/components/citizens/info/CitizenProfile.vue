@@ -262,8 +262,8 @@ const mugShotModal = ref(false);
                                     <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" />
                                     {{
                                         user.props?.wanted
-                                            ? $t('components.citizens.citizen_info_profile.revoke_wanted')
-                                            : $t('components.citizens.citizen_info_profile.set_wanted')
+                                            ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                                            : $t('components.citizens.CitizenInfoProfile.set_wanted')
                                     }}
                                 </UButton>
 
@@ -278,7 +278,7 @@ const mugShotModal = ref(false);
                                         })
                                     "
                                 >
-                                    {{ $t('components.citizens.citizen_info_profile.set_job') }}
+                                    {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
                                 </UButton>
 
                                 <UButton
@@ -293,7 +293,7 @@ const mugShotModal = ref(false);
                                         })
                                     "
                                 >
-                                    {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
+                                    {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
                                 </UButton>
 
                                 <UButton
@@ -307,7 +307,7 @@ const mugShotModal = ref(false);
                                         })
                                     "
                                 >
-                                    {{ $t('components.citizens.citizen_info_profile.set_mug_shot') }}
+                                    {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
                                 </UButton>
 
                                 <UButton
@@ -316,11 +316,11 @@ const mugShotModal = ref(false);
                                     icon="i-mdi-file-document-plus"
                                     @click="openTemplates()"
                                 >
-                                    {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
+                                    {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}
                                 </UButton>
 
                                 <UButton block icon="i-mdi-link" @click="copyLinkToClipboard()">
-                                    {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
+                                    {{ $t('components.citizens.CitizenInfoProfile.copy_profile_link') }}
                                 </UButton>
                             </div>
                         </div>

@@ -678,6 +678,16 @@
   resolved "https://registry.yarnpkg.com/@fontsource/dm-sans/-/dm-sans-5.0.20.tgz#b80690f6f9a6a3a0dadfc99d2e9d388bbb1c3ace"
   integrity sha512-0dEHhu/rW9n5AIufDodNwBOrySzZVC+67l5TrYDgpeOmvhiZXvApBQHRC/pUSYLKpdg7rYy2G0q8GFQXO7Kpgg==
 
+"@galexrt/nuxt-zod-i18n@1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@galexrt/nuxt-zod-i18n/-/nuxt-zod-i18n-1.6.2.tgz#44bead8cf69eaca0aaf6bbaf3cc6e8a16c8c1ec9"
+  integrity sha512-ob9/lK7358KYaujUFVsZeW2BuTkTggKsxi+6jachETCuQmds/G//Y+8jkYMNnPSFp/T9oVy5akvogZkdysMv8A==
+  dependencies:
+    "@intlify/shared" "^9.10.2"
+    "@nuxt/kit" "^3.11.1"
+    defu "^6.1.4"
+    zod "^3.22.4"
+
 "@gulpjs/to-absolute-glob@^4.0.0":
   version "4.0.0"
   resolved "https://registry.yarnpkg.com/@gulpjs/to-absolute-glob/-/to-absolute-glob-4.0.0.tgz#1fc2460d3953e1d9b9f2dfdb4bcc99da4710c021"
@@ -828,6 +838,11 @@
   version "9.10.2"
   resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.10.2.tgz#693300ea033868cbe4086b832170612f002e24a9"
   integrity sha512-ttHCAJkRy7R5W2S9RVnN9KYQYPIpV2+GiS79T4EE37nrPyH6/1SrOh3bmdCRC1T3ocL8qCDx7x2lBJ0xaITU7Q==
+
+"@intlify/shared@^9.10.2":
+  version "9.11.0"
+  resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.11.0.tgz#49c99651bace8247bd12e1917ef2c6b2a0c68f0d"
+  integrity sha512-KHSNgi7sRjmSm7aD8QH8WFt9VfKaekJuJ473opbJlkGY3EDnDUU8ikIhG8PbasQbgNvbY3m3tWNGqk2omIdwMA==
 
 "@intlify/unplugin-vue-i18n@^3.0.1":
   version "3.0.1"
@@ -2822,6 +2837,11 @@
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/@unovis/vue/-/vue-1.4.0.tgz#a3cf6af6bdbe5bfdec56b77d14402b344e7d1d00"
   integrity sha512-QETQVZQ5m4rcudBxB1WvV1zRDnZ9Tesim5O3mcc+dYjRI4HhCcIOFCh+LatWJO0eVoLxmUChuqsk8upAIJUrGw==
+
+"@valibot/i18n@^0.9.0":
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/@valibot/i18n/-/i18n-0.9.0.tgz#4cd37018153d79635664984a7e5e6bba3a54c854"
+  integrity sha512-msJwdB05TBYVZg+GGul7qkbMxr5iAn9tgsbR2Mp90pNibJMKPA7WYfNRnNs5/F77unTyI/ESMiVCm8JQFJL1/w==
 
 "@vee-validate/i18n@4.12.6":
   version "4.12.6"
@@ -10370,6 +10390,11 @@ v-calendar@^3.1.2:
     date-fns-tz "^2.0.0"
     lodash "^4.17.20"
     vue-screen-utils "^1.0.0-beta.13"
+
+valibot@^0.30.0:
+  version "0.30.0"
+  resolved "https://registry.yarnpkg.com/valibot/-/valibot-0.30.0.tgz#6b90386a04d2c281cdc5dc6ad33bd3d2d7ea13b5"
+  integrity sha512-5POBdbSkM+3nvJ6ZlyQHsggisfRtyT4tVTo1EIIShs6qCdXJnyWU5TJ68vr8iTg5zpOLjXLRiBqNx+9zwZz/rA==
 
 validate-npm-package-license@^3.0.1, validate-npm-package-license@^3.0.4:
   version "3.0.4"

@@ -35,9 +35,9 @@ const modal = useModal();
             />
 
             <template v-if="!accessToken">
-                <UButton :label="$t('components.auth.login.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
+                <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
                 <UButton
-                    :label="$t('components.auth.registration_form.title')"
+                    :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing
                     color="black"

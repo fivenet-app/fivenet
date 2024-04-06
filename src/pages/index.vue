@@ -36,9 +36,14 @@ onBeforeMount(async () => {
                 :links="
                     !accessToken
                         ? [
-                              { label: $t('components.auth.login.title'), icon: 'i-mdi-login', size: 'lg', to: '/auth/login' },
                               {
-                                  label: $t('components.auth.registration_form.title'),
+                                  label: $t('components.auth.LoginForm.title'),
+                                  icon: 'i-mdi-login',
+                                  size: 'lg',
+                                  to: '/auth/login',
+                              },
+                              {
+                                  label: $t('components.auth.RegistrationForm.title'),
                                   trailingIcon: 'i-mdi-account-plus',
                                   color: 'gray',
                                   size: 'lg',

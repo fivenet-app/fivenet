@@ -80,8 +80,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     <h3 class="text-2xl font-semibold leading-6">
                         {{
                             user.props?.wanted
-                                ? $t('components.citizens.citizen_info_profile.revoke_wanted')
-                                : $t('components.citizens.citizen_info_profile.set_wanted')
+                                ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                                : $t('components.citizens.CitizenInfoProfile.set_wanted')
                         }}
                     </h3>
 

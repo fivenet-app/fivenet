@@ -3,10 +3,10 @@ import AccountInfo from '~/components/auth/account/AccountInfo.vue';
 import { useNotificatorStore } from '~/store/notificator';
 
 useHead({
-    title: 'components.auth.account_info.title',
+    title: 'components.auth.AccountInfo.title',
 });
 definePageMeta({
-    title: 'components.auth.account_info.title',
+    title: 'components.auth.AccountInfo.title',
     requiresAuth: true,
     authOnlyToken: true,
 
@@ -40,7 +40,7 @@ if (query.oauth2Connect) {
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.auth.account_info.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')"> </UDashboardNavbar>
 
             <AccountInfo />
         </UDashboardPanel>

@@ -157,11 +157,11 @@ const columns = [
 
                         <UFormGroup
                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
-                            :label="$t('components.citizens.citizens_list.only_wanted')"
+                            :label="$t('components.citizens.CitizensList.only_wanted')"
                         >
                             <UToggle v-model="query.wanted">
                                 <span class="sr-only">
-                                    {{ $t('components.citizens.citizens_list.only_wanted') }}
+                                    {{ $t('components.citizens.CitizensList.only_wanted') }}
                                 </span>
                             </UToggle>
                         </UFormGroup>
@@ -211,7 +211,7 @@ const columns = [
                                 <UFormGroup
                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
                                     class="flex-1"
-                                    :label="$t('components.citizens.citizens_list.open_fine')"
+                                    :label="$t('components.citizens.CitizensList.open_fine')"
                                 >
                                     <UInput
                                         v-model="query.fines"

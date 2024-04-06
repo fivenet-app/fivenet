@@ -3,10 +3,10 @@ import RegistrationForm from '~/components/auth/RegistrationForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
-    title: 'components.auth.registration_form.title',
+    title: 'components.auth.RegistrationForm.title',
 });
 definePageMeta({
-    title: 'components.auth.registration_form.title',
+    title: 'components.auth.RegistrationForm.title',
     layout: 'auth',
     requiresAuth: false,
     showCookieOptions: true,

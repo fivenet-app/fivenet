@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-// eslint-disable-next-line camelcase
-import { alpha_dash, max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -14,12 +13,27 @@ const { clearAuthInfo } = authStore;
 
 const notifications = useNotificatorStore();
 
-interface FormData {
-    currentUsername: string;
-    newUsername: string;
-}
+const schema = z.object({
+    currentUsername: z
+        .string()
+        .min(3)
+        .max(24)
+        .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
+    newUsername: z
+        .string()
+        .min(3)
+        .max(24)
+        .regex(/^[0-9A-Za-zÄÖÜß_-]{3,24}$/),
+});
 
-async function changeUsername(values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    currentUsername: '',
+    newUsername: '',
+});
+
+async function changeUsername(values: Schema): Promise<void> {
     try {
         const call = $grpc.getAuthClient().changeUsername({
             current: values.currentUsername,
@@ -43,27 +57,10 @@ async function changeUsername(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('alpha_dash', alpha_dash);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        currentUsername: { required: true, min: 3, max: 24, alpha_dash: true },
-        newUsername: { required: true, min: 3, max: 24, alpha_dash: true },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await changeUsername(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await changeUsername(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -73,36 +70,30 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <template #header>
                 <div class="flex items-center justify-between">
                     <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.auth.change_username_modal.change_username') }}
+                        {{ $t('components.auth.ChangeUsernameModal.change_username') }}
                     </h3>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>
             </template>
 
-            <UForm :state="{}">
-                <UFormGroup name="currentUsername" :label="$t('components.auth.change_username_modal.current_username')">
-                    <VeeField
-                        name="currentUsername"
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UFormGroup name="currentUsername" :label="$t('components.auth.ChangeUsernameModal.current_username')">
+                    <UInput
+                        v-model="state.currentUsername"
                         type="text"
                         autocomplete="current-username"
-                        :placeholder="$t('components.auth.change_username_modal.current_username')"
-                        :label="$t('components.auth.change_username_modal.current_username')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :placeholder="$t('components.auth.ChangeUsernameModal.current_username')"
                     />
-                    <VeeErrorMessage name="currentUsername" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
 
-                <UFormGroup name="currentUsername" :label="$t('components.auth.change_username_modal.new_username')">
-                    <VeeField
-                        name="newUsername"
+                <UFormGroup name="newUsername" :label="$t('components.auth.ChangeUsernameModal.new_username')">
+                    <UInput
+                        v-model="state.newUsername"
                         type="text"
                         autocomplete="new-username"
-                        :placeholder="$t('components.auth.change_username_modal.new_username')"
-                        :label="$t('components.auth.change_username_modal.new_username')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :placeholder="$t('components.auth.ChangeUsernameModal.new_username')"
                     />
-                    <VeeErrorMessage name="newUsername" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
             </UForm>
 
@@ -111,14 +102,8 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('components.auth.change_username_modal.change_username') }}
+                    <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                        {{ $t('components.auth.ChangeUsernameModal.change_username') }}
                     </UButton>
                 </UButtonGroup>
             </template>

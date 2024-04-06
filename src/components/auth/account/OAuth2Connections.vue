@@ -19,8 +19,8 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
 <template>
     <UDashboardPanelContent class="pb-2">
         <UDashboardSection
-            :title="$t('components.auth.oauth2_connections.title')"
-            :description="$t('components.auth.oauth2_connections.subtitle')"
+            :title="$t('components.auth.OAuth2Connections.title')"
+            :description="$t('components.auth.OAuth2Connections.subtitle')"
         >
             <OAuth2Connection
                 v-for="provider in providers"

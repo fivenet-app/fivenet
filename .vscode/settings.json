@@ -12,7 +12,7 @@
         "src/lang"
     ],
     "i18n-ally.keystyle": "nested",
-    "i18n-ally.sourceLanguage": "en-US",
+    "i18n-ally.sourceLanguage": "en",
     "[typescript]": {
         "editor.defaultFormatter": "esbenp.prettier-vscode",
         "editor.formatOnSave": true

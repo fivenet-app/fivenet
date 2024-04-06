@@ -68,8 +68,8 @@ const modal = useModal();
             <template v-else>
                 <UDashboardPanelContent class="pb-2">
                     <UDashboardSection
-                        :title="$t('components.auth.account_info.title')"
-                        :description="$t('components.auth.account_info.subtitle')"
+                        :title="$t('components.auth.AccountInfo.title')"
+                        :description="$t('components.auth.AccountInfo.subtitle')"
                     >
                         <UFormGroup
                             name="version"
@@ -82,7 +82,7 @@ const modal = useModal();
 
                         <UFormGroup
                             name="version"
-                            :label="$t('components.auth.account_info.license')"
+                            :label="$t('components.auth.AccountInfo.license')"
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
@@ -91,23 +91,23 @@ const modal = useModal();
 
                         <UFormGroup
                             name="version"
-                            :label="$t('components.auth.account_info.change_username')"
+                            :label="$t('components.auth.AccountInfo.change_username')"
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UButton @click="modal.open(ChangeUsernameModal, {})">
-                                {{ $t('components.auth.account_info.change_username_button') }}
+                                {{ $t('components.auth.AccountInfo.change_username_button') }}
                             </UButton>
                         </UFormGroup>
 
                         <UFormGroup
                             name="version"
-                            :label="$t('components.auth.account_info.change_password')"
+                            :label="$t('components.auth.AccountInfo.change_password')"
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
                             <UButton @click="modal.open(ChangePasswordModal, {})">
-                                {{ $t('components.auth.account_info.change_password_button') }}
+                                {{ $t('components.auth.AccountInfo.change_password_button') }}
                             </UButton>
                         </UFormGroup>
                     </UDashboardSection>

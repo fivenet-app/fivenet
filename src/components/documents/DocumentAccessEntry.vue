@@ -65,7 +65,7 @@ const selectedAccessType = ref<AccessType>({
 const entriesChars = ref<UserShort[]>();
 const queryCharRaw = ref('');
 const queryChar = computed(() => queryCharRaw.value.toLowerCase());
-const selectedChar = ref<undefined | UserShort>(undefined);
+const selectedUser = ref<undefined | UserShort>(undefined);
 
 const queryJobRaw = ref('');
 const queryJob = computed(() => queryJobRaw.value.toLowerCase());
@@ -131,7 +131,7 @@ async function findChars(userId?: number): Promise<UserShort[]> {
 async function setFromProps(): Promise<void> {
     if (props.init.type === 0 && props.init.values.char !== undefined) {
         const users = await findChars(props.init.values.char);
-        selectedChar.value = users.find((char) => char.userId === props.init.values.char);
+        selectedUser.value = users.find((char) => char.userId === props.init.values.char);
     } else if (props.init.type === 1 && props.init.values.job !== undefined && props.init.values.minimumGrade !== undefined) {
         selectedJob.value = props.jobs?.find((j) => j.name === props.init.values.job);
         if (selectedJob.value) {
@@ -165,7 +165,7 @@ watch(selectedAccessType, async () => {
         type: selectedAccessType.value.id,
     });
 
-    selectedChar.value = undefined;
+    selectedUser.value = undefined;
     selectedJob.value = undefined;
     selectedMinimumRank.value = undefined;
 
@@ -192,15 +192,15 @@ watch(selectedJob, () => {
     entriesMinimumRank.value = selectedJob.value.grades;
 });
 
-watch(selectedChar, () => {
-    if (!selectedChar.value) {
+watch(selectedUser, () => {
+    if (!selectedUser.value) {
         return;
     }
 
     emit('nameChange', {
         id: props.init.id,
         job: undefined,
-        char: selectedChar.value,
+        char: selectedUser.value,
         required: required.value,
     });
 });
@@ -261,7 +261,7 @@ watch(selectedAccessRole, () => {
         </div>
         <div v-if="selectedAccessType.id === 0" class="flex grow">
             <div class="mr-2 flex-1">
-                <Combobox v-model="selectedChar" as="div" :disabled="readOnly">
+                <Combobox v-model="selectedUser" as="div" :disabled="readOnly">
                     <div class="relative">
                         <ComboboxButton as="div">
                             <ComboboxInput

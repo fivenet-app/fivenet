@@ -2,10 +2,10 @@
 import UserSettingsPanel from '~/components/auth/account/UserSettingsPanel.vue';
 
 useHead({
-    title: 'components.auth.settings_panel.title',
+    title: 'components.auth.UserSettingsPanel.title',
 });
 definePageMeta({
-    title: 'components.auth.settings_panel.title',
+    title: 'components.auth.UserSettingsPanel.title',
     requiresAuth: true,
     authOnlyToken: true,
 
@@ -16,7 +16,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.auth.settings_panel.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('components.auth.UserSettingsPanel.title')"> </UDashboardNavbar>
 
             <UserSettingsPanel />
         </UDashboardPanel>

@@ -23,7 +23,7 @@ const items = computed(() => [
     ],
     [
         {
-            label: t('components.auth.account_info.title'),
+            label: t('components.auth.AccountInfo.title'),
             icon: 'i-mdi-account-cog-outline',
             to: '/auth/account-info',
         },

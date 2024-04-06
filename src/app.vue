@@ -1,8 +1,5 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
-import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
-import de from '@vee-validate/i18n/dist/locale/de.json';
-import en from '@vee-validate/i18n/dist/locale/en.json';
-import { configure } from 'vee-validate';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
@@ -56,13 +53,6 @@ if (__APP_VERSION__ !== settings.version) {
     settings.setVersion(__APP_VERSION__);
 }
 
-configure({
-    generateMessage: localize({
-        en,
-        de,
-    }),
-});
-
 // Set user setting locale on load of app
 if (settings.locale !== null) {
     locale.value = settings.locale;
@@ -73,7 +63,6 @@ setLocaleGlobally(locale.value);
 
 async function setLocaleGlobally(locale: string): Promise<void> {
     settings.setLocale(locale);
-    veeValidateSetLocale(locale);
 
     // Cookie Banner Locale handling
     switch (locale.split('-', 1)[0]) {

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -14,14 +14,19 @@ const notifications = useNotificatorStore();
 const authStore = useAuthStore();
 const { setAccessToken } = authStore;
 
-const newPassword = ref('');
+const schema = z.object({
+    currentPassword: z.string().min(6).max(70),
+    newPassword: z.string().min(6).max(70),
+});
 
-interface FormData {
-    currentPassword: string;
-    newPassword: string;
-}
+type Schema = z.output<typeof schema>;
 
-async function changePassword(values: FormData): Promise<void> {
+const state = reactive({
+    currentPassword: '',
+    newPassword: '',
+});
+
+async function changePassword(values: Schema): Promise<void> {
     try {
         const call = $grpc.getAuthClient().changePassword({
             current: values.currentPassword,
@@ -44,80 +49,60 @@ async function changePassword(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        currentPassword: { required: true, min: 6, max: 70 },
-        newPassword: { required: true, min: 6, max: 70 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await changePassword(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await changePassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.auth.change_password_modal.change_password') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.auth.ChangePasswordModal.change_password') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <UForm :state="{}">
-                <UFormGroup name="currentPassword" :label="$t('components.auth.change_password_modal.current_password')">
-                    <VeeField
+                <UFormGroup name="currentPassword" :label="$t('components.auth.ChangePasswordModal.current_password')">
+                    <UInput
+                        v-model="state.currentPassword"
                         name="currentPassword"
                         type="password"
                         autocomplete="current-password"
-                        :placeholder="$t('components.auth.change_password_modal.current_password')"
-                        :label="$t('components.auth.change_password_modal.current_password')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
                     />
                     <VeeErrorMessage name="currentPassword" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
 
-                <UFormGroup name="newPassword" :label="$t('components.auth.change_password_modal.new_password')">
-                    <VeeField
-                        v-model:model-value="newPassword"
+                <UFormGroup name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
+                    <UInput
+                        v-model="state.newPassword"
                         name="newPassword"
                         type="password"
                         autocomplete="new-password"
-                        :placeholder="$t('components.auth.change_password_modal.new_password')"
-                        :label="$t('components.auth.change_password_modal.new_password')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                        :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
                     />
-                    <PasswordStrengthMeter :input="newPassword" class="mt-2" />
-                    <VeeErrorMessage name="newPassword" as="p" class="mt-2 text-sm text-error-400" />
+                    <PasswordStrengthMeter :input="state.newPassword" class="mt-2" />
                 </UFormGroup>
-            </UForm>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                        {{ $t('components.auth.change_password_modal.change_password') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('components.auth.ChangePasswordModal.change_password') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { BulletinBoardIcon, CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import { useCompletorStore } from '~/store/completor';
 
 const props = withDefaults(
     defineProps<{
@@ -21,13 +20,17 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
+const completorStore = useCompletorStore();
+
+const usersLoading = ref(false);
+
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+
 const selectedUsers = ref<Colleague[]>([]);
 const selectedUsersIds = computed(() =>
     props.userId !== undefined ? [props.userId] : selectedUsers.value.map((u) => u.userId),
 );
-
-const page = ref(1);
-const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `jobs-colleague-${selectedUsersIds.value.join(',')}-${page.value}`,
@@ -116,64 +119,35 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                     <form @submit.prevent="refresh()">
                         <div class="flex flex-row gap-2">
                             <div class="flex-1">
-                                <label for="selectedUsers" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.colleague', 1) }}
-                                </label>
-                                <div class="relative mt-2">
-                                    <Combobox v-model="selectedUsers" as="div" class="mt-2 w-full" multiple nullable>
-                                        <div class="relative">
-                                            <ComboboxButton as="div">
-                                                <ComboboxInput
-                                                    autocomplete="off"
-                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :display-value="
-                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
-                                                    "
-                                                    :placeholder="$t('common.target')"
-                                                    @change="queryColleagueNameRaw = $event.target.value"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </ComboboxButton>
-
-                                            <ComboboxOptions
-                                                v-if="colleagues?.colleagues !== undefined && colleagues.colleagues.length > 0"
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ComboboxOption
-                                                    v-for="colleague in colleagues?.colleagues"
-                                                    :key="colleague.identifier"
-                                                    v-slot="{ active, selected }"
-                                                    :value="colleague"
-                                                    as="char"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                            active ? 'bg-primary-500' : '',
-                                                        ]"
-                                                    >
-                                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ colleague.firstname }} {{ colleague.lastname }} ({{
-                                                                colleague?.dateofbirth
-                                                            }})
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" />
-                                                        </span>
-                                                    </li>
-                                                </ComboboxOption>
-                                            </ComboboxOptions>
-                                        </div>
-                                    </Combobox>
-                                </div>
+                                <UFormGroup name="selectedUsers" :label="$t('common.colleague', 2)" class="flex-1">
+                                    <USelectMenu
+                                        v-model="selectedUsers"
+                                        multiple
+                                        :searchable="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.completeCitizens({
+                                                    search: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="selectedUsers ? charsGetDisplayValue(selectedUsers) : $t('common.owner')"
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                    </USelectMenu>
+                                </UFormGroup>
                             </div>
                         </div>
                     </form>

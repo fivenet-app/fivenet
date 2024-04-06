@@ -121,12 +121,18 @@
             "edit": {
                 "title": "Qualifikation bearbeiten"
             }
+        },
+        "auth": {
+            "logout": {
+                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
+                "header": "Abgemeldet"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
     "components": {
         "auth": {
-            "account_info": {
+            "AccountInfo": {
                 "title": "Konto-Informationen",
                 "subtitle": "Deine FiveNet Konto-Informationen.",
                 "license": "Identifier/ Lizenz",
@@ -135,23 +141,23 @@
                 "change_username": "Benutzername ändern",
                 "change_username_button": "Konto-Benutzername ändern"
             },
-            "login": {
+            "LoginForm": {
                 "register_account": "Konto mit Token erstellen",
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
                 "forgot_password": "Passwort vergessen",
                 "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
             },
-            "change_password_modal": {
+            "ChangePasswordModal": {
                 "change_password": "Passwort ändern",
                 "current_password": "Momentanes Passwort",
                 "new_password": "Neues Passwort"
             },
-            "oauth2_connections": {
+            "OAuth2Connections": {
                 "title": "Social Login-Verbindungen",
                 "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
             },
-            "forgot_password": {
+            "ForgotPassword": {
                 "title": "Passwort vergessen",
                 "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein, um einen neuen Registrierungstoken zu erhalten.",
                 "registration_token": "Registrierungstoken",
@@ -159,7 +165,7 @@
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es ist ein Fehler beim Festlegen Ihres neuen Passworts aufgetreten, bitte versuchen Sie es erneut!"
             },
-            "registration_form": {
+            "RegistrationForm": {
                 "title": "Konto erstellen",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Konto erstellen",
@@ -167,7 +173,7 @@
                 "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
                 "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein."
             },
-            "settings_panel": {
+            "UserSettingsPanel": {
                 "title": "Eigene FiveNet-Einstellungen",
                 "subtitle": "Eigene FiveNet-Einstellungen.",
                 "set_startpage": {
@@ -190,26 +196,22 @@
                     "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
                 }
             },
-            "change_username_modal": {
+            "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",
                 "current_username": "Momentaner Benutzername",
                 "new_username": "Neuer Benutzername"
             },
-            "character_selector": {
+            "CharacterSelector": {
                 "title": "Charakter Auswahl"
-            },
-            "logout": {
-                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
-                "header": "Abgemeldet"
             }
         },
         "citizens": {
-            "citizens_list": {
+            "CitizensList": {
                 "only_wanted": "Nur Gesuchte",
                 "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
                 "open_fine": "Offene Geldstrafen"
             },
-            "citizen_info_profile": {
+            "CitizenInfoProfile": {
                 "create_new_document": "Neues Dokument erstellen",
                 "copy_profile_link": "Profil-Link kopieren",
                 "revoke_wanted": "Fahndungsstatus aufheben",
@@ -218,7 +220,7 @@
                 "set_traffic_points": "Setze StVo Punkte",
                 "set_mug_shot": "Setze Fahndungsfoto"
             },
-            "citizen_info_activity_feed_entry": {
+            "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {
                     "action_text": "Setzte Verkehrspunkte von"
                 },

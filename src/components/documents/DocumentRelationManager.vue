@@ -319,7 +319,7 @@ function removeRelation(id: string): void {
                                         />
                                         <DataNoDataBlock
                                             v-else-if="citizens === null || citizens.length === 0"
-                                            :message="$t('components.citizens.citizens_list.no_citizens')"
+                                            :message="$t('components.citizens.CitizensList.no_citizens')"
                                         />
 
                                         <table v-else class="min-w-full divide-y divide-base-200">

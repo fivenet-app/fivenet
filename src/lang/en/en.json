@@ -121,12 +121,18 @@
             "edit": {
                 "title": "Edit Qualification"
             }
+        },
+        "auth": {
+            "logout": {
+                "subtitle": "You will be redirected to the home page in a moment.",
+                "header": "Signed out"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt All rights reserved.",
     "components": {
         "auth": {
-            "account_info": {
+            "AccountInfo": {
                 "title": "Account Info",
                 "subtitle": "Your FiveNet account details.",
                 "license": "Identifier/ License",
@@ -135,23 +141,23 @@
                 "change_username": "Change Username",
                 "change_username_button": "Change Account Username"
             },
-            "login": {
+            "LoginForm": {
                 "register_account": "Register Account with Token",
                 "login_error": "There was an error signing you in, please try again!",
                 "title": "Login",
                 "forgot_password": "Forgot Password",
                 "social_login_disabled": "Social login requires you to accept the social login cookies."
             },
-            "change_password_modal": {
+            "ChangePasswordModal": {
                 "change_password": "Change Password",
                 "current_password": "Current Password",
                 "new_password": "New Password"
             },
-            "oauth2_connections": {
+            "OAuth2Connections": {
                 "title": "Social Login Connections",
                 "subtitle": "Your Social Login connections, for faster login and cool additional features."
             },
-            "forgot_password": {
+            "ForgotPassword": {
                 "title": "Forgot Password",
                 "subtitle": "To reset your apssword, join the FiveM server and run /fivenet command to get a new registration token.",
                 "registration_token": "Registration Token",
@@ -159,7 +165,7 @@
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error setting your new password, please try again!"
             },
-            "registration_form": {
+            "RegistrationForm": {
                 "title": "Create Account",
                 "registration_token": "Registration Token",
                 "submit_button": "Create Account",
@@ -167,7 +173,7 @@
                 "create_error": "There was an error creating your account, please try again!",
                 "subtitle": "To create an account join the FiveM server and run /fivenet command."
             },
-            "settings_panel": {
+            "UserSettingsPanel": {
                 "title": "Settings",
                 "subtitle": "Client-side FiveNet Settings.",
                 "set_startpage": {
@@ -190,26 +196,22 @@
                     "description": "Blur images by default and hide other information."
                 }
             },
-            "change_username_modal": {
+            "ChangeUsernameModal": {
                 "change_username": "Change Username",
                 "current_username": "Current Username",
                 "new_username": "New Username"
             },
-            "character_selector": {
+            "CharacterSelector": {
                 "title": "Character Selector"
-            },
-            "logout": {
-                "subtitle": "You will be redirected to the home page in a moment.",
-                "header": "Signed out"
             }
         },
         "citizens": {
-            "citizens_list": {
+            "CitizensList": {
                 "only_wanted": "Only Wanted",
                 "no_citizens": "Use the search field above to search or update your query.",
                 "open_fine": "Open fines"
             },
-            "citizen_info_profile": {
+            "CitizenInfoProfile": {
                 "create_new_document": "Create New Document",
                 "copy_profile_link": "Copy Profile Link",
                 "revoke_wanted": "Revoke Wanted Status",
@@ -218,7 +220,7 @@
                 "set_traffic_points": "Set Traffic Infraction Points",
                 "set_mug_shot": "Set Mug Shot Photo"
             },
-            "citizen_info_activity_feed_entry": {
+            "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {
                     "action_text": "Set traffic points from"
                 },

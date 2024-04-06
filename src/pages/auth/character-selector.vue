@@ -4,10 +4,10 @@ import { useAuthStore } from '~/store/auth';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 
 useHead({
-    title: 'components.auth.character_selector.title',
+    title: 'components.auth.CharacterSelector.title',
 });
 definePageMeta({
-    title: 'components.auth.character_selector.title',
+    title: 'components.auth.CharacterSelector.title',
     layout: 'auth',
     requiresAuth: true,
     authOnlyToken: true,

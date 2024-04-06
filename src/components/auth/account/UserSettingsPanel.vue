@@ -71,12 +71,12 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
 
             <UFormGroup
                 name="darkModeActive"
-                :label="$t('components.auth.settings_panel.editor_theme.title')"
+                :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: 'justify-self-end' }"
             >
                 <UToggle v-model="darkModeActive">
-                    <span class="sr-only">{{ $t('components.auth.settings_panel.editor_theme.title') }}</span>
+                    <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
                 </UToggle>
             </UFormGroup>
         </UDashboardSection>
@@ -84,22 +84,22 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
         <UDivider class="mb-4" />
 
         <UDashboardSection
-            :title="$t('components.auth.settings_panel.streamer_mode.title')"
-            :description="$t('components.auth.settings_panel.streamer_mode.description')"
+            :title="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
+            :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
         >
             <template #links>
                 <UToggle v-model="streamerMode">
-                    <span class="sr-only">{{ $t('components.auth.settings_panel.streamer_mode.title') }}</span>
+                    <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
                 </UToggle>
             </template>
         </UDashboardSection>
 
         <UDivider class="mb-4" />
 
-        <UDashboardSection :title="$t('components.auth.settings_panel.title')">
+        <UDashboardSection :title="$t('components.auth.UserSettingsPanel.title')">
             <UFormGroup
                 name="selectedHomepage"
-                :label="$t('components.auth.settings_panel.set_startpage.title')"
+                :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
                 class="grid grid-cols-2 items-center gap-2"
             >
                 <USelectMenu
@@ -109,7 +109,7 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
                     option-attribute="name"
                 />
                 <p v-else class="text-sm">
-                    {{ $t('components.auth.settings_panel.set_startpage.no_char_selected') }}
+                    {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
                 </p>
             </UFormGroup>
         </UDashboardSection>
@@ -117,12 +117,12 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
         <UDivider class="mb-4" />
 
         <UDashboardSection
-            :title="$t('components.auth.settings_panel.volumes.title')"
-            :description="$t('components.auth.settings_panel.volumes.subtitle')"
+            :title="$t('components.auth.UserSettingsPanel.volumes.title')"
+            :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
         >
             <UFormGroup
                 name="selectedHomepage"
-                :label="$t('components.auth.settings_panel.set_startpage.title')"
+                :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
                 class="grid grid-cols-2 items-center gap-2"
             >
                 <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />

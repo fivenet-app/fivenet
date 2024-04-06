@@ -8,10 +8,10 @@ import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
-    title: 'components.auth.login.title',
+    title: 'components.auth.LoginForm.title',
 });
 definePageMeta({
-    title: 'components.auth.login.title',
+    title: 'components.auth.LoginForm.title',
     layout: 'auth',
     requiresAuth: false,
     showCookieOptions: true,

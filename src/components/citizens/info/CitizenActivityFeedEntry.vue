@@ -38,10 +38,10 @@ const props = defineProps<{
                     <h3 class="inline-flex items-center gap-1 text-sm font-medium">
                         <span
                             ><template v-if="activity.newValue !== ''">
-                                {{ $t('components.citizens.citizen_info_activity_feed_entry.document_relation.added') }}
+                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.added') }}
                             </template>
                             <template v-else>
-                                {{ $t('components.citizens.citizen_info_activity_feed_entry.document_relation.removed') }}
+                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.removed') }}
                             </template>
                         </span>
                         <span class="font-semibold">
@@ -84,7 +84,7 @@ const props = defineProps<{
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                        {{ $t('components.citizens.citizen_info_activity_feed_entry.bool_set_citizen') }}
+                        {{ $t('components.citizens.CitizenInfoActivityFeedEntry.bool_set_citizen') }}
                         <span class="font-semibold">
                             {{
                                 activity.newValue === 'true'
@@ -120,7 +120,7 @@ const props = defineProps<{
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                        {{ $t('components.citizens.citizen_info_activity_feed_entry.userprops_job_set') }}
+                        {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_job_set') }}
                         <span class="font-semibold">
                             {{ activity.newValue }}
                         </span>
@@ -152,7 +152,7 @@ const props = defineProps<{
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                        {{ $t('components.citizens.citizen_info_activity_feed_entry.traffic_infraction_points.action_text') }}
+                        {{ $t('components.citizens.CitizenInfoActivityFeedEntry.traffic_infraction_points.action_text') }}
                         <span>
                             <span class="font-semibold">{{ activity.oldValue }}</span>
                             {{ $t('common.to').toLocaleLowerCase() }}
@@ -186,7 +186,7 @@ const props = defineProps<{
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
-                        {{ $t('components.citizens.citizen_info_activity_feed_entry.userprops_mug_shot_set') }}
+                        {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_set') }}
                     </h3>
                     <p class="text-sm text-gray-400">
                         <GenericTime :value="activity.createdAt" type="long" />
@@ -217,8 +217,8 @@ const props = defineProps<{
                     <h3 class="text-sm font-medium">
                         {{
                             activity.newValue !== ''
-                                ? $t('components.citizens.citizen_info_activity_feed_entry.plugin_license.added')
-                                : $t('components.citizens.citizen_info_activity_feed_entry.plugin_license.removed')
+                                ? $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_license.added')
+                                : $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_license.removed')
                         }}
                     </h3>
                     <p class="text-sm text-gray-400">
@@ -251,14 +251,14 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
                         <template v-if="activity.oldValue === '' && activity.newValue !== '0'">
-                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.jailed') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_jail.jailed') }}
                             {{ fromSecondsToFormattedDuration(parseInt(props.activity.newValue)) }}
                         </template>
                         <template v-else-if="activity.newValue === '0'">
-                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.unjailed') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_jail.unjailed') }}
                         </template>
                         <template v-else>
-                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_jail.escaped') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_jail.escaped') }}
                         </template>
                     </h3>
                     <p class="text-sm text-gray-400">
@@ -296,15 +296,13 @@ const props = defineProps<{
                 <div class="flex items-center justify-between">
                     <h3 class="text-sm font-medium">
                         <template v-if="activity.newValue === '0'">
-                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.paid') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_billing_fines.paid') }}
                         </template>
                         <template v-else-if="activity.newValue === activity.oldValue">
-                            {{
-                                $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.removed')
-                            }}</template
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_billing_fines.removed') }}</template
                         >
                         <template v-else>
-                            {{ $t('components.citizens.citizen_info_activity_feed_entry.plugin_billing_fines.created') }}
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_billing_fines.created') }}
                         </template>
                         <span>
                             {{ $n(parseInt(props.activity.newValue), 'currency') }}

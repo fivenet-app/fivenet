@@ -15,19 +15,21 @@ const route = useRoute();
 
 const buttonDisabled = ref(true);
 
+const { start } = useTimeoutFn(() => (buttonDisabled.value = false), 2000, { immediate: true });
+
 function handleError(url?: string): void {
-    startButtonTimer();
+    start();
 
     if (url === undefined) {
         url = '/';
     }
 
+    clearError();
     reloadNuxtApp({
         path: url,
         persistState: false,
         ttl: 2000,
     });
-    clearError();
 }
 
 function copyError(): void {
@@ -37,16 +39,6 @@ function copyError(): void {
 
     copyToClipboardWrapper(jsonStringify(props.error));
 }
-
-function startButtonTimer(): void {
-    buttonDisabled.value = true;
-
-    setTimeout(() => (buttonDisabled.value = false), 2000);
-}
-
-onBeforeMount(async () => {
-    startButtonTimer();
-});
 </script>
 
 <template>
@@ -65,6 +57,7 @@ onBeforeMount(async () => {
                         <h2 class="text-xl">
                             {{ $t ? $t('pages.error.subtitle') : 'A fatal error occured, please try again in a few seconds.' }}
                         </h2>
+
                         <div class="mb-4 py-2">
                             <p class="py-2 font-semibold">
                                 {{ $t ? $t('pages.error.error_message') : 'Error message:' }}
@@ -97,16 +90,21 @@ onBeforeMount(async () => {
                         </div>
 
                         <div class="flex justify-center gap-4">
-                            <UButton :disabled="buttonDisabled" size="xl" @click="handleError()">
+                            <UButton size="xl" :disabled="buttonDisabled" @click="handleError()">
                                 {{ $t('common.home') }}
                             </UButton>
 
-                            <UButton :disabled="buttonDisabled" size="xl" @click="handleError(route.fullPath)">
+                            <UButton size="xl" color="green" :disabled="buttonDisabled" @click="handleError(route.fullPath)">
                                 {{ $t('common.retry') }}
                             </UButton>
 
                             <!-- @vue-ignore -->
-                            <UButton v-if="error && (error.statusMessage || error.message)" size="xl" @click="copyError">
+                            <UButton
+                                v-if="error && (error.statusMessage || error.message)"
+                                size="xl"
+                                color="amber"
+                                @click="copyError"
+                            >
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>
                         </div>
