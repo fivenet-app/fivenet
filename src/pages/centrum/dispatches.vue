@@ -98,7 +98,7 @@ onBeforeUnmount(() => {
                                 <div class="flex max-h-full flex-col overflow-y-auto">
                                     <div class="border-neutral/20 border-b-2 pb-2 sm:flex sm:items-center">
                                         <div class="sm:flex-auto">
-                                            <UForm :state="{}" @submit.prevent="refresh()">
+                                            <UForm :state="{}" @submit="refresh()">
                                                 <div class="flex flex-row gap-2">
                                                     <div class="flex-1">
                                                         <label for="search" class="block text-sm font-medium leading-6">

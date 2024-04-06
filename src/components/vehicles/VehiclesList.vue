@@ -7,6 +7,7 @@ import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -27,15 +28,15 @@ const props = withDefaults(
     },
 );
 
-const query = ref<{ plate: string; model?: string; user_id?: number }>({
-    plate: '',
+const query = ref<{ licensePlate: string; model?: string; user_id?: number }>({
+    licensePlate: '',
     user_id: props.userId,
 });
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data: data, pending: loading, refresh } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
+const { data: data, pending: loading, refresh, error } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
 
 const hideVehicleModell = ref(false);
 
@@ -47,7 +48,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             },
             orderBy: [],
             userId: query.value.user_id,
-            search: query.value.plate,
+            search: query.value.licensePlate,
             model: query.value.model,
         });
         const { response } = await call;
@@ -133,83 +134,69 @@ const columns = computed(() =>
     <div>
         <UDashboardToolbar>
             <template #default>
-                <form class="w-full" @submit.prevent="refresh()">
-                    <div class="flex flex-row gap-2">
-                        <div class="flex-1">
-                            <label for="search" class="block text-sm font-medium leading-6">
-                                {{ $t('common.license_plate') }}
-                            </label>
-                            <div class="relative mt-2">
-                                <UInput
-                                    v-model="query.plate"
-                                    type="text"
-                                    :placeholder="$t('common.license_plate')"
-                                    block
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                            </div>
-                        </div>
-                        <div v-if="!hideVehicleModell" class="flex-1">
-                            <label for="model" class="block text-sm font-medium leading-6">
-                                {{ $t('common.model') }}
-                            </label>
-                            <div class="relative mt-2">
-                                <UInput
-                                    v-model="query.model"
-                                    type="text"
-                                    name="model"
-                                    :placeholder="$t('common.model')"
-                                    block
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                            </div>
-                        </div>
+                <UForm :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
+                    <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
+                        <UInput
+                            v-model="query.licensePlate"
+                            type="text"
+                            :placeholder="$t('common.license_plate')"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
 
-                        <div v-if="!userId" class="flex-1">
-                            <label for="owner" class="block text-sm font-medium leading-6">
-                                {{ $t('common.owner') }}
-                            </label>
-                            <div class="relative mt-2 items-center">
-                                <UInputMenu
-                                    v-model="selectedUser"
-                                    :search="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const users = await completorStore.completeCitizens({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return users;
-                                        }
-                                    "
-                                    :search-attributes="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="
-                                        selectedUser
-                                            ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
-                                            : $t('common.owner')
-                                    "
-                                    trailing
-                                    by="userId"
-                                >
-                                    <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                                </UInputMenu>
-                            </div>
-                        </div>
-                    </div>
-                </form>
+                    <UFormGroup v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">
+                        <UInput
+                            v-model="query.model"
+                            type="text"
+                            name="model"
+                            :placeholder="$t('common.model')"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup v-if="!userId" name="model" :label="$t('common.owner')" class="flex-1">
+                        <UInputMenu
+                            v-model="selectedUser"
+                            :search="
+                                async (query: string) => {
+                                    usersLoading = true;
+                                    const users = await completorStore.completeCitizens({
+                                        search: query,
+                                    });
+                                    usersLoading = false;
+                                    return users;
+                                }
+                            "
+                            :search-attributes="['firstname', 'lastname']"
+                            block
+                            :placeholder="
+                                selectedUser
+                                    ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
+                                    : $t('common.owner')
+                            "
+                            trailing
+                            by="userId"
+                        >
+                            <template #option="{ option: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                        </UInputMenu>
+                    </UFormGroup>
+                </UForm>
             </template>
         </UDashboardToolbar>
 
+        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])" :retry="refresh" />
         <UTable
+            v-else
             :loading="loading"
             :columns="columns"
             :rows="data?.vehicles"

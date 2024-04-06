@@ -103,106 +103,88 @@ const columns = [
 </script>
 
 <template>
-    <div class="py-2 pb-4">
-        <div v-if="can('JobsTimeclockService.ListTimeclock')" class="px-1 sm:px-2 lg:px-4">
-            <UButton :to="{ name: 'jobs-timeclock' }">
-                <ArrowLeftIcon class="mr-1 size-5" />
-                {{ $t('common.timeclock') }}
-            </UButton>
-        </div>
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
-                        <div class="flex flex-row gap-2">
-                            <div class="flex-1">
-                                <label for="days" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.time_ago.day', 2) }}
-                                </label>
-                                <div class="relative mt-2">
-                                    <VeeField
-                                        v-model="query.days"
-                                        name="days"
-                                        type="number"
-                                        min="3"
-                                        max="31"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :label="$t('common.time_ago.day', 2)"
-                                        :placeholder="$t('common.time_ago.day', 2)"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                    <VeeErrorMessage name="days" as="p" class="mt-2 text-sm text-error-400" />
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataErrorBlock
-                            v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
-                            :retry="refresh"
-                        />
-                        <UTable
-                            v-else
-                            :loading="loading"
-                            :columns="columns"
-                            :rows="data?.colleagues"
-                            :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
-                        >
-                            <template #name-data="{ row: colleague }">
-                                <div class="inline-flex items-center">
-                                    <ProfilePictureImg
-                                        :url="colleague.avatar?.url"
-                                        :name="`${colleague.firstname} ${colleague.lastname}`"
-                                        size="sm"
-                                        :enable-popup="true"
-                                        class="mr-2"
-                                    />
+    <div>
+        <UDashboardToolbar>
+            <template #default>
+                <div class="flex w-full flex-col">
+                    <UButton
+                        v-if="can('JobsTimeclockService.ListTimeclock')"
+                        :to="{ name: 'jobs-timeclock' }"
+                        icon="i-mdi-arrow-left"
+                        class="place-self-start"
+                    >
+                        {{ $t('common.timeclock') }}
+                    </UButton>
 
-                                    {{ colleague.firstname }} {{ colleague.lastname }}
-                                </div>
-                                <dl class="font-normal lg:hidden">
-                                    <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
-                                    <dd class="mt-1 truncate">
-                                        {{ colleague.jobGradeLabel
-                                        }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-                                    </dd>
-                                </dl>
-                            </template>
-                            <template #rank-data="{ row: colleague }">
-                                {{ colleague.jobGradeLabel
-                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
-                            </template>
-                            <template #phoneNumber-data="{ row: colleague }">
-                                <PhoneNumberBlock :number="colleague.phoneNumber" />
-                            </template>
-                            <template #actions-data="{ row: colleague }">
-                                <NuxtLink
-                                    v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
-                                    icon="i-mdi-eye"
-                                    :to="{
-                                        name: 'jobs-colleagues-id-actvitiy',
-                                        params: { id: colleague.userId ?? 0 },
-                                    }"
-                                />
-                            </template>
-                        </UTable>
-
-                        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                            <UPagination
-                                v-model="page"
-                                :page-count="data?.pagination?.pageSize ?? 0"
-                                :total="data?.pagination?.totalCount ?? 0"
+                    <UForm :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
+                        <UFormGroup name="days" :label="$t('common.time_ago.day', 2)" class="flex-1">
+                            <UInput
+                                v-model="query.days"
+                                name="days"
+                                type="number"
+                                min="3"
+                                max="31"
+                                :placeholder="$t('common.time_ago.day', 2)"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
                             />
-                        </div>
-                    </div>
+                        </UFormGroup>
+                    </UForm>
                 </div>
-            </div>
+            </template>
+        </UDashboardToolbar>
+
+        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
+        <UTable
+            v-else
+            :loading="loading"
+            :columns="columns"
+            :rows="data?.colleagues"
+            :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+        >
+            <template #name-data="{ row: colleague }">
+                <div class="inline-flex items-center">
+                    <ProfilePictureImg
+                        :url="colleague.avatar?.url"
+                        :name="`${colleague.firstname} ${colleague.lastname}`"
+                        size="sm"
+                        :enable-popup="true"
+                        class="mr-2"
+                    />
+
+                    {{ colleague.firstname }} {{ colleague.lastname }}
+                </div>
+                <dl class="font-normal lg:hidden">
+                    <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
+                    <dd class="mt-1 truncate">
+                        {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                    </dd>
+                </dl>
+            </template>
+            <template #rank-data="{ row: colleague }">
+                {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+            </template>
+            <template #phoneNumber-data="{ row: colleague }">
+                <PhoneNumberBlock :number="colleague.phoneNumber" />
+            </template>
+            <template #actions-data="{ row: colleague }">
+                <NuxtLink
+                    v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
+                    icon="i-mdi-eye"
+                    :to="{
+                        name: 'jobs-colleagues-id-actvitiy',
+                        params: { id: colleague.userId ?? 0 },
+                    }"
+                />
+            </template>
+        </UTable>
+
+        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+            <UPagination
+                v-model="page"
+                :page-count="data?.pagination?.pageSize ?? 0"
+                :total="data?.pagination?.totalCount ?? 0"
+            />
         </div>
     </div>
 </template>

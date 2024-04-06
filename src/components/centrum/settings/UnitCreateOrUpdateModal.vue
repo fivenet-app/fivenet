@@ -123,7 +123,7 @@ onBeforeMount(async () => updateUnitInForm());
             </template>
 
             <div>
-                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
+                <UForm :state="{}" @submit="onSubmitThrottle">
                     <div class="text-center">
                         <div>
                             <div class="text-sm text-gray-100">

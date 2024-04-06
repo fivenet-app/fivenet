@@ -78,7 +78,7 @@ const canSubmit = ref(true);
 <template>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <form @submit.prevent="refresh()">
+            <UForm :state="{}" @submit="refresh()">
                 <div class="flex flex-row items-center gap-2 sm:mx-auto">
                     <div class="flex-1">
                         <label for="search" class="block text-sm font-medium leading-6"
@@ -106,7 +106,7 @@ const canSubmit = ref(true);
                         </UButton>
                     </div>
                 </div>
-            </form>
+            </UForm>
         </div>
     </div>
     <div class="mt-2 flow-root">

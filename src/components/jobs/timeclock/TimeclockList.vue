@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ArrowRightIcon, CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
+import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
 import { format } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -154,99 +154,107 @@ function updateDates(): void {
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div v-if="can('JobsTimeclockService.ListInactiveEmployees')" class="px-1 sm:px-2 lg:px-4">
-            <UButton :to="{ name: 'jobs-timeclock-inactive' }">
-                {{ $t('common.inactive_colleagues') }}
-                <ArrowRightIcon class="ml-1 size-5" />
-            </UButton>
-        </div>
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <UForm :state="{}" @submit.prevent="refresh()">
-                        <div class="flex flex-row gap-2">
-                            <UFormGroup v-if="canAccessAll" class="flex-1" :label="$t('common.colleague', 2)">
-                                <UInputMenu
-                                    v-model="query.user"
-                                    :search="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const colleagues = await completorStore.listColleagues({
-                                                pagination: { offset: 0 },
-                                                searchName: query,
-                                            });
-                                            usersLoading = false;
-                                            return colleagues;
-                                        }
+    <div>
+        <UForm :state="{}" @submit="refresh()">
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex w-full flex-col">
+                        <div class="flex w-full flex-col">
+                            <UButton
+                                v-if="can('JobsTimeclockService.ListInactiveEmployees')"
+                                :to="{ name: 'jobs-timeclock-inactive' }"
+                                class="place-self-end"
+                                trailing-icon="i-mdi-arrow-right"
+                            >
+                                {{ $t('common.inactive_colleagues') }}
+                            </UButton>
+
+                            <div class="flex flex-row gap-2">
+                                <UFormGroup v-if="canAccessAll" class="flex-1" :label="$t('common.colleague', 2)">
+                                    <UInputMenu
+                                        v-model="query.user"
+                                        :search="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.listColleagues({
+                                                    pagination: { offset: 0 },
+                                                    searchName: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="
+                                            query.user
+                                                ? `${query.user?.firstname} ${query.user?.lastname} (${query.user?.dateofbirth})`
+                                                : $t('common.owner')
+                                        "
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                    </UInputMenu>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    class="flex-1"
+                                    :label="
+                                        query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`
                                     "
-                                    :search-attributes="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="
-                                        query.user
-                                            ? `${query.user?.firstname} ${query.user?.lastname} (${query.user?.dateofbirth})`
-                                            : $t('common.owner')
-                                    "
-                                    trailing
-                                    by="userId"
                                 >
-                                    <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                </UInputMenu>
-                            </UFormGroup>
+                                    <UPopover :popper="{ placement: 'bottom-start' }">
+                                        <UButton
+                                            variant="outline"
+                                            color="gray"
+                                            block
+                                            icon="i-heroicons-calendar-days-20-solid"
+                                            :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        />
 
-                            <UFormGroup
-                                class="flex-1"
-                                :label="query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`"
-                            >
-                                <UPopover :popper="{ placement: 'bottom-start' }">
-                                    <UButton
-                                        variant="outline"
-                                        color="gray"
-                                        block
-                                        icon="i-heroicons-calendar-days-20-solid"
-                                        :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                    />
+                                        <template #panel="{ close }">
+                                            <DatePicker v-model="query.from" @close="close" />
+                                        </template>
+                                    </UPopover>
+                                </UFormGroup>
 
-                                    <template #panel="{ close }">
-                                        <DatePicker v-model="query.from" @close="close" />
-                                    </template>
-                                </UPopover>
-                            </UFormGroup>
+                                <UFormGroup
+                                    v-if="!query.perDay"
+                                    class="flex-1"
+                                    :label="`${$t('common.time_range')} ${$t('common.to')}`"
+                                >
+                                    <UPopover :popper="{ placement: 'bottom-start' }">
+                                        <UButton
+                                            variant="outline"
+                                            color="gray"
+                                            block
+                                            icon="i-heroicons-calendar-days-20-solid"
+                                            :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        />
 
-                            <UFormGroup
-                                v-if="!query.perDay"
-                                class="flex-1"
-                                :label="`${$t('common.time_range')} ${$t('common.to')}`"
-                            >
-                                <UPopover :popper="{ placement: 'bottom-start' }">
-                                    <UButton
-                                        variant="outline"
-                                        color="gray"
-                                        block
-                                        icon="i-heroicons-calendar-days-20-solid"
-                                        :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                    />
-
-                                    <template #panel="{ close }">
-                                        <DatePicker v-model="query.to" @close="close" />
-                                    </template>
-                                </UPopover>
-                            </UFormGroup>
+                                        <template #panel="{ close }">
+                                            <DatePicker v-model="query.to" @close="close" />
+                                        </template>
+                                    </UPopover>
+                                </UFormGroup>
+                            </div>
                         </div>
 
-                        <div v-if="query.perDay" class="mx-auto flex flex-row gap-4 pt-2">
+                        <div v-if="query.perDay" class="flex flex-row gap-4 pt-2">
                             <div class="flex-1">
                                 <UButton block :disabled="futureDay > today" @click="dayForward()">
                                     <ChevronLeftIcon class="size-5" />
                                     {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
                                 </UButton>
                             </div>
+
                             <div class="flex-initial">
                                 <UButton
                                     disabled
@@ -259,6 +267,7 @@ function updateDates(): void {
                                     <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
                                 </UButton>
                             </div>
+
                             <div class="flex-1">
                                 <UButton block @click="dayBackwards()">
                                     {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
@@ -266,9 +275,10 @@ function updateDates(): void {
                                 </UButton>
                             </div>
                         </div>
-                    </UForm>
-                </div>
-            </div>
+                    </div>
+                </template>
+            </UDashboardToolbar>
+
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
@@ -333,6 +343,7 @@ function updateDates(): void {
                     </div>
                 </div>
             </div>
+
             <div v-if="data && data.stats" class="mb-4 flow-root">
                 <div class="mt-2 sm:flex sm:items-center">
                     <div class="sm:flex-auto">
@@ -346,6 +357,6 @@ function updateDates(): void {
                     </div>
                 </div>
             </div>
-        </div>
+        </UForm>
     </div>
 </template>

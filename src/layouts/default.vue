@@ -84,7 +84,7 @@ const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })
                     permission: 'JobsService.ListColleagueActivity' as Perms,
                 },
                 {
-                    label: t('common.colleague', 2),
+                    label: t('common.timeclock'),
                     to: '/jobs/timeclock',
                     permission: 'JobsTimeclockService.ListTimeclock' as Perms,
                 },

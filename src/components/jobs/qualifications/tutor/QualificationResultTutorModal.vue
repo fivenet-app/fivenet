@@ -112,7 +112,7 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
             </template>
 
             <div>
-                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
+                <UForm :state="{}" @submit="onSubmitThrottle">
                     <div class="flex-1">
                         <label for="status" class="block text-sm font-medium leading-6">
                             {{ $t('common.status') }}

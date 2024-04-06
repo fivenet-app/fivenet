@@ -88,7 +88,7 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
             </template>
 
             <div>
-                <UForm :state="{}" @submit.prevent="onSubmitThrottle">
+                <UForm :state="{}" @submit="onSubmitThrottle">
                     <div class="my-2 space-y-24">
                         <div class="flex-1">
                             <label for="reason" class="block text-sm font-medium leading-6">
