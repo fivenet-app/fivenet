@@ -23,12 +23,12 @@ const notifications = useNotificatorStore();
 
 interface FormData {
     reason: string;
-    trafficPoints: number;
+    trafficPoints: string;
     reset?: boolean;
 }
 
 async function setTrafficPoints(values: FormData): Promise<void> {
-    if (!values.reset && values.trafficPoints === 0) {
+    if (!values.reset && values.trafficPoints === '0') {
         return;
     }
 
@@ -36,7 +36,7 @@ async function setTrafficPoints(values: FormData): Promise<void> {
 
     const userProps: UserProps = {
         userId: props.user.userId,
-        trafficInfractionPoints: points,
+        trafficInfractionPoints: parseInt(points.toString()),
     };
 
     try {
