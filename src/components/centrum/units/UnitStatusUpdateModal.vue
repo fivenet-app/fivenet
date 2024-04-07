@@ -177,7 +177,6 @@ function updateReasonField(value: string): void {
                                             <VeeField
                                                 type="text"
                                                 name="code"
-                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.code')"
                                                 :label="$t('common.code')"
                                                 @focusin="focusTablet(true)"
@@ -196,7 +195,6 @@ function updateReasonField(value: string): void {
                                             <VeeField
                                                 type="text"
                                                 name="reason"
-                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.reason')"
                                                 :label="$t('common.reason')"
                                                 @focusin="focusTablet(true)"
@@ -217,7 +215,6 @@ function updateReasonField(value: string): void {
                                         </dt>
                                         <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
                                             <select
-                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                                 @change="updateReasonField(($event.target as HTMLSelectElement).value)"

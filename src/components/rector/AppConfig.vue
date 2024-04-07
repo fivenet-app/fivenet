@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-// eslint-disable-next-line camelcase
 import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
 import { CheckIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
@@ -298,7 +297,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                         <VeeField
                                             :name="`permsDefault[${idx}].category`"
                                             type="text"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.category')"
                                             :label="$t('common.category')"
                                             :rules="required"
@@ -361,7 +359,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     type="text"
                                     name="websiteLinksPrivacyPolicy"
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="data.config!.website!.links!.privacyPolicy"
                                     :placeholder="$t('common.privacy_policy')"
                                     :label="$t('common.privacy_policy')"
@@ -378,7 +375,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     type="text"
                                     name="websiteLinksImprint"
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.imprint')"
                                     :label="$t('common.imprint')"
                                     :value="data.config!.website!.links!.imprint"
@@ -406,7 +402,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 <VeeField
                                     type="text"
                                     name="jobInfoUnemployedName"
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :value="data.config!.jobInfo!.unemployedJob!.name"
                                     :placeholder="$t('common.job')"
                                     :label="$t('common.job')"
@@ -426,7 +421,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     max="99"
                                     :value="data.config!.jobInfo!.unemployedJob!.grade"
                                     name="jobInfoUnemployedGrade"
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.rank')"
                                     :label="$t('common.rank')"
                                     @focusin="focusTablet(true)"
@@ -447,7 +441,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <ComboboxButton as="div">
                                         <ComboboxInput
                                             autocomplete="off"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                             :placeholder="$t('common.job', 2)"
                                             @change="queryJobsRaw = $event.target.value"
@@ -506,7 +499,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <ComboboxButton as="div">
                                         <ComboboxInput
                                             autocomplete="off"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                             :placeholder="$t('common.job', 2)"
                                             @change="queryJobsRaw = $event.target.value"
@@ -620,7 +612,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     <ComboboxButton as="div">
                                         <ComboboxInput
                                             autocomplete="off"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
                                             :placeholder="$t('common.job', 2)"
                                             @change="queryJobsRaw = $event.target.value"
@@ -721,7 +712,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 type="url"
                                 name="discordBotInviteUrl"
                                 :value="data.config!.discord!.inviteUrl"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
                                 :label="$t('components.rector.app_config.discord.bot_invite_url')"
                                 @focusin="focusTablet(true)"

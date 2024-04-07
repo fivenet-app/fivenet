@@ -294,8 +294,8 @@ const columns = [
                                         modal.open(ConductCreateOrUpdateModal, {
                                             entry: conduct,
                                             userId: userId,
-                                            onCreated: data?.entries.unshift,
-                                            onUpdate: updateEntryInPlace,
+                                            onCreated: ($event) => data?.entries.unshift($event),
+                                            onUpdate: ($event) => updateEntryInPlace($event),
                                         })
                                     "
                                 />

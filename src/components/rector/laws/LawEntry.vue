@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// eslint-disable-next-line camelcase
 import { integer, max, max_value, min, min_value, required } from '@vee-validate/rules';
 import { CancelIcon, ContentSaveIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
@@ -165,20 +164,13 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.crime')"
                 :label="$t('common.crime')"
-                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
             <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
         </td>
         <td class="text-accent-200 whitespace-nowrap p-1 text-left">
-            <VeeField
-                name="fine"
-                type="text"
-                :placeholder="$t('common.fine')"
-                :label="$t('common.fine')"
-                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-            />
+            <VeeField name="fine" type="text" :placeholder="$t('common.fine')" :label="$t('common.fine')" />
             <VeeErrorMessage name="fine" as="p" class="mt-2 text-sm text-error-400" />
         </td>
         <td class="text-accent-200 whitespace-nowrap p-1 text-left">
@@ -187,7 +179,6 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.detention_time')"
                 :label="$t('common.detention_time')"
-                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -199,7 +190,6 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.traffic_infraction_points')"
                 :label="$t('common.traffic_infraction_points')"
-                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
@@ -211,7 +201,6 @@ const editing = ref(props.startInEdit);
                 type="text"
                 :placeholder="$t('common.description')"
                 :label="$t('common.description')"
-                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />

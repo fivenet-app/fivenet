@@ -15,9 +15,7 @@ const props = defineProps<{
     modelValue: Map<string, DocumentRelation>;
 }>();
 
-console.log(props.modelValue);
-
-const emit = defineEmits<{
+defineEmits<{
     (e: 'close'): void;
     (e: 'update:modelValue', payload: Map<string, DocumentRelation>): void;
 }>();

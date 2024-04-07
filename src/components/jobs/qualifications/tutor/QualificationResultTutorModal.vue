@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-// eslint-disable-next-line camelcase
 import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
 import { defineRule } from 'vee-validate';
 import { useNotificatorStore } from '~/store/notificator';
@@ -166,7 +165,6 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                             name="score"
                             min="0"
                             max="100"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="$t('common.score')"
                             :label="$t('common.score')"
                             @focusin="focusTablet(true)"

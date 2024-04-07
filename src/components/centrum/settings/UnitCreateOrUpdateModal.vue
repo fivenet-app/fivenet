@@ -134,7 +134,6 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="name"
                                         type="text"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.name')"
                                         :label="$t('common.name')"
                                         @focusin="focusTablet(true)"
@@ -149,7 +148,6 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="initials"
                                         type="text"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.initials')"
                                         :label="$t('common.initials')"
                                         @focusin="focusTablet(true)"
@@ -164,7 +162,6 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="description"
                                         type="text"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.description')"
                                         :label="$t('common.description')"
                                         @focusin="focusTablet(true)"
@@ -178,7 +175,6 @@ onBeforeMount(async () => updateUnitInForm());
                                     </label>
                                     <VeeField
                                         name="attributes"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.attributes', 2)"
                                         :label="$t('common.attributes', 2)"
                                         @focusin="focusTablet(true)"
@@ -220,7 +216,6 @@ onBeforeMount(async () => updateUnitInForm());
                                     <VeeField
                                         name="homePostal"
                                         type="text"
-                                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
                                         :label="`${$t('common.department')} ${$t('common.postal_code')}`"
                                         @focusin="focusTablet(true)"

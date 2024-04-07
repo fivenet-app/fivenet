@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { max, min, required, mimes, size } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useNotificatorStore } from '~/store/notificator';
-import type { File } from '~~/gen/ts/resources/filestore/file';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
 
 const props = defineProps<{
     user: User;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:mugShot', value?: File): void;
+    (e: 'update:mugShot', value?: FilestoreFile): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -20,13 +20,57 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-interface FormData {
-    reason: string;
-    mugShot?: Blob;
-    reset?: boolean;
-}
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
 
-async function setMugShot(values: FormData): Promise<void> {
+const schema = z
+    .object({
+        reason: z.string().min(3).max(255),
+        mugShot: z.custom<FileList>().superRefine((files, ctx) => {
+            if (!files || files.length === 0) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'File must be provided',
+                });
+                return false;
+            }
+
+            if (!ACCEPTED_IMAGE_TYPES.includes(files[0].type)) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'File must be a valid image type',
+                });
+                return false;
+            }
+
+            if (files[0].size > MAX_FILE_SIZE) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'File must be less than 5MB',
+                });
+                return false;
+            }
+
+            return true;
+        }),
+        reset: z.boolean(),
+    })
+    .or(
+        z.union([
+            z.object({ reason: z.string(), mugShot: z.custom<FileList>(), reset: z.boolean() }),
+            z.object({ reason: z.string(), mugShot: z.undefined(), reset: z.boolean() }),
+        ]),
+    );
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    reason: '',
+    mugShot: undefined,
+    reset: false,
+});
+
+async function setMugShot(values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
     };
@@ -35,9 +79,11 @@ async function setMugShot(values: FormData): Promise<void> {
             return;
         }
 
-        userProps.mugShot = { data: new Uint8Array(await values.mugShot.arrayBuffer()) };
+        userProps.mugShot = { data: new Uint8Array(await values.mugShot[0].arrayBuffer()) };
     } else {
         userProps.mugShot = { data: new Uint8Array(), delete: true };
+
+        state.reset = false;
     }
 
     try {
@@ -62,95 +108,57 @@ async function setMugShot(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('size', size);
-defineRule('mimes', mimes);
-
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
-    validationSchema: {
-        reason: { required: true, min: 3, max: 255 },
-        mugShot: { required: false, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> => await setMugShot(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
-    setFieldValue('reset', false);
+    await setMugShot(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <div>
-                <UForm :state="{}" @submit="onSubmitThrottle">
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="reason" class="block text-sm font-medium leading-6">
-                                {{ $t('common.reason') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="reason"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :placeholder="$t('common.reason')"
-                                :label="$t('common.reason')"
+                <div>
+                    <UFormGroup name="reason" :label="$t('common.reason')">
+                        <UInput
+                            v-model="state.reason"
+                            type="text"
+                            :placeholder="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="mugShot" :label="$t('common.image')">
+                        <template v-if="isNUIAvailable()">
+                            <p class="text-sm">
+                                {{ $t('system.not_supported_on_tablet.title') }}
+                            </p>
+                        </template>
+                        <template v-else>
+                            <UInput
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png"
+                                :placeholder="$t('common.image')"
+                                @change="state.mugShot = $event"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="mugShot" class="block text-sm font-medium leading-6">
-                                {{ $t('common.image') }}
-                            </label>
-                            <template v-if="isNUIAvailable()">
-                                <p class="text-sm">
-                                    {{ $t('system.not_supported_on_tablet.title') }}
-                                </p>
-                            </template>
-                            <template v-else>
-                                <VeeField
-                                    v-slot="{ handleChange, handleBlur }"
-                                    type="text"
-                                    name="mugShot"
-                                    :placeholder="$t('common.image')"
-                                    :label="$t('common.image')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                >
-                                    <UInput
-                                        type="file"
-                                        accept="image/jpeg,image/jpg,image/png"
-                                        @change="handleChange"
-                                        @blur="handleBlur"
-                                    />
-                                </VeeField>
-                                <VeeErrorMessage name="mugShot" as="p" class="mt-2 text-sm text-error-400" />
-                            </template>
-                        </div>
-                    </div>
-                    <div class="flex flex-1 items-center">
+                        </template>
+                    </UFormGroup>
+
+                    <div class="mt-4 flex flex-1 items-center">
                         <SquareImg
                             :url="user?.props?.mugShot?.url"
                             class="m-auto"
@@ -159,41 +167,30 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             :no-blur="true"
                         />
                     </div>
-                </UForm>
-            </div>
+                </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        color="red"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="
-                            setFieldValue('reset', true);
-                            onSubmitThrottle($event);
-                        "
-                    >
-                        {{ $t('common.reset') }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="
-                            setFieldValue('reset', false);
-                            onSubmitThrottle($event);
-                        "
-                    >
-                        {{ $t('common.save') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                        <UButton
+                            type="submit"
+                            block
+                            class="flex-1"
+                            color="red"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            @click="state.reset = true"
+                        >
+                            {{ $t('common.reset') }}
+                        </UButton>
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

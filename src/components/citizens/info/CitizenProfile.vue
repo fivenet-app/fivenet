@@ -254,7 +254,7 @@ const mugShotModal = ref(false);
                                     @click="
                                         modal.open(CitizenSetWantedModal, {
                                             user: user,
-                                            'onUpdate:wantedStatus': () => $emit('update:wantedStatus', $event),
+                                            'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
                                         })
                                     "
                                 >
@@ -274,7 +274,7 @@ const mugShotModal = ref(false);
                                     @click="
                                         modal.open(CitizenSetJobModal, {
                                             user: user,
-                                            'onUpdate:job': () => $emit('update:job', $event),
+                                            'onUpdate:job': ($event) => $emit('update:job', $event),
                                         })
                                     "
                                 >
@@ -288,7 +288,7 @@ const mugShotModal = ref(false);
                                     @click="
                                         modal.open(CitizenSetTrafficPointsModal, {
                                             user: user,
-                                            'onUpdate:trafficInfractionPoints': () =>
+                                            'onUpdate:trafficInfractionPoints': ($event) =>
                                                 $emit('update:trafficInfractionPoints', $event),
                                         })
                                     "
@@ -303,7 +303,7 @@ const mugShotModal = ref(false);
                                     @click="
                                         modal.open(CitizenSetMugShotModal, {
                                             user: user,
-                                            'onUpdate:mugShot': () => $emit('update:mugShot', $event),
+                                            'onUpdate:mugShot': ($event) => $emit('update:mugShot', $event),
                                         })
                                     "
                                 >

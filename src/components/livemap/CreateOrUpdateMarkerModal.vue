@@ -1,9 +1,8 @@
 <script lang="ts" setup>
 import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-// eslint-disable-next-line camelcase
 import { digits, max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
+import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
@@ -198,7 +197,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeField
                                             type="text"
                                             name="name"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.name')"
                                             :label="$t('common.name')"
                                             @focusin="focusTablet(true)"
@@ -217,7 +215,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeField
                                             type="text"
                                             name="description"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.description')"
                                             :label="$t('common.description')"
                                             @focusin="focusTablet(true)"
@@ -236,7 +233,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         <VeeField
                                             type="datetime-local"
                                             name="expiresAt"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.expires_at')"
                                             :label="$t('common.expires_at')"
                                             @focusin="focusTablet(true)"
@@ -270,12 +266,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             :placeholder="$t('common.marker')"
                                             :label="$t('common.marker')"
                                         >
-                                            <select
-                                                v-bind="field"
-                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            >
+                                            <select v-bind="field" @focusin="focusTablet(true)" @focusout="focusTablet(false)">
                                                 <option
                                                     v-for="mtype in markerTypes"
                                                     :key="mtype.status"
@@ -310,7 +301,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             name="circleRadius"
                                             min="5"
                                             max="250"
-                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.radius')"
                                             :label="$t('common.radius')"
                                         />
@@ -341,7 +331,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                     >
                                                         <ComboboxInput
                                                             autocomplete="off"
-                                                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                             :placeholder="$t('common.icon')"
                                                             @change="queryIcon = $event.target.value"
                                                             @focusin="focusTablet(true)"

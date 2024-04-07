@@ -127,23 +127,15 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
             <div>
                 <form @submit.prevent="onSubmitThrottle">
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="reason" class="block text-sm font-medium leading-6">
-                                {{ $t('common.reason') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="reason"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :placeholder="$t('common.reason')"
-                                :label="$t('common.reason')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
+                    <UFormGroup name="reason" :label="$t('common.reason')">
+                        <UInput
+                            v-model="state.reason"
+                            type="text"
+                            :placeholder="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                     <div class="my-2 space-y-24">
                         <div class="flex-1">
                             <label for="absenceBegin" class="block text-sm font-medium leading-6">
@@ -152,7 +144,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="date"
                                 name="absenceBegin"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.from')"
                                 :label="$t('common.from')"
                                 @focusin="focusTablet(true)"
@@ -169,7 +160,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             <VeeField
                                 type="date"
                                 name="absenceEnd"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :placeholder="$t('common.to')"
                                 :label="$t('common.to')"
                                 @focusin="focusTablet(true)"

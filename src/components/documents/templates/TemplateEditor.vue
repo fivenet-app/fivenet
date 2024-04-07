@@ -541,7 +541,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             name="weight"
                             min="0"
                             max="4294967295"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :label="$t('common.weight')"
                             :placeholder="$t('common.weight')"
                             @focusin="focusTablet(true)"
@@ -558,7 +557,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             as="textarea"
                             rows="1"
                             name="title"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :label="$t('common.title')"
                             :placeholder="$t('common.title')"
                             @focusin="focusTablet(true)"
@@ -577,7 +575,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="4"
                             name="description"
                             :label="$t('common.description')"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -630,7 +627,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="2"
                             name="contentTitle"
                             :label="$t('common.title')"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -666,7 +662,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="2"
                             name="contentState"
                             :label="$t('common.state')"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
@@ -683,7 +678,6 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             rows="6"
                             name="content"
                             :label="$t('common.template')"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />

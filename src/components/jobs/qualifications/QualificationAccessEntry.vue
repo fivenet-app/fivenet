@@ -201,7 +201,6 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :display-value="(job: any) => job?.label"
                                 :class="readOnly ? 'disabled' : ''"
                                 @change="queryJobRaw = $event.target.value"
@@ -250,7 +249,6 @@ watch(selectedAccessRole, () => {
                         <ComboboxButton as="div">
                             <ComboboxInput
                                 autocomplete="off"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :class="readOnly ? 'disabled' : ''"
                                 :display-value="(rank: any) => rank?.label"
                                 @change="queryMinimumRankRaw = $event.target.value"
@@ -301,7 +299,6 @@ watch(selectedAccessRole, () => {
                     <ComboboxButton as="div">
                         <ComboboxInput
                             autocomplete="off"
-                            class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :class="readOnly ? 'disabled' : ''"
                             :display-value="(role: any) => role.label"
                             @change="queryAccessRole = $event.target.value"

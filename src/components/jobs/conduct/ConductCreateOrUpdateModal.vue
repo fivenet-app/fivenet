@@ -172,7 +172,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             >
                                                 <select
                                                     v-bind="field"
-                                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 >
@@ -266,7 +265,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <VeeField
                                                 type="datetime-local"
                                                 name="expiresAt"
-                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.expires_at')"
                                                 :label="$t('common.expires_at')"
                                                 @focusin="focusTablet(true)"

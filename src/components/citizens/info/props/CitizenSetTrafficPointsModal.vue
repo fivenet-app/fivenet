@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, numeric, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
@@ -18,23 +18,29 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-interface FormData {
-    reason: string;
-    trafficPoints: number;
-    reset?: boolean;
-}
+const schema = z.object({
+    reason: z.string().min(3).max(255),
+    trafficInfractionPoints: z.coerce.number().int().nonnegative().lt(99999),
+    reset: z.boolean(),
+});
 
-async function setTrafficPoints(values: FormData): Promise<void> {
-    if (!values.reset && values.trafficPoints === 0) {
-        return;
-    }
+type Schema = z.output<typeof schema>;
 
-    const points = values.reset ? 0 : (props.user.props?.trafficInfractionPoints ?? 0) + values.trafficPoints;
+const state = reactive({
+    reason: '',
+    trafficInfractionPoints: 0,
+    reset: false,
+});
 
+async function setTrafficPoints(values: Schema): Promise<void> {
     const userProps: UserProps = {
         userId: props.user.userId,
-        trafficInfractionPoints: points,
+        trafficInfractionPoints: values.trafficInfractionPoints,
     };
+
+    if (values.reset) {
+        userProps.trafficInfractionPoints = 0;
+    }
 
     try {
         const call = $grpc.getCitizenStoreClient().setUserProps({
@@ -44,6 +50,8 @@ async function setTrafficPoints(values: FormData): Promise<void> {
         const { response } = await call;
 
         emit('update:trafficInfractionPoints', response.props?.trafficInfractionPoints ?? 0);
+
+        state.reset = false;
 
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
@@ -58,116 +66,75 @@ async function setTrafficPoints(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('numeric', numeric);
-
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
-    validationSchema: {
-        reason: { required: true, min: 3, max: 255 },
-        trafficPoints: { required: true, numeric: true, min: 0, max: 5 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await setTrafficPoints(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
-    setFieldValue('reset', false);
+    await setTrafficPoints(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
+
+                <div>
+                    <UFormGroup name="reason" :label="$t('common.reason')">
+                        <UInput
+                            v-model="state.reason"
+                            type="text"
+                            :placeholder="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
+                        <UInput
+                            v-model="state.trafficInfractionPoints"
+                            type="number"
+                            min="0"
+                            max="9999999"
+                            :placeholder="$t('common.traffic_infraction_points')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                 </div>
-            </template>
 
-            <div>
-                <UForm :state="{}" @submit="onSubmitThrottle">
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="reason" class="block text-sm font-medium leading-6">
-                                {{ $t('common.reason') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="reason"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :placeholder="$t('common.reason')"
-                                :label="$t('common.reason')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                    <div class="my-2 space-y-20">
-                        <div class="flex-1">
-                            <label for="trafficPoints" class="block text-sm font-medium leading-6">
-                                {{ $t('common.traffic_infraction_points') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="trafficPoints"
-                                min="0"
-                                max="9999999"
-                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :placeholder="$t('common.traffic_infraction_points')"
-                                :label="$t('common.traffic_infraction_points')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="trafficPoints" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                </UForm>
-            </div>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="
-                            setFieldValue('reset', true);
-                            onSubmitThrottle($event);
-                        "
-                    >
-                        {{ $t('common.reset') }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="
-                            setFieldValue('reset', false);
-                            onSubmitThrottle($event);
-                        "
-                    >
-                        {{ $t('common.add') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                        <UButton
+                            type="submit"
+                            block
+                            class="flex-1"
+                            color="red"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            @click="state.reset = true"
+                        >
+                            {{ $t('common.reset') }}
+                        </UButton>
+
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.add') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

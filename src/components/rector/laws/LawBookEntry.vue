@@ -170,7 +170,6 @@ const editing = ref(props.startInEdit);
                         type="text"
                         :placeholder="$t('common.law_book')"
                         :label="$t('common.law_book')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
@@ -185,7 +184,6 @@ const editing = ref(props.startInEdit);
                         type="text"
                         :placeholder="$t('common.description')"
                         :label="$t('common.description')"
-                        class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
