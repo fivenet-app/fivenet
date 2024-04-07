@@ -149,7 +149,7 @@ watch(props, async (newVal) => {
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     {{ item.firstname }} {{ item.lastname }}
                 </td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
+                <td class="whitespace-nowrap px-3 py-4 text-sm">
                     {{ item.jobLabel }}
                 </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">

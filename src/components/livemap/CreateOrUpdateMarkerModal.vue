@@ -161,7 +161,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.name') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="name">
                                                 <UInput
                                                     v-model="state.name"
@@ -180,7 +180,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.description') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="description">
                                                 <UInput
                                                     type="text"
@@ -198,7 +198,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.expires_at') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="expiresAt">
                                                 <UPopover :popper="{ placement: 'bottom-start' }">
                                                     <UButton
@@ -227,7 +227,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.color') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="color">
                                                 <ColorInput v-model="state.color" disable-alpha format="hex" position="top" />
                                             </UFormGroup>
@@ -239,7 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.marker') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="markerType">
                                                 <USelectMenu
                                                     v-model="state.markerType"
@@ -271,7 +271,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.radius') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="circleRadius">
                                                 <UInput
                                                     v-model="state.circleRadius"
@@ -293,7 +293,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 {{ $t('common.icon') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UFormGroup name="icon">
                                                 <USelectMenu v-model="state.icon" :options="markerIcons">
                                                     <template #label>

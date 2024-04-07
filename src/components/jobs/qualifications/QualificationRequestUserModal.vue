@@ -100,9 +100,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         <VeeField
                             as="textarea"
                             name="userComment"
-                            class="placeholder:text-accent-200 block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                             :placeholder="$t('common.message')"
-                            :label="$t('common.message')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />

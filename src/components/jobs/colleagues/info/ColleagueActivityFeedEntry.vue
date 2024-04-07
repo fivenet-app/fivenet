@@ -47,7 +47,7 @@ withDefaults(
                 </p>
             </div>
             <div class="flex items-center justify-between">
-                <p class="flex flex-col gap-1 text-sm text-gray-300">
+                <p class="flex flex-col gap-1 text-sm">
                     <template v-if="activity.reason">
                         <div class="inline-flex gap-1">
                             <span class="font-semibold">{{ $t('common.reason') }}:</span>
@@ -57,13 +57,13 @@ withDefaults(
                         </div>
                     </template>
                     <template v-if="showTargetUser">
-                        <div class="inline-flex items-center gap-1 text-sm text-gray-300">
+                        <div class="inline-flex items-center gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.colleague') }}:</span>
                             <CitizenInfoPopover :user="activity.targetUser" />
                         </div>
                     </template>
                 </p>
-                <p class="inline-flex items-center gap-1 text-sm text-gray-300">
+                <p class="inline-flex items-center gap-1 text-sm">
                     <span>{{ $t('common.created_by') }}</span>
                     <CitizenInfoPopover :user="activity.sourceUser" />
                 </p>

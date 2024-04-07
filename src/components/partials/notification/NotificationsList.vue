@@ -157,13 +157,13 @@ const canSubmit = ref(true);
 
                             <div class="flex items-center gap-x-4">
                                 <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                    <p class="mt-1 text-xs leading-5 text-gray-300">
+                                    <p class="mt-1 text-xs leading-5">
                                         {{ $t('common.received') }}
                                         <GenericTime :value="not.createdAt" :ago="true" />
                                     </p>
                                     <div class="mt-1 flex items-center gap-x-1.5">
                                         <template v-if="not.readAt">
-                                            <p class="text-xs leading-5 text-gray-300">
+                                            <p class="text-xs leading-5">
                                                 {{ $t('common.read') }}
                                                 <GenericTime :value="not.readAt" :ago="true" />
                                             </p>
@@ -172,7 +172,7 @@ const canSubmit = ref(true);
                                             <div class="flex-none rounded-full bg-error-500/20 p-1">
                                                 <div class="size-1.5 rounded-full bg-error-500" />
                                             </div>
-                                            <p class="text-xs leading-5 text-gray-300">
+                                            <p class="text-xs leading-5">
                                                 {{ $t('components.notifications.unread') }}
                                             </p>
                                         </template>

@@ -218,7 +218,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     ]"
                                                 />
                                             </UToggle>
-                                            <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                            <span class="ml-3 text-sm font-medium">{{
                                                 $t('components.penaltycalculator.title')
                                             }}</span>
                                         </div>
@@ -233,7 +233,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     ]"
                                                 />
                                             </UToggle>
-                                            <span class="ml-3 text-sm font-medium text-gray-300">{{
+                                            <span class="ml-3 text-sm font-medium">{{
                                                 $t('components.bodycheckup.title')
                                             }}</span>
                                         </div>

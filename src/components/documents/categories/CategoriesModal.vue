@@ -149,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     :placeholder="$t('common.category', 1)"
                                     :label="$t('common.category', 1)"
                                     :value="category?.name"
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
@@ -165,7 +165,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     :placeholder="$t('common.description')"
                                     :label="$t('common.description')"
                                     :value="category?.description"
-                                    class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />

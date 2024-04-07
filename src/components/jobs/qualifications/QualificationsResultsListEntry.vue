@@ -18,7 +18,7 @@ defineProps<{
                         {{ result.qualification?.abbreviation }}: {{ result.qualification?.title }}
                     </NuxtLink>
                 </p>
-                <p class="mt-1 flex text-xs leading-5 text-gray-300">
+                <p class="mt-1 flex text-xs leading-5">
                     <span class="inline-flex gap-1">
                         <span class="font-semibold">{{ $t('common.score') }}: {{ result.score }}</span>
                         <span v-if="result.summary"> ({{ $t('common.summary') }}: {{ result.summary }})</span>
@@ -37,11 +37,11 @@ defineProps<{
                         </span>
                     </div>
                 </div>
-                <p v-if="result.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
+                <p v-if="result.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="result.createdAt" />
                 </p>
             </div>
-            <ChevronRightIcon class="size-5 flex-none text-gray-300" />
+            <ChevronRightIcon class="size-5 flex-none" />
         </div>
     </li>
 </template>

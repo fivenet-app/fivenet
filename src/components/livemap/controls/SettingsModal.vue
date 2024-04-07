@@ -36,7 +36,7 @@ const { livemap } = storeToRefs(settingsStore);
                         :max="30"
                         :step="2"
                     />
-                    <span class="text-sm text-gray-300">{{ livemap.markerSize }}</span>
+                    <span class="text-sm">{{ livemap.markerSize }}</span>
                 </UFormGroup>
 
                 <UFormGroup name="showUnitNames" :label="$t('components.livemap.show_unit_names')">

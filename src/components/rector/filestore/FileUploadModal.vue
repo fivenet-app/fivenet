@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required, mimes, size } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 
@@ -10,22 +10,62 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-interface FormData {
-    prefix: string;
-    name: string;
-    file: Blob;
-}
-
 const { isOpen } = useModal();
 
-async function uploadFile(values: FormData): Promise<UploadFileResponse> {
+const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+
+const schema = z.object({
+    category: z.string().min(3).max(255),
+    name: z.string().min(3).max(255),
+    file: z.custom<FileList>().superRefine((files, ctx) => {
+        if (!files || files.length === 0) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'File must be provided',
+            });
+            return false;
+        }
+
+        if (!ACCEPTED_IMAGE_TYPES.includes(files[0].type)) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'File must be a valid image type',
+            });
+            return false;
+        }
+
+        if (files[0].size > MAX_FILE_SIZE) {
+            ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                message: 'File must be less than 5MB',
+            });
+            return false;
+        }
+
+        return true;
+    }),
+    reset: z.boolean(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    category: '',
+    name: '',
+    file: undefined,
+});
+
+const categories = ['jobassets'];
+
+async function uploadFile(values: Schema): Promise<UploadFileResponse> {
     const file = {} as File;
 
-    file.data = new Uint8Array(await values.file.arrayBuffer());
+    file.data = new Uint8Array(await values.file[0].arrayBuffer());
 
     try {
         const { response } = await $grpc.getRectorFilestoreClient().uploadFile({
-            prefix: values.prefix,
+            prefix: values.category,
             name: values.name,
             file,
         });
@@ -43,140 +83,76 @@ async function uploadFile(values: FormData): Promise<UploadFileResponse> {
     }
 }
 
-const prefixes = ['jobassets'];
-
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('mimes', mimes);
-defineRule('size', size);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        prefix: { required: true },
-        name: { required: true, min: 3, max: 128 },
-        file: { required: true, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<any> => await uploadFile(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await uploadFile(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.upload') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('common.upload') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div>
-                <UForm :state="{}">
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="prefix" class="block text-sm font-medium leading-6">
-                                {{ $t('common.category') }}
-                            </label>
-                            <VeeField
-                                v-slot="{ field }"
-                                name="prefix"
-                                :placeholder="$t('common.category')"
-                                :label="$t('common.category')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            >
-                                <select v-bind="field" @focusin="focusTablet(true)" @focusout="focusTablet(false)">
-                                    <option
-                                        v-for="prefix in prefixes"
-                                        :key="prefix"
-                                        :selected="field.value === prefix"
-                                        :value="prefix"
-                                    >
-                                        {{ prefix }}
-                                    </option>
-                                </select>
-                            </VeeField>
-                            <VeeErrorMessage name="prefix" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="name" class="block text-sm font-medium leading-6">
-                                {{ $t('common.name') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="name"
-                                :placeholder="$t('common.name')"
-                                :label="$t('common.name')"
+                </template>
+
+                <div>
+                    <UFormGroup name="prefix" :label="$t('common.category')" class="flex-1">
+                        <USelectMenu
+                            v-model="state.category"
+                            :options="categories"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                        <UInput
+                            v-model="state.name"
+                            type="text"
+                            name="name"
+                            :placeholder="$t('common.name')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+                    <UFormGroup name="file" :label="$t('common.file')" class="flex-1">
+                        <template v-if="isNUIAvailable()">
+                            <p class="text-sm">
+                                {{ $t('system.not_supported_on_tablet.title') }}
+                            </p>
+                        </template>
+                        <template v-else>
+                            <UInput
+                                v-model="state.file"
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png"
+                                :placeholder="$t('common.image')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                            <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="file" class="block text-sm font-medium leading-6">
-                                {{ $t('common.image') }}
-                            </label>
-                            <template v-if="isNUIAvailable()">
-                                <p class="text-sm">
-                                    {{ $t('system.not_supported_on_tablet.title') }}
-                                </p>
-                            </template>
-                            <template v-else>
-                                <VeeField
-                                    v-slot="{ handleChange, handleBlur }"
-                                    name="file"
-                                    :placeholder="$t('common.image')"
-                                    :label="$t('common.image')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                >
-                                    <input
-                                        type="file"
-                                        accept="image/jpeg,image/jpg,image/png"
-                                        @change="handleChange"
-                                        @blur="handleBlur"
-                                    />
-                                </VeeField>
-                                <VeeErrorMessage name="file" as="p" class="mt-2 text-sm text-error-400" />
-                            </template>
-                        </div>
-                    </div>
-                </UForm>
-            </div>
+                        </template>
+                    </UFormGroup>
+                </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="black" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.save') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

@@ -345,7 +345,7 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
 
             <UDashboardSidebar>
                 <template #header>
-                    <UDashboardSearchButton />
+                    <UDashboardSearchButton :label="`${$t('common.search')}...`" />
                 </template>
 
                 <UDashboardSidebarLinks :links="links" />

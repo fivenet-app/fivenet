@@ -2,6 +2,7 @@
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
+import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 
 const clipboardStore = useClipboardStore();
@@ -12,12 +13,25 @@ const authStore = useAuthStore();
 const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authStore);
 const { clearAuthInfo } = authStore;
 
+const notifications = useNotificatorStore();
+
 async function resetLocalStorage(): Promise<void> {
     clearAuthInfo();
 
     window.localStorage.clear();
 
     await navigateTo({ name: 'index' });
+}
+
+async function sendTestNotifications(): Promise<void> {
+    NotificationTypes.forEach((notificationType, index) => {
+        notifications.add({
+            title: { key: 'notifications.system.test_notification.title', parameters: { index: (index + 1).toString() } },
+            description: { key: 'notifications.system.test_notification.content', parameters: { type: notificationType } },
+            type: notificationType,
+            onClick: () => alert('Test was successful!'),
+        });
+    });
 }
 </script>
 
@@ -88,6 +102,9 @@ async function resetLocalStorage(): Promise<void> {
                         {{ $t('components.debug_info.reset_local_storage') }}
                     </UButton>
                     <UButton color="red" :external="true" to="/api/clear-site-data">
+                        {{ $t('components.debug_info.factory_reset') }}
+                    </UButton>
+                    <UButton color="gray" @click="sendTestNotifications">
                         {{ $t('components.debug_info.factory_reset') }}
                     </UButton>
                 </UButtonGroup>

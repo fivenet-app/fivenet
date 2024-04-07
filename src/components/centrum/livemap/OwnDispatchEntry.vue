@@ -25,7 +25,7 @@ const slideover = useSlideover();
                 :value="dispatch.id"
                 name="active"
                 type="radio"
-                class="form-radio focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 text-primary-500 dark:text-primary-400 h-4 w-4 border border-gray-300 bg-white focus:ring-0 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:checked:border-transparent dark:checked:bg-current dark:focus-visible:ring-offset-gray-900"
+                class="form-radio focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 text-primary-500 dark:text-primary-400 h-4 w-4 border border-gray-300 bg-white focus:ring-0 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:checked:border-transparent dark:checked:bg-current dark:focus-visible:ring-offset-gray-900"
                 :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />

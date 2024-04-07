@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AccountIcon, PencilIcon } from 'mdi-vue3';
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
 import UnitAssignUsersSlideover from '~/components/centrum/units/UnitAssignUsersSlideover.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
@@ -20,6 +19,8 @@ defineEmits<{
 
 const slideover = useSlideover();
 const { isOpen } = useSlideover();
+
+const modal = useModal();
 
 const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.status));
 </script>
@@ -56,7 +57,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.description') }}
                                     </dt>
-                                    <dd class="mt-2 max-h-24 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
                                         <p class="max-h-14 overflow-y-scroll break-words">
                                             {{ unit.description ?? $t('common.na') }}
                                         </p>
@@ -66,7 +67,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ `${$t('common.department')} ${$t('common.postal')}` }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         {{ unit.homePostal ?? $t('common.na') }}
                                     </dd>
                                 </div>
@@ -74,7 +75,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.last_update') }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <GenericTime :value="unit.status?.createdAt" />
                                     </dd>
                                 </div>
@@ -82,7 +83,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.status') }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <UButton
                                             class="hover:bg-neutral/20 rounded px-2 py-1 text-sm font-semibold shadow-sm"
                                             :class="unitStatusColors"
@@ -101,7 +102,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.code') }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         {{ unit.status?.code ?? $t('common.na') }}
                                     </dd>
                                 </div>
@@ -109,7 +110,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.reason') }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         {{ unit.status?.reason ?? $t('common.na') }}
                                     </dd>
                                 </div>
@@ -117,7 +118,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.location') }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <span class="block">
                                             {{ $t('common.postal') }}:
                                             {{ unit.status?.postal ?? $t('common.na') }}
@@ -138,7 +139,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.attributes', 2) }}
                                     </dt>
-                                    <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
                                         <UnitAttributes :attributes="unit.attributes" />
                                     </dd>
                                 </div>
@@ -146,7 +147,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     <dt class="text-sm font-medium leading-6">
                                         {{ $t('common.members') }}
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <span v-if="unit.users.length === 0" class="block">
                                             {{ $t('common.member', unit.users.length) }}
                                         </span>
@@ -164,7 +165,10 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                                             text-class="text-gray-300"
                                                         >
                                                             <template #before>
-                                                                <AccountIcon class="mr-1 size-5 shrink-0 text-base-300" />
+                                                                <UIcon
+                                                                    name="i-mdi-account"
+                                                                    class="mr-1 size-5 shrink-0 text-base-300"
+                                                                />
                                                             </template>
                                                         </CitizenInfoPopover>
                                                     </div>

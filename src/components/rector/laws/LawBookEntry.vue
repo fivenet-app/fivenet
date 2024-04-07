@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import LawEntry from '~/components/rector/laws/LawEntry.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -38,13 +38,19 @@ async function deleteLawBook(id: string): Promise<void> {
     }
 }
 
-interface FormData {
-    id: string;
-    name: string;
-    description?: string;
-}
+const schema = z.object({
+    name: z.string().min(3).max(128),
+    description: z.string().min(3).max(255).optional(),
+});
 
-async function saveLawBook(id: string, values: FormData): Promise<LawBook> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    name: props.modelValue.name,
+    description: props.modelValue.description,
+});
+
+async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
     const i = parseInt(id);
 
     try {
@@ -69,30 +75,10 @@ async function saveLawBook(id: string, values: FormData): Promise<LawBook> {
     }
 }
 
-defineRule('required', required);
-defineRule('max', max);
-defineRule('min', min);
-
-const { handleSubmit, setValues } = useForm<FormData>({
-    validationSchema: {
-        name: { required: true, min: 3, max: 128 },
-        description: { required: false, min: 3, max: 255 },
-    },
-    validateOnMount: true,
-});
-setValues({
-    name: props.modelValue.name,
-    description: props.modelValue.description,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<LawBook> =>
-        await saveLawBook(props.modelValue.id, values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await saveLawBook(props.modelValue.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 function deletedLaw(id: string): void {
@@ -161,34 +147,27 @@ const editing = ref(props.startInEdit);
                     "
                 />
 
-                <div class="flex-initial">
-                    <label for="name">
-                        {{ $t('common.law_book') }}
-                    </label>
-                    <VeeField
+                <UFormGroup name="name" :label="$t('common.law_book')" class="flex-initial">
+                    <UInput
+                        v-model="state.name"
                         name="name"
                         type="text"
                         :placeholder="$t('common.law_book')"
-                        :label="$t('common.law_book')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
-                    <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
-                <div class="flex-auto">
-                    <label for="description">
-                        {{ $t('common.description') }}
-                    </label>
-                    <VeeField
+                </UFormGroup>
+
+                <UFormGroup name="description" :label="$t('common.description')" class="flex-auto">
+                    <UInput
+                        v-model="state.description"
                         name="description"
                         type="text"
                         :placeholder="$t('common.description')"
-                        :label="$t('common.description')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
-                    <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
+                </UFormGroup>
             </UForm>
         </template>
 

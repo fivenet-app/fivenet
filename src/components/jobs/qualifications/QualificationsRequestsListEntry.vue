@@ -23,7 +23,7 @@ const { activeChar } = storeToRefs(authStore);
                         {{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}
                     </NuxtLink>
                 </p>
-                <p class="mt-1 flex text-xs leading-5 text-gray-300">
+                <p class="mt-1 flex text-xs leading-5">
                     <span class="inline-flex gap-1">
                         <span v-if="request.userComment">{{ $t('common.summary') }}: {{ request.userComment }}</span>
                     </span>
@@ -44,14 +44,14 @@ const { activeChar } = storeToRefs(authStore);
                         </template>
                     </div>
                 </div>
-                <p v-if="request.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
+                <p v-if="request.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
                 </p>
-                <p v-if="request.userId !== activeChar?.userId" class="mt-1 inline-flex gap-1 text-xs leading-5 text-gray-300">
+                <p v-if="request.userId !== activeChar?.userId" class="mt-1 inline-flex gap-1 text-xs leading-5">
                     {{ $t('common.created_by') }} <CitizenInfoPopover :user="request.user" />
                 </p>
             </div>
-            <ChevronRightIcon class="size-5 flex-none text-gray-300" />
+            <ChevronRightIcon class="size-5 flex-none" />
         </div>
     </li>
 </template>

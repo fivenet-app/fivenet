@@ -68,7 +68,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
             <div class="flex flex-col items-center uppercase">
                 <span
                     v-if="showUnitNames && unit"
-                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-clip-padding"
+                    class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-clip-padding"
                     :class="isColourBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: unit?.color ?? '#8d81f2' }"
                 >
@@ -79,7 +79,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">
                     <span
-                        class="relative inset-0 inline-flex size-3 rounded-full border-2 border-black/20"
+                        class="relative inset-0 inline-flex size-3 rounded-full border border-black/20"
                         :class="unitStatusColor"
                     ></span>
                 </span>

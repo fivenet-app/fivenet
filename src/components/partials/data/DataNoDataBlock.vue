@@ -27,10 +27,11 @@ function click() {
             variant="ghost"
             :disabled="!focus"
             :icon="icon"
-            class="focus:ring-neutral relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:ring-2 focus:ring-offset-2"
+            block
+            class="relative block w-full rounded-lg border border-dashed border-base-300 p-8 text-center"
             @click="click()"
         >
-            <span class="mt-2 block text-sm font-semibold text-gray-300">
+            <span class="mt-2 block text-sm font-semibold">
                 <span v-if="message">
                     {{ message }}
                 </span>

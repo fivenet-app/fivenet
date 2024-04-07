@@ -3,6 +3,8 @@ import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/no
 
 export type NotificationType = 'success' | 'info' | 'warning' | 'error';
 
+export const NotificationTypes: NotificationType[] = ['success', 'info', 'warning', 'error'];
+
 export interface Notification {
     id?: string;
     title: TranslateItem;
@@ -11,7 +13,7 @@ export interface Notification {
     type?: NotificationType;
     category?: NotificationCategory;
     data?: Data;
-    onClick?: (data?: Data) => Promise<any>;
+    onClick?: ((data?: Data) => any) | ((data?: Data) => Promise<any>);
     onClickText?: TranslateItem;
     callback?: Function;
 }

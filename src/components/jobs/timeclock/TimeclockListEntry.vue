@@ -24,7 +24,7 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
                 </div>
             </template>
         </td>
-        <td class="text-accent-200 inline-flex items-center gap-2 whitespace-nowrap p-1 text-left">
+        <td class="inline-flex items-center gap-2 whitespace-nowrap p-1 text-left">
             <ProfilePictureImg
                 :url="entry.user?.avatar?.url"
                 :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
@@ -32,7 +32,7 @@ const spentTime = parseFloat(((Math.round(props.entry.spentTime * 100) / 100) * 
             />
             <CitizenInfoPopover :user="entry.user" />
         </td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">
+        <td class="whitespace-nowrap p-1 text-left">
             {{ entry.spentTime > 0 ? fromSecondsToFormattedDuration(spentTime, { seconds: false }) : '' }}
             <template v-if="entry.startTime !== undefined">
                 <span

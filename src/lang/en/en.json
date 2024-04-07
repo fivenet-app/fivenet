@@ -1261,6 +1261,12 @@
                 "title": "SuperUser Mode",
                 "content": "SuperUser Mode changed (current job: {job})."
             }
+        },
+        "system": {
+            "test_notification": {
+                "title": "Test Notification {index}",
+                "content": "This is a test notification of type {type}."
+            }
         }
     },
     "perms": {

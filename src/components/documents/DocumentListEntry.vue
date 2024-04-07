@@ -14,7 +14,9 @@ defineProps<{
     <li
         :key="doc.id"
         :class="[
-            doc.deletedAt ? 'bg-warn-800 hover:bg-warn-700' : 'bg-base-900 hover:bg-base-800',
+            doc.deletedAt
+                ? 'bg-warn-100 hover:bg-warn-200 dark:bg-warn-800 dark:hover:bg-warn-700'
+                : 'bg-base-100 hover:bg-base-200 dark:bg-base-900 dark:hover:bg-base-700',
             'my-1 flex-initial rounded-lg',
         ]"
     >
@@ -86,7 +88,7 @@ defineProps<{
                     </div>
                 </div>
 
-                <div class="text-accent-200 flex flex-row gap-2">
+                <div class="flex flex-row gap-2">
                     <div class="flex flex-1 flex-row items-center justify-start">
                         <CitizenInfoPopover :user="doc.creator" />
                     </div>

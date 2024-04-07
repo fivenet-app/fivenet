@@ -17,10 +17,10 @@ function getNameForLawBookId(id: string): string | undefined {
     <UButton
         v-if="selectedLaws.length === 0"
         disabled
-        class="focus:ring-primary-500 relative block w-full rounded-lg border-2 border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:ring-2 focus:ring-offset-2"
+        class="focus:ring-primary-500 relative block w-full rounded-lg border border-dashed border-gray-300 p-12 text-center hover:border-gray-400 focus:ring-1 focus:ring-offset-2"
     >
         <CalculatorIcon class="mx-auto size-12" />
-        <span class="mt-2 block text-sm font-semibold text-gray-300">
+        <span class="mt-2 block text-sm font-semibold">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
     </UButton>
@@ -52,17 +52,17 @@ function getNameForLawBookId(id: string): string | undefined {
                 <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     {{ getNameForLawBookId(p.law.lawbookId) }} - {{ p.law.name }}
                 </td>
-                <td class="text-accent-200 whitespace-nowrap p-1 text-left">${{ p.law.fine ? p.law.fine * p.count : 0 }}</td>
-                <td class="text-accent-200 whitespace-nowrap p-1 text-left">
+                <td class="whitespace-nowrap p-1 text-left">${{ p.law.fine ? p.law.fine * p.count : 0 }}</td>
+                <td class="whitespace-nowrap p-1 text-left">
                     {{ p.law.detentionTime ? p.law.detentionTime * p.count : 0 }}
                 </td>
-                <td class="text-accent-200 whitespace-nowrap p-1 text-left">
+                <td class="whitespace-nowrap p-1 text-left">
                     {{ p.law.stvoPoints ? p.law.stvoPoints * p.count : 0 }}
                 </td>
-                <td class="text-accent-200 break-all p-1 text-left text-sm">
+                <td class="break-all p-1 text-left text-sm">
                     {{ p.law.description }}
                 </td>
-                <td class="text-accent-200 w-20 min-w-20 p-1 text-left">
+                <td class="w-20 min-w-20 p-1 text-left">
                     {{ p.count }}
                 </td>
             </tr>

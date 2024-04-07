@@ -55,18 +55,18 @@ const props = defineProps<{
                             <IDCopyBadge :id="activity.newValue !== '' ? activity.newValue : activity.oldValue" prefix="DOC" />
                         </UButton>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ $t(`enums.docstore.DocRelation.${activity.reason.replace('DOC_RELATION_', '')}`) }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -92,18 +92,18 @@ const props = defineProps<{
                             }}
                         </span>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -124,18 +124,18 @@ const props = defineProps<{
                             {{ activity.newValue }}
                         </span>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -158,18 +158,18 @@ const props = defineProps<{
                             <span class="font-semibold">{{ activity.newValue }}</span>
                         </span>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -187,18 +187,18 @@ const props = defineProps<{
                     <h3 class="text-sm font-medium">
                         {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_mug_shot_set') }}
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -220,18 +220,18 @@ const props = defineProps<{
                                 : $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_license.removed')
                         }}
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -260,12 +260,12 @@ const props = defineProps<{
                             {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_jail.escaped') }}
                         </template>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <template v-if="activity.oldValue === '' && activity.newValue !== '0'">
                             <span class="font-semibold">{{ $t('common.reason') }}:</span>
                             <span>
@@ -273,7 +273,7 @@ const props = defineProps<{
                             </span>
                         </template>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -307,18 +307,18 @@ const props = defineProps<{
                             {{ $n(parseInt(props.activity.newValue), 'currency') }}
                         </span>
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>
@@ -336,18 +336,18 @@ const props = defineProps<{
                     <h3 class="text-sm font-medium">
                         {{ `${props.activity.oldValue} -> ${props.activity.newValue}` }}
                     </h3>
-                    <p class="text-sm text-gray-400">
+                    <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>
                 </div>
                 <div class="flex items-center justify-between">
-                    <p class="inline-flex gap-1 text-sm text-gray-300">
+                    <p class="inline-flex gap-1 text-sm">
                         <span class="font-semibold">{{ $t('common.reason') }}:</span>
                         <span>
                             {{ activity.reason }}
                         </span>
                     </p>
-                    <p class="inline-flex text-sm text-gray-300">
+                    <p class="inline-flex text-sm">
                         {{ $t('common.created_by') }}
                         <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
                     </p>

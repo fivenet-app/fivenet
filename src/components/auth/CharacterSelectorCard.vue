@@ -44,22 +44,22 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             <dt class="text-sm font-medium">
                 {{ $t('common.job') }}
             </dt>
-            <dd class="text-sm text-gray-300">{{ char.jobLabel }} ({{ char.jobGradeLabel }})</dd>
+            <dd class="text-sm">{{ char.jobLabel }} ({{ char.jobGradeLabel }})</dd>
             <dt class="text-sm font-medium">
                 {{ $t('common.date_of_birth') }}
             </dt>
-            <dd class="text-sm text-gray-300">{{ char.dateofbirth }}</dd>
+            <dd class="text-sm">{{ char.dateofbirth }}</dd>
             <dt class="text-sm font-medium">{{ $t('common.height') }}</dt>
-            <dd class="text-sm text-gray-300">{{ char.height }}cm</dd>
+            <dd class="text-sm">{{ char.height }}cm</dd>
             <template v-if="char.visum">
                 <dt class="text-sm font-medium">{{ $t('common.visum') }}</dt>
-                <dd class="text-sm text-gray-300">{{ char.visum }}</dd>
+                <dd class="text-sm">{{ char.visum }}</dd>
             </template>
             <template v-if="char.playtime">
                 <dt class="text-sm font-medium">
                     {{ $t('common.playtime') }}
                 </dt>
-                <dd class="truncate text-sm text-gray-300">
+                <dd class="truncate text-sm">
                     {{ fromSecondsToFormattedDuration(char.playtime!) }}
                 </dd>
             </template>

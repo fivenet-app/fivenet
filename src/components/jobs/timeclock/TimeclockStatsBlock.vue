@@ -64,7 +64,7 @@ onBeforeMount(async () => updateStats());
                 </h3>
                 <div class="grid grid-cols-1 gap-2">
                     <UCard v-for="stat in statsData" :key="stat.name">
-                        <p class="text-sm font-medium leading-6 text-gray-300">{{ $t(stat.name) }}</p>
+                        <p class="text-sm font-medium leading-6">{{ $t(stat.name) }}</p>
                         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
                             <template v-if="stat.value === undefined">
                                 <UIcon name="i-mdi-loading" class="size-5 animate-spin" />

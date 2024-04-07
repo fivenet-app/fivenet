@@ -162,7 +162,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 {{ $t('common.type') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <VeeField
                                                 v-slot="{ field }"
                                                 as="div"
@@ -194,7 +194,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 {{ $t('common.target') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <UInputMenu
                                                 v-model="targetUser"
                                                 :search="
@@ -236,11 +236,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 {{ $t('common.message') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <VeeField
                                                 as="textarea"
                                                 name="message"
-                                                class="placeholder:text-accent-200 block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                                class="block h-36 w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                                 :placeholder="$t('common.message')"
                                                 :label="$t('common.message')"
                                                 @focusin="focusTablet(true)"
@@ -255,7 +255,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                 {{ $t('common.expires_at') }}?
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <VeeField
                                                 type="datetime-local"
                                                 name="expiresAt"

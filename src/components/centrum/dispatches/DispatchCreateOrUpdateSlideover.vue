@@ -120,12 +120,11 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             {{ $t('common.message') }}
                                         </label>
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <VeeField
                                             type="text"
                                             name="message"
                                             :placeholder="$t('common.message')"
-                                            :label="$t('common.message')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
@@ -138,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             {{ $t('common.description') }}
                                         </label>
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <VeeField
                                             type="text"
                                             name="description"
@@ -156,7 +155,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             {{ $t('common.anon') }}
                                         </label>
                                     </dt>
-                                    <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                         <div class="flex h-6 items-center">
                                             <VeeField
                                                 type="checkbox"

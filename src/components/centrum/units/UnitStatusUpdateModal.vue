@@ -130,7 +130,7 @@ function updateReasonField(value: string): void {
                                                 {{ $t('common.status') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <VeeField
                                                 v-slot="{ field }"
                                                 name="status"
@@ -173,7 +173,7 @@ function updateReasonField(value: string): void {
                                                 {{ $t('common.code') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <VeeField
                                                 type="text"
                                                 name="code"
@@ -191,7 +191,7 @@ function updateReasonField(value: string): void {
                                                 {{ $t('common.reason') }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <VeeField
                                                 type="text"
                                                 name="reason"
@@ -213,7 +213,7 @@ function updateReasonField(value: string): void {
                                                 {{ $t('common.reason', 2) }}
                                             </label>
                                         </dt>
-                                        <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                             <select
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"

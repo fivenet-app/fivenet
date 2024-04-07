@@ -97,7 +97,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.date_of_birth') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         {{ user?.dateofbirth }}
                                                     </dd>
                                                 </div>
@@ -106,7 +108,7 @@ const mugShotModal = ref(false);
                                                         {{ $t('common.sex') }}
                                                     </dt>
                                                     <dd
-                                                        class="mt-1 inline-flex items-center gap-2 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
+                                                        class="mt-1 inline-flex items-center gap-2 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
                                                     >
                                                         <span>{{ user?.sex!.toUpperCase() }} </span>
                                                         <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
@@ -116,7 +118,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.height') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         {{ user?.height }}cm
                                                     </dd>
                                                 </div>
@@ -127,7 +131,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.phone_number') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         <PhoneNumberBlock :number="user.phoneNumber" />
                                                     </dd>
                                                 </div>
@@ -135,7 +141,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.visum') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-blue-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-blue-300"
+                                                    >
                                                         {{ user?.visum }}
                                                     </dd>
                                                 </div>
@@ -152,7 +160,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.blood_type') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         {{ user?.props?.bloodType ?? $t('common.na') }}
                                                     </dd>
                                                 </div>
@@ -170,7 +180,7 @@ const mugShotModal = ref(false);
                                                         {{ $t('common.traffic_infraction_points', 2) }}
                                                     </dt>
                                                     <dd
-                                                        class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
                                                         :class="
                                                             (user?.props?.trafficInfractionPoints ?? 0) >= 10
                                                                 ? 'text-error-500'
@@ -193,7 +203,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.fine') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         <span v-if="(user.props?.openFines ?? 0n) <= 0n">
                                                             {{ $t('common.no_open_fine') }}
                                                         </span>
@@ -214,7 +226,9 @@ const mugShotModal = ref(false);
                                                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.license', 2) }}
                                                     </dt>
-                                                    <dd class="mt-1 w-full text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 w-full text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         <span v-if="user?.licenses.length === 0">
                                                             {{ $t('common.no_licenses') }}
                                                         </span>

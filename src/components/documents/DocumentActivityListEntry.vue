@@ -97,7 +97,7 @@ function getDocAtivityIcon(activityType: DocActivityType): string {
                         <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
-                <p class="inline-flex text-sm text-gray-300">
+                <p class="inline-flex text-sm">
                     {{ $t('common.created_by') }}
                     <CitizenInfoPopover class="ml-1" :user="entry.creator" />
                 </p>
@@ -124,7 +124,7 @@ function getDocAtivityIcon(activityType: DocActivityType): string {
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>
-                        <p class="inline-flex text-sm text-gray-300">
+                        <p class="inline-flex text-sm">
                             {{ $t('common.created_by') }}
                             <CitizenInfoPopover class="ml-1" :user="entry.creator" />
                         </p>

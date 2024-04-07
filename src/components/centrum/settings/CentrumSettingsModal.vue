@@ -201,7 +201,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     <VeeField
                                         :name="`unitStatus[${idx}]`"
                                         type="text"
-                                        class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.reason')"
                                         :label="$t('common.reason')"
                                         @focusin="focusTablet(true)"
@@ -229,7 +229,7 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                                     <VeeField
                                         :name="`dispatchStatus[${idx}]`"
                                         type="text"
-                                        class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="$t('common.reason')"
                                         :label="$t('common.reason')"
                                         @focusin="focusTablet(true)"

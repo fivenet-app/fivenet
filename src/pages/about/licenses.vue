@@ -42,7 +42,7 @@ const licenses = [
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
                                 {{ $t('common.licenses') }}
                             </h2>
-                            <p class="mt-6 text-lg leading-8 text-gray-300">
+                            <p class="mt-6 text-lg leading-8">
                                 {{ $t('components.about.licenses.subtitle') }}
                             </p>
                         </div>

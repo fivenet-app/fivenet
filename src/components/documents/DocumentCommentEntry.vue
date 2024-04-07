@@ -109,7 +109,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             class="text-primary-400 hover:text-primary-300 text-sm font-medium"
                         />
                     </div>
-                    <div class="text-accent-200 flex flex-1 items-center">
+                    <div class="flex flex-1 items-center">
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
                     <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center">

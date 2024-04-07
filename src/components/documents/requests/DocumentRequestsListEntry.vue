@@ -88,10 +88,10 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                 <p class="text-base font-semibold leading-6 text-gray-100" :title="`${$t('common.id')}: ${request.id}`">
                     {{ $t(`enums.docstore.DocActivityType.${DocActivityType[request.requestType]}`) }}
                 </p>
-                <p class="mt-1 flex gap-1 text-sm leading-5 text-gray-300">
+                <p class="mt-1 flex gap-1 text-sm leading-5">
                     <span class="font-semibold">{{ $t('common.reason') }}:</span> <span>{{ request.reason }}</span>
                 </p>
-                <p v-if="request.accepted !== undefined" class="mt-1 flex gap-1 text-sm leading-5 text-gray-300">
+                <p v-if="request.accepted !== undefined" class="mt-1 flex gap-1 text-sm leading-5">
                     <span class="font-semibold">{{ $t('common.accept', 2) }}:</span>
                     <span v-if="request.accepted" class="text-success-400">
                         {{ $t('common.yes') }}
@@ -140,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                 </UButtonGroup>
 
                 <Menu v-if="canDelete" as="div" class="relative flex-none">
-                    <MenuButton class="block text-gray-300 hover:text-gray-100">
+                    <MenuButton class="block hover:text-gray-100">
                         <span class="sr-only">{{ $t('common.open') }}</span>
                         <MenuIcon class="size-5" />
                     </MenuButton>

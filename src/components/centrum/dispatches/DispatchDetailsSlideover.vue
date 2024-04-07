@@ -115,7 +115,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.created_at') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <GenericTime :value="dispatch.createdAt" />
                             </dd>
                         </div>
@@ -123,7 +123,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.sent_by') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span v-if="dispatch.anon">
                                     {{ $t('common.anon') }}
                                 </span>
@@ -137,7 +137,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.location') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span class="block">
                                     {{ $t('common.postal') }}:
                                     {{ dispatch.postal ?? $t('common.na') }}
@@ -158,7 +158,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.description') }}
                             </dt>
-                            <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
                                 <p class="max-h-14 overflow-y-scroll break-words">
                                     {{ dispatch.description ?? $t('common.na') }}
                                 </p>
@@ -168,7 +168,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.attributes', 2) }}
                             </dt>
-                            <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
                                 <DispatchAttributes :attributes="dispatch.attributes" />
                             </dd>
                         </div>
@@ -176,7 +176,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.reference', 2) }}
                             </dt>
-                            <dd class="mt-2 text-sm text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
                                 <DispatchReferences :references="dispatch.references" />
                             </dd>
                         </div>
@@ -184,7 +184,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.units') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span v-if="dispatch.units.length === 0" class="block">
                                     {{ $t('common.unit', dispatch.units.length) }}
                                 </span>
@@ -252,7 +252,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.last_update') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <GenericTime :value="dispatch.status?.createdAt" />
                             </dd>
                         </div>
@@ -260,7 +260,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.location') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span class="block">
                                     {{ $t('common.postal') }}:
                                     {{ dispatch.status?.postal ?? $t('common.na') }}
@@ -286,7 +286,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.status') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UButton
                                     class="hover:bg-neutral/20 rounded px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
@@ -303,7 +303,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.code') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 {{ dispatch.status?.code ?? $t('common.na') }}
                             </dd>
                         </div>
@@ -311,7 +311,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             <dt class="text-sm font-medium leading-6">
                                 {{ $t('common.reason') }}
                             </dt>
-                            <dd class="mt-1 text-sm leading-6 text-gray-300 sm:col-span-2 sm:mt-0">
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 {{ dispatch.status?.reason ?? $t('common.na') }}
                             </dd>
                         </div>

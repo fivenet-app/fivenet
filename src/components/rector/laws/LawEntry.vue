@@ -1,7 +1,6 @@
 <script lang="ts" setup>
-import { integer, max, max_value, min, min_value, required } from '@vee-validate/rules';
-import { CancelIcon, ContentSaveIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 
@@ -16,6 +15,24 @@ const emits = defineEmits<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const schema = z.object({
+    name: z.string().min(3).max(128),
+    description: z.string().min(3).max(500).optional(),
+    fine: z.coerce.number().min(0).max(999_999_999).optional(),
+    detentionTime: z.coerce.number().min(0).max(999_999_999).optional(),
+    stvoPoints: z.coerce.number().min(0).max(999_999_999).optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    name: props.law.name,
+    description: props.law.description,
+    fine: props.law.fine,
+    detentionTime: props.law.detentionTime,
+    stvoPoints: props.law.stvoPoints,
+});
 
 async function deleteLaw(id: string): Promise<void> {
     const i = parseInt(id);
@@ -37,15 +54,7 @@ async function deleteLaw(id: string): Promise<void> {
     }
 }
 
-interface FormData {
-    name: string;
-    description?: string;
-    fine: number;
-    detentionTime: number;
-    stvoPoints: number;
-}
-
-async function saveLaw(lawBookId: string, id: string, values: FormData): Promise<void> {
+async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<void> {
     try {
         const call = $grpc.getRectorLawsClient().createOrUpdateLaw({
             law: {
@@ -69,42 +78,12 @@ async function saveLaw(lawBookId: string, id: string, values: FormData): Promise
     }
 }
 
-defineRule('required', required);
-defineRule('max', max);
-defineRule('max_value', max_value);
-defineRule('min', min);
-defineRule('min_value', min_value);
-defineRule('integer', integer);
-
-const { handleSubmit, setValues } = useForm<FormData>({
-    validationSchema: {
-        name: { required: true, min: 3, max: 128 },
-        description: { required: true, min: 6, max: 500 },
-        fine: { required: false, integer: true, min_value: 0, max_value: 999_999_999 },
-        detentionTime: { required: false, integer: true, min_value: 0, max_value: 999_999_999 },
-        stvoPoints: { required: false, integer: true, min_value: 0, max_value: 999_999_999 },
-    },
-    validateOnMount: true,
-});
-
-setValues({
-    name: props.law.name,
-    description: props.law.description,
-    fine: props.law.fine,
-    detentionTime: props.law.detentionTime,
-    stvoPoints: props.law.stvoPoints,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await saveLaw(props.law.lawbookId, props.law.id, values).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await saveLaw(props.law.lawbookId, props.law.id, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 
 const modal = useModal();
@@ -132,14 +111,14 @@ const editing = ref(props.startInEdit);
         <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
             {{ law.name }}
         </td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">${{ law.fine }}</td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">
+        <td class="whitespace-nowrap p-1 text-left">${{ law.fine }}</td>
+        <td class="whitespace-nowrap p-1 text-left">
             {{ law.detentionTime }}
         </td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">
+        <td class="whitespace-nowrap p-1 text-left">
             {{ law.stvoPoints }}
         </td>
-        <td class="text-accent-200 p-1 text-left text-sm font-medium">
+        <td class="p-1 text-left text-sm font-medium">
             {{ law.description }}
         </td>
     </tr>
@@ -159,52 +138,47 @@ const editing = ref(props.startInEdit);
             </UButtonGroup>
         </td>
         <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <VeeField
+            <UInput
+                v-model="state.name"
                 name="name"
                 type="text"
                 :placeholder="$t('common.crime')"
-                :label="$t('common.crime')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
-            <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">
-            <VeeField name="fine" type="text" :placeholder="$t('common.fine')" :label="$t('common.fine')" />
-            <VeeErrorMessage name="fine" as="p" class="mt-2 text-sm text-error-400" />
+        <td class="whitespace-nowrap p-1 text-left">
+            <UInput name="fine" type="text" :placeholder="$t('common.fine')" :label="$t('common.fine')" />
         </td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">
-            <VeeField
+        <td class="whitespace-nowrap p-1 text-left">
+            <UInput
+                v-model="state.detentionTime"
                 name="detentionTime"
                 type="text"
                 :placeholder="$t('common.detention_time')"
-                :label="$t('common.detention_time')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
-            <VeeErrorMessage name="detentionTime" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="text-accent-200 whitespace-nowrap p-1 text-left">
-            <VeeField
+        <td class="whitespace-nowrap p-1 text-left">
+            <UInput
+                v-model="state.stvoPoints"
                 name="stvoPoints"
                 type="text"
                 :placeholder="$t('common.traffic_infraction_points')"
-                :label="$t('common.traffic_infraction_points')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
-            <VeeErrorMessage name="stvoPoints" as="p" class="mt-2 text-sm text-error-400" />
         </td>
-        <td class="text-accent-200 p-1 text-left">
-            <VeeField
+        <td class="p-1 text-left">
+            <UInput
+                v-model="state.description"
                 name="description"
                 type="text"
                 :placeholder="$t('common.description')"
-                :label="$t('common.description')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />
-            <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
         </td>
     </tr>
 </template>

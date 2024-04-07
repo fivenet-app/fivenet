@@ -325,7 +325,7 @@ async function checkup(): Promise<void> {
 
                         <LControl position="bottomright">
                             <UButton
-                                class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+                                class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
                                 size="2xs"
                                 :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
                                 @click="open = !open"

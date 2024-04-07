@@ -18,7 +18,7 @@ defineProps<{
                         {{ qualification.abbreviation }}: {{ qualification.title }}
                     </NuxtLink>
                 </p>
-                <p class="mt-1 flex gap-1 text-xs leading-5 text-gray-300">
+                <p class="mt-1 flex gap-1 text-xs leading-5">
                     <span class="font-semibold">{{ $t('common.description') }}:</span>
                     {{ qualification.description ?? $t('common.na') }}
                 </p>
@@ -54,11 +54,11 @@ defineProps<{
                         </span>
                     </div>
                 </div>
-                <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5 text-gray-300">
+                <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="qualification.createdAt" />
                 </p>
             </div>
-            <ChevronRightIcon class="size-5 flex-none text-gray-300" />
+            <ChevronRightIcon class="size-5 flex-none" />
         </div>
     </li>
 </template>

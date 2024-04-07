@@ -57,7 +57,10 @@ const filteredUnits = computed(() =>
     <USlideover>
         <UCard
             :ui="{
-                body: { base: 'flex-1 overflow-y-auto', padding: 'px-1 py-2 sm:p-2' },
+                body: {
+                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
                 ring: '',
                 divide: 'divide-y divide-gray-100 dark:divide-gray-800',
             }"
@@ -72,9 +75,9 @@ const filteredUnits = computed(() =>
                 </div>
             </template>
 
-            <div class="overflow-y-auto">
+            <div>
                 <div>
-                    <div>
+                    <div class="mb-2">
                         <UFormGroup :label="$t('common.search')">
                             <UInput
                                 v-model="queryUnit"
@@ -114,12 +117,13 @@ const filteredUnits = computed(() =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block @click="isOpen = false">
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
                     <UButton
                         v-if="ownUnitId !== undefined"
                         block
+                        class="flex-1"
                         :disabled="!canSubmit"
                         :loading="!canSubmit"
                         @click="onSubmitThrottle()"

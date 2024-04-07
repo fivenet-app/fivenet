@@ -6,7 +6,7 @@ const modal = useModal();
 
 <template>
     <UButton
-        class="inset-0 inline-flex items-center justify-center rounded-md border-2 border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
+        class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
         :title="$t('common.setting', 2)"
         icon="i-mdi-cog"
         size="2xs"
