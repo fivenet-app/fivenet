@@ -47,7 +47,7 @@ const grouped = computedAsync(async () => {
 </script>
 
 <template>
-    <div class="flex h-full grow flex-col px-1">
+    <div class="flex h-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
                 {{ $t('common.units') }}
@@ -60,7 +60,7 @@ const grouped = computedAsync(async () => {
                 />
             </h2>
         </div>
-        <div class="@container flex-1 overflow-hidden">
+        <div class="@container flex-1">
             <template v-for="group in grouped" :key="group.key">
                 <p class="-mb-1.5 text-sm">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}

@@ -19,21 +19,21 @@ const repoLink = 'https://github.com/galexrt/fivenet';
 const faqs = [
     {
         label: t('components.about.faq.one.question'),
-        description: t('components.about.faq.one.answer'),
+        content: t('components.about.faq.one.answer'),
     },
     {
         label: t('components.about.faq.two.question'),
-        description: t('components.about.faq.two.answer'),
+        content: t('components.about.faq.two.answer'),
     },
     {
         label: t('components.about.faq.three.question'),
-        description: t('components.about.faq.three.answer', { repoLink }),
+        content: t('components.about.faq.three.answer', { repoLink }),
     },
     {
         label: t('components.about.faq.four.question'),
-        description: t('components.about.faq.four.answer', { discordLink, repoLink }),
+        content: t('components.about.faq.four.answer', { discordLink, repoLink }),
     },
-] as { label: string; description: string }[];
+] as { label: string; content: string }[];
 </script>
 
 <template>
@@ -133,7 +133,8 @@ const faqs = [
                                 <dl class="mt-4">
                                     <UAccordion :items="faqs" multiple>
                                         <template #item="{ item: faq }">
-                                            <p class="text-base leading-7 text-gray-300" v-html="faq.answer"></p>
+                                            <!-- eslint-disable-next-line vue/no-v-html -->
+                                            <p class="text-base leading-7 text-gray-300" v-html="faq.content"></p>
                                         </template>
                                     </UAccordion>
                                 </dl>

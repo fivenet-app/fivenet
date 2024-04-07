@@ -14,34 +14,34 @@ defineEmits<{
 </script>
 
 <template>
-    <div class="flex size-full grow flex-col px-1">
+    <div class="flex size-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
             <h2 class="text-base font-semibold leading-6 text-gray-100">
                 {{ $t('common.activity', 2) }}
             </h2>
         </div>
-    </div>
-    <div class="flex-1">
-        <ul role="list" class="space-y-2">
-            <template v-for="(activityItem, activityItemIdx) in items">
-                <DispatchFeedItem
-                    v-if="'dispatchId' in activityItem"
-                    :key="'dsp' + activityItem.id"
-                    :activity-length="items?.length ?? 0"
-                    :item="activityItem"
-                    :activity-item-idx="activityItemIdx"
-                    :show-id="true"
-                    @goto="$emit('goto', $event)"
-                />
-                <UnitFeedItem
-                    v-else
-                    :key="'unit' + activityItem.id"
-                    :activity-length="items?.length ?? 0"
-                    :item="activityItem"
-                    :activity-item-idx="activityItemIdx"
-                    @goto="$emit('goto', $event)"
-                />
-            </template>
-        </ul>
+        <div class="flex-1">
+            <ul role="list" class="space-y-2">
+                <template v-for="(activityItem, activityItemIdx) in items">
+                    <DispatchFeedItem
+                        v-if="'dispatchId' in activityItem"
+                        :key="'dsp' + activityItem.id"
+                        :activity-length="items?.length ?? 0"
+                        :item="activityItem"
+                        :activity-item-idx="activityItemIdx"
+                        :show-id="true"
+                        @goto="$emit('goto', $event)"
+                    />
+                    <UnitFeedItem
+                        v-else
+                        :key="'unit' + activityItem.id"
+                        :activity-length="items?.length ?? 0"
+                        :item="activityItem"
+                        :activity-item-idx="activityItemIdx"
+                        @goto="$emit('goto', $event)"
+                    />
+                </template>
+            </ul>
+        </div>
     </div>
 </template>

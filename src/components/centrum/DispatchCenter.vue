@@ -37,69 +37,72 @@ function goto(e: Coordinate) {
 </script>
 
 <template>
-    <UDashboardPanel :width="400" :resizable="{ min: 300, max: 500 }">
+    <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.dispatch_center')">
-            <template #right> </template>
-        </UDashboardNavbar>
-
-        <UMain>
-            <div class="relative z-0 size-full">
-                <div
-                    v-if="error !== undefined || (abort === undefined && !reconnecting)"
-                    class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
-                >
-                    <DataErrorBlock
-                        v-if="error"
-                        :title="$t('components.centrum.dispatch_center.failed_datastream')"
-                        :retry="startStream"
-                    />
-                    <DataPendingBlock
-                        v-else-if="abort === undefined && !reconnecting"
-                        :message="$t('components.centrum.dispatch_center.starting_datastream')"
-                    />
-                </div>
-
-                <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
-                    <template #default>
-                        <DispatchesLayer v-if="can('CentrumService.Stream')" :show-all-dispatches="true" @goto="goto($event)" />
-                    </template>
-                </LivemapBase>
-            </div>
-        </UMain>
-    </UDashboardPanel>
-
-    <UDashboardPanel grow side="right" class="overflow-x-hidden">
-        <UDashboardNavbar>
             <template #right>
                 <DisponentsInfo />
             </template>
         </UDashboardNavbar>
 
-        <Splitpanes class="max-h-[calc(100vh-var(--header-height))] overflow-hidden" horizontal>
-            <Pane size="58" min-size="2">
-                <DispatchList :show-button="true" @goto="goto($event)" />
-            </Pane>
-            <Pane size="26" min-size="2">
-                <UnitList @goto="goto($event)" />
-            </Pane>
-            <Pane size="8" min-size="2">
-                <MarkersList @goto="goto($event)" />
-            </Pane>
-            <Pane size="8" min-size="2">
-                <CentrumFeed :items="feed" @goto="goto($event)" />
-            </Pane>
-        </Splitpanes>
+        <UMain class="max-h-[calc(100vh-var(--header-height))] overflow-hidden">
+            <Splitpanes class="relative">
+                <Pane min-size="25">
+                    <div class="relative z-0 size-full">
+                        <div
+                            v-if="error !== undefined || (abort === undefined && !reconnecting)"
+                            class="absolute inset-0 z-30 flex items-center justify-center bg-gray-600/70"
+                        >
+                            <DataErrorBlock
+                                v-if="error"
+                                :title="$t('components.centrum.dispatch_center.failed_datastream')"
+                                :retry="startStream"
+                            />
+                            <DataPendingBlock
+                                v-else-if="abort === undefined && !reconnecting"
+                                :message="$t('components.centrum.dispatch_center.starting_datastream')"
+                            />
+                        </div>
+
+                        <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
+                            <template #default>
+                                <DispatchesLayer
+                                    v-if="can('CentrumService.Stream')"
+                                    :show-all-dispatches="true"
+                                    @goto="goto($event)"
+                                />
+                            </template>
+                        </LivemapBase>
+                    </div>
+                </Pane>
+                <Pane size="65">
+                    <Splitpanes horizontal>
+                        <Pane size="58" min-size="2">
+                            <DispatchList :show-button="true" @goto="goto($event)" />
+                        </Pane>
+                        <Pane size="26" min-size="2">
+                            <UnitList @goto="goto($event)" />
+                        </Pane>
+                        <Pane size="8" min-size="2">
+                            <MarkersList @goto="goto($event)" />
+                        </Pane>
+                        <Pane size="8" min-size="2">
+                            <CentrumFeed :items="feed" @goto="goto($event)" />
+                        </Pane>
+                    </Splitpanes>
+                </Pane>
+            </Splitpanes>
+        </UMain>
     </UDashboardPanel>
 </template>
 
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 2px;
-    background-color: #898d9b;
+    background-color: rgb(var(--color-gray-800));
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
     min-height: 2px;
-    background-color: #898d9b;
+    background-color: rgb(var(--color-gray-800));
 }
 </style>

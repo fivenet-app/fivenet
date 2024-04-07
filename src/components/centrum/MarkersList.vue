@@ -71,7 +71,7 @@ const columns = [
 </script>
 
 <template>
-    <div class="flex size-full grow flex-col px-1">
+    <div class="flex size-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex flex-1 items-center text-base font-semibold leading-6 text-gray-100">
                 {{ $t('common.marker', 2) }}
