@@ -294,7 +294,7 @@ const accordionItems = computed(() => {
                     <h2 class="sr-only">
                         {{ $t('common.content') }}
                     </h2>
-                    <div class="break-words rounded-lg bg-base-900">
+                    <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                         <!-- eslint-disable vue/no-v-html -->
                         <div
                             ref="contentRef"

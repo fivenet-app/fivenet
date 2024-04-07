@@ -8,7 +8,7 @@ import NotificationProvider from '~/components/partials/notification/Notificatio
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
 const settings = useSettingsStore();
-const { isNUIAvailable, updateAvailable } = storeToRefs(settings);
+const { isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 const route = useRoute();
 
@@ -52,6 +52,12 @@ if (__APP_VERSION__ !== settings.version) {
     useDocumentEditorStore().$reset();
     settings.setVersion(__APP_VERSION__);
 }
+
+const appConfig = useAppConfig();
+
+// Set theme colors into app config
+appConfig.ui.primary = design.value.ui.primary;
+appConfig.ui.gray = design.value.ui.gray;
 
 // Set user setting locale on load of app
 if (settings.locale !== null) {

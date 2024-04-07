@@ -39,11 +39,21 @@ watch(darkModeActive, async () => {
     }
 });
 
-const colors = ['green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet'];
+const primaryColors = ['green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet'].map((color) => ({
+    label: color,
+    chip: color,
+}));
+
+const grayColors = computed(() =>
+    ['slate', 'cool', 'zinc', 'neutral', 'stone'].map((color) => ({ label: color, chip: color })),
+);
 
 const appConfig = useAppConfig();
 
-watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
+watch(design.value, () => {
+    appConfig.ui.primary = design.value.ui.primary;
+    appConfig.ui.gray = design.value.ui.gray;
+});
 </script>
 
 <template>
@@ -54,17 +64,37 @@ watch(design, () => (appConfig.ui.primary = design.value.ui.primary));
             </template>
 
             <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
-                <USelectMenu v-model="design.ui.primary" :options="colors">
+                <USelectMenu
+                    v-model="design.ui.primary"
+                    :options="primaryColors"
+                    option-attribute="label"
+                    value-attribute="chip"
+                >
                     <template #label>
                         <span
-                            class="h-2 w-2 rounded-full"
+                            class="size-2 rounded-full"
                             :class="`bg-${design.ui.primary}-500 dark:bg-${design.ui.primary}-400`"
                         />
                         <span class="truncate">{{ design.ui.primary }}</span>
                     </template>
+
                     <template #option="{ option }">
-                        <span class="h-2 w-2 rounded-full" :class="`bg-${option}-500 dark:bg-${option}-400`" />
-                        <span class="truncate">{{ option }}</span>
+                        <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
+                        <span class="truncate">{{ option.label }}</span>
+                    </template>
+                </USelectMenu>
+            </UFormGroup>
+
+            <UFormGroup name="grayColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+                <USelectMenu v-model="design.ui.gray" :options="grayColors" option-attribute="label" value-attribute="chip">
+                    <template #label>
+                        <span class="size-2 rounded-full" :class="`bg-${design.ui.gray}-500 dark:bg-${design.ui.gray}-400`" />
+                        <span class="truncate">{{ design.ui.gray }}</span>
+                    </template>
+
+                    <template #option="{ option }">
+                        <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
+                        <span class="truncate">{{ option.label }}</span>
                     </template>
                 </USelectMenu>
             </UFormGroup>

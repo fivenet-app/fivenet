@@ -58,7 +58,7 @@ const {
 } = useLazyAsyncData(`document-${props.documentId?.toString()}-relations-citzens-${queryCitizens.value}`, () => listCitizens());
 
 watchDebounced(queryCitizens, async () => await refresh(), {
-    debounce: 600,
+    debounce: 200,
     maxWait: 1750,
 });
 

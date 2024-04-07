@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { min, numeric, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { Form } from '#ui/types';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -16,9 +16,15 @@ const { $grpc } = useNuxtApp();
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-const query = ref<{
-    days: number;
-}>({
+const form = ref<null | Form<Schema>>();
+
+const schema = z.object({
+    days: z.coerce.number().min(1).max(31),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
     days: 14,
 });
 
@@ -30,15 +36,15 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-timeclock-inactive-${page.value}-${query.value.days}`, () => listInactiveEmployees());
+} = useLazyAsyncData(`jobs-timeclock-inactive-${page.value}-${state.days}`, () => listInactiveEmployees(state));
 
-async function listInactiveEmployees(): Promise<ListInactiveEmployeesResponse> {
+async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
     try {
         const call = $grpc.getJobsTimeclockClient().listInactiveEmployees({
             pagination: {
                 offset: offset.value,
             },
-            days: query.value.days,
+            days: values.days,
         });
 
         const { response } = await call;
@@ -50,28 +56,15 @@ async function listInactiveEmployees(): Promise<ListInactiveEmployeesResponse> {
     }
 }
 
-interface FormData {
-    days: number;
-}
-
-defineRule('required', required);
-defineRule('min', min);
-defineRule('numeric', numeric);
-
-const { meta } = useForm<FormData>({
-    validationSchema: {
-        days: { required: true, min: 1, numeric: true },
-    },
-});
-
 watchDebounced(
-    query.value,
+    state,
     async () => {
-        if (meta.value.valid) {
+        const valid = await form.value?.validate();
+        if (valid) {
             refresh();
         }
     },
-    { debounce: 600, maxWait: 1400 },
+    { debounce: 200, maxWait: 1250 },
 );
 watch(offset, async () => refresh());
 
@@ -115,13 +108,13 @@ const columns = [
                         {{ $t('common.timeclock') }}
                     </UButton>
 
-                    <UForm :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
+                    <UForm :schema="schema" :state="state" class="flex w-full flex-row gap-2" @submit="refresh()">
                         <UFormGroup name="days" :label="$t('common.time_ago.day', 2)" class="flex-1">
                             <UInput
-                                v-model="query.days"
+                                v-model="state.days"
                                 name="days"
                                 type="number"
-                                min="3"
+                                min="1"
                                 max="31"
                                 :placeholder="$t('common.time_ago.day', 2)"
                                 @focusin="focusTablet(true)"

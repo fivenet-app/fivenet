@@ -403,8 +403,8 @@ const queryCategories = ref('');
 const selectedCategory = ref<Category | undefined>(undefined);
 
 watchDebounced(queryCategories, () => findCategories(), {
-    debounce: 600,
-    maxWait: 1400,
+    debounce: 200,
+    maxWait: 1250,
 });
 
 async function findCategories(): Promise<void> {

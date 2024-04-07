@@ -51,7 +51,7 @@ const {
 });
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(query.value, () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);

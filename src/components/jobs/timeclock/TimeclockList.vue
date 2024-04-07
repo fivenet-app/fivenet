@@ -121,7 +121,7 @@ watchDebounced(
 
         return refresh();
     },
-    { debounce: 600, maxWait: 1400 },
+    { debounce: 200, maxWait: 1250 },
 );
 
 function dayForward(): void {

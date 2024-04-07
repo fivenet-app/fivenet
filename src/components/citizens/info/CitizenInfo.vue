@@ -155,7 +155,7 @@ function addToClipboard(): void {
 
                                 <span
                                     v-if="selected"
-                                    class="bg-primary-500 dark:bg-primary-400 absolute -right-4 h-2 w-2 rounded-full"
+                                    class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
                                 />
                             </div>
                         </template>

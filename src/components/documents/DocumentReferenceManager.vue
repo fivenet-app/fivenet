@@ -53,7 +53,7 @@ const {
 } = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc}`, () => listDocuments());
 
 watchDebounced(queryDoc, async () => await refresh(), {
-    debounce: 600,
+    debounce: 200,
     maxWait: 1750,
 });
 
@@ -132,7 +132,7 @@ function removeReference(id: string): void {
 
                             <span
                                 v-if="selected"
-                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 h-2 w-2 rounded-full"
+                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
                             />
                         </div>
                     </template>

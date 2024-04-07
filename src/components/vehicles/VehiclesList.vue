@@ -82,8 +82,8 @@ watch(selectedUser, () => {
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), {
-    debounce: 600,
-    maxWait: 1400,
+    debounce: 200,
+    maxWait: 1250,
 });
 
 const clipboardStore = useClipboardStore();

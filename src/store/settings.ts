@@ -19,6 +19,7 @@ export interface SettingsState {
         docEditorTheme: 'default' | 'dark';
         ui: {
             primary: string;
+            gray: string;
         };
     };
     audio: {
@@ -52,6 +53,7 @@ export const useSettingsStore = defineStore('settings', {
                 docEditorTheme: 'default',
                 ui: {
                     primary: 'sky',
+                    gray: 'cool',
                 },
             },
             audio: {

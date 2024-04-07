@@ -14,7 +14,7 @@ export default defineAppConfig({
 
     // Nuxt UI app config
     ui: {
-        primary: 'sky',
+        primary: 'blue',
         gray: 'cool',
         tooltip: {
             default: {
