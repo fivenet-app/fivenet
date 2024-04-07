@@ -54,8 +54,6 @@ const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, 
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
-
-const openUnit = ref(false);
 </script>
 
 <template>
@@ -91,7 +89,7 @@ const openUnit = ref(false);
         <LPopup :options="{ closeButton: true }">
             <div
                 v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
-                class="mb-1 flex items-center"
+                class="mb-1 flex items-center gap-1"
             >
                 <UButton
                     v-if="marker.info?.x && marker.info?.y"

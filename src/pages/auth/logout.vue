@@ -36,10 +36,7 @@ onMounted(async () => {
         <div class="hero w-full flex-1">
             <UContainer class="h-full bg-black/50">
                 <UPage>
-                    <ULandingHero
-                        :title="$t('pages.auth.logout.header')"
-                        :description="$t('components.header.logout.subtitle')"
-                    >
+                    <ULandingHero :title="$t('pages.auth.logout.header')" :description="$t('components.auth.logout.subtitle')">
                         <template #headline>
                             <FiveNetLogo class="mx-auto h-36 w-auto" />
                         </template>

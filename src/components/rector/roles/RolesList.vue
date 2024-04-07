@@ -1,16 +1,16 @@
 <script lang="ts" setup>
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import RoleView from '~/components/rector/roles/RoleView.vue';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
 
 const notifications = useNotificatorStore();
 
@@ -20,7 +20,7 @@ const { activeChar } = storeToRefs(authStore);
 const completorStore = useCompletorStore();
 const { getJobByName } = completorStore;
 
-const { data: roles, pending, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
+const { data: roles, pending: loading, refresh, error } = useLazyAsyncData('rector-roles', () => getRoles());
 
 async function getRoles(): Promise<Role[]> {
     try {
@@ -77,6 +77,17 @@ async function createRole(): Promise<void> {
 const sortedRoles = computed(() => roles.value?.sort((a, b) => a.grade - b.grade));
 
 const selectedRole = ref<Role | undefined>();
+
+const columns = [
+    {
+        key: 'rank',
+        label: t('common.rank'),
+    },
+    {
+        key: 'actions',
+        label: t('common.action', 2),
+    },
+];
 </script>
 
 <template>
@@ -119,45 +130,25 @@ const selectedRole = ref<Role | undefined>();
                     </template>
                     <div class="-my-2 mx-0 overflow-x-auto">
                         <div class="inline-block min-w-full px-1 py-2 align-middle">
-                            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
                             <DataErrorBlock
-                                v-else-if="error"
+                                v-if="error"
                                 :title="$t('common.unable_to_load', [$t('common.role', 2)])"
                                 :retry="refresh"
                             />
-                            <DataNoDataBlock v-else-if="roles && roles.length === 0" :type="$t('common.role', 2)" />
-                            <GenericTable v-else>
-                                <template #thead>
-                                    <tr>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </template>
-                                <template #tbody>
-                                    <tr v-for="role in sortedRoles" :key="role.id" class="even:bg-base-800">
-                                        <td
-                                            class="whitespace-nowrap py-2 pl-2 pr-3 text-sm font-medium"
-                                            :title="`ID: ${role.id}`"
-                                        >
-                                            {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
-                                        </td>
-                                        <td class="whitespace-nowrap py-2 pl-3 pr-2 text-right text-sm font-medium">
-                                            <div class="flex flex-row justify-end">
-                                                <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
-                                            </div>
-                                        </td>
-                                    </tr>
-                                </template>
-                            </GenericTable>
+                            <template v-else>
+                                <UTable :columns="columns" :rows="sortedRoles" :loading="loading">
+                                    <template #rank-data="{ row: role }">
+                                        <span>{{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})</span>
+                                    </template>
+                                    <template #actions-data="{ row: role }">
+                                        <div class="text-right">
+                                            <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                        </div>
+                                    </template>
+                                </UTable>
+                            </template>
 
-                            <SingleHint hint-id="rector_roles_list" />
+                            <SingleHint class="mt-2" hint-id="rector_roles_list" />
                         </div>
                     </div>
                 </div>

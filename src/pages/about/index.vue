@@ -41,7 +41,7 @@ const faqs = [
         <UDashboardPanel>
             <div class="flex flex-col justify-between">
                 <div>
-                    <div class="hero bg-primary-900 relative isolate px-6 py-20 lg:px-8">
+                    <div class="hero bg-background relative isolate px-6 py-20 lg:px-8">
                         <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
@@ -79,7 +79,7 @@ const faqs = [
                                 class="-ml-12 -mt-12 p-12 lg:sticky lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden"
                             >
                                 <img
-                                    class="bg-primary-900 w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
+                                    class="bg-background w-[48rem] max-w-none rounded-xl shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
                                     src="/images/screenshots/overview.png"
                                     alt="FiveNet Overview - Screenshot"
                                 />

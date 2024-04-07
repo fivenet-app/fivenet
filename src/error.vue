@@ -45,7 +45,7 @@ function copyError(): void {
     <div class="h-dscreen">
         <NuxtLoadingIndicator />
 
-        <div class="hero h-full bg-base-900">
+        <div class="hero bg-background h-full">
             <div class="hero-overlay h-full">
                 <main class="mx-auto flex size-full max-w-3xl text-center">
                     <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">

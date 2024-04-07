@@ -66,8 +66,17 @@ const zIndexOffset = computed(() => {
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <div class="mb-1 flex items-center gap-2">
-                <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
+            <div class="mb-1 flex items-center gap-1">
+                <UButton
+                    v-if="dispatch?.x && dispatch?.y"
+                    variant="link"
+                    icon="i-mdi-map-marker"
+                    :padded="false"
+                    @click="$emit('goto', { x: dispatch?.x, y: dispatch?.y })"
+                >
+                    {{ $t('common.mark') }}
+                </UButton>
+
                 <UButton
                     :title="$t('common.detail', 2)"
                     variant="link"
@@ -79,6 +88,9 @@ const zIndexOffset = computed(() => {
             </div>
 
             <ul role="list" class="flex flex-col">
+                <li>
+                    <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
+                </li>
                 <li>
                     <span class="font-semibold">{{ $t('common.sent_at') }}:</span> {{ $d(toDate(dispatch.createdAt), 'short') }}
                 </li>
