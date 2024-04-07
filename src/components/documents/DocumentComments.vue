@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { type Comment } from '~~/gen/ts/resources/documents/comment';
@@ -65,11 +65,17 @@ async function getComments(): Promise<GetCommentsResponse> {
     }
 }
 
-interface FormData {
-    comment: string;
-}
+const schema = z.object({
+    comment: z.string().min(3).max(1536),
+});
 
-async function addComment(documentId: string, values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    comment: '',
+});
+
+async function addComment(documentId: string, values: Schema): Promise<void> {
     if (data.value === null) {
         return;
     }
@@ -85,12 +91,9 @@ async function addComment(documentId: string, values: FormData): Promise<void> {
         const call = $grpc.getDocStoreClient().postComment({ comment });
         const { response } = await call;
 
-        comment.id = response.id;
-        comment.creator = activeChar.value!;
-
-        data.value.comments.unshift(comment);
-
-        resetForm();
+        if (response.comment) {
+            data.value.comments.unshift(response.comment);
+        }
 
         emit('newComment');
     } catch (e) {
@@ -121,6 +124,7 @@ async function removeComment(comment: Comment): Promise<void> {
 
 const commentsEl = ref<HTMLDivElement | null>(null);
 const isVisible = useElementVisibility(commentsEl);
+
 watchOnce(isVisible, () => refresh());
 
 const commentInput = ref<HTMLInputElement | null>(null);
@@ -133,24 +137,10 @@ function focusComment(): void {
 
 watch(offset, async () => refresh());
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, resetForm } = useForm<FormData>({
-    validationSchema: {
-        comment: { required: true, min: 3, max: 1536 },
-    },
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await addComment(props.documentId, values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await addComment(props.documentId, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -160,29 +150,20 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
             <template v-if="can('DocStoreService.PostComment')">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
                     <div class="min-w-0 flex-1">
-                        <UForm :state="{}" class="relative">
-                            <div>
-                                <VeeField
-                                    v-slot="{ handleChange, value }"
+                        <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
+                            <UFormGroup name="comment">
+                                <UTextarea
+                                    v-model="state.comment"
                                     ref="commentInput"
-                                    rows="3"
-                                    name="comment"
-                                    :label="$t('common.comment')"
-                                    class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                                    :rows="3"
+                                    :placeholder="$t('components.documents.document_comments.add_comment')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
-                                >
-                                    <UTextarea
-                                        :placeholder="$t('components.documents.document_comments.add_comment')"
-                                        :model-value="value"
-                                        @change="handleChange"
-                                    />
-                                </VeeField>
-                                <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
+                                />
+                            </UFormGroup>
 
                             <div class="mt-2 shrink-0">
-                                <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                                <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
                                     {{ $t('common.post') }}
                                 </UButton>
                             </div>

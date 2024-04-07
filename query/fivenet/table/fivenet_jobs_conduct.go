@@ -23,7 +23,7 @@ type fivenetJobsConductTable struct {
 	Job          mysql.ColumnString
 	Type         mysql.ColumnInteger
 	Message      mysql.ColumnString
-	ExpiresAt    mysql.ColumnTimestamp
+	ExpiresAt    mysql.ColumnDate
 	TargetUserID mysql.ColumnInteger
 	CreatorID    mysql.ColumnInteger
 
@@ -72,7 +72,7 @@ func newFivenetJobsConductTableImpl(schemaName, tableName, alias string) fivenet
 		JobColumn          = mysql.StringColumn("job")
 		TypeColumn         = mysql.IntegerColumn("type")
 		MessageColumn      = mysql.StringColumn("message")
-		ExpiresAtColumn    = mysql.TimestampColumn("expires_at")
+		ExpiresAtColumn    = mysql.DateColumn("expires_at")
 		TargetUserIDColumn = mysql.IntegerColumn("target_user_id")
 		CreatorIDColumn    = mysql.IntegerColumn("creator_id")
 		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, JobColumn, TypeColumn, MessageColumn, ExpiresAtColumn, TargetUserIDColumn, CreatorIDColumn}

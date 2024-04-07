@@ -136,8 +136,14 @@ const editing = ref(props.startInEdit);
                     {{ $t('pages.rector.laws.add_new_law') }}
                 </UButton>
             </div>
-            <UForm v-else :state="{}" class="flex w-full flex-row items-start gap-x-4">
-                <UButton :title="$t('common.save')" icon="i-mdi-content-save-icon" @click="onSubmitThrottle" />
+            <UForm
+                v-else
+                :schema="schema"
+                :state="state"
+                class="flex w-full flex-row items-start gap-x-4"
+                @submit="onSubmitThrottle"
+            >
+                <UButton :title="$t('common.save')" icon="i-mdi-content-save-icon" />
                 <UButton
                     :title="$t('common.cancel')"
                     icon="i-mdi-cancel"

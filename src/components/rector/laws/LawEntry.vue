@@ -123,62 +123,64 @@ const editing = ref(props.startInEdit);
         </td>
     </tr>
     <tr v-else>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <UButtonGroup class="inline-flex w-full">
-                <UButton variant="link" icon="i-mdi-content-save" :title="$t('common.save')" @click="onSubmitThrottle" />
-                <UButton
-                    variant="link"
-                    icon="i-mdi-cancel"
-                    :title="$t('common.cancel')"
-                    @click="
-                        editing = false;
-                        parseInt(law.id) < 0 && $emit('deleted', law.id);
-                    "
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton variant="link" icon="i-mdi-content-save" :title="$t('common.save')" />
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-cancel"
+                        :title="$t('common.cancel')"
+                        @click="
+                            editing = false;
+                            parseInt(law.id) < 0 && $emit('deleted', law.id);
+                        "
+                    />
+                </UButtonGroup>
+            </td>
+            <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                <UInput
+                    v-model="state.name"
+                    name="name"
+                    type="text"
+                    :placeholder="$t('common.crime')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
                 />
-            </UButtonGroup>
-        </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <UInput
-                v-model="state.name"
-                name="name"
-                type="text"
-                :placeholder="$t('common.crime')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
-        </td>
-        <td class="whitespace-nowrap p-1 text-left">
-            <UInput name="fine" type="text" :placeholder="$t('common.fine')" :label="$t('common.fine')" />
-        </td>
-        <td class="whitespace-nowrap p-1 text-left">
-            <UInput
-                v-model="state.detentionTime"
-                name="detentionTime"
-                type="text"
-                :placeholder="$t('common.detention_time')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
-        </td>
-        <td class="whitespace-nowrap p-1 text-left">
-            <UInput
-                v-model="state.stvoPoints"
-                name="stvoPoints"
-                type="text"
-                :placeholder="$t('common.traffic_infraction_points')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
-        </td>
-        <td class="p-1 text-left">
-            <UInput
-                v-model="state.description"
-                name="description"
-                type="text"
-                :placeholder="$t('common.description')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
-        </td>
+            </td>
+            <td class="whitespace-nowrap p-1 text-left">
+                <UInput name="fine" type="text" :placeholder="$t('common.fine')" :label="$t('common.fine')" />
+            </td>
+            <td class="whitespace-nowrap p-1 text-left">
+                <UInput
+                    v-model="state.detentionTime"
+                    name="detentionTime"
+                    type="text"
+                    :placeholder="$t('common.detention_time')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+            </td>
+            <td class="whitespace-nowrap p-1 text-left">
+                <UInput
+                    v-model="state.stvoPoints"
+                    name="stvoPoints"
+                    type="text"
+                    :placeholder="$t('common.traffic_infraction_points')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+            </td>
+            <td class="p-1 text-left">
+                <UInput
+                    v-model="state.description"
+                    name="description"
+                    type="text"
+                    :placeholder="$t('common.description')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
+            </td>
+        </UForm>
     </tr>
 </template>

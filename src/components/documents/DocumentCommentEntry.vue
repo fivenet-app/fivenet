@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
@@ -26,11 +26,17 @@ const { activeChar, permissions } = storeToRefs(authStore);
 
 const editing = ref(false);
 
-interface FormData {
-    comment: string;
-}
+const schema = z.object({
+    comment: z.string().min(3).max(1536),
+});
 
-async function editComment(documentId: string, commentId: string, values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    comment: '',
+});
+
+async function editComment(documentId: string, commentId: string, values: Schema): Promise<void> {
     const comment: Comment = {
         id: commentId,
         documentId,
@@ -64,21 +70,8 @@ async function deleteComment(id: string): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setValues } = useForm<FormData>({
-    validationSchema: {
-        comment: { required: true, min: 3, max: 1536 },
-    },
-    validateOnMount: true,
-});
-
 function resetForm(): void {
-    setValues({
-        comment: props.comment.comment,
-    });
+    state.comment = props.comment.comment;
 }
 
 onMounted(() => resetForm());
@@ -86,15 +79,11 @@ onMounted(() => resetForm());
 watch(props, () => resetForm());
 
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await editComment(props.comment.documentId, props.comment.id, values).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await editComment(props.comment.documentId, props.comment.id, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 </script>
 
@@ -145,29 +134,20 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
         <template v-else>
             <div v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
-                    <UForm :state="{}" class="relative">
-                        <div>
-                            <VeeField
-                                v-slot="{ handleChange, value }"
+                    <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
+                        <UFormGroup name="comment">
+                            <UTextarea
+                                v-model="state.comment"
                                 ref="commentInput"
-                                rows="3"
-                                name="comment"
-                                :label="$t('common.comment')"
-                                class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                                :rows="3"
+                                :placeholder="$t('components.documents.document_comments.add_comment')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
-                            >
-                                <UTextarea
-                                    :placeholder="$t('components.documents.document_comments.add_comment')"
-                                    :model-value="value"
-                                    @change="handleChange"
-                                />
-                            </VeeField>
-                            <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
+                            />
+                        </UFormGroup>
 
                         <div class="mt-2 shrink-0">
-                            <UButton :disabled="!meta.valid || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                            <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
                                 {{ $t('common.edit') }}
                             </UButton>
                         </div>

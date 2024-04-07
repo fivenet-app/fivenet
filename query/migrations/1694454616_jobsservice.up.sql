@@ -9,7 +9,7 @@ CREATE TABLE
         `job` varchar(20) NOT NULL,
         `type` smallint(2) NOT NULL,
         `message` longtext,
-        `expires_at` datetime(3) DEFAULT NULL,
+        `expires_at` date DEFAULT NULL,
         `target_user_id` int(11) NULL DEFAULT NULL,
         `creator_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),

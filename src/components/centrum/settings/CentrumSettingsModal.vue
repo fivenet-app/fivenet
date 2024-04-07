@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 
 const { $grpc } = useNuxtApp();
@@ -28,15 +28,25 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
     { mode: CentrumMode.AUTO_ROUND_ROBIN },
 ]);
 
-interface FormData {
-    enabled: boolean;
-    mode: CentrumMode;
-    fallbackMode: CentrumMode;
-    unitStatus: string[];
-    dispatchStatus: string[];
-}
+const schema = z.object({
+    enabled: z.boolean(),
+    mode: z.custom<CentrumMode>(),
+    fallbackMode: z.custom<CentrumMode>(),
+    unitStatus: z.string().array().max(10),
+    dispatchStatus: z.string().array().max(10),
+});
 
-async function updateSettings(values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    enabled: false,
+    mode: CentrumMode.MANUAL,
+    fallbackMode: CentrumMode.AUTO_ROUND_ROBIN,
+    unitStatus: [],
+    dispatchStatus: [],
+});
+
+async function updateSettings(values: Schema): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().updateSettings({
             settings: {
@@ -45,8 +55,8 @@ async function updateSettings(values: FormData): Promise<void> {
                 mode: values.mode,
                 fallbackMode: values.fallbackMode,
                 predefinedStatus: {
-                    dispatchStatus: values.dispatchStatus.filter((s) => s.trim().length > 0),
-                    unitStatus: values.unitStatus.filter((s) => s.trim().length > 0),
+                    dispatchStatus: values.dispatchStatus,
+                    unitStatus: values.unitStatus,
                 },
             },
         });
@@ -61,33 +71,16 @@ async function updateSettings(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setValues } = useForm<FormData>({
-    validationSchema: {
-        enabled: { required: false },
-        mode: { required: true },
-        fallbackMode: { required: true },
-        unitStatus: { max: 255 },
-        dispatchStatus: { max: 255 },
-    },
-    validateOnMount: true,
-});
-
 function setSettingsValues(): void {
     if (!settings.value) {
         return;
     }
 
-    setValues({
-        enabled: settings.value.enabled,
-        mode: settings.value.mode,
-        fallbackMode: settings.value.fallbackMode,
-        unitStatus: settings.value.predefinedStatus?.unitStatus ?? [],
-        dispatchStatus: settings.value.predefinedStatus?.dispatchStatus ?? [],
-    });
+    state.enabled = settings.value.enabled;
+    state.mode = settings.value.mode;
+    state.fallbackMode = settings.value.fallbackMode;
+    state.dispatchStatus = settings.value.predefinedStatus?.dispatchStatus ?? [];
+    state.unitStatus = settings.value.predefinedStatus?.unitStatus ?? [];
 }
 
 watch(settings, () => setSettingsValues());
@@ -95,177 +88,162 @@ watch(settings, () => setSettingsValues());
 setSettingsValues();
 
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await updateSettings(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await updateSettings(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
-
-const { remove: usRemove, push: usPush, fields: usFields } = useFieldArray<string>('unitStatus');
-
-const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<string>('dispatchStatus');
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.centrum.units.update_settings') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.centrum.units.update_settings') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <div>
-                <UForm :state="{}">
+                <div>
                     <div class="text-sm text-gray-100">
-                        <div class="flex-1">
-                            <label for="enabled" class="block text-sm font-medium leading-6">
-                                {{ $t('common.enabled') }}
-                            </label>
-                            <VeeField
+                        <UFormGroup name="enabled" :label="$t('common.enabled')" class="flex-1">
+                            <UCheckbox
+                                v-model="state.enabled"
                                 name="enabled"
-                                type="checkbox"
-                                :placeholder="$t('common.enabled')"
-                                :label="$t('common.enabled')"
-                                :value="true"
                                 :disabled="!can('SuperUser')"
+                                :placeholder="$t('common.enabled')"
                             />
-                            <VeeErrorMessage name="enabled" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
+                        </UFormGroup>
 
-                        <div class="flex-1">
-                            <label for="mode" class="block text-sm font-medium leading-6">
-                                {{ $t('common.mode') }}
-                            </label>
-                            <VeeField
-                                v-slot="{ field }"
-                                name="mode"
-                                as="div"
-                                :placeholder="$t('common.mode')"
-                                :label="$t('common.mode')"
+                        <UFormGroup name="mode" :label="$t('common.mode')" class="flex-1">
+                            <USelectMenu
+                                v-model="state.mode"
+                                :options="modes"
+                                value-attribute="mode"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
                             >
-                                <select v-bind="field" @focusin="focusTablet(true)" @focusout="focusTablet(false)">
-                                    <option
-                                        v-for="mode in modes"
-                                        :key="mode.mode"
-                                        :selected="settings !== null && mode.mode === settings.mode"
-                                        :value="mode.mode"
-                                    >
-                                        {{ $t(`enums.centrum.CentrumMode.${CentrumMode[mode.mode ?? 0]}`) }}
-                                    </option>
-                                </select>
-                            </VeeField>
-                            <VeeErrorMessage name="mode" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
+                                <template #label>
+                                    <span class="truncate">{{
+                                        $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                    }}</span>
+                                </template>
+                                <template #option="{ option }">
+                                    <span class="truncate">{{
+                                        $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                    }}</span>
+                                </template>
+                            </USelectMenu>
+                        </UFormGroup>
 
-                        <div class="flex-1">
-                            <label for="fallbackMode" class="block text-sm font-medium leading-6">
-                                {{ $t('common.fallback_mode') }}
-                            </label>
-                            <VeeField
-                                v-slot="{ field }"
-                                name="fallbackMode"
-                                as="div"
-                                :placeholder="$t('common.mode')"
-                                :label="$t('common.mode')"
+                        <UFormGroup name="fallbackMode" :label="$t('common.fallback_mode')" class="flex-1">
+                            <USelectMenu
+                                v-model="state.fallbackMode"
+                                :options="modes"
+                                value-attribute="mode"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
                             >
-                                <select v-bind="field" @focusin="focusTablet(true)" @focusout="focusTablet(false)">
-                                    <option
-                                        v-for="mode in modes"
-                                        :key="mode.mode"
-                                        :selected="settings !== null && mode.mode === settings.fallbackMode"
-                                        :value="mode.mode"
-                                    >
-                                        {{ $t(`enums.centrum.CentrumMode.${CentrumMode[mode.mode ?? 0]}`) }}
-                                    </option>
-                                </select>
-                            </VeeField>
-                            <VeeErrorMessage name="fallbackMode" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
+                                <template #label>
+                                    <span class="truncate">{{
+                                        $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                    }}</span>
+                                </template>
+                                <template #option="{ option }">
+                                    <span class="truncate">{{
+                                        $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                    }}</span>
+                                </template>
+                            </USelectMenu>
+                        </UFormGroup>
 
                         <!-- Predefined Unit Status Reason -->
-                        <div class="flex-1">
-                            <label for="unitStatus" class="block text-sm font-medium leading-6">
-                                {{ `${$t('common.units')} ${$t('common.status')}` }}
-                            </label>
+                        <UFormGroup name="unitStatus" :label="`${$t('common.units')} ${$t('common.status')}`" class="flex-1">
                             <div class="flex flex-col gap-1">
-                                <div v-for="(field, idx) in usFields" :key="field.key" class="flex items-center gap-1">
-                                    <VeeField
-                                        :name="`unitStatus[${idx}]`"
+                                <div v-for="(_, idx) in state.unitStatus" :key="idx" class="flex items-center gap-1">
+                                    <UInput
                                         type="text"
-                                        class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="w-full flex-1"
                                         :placeholder="$t('common.reason')"
                                         :label="$t('common.reason')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
 
-                                    <UButton :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="usRemove(idx)" />
+                                    <UButton
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        icon="i-mdi-close"
+                                        @click="state.unitStatus.splice(idx, 1)"
+                                    />
                                 </div>
                             </div>
+
                             <UButton
                                 :ui="{ rounded: 'rounded-full' }"
                                 icon="i-mdi-plus"
-                                :disabled="!canSubmit || usFields.length >= 4"
-                                @click="usPush('')"
+                                :disabled="!canSubmit || state.unitStatus.length >= 8"
+                                @click="state.unitStatus.push('')"
                             />
-                        </div>
+                        </UFormGroup>
 
                         <!-- Predefined Dispatch Status Reason -->
-                        <div class="flex-1">
-                            <label for="dispatchStatus" class="block text-sm font-medium leading-6">
-                                {{ `${$t('common.dispatches')} ${$t('common.status')}` }}
-                            </label>
+                        <UFormGroup
+                            name="dispatchStatus"
+                            :label="`${$t('common.dispatches')} ${$t('common.status')}`"
+                            class="flex-1"
+                        >
                             <div class="flex flex-col gap-1">
-                                <div v-for="(field, idx) in dspFields" :key="field.key" class="flex items-center gap-1">
-                                    <VeeField
-                                        :name="`dispatchStatus[${idx}]`"
+                                <div v-for="(_, idx) in state.dispatchStatus" :key="idx" class="flex items-center gap-1">
+                                    <UInput
+                                        v-model="state.dispatchStatus[idx]"
                                         type="text"
-                                        class="block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                        class="w-full flex-1"
                                         :placeholder="$t('common.reason')"
                                         :label="$t('common.reason')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
 
-                                    <UButton :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="dspRemove(idx)" />
+                                    <UButton
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        icon="i-mdi-close"
+                                        @click="state.dispatchStatus.splice(idx, 1)"
+                                    />
                                 </div>
                             </div>
+
                             <UButton
                                 :ui="{ rounded: 'rounded-full' }"
                                 icon="i-mdi-plus"
-                                :disabled="!canSubmit || dspFields.length >= 4"
-                                @click="dspPush('')"
+                                :disabled="!canSubmit || state.dispatchStatus.length >= 8"
+                                @click="state.dispatchStatus.push('')"
                             />
-                        </div>
+                        </UFormGroup>
                     </div>
-                </UForm>
-            </div>
+                </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton
-                        v-if="can('CentrumService.UpdateSettings')"
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.update') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                        <UButton
+                            v-if="can('CentrumService.UpdateSettings')"
+                            type="submit"
+                            block
+                            class="flex-1"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                        >
+                            {{ $t('common.update') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>
