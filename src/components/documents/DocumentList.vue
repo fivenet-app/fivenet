@@ -102,7 +102,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
     <UDashboardToolbar>
         <template #default>
             <UForm class="w-full" :state="{}" @submit="refresh()">
-                <UFormGroup :label="$t('common.search')">
+                <UFormGroup name="search" :label="$t('common.search')">
                     <UInput
                         v-model="query.title"
                         type="text"
@@ -128,7 +128,11 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                 >
                     <template #search>
                         <div class="flex flex-row flex-wrap gap-1">
-                            <UFormGroup class="flex-1" :label="`${$t('common.document')} ${$t('common.id')}`">
+                            <UFormGroup
+                                class="flex-1"
+                                name="documentIds"
+                                :label="`${$t('common.document')} ${$t('common.id')}`"
+                            >
                                 <UInput
                                     v-model="query.documentIds"
                                     type="text"
@@ -140,7 +144,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                                 />
                             </UFormGroup>
 
-                            <UFormGroup class="flex-1" :label="$t('common.category', 1)">
+                            <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
                                 <UInputMenu
                                     v-model="query.category"
                                     option-attribute="name"
@@ -158,7 +162,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                                 </UInputMenu>
                             </UFormGroup>
 
-                            <UFormGroup class="flex-1" :label="$t('common.creator')">
+                            <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
                                 <UInputMenu
                                     v-model="query.creator"
                                     :search="
@@ -196,7 +200,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                                 <USelectMenu v-model="queryClosed" :options="openclose" />
                             </UFormGroup>
 
-                            <UFormGroup class="flex-1" :label="`${$t('common.time_range')} ${$t('common.from')}`">
+                            <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
                                 <UPopover :popper="{ placement: 'bottom-start' }">
                                     <UButton
                                         variant="outline"
@@ -211,7 +215,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                                     </template>
                                 </UPopover>
                             </UFormGroup>
-                            <UFormGroup class="flex-1" :label="`${$t('common.time_range')} ${$t('common.to')}`">
+                            <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
                                 <UPopover :popper="{ placement: 'bottom-start' }">
                                     <UButton
                                         variant="outline"

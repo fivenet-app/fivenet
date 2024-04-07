@@ -181,13 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         :selected="mtype.selected"
                                                         :value="mtype.status"
                                                     >
-                                                        {{
-                                                            $t(
-                                                                `enums.jobs.ConductType.${
-                                                                    ConductType[mtype.status ?? (0 as number)]
-                                                                }`,
-                                                            )
-                                                        }}
+                                                        {{ $t(`enums.jobs.ConductType.${ConductType[mtype.status ?? 0]}`) }}
                                                     </option>
                                                 </select>
                                             </VeeField>

@@ -170,7 +170,7 @@ function updateDates(): void {
                             </UButton>
 
                             <div class="flex flex-row gap-2">
-                                <UFormGroup v-if="canAccessAll" class="flex-1" :label="$t('common.colleague', 2)">
+                                <UFormGroup v-if="canAccessAll" class="flex-1" name="user" :label="$t('common.colleague', 2)">
                                     <UInputMenu
                                         v-model="query.user"
                                         :search="
@@ -206,6 +206,7 @@ function updateDates(): void {
 
                                 <UFormGroup
                                     class="flex-1"
+                                    name="from"
                                     :label="
                                         query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`
                                     "
@@ -228,6 +229,7 @@ function updateDates(): void {
                                 <UFormGroup
                                     v-if="!query.perDay"
                                     class="flex-1"
+                                    name="to"
                                     :label="`${$t('common.time_range')} ${$t('common.to')}`"
                                 >
                                     <UPopover :popper="{ placement: 'bottom-start' }">

@@ -264,7 +264,7 @@ const columns = [
                                     conductTypesToTextColor(conduct.type),
                                 ]"
                             >
-                                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? (0 as number)]}`) }}
+                                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? 0]}`) }}
                             </div>
                         </template>
                         <template #message-data="{ row: conduct }">

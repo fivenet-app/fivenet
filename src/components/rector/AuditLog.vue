@@ -173,7 +173,7 @@ const columns = [
         <template #default>
             <UForm class="w-full" :state="{}" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup class="flex-1" :label="`${$t('common.time_range')} ${$t('common.from')}`">
+                    <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
@@ -189,7 +189,7 @@ const columns = [
                         </UPopover>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" :label="`${$t('common.time_range')} ${$t('common.to')}`">
+                    <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
@@ -205,7 +205,7 @@ const columns = [
                         </UPopover>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" :label="$t('common.user')">
+                    <UFormGroup class="flex-1" name="user" :label="$t('common.user')">
                         <USelectMenu
                             v-model="selectedCitizens"
                             multiple
@@ -235,7 +235,7 @@ const columns = [
                         </USelectMenu>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" :label="$t('common.service')">
+                    <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
                         <UInput
                             v-model="query.service"
                             type="text"
@@ -247,7 +247,7 @@ const columns = [
                         />
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" :label="$t('common.method')">
+                    <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
                         <UInput
                             v-model="query.method"
                             type="text"
@@ -259,7 +259,7 @@ const columns = [
                         />
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" :label="$t('common.data')">
+                    <UFormGroup class="flex-1" name="data" :label="$t('common.data')">
                         <UInput
                             v-model="query.search"
                             type="text"
