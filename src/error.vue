@@ -43,7 +43,7 @@ function copyError(): void {
 
 <template>
     <div class="h-dscreen">
-        <NuxtLoadingIndicator />
+        <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
         <div class="hero bg-background h-full">
             <div class="hero-overlay h-full">

@@ -121,7 +121,7 @@ watch(updateAvailable, async () => {
 
 <template>
     <div>
-        <NuxtLoadingIndicator />
+        <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
 
         <NuxtLayout>
             <NuxtPage
