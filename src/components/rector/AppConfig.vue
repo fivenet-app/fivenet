@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { max, min, regex, required, url, min_value, max_value, numeric, size } from '@vee-validate/rules';
-import { CheckIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useSettingsStore } from '~/store/settings';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -10,8 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { useNotificatorStore } from '~/store/notificator';
 import { useCompletorStore } from '~/store/completor';
-import type { Perm } from '~~/gen/ts/resources/rector/config';
 import { toDuration } from '~/utils/duration';
+import { Perms, type Auth, Website, Discord, UserTracker, JobInfo } from '~~/gen/ts/resources/rector/config';
 
 const { $grpc } = useNuxtApp();
 
@@ -39,86 +37,24 @@ const { listJobs } = completorStore;
 
 const { data: jobs } = useLazyAsyncData(`rector-appconfig-jobs`, () => listJobs());
 
-interface FormData {
-    permsDefault: Perm[];
+// TODO add custom validation and transformers for durations
+const schema = z.object({
+    auth: z.custom<Auth>(),
+    perms: z.custom<Perms>(),
+    website: z.custom<Website>(),
+    jobInfo: z.custom<JobInfo>(),
+    userTracker: z.custom<UserTracker>(),
+    discord: z.custom<Discord>(),
+});
 
-    websiteLinksPrivacyPolicy?: string;
-    websiteLinksImprint?: string;
+type Schema = z.output<typeof schema>;
 
-    jobInfoUnemployedName: string;
-    jobInfoUnemployedGrade: number;
-
-    userTrackerRefreshTime: string;
-    userTrackerDbRefreshTime: string;
-
-    discordBotInviteUrl?: string;
-    discordSyncInterval: string;
-}
-
-async function updateAppConfig(values: FormData): Promise<void> {
+async function updateAppConfig(values: Schema): Promise<void> {
     if (!data.value?.config) {
         return;
     }
 
-    // Perms
-    if (data.value.config.perms === undefined) {
-        data.value.config.perms = {
-            default: [],
-        };
-    }
-    data.value.config.perms.default = values.permsDefault;
-
-    // Website
-    if (data.value.config.website === undefined) {
-        data.value.config.website = {
-            links: {},
-        };
-    }
-    if (data.value.config.website.links === undefined) {
-        data.value.config.website.links = {};
-    }
-    data.value.config.website.links.imprint = values.websiteLinksImprint;
-    data.value.config.website.links.privacyPolicy = values.websiteLinksPrivacyPolicy;
-
-    // Job Info
-    if (data.value.config.jobInfo === undefined) {
-        data.value.config.jobInfo = {
-            hiddenJobs: [],
-            publicJobs: [],
-        };
-    }
-    if (data.value.config.jobInfo.unemployedJob === undefined) {
-        data.value.config.jobInfo.unemployedJob = {
-            name: '',
-            grade: 0,
-        };
-    }
-    data.value.config.jobInfo.unemployedJob.name = values.jobInfoUnemployedName;
-    data.value.config.jobInfo.unemployedJob.grade = values.jobInfoUnemployedGrade;
-
-    // User Tracker
-    if (data.value.config.userTracker === undefined) {
-        data.value.config.userTracker = {
-            livemapJobs: [],
-        };
-    }
-    if (values.userTrackerRefreshTime) {
-        data.value.config.userTracker.refreshTime = toDuration(values.userTrackerRefreshTime);
-    }
-    if (values.userTrackerDbRefreshTime) {
-        data.value.config.userTracker.dbRefreshTime = toDuration(values.userTrackerDbRefreshTime);
-    }
-
-    // Discord
-    if (data.value.config.discord === undefined) {
-        data.value.config.discord = {
-            enabled: false,
-        };
-    }
-    data.value.config.discord.inviteUrl = values.discordBotInviteUrl;
-    if (data.value.config.discord.syncInterval === undefined && values.discordSyncInterval) {
-        data.value.config.discord.syncInterval = toDuration(values.discordSyncInterval);
-    }
+    data.value.config = values;
 
     try {
         const { response } = await $grpc.getRectorConfigClient().updateAppConfig({
@@ -142,17 +78,7 @@ async function updateAppConfig(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('regex', regex);
-defineRule('size', size);
-defineRule('url', url);
-defineRule('min_value', min_value);
-defineRule('max_value', max_value);
-defineRule('numeric', numeric);
-
-const { handleSubmit, meta, setValues } = useForm<FormData>({
+const { setValues } = useForm<FormData>({
     validationSchema: {
         permsDefault: { size: 25 },
 
@@ -168,7 +94,6 @@ const { handleSubmit, meta, setValues } = useForm<FormData>({
         discordBotInviteUrl: { required: false, url: 'https://discord.com/.*' },
         discordSyncInterval: { required: true, max: 5, regex: /^\d+(\.\d+)?s$/ },
     },
-    validateOnMount: true,
 });
 
 function setSettingsValues(): void {
@@ -213,20 +138,11 @@ function setSettingsValues(): void {
 
 watchOnce(data, () => setSettingsValues());
 
-const queryJobsRaw = ref('');
-const queryJobs = computed(() => queryJobsRaw.value.trim());
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await updateAppConfig(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await updateAppConfig(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
-
-const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
 </script>
 
 <template>
@@ -253,7 +169,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                     <template #right>
                         <UButton
                             class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                            :disabled="!canSubmit || !meta.valid"
+                            :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="onSubmitThrottle"
                         >
@@ -292,42 +208,37 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             :ui="{ container: '' }"
                         >
                             <div class="flex flex-col gap-1">
-                                <div v-for="(field, idx) in fields" :key="field.key" class="flex items-center gap-1">
+                                <div
+                                    v-for="(perm, idx) in data.config!.perms!.default"
+                                    :key="idx"
+                                    class="flex items-center gap-1"
+                                >
                                     <div class="flex-1">
-                                        <VeeField
-                                            :name="`permsDefault[${idx}].category`"
+                                        <UInput
+                                            v-model="perm.category"
                                             type="text"
                                             :placeholder="$t('common.category')"
                                             :label="$t('common.category')"
-                                            :rules="required"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage
-                                            :name="`permsDefault[${idx}].category`"
-                                            as="p"
-                                            class="mt-2 text-sm text-error-400"
                                         />
                                     </div>
                                     <div class="flex-1">
-                                        <VeeField
-                                            :name="`permsDefault[${idx}].name`"
+                                        <UInput
+                                            v-model="perm.name"
                                             type="text"
-                                            class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                             :placeholder="$t('common.name')"
                                             :label="$t('common.name')"
-                                            :rules="required"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
-                                        <VeeErrorMessage
-                                            :name="`permsDefault[${idx}].name`"
-                                            as="p"
-                                            class="mt-2 text-sm text-error-400"
-                                        />
                                     </div>
 
-                                    <UButton :ui="{ rounded: 'rounded-full' }" icon="i-mdi-close" @click="remove(idx)" />
+                                    <UButton
+                                        :ui="{ rounded: 'rounded-full' }"
+                                        icon="i-mdi-close"
+                                        @click="data.config!.perms!.default.splice(idx, 1)"
+                                    />
                                 </div>
                             </div>
 
@@ -336,7 +247,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 :ui="{ rounded: 'rounded-full' }"
                                 :disabled="!canSubmit"
                                 icon="i-mdi-plus"
-                                @click="push({ category: '', name: '' })"
+                                @click="data.config!.perms!.default.push({ category: '', name: '' })"
                             >
                             </UButton>
                         </UFormGroup>
@@ -347,43 +258,38 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         :description="$t('components.rector.app_config.website.description')"
                     >
                         <UFormGroup
-                            name="websiteLinks"
-                            :label="$t('components.rector.app_config.website.links.title')"
+                            name="websiteLinksPrivacyPolicy"
+                            :label="$t('common.privacy_policy')"
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <div class="flex-1">
-                                <label for="websiteLinksPrivacyPolicy">
-                                    {{ $t('common.privacy_policy') }}
-                                </label>
-                                <VeeField
-                                    type="text"
-                                    name="websiteLinksPrivacyPolicy"
-                                    :value="data.config!.website!.links!.privacyPolicy"
-                                    :placeholder="$t('common.privacy_policy')"
-                                    :label="$t('common.privacy_policy')"
-                                    maxlength="128"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="websiteLinksPrivacyPolicy" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
-                            <div class="flex-1">
-                                <label for="websiteLinksImprint">
-                                    {{ $t('common.imprint') }}
-                                </label>
-                                <VeeField
-                                    type="text"
-                                    name="websiteLinksImprint"
-                                    :placeholder="$t('common.imprint')"
-                                    :label="$t('common.imprint')"
-                                    :value="data.config!.website!.links!.imprint"
-                                    maxlength="128"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="websiteLinksImprint" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
+                            <UInput
+                                type="text"
+                                name="websiteLinksPrivacyPolicy"
+                                :value="data.config!.website!.links!.privacyPolicy"
+                                :placeholder="$t('common.privacy_policy')"
+                                :label="$t('common.privacy_policy')"
+                                maxlength="128"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="websiteLinksImprint"
+                            :label="$t('common.imprint')"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :ui="{ container: '' }"
+                        >
+                            <UInput
+                                type="text"
+                                name="websiteLinksImprint"
+                                :placeholder="$t('common.imprint')"
+                                :value="data.config!.website!.links!.imprint"
+                                maxlength="128"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
                         </UFormGroup>
                     </UDashboardSection>
 
@@ -392,42 +298,40 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                         :description="$t('components.rector.app_config.job_info.description')"
                     >
                         <UFormGroup
-                            name="jobInfoUnmployedJob"
-                            :label="$t('components.rector.app_config.job_info.unemployed_job')"
+                            name="jobInfoUnemployedName"
+                            :label="`${$t('common.job')} ${$t('common.name')}`"
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <div class="flex-1">
-                                <label for="jobInfoUnemployedName"> {{ $t('common.job') }} {{ $t('common.name') }} </label>
-                                <VeeField
-                                    type="text"
-                                    name="jobInfoUnemployedName"
-                                    :value="data.config!.jobInfo!.unemployedJob!.name"
-                                    :placeholder="$t('common.job')"
-                                    :label="$t('common.job')"
-                                    maxlength="128"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="jobInfoUnemployedName" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
-                            <div class="flex-1">
-                                <label for="jobInfoUnemployedGrade">
-                                    {{ $t('common.rank') }}
-                                </label>
-                                <VeeField
-                                    type="number"
-                                    min="1"
-                                    max="99"
-                                    :value="data.config!.jobInfo!.unemployedJob!.grade"
-                                    name="jobInfoUnemployedGrade"
-                                    :placeholder="$t('common.rank')"
-                                    :label="$t('common.rank')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="jobInfoUnemployedGrade" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
+                            <UInput
+                                type="text"
+                                name="jobInfoUnemployedName"
+                                :value="data.config!.jobInfo!.unemployedJob!.name"
+                                :placeholder="$t('common.job')"
+                                :label="$t('common.job')"
+                                maxlength="128"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="jobInfoUnemployedGrade"
+                            :label="$t('common.rank')"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :ui="{ container: '' }"
+                        >
+                            <UInput
+                                type="number"
+                                min="1"
+                                max="99"
+                                :value="data.config!.jobInfo!.unemployedJob!.grade"
+                                name="jobInfoUnemployedGrade"
+                                :placeholder="$t('common.rank')"
+                                :label="$t('common.rank')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
                         </UFormGroup>
 
                         <UFormGroup
@@ -436,56 +340,24 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <Combobox v-model="data.config!.jobInfo!.publicJobs" as="div" multiple nullable>
-                                <div class="relative">
-                                    <ComboboxButton as="div">
-                                        <ComboboxInput
-                                            autocomplete="off"
-                                            :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                            :placeholder="$t('common.job', 2)"
-                                            @change="queryJobsRaw = $event.target.value"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </ComboboxButton>
-
-                                    <ComboboxOptions
-                                        v-if="jobs !== null && jobs.length > 0"
-                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ComboboxOption
-                                            v-for="job in jobs.filter(
-                                                (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                            )"
-                                            v-slot="{ active, selected }"
-                                            :key="job.name"
-                                            :value="job.name"
-                                            as="template"
-                                        >
-                                            <li
-                                                :class="[
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                    active ? 'bg-primary-500' : '',
-                                                ]"
-                                            >
-                                                <span :class="['block truncate', selected && 'font-semibold']">
-                                                    {{ job.name }}
-                                                </span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ComboboxOption>
-                                    </ComboboxOptions>
-                                </div>
-                            </Combobox>
+                            <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
+                                <USelectMenu
+                                    v-model="data.config!.jobInfo!.publicJobs"
+                                    multiple
+                                    :options="jobs"
+                                    value-attribute="name"
+                                    by="label"
+                                >
+                                    <template #label>
+                                        <template v-if="data.config!.jobInfo!.publicJobs">
+                                            <span class="truncate">{{ data.config!.jobInfo!.publicJobs.join(',') }}</span>
+                                        </template>
+                                    </template>
+                                    <template #option="{ option: job }">
+                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
                         </UFormGroup>
 
                         <UFormGroup
@@ -494,56 +366,24 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <Combobox v-model="data.config!.jobInfo!.hiddenJobs" as="div" multiple nullable>
-                                <div class="relative">
-                                    <ComboboxButton as="div">
-                                        <ComboboxInput
-                                            autocomplete="off"
-                                            :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                            :placeholder="$t('common.job', 2)"
-                                            @change="queryJobsRaw = $event.target.value"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </ComboboxButton>
-
-                                    <ComboboxOptions
-                                        v-if="jobs !== null && jobs.length > 0"
-                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ComboboxOption
-                                            v-for="job in jobs.filter(
-                                                (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                            )"
-                                            v-slot="{ active, selected }"
-                                            :key="job.name"
-                                            :value="job.name"
-                                            as="template"
-                                        >
-                                            <li
-                                                :class="[
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                    active ? 'bg-primary-500' : '',
-                                                ]"
-                                            >
-                                                <span :class="['block truncate', selected && 'font-semibold']">
-                                                    {{ job.name }}
-                                                </span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ComboboxOption>
-                                    </ComboboxOptions>
-                                </div>
-                            </Combobox>
+                            <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
+                                <USelectMenu
+                                    v-model="data.config!.jobInfo!.hiddenJobs"
+                                    multiple
+                                    :options="jobs"
+                                    value-attribute="name"
+                                    by="label"
+                                >
+                                    <template #label>
+                                        <template v-if="data.config!.jobInfo!.hiddenJobs">
+                                            <span class="truncate">{{ data.config!.jobInfo!.hiddenJobs.join(',') }}</span>
+                                        </template>
+                                    </template>
+                                    <template #option="{ option: job }">
+                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
                         </UFormGroup>
                     </UDashboardSection>
 
@@ -557,10 +397,9 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <VeeField
+                            <UInput
                                 name="userTrackerRefreshTime"
                                 type="text"
-                                class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :value="
                                     parseFloat(
                                         data.config?.userTracker?.refreshTime?.seconds.toString() +
@@ -569,11 +408,9 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     ).toString() + 's'
                                 "
                                 :placeholder="$t('common.duration')"
-                                :label="$t('common.duration')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                            <VeeErrorMessage name="userTrackerRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
                         </UFormGroup>
 
                         <UFormGroup
@@ -582,10 +419,9 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <VeeField
+                            <UInput
                                 name="userTrackerDbRefreshTime"
                                 type="text"
-                                class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :value="
                                     parseFloat(
                                         data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
@@ -594,11 +430,9 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                     ).toString() + 's'
                                 "
                                 :placeholder="$t('common.duration')"
-                                :label="$t('common.duration')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                            <VeeErrorMessage name="userTrackerDbRefreshTime" as="p" class="mt-2 text-sm text-error-400" />
                         </UFormGroup>
 
                         <UFormGroup
@@ -607,56 +441,22 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <Combobox v-model="data.config!.userTracker!.livemapJobs" as="div" multiple nullable>
-                                <div class="relative">
-                                    <ComboboxButton as="div">
-                                        <ComboboxInput
-                                            autocomplete="off"
-                                            :display-value="(js: any) => (js ? js.join(', ') : $t('common.na'))"
-                                            :placeholder="$t('common.job', 2)"
-                                            @change="queryJobsRaw = $event.target.value"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </ComboboxButton>
-
-                                    <ComboboxOptions
-                                        v-if="jobs !== null && jobs.length > 0"
-                                        class="absolute z-30 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ComboboxOption
-                                            v-for="job in jobs.filter(
-                                                (j) => j.label.includes(queryJobs) || j.name.includes(queryJobs),
-                                            )"
-                                            v-slot="{ active, selected }"
-                                            :key="job.name"
-                                            :value="job.name"
-                                            as="template"
-                                        >
-                                            <li
-                                                :class="[
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4',
-                                                    active ? 'bg-primary-500' : '',
-                                                ]"
-                                            >
-                                                <span :class="['block truncate', selected && 'font-semibold']">
-                                                    {{ job.name }}
-                                                </span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" />
-                                                </span>
-                                            </li>
-                                        </ComboboxOption>
-                                    </ComboboxOptions>
-                                </div>
-                            </Combobox>
+                            <USelectMenu
+                                v-model="data.config!.userTracker!.livemapJobs"
+                                multiple
+                                :options="jobs"
+                                value-attribute="name"
+                                by="label"
+                            >
+                                <template #label>
+                                    <template v-if="data.config!.userTracker!.livemapJobs">
+                                        <span class="truncate">{{ data.config!.userTracker!.livemapJobs.join(',') }}</span>
+                                    </template>
+                                </template>
+                                <template #option="{ option: job }">
+                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                </template>
+                            </USelectMenu>
                         </UFormGroup>
                     </UDashboardSection>
 
@@ -683,10 +483,9 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <VeeField
+                            <UInput
                                 name="discordSyncInterval"
                                 type="text"
-                                class="placeholder:text-accent-200 block w-full flex-1 rounded-md border-0 bg-base-700 py-1.5 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 :value="
                                     parseFloat(
                                         data.config?.discord?.syncInterval?.seconds.toString() +
@@ -699,7 +498,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                            <VeeErrorMessage name="discordSyncInterval" as="p" class="mt-2 text-sm text-error-400" />
                         </UFormGroup>
 
                         <UFormGroup
@@ -708,7 +506,7 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                             class="grid grid-cols-2 items-center gap-2"
                             :ui="{ container: '' }"
                         >
-                            <VeeField
+                            <UInput
                                 type="url"
                                 name="discordBotInviteUrl"
                                 :value="data.config!.discord!.inviteUrl"
@@ -717,7 +515,6 @@ const { remove, push, fields } = useFieldArray<Perm>('permsDefault');
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                            <VeeErrorMessage name="discordBotInviteUrl" as="p" class="mt-2 text-sm text-error-400" />
                         </UFormGroup>
                     </UDashboardSection>
                 </UDashboardPanelContent>

@@ -2039,6 +2039,12 @@
                 "DENIED": "Abgelehnt",
                 "ACCEPTED": "Akzeptiert"
             }
+        },
+        "rector": {
+            "UserInfoSyncUnemployedMode": {
+                "GIVE_ROLE": "Rolle vergeben",
+                "KICK": "Kicken"
+            }
         }
     },
     "commandpalette": {

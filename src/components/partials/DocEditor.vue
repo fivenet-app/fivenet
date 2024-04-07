@@ -6,13 +6,21 @@ import { JoditEditor } from 'jodit-vue';
 import type { IJodit } from 'jodit/types/types';
 import { useSettingsStore } from '~/store/settings';
 
-const props = defineProps<{
-    modelValue: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        modelValue: string;
+        disabled?: boolean;
+    }>(),
+    {
+        disabled: false,
+    },
+);
 
 const emit = defineEmits<{
     (e: 'update:modelValue', content: string): void;
 }>();
+
+const editorRef = ref<JoditEditor | null>(null);
 
 const content = useVModel(props, 'modelValue', emit);
 
@@ -20,6 +28,8 @@ const settingsStore = useSettingsStore();
 const { design: theme } = storeToRefs(settingsStore);
 
 const config = {
+    readOnly: props.disabled,
+
     language: 'de',
     spellcheck: true,
     minHeight: 475,
@@ -52,7 +62,7 @@ const config = {
         /**
          * Template for the link dialog form
          */
-        formTemplate: (_: Jodit) => `<form><input ref="url_input"><UButton>Apply</UButton></form>`,
+        formTemplate: (_: Jodit) => `<form><input ref="url_input"><button>Apply</button></form>`,
         formClassName: 'some-class',
         /**
          * Follow link address after dblclick
@@ -160,17 +170,13 @@ function setupCheckboxes(): void {
     );
 }
 
-watch(
-    props,
-    () => {
-        if (props.modelValue !== '') {
-            useTimeoutFn(setupCheckboxes, 50);
-        }
-    },
-    {
-        once: true,
-    },
-);
+watch(props, () => {
+    if (props.modelValue !== '') {
+        useTimeoutFn(setupCheckboxes, 50);
+    }
+
+    editorRef.value.editor.setReadOnly(props.disabled);
+});
 
 onBeforeUnmount(() => {
     // Remove event listeners on unmount

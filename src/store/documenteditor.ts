@@ -4,7 +4,7 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 export interface DocumentEditorState {
     title: string;
     content: string;
-    closed: undefined | { id: number; label: string; closed: boolean };
+    closed: boolean;
     state: string;
     category?: Category;
 }
@@ -14,7 +14,7 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
         ({
             title: '',
             content: '',
-            closed: undefined,
+            closed: false,
             state: '',
             category: undefined,
         }) as DocumentEditorState,
@@ -32,7 +32,7 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
         clear(): void {
             this.title = '';
             this.content = '';
-            this.closed = undefined;
+            this.closed = false;
             this.state = '';
             this.category = undefined;
         },

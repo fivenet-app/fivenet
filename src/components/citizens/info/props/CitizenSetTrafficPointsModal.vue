@@ -75,7 +75,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UForm ref="form" :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">

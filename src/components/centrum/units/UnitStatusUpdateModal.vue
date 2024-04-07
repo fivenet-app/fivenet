@@ -119,7 +119,7 @@ function updateReasonField(value: string): void {
             </template>
 
             <div>
-                <UForm :state="{}" class="flex h-full flex-col divide-y divide-gray-200" @submit.prevent="onSubmitThrottle">
+                <UForm :state="{}" class="flex h-full flex-col divide-y divide-gray-200" @submit="onSubmitThrottle">
                     <div class="flex flex-1 flex-col justify-between">
                         <div class="divide-y divide-gray-200 px-2 sm:px-6">
                             <div>

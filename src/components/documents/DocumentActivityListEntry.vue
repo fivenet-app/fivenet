@@ -26,7 +26,7 @@ function getDocAtivityIcon(activityType: DocActivityType): string {
         case DocActivityType.CREATED:
             return 'i-mdi-new-box';
         case DocActivityType.STATUS_OPEN:
-            return 'i-mdi-lock-open';
+            return 'i-mdi-lock-open-variant';
         case DocActivityType.STATUS_CLOSED:
             return 'i-mdi-lock';
         case DocActivityType.UPDATED:

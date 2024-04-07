@@ -22,9 +22,7 @@ const route = useRoute('documents-id-edit');
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.documents.edit.title')"></UDashboardNavbar>
-
-            <DocumentEditor :id="route.params.id" />
+            <DocumentEditor :document-id="route.params.id" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

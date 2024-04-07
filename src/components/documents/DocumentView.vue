@@ -323,92 +323,77 @@ const accordionItems = [
                     </div>
 
                     <div class="mb-2 flex gap-2">
-                        <div
-                            v-if="doc.category"
-                            class="bg-primary-100 text-primary-500 flex flex-initial flex-row gap-1 rounded-full px-2 py-1"
-                        >
-                            <ShapeIcon class="h-auto w-5" />
-                            <span
-                                class="text-primary-800 inline-flex items-center text-sm font-medium"
-                                :title="doc.category.description ?? $t('common.na')"
-                            >
+                        <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                            <span :title="doc.category.description ?? $t('common.na')">
                                 {{ doc.category.name }}
                             </span>
-                        </div>
+                        </UBadge>
 
-                        <div v-if="doc?.closed" class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1">
-                            <LockIcon class="size-5 text-error-400" />
-                            <span class="text-sm font-medium text-error-700">
+                        <UBadge v-if="doc?.closed" color="red" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.close', 2) }}
                             </span>
-                        </div>
-                        <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                            <LockOpenVariantIcon class="size-5 text-success-500" />
-                            <span class="text-sm font-medium text-success-700">
+                        </UBadge>
+                        <UBadge v-else color="green" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.open', 2) }}
                             </span>
-                        </div>
+                        </UBadge>
 
-                        <div
-                            v-if="doc?.state"
-                            class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1 text-info-500"
-                        >
-                            <NoteCheckIcon class="h-auto w-5" />
-                            <span class="text-sm font-medium text-info-800">
+                        <UBadge v-if="doc?.state" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-note-check" class="h-auto w-5" />
+                            <span>
                                 {{ doc?.state }}
                             </span>
-                        </div>
-                        <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                            <CommentTextMultipleIcon class="h-auto w-5" />
-                            <span class="text-sm font-medium text-base-700">
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-comment-text-multiple" class="h-auto w-5" />
+                            <span>
                                 {{
                                     commentCount !== undefined
                                         ? $t('common.comments', commentCount)
                                         : '? ' + $t('common.comment', 2)
                                 }}
                             </span>
-                        </div>
+                        </UBadge>
                     </div>
 
                     <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                            <AccountIcon class="h-auto w-5" />
-                            <span class="inline-flex items-center text-sm font-medium text-base-700">
-                                {{ $t('common.created_by') }}
-                                <CitizenInfoPopover
-                                    :user="doc.creator"
-                                    class="text-primary-600 hover:text-primary-400 ml-1 font-medium"
-                                />
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-account" class="h-auto w-5" />
+                            <span class="inline-flex items-center gap-1">
+                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover :user="doc.creator" />
                             </span>
-                        </div>
+                        </UBadge>
 
-                        <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                            <CalendarIcon class="h-auto w-5" />
-                            <span class="text-sm font-medium text-base-700">
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.created_at') }}
                                 <GenericTime :value="doc.createdAt" type="long" />
                             </span>
-                        </div>
-                        <div
-                            v-if="doc.updatedAt"
-                            class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
-                        >
-                            <CalendarEditIcon class="h-auto w-5" />
-                            <span class="text-sm font-medium text-base-700">
+                        </UBadge>
+
+                        <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-edit" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.updated_at') }}
                                 <GenericTime :value="doc.updatedAt" type="long" />
                             </span>
-                        </div>
-                        <div
-                            v-if="doc.deletedAt"
-                            class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
-                        >
-                            <CalendarRemoveIcon class="h-auto w-5" />
-                            <span class="text-sm font-medium text-base-700">
+                        </UBadge>
+
+                        <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-remove" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.deleted') }}
                                 <GenericTime :value="doc.deletedAt" type="long" />
                             </span>
-                        </div>
+                        </UBadge>
                     </div>
                 </template>
 
@@ -427,54 +412,61 @@ const accordionItems = [
                         <template #relations>
                             <DocumentRelations :document-id="documentId" :show-source="false" />
                         </template>
+
                         <template #references>
                             <DocumentReferences :document-id="documentId" :show-source="false" />
                         </template>
-                        <template #access>
-                            <div class="mx-4 flex flex-row flex-wrap gap-1">
-                                <DataNoDataBlock
-                                    v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
-                                    icon="i-mdi-file-search"
-                                    :message="$t('common.not_found', [$t('common.access', 2)])"
-                                />
 
-                                <div
-                                    v-for="entry in access?.jobs"
-                                    :key="entry.id"
-                                    class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                >
-                                    <span class="size-2 rounded-full bg-info-500" />
-                                    <span class="text-sm font-medium text-info-800"
-                                        >{{ entry.jobLabel
-                                        }}<span
-                                            v-if="entry.minimumGrade > 0"
-                                            :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                        >
-                                            ({{ entry.jobGradeLabel }})</span
-                                        >
-                                        -
-                                        {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                    </span>
-                                </div>
-                            </div>
-                            <div class="mx-4 flex flex-row flex-wrap gap-1">
-                                <div
-                                    v-for="entry in access?.users"
-                                    :key="entry.id"
-                                    class="bg-secondary-100 flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full px-2 py-1"
-                                >
-                                    <span class="bg-secondary-400 size-2 rounded-full" />
-                                    <span
-                                        class="text-secondary-700 text-sm font-medium"
-                                        :title="`${$t('common.id')} ${entry.userId}`"
+                        <template #access>
+                            <DataNoDataBlock
+                                v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <div v-else class="mx-4 flex flex-col gap-2">
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in access?.jobs"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
                                     >
-                                        {{ entry.user?.firstname }}
-                                        {{ entry.user?.lastname }} -
-                                        {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                    </span>
+                                        <span class="size-2 rounded-full bg-info-500" />
+                                        <span>
+                                            {{ entry.jobLabel
+                                            }}<span
+                                                v-if="entry.minimumGrade > 0"
+                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                            >
+                                                ({{ entry.jobGradeLabel }})</span
+                                            >
+                                            -
+                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in access?.users"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-amber-500" />
+                                        <span :title="`${$t('common.id')} ${entry.userId}`">
+                                            {{ entry.user?.firstname }}
+                                            {{ entry.user?.lastname }} -
+                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
                                 </div>
                             </div>
                         </template>
+
                         <template #comments>
                             <div id="comments">
                                 <DocumentComments
@@ -487,6 +479,7 @@ const accordionItems = [
                                 />
                             </div>
                         </template>
+
                         <template #activity>
                             <DocumentActivityList :document-id="documentId" />
                         </template>

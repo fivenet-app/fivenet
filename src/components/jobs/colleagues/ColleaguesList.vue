@@ -147,7 +147,7 @@ const modal = useModal();
                     :loading="loading"
                     :columns="columns"
                     :rows="data?.colleagues"
-                    :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
+                    :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
                 >
                     <template #name-data="{ row: colleague }">
                         <div class="inline-flex items-center">

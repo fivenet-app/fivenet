@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { format } from 'date-fns';
-import { CheckIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';

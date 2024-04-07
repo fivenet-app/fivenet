@@ -93,6 +93,8 @@ const columns = [
     {
         key: 'sex',
         label: t('common.sex'),
+        class: 'hidden lg:block',
+        rowClass: 'hidden lg:block',
     },
     attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')
         ? { key: 'phoneNumber', label: t('common.phone_number') }
@@ -100,6 +102,8 @@ const columns = [
     {
         key: 'dateofbirth',
         label: t('common.date_of_birth'),
+        class: 'hidden lg:block',
+        rowClass: 'hidden lg:block',
     },
     attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')
         ? {
@@ -116,6 +120,8 @@ const columns = [
     {
         key: 'height',
         label: t('common.height'),
+        class: 'hidden lg:block',
+        rowClass: 'hidden lg:block',
     },
     {
         key: 'actions',
@@ -238,14 +244,13 @@ const columns = [
             :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
         >
             <template #name-data="{ row: citizen }">
-                <div class="inline-flex items-center">
+                <div class="inline-flex items-center gap-1">
                     <ProfilePictureImg
                         :url="citizen.props?.mugShot?.url"
                         :name="`${citizen.firstname} ${citizen.lastname}`"
                         :alt="$t('common.mug_shot')"
                         :enable-popup="true"
                         size="sm"
-                        class="mr-2"
                     />
 
                     <span>{{ citizen.firstname }} {{ citizen.lastname }}</span>

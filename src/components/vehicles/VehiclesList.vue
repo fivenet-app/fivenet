@@ -158,7 +158,7 @@ const columns = computed(() =>
                         />
                     </UFormGroup>
 
-                    <UFormGroup v-if="!userId" name="model" :label="$t('common.owner')" class="flex-1">
+                    <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
                         <UInputMenu
                             v-model="selectedUser"
                             :search="

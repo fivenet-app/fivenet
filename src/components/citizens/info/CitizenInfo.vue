@@ -15,7 +15,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const props = defineProps<{
-    id: number;
+    userId: number;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -52,7 +52,7 @@ const tabs: { slot: string; label: string; icon: string; permission: Perms }[] =
     },
 ].filter((tab) => can(tab.permission));
 
-const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.id}`, () => getUser(props.id));
+const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.userId}`, () => getUser(props.userId));
 
 async function getUser(userId: number): Promise<User> {
     try {
@@ -94,7 +94,7 @@ function addToClipboard(): void {
             <template #right>
                 <UButtonGroup>
                     <IDCopyBadge
-                        :id="id"
+                        :id="userId"
                         prefix="CIT"
                         :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
                         :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"

@@ -1,7 +1,5 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
 import { listEnumValues } from '@protobuf-ts/runtime';
-import { CheckIcon } from 'mdi-vue3';
 import { useCompletorStore } from '~/store/completor';
 import { type ArrayElement } from '~/utils/types';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
@@ -18,7 +16,7 @@ const props = withDefaults(
             id: string;
             type: number;
             values: {
-                char?: number;
+                userId?: number;
                 job?: string;
                 minimumGrade?: number;
                 accessRole?: AccessLevel;
@@ -62,32 +60,11 @@ const selectedAccessType = ref<AccessType>({
     id: -1,
     name: '',
 });
-const entriesChars = ref<UserShort[]>();
-const queryCharRaw = ref('');
-const queryChar = computed(() => queryCharRaw.value.toLowerCase());
+const usersLoading = ref(false);
 const selectedUser = ref<undefined | UserShort>(undefined);
-
-const queryJobRaw = ref('');
-const queryJob = computed(() => queryJobRaw.value.toLowerCase());
-const filteredJobs = computed(
-    () =>
-        props.jobs?.filter(
-            (j) => j.name.toLowerCase().includes(queryJob.value) || j.label.toLowerCase().includes(queryJob.value),
-        ) ?? [],
-);
 const selectedJob = ref<undefined | Job>();
-
-const queryMinimumRankRaw = ref('');
-const queryMinimumRank = computed(() => queryMinimumRankRaw.value.toLowerCase());
-const entriesMinimumRank = ref<JobGrade[]>([]);
-const filteredJobRanks = computed(() =>
-    entriesMinimumRank.value.filter(
-        (j) =>
-            j.grade.toString().toLowerCase().includes(queryMinimumRank.value) ||
-            j.label.toLowerCase().includes(queryMinimumRank.value),
-    ),
-);
 const selectedMinimumRank = ref<undefined | JobGrade>(undefined);
+const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
 
 const entriesAccessRoles: {
     id: AccessLevel;
@@ -116,27 +93,23 @@ if (props.accessRoles === undefined || props.accessRoles.length === 0) {
     });
 }
 
-const queryAccessRole = ref('');
-const selectedAccessRole = ref<ArrayElement<typeof entriesAccessRoles>>();
-
-async function findChars(userId?: number): Promise<UserShort[]> {
-    if (queryChar.value === '' && userId === undefined) return [];
+async function findUser(userId?: number): Promise<UserShort[]> {
+    if (userId === undefined) return [];
 
     return completorStore.completeCitizens({
-        search: queryChar.value,
-        userId,
+        search: '',
+        userId: userId,
     });
 }
 
 async function setFromProps(): Promise<void> {
-    if (props.init.type === 0 && props.init.values.char !== undefined) {
-        const users = await findChars(props.init.values.char);
-        selectedUser.value = users.find((char) => char.userId === props.init.values.char);
+    if (props.init.type === 0 && props.init.values.userId !== undefined) {
+        const users = await findUser(props.init.values.userId);
+        selectedUser.value = users.find((char) => char.userId === props.init.values.userId);
     } else if (props.init.type === 1 && props.init.values.job !== undefined && props.init.values.minimumGrade !== undefined) {
         selectedJob.value = props.jobs?.find((j) => j.name === props.init.values.job);
         if (selectedJob.value) {
-            entriesMinimumRank.value = selectedJob.value.grades;
-            selectedMinimumRank.value = entriesMinimumRank.value.find((rank) => rank.grade === props.init.values.minimumGrade);
+            selectedMinimumRank.value = selectedJob.value.grades.find((rank) => rank.grade === props.init.values.minimumGrade);
         }
     }
 
@@ -152,11 +125,6 @@ onMounted(() => setFromProps());
 
 watch(props, () => setFromProps());
 
-watchDebounced(queryChar, async () => (entriesChars.value = await findChars()), {
-    debounce: 600,
-    maxWait: 1750,
-});
-
 watch(required, () => emit('requiredChange', { id: props.init.id, required: required.value }));
 
 watch(selectedAccessType, async () => {
@@ -168,13 +136,6 @@ watch(selectedAccessType, async () => {
     selectedUser.value = undefined;
     selectedJob.value = undefined;
     selectedMinimumRank.value = undefined;
-
-    if (selectedAccessType.value.id === 0) {
-        queryCharRaw.value = '';
-    } else {
-        queryJobRaw.value = '';
-        queryMinimumRankRaw.value = '';
-    }
 });
 
 watch(selectedJob, () => {
@@ -188,8 +149,6 @@ watch(selectedJob, () => {
         char: undefined,
         required: required.value,
     });
-
-    entriesMinimumRank.value = selectedJob.value.grades;
 });
 
 watch(selectedUser, () => {
@@ -226,24 +185,24 @@ watch(selectedAccessRole, () => {
 </script>
 
 <template>
-    <div class="my-2 flex flex-row items-center">
-        <div v-if="showRequired" class="mr-2 flex-initial">
-            <UCheckbox
-                v-model="required"
-                :disabled="readOnly"
-                :title="$t('common.require')"
-                name="required"
-                :class="readOnly ? 'disabled' : ''"
-            />
-        </div>
-        <div class="mr-2 w-60 flex-initial">
+    <div class="my-2 flex flex-row items-center gap-1">
+        <UCheckbox
+            v-if="showRequired"
+            v-model="required"
+            class="flex-initial"
+            :disabled="readOnly"
+            :title="$t('common.require')"
+            name="required"
+        />
+
+        <UFormGroup class="w-60 flex-initial">
             <UInput v-if="accessTypes.length === 1" type="text" disabled :value="accessTypes[0].name" />
             <USelectMenu
                 v-else
                 v-model="selectedAccessType"
                 :disabled="readOnly"
                 :options="accessTypes"
-                :placeholder="selectedAccessType ? $t(selectedAccessType.name) : $t('common.na')"
+                :placeholder="selectedAccessType ? selectedAccessType.name : $t('common.na')"
             >
                 <template #label>
                     <span v-if="selectedAccessType" class="truncate">{{ selectedAccessType.name }}</span>
@@ -258,210 +217,102 @@ watch(selectedAccessRole, () => {
                     {{ $t('common.not_found', [$t('common.access', 1)]) }}
                 </template>
             </USelectMenu>
-        </div>
-        <div v-if="selectedAccessType.id === 0" class="flex grow">
-            <div class="mr-2 flex-1">
-                <Combobox v-model="selectedUser" as="div" :disabled="readOnly">
-                    <div class="relative">
-                        <ComboboxButton as="div">
-                            <ComboboxInput
-                                autocomplete="off"
-                                :display-value="
-                                    (char: any) =>
-                                        char ? `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})` : $t('common.na')
-                                "
-                                :class="readOnly ? 'disabled' : ''"
-                                @change="queryCharRaw = $event.target.value"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </ComboboxButton>
+        </UFormGroup>
 
-                        <ComboboxOptions
-                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                        >
-                            <ComboboxOption
-                                v-for="char in entriesChars"
-                                :key="char.identifier"
-                                v-slot="{ active, selected }"
-                                :value="char"
-                                as="char"
-                            >
-                                <li
-                                    :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                        active ? 'bg-primary-500' : '',
-                                    ]"
-                                >
-                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ char.firstname }} {{ char.lastname }} ({{ char.dateofbirth }})
-                                    </span>
+        <template v-if="selectedAccessType?.id === 1">
+            <UFormGroup name="selectedJob" class="flex-1">
+                <UInputMenu
+                    v-model="selectedJob"
+                    :disabled="readOnly"
+                    class="flex-1"
+                    option-attribute="label"
+                    :search-attributes="['name', 'label']"
+                    :options="jobs"
+                    :placeholder="selectedJob ? selectedJob.label : $t('common.na')"
+                >
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                </UInputMenu>
+            </UFormGroup>
 
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-neutral' : 'text-primary-500',
-                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" />
-                                    </span>
-                                </li>
-                            </ComboboxOption>
-                        </ComboboxOptions>
-                    </div>
-                </Combobox>
-            </div>
-        </div>
-        <div v-else class="flex grow">
-            <div class="mr-2 flex-1">
-                <Combobox v-model="selectedJob" as="div" :disabled="readOnly">
-                    <div class="relative">
-                        <ComboboxButton as="div">
-                            <ComboboxInput
-                                autocomplete="off"
-                                :display-value="(job: any) => job?.label ?? $t('common.na')"
-                                :class="readOnly ? 'disabled' : ''"
-                                @change="queryJobRaw = $event.target.value"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </ComboboxButton>
+            <UFormGroup name="selectedMinimumRank" class="flex-1">
+                <UInputMenu
+                    v-model="selectedMinimumRank"
+                    :disabled="readOnly || !selectedJob"
+                    class="flex-1"
+                    option-attribute="label"
+                    :search-attributes="['name', 'label']"
+                    :options="selectedJob?.grades ?? []"
+                    :placeholder="selectedMinimumRank ? selectedMinimumRank.label : $t('common.na')"
+                >
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                </UInputMenu>
+            </UFormGroup>
+        </template>
 
-                        <ComboboxOptions
-                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                        >
-                            <ComboboxOption
-                                v-for="job in filteredJobs"
-                                :key="job.name"
-                                v-slot="{ active, selected }"
-                                :value="job"
-                            >
-                                <li
-                                    :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                        active ? 'bg-primary-500' : '',
-                                    ]"
-                                >
-                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ job.label }}
-                                    </span>
+        <template v-else>
+            <UFormGroup name="selectedUser" class="flex-1">
+                <UInputMenu
+                    v-model="selectedUser"
+                    :search="
+                        async (query: string) => {
+                            usersLoading = true;
+                            const users = await completorStore.completeCitizens({
+                                search: query,
+                            });
+                            usersLoading = false;
+                            return users;
+                        }
+                    "
+                    :search-attributes="['firstname', 'lastname']"
+                    class="flex-1"
+                    :placeholder="
+                        selectedUser
+                            ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
+                            : $t('common.owner')
+                    "
+                    trailing
+                    by="userId"
+                >
+                    <template #option="{ option: user }">
+                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                </UInputMenu>
+            </UFormGroup>
+        </template>
 
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-neutral' : 'text-primary-500',
-                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" />
-                                    </span>
-                                </li>
-                            </ComboboxOption>
-                        </ComboboxOptions>
-                    </div>
-                </Combobox>
-            </div>
-            <div class="mr-2 flex-1">
-                <Combobox v-model="selectedMinimumRank" as="div" :disabled="readOnly || selectedJob === undefined">
-                    <div class="relative">
-                        <ComboboxButton as="div">
-                            <ComboboxInput
-                                autocomplete="off"
-                                :class="readOnly ? 'disabled' : ''"
-                                :display-value="(rank: any) => rank?.label ?? $t('common.na')"
-                                @change="queryMinimumRankRaw = $event.target.value"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </ComboboxButton>
+        <UFormGroup class="w-60 flex-initial">
+            <USelectMenu
+                v-model="selectedAccessRole"
+                :disabled="readOnly"
+                class="flex-1"
+                option-attribute="label"
+                :search-attributes="['label']"
+                :options="entriesAccessRoles"
+                :placeholder="selectedAccessRole ? selectedAccessRole.label : $t('common.na')"
+            >
+                <template #option-empty="{ query: search }">
+                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                </template>
+                <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
+            </USelectMenu>
+        </UFormGroup>
 
-                        <ComboboxOptions
-                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                        >
-                            <ComboboxOption
-                                v-for="rank in filteredJobRanks"
-                                :key="rank.grade"
-                                v-slot="{ active, selected }"
-                                :value="rank"
-                                as="minimumGrade"
-                            >
-                                <li
-                                    :class="[
-                                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                                        active ? 'bg-primary-500' : '',
-                                    ]"
-                                >
-                                    <span :class="['block truncate', selected && 'font-semibold']">
-                                        {{ rank.label }}
-                                    </span>
-
-                                    <span
-                                        v-if="selected"
-                                        :class="[
-                                            active ? 'text-neutral' : 'text-primary-500',
-                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                        ]"
-                                    >
-                                        <CheckIcon class="size-5" />
-                                    </span>
-                                </li>
-                            </ComboboxOption>
-                        </ComboboxOptions>
-                    </div>
-                </Combobox>
-            </div>
-        </div>
-        <div class="mr-2 w-60 flex-initial">
-            <Combobox v-model="selectedAccessRole" as="div" :disabled="readOnly">
-                <div class="relative">
-                    <ComboboxButton as="div">
-                        <ComboboxInput
-                            autocomplete="off"
-                            :class="readOnly ? 'disabled' : ''"
-                            :display-value="(role: any) => role.label"
-                            @change="queryAccessRole = $event.target.value"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </ComboboxButton>
-
-                    <ComboboxOptions
-                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                    >
-                        <ComboboxOption
-                            v-for="role in entriesAccessRoles"
-                            :key="role.id"
-                            v-slot="{ active, selected }"
-                            :value="role"
-                            as="accessRole"
-                        >
-                            <li :class="['relative cursor-default select-none py-2 pl-8 pr-4', active ? 'bg-primary-500' : '']">
-                                <span :class="['block truncate', selected && 'font-semibold']">
-                                    {{ role.label }}
-                                </span>
-
-                                <span
-                                    v-if="selected"
-                                    :class="[
-                                        active ? 'text-neutral' : 'text-primary-500',
-                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                    ]"
-                                >
-                                    <CheckIcon class="size-5" />
-                                </span>
-                            </li>
-                        </ComboboxOption>
-                    </ComboboxOptions>
-                </div>
-            </Combobox>
-        </div>
-        <div v-if="!readOnly" class="flex-initial">
-            <UButton
-                :ui="{ rounded: 'rounded-full' }"
-                icon="i-mdi-close"
-                @click="$emit('deleteRequest', { id: props.init.id })"
-            />
-        </div>
+        <UButton
+            v-if="!readOnly"
+            :ui="{ rounded: 'rounded-full' }"
+            class="flex-initial"
+            icon="i-mdi-close"
+            @click="$emit('deleteRequest', { id: props.init.id })"
+        />
     </div>
 </template>

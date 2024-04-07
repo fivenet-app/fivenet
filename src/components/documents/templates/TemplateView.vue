@@ -97,7 +97,7 @@ const contentAccess = ref<
             type: number;
             values: {
                 job?: string;
-                char?: number;
+                userId?: number;
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
@@ -139,7 +139,7 @@ watch(template, () => {
             contentAccess.value.set(id, {
                 id,
                 type: 0,
-                values: { char: access.userId, accessRole: access.access },
+                values: { userId: access.userId, accessRole: access.access },
                 required: access.required,
             });
             accessId++;

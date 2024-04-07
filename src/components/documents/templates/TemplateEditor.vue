@@ -178,7 +178,7 @@ const contentAccess = ref<
             type: number;
             values: {
                 job?: string;
-                char?: number;
+                userId?: number;
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
@@ -314,14 +314,14 @@ async function createOrUpdateTemplate(values: FormData, templateId?: string): Pr
         }
 
         if (entry.type === 0) {
-            if (!entry.values.char) {
+            if (!entry.values.userId) {
                 return;
             }
 
             reqAccess.users.push({
                 id: '0',
                 documentId: '0',
-                userId: entry.values.char,
+                userId: entry.values.userId,
                 access: entry.values.accessRole,
                 required: entry.required,
             });
@@ -452,7 +452,7 @@ function setValuesFromTemplate(tpl: Template): void {
             contentAccess.value.set(id, {
                 id,
                 type: 0,
-                values: { char: access.userId, accessRole: access.access },
+                values: { userId: access.userId, accessRole: access.access },
                 required: access.required,
             });
             accessId++;

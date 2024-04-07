@@ -1,9 +1,11 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
+import { format } from 'date-fns';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import DatePicker from '~/components/partials/DatePicker.vue';
 
 const props = defineProps<{
     userId: number;
@@ -20,18 +22,33 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-interface FormData {
-    reason: string;
-    absenceBegin?: string;
-    absenceEnd?: string;
-}
+const schema = z.object({
+    reason: z.string().min(3).max(255),
+    absenceBegin: z.date().optional(),
+    absenceEnd: z.date().optional(),
+    reset: z.boolean(),
+});
 
-async function setAbsenceDate(values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    reason: '',
+    absenceBegin: undefined,
+    absenceEnd: undefined,
+    reset: false,
+});
+
+async function setAbsenceDate(values: Schema): Promise<void> {
     const userProps: JobsUserProps = {
         userId: props.userId,
-        absenceBegin: values.absenceBegin ? toTimestamp(fromString(values.absenceBegin)) : {},
-        absenceEnd: values.absenceEnd ? toTimestamp(fromString(values.absenceEnd)) : {},
+        absenceBegin: values.absenceBegin ? toTimestamp(values.absenceBegin) : {},
+        absenceEnd: values.absenceEnd ? toTimestamp(values.absenceEnd) : {},
     };
+
+    if (values.reset) {
+        userProps.absenceBegin = undefined;
+        userProps.absenceEnd = undefined;
+    }
 
     try {
         const call = $grpc.getJobsClient().setJobsUserProps({
@@ -59,74 +76,44 @@ async function setAbsenceDate(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setFieldValue, resetForm } = useForm<FormData>({
-    validationSchema: {
-        reason: { required: true, min: 3, max: 255 },
-        absenceBegin: { required: true },
-        absenceEnd: { required: true },
-    },
-    validateOnMount: true,
-    initialValues: {
-        absenceBegin: toDatetimeLocal(
-            props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()
-                ? toDate(props.userProps.absenceBegin)
-                : new Date(),
-        ).split('T')[0],
-        absenceEnd:
-            props.userProps?.absenceEnd && toDate(props.userProps.absenceEnd).getTime() > new Date().getTime()
-                ? toDatetimeLocal(toDate(props.userProps.absenceEnd)).split('T')[0]
-                : undefined,
-    },
-});
-
 function updateAbsenceDateField(): void {
-    resetForm();
-
     if (props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()) {
-        setFieldValue('absenceBegin', toDatetimeLocal(toDate(props.userProps.absenceBegin)).split('T')[0]);
+        state.absenceBegin = toDate(props.userProps.absenceBegin);
     } else {
-        setFieldValue('absenceBegin', toDatetimeLocal(new Date()).split('T')[0]);
+        state.absenceBegin = new Date();
     }
 
     if (props.userProps?.absenceEnd && toDate(props.userProps.absenceEnd).getTime() > new Date().getTime()) {
-        setFieldValue('absenceEnd', toDatetimeLocal(toDate(props.userProps.absenceEnd)).split('T')[0]);
+        state.absenceEnd = props.userProps.absenceEnd ? toDate(props.userProps.absenceEnd) : undefined;
     } else {
-        setFieldValue('absenceEnd', undefined);
+        state.absenceBegin = undefined;
     }
 }
 
 watch(props, () => updateAbsenceDateField());
 
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await setAbsenceDate(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await setAbsenceDate(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.jobs.self_service.set_absence_date') }}
-                    </h3>
+        <UForm :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.jobs.self_service.set_absence_date') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <div>
-                <form @submit.prevent="onSubmitThrottle">
+                <div>
                     <UFormGroup name="reason" :label="$t('common.reason')">
                         <UInput
                             v-model="state.reason"
@@ -136,57 +123,66 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="absenceBegin" class="block text-sm font-medium leading-6">
-                                {{ $t('common.from') }}
-                            </label>
-                            <VeeField
-                                type="date"
-                                name="absenceBegin"
-                                :placeholder="$t('common.from')"
-                                :label="$t('common.from')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="absenceBegin" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="absenceEnd" class="block text-sm font-medium leading-6">
-                                {{ $t('common.to') }}
-                            </label>
-                            <VeeField
-                                type="date"
-                                name="absenceEnd"
-                                :placeholder="$t('common.to')"
-                                :label="$t('common.to')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="absenceEnd" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
-                </form>
-            </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.save') }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                    <div class="flex flex-col gap-1 sm:flex-row">
+                        <UFormGroup class="flex-1" name="from" :label="$t('common.from')">
+                            <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UButton
+                                    variant="outline"
+                                    color="gray"
+                                    block
+                                    icon="i-heroicons-calendar-days-20-solid"
+                                    :label="state.absenceBegin ? format(state.absenceBegin, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                />
+
+                                <template #panel="{ close }">
+                                    <DatePicker v-model="state.absenceBegin" @close="close" />
+                                </template>
+                            </UPopover>
+                        </UFormGroup>
+
+                        <UFormGroup class="flex-1" name="to" :label="$t('common.to')">
+                            <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UButton
+                                    variant="outline"
+                                    color="gray"
+                                    block
+                                    icon="i-heroicons-calendar-days-20-solid"
+                                    :label="state.absenceEnd ? format(state.absenceEnd, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                />
+
+                                <template #panel="{ close }">
+                                    <DatePicker v-model="state.absenceEnd" @close="close" />
+                                </template>
+                            </UPopover>
+                        </UFormGroup>
+                    </div>
+                </div>
+
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+
+                        <UButton
+                            type="submit"
+                            block
+                            color="red"
+                            class="flex-1"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            @click="state.reset = true"
+                        >
+                            {{ $t('common.reset') }}
+                        </UButton>
+
+                        <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                            {{ $t('common.save') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

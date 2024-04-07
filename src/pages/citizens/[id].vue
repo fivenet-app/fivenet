@@ -9,7 +9,6 @@ definePageMeta({
     title: 'pages.citizens.id.title',
     requiresAuth: true,
     permission: 'CitizenStoreService.GetUser',
-
     validate: async (route) => {
         route = route as TypedRouteFromName<'citizens-id'>;
         // Check if the id is made up of digits
@@ -23,7 +22,7 @@ const route = useRoute('citizens-id');
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <CitizenInfo :id="parseInt(route.params.id)" />
+            <CitizenInfo :user-id="parseInt(route.params.id)" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

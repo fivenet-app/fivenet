@@ -235,7 +235,7 @@ const columns = [
                         :loading="loading"
                         :columns="columns"
                         :rows="data?.entries"
-                        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.entry', 2)]) }"
+                        :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
                     >
                         <template #createdAt-data="{ row: conduct }">
                             <GenericTime :value="conduct.createdAt" />

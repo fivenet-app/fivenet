@@ -36,25 +36,24 @@ const props = defineProps<{
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
                     <h3 class="inline-flex items-center gap-1 text-sm font-medium">
-                        <span
-                            ><template v-if="activity.newValue !== ''">
-                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.added') }}
-                            </template>
-                            <template v-else>
-                                {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.removed') }}
-                            </template>
-                        </span>
-                        <span class="font-semibold">
-                            <UButton
-                                :to="{
-                                    name: 'documents-id',
-                                    params: { id: activity.newValue !== '' ? activity.newValue : activity.oldValue },
-                                }"
-                            >
-                                {{ $t('common.document', 1) }}
-                            </UButton>
-                        </span>
-                        <IDCopyBadge :id="activity.newValue !== '' ? activity.newValue : activity.oldValue" prefix="DOC" />
+                        <template v-if="activity.newValue !== ''">
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.added') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.removed') }}
+                        </template>
+
+                        <UButton
+                            variant="link"
+                            :padded="false"
+                            :to="{
+                                name: 'documents-id',
+                                params: { id: activity.newValue !== '' ? activity.newValue : activity.oldValue },
+                            }"
+                        >
+                            {{ $t('common.document', 1) }}
+                            <IDCopyBadge :id="activity.newValue !== '' ? activity.newValue : activity.oldValue" prefix="DOC" />
+                        </UButton>
                     </h3>
                     <p class="text-sm text-gray-400">
                         <GenericTime :value="activity.createdAt" type="long" />
