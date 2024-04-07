@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LockIcon, LockOpenVariantIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -103,13 +102,13 @@ const columns = [
                 <template #closed-data="{ row }">
                     <div class="inline-flex gap-1">
                         <template v-if="row.document?.closed">
-                            <LockIcon class="size-5 text-error-400" />
+                            <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
                             <span class="text-sm font-medium text-error-400">
                                 {{ $t('common.close', 2) }}
                             </span>
                         </template>
                         <template v-else>
-                            <LockOpenVariantIcon class="size-5 text-success-400" />
+                            <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-400" />
                             <span class="text-sm font-medium text-success-400">
                                 {{ $t('common.open', 2) }}
                             </span>

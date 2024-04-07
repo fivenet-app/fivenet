@@ -48,12 +48,7 @@ const open = ref(false);
 
         <dt class="flex-initial text-sm font-medium leading-6">
             <div class="flex h-6 items-center">
-                <UCheckbox
-                    v-model="checked"
-                    name="selected"
-                    class="text-primary-600 focus:ring-primary-600 size-5 rounded border-gray-300"
-                    @change="$emit('selected', checked)"
-                />
+                <UCheckbox v-model="checked" name="selected" @change="$emit('selected', checked)" />
                 <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" :action="() => (open = true)" :hide-icon="true" />
             </div>
             <div v-if="expiresAt" class="mt-1 flex flex-col text-sm">

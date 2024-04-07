@@ -47,7 +47,7 @@ defineEmits<{
         </div>
         <template v-if="item.status === StatusDispatch.NEW">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <UIcon name="i-mdi-new-box" class="text-primary-600 size-5" />
+                <UIcon name="i-mdi-new-box" class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -73,7 +73,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <UIcon name="i-mdi-account-alert" class="text-primary-600 size-5" />
+                <UIcon name="i-mdi-account-alert" class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -100,7 +100,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountPlusIcon class="text-primary-600 size-5" />
+                <AccountPlusIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -127,7 +127,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_UNASSIGNED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountRemoveIcon class="text-primary-600 size-5" />
+                <AccountRemoveIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -154,7 +154,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_ACCEPTED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountCheckIcon class="text-primary-600 size-5" />
+                <AccountCheckIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -181,7 +181,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.UNIT_DECLINED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <AccountCancelIcon class="text-primary-600 size-5" />
+                <AccountCancelIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -208,7 +208,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.EN_ROUTE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CarIcon class="text-primary-600 size-5" />
+                <CarIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -235,7 +235,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.ON_SCENE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <MapMarkerIcon class="text-primary-600 size-5" />
+                <MapMarkerIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -261,7 +261,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.NEED_ASSISTANCE">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <HelpIcon class="text-primary-600 size-5" />
+                <HelpIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -288,7 +288,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.COMPLETED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CheckIcon class="text-primary-600 size-5" />
+                <CheckIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -315,7 +315,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.CANCELLED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <CancelIcon class="text-primary-600 size-5" />
+                <CancelIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -342,7 +342,7 @@ defineEmits<{
         </template>
         <template v-else-if="item.status === StatusDispatch.ARCHIVED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <ArchiveIcon class="text-primary-600 size-5" />
+                <ArchiveIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
@@ -369,7 +369,7 @@ defineEmits<{
         </template>
         <template v-else>
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <NewBoxIcon class="text-primary-600 size-5" />
+                <NewBoxIcon class="size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">

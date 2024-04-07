@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { AccountMinusIcon, AtIcon, OpenInNewIcon, SourceCommitStartIcon, TargetIcon } from 'mdi-vue3';
+import { AccountMinusIcon, OpenInNewIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -122,13 +122,13 @@ function removeRelation(id: string): void {
                 <UTabs :items="tabs">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
-                            <UIcon :name="item.icon" class="h-4 w-4 flex-shrink-0" />
+                            <UIcon :name="item.icon" class="size-4 shrink-0" />
 
                             <span class="truncate">{{ item.label }}</span>
 
                             <span
                                 v-if="selected"
-                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 h-2 w-2 rounded-full"
+                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
                             />
                         </div>
                     </template>

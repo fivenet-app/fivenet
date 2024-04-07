@@ -28,7 +28,7 @@ defineEmits<{
                 <UCheckbox
                     v-model="modelValue.users.req"
                     name="users"
-                    class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-1 focus:ring-inset focus:ring-base-300"
+                    class="hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-1 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -78,7 +78,7 @@ defineEmits<{
                 <UCheckbox
                     v-model="modelValue.documents.req"
                     name="documents"
-                    class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-1 focus:ring-inset focus:ring-base-300"
+                    class="hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-1 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span
@@ -128,7 +128,7 @@ defineEmits<{
                 <UCheckbox
                     v-model="modelValue.vehicles.req"
                     name="vehicles"
-                    class="text-primary-600 hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-1 focus:ring-inset focus:ring-base-300"
+                    class="hover:bg-background hover:text-primary-500 size-8 rounded-md border-0 bg-base-700 transition-colors focus:ring-1 focus:ring-inset focus:ring-base-300"
                 />
                 <div class="flex flex-row">
                     <span

@@ -27,7 +27,7 @@ defineProps<{
             <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
 
             <template v-if="keyboard || to">
-                <UKbd v-if="keyboard" class="ml-1" :key="$t(`components.hints.${hintId}.keyboard`)" />
+                <UKbd v-if="keyboard" class="ml-1" :value="$t(`components.hints.${hintId}.keyboard`)" />
                 <UButton v-else-if="to" variant="link" :to="to" :external="external" :target="linkTarget ?? null">
                     {{ $t('components.hints.click_me') }}
                 </UButton>

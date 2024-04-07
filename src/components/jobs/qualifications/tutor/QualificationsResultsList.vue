@@ -5,7 +5,6 @@ import type {
     ListQualificationsResultsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';

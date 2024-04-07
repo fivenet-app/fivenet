@@ -160,7 +160,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                             <VeeField
                                                 type="checkbox"
                                                 name="anon"
-                                                class="text-primary-600 focus:ring-primary-600 size-5 rounded border-gray-300"
                                                 :placeholder="$t('common.anon')"
                                                 :label="$t('common.anon')"
                                                 :value="true"

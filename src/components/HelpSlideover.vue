@@ -83,7 +83,7 @@ const filteredCategories = computed(() => {
                     <div v-for="(item, i) in category.items" :key="i" class="flex items-center justify-between">
                         <span class="text-sm text-gray-500 dark:text-gray-400">{{ item.name }}</span>
 
-                        <div class="flex flex-shrink-0 items-center justify-end gap-0.5">
+                        <div class="flex shrink-0 items-center justify-end gap-0.5">
                             <UKbd v-for="(shortcut, j) in item.shortcuts" :key="j">
                                 {{ shortcut }}
                             </UKbd>

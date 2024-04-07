@@ -1,14 +1,4 @@
 <script lang="ts" setup>
-import {
-    AccountIcon,
-    CalendarEditIcon,
-    CalendarIcon,
-    CalendarRemoveIcon,
-    ListStatusIcon,
-    LockIcon,
-    LockOpenVariantIcon,
-    MailIcon,
-} from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

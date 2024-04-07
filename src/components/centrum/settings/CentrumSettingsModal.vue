@@ -132,7 +132,6 @@ const { remove: dspRemove, push: dspPush, fields: dspFields } = useFieldArray<st
                             <VeeField
                                 name="enabled"
                                 type="checkbox"
-                                class="text-primary-600 focus:ring-primary-600 size-5 rounded border-gray-300"
                                 :placeholder="$t('common.enabled')"
                                 :label="$t('common.enabled')"
                                 :value="true"

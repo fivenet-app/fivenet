@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { min, numeric, required } from '@vee-validate/rules';
-import { ArrowLeftIcon } from 'mdi-vue3';
 import { defineRule } from 'vee-validate';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';

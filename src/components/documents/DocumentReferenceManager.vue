@@ -126,7 +126,7 @@ function removeReference(id: string): void {
                 <UTabs :items="tabs">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
-                            <UIcon :name="item.icon" class="h-4 w-4 flex-shrink-0" />
+                            <UIcon :name="item.icon" class="h-4 w-4 shrink-0" />
 
                             <span class="truncate">{{ item.label }}</span>
 

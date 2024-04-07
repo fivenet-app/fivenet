@@ -1,16 +1,5 @@
 <script lang="ts" setup>
 import { useRouteHash } from '@vueuse/router';
-import {
-    AccountIcon,
-    CalendarEditIcon,
-    CalendarIcon,
-    CalendarRemoveIcon,
-    CommentTextMultipleIcon,
-    LockIcon,
-    LockOpenVariantIcon,
-    NoteCheckIcon,
-    ShapeIcon,
-} from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -239,11 +228,11 @@ const accordionItems = [
                             @click="toggleDocument(documentId, !doc?.closed)"
                         >
                             <template v-if="doc?.closed">
-                                <LockOpenVariantIcon class="size-5 text-success-500" />
+                                <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
                                 {{ $t('common.open', 1) }}
                             </template>
                             <template v-else>
-                                <LockIcon class="size-5 text-error-400" />
+                                <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
                                 {{ $t('common.close', 1) }}
                             </template>
                         </UButton>

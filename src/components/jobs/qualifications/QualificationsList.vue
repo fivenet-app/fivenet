@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { SchoolIcon } from 'mdi-vue3';
 import QualificationsListEntry from '~/components/jobs/qualifications/QualificationsListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';

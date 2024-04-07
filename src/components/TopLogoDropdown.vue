@@ -41,7 +41,7 @@ watch(getNotificationsCount, () => {
             size="xl"
         >
             <UButton color="gray" variant="ghost" square @click="isNotificationsSlideoverOpen = true">
-                <UIcon name="i-mdi-bell-outline" class="h-5 w-5" />
+                <UIcon name="i-mdi-bell-outline" class="size-5" />
             </UButton>
         </UChip>
     </UTooltip>

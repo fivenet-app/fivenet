@@ -149,7 +149,7 @@ function addToClipboard(): void {
                     <UTabs :items="tabs" class="w-full" :unmount="true">
                         <template #default="{ item, selected }">
                             <div class="relative flex items-center gap-2 truncate">
-                                <UIcon :name="item.icon" class="h-4 w-4 flex-shrink-0" />
+                                <UIcon :name="item.icon" class="size-4 shrink-0" />
 
                                 <span class="truncate">{{ item.label }}</span>
 
@@ -174,13 +174,13 @@ function addToClipboard(): void {
                                 @update:mug-shot="user.props!.mugShot = $event"
                             />
                         </template>
-                        <template #vehicles v-if="can('DMVService.ListVehicles')">
+                        <template v-if="can('DMVService.ListVehicles')" #vehicles>
                             <CitizenVehicles :user-id="user.userId" />
                         </template>
-                        <template #documents v-if="can('DocStoreService.ListUserDocuments')">
+                        <template v-if="can('DocStoreService.ListUserDocuments')" #documents>
                             <CitizenDocuments :user-id="user.userId" />
                         </template>
-                        <template #activity v-if="can('CitizenStoreService.ListUserActivity')">
+                        <template v-if="can('CitizenStoreService.ListUserActivity')" #activity>
                             <CitizenActivityFeed :user-id="user.userId" />
                         </template>
                     </UTabs>
