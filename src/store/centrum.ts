@@ -322,8 +322,7 @@ export const useCentrumStore = defineStore('centrum', {
                     type: 'info',
                 });
 
-                const { play } = useSound();
-                play({ name: 'centrum/message-incoming' });
+                useSound().play({ name: 'centrum/message-incoming' });
             }
         },
         removePendingDispatch(id: string): void {
@@ -547,6 +546,8 @@ export const useCentrumStore = defineStore('centrum', {
                             // If dispatch has been archived, remove from the main list
                             this.removeDispatch(status.id);
                             continue;
+                        } else if (status.status === StatusDispatch.NEED_ASSISTANCE) {
+                            useSound().play({ name: 'centrum/morse-sos' });
                         }
 
                         // Only handle dispatch status affecting pending or own dispatches, when

@@ -40,23 +40,6 @@ const slideover = useSlideover();
 const centrumStore = useCentrumStore();
 const { getSortedDispatches } = storeToRefs(centrumStore);
 
-const { play } = useSound();
-const debouncedPlay = useDebounceFn(async () => {
-    play({ name: 'centrum/morse-sos' });
-}, 950);
-
-const previousStatus = ref<undefined | StatusDispatch>();
-watchThrottled(props, () => {
-    if (
-        previousStatus.value !== props.dispatch.status?.status &&
-        props.dispatch.status?.status === StatusDispatch.NEED_ASSISTANCE
-    ) {
-        previousStatus.value = props.dispatch.status?.status;
-
-        debouncedPlay();
-    }
-});
-
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 
 const grouped = computedAsync(async () => {
