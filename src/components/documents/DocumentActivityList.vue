@@ -4,6 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const props = defineProps<{
     documentId: string;
@@ -55,12 +56,6 @@ watch(offset, async () => refresh());
             </div>
         </template>
 
-        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-            <UPagination
-                v-model="page"
-                :page-count="data?.pagination?.pageSize ?? 0"
-                :total="data?.pagination?.totalCount ?? 0"
-            />
-        </div>
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

@@ -13,11 +13,11 @@ defineProps<{
 <template>
     <li
         :key="doc.id"
+        class="flex-initial rounded-lg"
         :class="[
             doc.deletedAt
                 ? 'bg-warn-100 hover:bg-warn-200 dark:bg-warn-800 dark:hover:bg-warn-700'
                 : 'bg-base-100 hover:bg-base-200 dark:bg-base-900 dark:hover:bg-base-700',
-            'my-1 flex-initial rounded-lg',
         ]"
     >
         <NuxtLink
@@ -34,6 +34,7 @@ defineProps<{
                             prefix="DOC"
                             :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
                             :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                            size="xs"
                         />
                     </div>
                     <p

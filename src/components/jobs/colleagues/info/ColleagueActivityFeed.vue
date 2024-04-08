@@ -6,6 +6,7 @@ import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/Collea
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { useCompletorStore } from '~/store/completor';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -177,13 +178,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                 </li>
                             </ul>
 
-                            <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                                <UPagination
-                                    v-model="page"
-                                    :page-count="data?.pagination?.pageSize ?? 0"
-                                    :total="data?.pagination?.totalCount ?? 0"
-                                />
-                            </div>
+                            <Pagination v-model="page" :pagination="data?.pagination" />
                         </div>
                     </div>
                 </div>

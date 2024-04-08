@@ -5,6 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/QualificationsResultsListEntry.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -83,13 +84,7 @@ watch(offset, async () => refresh());
         </div>
         <div class="bg-background border-t border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex items-center">
-                <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                    <UPagination
-                        v-model="page"
-                        :page-count="data?.pagination?.pageSize ?? 0"
-                        :total="data?.pagination?.totalCount ?? 0"
-                    />
-                </div>
+                <Pagination v-model="page" :pagination="data?.pagination" />
             </div>
         </div>
     </div>

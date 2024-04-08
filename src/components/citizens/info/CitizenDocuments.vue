@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -128,13 +129,7 @@ const columns = [
                 </template>
             </UTable>
 
-            <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                <UPagination
-                    v-model="page"
-                    :page-count="data?.pagination?.pageSize ?? 0"
-                    :total="data?.pagination?.totalCount ?? 0"
-                />
-            </div>
+            <Pagination v-model="page" :pagination="data?.pagination" />
         </template>
     </div>
 </template>

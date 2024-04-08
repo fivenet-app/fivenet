@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { ButtonVariant } from '#ui/types';
+import type { ButtonVariant, ButtonSize } from '#ui/types';
 import { type TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -15,6 +15,7 @@ const props = withDefaults(
         hideIcon?: boolean;
         variant?: ButtonVariant;
         padded?: boolean;
+        size?: ButtonSize;
     }>(),
     {
         title: undefined,
@@ -23,6 +24,7 @@ const props = withDefaults(
         hideIcon: false,
         variant: 'solid',
         padded: true,
+        size: 'sm',
     },
 );
 
@@ -54,6 +56,7 @@ function click(): void {
         :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
         :variant="variant"
         :padded="padded"
+        :size="size"
         class="break-keep"
         @click="click"
     >

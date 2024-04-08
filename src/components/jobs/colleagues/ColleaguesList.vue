@@ -8,6 +8,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import { useAuthStore } from '~/store/auth';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -105,7 +106,7 @@ const columns = [
               sortable: false,
           }
         : undefined,
-].filter((c) => c !== undefined);
+].filter((c) => c !== undefined) as { key: string; label: string; sortable?: boolean }[];
 
 const modal = useModal();
 
@@ -236,13 +237,7 @@ defineShortcuts({
                     </template>
                 </UTable>
 
-                <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                    <UPagination
-                        v-model="page"
-                        :page-count="data?.pagination?.pageSize ?? 0"
-                        :total="data?.pagination?.totalCount ?? 0"
-                    />
-                </div>
+                <Pagination v-model="page" :pagination="data?.pagination" />
             </div>
         </div>
     </div>

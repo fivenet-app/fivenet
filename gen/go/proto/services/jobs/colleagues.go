@@ -83,7 +83,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
 	resp := &ListColleaguesResponse{
 		Pagination: pag,
 	}
@@ -615,7 +615,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
 	resp.Pagination = pag
 	if count.TotalCount <= 0 {
 		return resp, nil

@@ -34,7 +34,7 @@ import (
 )
 
 const (
-	DocsDefaultPageLimit  = 15
+	DocsDefaultPageSize   = 16
 	DocShortContentLength = 128
 )
 
@@ -148,7 +148,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageSize)
 	resp := &ListDocumentsResponse{
 		Pagination: pag,
 	}

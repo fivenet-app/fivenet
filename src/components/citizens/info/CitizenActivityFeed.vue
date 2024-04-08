@@ -4,6 +4,7 @@ import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citize
 import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -60,12 +61,6 @@ watch(offset, async () => refresh());
             </li>
         </ul>
 
-        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-            <UPagination
-                v-model="page"
-                :page-count="data?.pagination?.pageSize ?? 0"
-                :total="data?.pagination?.totalCount ?? 0"
-            />
-        </div>
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

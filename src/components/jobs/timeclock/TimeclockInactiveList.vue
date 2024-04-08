@@ -8,6 +8,7 @@ import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/time
 import { checkIfCanAccessColleague } from '../colleagues/helpers';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { t } = useI18n();
 
@@ -171,12 +172,6 @@ const columns = [
             </template>
         </UTable>
 
-        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-            <UPagination
-                v-model="page"
-                :page-count="data?.pagination?.pageSize ?? 0"
-                :total="data?.pagination?.totalCount ?? 0"
-            />
-        </div>
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

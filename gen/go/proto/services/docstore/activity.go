@@ -20,7 +20,7 @@ import (
 )
 
 const (
-	ActivityDefaultPageLimit = 10
+	ActivityDefaultPageSize = 10
 )
 
 var (
@@ -101,7 +101,7 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ActivityDefaultPageLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ActivityDefaultPageSize)
 	resp := &ListDocumentActivityResponse{
 		Pagination: pag,
 		Activity:   []*documents.DocActivity{},

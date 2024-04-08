@@ -14,6 +14,7 @@ import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import DatePicker from '~/components/partials/DatePicker.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -348,13 +349,7 @@ defineShortcuts({
                             </GenericTable>
                         </template>
 
-                        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                            <UPagination
-                                v-model="page"
-                                :page-count="data?.pagination?.pageSize ?? 0"
-                                :total="data?.pagination?.totalCount ?? 0"
-                            />
-                        </div>
+                        <Pagination v-model="page" :pagination="data?.pagination" />
                     </div>
                 </div>
             </div>

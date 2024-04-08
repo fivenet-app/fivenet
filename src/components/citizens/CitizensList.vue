@@ -9,6 +9,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '../partials/citizens/ProfilePictureImg.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -128,7 +129,7 @@ const columns = [
         label: t('common.action', 2),
         sortable: false,
     },
-].filter((c) => c !== undefined);
+].filter((c) => c !== undefined) as { key: string; label: string; class?: string; rowClass?: string; sortable?: boolean }[];
 
 const input = ref<{ input: HTMLInputElement }>();
 
@@ -316,12 +317,6 @@ defineShortcuts({
             </template>
         </UTable>
 
-        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-            <UPagination
-                v-model="page"
-                :page-count="data?.pagination?.pageSize ?? 0"
-                :total="data?.pagination?.totalCount ?? 0"
-            />
-        </div>
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

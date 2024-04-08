@@ -26,7 +26,7 @@ import (
 	"google.golang.org/grpc"
 )
 
-const QualificationsPageSize = 5
+const QualificationsPageSize = 6
 
 var (
 	tQuali = table.FivenetQualifications.AS("qualification")

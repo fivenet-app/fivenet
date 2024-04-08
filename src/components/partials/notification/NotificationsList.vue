@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
+import Pagination from '../Pagination.vue';
 
 defineEmits<{
     (e: 'clicked'): void;
@@ -195,13 +196,7 @@ const canSubmit = ref(true);
                     </ul>
                 </template>
 
-                <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                    <UPagination
-                        v-model="page"
-                        :page-count="data?.pagination?.pageSize ?? 0"
-                        :total="data?.pagination?.totalCount ?? 0"
-                    />
-                </div>
+                <Pagination v-model="page" :pagination="data?.pagination" />
             </div>
         </div>
     </div>

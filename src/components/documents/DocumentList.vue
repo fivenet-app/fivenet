@@ -11,6 +11,7 @@ import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DatePicker from '~/components/partials/DatePicker.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -251,17 +252,11 @@ defineShortcuts({
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
         <template v-else>
-            <ul role="list" class="flex flex-col">
+            <ul role="list" class="flex flex-col gap-1 2xl:grid 2xl:grid-cols-2">
                 <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
             </ul>
         </template>
 
-        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-            <UPagination
-                v-model="page"
-                :page-count="data?.pagination?.pageSize ?? 0"
-                :total="data?.pagination?.totalCount ?? 0"
-            />
-        </div>
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

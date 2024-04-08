@@ -83,7 +83,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 25)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 30)
 	resp := &ListTimeclockResponse{
 		Pagination: pag,
 	}
@@ -251,7 +251,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
 	resp := &ListInactiveEmployeesResponse{
 		Pagination: pag,
 		Colleagues: []*jobs.Colleague{},

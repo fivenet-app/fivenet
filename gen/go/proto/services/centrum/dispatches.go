@@ -94,7 +94,7 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
 	resp := &ListDispatchesResponse{
 		Pagination: pag,
 	}
