@@ -44,7 +44,7 @@ function goto(e: Coordinate) {
             </template>
         </UDashboardNavbar>
 
-        <UMain class="max-h-[calc(100vh-var(--header-height))] overflow-hidden">
+        <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
             <Splitpanes class="relative">
                 <Pane min-size="25">
                     <div class="relative z-0 size-full">
@@ -74,7 +74,7 @@ function goto(e: Coordinate) {
                         </LivemapBase>
                     </div>
                 </Pane>
-                <Pane size="65">
+                <Pane min-size="40" size="70">
                     <Splitpanes horizontal>
                         <Pane size="58" min-size="2">
                             <DispatchList :show-button="true" @goto="goto($event)" />
@@ -91,18 +91,18 @@ function goto(e: Coordinate) {
                     </Splitpanes>
                 </Pane>
             </Splitpanes>
-        </UMain>
+        </div>
     </UDashboardPanel>
 </template>
 
 <style>
 .splitpanes--vertical > .splitpanes__splitter {
-    min-width: 2px;
+    min-width: 3px;
     background-color: rgb(var(--color-gray-800));
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 2px;
+    min-height: 3px;
     background-color: rgb(var(--color-gray-800));
 }
 </style>

@@ -88,7 +88,7 @@ const columns = [
                 :rows="Array.from(markersMarkers.values())"
                 :empty-state="{
                     icon: 'i-mdi-map-marker',
-                    label: $t('common.not_found', [$t('common.dispatch', 2)]),
+                    label: $t('common.not_found', [$t('common.marker', 2)]),
                 }"
                 :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
             >
