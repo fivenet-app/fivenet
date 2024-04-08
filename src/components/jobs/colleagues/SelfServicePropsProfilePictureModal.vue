@@ -112,13 +112,7 @@ const nuiAvailable = ref(isNUIAvailable());
                             {{ $t('components.jobs.self_service.set_profile_picture') }}
                         </h3>
 
-                        <UButton
-                            color="gray"
-                            variant="ghost"
-                            icon="i-heroicons-x-mark-20-solid"
-                            class="-my-1"
-                            @click="isOpen = false"
-                        />
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -166,8 +160,14 @@ const nuiAvailable = ref(isNUIAvailable());
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
+                        <UButton
+                            type="submit"
+                            block
+                            class="flex-1"
+                            :disabled="nuiAvailable || !canSubmit"
+                            :loading="!canSubmit"
+                        >
+                            {{ $t('common.save') }}
                         </UButton>
 
                         <UButton
@@ -182,14 +182,8 @@ const nuiAvailable = ref(isNUIAvailable());
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton
-                            type="submit"
-                            block
-                            class="flex-1"
-                            :disabled="nuiAvailable || !canSubmit"
-                            :loading="!canSubmit"
-                        >
-                            {{ $t('common.save') }}
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

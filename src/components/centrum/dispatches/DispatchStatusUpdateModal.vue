@@ -105,7 +105,7 @@ function updateReasonField(value: string): void {
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
                         {{ $t('components.centrum.update_dispatch_status.title') }}:
                         <IDCopyBadge :id="dispatchId" class="ml-2" prefix="DSP" />
                     </h3>
@@ -115,135 +115,122 @@ function updateReasonField(value: string): void {
             </template>
 
             <div>
-                <div class="flex flex-1 flex-col justify-between">
-                    <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                        <div class="mt-1">
-                            <dl class="divide-neutral/10 border-neutral/10 divide-y border-b">
-                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6">
-                                        <label for="status" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.status') }}
-                                        </label>
-                                    </dt>
-                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                        <VeeField
-                                            v-slot="{ field }"
-                                            name="status"
-                                            as="div"
-                                            class="grid w-full grid-cols-2 gap-0.5"
-                                            :placeholder="$t('common.status')"
-                                            :label="$t('common.status')"
-                                        >
-                                            <UButton
-                                                v-for="(item, idx) in dispatchStatuses"
-                                                :key="item.name"
-                                                class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
-                                                :class="[
-                                                    idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
-                                                    field.value == item.status
-                                                        ? 'disabled bg-base-500 hover:bg-base-400'
-                                                        : item.status
-                                                          ? dispatchStatusToBGColor(item.status)
-                                                          : '',
-                                                    ,
-                                                ]"
-                                                :disabled="field.value == item.status"
-                                                @click="setFieldValue('status', item.status?.valueOf() ?? 0)"
-                                            >
-                                                <UIcon :name="item.icon" class="size-5 shrink-0" />
-                                                <span class="mt-1">
-                                                    {{
-                                                        item.status
-                                                            ? $t(
-                                                                  `enums.centrum.StatusDispatch.${
-                                                                      StatusDispatch[item.status ?? 0]
-                                                                  }`,
-                                                              )
-                                                            : $t(item.name)
-                                                    }}
-                                                </span>
-                                            </UButton>
-                                        </VeeField>
-                                        <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
-                                    </dd>
-                                </div>
-                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6">
-                                        <label for="code" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.code') }}
-                                        </label>
-                                    </dt>
-                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                        <VeeField
-                                            type="text"
-                                            name="code"
-                                            :placeholder="$t('common.code')"
-                                            :label="$t('common.code')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="code" as="p" class="mt-2 text-sm text-error-400" />
-                                    </dd>
-                                </div>
-                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6">
-                                        <label for="reason" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.reason') }}
-                                        </label>
-                                    </dt>
-                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                        <VeeField
-                                            type="text"
-                                            name="reason"
-                                            :placeholder="$t('common.reason')"
-                                            :label="$t('common.reason')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                                    </dd>
-                                </div>
-
-                                <div
-                                    v-if="settings?.predefinedStatus && settings?.predefinedStatus.dispatchStatus.length > 0"
-                                    class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                <dl class="divide-neutral/10 divide-y">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            <label for="status" class="block text-sm font-medium leading-6">
+                                {{ $t('common.status') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <VeeField
+                                v-slot="{ field }"
+                                name="status"
+                                as="div"
+                                class="grid w-full grid-cols-2 gap-0.5"
+                                :placeholder="$t('common.status')"
+                                :label="$t('common.status')"
+                            >
+                                <UButton
+                                    v-for="(item, idx) in dispatchStatuses"
+                                    :key="item.name"
+                                    class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                    :class="[
+                                        idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
+                                        field.value == item.status
+                                            ? 'disabled bg-base-500 hover:bg-base-400'
+                                            : item.status
+                                              ? dispatchStatusToBGColor(item.status)
+                                              : '',
+                                        ,
+                                    ]"
+                                    :disabled="field.value == item.status"
+                                    @click="setFieldValue('status', item.status?.valueOf() ?? 0)"
                                 >
-                                    <dt class="text-sm font-medium leading-6">
-                                        <label for="dispatchStatus" class="block text-sm font-medium leading-6">
-                                            {{ $t('common.predefined', 2) }}
-                                            {{ $t('common.reason', 2) }}
-                                        </label>
-                                    </dt>
-                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                        <select
-                                            name="dispatchStatus"
-                                            class="mt-1 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                            @change="updateReasonField(($event.target as HTMLSelectElement).value)"
-                                        >
-                                            <option value=""></option>
-                                            <option
-                                                v-for="(preStatus, idx) in settings?.predefinedStatus.dispatchStatus"
-                                                :key="idx"
-                                                :value="preStatus"
-                                            >
-                                                {{ preStatus }}
-                                            </option>
-                                        </select>
-                                    </dd>
-                                </div>
-                            </dl>
-                        </div>
+                                    <UIcon :name="item.icon" class="size-5 shrink-0" />
+                                    <span class="mt-1">
+                                        {{
+                                            item.status
+                                                ? $t(`enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]}`)
+                                                : $t(item.name)
+                                        }}
+                                    </span>
+                                </UButton>
+                            </VeeField>
+                            <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
+                        </dd>
                     </div>
-                </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            <label for="code" class="block text-sm font-medium leading-6">
+                                {{ $t('common.code') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <VeeField
+                                type="text"
+                                name="code"
+                                :placeholder="$t('common.code')"
+                                :label="$t('common.code')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="code" as="p" class="mt-2 text-sm text-error-400" />
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            <label for="reason" class="block text-sm font-medium leading-6">
+                                {{ $t('common.reason') }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <VeeField
+                                type="text"
+                                name="reason"
+                                :placeholder="$t('common.reason')"
+                                :label="$t('common.reason')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                        </dd>
+                    </div>
+
+                    <div
+                        v-if="settings?.predefinedStatus && settings?.predefinedStatus.dispatchStatus.length > 0"
+                        class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0"
+                    >
+                        <dt class="text-sm font-medium leading-6">
+                            <label for="dispatchStatus" class="block text-sm font-medium leading-6">
+                                {{ $t('common.predefined', 2) }}
+                                {{ $t('common.reason', 2) }}
+                            </label>
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <select
+                                name="dispatchStatus"
+                                class="mt-1 block w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                                @change="updateReasonField(($event.target as HTMLSelectElement).value)"
+                            >
+                                <option value=""></option>
+                                <option
+                                    v-for="(preStatus, idx) in settings?.predefinedStatus.dispatchStatus"
+                                    :key="idx"
+                                    :value="preStatus"
+                                >
+                                    {{ preStatus }}
+                                </option>
+                            </select>
+                        </dd>
+                    </div>
+                </dl>
             </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
                     <UButton
                         block
                         class="flex-1"
@@ -252,6 +239,10 @@ function updateReasonField(value: string): void {
                         @click="onSubmitThrottle"
                     >
                         {{ $t('common.update') }}
+                    </UButton>
+
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>
             </template>

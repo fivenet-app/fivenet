@@ -131,7 +131,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     variant="outline"
                                     color="gray"
                                     block
-                                    icon="i-heroicons-calendar-days-20-solid"
+                                    icon="i-mdi-calendar-month"
                                     :label="state.absenceBegin ? format(state.absenceBegin, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
                                 />
 
@@ -147,7 +147,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     variant="outline"
                                     color="gray"
                                     block
-                                    icon="i-heroicons-calendar-days-20-solid"
+                                    icon="i-mdi-calendar-month"
                                     :label="state.absenceEnd ? format(state.absenceEnd, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
                                 />
 
@@ -161,8 +161,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
+                        <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+                            {{ $t('common.save') }}
                         </UButton>
 
                         <UButton
@@ -177,8 +177,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                            {{ $t('common.save') }}
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

@@ -177,9 +177,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
+                        <UButton block class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
+                            {{ category === undefined ? $t('common.create') : $t('common.update') }}
                         </UButton>
+
                         <UButton
                             v-if="category !== undefined && can('DocStoreService.DeleteCategory')"
                             block
@@ -190,8 +191,9 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         >
                             {{ $t('common.delete') }}
                         </UButton>
-                        <UButton block class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
-                            {{ category === undefined ? $t('common.create') : $t('common.update') }}
+
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

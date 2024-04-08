@@ -29,7 +29,7 @@ const open = ref(false);
                 size="xs"
                 class="inline-flex items-center p-0.5"
                 :class="buttonClass"
-                trailing-icon="i-heroicons-chevron-down-20-solid"
+                trailing-icon="i-mdi-chevron-down"
             >
                 <slot name="before" />
                 <span :class="textClass"> DSP-{{ status.dispatchId }} </span>

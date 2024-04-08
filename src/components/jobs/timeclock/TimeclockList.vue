@@ -216,7 +216,7 @@ function updateDates(): void {
                                             variant="outline"
                                             color="gray"
                                             block
-                                            icon="i-heroicons-calendar-days-20-solid"
+                                            icon="i-mdi-calendar-month"
                                             :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
                                         />
 
@@ -237,7 +237,7 @@ function updateDates(): void {
                                             variant="outline"
                                             color="gray"
                                             block
-                                            icon="i-heroicons-calendar-days-20-solid"
+                                            icon="i-mdi-calendar-month"
                                             :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
                                         />
 

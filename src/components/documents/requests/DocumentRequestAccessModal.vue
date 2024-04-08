@@ -146,9 +146,6 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
                     <UButton
                         block
                         class="flex-1"
@@ -157,6 +154,10 @@ const selectedAccessLevel = ref<AccessLevel>(AccessLevel.VIEW);
                         @click="onSubmitThrottle"
                     >
                         {{ $t('common.request', 2) }}
+                    </UButton>
+
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>
             </template>

@@ -134,65 +134,63 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
             </template>
 
             <div>
-                <div class="flex flex-1 flex-col justify-between">
-                    <dl class="divide-neutral/10 divide-y">
-                        <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
-                            <DataNoDataBlock
-                                v-if="dispatches.size === 0"
-                                icon="i-mdi-car-emergency"
-                                :type="$t('common.dispatch', 2)"
-                            />
-                            <template v-else>
-                                <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                    <dt class="text-sm font-medium leading-6">
-                                        <div class="flex h-6 items-center">
-                                            {{ $t('common.search') }}
-                                        </div>
-                                    </dt>
-                                    <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                        <UFormGroup name="search">
-                                            <UInput
-                                                v-model="queryDispatches"
-                                                type="text"
-                                                name="search"
-                                                :placeholder="$t('common.search')"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
-                                            />
-                                        </UFormGroup>
-                                    </dd>
-                                </div>
-
-                                <TakeDispatchEntry
-                                    v-for="pd in filteredDispatches"
-                                    :key="pd"
-                                    :dispatch="dispatches.get(pd)!"
-                                    :preselected="false"
-                                    @selected="selectDispatch(pd, $event)"
-                                    @goto="$emit('goto', $event)"
-                                />
-                            </template>
-                        </template>
-
+                <dl class="divide-neutral/10 divide-y">
+                    <template v-if="getCurrentMode === CentrumMode.SIMPLIFIED">
+                        <DataNoDataBlock
+                            v-if="dispatches.size === 0"
+                            icon="i-mdi-car-emergency"
+                            :type="$t('common.dispatch', 2)"
+                        />
                         <template v-else>
-                            <DataNoDataBlock
-                                v-if="pendingDispatches.length === 0"
-                                icon="i-mdi-car-emergency"
-                                :type="$t('common.dispatch', 2)"
+                            <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                                <dt class="text-sm font-medium leading-6">
+                                    <div class="flex h-6 items-center">
+                                        {{ $t('common.search') }}
+                                    </div>
+                                </dt>
+                                <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                    <UFormGroup name="search">
+                                        <UInput
+                                            v-model="queryDispatches"
+                                            type="text"
+                                            name="search"
+                                            :placeholder="$t('common.search')"
+                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </UFormGroup>
+                                </dd>
+                            </div>
+
+                            <TakeDispatchEntry
+                                v-for="pd in filteredDispatches"
+                                :key="pd"
+                                :dispatch="dispatches.get(pd)!"
+                                :preselected="false"
+                                @selected="selectDispatch(pd, $event)"
+                                @goto="$emit('goto', $event)"
                             />
-                            <template v-else>
-                                <TakeDispatchEntry
-                                    v-for="pd in pendingDispatches"
-                                    :key="pd"
-                                    :dispatch="dispatches.get(pd)!"
-                                    @selected="selectDispatch(pd, $event)"
-                                    @goto="$emit('goto', $event)"
-                                />
-                            </template>
                         </template>
-                    </dl>
-                </div>
+                    </template>
+
+                    <template v-else>
+                        <DataNoDataBlock
+                            v-if="pendingDispatches.length === 0"
+                            icon="i-mdi-car-emergency"
+                            :type="$t('common.dispatch', 2)"
+                        />
+                        <template v-else>
+                            <TakeDispatchEntry
+                                v-for="pd in pendingDispatches"
+                                :key="pd"
+                                :dispatch="dispatches.get(pd)!"
+                                @selected="selectDispatch(pd, $event)"
+                                @goto="$emit('goto', $event)"
+                            />
+                        </template>
+                    </template>
+                </dl>
             </div>
 
             <template #footer>

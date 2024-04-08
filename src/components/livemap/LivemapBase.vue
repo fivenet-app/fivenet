@@ -3,7 +3,7 @@ import { LControl } from '@vue-leaflet/vue-leaflet';
 import { type LeafletMouseEvent } from 'leaflet';
 import DispatchCreateOrUpdateSlideover from '~/components/centrum/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
-import CreateOrUpdateMarkerSlideover from '~/components/livemap/CreateOrUpdateMarkerSlideover.vue';
+import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
 import PlayersLayer from '~/components/livemap/PlayersLayer.vue';
@@ -74,7 +74,7 @@ if (can('LivemapperService.CreateOrUpdateMarker')) {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
 
-            slideover.open(CreateOrUpdateMarkerSlideover, {
+            slideover.open(MarkerCreateOrUpdateSlideover, {
                 location: { x: e.latlng.lng, y: e.latlng.lat },
                 onClose: () => (showLocationMarker.value = false),
             });

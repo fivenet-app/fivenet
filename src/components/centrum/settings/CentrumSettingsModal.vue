@@ -228,9 +228,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
                         <UButton
                             v-if="can('CentrumService.UpdateSettings')"
                             type="submit"
@@ -240,6 +237,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :loading="!canSubmit"
                         >
                             {{ $t('common.update') }}
+                        </UButton>
+
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

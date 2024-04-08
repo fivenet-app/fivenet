@@ -59,7 +59,7 @@ const appVersion = __APP_VERSION__.split('-')[0];
                         color="gray"
                         to="/about"
                         :label="$t('pages.index.whats_new_in', { version: appVersion })"
-                        trailing-icon="i-heroicons-arrow-right"
+                        trailing-icon="i-mdi-arrow-right"
                         size="xs"
                         class="rounded-full"
                     />

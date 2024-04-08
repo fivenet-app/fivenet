@@ -136,7 +136,7 @@ const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })
 const footerLinks = [
     {
         label: t('common.help'),
-        icon: 'i-heroicons-question-mark-circle',
+        icon: 'i-mdi-question-mark-circle',
         click: () => (isHelpSlideoverOpen.value = true),
     },
     {

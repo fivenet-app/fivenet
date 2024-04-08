@@ -25,7 +25,7 @@ export default defineNuxtConfig({
         'nuxt-update',
     ],
     ui: {
-        icons: ['heroicons', 'simple-icons', 'mdi', 'flagpack'],
+        icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
     },
     app: {

@@ -98,7 +98,7 @@ const items = computed(() => [
                 </template>
 
                 <template #trailing>
-                    <UIcon name="i-heroicons-ellipsis-vertical" class="ml-auto size-5" />
+                    <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
                 </template>
             </UButton>
         </template>

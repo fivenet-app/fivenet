@@ -115,7 +115,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
                         {{ $t('components.centrum.assign_dispatch.title') }}:
                         <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
                     </h3>
@@ -125,64 +125,54 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </template>
 
             <div>
-                <div class="flex flex-1 flex-col justify-between">
-                    <div class="divide-y divide-gray-200 px-2">
-                        <div class="mt-1">
-                            <div class="my-2 space-y-24">
-                                <div class="flex-1">
-                                    <template v-for="group in grouped" :key="group.key">
-                                        <p class="text-sm">
-                                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
-                                        </p>
-                                        <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
-                                            <UButton
-                                                v-for="unit in group.units"
-                                                :key="unit.name"
-                                                :disabled="unit.users.length === 0"
-                                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
-                                                :class="[
-                                                    unitStatusToBGColor(unit.status?.status),
-                                                    unit.users.length === 0 ? 'disabled !bg-error-600' : '',
-                                                ]"
-                                                @click="selectUnit(unit)"
-                                            >
-                                                <CheckIcon
-                                                    v-if="selectedUnits?.findIndex((u) => u && u === unit.id) > -1"
-                                                    class="size-5"
-                                                />
-                                                <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
-                                                <CancelIcon v-else class="size-5" />
+                <div class="flex flex-1 flex-col justify-between px-2">
+                    <template v-for="group in grouped" :key="group.key">
+                        <h3 class="mb-1 text-sm">
+                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                        </h3>
+                        <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
+                            <UButton
+                                v-for="unit in group.units"
+                                :key="unit.name"
+                                :disabled="unit.users.length === 0"
+                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
+                                :class="[
+                                    unitStatusToBGColor(unit.status?.status),
+                                    unit.users.length === 0 ? 'disabled !bg-error-600' : '',
+                                ]"
+                                @click="selectUnit(unit)"
+                            >
+                                <CheckIcon v-if="selectedUnits?.findIndex((u) => u && u === unit.id) > -1" class="size-5" />
+                                <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
+                                <CancelIcon v-else class="size-5" />
 
-                                                <div class="ml-0.5 flex w-full flex-col place-items-start">
-                                                    <span class="font-bold">
-                                                        {{ unit.initials }}
-                                                    </span>
-                                                    <span class="text-xs">
-                                                        {{ unit.name }}
-                                                    </span>
-                                                    <span class="mt-1 text-xs">
-                                                        <span class="block">
-                                                            {{ $t('common.member', unit.users.length) }}
-                                                        </span>
-                                                    </span>
-                                                </div>
-                                            </UButton>
-                                        </div>
-                                    </template>
+                                <div class="ml-0.5 flex w-full flex-col place-items-start">
+                                    <span class="font-bold">
+                                        {{ unit.initials }}
+                                    </span>
+                                    <span class="text-xs">
+                                        {{ unit.name }}
+                                    </span>
+                                    <span class="mt-1 text-xs">
+                                        <span class="block">
+                                            {{ $t('common.member', unit.users.length) }}
+                                        </span>
+                                    </span>
                                 </div>
-                            </div>
+                            </UButton>
                         </div>
-                    </div>
+                    </template>
                 </div>
             </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
                     <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
                         {{ $t('common.update') }}
+                    </UButton>
+
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>
             </template>

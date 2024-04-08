@@ -106,24 +106,24 @@ onBeforeMount(async () => updateUnitInForm());
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        <template v-if="unit && unit?.id">
-                            {{ $t('components.centrum.units.update_unit') }}
-                        </template>
-                        <template v-else>
-                            {{ $t('components.centrum.units.create_unit') }}
-                        </template>
-                    </h3>
+        <UForm :schema="{}" :state="{}" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            <template v-if="unit && unit?.id">
+                                {{ $t('components.centrum.units.update_unit') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('components.centrum.units.create_unit') }}
+                            </template>
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <div>
-                <UForm :state="{}" @submit="onSubmitThrottle">
+                <div>
                     <div class="text-center">
                         <div>
                             <div class="text-sm text-gray-100">
@@ -139,7 +139,6 @@ onBeforeMount(async () => updateUnitInForm());
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
-                                    <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
                                 <div class="flex-1">
                                     <label for="initials" class="block text-sm font-medium leading-6">
@@ -153,7 +152,6 @@ onBeforeMount(async () => updateUnitInForm());
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
-                                    <VeeErrorMessage name="initials" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
                                 <div class="flex-1">
                                     <label for="description" class="block text-sm font-medium leading-6">
@@ -167,7 +165,6 @@ onBeforeMount(async () => updateUnitInForm());
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
-                                    <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
                                 <div class="flex-1">
                                     <label for="attributes" class="block text-sm font-medium leading-6">
@@ -195,7 +192,6 @@ onBeforeMount(async () => updateUnitInForm());
                                             </template>
                                         </USelectMenu>
                                     </VeeField>
-                                    <VeeErrorMessage name="attributes" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
                                 <div class="flex-1">
                                     <label for="color" class="block text-sm font-medium leading-6">
@@ -221,35 +217,29 @@ onBeforeMount(async () => updateUnitInForm());
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
-                                    <VeeErrorMessage name="homePostal" as="p" class="mt-2 text-sm text-error-400" />
                                 </div>
                             </div>
                         </div>
                     </div>
-                </UForm>
-            </div>
+                </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                    <UButton
-                        block
-                        class="flex-1"
-                        :loading="!canSubmit"
-                        :disabled="!meta.valid || !canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        <template v-if="unit && unit?.id">
-                            {{ $t('components.centrum.units.update_unit') }}
-                        </template>
-                        <template v-else>
-                            {{ $t('components.centrum.units.create_unit') }}
-                        </template>
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton type="submit" block class="flex-1" :loading="!canSubmit" :disabled="!canSubmit">
+                            <template v-if="unit && unit?.id">
+                                {{ $t('components.centrum.units.update_unit') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('components.centrum.units.create_unit') }}
+                            </template>
+                        </UButton>
+
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

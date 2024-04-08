@@ -89,7 +89,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
         <LPopup :options="{ closeButton: true }">
             <div
                 v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
-                class="mb-1 flex items-center gap-1"
+                class="mb-1 flex flex-wrap items-center gap-2"
             >
                 <UButton
                     v-if="marker.info?.x && marker.info?.y"

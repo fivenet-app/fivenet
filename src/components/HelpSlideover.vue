@@ -11,7 +11,7 @@ const links = [
     {
         label: t('common.shortcuts'),
         icon: 'i-mdi-key',
-        trailingIcon: 'i-heroicons-arrow-right-20-solid',
+        trailingIcon: 'i-mdi-arrow-right',
         color: 'gray',
         onClick: () => {
             shortcuts.value = true;
@@ -64,15 +64,15 @@ const filteredCategories = computed(() => {
                 color="gray"
                 variant="ghost"
                 size="sm"
-                icon="i-heroicons-arrow-left-20-solid"
+                icon="i-mdi-arrow-left"
                 @click="shortcuts = false"
             />
 
-            {{ shortcuts ? 'Shortcuts' : 'Help & Support' }}
+            {{ shortcuts ? $t('common.shortcuts') : $t('common.help') }}
         </template>
 
         <div v-if="shortcuts" class="space-y-6">
-            <UInput v-model="query" icon="i-heroicons-magnifying-glass" placeholder="Search..." autofocus color="gray" />
+            <UInput v-model="query" icon="i-mdi-search" :placeholder="`${$t('common.search')}...`" autofocus color="gray" />
 
             <div v-for="(category, index) in filteredCategories" :key="index">
                 <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">

@@ -11,7 +11,7 @@ withDefaults(
         title: undefined,
         description: undefined,
         cancel: undefined,
-        icon: 'i-heroicons-exclamation-circle',
+        icon: 'i-mdi-warning-circle',
     },
 );
 

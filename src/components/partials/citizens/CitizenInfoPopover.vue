@@ -48,7 +48,7 @@ withDefaults(
             :padded="false"
             class="inline-flex items-center"
             :class="buttonClass"
-            :trailing-icon="trailing ? 'i-heroicons-chevron-down-20-solid' : ''"
+            :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
             <slot name="before" />
             <span :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>

@@ -26,9 +26,6 @@ export default defineAppConfig({
                 loadingIcon: 'i-mdi-loading',
             },
         },
-        icons: {
-            dynamic: true,
-        },
         table: {
             td: {
                 padding: 'px-1.5 py-1.5',
@@ -43,6 +40,20 @@ export default defineAppConfig({
             footer: {
                 padding: 'px-2 py-3 sm:px-4',
             },
+        },
+        icons: {
+            dynamic: true,
+            // Nuxt UI Pro Icons
+            dark: 'i-mdi-moon-and-stars',
+            light: 'i-mdi-weather-sunny',
+            system: 'i-mdi-computer',
+            search: 'i-mdi-search',
+            external: 'i-mdi-external-link',
+            chevron: 'i-mdi-chevron-down',
+            hash: 'i-mdi-hashtag',
+            menu: 'i-mdi-menu',
+            close: 'i-mdi-window-close',
+            check: 'i-mdi-check-circle',
         },
     },
 });

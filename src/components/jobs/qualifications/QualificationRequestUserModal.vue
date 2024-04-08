@@ -111,9 +111,6 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
                     <UButton
                         block
                         class="flex-1"
@@ -122,6 +119,10 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                         @click="onSubmitThrottle"
                     >
                         {{ $t('common.submit') }}
+                    </UButton>
+
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>
             </template>

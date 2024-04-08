@@ -135,143 +135,134 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <div class="flex flex-1 flex-col justify-between">
-                        <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                            <div class="mt-1">
-                                <dl class="divide-neutral/10 border-neutral/10 divide-y border-b">
-                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt class="text-sm font-medium leading-6">
-                                            <label for="type" class="block text-sm font-medium leading-6">
-                                                {{ $t('common.type') }}
-                                            </label>
-                                        </dt>
-                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                            <UFormGroup name="type">
-                                                <USelectMenu
-                                                    v-model="state.type"
-                                                    :options="cTypes"
-                                                    value-attribute="status"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                >
-                                                    <template #label>
-                                                        <span class="truncate">{{
-                                                            $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)
-                                                        }}</span>
-                                                    </template>
-                                                    <template #option="{ option }">
-                                                        <span class="truncate">{{
-                                                            $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
-                                                        }}</span>
-                                                    </template>
-                                                </USelectMenu>
-                                            </UFormGroup>
-                                        </dd>
-                                    </div>
-                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt class="text-sm font-medium leading-6">
-                                            <label for="targetUser" class="block text-sm font-medium leading-6">
-                                                {{ $t('common.target') }}
-                                            </label>
-                                        </dt>
-                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                            <UFormGroup name="targetUserId">
-                                                <UInputMenu
-                                                    v-model="selectedUser"
-                                                    :search="
-                                                        async (query: string) => {
-                                                            usersLoading = true;
-                                                            const colleagues = await completorStore.listColleagues({
-                                                                pagination: { offset: 0 },
-                                                                searchName: query,
-                                                            });
-                                                            usersLoading = false;
-                                                            return colleagues;
-                                                        }
-                                                    "
-                                                    :search-attributes="['firstname', 'lastname']"
-                                                    block
-                                                    :placeholder="
-                                                        selectedUser
-                                                            ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
-                                                            : $t('common.target')
-                                                    "
-                                                    trailing
-                                                    by="userId"
-                                                >
-                                                    <template #option="{ option: user }">
-                                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                                    </template>
-                                                    <template #option-empty="{ query: search }">
-                                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                    </template>
-                                                    <template #empty>
-                                                        {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                                    </template>
-                                                </UInputMenu>
-                                            </UFormGroup>
-                                        </dd>
-                                    </div>
-                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt class="text-sm font-medium leading-6">
-                                            <label for="message" class="block text-sm font-medium leading-6">
-                                                {{ $t('common.message') }}
-                                            </label>
-                                        </dt>
-                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                            <UFormGroup name="message">
-                                                <UTextarea
-                                                    v-model="state.message"
-                                                    name="message"
-                                                    :rows="6"
-                                                    :placeholder="$t('common.message')"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </UFormGroup>
-                                        </dd>
-                                    </div>
-                                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
-                                        <dt class="text-sm font-medium leading-6">
-                                            <label for="expiresAt" class="block text-sm font-medium leading-6">
-                                                {{ $t('common.expires_at') }}?
-                                            </label>
-                                        </dt>
-                                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                            <UFormGroup name="expiresAt">
-                                                <UPopover :popper="{ placement: 'bottom-start' }">
-                                                    <UButton
-                                                        variant="outline"
-                                                        color="gray"
-                                                        block
-                                                        icon="i-heroicons-calendar-days-20-solid"
-                                                        :label="
-                                                            state.expiresAt
-                                                                ? format(state.expiresAt, 'dd.MM.yyyy')
-                                                                : 'dd.mm.yyyy'
-                                                        "
-                                                    />
-
-                                                    <template #panel="{ close }">
-                                                        <DatePicker v-model="state.expiresAt" @close="close" />
-                                                    </template>
-                                                </UPopover>
-                                            </UFormGroup>
-                                        </dd>
-                                    </div>
-                                </dl>
-                            </div>
+                    <dl class="divide-neutral/10 divide-y">
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6">
+                                <label for="type" class="block text-sm font-medium leading-6">
+                                    {{ $t('common.type') }}
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormGroup name="type">
+                                    <USelectMenu
+                                        v-model="state.type"
+                                        :options="cTypes"
+                                        value-attribute="status"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    >
+                                        <template #label>
+                                            <span class="truncate">{{
+                                                $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{
+                                                $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </UFormGroup>
+                            </dd>
                         </div>
-                    </div>
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6">
+                                <label for="targetUser" class="block text-sm font-medium leading-6">
+                                    {{ $t('common.target') }}
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormGroup name="targetUserId">
+                                    <UInputMenu
+                                        v-model="selectedUser"
+                                        :search="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.listColleagues({
+                                                    pagination: { offset: 0 },
+                                                    searchName: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="
+                                            selectedUser
+                                                ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
+                                                : $t('common.target')
+                                        "
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                        </template>
+                                    </UInputMenu>
+                                </UFormGroup>
+                            </dd>
+                        </div>
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6">
+                                <label for="message" class="block text-sm font-medium leading-6">
+                                    {{ $t('common.message') }}
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormGroup name="message">
+                                    <UTextarea
+                                        v-model="state.message"
+                                        name="message"
+                                        :rows="6"
+                                        :placeholder="$t('common.message')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+                            </dd>
+                        </div>
+                        <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                            <dt class="text-sm font-medium leading-6">
+                                <label for="expiresAt" class="block text-sm font-medium leading-6">
+                                    {{ $t('common.expires_at') }}?
+                                </label>
+                            </dt>
+                            <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                                <UFormGroup name="expiresAt">
+                                    <UPopover :popper="{ placement: 'bottom-start' }">
+                                        <UButton
+                                            variant="outline"
+                                            color="gray"
+                                            block
+                                            icon="i-mdi-calendar-month"
+                                            :label="state.expiresAt ? format(state.expiresAt, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        />
+
+                                        <template #panel="{ close }">
+                                            <DatePicker v-model="state.expiresAt" @close="close" />
+                                        </template>
+                                    </UPopover>
+                                </UFormGroup>
+                            </dd>
+                        </div>
+                    </dl>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
-                        </UButton>
                         <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ entry?.id === undefined ? $t('common.create') : $t('common.update') }}
+                        </UButton>
+
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

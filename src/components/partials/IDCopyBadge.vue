@@ -1,17 +1,30 @@
 <script lang="ts" setup>
+import type { ButtonVariant } from '#ui/types';
 import { type TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 
 const notifications = useNotificatorStore();
 
-const props = defineProps<{
-    id: string | number | string;
-    prefix: string;
-    title?: TranslateItem;
-    content?: TranslateItem;
-    action?: (id: string | number | string) => void;
-    hideIcon?: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        id: string | number | string;
+        prefix: string;
+        title?: TranslateItem;
+        content?: TranslateItem;
+        action?: (id: string | number | string) => void;
+        hideIcon?: boolean;
+        variant?: ButtonVariant;
+        padded?: boolean;
+    }>(),
+    {
+        title: undefined,
+        content: undefined,
+        action: undefined,
+        hideIcon: false,
+        variant: 'solid',
+        padded: true,
+    },
+);
 
 function copyDocumentIDToClipboard(): void {
     copyToClipboardWrapper(props.prefix + '-' + props.id);
@@ -38,7 +51,9 @@ function click(): void {
 <template>
     <UButton
         :ui="{ round: 'rounded-md' }"
-        :icon="hideIcon === undefined || !hideIcon ? 'i-mdi-fingerprint' : undefined"
+        :icon="!hideIcon ? 'i-mdi-fingerprint' : undefined"
+        :variant="variant"
+        :padded="padded"
         class="break-keep"
         @click="click"
     >
