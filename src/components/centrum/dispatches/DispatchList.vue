@@ -102,7 +102,7 @@ const columns = [
     },
     {
         key: 'units',
-        label: t('common.units'),
+        label: t('common.unit'),
     },
     {
         key: 'creator',

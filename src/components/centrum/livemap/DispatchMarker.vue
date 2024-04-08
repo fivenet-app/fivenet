@@ -138,7 +138,7 @@ const zIndexOffset = computed(() => {
                         <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
                     </li>
                     <li class="inline-flex gap-1">
-                        <span class="font-semibold">{{ $t('common.units') }}:</span>
+                        <span class="font-semibold">{{ $t('common.unit') }}:</span>
                         <span v-if="dispatch.units.length === 0" class="italic">{{
                             $t('enums.centrum.StatusDispatch.UNASSIGNED')
                         }}</span>

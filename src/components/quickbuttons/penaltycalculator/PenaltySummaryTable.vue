@@ -52,8 +52,12 @@ const columns = [
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
     </UButton>
-    <UTable v-else :columns="columns" :rows="selectedLaws" class="min-w-full divide-y divide-base-600">
-        <template #law-data="{ row: law }"> {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }} </template>
+    <UTable v-else :columns="columns" :rows="selectedLaws" class="max-w-full divide-y divide-base-600">
+        <template #law-data="{ row: law }">
+            <p class="whitespace-pre-line text-gray-900 dark:text-gray-300">
+                {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }}
+            </p>
+        </template>
         <template #fine-data="{ row: law }"> ${{ law.law.fine ? law.law.fine * law.count : 0 }} </template>
         <template #detentionTime-data="{ row: law }">
             {{ law.law.detentionTime ? law.law.detentionTime * law.count : 0 }}
@@ -62,7 +66,9 @@ const columns = [
             {{ law.law.stvoPoints ? law.law.stvoPoints * law.count : 0 }}
         </template>
         <template #description-data="{ row: law }">
-            {{ law.law.description }}
+            <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-none">
+                {{ law.law.description }}
+            </p>
         </template>
         <template #fine-count="{ row: law }">
             {{ law.count }}

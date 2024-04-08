@@ -678,10 +678,10 @@
   resolved "https://registry.yarnpkg.com/@fontsource/dm-sans/-/dm-sans-5.0.20.tgz#b80690f6f9a6a3a0dadfc99d2e9d388bbb1c3ace"
   integrity sha512-0dEHhu/rW9n5AIufDodNwBOrySzZVC+67l5TrYDgpeOmvhiZXvApBQHRC/pUSYLKpdg7rYy2G0q8GFQXO7Kpgg==
 
-"@galexrt/nuxt-zod-i18n@1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@galexrt/nuxt-zod-i18n/-/nuxt-zod-i18n-1.6.2.tgz#44bead8cf69eaca0aaf6bbaf3cc6e8a16c8c1ec9"
-  integrity sha512-ob9/lK7358KYaujUFVsZeW2BuTkTggKsxi+6jachETCuQmds/G//Y+8jkYMNnPSFp/T9oVy5akvogZkdysMv8A==
+"@galexrt/nuxt-zod-i18n@1.7.0":
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@galexrt/nuxt-zod-i18n/-/nuxt-zod-i18n-1.7.0.tgz#592fe84e6e350f82ef2ad5bb5797353bcd4feef1"
+  integrity sha512-oLgPdu7B+amWPy2GHUKM+FvkAGXwtYnlkK1GRznwJ0uVYF/y4O739XfdUwa2MYVjBLdT8Ac3/uCuGUxPAT/gYw==
   dependencies:
     "@intlify/shared" "^9.10.2"
     "@nuxt/kit" "^3.11.1"
@@ -700,7 +700,7 @@
   resolved "https://registry.yarnpkg.com/@headlessui/tailwindcss/-/tailwindcss-0.2.0.tgz#2c55c98fd8eee4b4f21ec6eb35a014b840059eec"
   integrity sha512-fpL830Fln1SykOCboExsWr3JIVeQKieLJ3XytLe/tt1A0XzqUthOftDmjcCYLW62w7mQI7wXcoPXr3tZ9QfGxw==
 
-"@headlessui/vue@1.7.19", "@headlessui/vue@^1.7.19":
+"@headlessui/vue@^1.7.19":
   version "1.7.19"
   resolved "https://registry.yarnpkg.com/@headlessui/vue/-/vue-1.7.19.tgz#c128504afc14c5a85e2bedd59370a6a461b7c669"
   integrity sha512-VFjKPybogux/5/QYGSq4zgG/x3RcxId15W8uguAJAjPBxelI23dwjOjTx/mIiMkM/Hd3rzFxcf2aIp56eEWRcA==
@@ -2439,17 +2439,24 @@
   resolved "https://registry.yarnpkg.com/@types/json-schema/-/json-schema-7.0.15.tgz#596a1747233694d50f6ad8a7869fcb6f56cf5841"
   integrity sha512-5+fP8P8MFNC+AyZCDxrB2pkZFPGzqQWUzpSeuuVLvm8VMcorNYavBqoFcxK8bQz4Qsbn4oUEEem4wDLfcysGHA==
 
+"@types/leaflet-contextmenu@^1.4.3":
+  version "1.4.3"
+  resolved "https://registry.yarnpkg.com/@types/leaflet-contextmenu/-/leaflet-contextmenu-1.4.3.tgz#8fa0f07d879ebda752ecac5ecc2bda92ec0915df"
+  integrity sha512-S2FCwMDtgyuykW9tZ0Wg99FDDdtpoMhmoqGgbrqXvMlQ2Yfl7ZuHJqcmvLZznr48pZjfPuvdkeGzcGkIM3ihYg==
+  dependencies:
+    "@types/leaflet" "*"
+
+"@types/leaflet@*", "@types/leaflet@1.9.9":
+  version "1.9.9"
+  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.9.9.tgz#5e469f1443c6796b59ad8300495bd82797345356"
+  integrity sha512-o0qD9ReJzWpGNIAY0O32NkpfM6rhV4sxnwVkz7x7Ah4Zy9sP+2T9Q3byccL5la1ZX416k+qiyvt8ksBavPPY7A==
+  dependencies:
+    "@types/geojson" "*"
+
 "@types/leaflet@1.7.6":
   version "1.7.6"
   resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.7.6.tgz#6580f4babb648972c5af3abc3d66866753fa9311"
   integrity sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==
-  dependencies:
-    "@types/geojson" "*"
-
-"@types/leaflet@1.9.9":
-  version "1.9.9"
-  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.9.9.tgz#5e469f1443c6796b59ad8300495bd82797345356"
-  integrity sha512-o0qD9ReJzWpGNIAY0O32NkpfM6rhV4sxnwVkz7x7Ah4Zy9sP+2T9Q3byccL5la1ZX416k+qiyvt8ksBavPPY7A==
   dependencies:
     "@types/geojson" "*"
 

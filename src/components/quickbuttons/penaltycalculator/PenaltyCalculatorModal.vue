@@ -2,11 +2,17 @@
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import PenaltyCalculator from '~/components/quickbuttons/penaltycalculator/PenaltyCalculator.vue';
 
-const open = ref(true);
+defineProps<{
+    open: boolean;
+}>();
+
+defineEmits<{
+    (e: 'close'): void;
+}>();
 </script>
 
 <template>
-    <GenericModal :open="open" :unmount="false" :title="$t('components.penaltycalculator.title')" @close="open = false">
+    <GenericModal :open="open" :title="$t('components.penaltycalculator.title')" @close="$emit('close')">
         <PenaltyCalculator :load-laws="open" />
     </GenericModal>
 </template>

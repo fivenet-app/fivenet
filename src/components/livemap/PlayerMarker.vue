@@ -152,7 +152,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         }})
                     </li>
                     <li v-if="unit">
-                        <span class="font-semibold">{{ $t('common.unit') }}:</span> {{ unit.name }} ({{ unit.initials }})
+                        <span class="font-semibold">{{ $t('common.units') }}:</span> {{ unit.name }} ({{ unit.initials }})
                     </li>
                 </ul>
             </div>

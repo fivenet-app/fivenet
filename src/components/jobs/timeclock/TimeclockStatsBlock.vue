@@ -22,7 +22,7 @@ const props = withDefaults(
 );
 
 defineEmits<{
-    (e: 'refresh'): void;
+    (e: 'refreshRequests'): void;
 }>();
 
 const statsData = ref<Record<string, { name: string; value?: number }>>({
@@ -64,7 +64,7 @@ onBeforeMount(async () => updateStats());
                     :title="$t('common.refresh')"
                     :disabled="loading"
                     :loading="loading"
-                    @click="$emit('refresh')"
+                    @click="$emit('refreshRequests')"
                 >
                     {{ $t('common.refresh') }}
                 </UButton>
@@ -104,7 +104,7 @@ onBeforeMount(async () => updateStats());
                     {{ $t('components.jobs.timeclock.Stats.weekly') }}
                 </h3>
 
-                <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
+                <DataErrorBlock v-if="failed" :retry="async () => $emit('refreshRequests')" />
 
                 <DataNoDataBlock v-else-if="weekly === undefined" />
                 <TimeclockStatsChart v-else :stats="weekly" />

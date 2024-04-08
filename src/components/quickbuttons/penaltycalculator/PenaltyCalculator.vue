@@ -30,6 +30,7 @@ export type SelectedPenalty = {
 };
 
 export type PenaltiesSummary = {
+    selectedPenalties: SelectedPenalty[];
     fine: number;
     detentionTime: number;
     stvoPoints: number;
@@ -39,14 +40,13 @@ export type PenaltiesSummary = {
 const querySearchRaw = ref('');
 const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
 
-const selectedPenalties = ref<SelectedPenalty[]>([]);
-
-const summary = ref<PenaltiesSummary>({
+const state = useState<PenaltiesSummary>('quickButton:penaltyCalculator:summary', () => ({
+    selectedPenalties: [],
     fine: 0,
     detentionTime: 0,
     stvoPoints: 0,
     count: 0,
-});
+}));
 
 const filteredLawBooks = computed(() =>
     lawBooks.value
@@ -83,33 +83,35 @@ function getNameForLawBookId(id: string): string | undefined {
 }
 
 function calculate(e: SelectedPenalty): void {
-    const idx = selectedPenalties.value.findIndex((v) => v.law.lawbookId === e.law.lawbookId && v.law.name === e.law.name);
+    const idx = state.value.selectedPenalties.findIndex(
+        (v) => v.law.lawbookId === e.law.lawbookId && v.law.name === e.law.name,
+    );
 
     let count = e.count;
     if (idx > -1) {
-        const existing = selectedPenalties.value.at(idx)!;
-        selectedPenalties.value[idx] = e;
+        const existing = state.value.selectedPenalties.at(idx)!;
+        state.value.selectedPenalties[idx] = e;
         if (existing.count !== e.count) {
             count = e.count - existing.count;
         }
         // If the selected penalty count is 0, remove it from the list
         if (e.count === 0) {
-            selectedPenalties.value.splice(idx, 1);
+            state.value.selectedPenalties.splice(idx, 1);
         }
     } else if (e.count !== 0) {
-        selectedPenalties.value.push(e);
+        state.value.selectedPenalties.push(e);
     }
 
     if (e.law.fine) {
-        summary.value.fine += count * e.law.fine;
+        state.value.fine += count * e.law.fine;
     }
     if (e.law.detentionTime) {
-        summary.value.detentionTime += count * e.law.detentionTime;
+        state.value.detentionTime += count * e.law.detentionTime;
     }
     if (e.law.stvoPoints) {
-        summary.value.stvoPoints += count * e.law.stvoPoints;
+        state.value.stvoPoints += count * e.law.stvoPoints;
     }
-    summary.value.count = summary.value.count + count;
+    state.value.count = state.value.count + count;
 }
 
 async function copyToClipboard(): Promise<void> {
@@ -119,21 +121,18 @@ async function copyToClipboard(): Promise<void> {
         d(new Date(), 'long') +
         `)
 
-${t('common.fine')}: $${summary.value.fine}
-${t('common.detention_time')}: ${summary.value.detentionTime} ${t(
-            'common.time_ago.month',
-            summary.value.detentionTime.toString(),
-        )}
-${t('common.traffic_infraction_points', 2)}: ${summary.value.stvoPoints}
-${t('common.total_count')}: ${summary.value.count}
+${t('common.fine')}: $${state.value.fine}
+${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime.toString())}
+${t('common.traffic_infraction_points', 2)}: ${state.value.stvoPoints}
+${t('common.total_count')}: ${state.value.count}
 `;
 
-    if (selectedPenalties.value.length > 0) {
+    if (state.value.selectedPenalties.length > 0) {
         text += `
-${t('common.crime', selectedPenalties.value.length)}:
+${t('common.crime', state.value.selectedPenalties.length)}:
 `;
 
-        selectedPenalties.value.forEach((v) => {
+        state.value.selectedPenalties.forEach((v) => {
             text += `* ${getNameForLawBookId(v.law.lawbookId)} - ${v.law.name} (${v.count}x)
 `;
         });
@@ -150,12 +149,12 @@ ${t('common.crime', selectedPenalties.value.length)}:
 
 function reset(): void {
     querySearchRaw.value = '';
-    selectedPenalties.value = [];
+    state.value.selectedPenalties = [];
 
-    summary.value.count = 0;
-    summary.value.detentionTime = 0;
-    summary.value.fine = 0;
-    summary.value.stvoPoints = 0;
+    state.value.count = 0;
+    state.value.detentionTime = 0;
+    state.value.fine = 0;
+    state.value.stvoPoints = 0;
 }
 
 watch(props, () => {
@@ -243,7 +242,9 @@ const columns = [
                                             <USelect
                                                 name="count"
                                                 :options="Array.from(Array(7).keys())"
-                                                :model-value="selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0"
+                                                :model-value="
+                                                    state.selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0
+                                                "
                                                 @change="calculate({ law: law, count: parseInt($event) })"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
@@ -264,13 +265,13 @@ const columns = [
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="text-xl">
-                        <PenaltyStats :summary="summary" />
+                        <PenaltyStats :summary="state" />
 
                         <div class="mt-4">
                             <PenaltySummaryTable
                                 v-if="lawBooks && lawBooks.length > 0"
                                 :law-books="lawBooks"
-                                :selected-laws="selectedPenalties"
+                                :selected-laws="state.selectedPenalties"
                             />
                         </div>
                     </div>

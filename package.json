@@ -22,8 +22,7 @@
     },
     "dependencies": {
         "@fontsource/dm-sans": "5.0.20",
-        "@galexrt/nuxt-zod-i18n": "1.6.2",
-        "@headlessui/vue": "1.7.19",
+        "@galexrt/nuxt-zod-i18n": "1.7.0",
         "@iconify-json/flagpack": "^1.1.14",
         "@iconify-json/heroicons": "^1.1.20",
         "@iconify-json/mdi": "^1.1.66",
@@ -74,6 +73,7 @@
         "@types/google-protobuf": "3.15.12",
         "@types/howler": "^2.2.11",
         "@types/leaflet": "1.9.9",
+        "@types/leaflet-contextmenu": "^1.4.3",
         "@types/node": "20.12.5",
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "9.0.8",

@@ -95,12 +95,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.save') }}
-                        </UButton>
-
                         <UButton color="black" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
+                        </UButton>
+
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

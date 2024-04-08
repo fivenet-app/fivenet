@@ -184,6 +184,10 @@ onBeforeMount(async () => updateUnitInForm());
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+
                         <UButton type="submit" block class="flex-1" :loading="!canSubmit" :disabled="!canSubmit">
                             <template v-if="unit && unit?.id">
                                 {{ $t('components.centrum.units.update_unit') }}
@@ -191,10 +195,6 @@ onBeforeMount(async () => updateUnitInForm());
                             <template v-else>
                                 {{ $t('components.centrum.units.create_unit') }}
                             </template>
-                        </UButton>
-
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

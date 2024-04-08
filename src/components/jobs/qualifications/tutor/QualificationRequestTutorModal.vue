@@ -17,7 +17,7 @@ const props = withDefaults(
 
 const emits = defineEmits<{
     (e: 'close'): void;
-    (e: 'refresh'): void;
+    (e: 'refreshRequests'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -66,7 +66,7 @@ async function createOrUpdateQualificationRequest(
             type: 'success',
         });
 
-        emits('refresh');
+        emits('refreshRequests');
         emits('close');
 
         return response;
@@ -144,12 +144,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.submit') }}
-                        </UButton>
-
                         <UButton color="black" block class="flex-1" @click="isOpen = false">
                             {{ $t('common.close', 1) }}
+                        </UButton>
+
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.submit') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

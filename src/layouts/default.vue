@@ -320,18 +320,23 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => modal.open(PenaltyCalculatorModal, {}),
+                  click: () => (quickButtons.value.penaltycalculator = true),
               }
             : undefined,
         jobProps.value?.quickButtons?.bodyCheckup
             ? {
                   label: t('components.bodycheckup.title'),
                   icon: 'i-mdi-human',
-                  click: () => modal.open(BodyCheckupModal, {}),
+                  click: () => (quickButtons.value.bodycheckup = true),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
+
+const quickButtons = ref({
+    bodycheckup: false,
+    penaltycalculator: false,
+});
 </script>
 
 <template>
@@ -382,6 +387,10 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
         <HelpSlideover />
         <!-- ~/components/NotificationsSlideover.vue -->
         <NotificationsSlideover />
+
+        <!-- Quick Buttons -->
+        <BodyCheckupModal :open="quickButtons.bodycheckup" @close="quickButtons.bodycheckup = false" />
+        <PenaltyCalculatorModal :open="quickButtons.penaltycalculator" @close="quickButtons.penaltycalculator = false" />
 
         <ClientOnly>
             <LazyUDashboardSearch

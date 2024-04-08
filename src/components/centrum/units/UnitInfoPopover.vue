@@ -67,7 +67,7 @@ withDefaults(
                 </p>
                 <template v-if="unit.users.length === 0">
                     <p class="text-xs font-normal">
-                        {{ $t('common.unit', 0) }}
+                        {{ $t('common.units', 0) }}
                     </p>
                 </template>
                 <ul v-else class="text-xs font-normal">

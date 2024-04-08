@@ -185,11 +185,11 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                             <dt class="text-sm font-medium leading-6">
-                                {{ $t('common.units') }}
+                                {{ $t('common.unit') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <span v-if="dispatch.units.length === 0" class="block">
-                                    {{ $t('common.unit', dispatch.units.length) }}
+                                    {{ $t('common.units', dispatch.units.length) }}
                                 </span>
                                 <div v-else class="mb-1 rounded-md bg-base-800">
                                     <ul role="list" class="divide-y divide-gray-200 text-sm font-medium">

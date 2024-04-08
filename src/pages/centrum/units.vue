@@ -2,10 +2,10 @@
 import UnitsList from '~/components/centrum/settings/UnitsList.vue';
 
 useHead({
-    title: 'common.units',
+    title: 'common.unit',
 });
 definePageMeta({
-    title: 'common.units',
+    title: 'common.unit',
     requiresAuth: true,
     permission: 'CentrumService.CreateOrUpdateUnit',
 });

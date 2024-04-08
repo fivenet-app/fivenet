@@ -322,7 +322,7 @@ async function checkup(): Promise<void> {
                                 @click="open = !open"
                             >
                                 <span v-if="!open" class="inline-flex items-center justify-center">
-                                    {{ $t('common.units') }}
+                                    {{ $t('common.unit') }}
                                 </span>
                             </UButton>
                         </LControl>
@@ -404,7 +404,7 @@ async function checkup(): Promise<void> {
                                                 <li>
                                                     <ul role="list" class="-mx-1 space-y-0.5">
                                                         <div class="inline-flex items-center text-xs font-semibold leading-6">
-                                                            {{ $t('common.unit') }}
+                                                            {{ $t('common.units') }}
                                                             <UIcon
                                                                 v-if="!canSubmitUnitStatus"
                                                                 name="i-mdi-loading"
@@ -549,35 +549,35 @@ async function checkup(): Promise<void> {
                             <!-- "Take Dispatches" Button -->
                             <template v-if="open && getOwnUnit !== undefined">
                                 <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
-                                    <span>
-                                        <span
-                                            v-if="pendingDispatches.length > 0"
-                                            class="absolute left-0 top-0 -mr-1 -mt-1 flex size-3"
-                                        >
-                                            <span
-                                                class="absolute inline-flex size-full animate-ping rounded-full bg-error-400 opacity-75"
-                                            ></span>
-                                            <span class="relative inline-flex size-3 rounded-full bg-error-500"></span>
-                                        </span>
+                                    <UChip
+                                        :ui="{
+                                            base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
+                                        }"
+                                        position="top-left"
+                                        size="xl"
+                                        color="red"
+                                        :show="pendingDispatches.length > 0"
+                                    >
                                         <UButton
+                                            :color="pendingDispatches.length > 0 ? 'red' : 'primary'"
+                                            size="xl"
+                                            icon="i-mdi-car-emergency"
                                             class="flex size-12 items-center justify-center"
-                                            :class="getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full'"
+                                            :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
                                             @click="
                                                 slideover.open(TakeDispatchSlideover, {
                                                     onGoto: ($event) => $emit('goto', $event),
                                                 })
                                             "
-                                        >
-                                            <CarEmergencyIcon class="h-auto w-10" />
-                                        </UButton>
-                                    </span>
+                                        />
+                                    </UChip>
                                     <UButton
                                         v-if="getOwnUnit.homePostal !== undefined"
                                         class="flex size-12 items-center justify-center rounded-r-full"
+                                        size="xl"
+                                        icon="i-mdi-home-floor-b"
                                         @click="setWaypointPLZ(getOwnUnit.homePostal)"
-                                    >
-                                        <HomeFloorBIcon class="h-auto w-10" />
-                                    </UButton>
+                                    />
                                 </span>
                             </template>
                         </div>

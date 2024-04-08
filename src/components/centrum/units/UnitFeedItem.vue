@@ -27,7 +27,7 @@ defineEmits<{
         </div>
         <template v-if="item.status === StatusUnit.USER_ADDED">
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
-                <UIcon name="AccountPlus" class="text-primary-500 size-5" />
+                <UIcon name="i-mdi-account-plus" class="text-primary-500 size-5" />
             </div>
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">

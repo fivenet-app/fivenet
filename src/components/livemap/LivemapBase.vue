@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { type LeafletMouseEvent } from 'leaflet';
+import { type ContextMenuItemClickEvent, type LeafletMouseEvent, type MapOptions } from 'leaflet';
 import DispatchCreateOrUpdateSlideover from '~/components/centrum/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
@@ -41,22 +41,17 @@ const { startStream } = livemapStore;
 const centrumStore = useCentrumStore();
 const { reconnecting: reconnectingCentrum } = storeToRefs(centrumStore);
 
-interface ContextmenuItem {
-    text: string;
-    callback: (e: LeafletMouseEvent) => void;
-}
-
 const mapOptions = {
     zoomControl: false,
     contextmenu: true,
     contextmenuWidth: 150,
-    contextmenuItems: [] as ContextmenuItem[],
-};
+    contextmenuItems: [],
+} as MapOptions;
 
 if (can('CentrumService.CreateDispatch')) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.create_dispatch.title'),
-        callback: (e: LeafletMouseEvent) => {
+        callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
 
@@ -70,7 +65,7 @@ if (can('CentrumService.CreateDispatch')) {
 if (can('LivemapperService.CreateOrUpdateMarker')) {
     mapOptions.contextmenuItems.push({
         text: t('components.livemap.create_marker.title'),
-        callback: (e: LeafletMouseEvent) => {
+        callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
 
@@ -84,7 +79,7 @@ if (can('LivemapperService.CreateOrUpdateMarker')) {
 if (isNUIAvailable()) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.livemap.mark_on_gps'),
-        callback: (e: LeafletMouseEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
+        callback: (e: ContextMenuItemClickEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
     });
 }
 

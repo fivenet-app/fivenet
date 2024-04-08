@@ -2,20 +2,20 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
-import DocumentRequestsList from '~/components/documents/requests/DocumentRequestsList.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { checkDocAccess } from '~/components/documents/helpers';
+import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
 
 const props = defineProps<{
     access: DocumentAccess;
     doc: DocumentShort;
-}>();
-
-const emits = defineEmits<{
-    (e: 'refresh'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -51,6 +51,32 @@ const state = reactive<Schema>({
     requestType: availableRequestTypes.value[0]?.key ?? undefined,
 });
 
+const offset = ref(0);
+
+const {
+    data: requests,
+    pending,
+    refresh,
+    error,
+} = useLazyAsyncData(`document-${props.doc.id}-requests-${offset.value}`, () => listDocumnetReqs(props.doc.id));
+
+async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsResponse> {
+    try {
+        const call = $grpc.getDocStoreClient().listDocumentReqs({
+            pagination: {
+                offset: offset.value,
+            },
+            documentId,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
 async function createDocumentRequest(values: Schema): Promise<void> {
     if (values.requestType === undefined) {
         return;
@@ -70,7 +96,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
             type: 'success',
         });
 
-        emits('refresh');
+        refresh();
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -82,6 +108,12 @@ const canCreate =
     availableRequestTypes.value.length > 0 &&
     can('DocStoreService.CreateDocumentReq') &&
     checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW);
+const canUpdate =
+    can('DocStoreService.CreateDocumentReq') &&
+    checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.CreateDocumentReq');
+const canDelete =
+    can('DocStoreService.DeleteDocumentReq') &&
+    checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocumentReq');
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -144,11 +176,40 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </div>
                     </template>
 
-                    <DocumentRequestsList :doc="doc" :access="access" @refresh="$emit('refresh')" />
+                    <div>
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
+                        <DataErrorBlock
+                            v-else-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.request', 2)])"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock
+                            v-else-if="requests === null || requests.requests.length === 0"
+                            icon="i-mdi-frequently-asked-questions"
+                            :message="$t('common.not_found', [$t('common.request', 2)])"
+                        />
+
+                        <template v-else>
+                            <ul role="list" class="mb-6 divide-y divide-gray-100 rounded-md">
+                                <DocumentRequestsListEntry
+                                    v-for="request in requests.requests"
+                                    :key="request.id"
+                                    :request="request"
+                                    :can-update="canUpdate"
+                                    :can-delete="canDelete"
+                                    @refresh="refresh()"
+                                />
+                            </ul>
+                        </template>
+                    </div>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+
                         <UButton
                             v-if="canCreate"
                             type="submit"
@@ -158,10 +219,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :loading="!canSubmit"
                         >
                             {{ $t('common.add') }}
-                        </UButton>
-
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

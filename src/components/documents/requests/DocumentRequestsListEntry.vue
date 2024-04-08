@@ -1,12 +1,9 @@
 <script lang="ts" setup>
-import { Menu, MenuButton, MenuItem, MenuItems } from '@headlessui/vue';
-import { MenuIcon } from 'mdi-vue3';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { DocRequest } from '~~/gen/ts/resources/documents/requests';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     request: DocRequest;
@@ -15,12 +12,10 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'refresh'): void;
+    (e: 'refreshRequests'): void;
 }>();
 
 const { $grpc } = useNuxtApp();
-
-const modal = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -33,7 +28,7 @@ async function updateDocumentReq(documentId: string, requestId: string, accepted
         });
         const { response } = await call;
 
-        emits('refresh');
+        emits('refreshRequests');
 
         if (response.request !== undefined) {
             if (response.request.requestType === DocActivityType.REQUESTED_UPDATE) {
@@ -65,7 +60,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
             type: 'success',
         });
 
-        emits('refresh');
+        emits('refreshRequests');
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -128,6 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                         :loading="!canSubmit"
                         @click="onSubmitThrottle(true)"
                     />
+
                     <UButton
                         class="flex-1"
                         block
@@ -139,41 +135,21 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
                     />
                 </UButtonGroup>
 
-                <Menu v-if="canDelete" as="div" class="relative flex-none">
-                    <MenuButton class="block hover:text-gray-100">
-                        <span class="sr-only">{{ $t('common.open') }}</span>
-                        <MenuIcon class="size-5" />
-                    </MenuButton>
-                    <transition
-                        enter-active-class="transition ease-out duration-100"
-                        enter-from-class="transform opacity-0 scale-95"
-                        enter-to-class="transform opacity-100 scale-100"
-                        leave-active-class="transition ease-in duration-75"
-                        leave-from-class="transform opacity-100 scale-100"
-                        leave-to-class="transform opacity-0 scale-95"
-                    >
-                        <MenuItems
-                            class="absolute right-0 z-30 mt-2 w-28 origin-top-right rounded-md bg-base-800 py-1 shadow-float ring-1 ring-base-100/5"
-                        >
-                            <MenuItem v-slot="{ close }">
-                                <UButton
-                                    class="inline-flex items-center px-4 py-2 text-sm hover:transition-colors"
-                                    :disabled="!canSubmit"
-                                    :loading="!canSubmit"
-                                    icon="i-mdi-trash-can"
-                                    @click="
-                                        close();
-                                        modal.open(ConfirmModal, {
-                                            confirm: async () => deleteDocumentReq(request.id),
-                                        });
-                                    "
-                                >
-                                    {{ $t('common.delete') }}
-                                </UButton>
-                            </MenuItem>
-                        </MenuItems>
-                    </transition>
-                </Menu>
+                <UDropdown
+                    v-if="canDelete"
+                    :items="[
+                        [
+                            {
+                                label: $t('common.delete'),
+                                icon: 'i-mdi-trash-can',
+                                click: async () => deleteDocumentReq(request.id),
+                            },
+                        ],
+                    ]"
+                    :popper="{ placement: 'bottom-start' }"
+                >
+                    <UButton size="md" color="white" icon="i-mdi-menu" trailing-icon="i-mdi-chevron-down" />
+                </UDropdown>
             </div>
         </div>
     </li>

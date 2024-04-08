@@ -163,10 +163,10 @@ export default defineNuxtConfig({
             strictMessage: false,
             jit: true,
         },
-        parallelPlugin: false,
+        parallelPlugin: true,
     },
     zodI18n: {
-        useExistingLocales: true,
+        useModuleLocale: true,
     },
     piniaPersistedstate: {
         storage: 'localStorage',

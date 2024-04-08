@@ -161,6 +161,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+
                         <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ category === undefined ? $t('common.create') : $t('common.update') }}
                         </UButton>
@@ -174,10 +178,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             @click="deleteCategory()"
                         >
                             {{ $t('common.delete') }}
-                        </UButton>
-
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

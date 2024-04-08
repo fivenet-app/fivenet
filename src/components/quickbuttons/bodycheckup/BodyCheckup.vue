@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { TrashCanIcon } from 'mdi-vue3';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import BMICalculator from '~/components/quickbuttons/bodycheckup/BMICalculator.vue';
@@ -14,7 +13,8 @@ type Pin = {
     selected?: boolean;
     description?: string;
 };
-const pins = ref<Pin[]>([]);
+
+const pins = useState<Pin[]>('quickButton:bodyCheckup:summary', () => []);
 
 const svgRef = ref<SVGSVGElement | null>(null);
 

@@ -75,7 +75,7 @@ const columns = [
 
 <template>
     <div>
-        <UDashboardNavbar :title="$t('common.units')">
+        <UDashboardNavbar :title="$t('common.unit')">
             <template #right>
                 <UButton
                     v-if="can('CentrumService.Stream')"
@@ -107,7 +107,7 @@ const columns = [
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataErrorBlock
                             v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.units')])"
+                            :title="$t('common.unable_to_load', [$t('common.unit')])"
                             :retry="refresh"
                         />
                         <UTable
@@ -115,7 +115,7 @@ const columns = [
                             :loading="loading"
                             :columns="columns"
                             :rows="units?.units"
-                            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"
+                            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.units', 2)]) }"
                         >
                             <template #attributes-data="{ row: unit }">
                                 <UnitAttributes :attributes="unit.attributes" />

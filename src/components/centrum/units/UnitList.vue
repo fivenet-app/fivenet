@@ -50,11 +50,11 @@ const grouped = computedAsync(async () => {
     <div class="flex h-full grow flex-col overflow-y-auto px-1">
         <div class="flex justify-between">
             <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
-                {{ $t('common.units') }}
+                {{ $t('common.unit') }}
                 <UButton
                     v-if="can('CentrumService.CreateOrUpdateUnit')"
                     :to="{ name: 'centrum-units' }"
-                    :title="$t('common.units')"
+                    :title="$t('common.unit')"
                     icon="i-mdi-cog"
                     variant="link"
                 />

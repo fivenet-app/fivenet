@@ -3,12 +3,10 @@ withDefaults(
     defineProps<{
         open: boolean;
         dialogClass?: unknown;
-        unmount?: boolean;
         title?: string;
     }>(),
     {
         dialogClass: '' as any,
-        unmount: true,
         title: undefined,
     },
 );
@@ -20,7 +18,6 @@ defineEmits<{
 
 <template>
     <UModal
-        :unmount="unmount"
         :model-value="open"
         :class="dialogClass"
         :ui="{ width: 'w-full sm:max-w-5xl' }"
