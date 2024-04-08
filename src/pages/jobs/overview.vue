@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { RadioHandheldIcon } from 'mdi-vue3';
 import JobMotd from '~/components/jobs/JobMotd.vue';
 import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
@@ -24,72 +23,68 @@ const showRadioFrequency = ref(false);
 
 <template>
     <div>
-        <div class="py-2 pb-14">
-            <div class="px-1 sm:px-2 lg:px-4">
-                <div class="grid gap-2">
-                    <div class="sm:flex-auto">
-                        <div class="flex flex-row gap-2">
-                            <UCard class="flex-1">
-                                <template #header>
-                                    <div class="flex flex-row gap-2">
-                                        <SquareImg
-                                            v-if="jobProps && jobProps.logoUrl"
-                                            :url="jobProps?.logoUrl.url"
-                                            :alt="`${jobProps.jobLabel} ${$t('common.logo')}`"
-                                            size="xl"
-                                            :no-blur="true"
-                                        />
+        <div class="px-1 py-2 sm:px-2 lg:px-4">
+            <div class="grid gap-2">
+                <div class="flex flex-row gap-2">
+                    <UCard class="flex-1">
+                        <template #header>
+                            <div class="flex flex-row gap-2">
+                                <SquareImg
+                                    v-if="jobProps && jobProps.logoUrl"
+                                    :url="jobProps?.logoUrl.url"
+                                    :alt="`${jobProps.jobLabel} ${$t('common.logo')}`"
+                                    size="xl"
+                                    :no-blur="true"
+                                />
 
-                                        <div>
-                                            <h1 class="text-3xl font-semibold leading-6">
-                                                {{ activeChar?.jobLabel }}
-                                            </h1>
-                                            <h2 class="mt-2 text-xl font-semibold leading-6">
-                                                {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
-                                            </h2>
-                                        </div>
-                                    </div>
-                                </template>
-
-                                <JobMotd />
-                            </UCard>
-
-                            <UCard v-if="jobProps?.radioFrequency">
-                                <template #header>
-                                    <h3 class="text-lg font-semibold">
-                                        {{ $t('common.radio_frequency') }}
-                                    </h3>
-                                </template>
-
-                                <div class="flex flex-col gap-2">
-                                    <p class="flex items-center text-center text-lg font-bold">
-                                        <RadioHandheldIcon class="h-auto w-6" />
-                                        <span
-                                            :class="showRadioFrequency ? '' : 'blur'"
-                                            @click="showRadioFrequency = !showRadioFrequency"
-                                            >{{ jobProps?.radioFrequency }}.00</span
-                                        >
-                                    </p>
-
-                                    <UButton
-                                        v-if="isNUIAvailable()"
-                                        block
-                                        variant="soft"
-                                        @click="setRadioFrequency(jobProps.radioFrequency)"
-                                    >
-                                        {{ $t('common.connect') }}
-                                    </UButton>
+                                <div>
+                                    <h1 class="text-3xl font-semibold leading-6">
+                                        {{ activeChar?.jobLabel }}
+                                    </h1>
+                                    <h2 class="mt-2 text-xl font-semibold leading-6">
+                                        {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
+                                    </h2>
                                 </div>
-                            </UCard>
-                        </div>
+                            </div>
+                        </template>
 
-                        <div v-if="activeChar" class="mt-4 flex flex-row gap-2">
-                            <JobSelfService :user-id="activeChar.userId" />
-                        </div>
+                        <JobMotd />
+                    </UCard>
 
-                        <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
-                    </div>
+                    <UCard v-if="jobProps?.radioFrequency">
+                        <template #header>
+                            <h3 class="text-lg font-semibold">
+                                {{ $t('common.radio_frequency') }}
+                            </h3>
+                        </template>
+
+                        <div class="flex flex-col gap-2">
+                            <div class="flex items-center text-center text-lg font-bold">
+                                <UIcon name="i-mdi-radio-handheld" class="h-auto w-7" />
+                                <span
+                                    :class="showRadioFrequency ? '' : 'blur'"
+                                    @click="showRadioFrequency = !showRadioFrequency"
+                                    >{{ jobProps?.radioFrequency }}.00</span
+                                >
+                            </div>
+
+                            <UButton
+                                v-if="isNUIAvailable()"
+                                block
+                                variant="soft"
+                                @click="setRadioFrequency(jobProps.radioFrequency)"
+                            >
+                                {{ $t('common.connect') }}
+                            </UButton>
+                        </div>
+                    </UCard>
                 </div>
+
+                <div v-if="activeChar" class="flex flex-row gap-2">
+                    <JobSelfService :user-id="activeChar.userId" />
+                </div>
+
+                <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
             </div>
         </div>
     </div>

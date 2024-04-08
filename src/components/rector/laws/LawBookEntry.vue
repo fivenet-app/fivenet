@@ -140,12 +140,13 @@ const editing = ref(props.startInEdit);
                 v-else
                 :schema="schema"
                 :state="state"
-                class="flex w-full flex-row items-start gap-x-4"
+                class="flex w-full flex-row items-start gap-x-2"
                 @submit="onSubmitThrottle"
             >
-                <UButton :title="$t('common.save')" icon="i-mdi-content-save-icon" />
+                <UButton :title="$t('common.save')" variant="link" icon="i-mdi-content-save" />
                 <UButton
                     :title="$t('common.cancel')"
+                    variant="link"
                     icon="i-mdi-cancel"
                     @click="
                         editing = false;

@@ -10,9 +10,12 @@ const props = withDefaults(
         hideNumber?: boolean;
         showLabel?: boolean;
         width?: string;
+        padded?: boolean;
     }>(),
     {
-        showIcon: undefined,
+        showIcon: true,
+        hideNumber: false,
+        showLabel: false,
         width: 'w-6',
     },
 );
@@ -51,12 +54,12 @@ async function doCall(): Promise<void> {
     <div class="inline-flex items-center">
         <span v-if="number === undefined">N/A</span>
         <template v-else>
-            <UButton v-if="showIcon === undefined || showIcon" variant="link" icon="i-mdi-phone" @click="doCall">
+            <UButton v-if="showIcon" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
                 <span class="sr-only">{{ $t('common.call') }}</span>
-                <span v-if="showLabel">{{ $t('common.call') }}</span>
+                <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
             </UButton>
 
-            <span v-if="hideNumber === undefined || !hideNumber" :class="streamerMode ? 'blur' : ''">
+            <span v-if="!hideNumber" :class="[streamerMode ? 'blur' : '', !padded && 'ml-1']">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx" class="mr-1">{{ part }}</span>
             </span>
         </template>

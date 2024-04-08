@@ -118,6 +118,9 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
 			tUserUserProps.Avatar.AS("target_user.avatar"),
+			tJobsUserProps.UserID,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -135,7 +138,11 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 					tUser.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tUserUserProps,
-					tUserUserProps.UserID.EQ(tUser.ID),
+					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tConduct.TargetUserID).
+						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -13,6 +12,7 @@ import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/Q
 import QualificationsResultsList from '~/components/jobs/qualifications/tutor/QualificationsResultsList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import type { AccordionItem } from '#ui/types';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 const props = defineProps<{
     qualificationId: string;

@@ -6,10 +6,10 @@ import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateO
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useCompletorStore } from '~/store/completor';
-import { conductTypesToBGColor, conductTypesToRingColor, conductTypesToTextColor } from './helpers';
+import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 
 const props = defineProps<{
     userId?: number;
@@ -136,16 +136,16 @@ defineShortcuts({
 
 <template>
     <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <UForm :schema="{}" :state="{}" @submit="refresh()">
+                    <UForm :schema="undefined" :state="{}" @submit="refresh()">
                         <div class="flex flex-row gap-2">
                             <UFormGroup v-if="hideUserSearch !== true" name="user" class="flex-1" :label="$t('common.target')">
                                 <UInputMenu
-                                    v-model="query.user"
                                     ref="input"
-                                    :nullable="true"
+                                    v-model="query.user"
+                                    nullable
                                     :search="
                                         async (query: string) => {
                                             usersLoading = true;
@@ -199,9 +199,9 @@ defineShortcuts({
                                             : $t('common.na')
                                     "
                                 >
-                                    <template #option="{ option: cType }">
-                                        <span :class="conductTypesToBGColor(cType.status)">
-                                            {{ $t(`enums.jobs.ConductType.${ConductType[cType.status]}`) }}
+                                    <template #option="{ option }">
+                                        <span class="truncate" :class="conductTypesToBGColor(option.status)">
+                                            {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
                                         </span>
                                     </template>
                                     <template #option-empty="{ query: search }">
@@ -270,16 +270,9 @@ defineShortcuts({
                             </span>
                         </template>
                         <template #type-data="{ row: conduct }">
-                            <div
-                                class="rounded-md px-2 py-1 text-base font-medium ring-1 ring-inset"
-                                :class="[
-                                    conductTypesToBGColor(conduct.type),
-                                    conductTypesToRingColor(conduct.type),
-                                    conductTypesToTextColor(conduct.type),
-                                ]"
-                            >
+                            <UBadge :color="conductTypesToBadgeColor(conduct.type)">
                                 {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? 0]}`) }}
-                            </div>
+                            </UBadge>
                         </template>
                         <template #message-data="{ row: conduct }">
                             <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-6">
@@ -287,16 +280,16 @@ defineShortcuts({
                             </p>
                         </template>
                         <template #target-data="{ row: conduct }">
-                            <CitizenInfoPopover :user="conduct.targetUser" />
+                            <ColleagueInfoPopover :user="conduct.targetUser" />
                             <dl class="font-normal lg:hidden">
                                 <dt class="sr-only">{{ $t('common.creator') }}</dt>
                                 <dd class="mt-1 truncate">
-                                    <CitizenInfoPopover :user="conduct.creator" />
+                                    <ColleagueInfoPopover :user="conduct.creator" />
                                 </dd>
                             </dl>
                         </template>
                         <template #creator-data="{ row: conduct }">
-                            <CitizenInfoPopover :user="conduct.creator" />
+                            <ColleagueInfoPopover :user="conduct.creator" :hide-props="true" />
                         </template>
                         <template #actions-data="{ row: conduct }">
                             <UButtonGroup class="inline-flex">

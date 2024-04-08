@@ -45,7 +45,7 @@ watch(result, () => {
 <template>
     <div>
         <UProgress :color="color" :value="percent" />
-        <p v-if="showFeedback && feedback !== null" class="my-1 text-sm text-base-300">
+        <p v-if="showFeedback && feedback !== null" class="my-1 text-sm">
             {{ feedback }}
         </p>
     </div>

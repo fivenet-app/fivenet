@@ -89,25 +89,34 @@ function copyError(): void {
                             </span>
                         </div>
 
-                        <div class="flex justify-center gap-4">
-                            <UButton size="xl" :disabled="buttonDisabled" @click="handleError()">
+                        <UButtonGroup class="inline-flex w-full">
+                            <UButton block class="flex-1" size="xl" :disabled="buttonDisabled" @click="handleError()">
                                 {{ $t('common.home') }}
                             </UButton>
 
-                            <UButton size="xl" color="green" :disabled="buttonDisabled" @click="handleError(route.fullPath)">
+                            <UButton
+                                block
+                                class="flex-1"
+                                size="xl"
+                                color="green"
+                                :disabled="buttonDisabled"
+                                @click="handleError(route.fullPath)"
+                            >
                                 {{ $t('common.retry') }}
                             </UButton>
 
                             <!-- @vue-ignore -->
                             <UButton
                                 v-if="error && (error.statusMessage || error.message)"
+                                block
+                                class="flex-1"
                                 size="xl"
                                 color="amber"
                                 @click="copyError"
                             >
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>
-                        </div>
+                        </UButtonGroup>
                     </div>
                 </main>
             </div>

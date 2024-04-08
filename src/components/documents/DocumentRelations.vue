@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AccountMultipleIcon, ArrowCollapseIcon } from 'mdi-vue3';
+import { ArrowCollapseIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';

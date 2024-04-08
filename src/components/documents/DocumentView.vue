@@ -225,9 +225,9 @@ const accordionItems = [
                             "
                             class="flex-1"
                             block
-                            @click="toggleDocument(documentId, !doc?.closed)"
+                            @click="toggleDocument(documentId, !doc.closed)"
                         >
-                            <template v-if="doc?.closed">
+                            <template v-if="doc.closed">
                                 <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
                                 {{ $t('common.open', 1) }}
                             </template>
@@ -307,7 +307,7 @@ const accordionItems = [
                 <template #header>
                     <div class="mb-4">
                         <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            {{ doc?.title }}
+                            {{ doc.title }}
                         </h1>
                     </div>
 
@@ -319,7 +319,7 @@ const accordionItems = [
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc?.closed" color="red" class="inline-flex gap-1" size="md">
+                        <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
                             <span>
                                 {{ $t('common.close', 2) }}
@@ -332,10 +332,10 @@ const accordionItems = [
                             </span>
                         </UBadge>
 
-                        <UBadge v-if="doc?.state" class="inline-flex gap-1" size="md">
+                        <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-note-check" class="h-auto w-5" />
                             <span>
-                                {{ doc?.state }}
+                                {{ doc.state }}
                             </span>
                         </UBadge>
 
@@ -460,7 +460,7 @@ const accordionItems = [
                             <div id="comments">
                                 <DocumentComments
                                     :document-id="documentId"
-                                    :closed="doc?.closed"
+                                    :closed="doc.closed"
                                     :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
                                     @counted="commentCount = $event"
                                     @new-comment="commentCount && commentCount++"

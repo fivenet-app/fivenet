@@ -6,6 +6,7 @@ import { useCompletorStore } from '~/store/completor';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import DatePicker from '~/components/partials/DatePicker.vue';
+import { conductTypesToBGColor } from './helpers';
 
 const props = defineProps<{
     entry?: ConductEntry;
@@ -157,7 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             }}</span>
                                         </template>
                                         <template #option="{ option }">
-                                            <span class="truncate">{{
+                                            <span class="truncate" :class="conductTypesToBGColor(option.status)">{{
                                                 $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
                                             }}</span>
                                         </template>

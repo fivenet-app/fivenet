@@ -138,20 +138,23 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                 {{ $t('common.location') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <span class="block">
-                                    {{ $t('common.postal') }}:
-                                    {{ dispatch.postal ?? $t('common.na') }}
-                                </span>
-                                <UButton
-                                    v-if="dispatch.x && dispatch.y"
-                                    size="xs"
-                                    variant="link"
-                                    icon="i-mdi-map-marker"
-                                    @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
-                                >
-                                    {{ $t('common.go_to_location') }}
-                                </UButton>
-                                <span v-else>{{ $t('common.no_location') }}</span>
+                                <div class="sm:inline-flex sm:flex-row sm:gap-2">
+                                    <span class="block">
+                                        {{ $t('common.postal') }}:
+                                        {{ dispatch.postal ?? $t('common.na') }}
+                                    </span>
+                                    <UButton
+                                        v-if="dispatch.x && dispatch.y"
+                                        size="xs"
+                                        variant="link"
+                                        icon="i-mdi-map-marker"
+                                        :padded="false"
+                                        @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                                    >
+                                        {{ $t('common.go_to_location') }}
+                                    </UButton>
+                                    <span v-else>{{ $t('common.no_location') }}</span>
+                                </div>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -261,25 +264,28 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                 {{ $t('common.location') }}
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <span class="block">
-                                    {{ $t('common.postal') }}:
-                                    {{ dispatch.status?.postal ?? $t('common.na') }}
-                                </span>
-                                <UButton
-                                    v-if="dispatch.status?.x && dispatch.status?.y"
-                                    size="xs"
-                                    variant="link"
-                                    icon="i-mdi-map-marker"
-                                    @click="
-                                        $emit('goto', {
-                                            x: dispatch.status?.x,
-                                            y: dispatch.status?.y,
-                                        })
-                                    "
-                                >
-                                    {{ $t('common.go_to_location') }}
-                                </UButton>
-                                <span v-else>{{ $t('common.no_location') }}</span>
+                                <div class="sm:inline-flex sm:flex-row sm:gap-2">
+                                    <span class="block">
+                                        {{ $t('common.postal') }}:
+                                        {{ dispatch.status?.postal ?? $t('common.na') }}
+                                    </span>
+                                    <UButton
+                                        v-if="dispatch.status?.x && dispatch.status?.y"
+                                        size="xs"
+                                        variant="link"
+                                        icon="i-mdi-map-marker"
+                                        :padded="false"
+                                        @click="
+                                            $emit('goto', {
+                                                x: dispatch.status?.x,
+                                                y: dispatch.status?.y,
+                                            })
+                                        "
+                                    >
+                                        {{ $t('common.go_to_location') }}
+                                    </UButton>
+                                    <span v-else>{{ $t('common.no_location') }}</span>
+                                </div>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

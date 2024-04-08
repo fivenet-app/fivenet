@@ -38,55 +38,64 @@ async function deleteMarker(id: string): Promise<void> {
 
 <template>
     <LPopup :options="{ closeButton: true }">
-        <div class="mb-1 flex items-center gap-2">
-            <UButton
-                v-if="marker.info?.x && marker.info?.y"
-                variant="link"
-                icon="i-mdi-map-marker"
-                @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
-            >
-                {{ $t('common.mark') }}
-            </UButton>
-            <UButton
-                v-if="can('LivemapperService.DeleteMarker')"
-                :title="$t('common.delete')"
-                variant="link"
-                icon="i-mdi-trash-can"
-                @click="
-                    modal.open(ConfirmModal, {
-                        confirm: async () => deleteMarker(marker.info!.id),
-                    })
-                "
-            >
-                {{ $t('common.delete') }}
-            </UButton>
+        <div class="flex flex-col gap-2">
+            <div class="grid grid-cols-2 gap-2">
+                <UButton
+                    v-if="marker.info?.x && marker.info?.y"
+                    variant="link"
+                    icon="i-mdi-map-marker"
+                    @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
+                >
+                    <span class="truncate">
+                        {{ $t('common.mark') }}
+                    </span>
+                </UButton>
+
+                <UButton
+                    v-if="can('LivemapperService.DeleteMarker')"
+                    :title="$t('common.delete')"
+                    variant="link"
+                    icon="i-mdi-trash-can"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteMarker(marker.info!.id),
+                        })
+                    "
+                >
+                    <span class="truncate">
+                        {{ $t('common.delete') }}
+                    </span>
+                </UButton>
+            </div>
+
+            <span class="font-semibold"> {{ $t('common.marker') }}: {{ marker.info?.name }} </span>
+
+            <ul role="list">
+                <li>
+                    <span class="font-semibold">{{ $t('common.job') }}:</span>
+                    {{ marker.info?.jobLabel ?? $t('common.na') }}
+                </li>
+                <li>
+                    <span class="font-semibold">{{ $t('common.description') }}:</span>
+                    {{ marker.info?.description ?? $t('common.na') }}
+                </li>
+                <li class="inline-flex gap-1">
+                    <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
+                    <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" />
+                    <span v-else>{{ $t('common.na') }}</span>
+                </li>
+                <li class="inline-flex gap-1">
+                    <span class="flex-initial">
+                        <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
+                    </span>
+                    <span class="flex-1">
+                        <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
+                        <template v-else>
+                            {{ $t('common.unknown') }}
+                        </template>
+                    </span>
+                </li>
+            </ul>
         </div>
-        <span class="font-semibold"> {{ $t('common.marker') }}: {{ marker.info?.name }} </span>
-        <ul role="list" class="flex flex-col">
-            <li>
-                <span class="font-semibold">{{ $t('common.job') }}:</span>
-                {{ marker.info?.jobLabel ?? $t('common.na') }}
-            </li>
-            <li>
-                <span class="font-semibold">{{ $t('common.description') }}:</span>
-                {{ marker.info?.description ?? $t('common.na') }}
-            </li>
-            <li class="inline-flex gap-1">
-                <span class="font-semibold">{{ $t('common.expires_at') }}:</span>
-                <GenericTime v-if="marker.expiresAt" :value="marker.expiresAt" />
-                <span v-else>{{ $t('common.na') }}</span>
-            </li>
-            <li class="inline-flex gap-1">
-                <span class="flex-initial">
-                    <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                </span>
-                <span class="flex-1">
-                    <CitizenInfoPopover v-if="marker.creator" :user="marker.creator" />
-                    <template v-else>
-                        {{ $t('common.unknown') }}
-                    </template>
-                </span>
-            </li>
-        </ul>
     </LPopup>
 </template>

@@ -20,7 +20,7 @@ const { livemap } = storeToRefs(settingsStore);
                 </div>
             </template>
 
-            <UForm :schema="{}" :state="{}">
+            <UForm :schema="undefined" :state="{}">
                 <UFormGroup name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">
                     <UToggle v-model="livemap.centerSelectedMarker">
                         <span class="sr-only">{{ $t('components.livemap.center_selected_marker') }}</span>

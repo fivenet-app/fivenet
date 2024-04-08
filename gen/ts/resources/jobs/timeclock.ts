@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
+import { Colleague } from "./colleagues";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.jobs.TimeclockEntry
@@ -29,9 +29,9 @@ export interface TimeclockEntry {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 4;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 4;
      */
-    user?: UserShort;
+    user?: Colleague;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 5;
      */
@@ -98,7 +98,7 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "date", kind: "message", T: () => Timestamp },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "user", kind: "message", T: () => UserShort },
+            { no: 4, name: "user", kind: "message", T: () => Colleague },
             { no: 5, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "end_time", kind: "message", T: () => Timestamp },
             { no: 7, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
@@ -127,8 +127,8 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort user */ 4:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                case /* optional resources.jobs.Colleague user */ 4:
+                    message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* optional resources.timestamp.Timestamp start_time */ 5:
                     message.startTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startTime);
@@ -160,9 +160,9 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 4; */
+        /* optional resources.jobs.Colleague user = 4; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp start_time = 5; */
         if (message.startTime)
             Timestamp.internalBinaryWrite(message.startTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();

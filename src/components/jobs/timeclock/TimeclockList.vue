@@ -1,22 +1,22 @@
 <script lang="ts" setup>
-import { CalendarIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
 import { format } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
-import TimeclockListEntry from '~/components/jobs/timeclock/TimeclockListEntry.vue';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import { getWeekNumber } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
 import DatePicker from '~/components/partials/DatePicker.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import Pagination from '~/components/partials/Pagination.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
 
 const completorStore = useCompletorStore();
 
@@ -46,7 +46,12 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(
     `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
@@ -83,20 +88,24 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     }
 }
 
-type GroupedTimeClockEntries = { date: Date; key: string; entries: TimeclockEntry[] }[];
+type GroupTimeClockEntry = { date?: Date; entry: TimeclockEntry }[];
+
 const grouped = computed(() => {
-    const groups: GroupedTimeClockEntries = [];
+    const groups: GroupTimeClockEntry = [];
+
     data.value?.entries.forEach((e) => {
         const date = toDate(e.date);
-        const idx = groups.findIndex((g) => g.key === date.toString());
+        const idx = groups.findIndex((g) => g.date === date);
         if (idx === -1) {
             groups.push({
-                date,
-                entries: [e],
-                key: date.toString(),
+                date: date,
+                entry: e,
             });
         } else {
-            groups[idx].entries.push(e);
+            groups.push({
+                date: date,
+                entry: e,
+            });
         }
     });
 
@@ -153,6 +162,32 @@ function updateDates(): void {
     query.value.to = previousDay.value;
 }
 
+function charsGetDisplayValue(chars: UserShort[]): string {
+    const cs: string[] = [];
+    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
+
+    return cs.join(', ');
+}
+
+const columns = computed(() =>
+    [
+        !query.value.perDay
+            ? {
+                  key: 'date',
+                  label: t('common.date'),
+              }
+            : undefined,
+        {
+            key: 'name',
+            label: t('common.name'),
+        },
+        {
+            key: 'time',
+            label: t('common.time'),
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
 const input = ref<{ input: HTMLInputElement }>();
 
 defineShortcuts({
@@ -164,10 +199,10 @@ defineShortcuts({
 
 <template>
     <div>
-        <UForm :schema="{}" :state="{}" @submit="refresh()">
+        <UForm :schema="undefined" :state="{}" @submit="refresh()">
             <UDashboardToolbar>
                 <template #default>
-                    <div class="flex w-full flex-col">
+                    <div class="flex w-full flex-col gap-2">
                         <div class="flex w-full flex-col">
                             <UButton
                                 v-if="can('JobsTimeclockService.ListInactiveEmployees')"
@@ -181,8 +216,9 @@ defineShortcuts({
                             <div class="flex flex-row gap-2">
                                 <UFormGroup v-if="canAccessAll" class="flex-1" name="user" :label="$t('common.colleague', 2)">
                                     <UInputMenu
-                                        v-model="query.user"
                                         ref="input"
+                                        v-model="query.user_ids"
+                                        nullable
                                         :search="
                                             async (query: string) => {
                                                 usersLoading = true;
@@ -197,9 +233,7 @@ defineShortcuts({
                                         :search-attributes="['firstname', 'lastname']"
                                         block
                                         :placeholder="
-                                            query.user
-                                                ? `${query.user?.firstname} ${query.user?.lastname} (${query.user?.dateofbirth})`
-                                                : $t('common.owner')
+                                            query.user_ids ? charsGetDisplayValue(query.user_ids) : $t('common.owner')
                                         "
                                         trailing
                                         by="userId"
@@ -263,33 +297,31 @@ defineShortcuts({
                             </div>
                         </div>
 
-                        <div v-if="query.perDay" class="flex flex-row gap-4 pt-2">
-                            <div class="flex-1">
-                                <UButton block :disabled="futureDay > today" @click="dayForward()">
-                                    <ChevronLeftIcon class="size-5" />
-                                    {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
-                                </UButton>
-                            </div>
+                        <div v-if="query.perDay" class="flex flex-row gap-2">
+                            <UButton
+                                block
+                                class="flex-1"
+                                :disabled="futureDay > today"
+                                icon="i-mdi-chevron-left"
+                                @click="dayForward()"
+                            >
+                                {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
+                            </UButton>
 
-                            <div class="flex-initial">
-                                <UButton
-                                    disabled
-                                    class="disabled relative flex w-full cursor-pointer flex-col place-content-end items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
-                                >
-                                    <span class="inline-flex flex-row items-center gap-1">
-                                        <CalendarIcon class="size-5" />
-                                        {{ $d(currentDay, 'date') }}
-                                    </span>
-                                    <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
-                                </UButton>
-                            </div>
+                            <UButton
+                                disabled
+                                icon="i-mdi-calendar"
+                                class="flex flex-initial cursor-pointer flex-col place-content-end items-center"
+                            >
+                                <span>
+                                    {{ $d(currentDay, 'date') }}
+                                </span>
+                                <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
+                            </UButton>
 
-                            <div class="flex-1">
-                                <UButton block @click="dayBackwards()">
-                                    {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
-                                    <ChevronRightIcon class="size-5" />
-                                </UButton>
-                            </div>
+                            <UButton class="flex-1" block trailing-icon="i-mdi-chevron-right" @click="dayBackwards()">
+                                {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
+                            </UButton>
                         </div>
                     </div>
                 </template>
@@ -298,75 +330,77 @@ defineShortcuts({
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.timeclock', 2)])" />
                         <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.timeclock', 2)])"
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
                             :retry="refresh"
                         />
-                        <DataNoDataBlock
-                            v-else-if="data && data.entries && data.entries.length === 0"
-                            :message="$t('components.citizens.CitizensList.no_citizens')"
-                        />
                         <template v-else>
-                            <GenericTable class="min-w-full divide-y divide-base-600">
-                                <template #thead>
-                                    <tr>
-                                        <th
-                                            v-if="!query.perDay"
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1"
-                                        >
-                                            {{ $t('common.date') }}
-                                        </th>
-                                        <th
-                                            v-if="
-                                                query.user_ids === undefined ||
-                                                query.user_ids.length === 0 ||
-                                                query.user_ids?.length >= 1
-                                            "
-                                            scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold"
-                                        >
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                    </tr>
+                            <UTable
+                                :loading="loading"
+                                :columns="columns"
+                                :rows="grouped"
+                                :empty-state="{
+                                    icon: 'i-mdi-timeline-clock',
+                                    label: $t('common.not_found', [$t('common.entry', 2)]),
+                                }"
+                            >
+                                <template #date-data="{ row: entry }">
+                                    <div class="inline-flex items-center">
+                                        {{ $d(entry.date, 'date') }}
+                                    </div>
                                 </template>
-                                <template #tbody>
-                                    <template v-for="group in grouped" :key="group.key">
-                                        <TimeclockListEntry
-                                            v-for="(entry, idx) in group.entries"
-                                            :key="entry.userId + toDate(entry.date).toString()"
-                                            :entry="entry"
-                                            :first="idx === 0 ? group.date : undefined"
-                                            :show-date="!query.perDay"
+
+                                <template #name-data="{ row: entry }">
+                                    <div class="inline-flex items-center gap-1">
+                                        <ProfilePictureImg
+                                            :url="entry.entry.user?.avatar?.url"
+                                            :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
+                                            size="sm"
                                         />
-                                    </template>
+
+                                        <ColleagueInfoPopover :user="entry.entry.user" />
+                                    </div>
                                 </template>
-                            </GenericTable>
+
+                                <template #time-data="{ row: entry }">
+                                    <div class="text-right">
+                                        {{
+                                            entry.entry.spentTime > 0
+                                                ? fromSecondsToFormattedDuration(
+                                                      parseFloat(
+                                                          (
+                                                              (Math.round(entry.entry.spentTime * 100) / 100) *
+                                                              60 *
+                                                              60
+                                                          ).toPrecision(2),
+                                                      ),
+                                                      { seconds: false },
+                                                  )
+                                                : ''
+                                        }}
+
+                                        <UBadge v-if="entry.entry.startTime !== undefined" color="green">
+                                            {{ $t('common.active') }}
+                                        </UBadge>
+                                    </div>
+                                </template>
+                            </UTable>
+
+                            <Pagination v-model="page" :pagination="data?.pagination" />
                         </template>
-
-                        <Pagination v-model="page" :pagination="data?.pagination" />
                     </div>
                 </div>
             </div>
 
-            <div v-if="data && data.stats" class="mb-4 flow-root">
-                <div class="mt-2 sm:flex sm:items-center">
-                    <div class="sm:flex-auto">
-                        <TimeclockStatsBlock
-                            :stats="data.stats"
-                            :weekly="data.weekly"
-                            :hide-header="true"
-                            :failed="error !== null"
-                            @refresh="refresh()"
-                        />
-                    </div>
-                </div>
-            </div>
+            <TimeclockStatsBlock
+                v-if="data && data.stats"
+                :stats="data.stats"
+                :weekly="data.weekly"
+                :hide-header="true"
+                :failed="error !== null"
+                :loading="loading"
+            />
         </UForm>
     </div>
 </template>

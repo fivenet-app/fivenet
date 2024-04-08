@@ -102,6 +102,7 @@ const columns = [
                         >
                             <span class="sr-only">{{ $t('common.mark') }}</span>
                         </UButton>
+
                         <UButton
                             v-if="can('LivemapperService.DeleteMarker')"
                             :title="$t('common.delete')"

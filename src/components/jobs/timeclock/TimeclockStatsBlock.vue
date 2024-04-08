@@ -10,11 +10,14 @@ const props = withDefaults(
         weekly?: TimeclockWeeklyStats[];
         hideHeader?: boolean;
         failed?: boolean;
+        loading?: boolean;
     }>(),
     {
         stats: null,
         weekly: undefined,
         hideHeader: false,
+        failed: false,
+        loading: false,
     },
 );
 
@@ -52,8 +55,19 @@ onBeforeMount(async () => updateStats());
 <template>
     <UCard>
         <template v-if="!hideHeader" #header>
-            <h2 class="text-2xl font-semibold">
+            <h2 class="inline-flex w-full items-center justify-between text-2xl font-semibold">
                 {{ $t('common.timeclock') }}
+
+                <UButton
+                    variant="link"
+                    trailing-icon="i-mdi-refresh"
+                    :title="$t('common.refresh')"
+                    :disabled="loading"
+                    :loading="loading"
+                    @click="$emit('refresh')"
+                >
+                    {{ $t('common.refresh') }}
+                </UButton>
             </h2>
         </template>
 
@@ -66,11 +80,11 @@ onBeforeMount(async () => updateStats());
                     <UCard v-for="stat in statsData" :key="stat.name">
                         <p class="text-sm font-medium leading-6">{{ $t(stat.name) }}</p>
                         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
-                            <template v-if="stat.value === undefined">
-                                <UIcon name="i-mdi-loading" class="size-5 animate-spin" />
-                            </template>
-                            <template v-else-if="failed">
+                            <template v-if="failed">
                                 <UIcon name="i-mdi-alert-circle" class="size-5" />
+                            </template>
+                            <template v-else-if="stat.value === undefined">
+                                <UIcon name="i-mdi-loading" class="size-5 animate-spin" />
                             </template>
                             <template v-else>
                                 {{
@@ -91,6 +105,7 @@ onBeforeMount(async () => updateStats());
                 </h3>
 
                 <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
+
                 <DataNoDataBlock v-else-if="weekly === undefined" />
                 <TimeclockStatsChart v-else :stats="weekly" />
             </div>

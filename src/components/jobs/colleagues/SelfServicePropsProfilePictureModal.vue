@@ -117,36 +117,29 @@ const nuiAvailable = ref(isNUIAvailable());
                 </template>
 
                 <div>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="avatar" class="block text-sm font-medium leading-6">
-                                {{ $t('common.avatar') }}
-                            </label>
-                            <template v-if="nuiAvailable">
-                                <p class="text-sm">
-                                    {{ $t('system.not_supported_on_tablet.title') }}
-                                </p>
-                            </template>
-                            <template v-else>
-                                <VeeField
-                                    v-slot="{ handleChange, handleBlur }"
-                                    name="avatar"
-                                    :placeholder="$t('common.image')"
-                                    :label="$t('common.image')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                >
-                                    <UInput
-                                        type="file"
-                                        accept="image/jpeg,image/jpg,image/png"
-                                        @change="handleChange"
-                                        @blur="handleBlur"
-                                    />
-                                </VeeField>
-                                <VeeErrorMessage name="avatar" as="p" class="mt-2 text-sm text-error-400" />
-                            </template>
-                        </div>
+                    <div>
+                        <UFormGroup
+                            name="avatar"
+                            class="flex-1"
+                            :label="$t('common.avatar')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <p v-if="nuiAvailable" class="text-sm">
+                                {{ $t('system.not_supported_on_tablet.title') }}
+                            </p>
+                            <UInput
+                                v-else
+                                type="file"
+                                name="avatar"
+                                :placeholder="$t('common.image')"
+                                accept="image/jpeg,image/jpg,image/png"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
                     </div>
+
                     <div class="flex flex-1 items-center">
                         <ProfilePictureImg
                             class="m-auto"
@@ -159,6 +152,22 @@ const nuiAvailable = ref(isNUIAvailable());
                 </div>
 
                 <template #footer>
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
+                    </UButton>
+
+                    <UButton
+                        type="submit"
+                        block
+                        color="red"
+                        class="flex-1"
+                        :disabled="nuiAvailable || !canSubmit || !activeChar?.avatar"
+                        :loading="!canSubmit"
+                        @click="state.reset = true"
+                    >
+                        {{ $t('common.reset') }}
+                    </UButton>
+
                     <UButtonGroup class="inline-flex w-full">
                         <UButton
                             type="submit"
@@ -168,22 +177,6 @@ const nuiAvailable = ref(isNUIAvailable());
                             :loading="!canSubmit"
                         >
                             {{ $t('common.save') }}
-                        </UButton>
-
-                        <UButton
-                            type="submit"
-                            block
-                            color="red"
-                            class="flex-1"
-                            :disabled="nuiAvailable || !canSubmit || !activeChar?.avatar"
-                            :loading="!canSubmit"
-                            @click="state.reset = true"
-                        >
-                            {{ $t('common.reset') }}
-                        </UButton>
-
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
                         </UButton>
                     </UButtonGroup>
                 </template>

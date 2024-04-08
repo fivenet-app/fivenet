@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { TimerIcon } from 'mdi-vue3';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
@@ -36,17 +35,19 @@ withDefaults(
         </span>
     </template>
     <UPopover v-else>
-        <UButton variant="link" :padded="false" class="inline-flex items-center" :class="buttonClass">
+        <UButton variant="link" :padded="false" class="inline-flex items-center gap-1" :class="buttonClass">
             <slot name="before" />
+
             <span :class="textClass">
                 <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
                 <template v-else>
                     {{ unit.initials }}
                 </template>
-                <template v-if="assignment?.expiresAt">
-                    <TimerIcon class="size-4 fill-warn-600" />
-                </template>
             </span>
+            <template v-if="assignment?.expiresAt">
+                <UIcon name="i-mdi-timer" class="size-4 text-warn-600" />
+            </template>
+
             <slot name="after" />
         </UButton>
 

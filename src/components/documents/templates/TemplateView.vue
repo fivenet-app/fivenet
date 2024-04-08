@@ -172,7 +172,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
 
-        <div v-else-if="template" class="px-1 sm:px-2 lg:px-4">
+        <div v-else-if="template" class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
                 <UButtonGroup class="inline-flex w-full">
                     <UButton

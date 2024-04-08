@@ -90,12 +90,12 @@ const columns = [
 
 <template>
     <div class="py-2">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div class="flex flex-col lg:flex-row">
                 <div class="mt-2 flow-root basis-1/3">
                     <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
                         <div class="sm:flex-auto">
-                            <UForm :schema="{}" :state="{}" @submit="refresh()">
+                            <UForm :schema="undefined" :state="{}" @submit="refresh()">
                                 <div class="flex flex-row gap-2">
                                     <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
                                         <USelectMenu v-model="selectedJob" :options="availableJobs" by="label">

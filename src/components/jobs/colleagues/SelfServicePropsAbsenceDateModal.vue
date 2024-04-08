@@ -101,7 +101,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :state="state" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
@@ -161,8 +161,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                            {{ $t('common.save') }}
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
                         </UButton>
 
                         <UButton
@@ -177,8 +177,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('common.reset') }}
                         </UButton>
 
-                        <UButton color="black" block class="flex-1" @click="isOpen = false">
-                            {{ $t('common.close', 1) }}
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

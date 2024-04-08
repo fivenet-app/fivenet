@@ -170,7 +170,7 @@ const columns = [
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="{}" :state="{}" class="w-full" @submit="refresh()">
+            <UForm :schema="undefined" :state="{}" class="w-full" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
                     <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
                         <UPopover :popper="{ placement: 'bottom-start' }">

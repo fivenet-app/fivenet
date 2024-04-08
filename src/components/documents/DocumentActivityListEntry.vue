@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ChevronDownIcon } from 'mdi-vue3';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -117,7 +116,10 @@ function getDocAtivityIcon(activityType: DocActivityType): string {
                                     {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
-                                    <ChevronDownIcon :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']" />
+                                    <UIcon
+                                        name="i-mdi-chevron-down"
+                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
+                                    />
                                 </span>
                             </h3>
                             <p class="text-sm text-gray-400">

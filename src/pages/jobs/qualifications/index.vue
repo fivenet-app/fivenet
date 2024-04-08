@@ -16,7 +16,7 @@ definePageMeta({
 <template>
     <div>
         <div class="py-2 pb-14">
-            <div class="px-1 sm:px-2 lg:px-4">
+            <div class="px-1 sm:px-2">
                 <div class="grid gap-2 md:grid-cols-2">
                     <QualificationsList />
 

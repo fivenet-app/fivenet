@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
@@ -12,7 +12,7 @@ message TimeclockEntry {
   string job = 1 [(validate.rules).string.max_len = 20];
   resources.timestamp.Timestamp date = 2;
   int32 user_id = 3;
-  optional resources.users.UserShort user = 4;
+  optional resources.jobs.Colleague user = 4;
   optional resources.timestamp.Timestamp start_time = 5;
   optional resources.timestamp.Timestamp end_time = 6;
   float spent_time = 7;

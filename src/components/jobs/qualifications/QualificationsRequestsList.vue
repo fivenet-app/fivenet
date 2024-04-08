@@ -63,7 +63,7 @@ watch(offset, async () => refresh());
                 </div>
             </div>
         </div>
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
             <DataErrorBlock
                 v-else-if="error"

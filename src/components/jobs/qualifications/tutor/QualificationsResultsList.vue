@@ -6,10 +6,10 @@ import type {
 } from '~~/gen/ts/services/qualifications/qualifications';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { resultStatusToTextColor } from '../helpers';
 import Pagination from '~/components/partials/Pagination.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -113,7 +113,7 @@ const columns = [
 
 <template>
     <div class="overflow-hidden">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <DataErrorBlock
                 v-if="error"
                 :title="$t('common.unable_to_load', [$t('common.qualifications', 2)])"

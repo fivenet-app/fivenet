@@ -110,7 +110,7 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="{}" :state="{}" class="w-full" @submit="refresh()">
+            <UForm :schema="undefined" :state="{}" class="w-full" @submit="refresh()">
                 <UFormGroup name="search" :label="$t('common.search')">
                     <UInput
                         v-model="query.title"

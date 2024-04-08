@@ -49,7 +49,7 @@ function updateLaw(event: { id: string; law: Law }): void {
 
 <template>
     <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
                 <div class="w-full sm:flex-auto">
                     <UButton @click="addLawBook">

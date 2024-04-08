@@ -1,4 +1,22 @@
+import type { BadgeColor } from '#ui/types';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
+
+export function conductTypesToBadgeColor(status: ConductType | undefined): BadgeColor {
+    switch (status) {
+        case ConductType.NEUTRAL:
+            return 'gray';
+        case ConductType.POSITIVE:
+            return 'green';
+        case ConductType.NEGATIVE:
+            return 'red';
+        case ConductType.WARNING:
+            return 'amber';
+        case ConductType.SUSPENSION:
+            return 'sky';
+        default:
+            return 'white';
+    }
+}
 
 export function conductTypesToBGColor(status: ConductType | undefined): string {
     switch (status) {
@@ -14,39 +32,5 @@ export function conductTypesToBGColor(status: ConductType | undefined): string {
             return 'bg-info-500/10';
         default:
             return 'bg-background/10';
-    }
-}
-
-export function conductTypesToRingColor(status: ConductType | undefined): string {
-    switch (status) {
-        case ConductType.NEUTRAL:
-            return 'ring-base-600/20';
-        case ConductType.POSITIVE:
-            return 'ring-success-600/20';
-        case ConductType.NEGATIVE:
-            return 'ring-error-600/20';
-        case ConductType.WARNING:
-            return 'ring-warn-600/20';
-        case ConductType.SUSPENSION:
-            return 'ring-info-500/20';
-        default:
-            return 'ring-base-500/20';
-    }
-}
-
-export function conductTypesToTextColor(status: ConductType | undefined): string {
-    switch (status) {
-        case ConductType.NEUTRAL:
-            return 'text-base-400';
-        case ConductType.POSITIVE:
-            return 'text-success-400';
-        case ConductType.NEGATIVE:
-            return 'text-error-400';
-        case ConductType.WARNING:
-            return 'text-warn-400';
-        case ConductType.SUSPENSION:
-            return 'text-info-400';
-        default:
-            return 'text-base-400';
     }
 }

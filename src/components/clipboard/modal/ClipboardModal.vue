@@ -30,12 +30,12 @@ const clipboardStore = useClipboardStore();
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" color="red" @click="clipboardStore.clear()">
-                        {{ $t('components.clipboard.clipboard_modal.clear') }}
-                    </UButton>
-
                     <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
+                    </UButton>
+
+                    <UButton block class="flex-1" color="red" @click="clipboardStore.clear()">
+                        {{ $t('components.clipboard.clipboard_modal.clear') }}
                     </UButton>
                 </UButtonGroup>
             </template>

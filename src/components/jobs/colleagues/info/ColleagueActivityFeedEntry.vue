@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
 import { JobsUserActivityType, type JobsUserActivity } from '~~/gen/ts/resources/jobs/colleagues';
+import ColleagueInfoPopover from '../ColleagueInfoPopover.vue';
 
 withDefaults(
     defineProps<{
@@ -59,13 +59,13 @@ withDefaults(
                     <template v-if="showTargetUser">
                         <div class="inline-flex items-center gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.colleague') }}:</span>
-                            <CitizenInfoPopover :user="activity.targetUser" />
+                            <ColleagueInfoPopover :user="activity.targetUser" />
                         </div>
                     </template>
                 </p>
                 <p class="inline-flex items-center gap-1 text-sm">
                     <span>{{ $t('common.created_by') }}</span>
-                    <CitizenInfoPopover :user="activity.sourceUser" />
+                    <ColleagueInfoPopover :user="activity.sourceUser" :hide-props="true" />
                 </p>
             </div>
         </div>

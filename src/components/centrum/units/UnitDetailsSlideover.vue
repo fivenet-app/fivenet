@@ -116,20 +116,23 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             {{ $t('common.location') }}
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                            <span class="block">
-                                {{ $t('common.postal') }}:
-                                {{ unit.status?.postal ?? $t('common.na') }}
-                            </span>
-                            <UButton
-                                v-if="unit.status?.x && unit.status?.y"
-                                size="xs"
-                                variant="link"
-                                icon="i-mdi-map-marker"
-                                @click="$emit('goto', { x: unit.status?.x, y: unit.status?.y })"
-                            >
-                                {{ $t('common.go_to_location') }}
-                            </UButton>
-                            <span v-else>{{ $t('common.no_location') }}</span>
+                            <div class="sm:inline-flex sm:flex-row sm:gap-2">
+                                <span class="block">
+                                    {{ $t('common.postal') }}:
+                                    {{ unit.status?.postal ?? $t('common.na') }}
+                                </span>
+                                <UButton
+                                    v-if="unit.status?.x && unit.status?.y"
+                                    size="xs"
+                                    variant="link"
+                                    icon="i-mdi-map-marker"
+                                    :padded="false"
+                                    @click="$emit('goto', { x: unit.status?.x, y: unit.status?.y })"
+                                >
+                                    {{ $t('common.go_to_location') }}
+                                </UButton>
+                                <span v-else>{{ $t('common.no_location') }}</span>
+                            </div>
                         </dd>
                     </div>
                     <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -162,7 +165,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                                 text-class="text-gray-300"
                                             >
                                                 <template #before>
-                                                    <UIcon name="i-mdi-account" class="mr-1 size-5 shrink-0 text-base-300" />
+                                                    <UIcon name="i-mdi-account" class="mr-1 size-5 shrink-0" />
                                                 </template>
                                             </CitizenInfoPopover>
                                         </div>

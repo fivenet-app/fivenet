@@ -1,25 +1,37 @@
 <script lang="ts" setup>
-import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
-import { ClipboardUser } from '~/store/clipboard';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import { useAuthStore } from '~/store/auth';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 
 withDefaults(
     defineProps<{
-        user: ClipboardUser | User | UserShort | undefined;
+        user: Colleague | undefined;
         noPopover?: boolean;
         textClass?: unknown;
         buttonClass?: unknown;
         showAvatar?: boolean;
         trailing?: boolean;
+        hideProps?: boolean;
     }>(),
     {
         textClass: '' as any,
         buttonClass: '' as any,
         showAvatar: undefined,
         trailing: true,
+        hideProps: false,
     },
 );
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
+const today = new Date();
+today.setHours(0);
+today.setMinutes(0);
+today.setSeconds(0);
+today.setMilliseconds(0);
 </script>
 
 <template>
@@ -33,7 +45,14 @@ withDefaults(
     <template v-else-if="noPopover">
         <span class="inline-flex items-center">
             <slot name="before" />
-            <UButton variant="link" :padded="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
+            <UButton
+                variant="link"
+                :padded="false"
+                :to="{
+                    name: activeChar?.job === user.job ? 'jobs-colleagues-id' : 'citizens-id',
+                    params: { id: user.userId ?? 0 },
+                }"
+            >
                 {{ user.firstname }} {{ user.lastname }}
             </UButton>
             <span v-if="user.phoneNumber">
@@ -62,7 +81,10 @@ withDefaults(
                         v-if="can('CitizenStoreService.ListCitizens')"
                         variant="link"
                         icon="i-mdi-account"
-                        :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }"
+                        :to="{
+                            name: activeChar?.job === user.job ? 'jobs-colleagues-id' : 'citizens-id',
+                            params: { id: user.userId ?? 0 },
+                        }"
                     >
                         {{ $t('common.profile') }}
                     </UButton>
@@ -80,7 +102,14 @@ withDefaults(
                         <ProfilePictureImg :url="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
                     </div>
                     <div>
-                        <UButton variant="link" :padded="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
+                        <UButton
+                            variant="link"
+                            :padded="false"
+                            :to="{
+                                name: activeChar?.job === user.job ? 'jobs-colleagues-id' : 'citizens-id',
+                                params: { id: user.userId ?? 0 },
+                            }"
+                        >
                             {{ user.firstname }} {{ user.lastname }}
                         </UButton>
 
@@ -94,6 +123,24 @@ withDefaults(
                             <span class="font-semibold">{{ $t('common.date_of_birth') }}:</span>
                             {{ user.dateofbirth }}
                         </p>
+
+                        <template v-if="!hideProps">
+                            <div
+                                v-if="user.props?.absenceEnd && toDate(user.props?.absenceEnd).getTime() >= today.getTime()"
+                                class="text-sm font-normal"
+                            >
+                                <span class="font-semibold">{{ $t('common.absent') }}:</span>
+                                <dl class="text-sm font-normal">
+                                    <dd class="truncate">
+                                        {{ $t('common.from') }}:
+                                        <GenericTime :value="user.props?.absenceBegin" type="date" />
+                                    </dd>
+                                    <dd class="truncate">
+                                        {{ $t('common.to') }}: <GenericTime :value="user.props?.absenceEnd" type="date" />
+                                    </dd>
+                                </dl>
+                            </div>
+                        </template>
                     </div>
                 </div>
             </div>

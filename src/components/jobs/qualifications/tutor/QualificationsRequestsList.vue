@@ -8,10 +8,10 @@ import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications
 import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
 import QualificationResultTutorModal from '~/components/jobs/qualifications/tutor/QualificationResultTutorModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { requestStatusToTextColor } from '../helpers';
 import Pagination from '~/components/partials/Pagination.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -116,7 +116,7 @@ const columns = [
 
 <template>
     <div class="overflow-hidden">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.request', 2)])" :retry="refresh" />
 
             <template v-else>
@@ -159,6 +159,7 @@ const columns = [
                                 })
                             "
                         />
+
                         <UButton
                             v-if="request.status !== RequestStatus.ACCEPTED"
                             variant="link"
@@ -172,6 +173,7 @@ const columns = [
                                 })
                             "
                         />
+
                         <UButton
                             v-if="request.status === RequestStatus.ACCEPTED"
                             variant="link"
@@ -185,6 +187,7 @@ const columns = [
                                 })
                             "
                         />
+
                         <UButton
                             v-if="can('QualificationsService.DeleteQualificationReq')"
                             variant="link"

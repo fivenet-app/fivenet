@@ -143,7 +143,7 @@ defineShortcuts({
     <div>
         <UDashboardToolbar>
             <template #default>
-                <UForm :schema="{}" :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
+                <UForm :schema="undefined" :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
                     <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
                         <UInput
                             v-model="query.licensePlate"

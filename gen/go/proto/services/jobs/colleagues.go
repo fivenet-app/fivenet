@@ -71,7 +71,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		FROM(
 			tUser.
 				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUser.ID),
+					tJobsUserProps.UserID.EQ(tUser.ID).
+						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
 		WHERE(condition)
@@ -95,10 +96,10 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		SELECT(
 			tUser.ID,
 			tUser.Identifier,
-			tUser.Firstname,
-			tUser.Lastname,
 			tUser.Job,
 			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("colleague.avatar"),
@@ -113,7 +114,8 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 					tUserProps.UserID.EQ(tUser.ID),
 				).
 				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUser.ID),
+					tJobsUserProps.UserID.EQ(tUser.ID).
+						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
 		WHERE(condition).
@@ -140,7 +142,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	return resp, nil
 }
 
-func (s *Server) getColleague(ctx context.Context, userId int32) (*jobs.Colleague, error) {
+func (s *Server) getColleague(ctx context.Context, job string, userId int32) (*jobs.Colleague, error) {
 	tUser := tUser.AS("colleague")
 	stmt := tUser.
 		SELECT(
@@ -163,7 +165,8 @@ func (s *Server) getColleague(ctx context.Context, userId int32) (*jobs.Colleagu
 					tUserProps.UserID.EQ(tUser.ID),
 				).
 				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUser.ID),
+					tJobsUserProps.UserID.EQ(tUser.ID).
+						AND(tUser.Job.EQ(jet.String(job))),
 				),
 		).
 		WHERE(
@@ -205,7 +208,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 		fields = fieldsAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, req.UserId)
+	targetUser, err := s.getColleague(ctx, userInfo.Job, req.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -218,7 +221,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	colleague, err := s.getColleague(ctx, targetUser.UserId)
+	colleague, err := s.getColleague(ctx, userInfo.Job, targetUser.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -233,7 +236,7 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	colleague, err := s.getColleague(ctx, userInfo.UserId)
+	colleague, err := s.getColleague(ctx, userInfo.Job, userInfo.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -291,7 +294,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		fields = fieldsAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, req.Props.UserId)
+	targetUser, err := s.getColleague(ctx, userInfo.Job, req.Props.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -530,7 +533,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	} else {
 		userId := req.UserIds[0]
 
-		targetUser, err := s.getColleague(ctx, userId)
+		targetUser, err := s.getColleague(ctx, userInfo.Job, userId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -621,6 +624,10 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		return resp, nil
 	}
 
+	tTargetUserProps := tUserProps.AS("target_user_props")
+	tTargetJobsUserProps := tJobsUserProps.AS("fivenet_jobs_user_props")
+	tSourceUserProps := tUserProps.AS("source_user_props")
+
 	stmt := tJobsUserActivity.
 		SELECT(
 			tJobsUserActivity.ID,
@@ -637,20 +644,37 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tTargetUser.JobGrade,
 			tTargetUser.Firstname,
 			tTargetUser.Lastname,
+			tTargetUser.Dateofbirth,
+			tTargetUserProps.Avatar.AS("target_user.avatar"),
+			tTargetJobsUserProps.UserID,
+			tTargetJobsUserProps.AbsenceBegin,
+			tTargetJobsUserProps.AbsenceEnd,
 			tSourceUser.ID,
 			tSourceUser.Identifier,
 			tSourceUser.Job,
 			tSourceUser.JobGrade,
 			tSourceUser.Firstname,
 			tSourceUser.Lastname,
+			tSourceUser.Dateofbirth,
+			tSourceUserProps.Avatar.AS("source_user.avatar"),
 		).
 		FROM(
 			tJobsUserActivity.
 				INNER_JOIN(tTargetUser,
 					tTargetUser.ID.EQ(tJobsUserActivity.TargetUserID),
 				).
+				LEFT_JOIN(tTargetUserProps,
+					tTargetUserProps.UserID.EQ(tTargetUser.ID),
+				).
+				LEFT_JOIN(tTargetJobsUserProps,
+					tTargetJobsUserProps.UserID.EQ(tTargetUser.ID).
+						AND(tTargetUser.Job.EQ(jet.String(userInfo.Job))),
+				).
 				LEFT_JOIN(tSourceUser,
 					tSourceUser.ID.EQ(tJobsUserActivity.SourceUserID),
+				).
+				LEFT_JOIN(tSourceUserProps,
+					tSourceUserProps.UserID.EQ(tSourceUser.ID),
 				),
 		).
 		WHERE(condition).

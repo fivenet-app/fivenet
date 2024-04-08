@@ -16,7 +16,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useModal();
 
 const selectedUnits = ref<string[]>(props.dispatch.units.map((du) => du.unitId));
 
@@ -103,79 +103,81 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard
-            class="flex flex-1 flex-col"
-            :ui="{
-                body: {
-                    padding: 'px-1 py-2 sm:p-2',
-                },
-                ring: '',
-                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
-            }"
-        >
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
-                        {{ $t('components.centrum.assign_dispatch.title') }}:
-                        <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
-                    </h3>
-
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div>
-                <div class="flex flex-1 flex-col justify-between px-2">
-                    <template v-for="group in grouped" :key="group.key">
-                        <h3 class="mb-1 text-sm">
-                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+        <UForm :schema="undefined" :state="{}" @submit="onSubmitThrottle">
+            <UCard
+                class="flex flex-1 flex-col"
+                :ui="{
+                    body: {
+                        padding: 'px-1 py-2 sm:p-2',
+                    },
+                    ring: '',
+                    divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+                }"
+            >
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
+                            {{ $t('components.centrum.assign_dispatch.title') }}:
+                            <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
                         </h3>
-                        <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
-                            <UButton
-                                v-for="unit in group.units"
-                                :key="unit.name"
-                                :disabled="unit.users.length === 0"
-                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
-                                :class="[
-                                    unitStatusToBGColor(unit.status?.status),
-                                    unit.users.length === 0 ? 'disabled !bg-error-600' : '',
-                                ]"
-                                @click="selectUnit(unit)"
-                            >
-                                <CheckIcon v-if="selectedUnits?.findIndex((u) => u && u === unit.id) > -1" class="size-5" />
-                                <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
-                                <CancelIcon v-else class="size-5" />
 
-                                <div class="ml-0.5 flex w-full flex-col place-items-start">
-                                    <span class="font-bold">
-                                        {{ unit.initials }}
-                                    </span>
-                                    <span class="text-xs">
-                                        {{ unit.name }}
-                                    </span>
-                                    <span class="mt-1 text-xs">
-                                        <span class="block">
-                                            {{ $t('common.member', unit.users.length) }}
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
+
+                <div>
+                    <div class="flex flex-1 flex-col justify-between px-2">
+                        <template v-for="group in grouped" :key="group.key">
+                            <h3 class="mb-1 text-sm">
+                                {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                            </h3>
+                            <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
+                                <UButton
+                                    v-for="unit in group.units"
+                                    :key="unit.name"
+                                    :disabled="unit.users.length === 0"
+                                    class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
+                                    :class="[
+                                        unitStatusToBGColor(unit.status?.status),
+                                        unit.users.length === 0 ? 'disabled !bg-error-600' : '',
+                                    ]"
+                                    @click="selectUnit(unit)"
+                                >
+                                    <CheckIcon v-if="selectedUnits?.findIndex((u) => u && u === unit.id) > -1" class="size-5" />
+                                    <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
+                                    <CancelIcon v-else class="size-5" />
+
+                                    <div class="ml-0.5 flex w-full flex-col place-items-start">
+                                        <span class="font-bold">
+                                            {{ unit.initials }}
                                         </span>
-                                    </span>
-                                </div>
-                            </UButton>
-                        </div>
-                    </template>
+                                        <span class="text-xs">
+                                            {{ unit.name }}
+                                        </span>
+                                        <span class="mt-1 text-xs">
+                                            <span class="block">
+                                                {{ $t('common.member', unit.users.length) }}
+                                            </span>
+                                        </span>
+                                    </div>
+                                </UButton>
+                            </div>
+                        </template>
+                    </div>
                 </div>
-            </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                        {{ $t('common.update') }}
-                    </UButton>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.update') }}
+                        </UButton>
 
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

@@ -248,7 +248,7 @@ const accordionCategories = computed(() =>
 
 <template>
     <div class="w-full">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
             <DataNoDataBlock v-else-if="role === null" :type="$t('common.role', 2)" />

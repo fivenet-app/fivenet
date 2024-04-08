@@ -11,7 +11,7 @@ export function jobsUserActivityTypeBGColor(activityType: JobsUserActivityType |
         case JobsUserActivityType.PROMOTED:
             return '!text-green-500';
         case JobsUserActivityType.DEMOTED:
-            return '!text-orang-500';
+            return '!text-orange-500';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return '!text-info-500';

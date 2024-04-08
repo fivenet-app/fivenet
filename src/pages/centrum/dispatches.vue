@@ -104,7 +104,7 @@ defineShortcuts({
 
                     <Pane size="65">
                         <div class="mb-2 px-2">
-                            <UForm :schema="{}" :state="{}" @submit="refresh()" class="flex flex-row gap-2">
+                            <UForm :schema="undefined" :state="{}" @submit="refresh()" class="flex flex-row gap-2">
                                 <UFormGroup name="search" :label="$t('common.postal')" class="flex-1">
                                     <UInput
                                         v-model="query.postal"

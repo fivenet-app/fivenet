@@ -82,22 +82,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <div class="my-2 space-y-24">
-                        <div class="flex-1">
-                            <label for="job" class="block text-sm font-medium leading-6">
-                                {{ $t('common.reason') }}
-                            </label>
-                            <VeeField
-                                type="text"
-                                name="reason"
-                                :placeholder="$t('common.reason')"
-                                :label="$t('common.reason')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
-                        </div>
-                    </div>
+                    <UFormGroup name="reason" :label="$t('common.reason')" class="flex-1">
+                        <UInput
+                            v-model="state.reason"
+                            type="text"
+                            :placeholder="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                 </div>
 
                 <template #footer>

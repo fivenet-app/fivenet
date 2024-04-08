@@ -111,13 +111,13 @@ function charsGetDisplayValue(chars: Colleague[]): string {
 
 <template>
     <div class="py-2 pb-4">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div
                 v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
                 class="mb-4 sm:flex sm:items-center"
             >
                 <div class="sm:flex-auto">
-                    <UForm :schema="{}" :state="{}" @submit="refresh()">
+                    <UForm :schema="undefined" :state="{}" @submit="refresh()">
                         <div class="flex flex-row gap-2">
                             <div class="flex-1">
                                 <UFormGroup name="selectedUsers" :label="$t('common.colleague', 2)" class="flex-1">

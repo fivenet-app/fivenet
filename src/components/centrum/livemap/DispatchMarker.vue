@@ -66,85 +66,95 @@ const zIndexOffset = computed(() => {
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <div class="mb-1 flex flex-wrap items-center gap-2">
-                <UButton
-                    v-if="dispatch?.x && dispatch?.y"
-                    variant="link"
-                    icon="i-mdi-map-marker"
-                    :padded="false"
-                    @click="$emit('goto', { x: dispatch?.x, y: dispatch?.y })"
-                >
-                    {{ $t('common.mark') }}
-                </UButton>
+            <div class="flex flex-col gap-2">
+                <div class="grid grid-cols-2 gap-2">
+                    <UButton
+                        v-if="dispatch?.x && dispatch?.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        :padded="false"
+                        @click="$emit('goto', { x: dispatch?.x, y: dispatch?.y })"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.mark') }}
+                        </span>
+                    </UButton>
 
-                <UButton
-                    :title="$t('common.detail', 2)"
-                    variant="link"
-                    icon="i-mdi-car-emergency"
-                    :padded="false"
-                    @click="selected(dispatch.id)"
-                >
-                    {{ $t('common.detail', 2) }}
-                </UButton>
+                    <UButton
+                        :title="$t('common.detail', 2)"
+                        variant="link"
+                        icon="i-mdi-car-emergency"
+                        :padded="false"
+                        @click="selected(dispatch.id)"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.detail', 2) }}
+                        </span>
+                    </UButton>
+                </div>
 
-                <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" variant="link" :padded="false" />
+                <span class="font-semibold"
+                    >{{ $t('common.dispatch') }}:
+                    <IDCopyBadge :id="dispatch.id" prefix="DSP" variant="link" :padded="false" :hide-icon="true"
+                /></span>
+
+                <ul role="list">
+                    <li>
+                        <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
+                        {{ $d(toDate(dispatch.createdAt), 'short') }}
+                    </li>
+                    <li class="inline-flex gap-1">
+                        <span class="flex-initial">
+                            <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
+                        </span>
+                        <span class="flex-1">
+                            <template v-if="dispatch.anon">
+                                {{ $t('common.anon') }}
+                            </template>
+                            <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
+                            <template v-else>
+                                {{ $t('common.unknown') }}
+                            </template>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal ?? $t('common.na') }}
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
+                    </li>
+                    <li class="truncate">
+                        <span class="font-semibold">{{ $t('common.description') }}:</span>
+                        {{ dispatch.description ?? $t('common.na') }}
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.status') }}:</span>
+                        <span class="ml-1" :class="dispatchStatusToBGColor(dispatch.status?.status)">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+                        </span>
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
+                        <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
+                    </li>
+                    <li class="inline-flex gap-1">
+                        <span class="font-semibold">{{ $t('common.units') }}:</span>
+                        <span v-if="dispatch.units.length === 0" class="italic">{{
+                            $t('enums.centrum.StatusDispatch.UNASSIGNED')
+                        }}</span>
+                        <span v-else class="mr-1 grid grid-cols-2 gap-1">
+                            <UnitInfoPopover
+                                v-for="unit in dispatch.units"
+                                :key="unit.unitId"
+                                :unit="unit.unit"
+                                :initials-only="true"
+                                :badge="true"
+                                :assignment="unit"
+                            />
+                        </span>
+                    </li>
+                </ul>
             </div>
-
-            <ul role="list" class="flex flex-col">
-                <li>
-                    <span class="font-semibold">{{ $t('common.sent_at') }}:</span> {{ $d(toDate(dispatch.createdAt), 'short') }}
-                </li>
-                <li class="inline-flex gap-1">
-                    <span class="flex-initial">
-                        <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                    </span>
-                    <span class="flex-1">
-                        <template v-if="dispatch.anon">
-                            {{ $t('common.anon') }}
-                        </template>
-                        <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
-                        <template v-else>
-                            {{ $t('common.unknown') }}
-                        </template>
-                    </span>
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal ?? $t('common.na') }}
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
-                </li>
-                <li class="truncate">
-                    <span class="font-semibold">{{ $t('common.description') }}:</span>
-                    {{ dispatch.description ?? $t('common.na') }}
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.status') }}:</span>
-                    <span class="ml-1" :class="dispatchStatusToBGColor(dispatch.status?.status)">
-                        {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                    </span>
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
-                    <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
-                </li>
-                <li class="inline-flex gap-1">
-                    <span class="font-semibold">{{ $t('common.units') }}:</span>
-                    <span v-if="dispatch.units.length === 0" class="italic">{{
-                        $t('enums.centrum.StatusDispatch.UNASSIGNED')
-                    }}</span>
-                    <span v-else class="mr-1 grid grid-cols-2 gap-1">
-                        <UnitInfoPopover
-                            v-for="unit in dispatch.units"
-                            :key="unit.unitId"
-                            :unit="unit.unit"
-                            :initials-only="true"
-                            :badge="true"
-                            :assignment="unit"
-                        />
-                    </span>
-                </li>
-            </ul>
         </LPopup>
     </LMarker>
 </template>

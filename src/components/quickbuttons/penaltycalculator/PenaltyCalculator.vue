@@ -36,8 +36,9 @@ export type PenaltiesSummary = {
     count: number;
 };
 
-const rawQuery = ref('');
-const query = computed(() => rawQuery.value.toLowerCase());
+const querySearchRaw = ref('');
+const querySearch = computed(() => querySearchRaw.value.trim().toLowerCase());
+
 const selectedPenalties = ref<SelectedPenalty[]>([]);
 
 const summary = ref<PenaltiesSummary>({
@@ -51,7 +52,11 @@ const filteredLawBooks = computed(() =>
     lawBooks.value
         ?.map((book) => {
             const laws = book.laws
-                .filter((p) => p.name.toLowerCase().includes(query.value) || p.description?.toLowerCase().includes(query.value))
+                .filter(
+                    (p) =>
+                        p.name.toLowerCase().includes(querySearch.value) ||
+                        p.description?.toLowerCase().includes(querySearch.value),
+                )
                 .map((p) => {
                     const show = true;
                     return {
@@ -144,7 +149,7 @@ ${t('common.crime', selectedPenalties.value.length)}:
 }
 
 function reset(): void {
-    rawQuery.value = '';
+    querySearchRaw.value = '';
     selectedPenalties.value = [];
 
     summary.value.count = 0;
@@ -206,16 +211,16 @@ const columns = [
                 />
 
                 <div v-else>
-                    <div>
+                    <UFormGroup name="search">
                         <UInput
-                            v-model="rawQuery"
+                            v-model="querySearchRaw"
                             type="text"
                             name="search"
                             :placeholder="$t('common.filter')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                    </div>
+                    </UFormGroup>
 
                     <dl class="mt-4">
                         <UAccordion multiple :items="filteredLawBooks">

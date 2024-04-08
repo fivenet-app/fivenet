@@ -78,7 +78,7 @@ const canSubmit = ref(true);
 <template>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <UForm :schema="{}" :state="{}" @submit="refresh()">
+            <UForm :schema="undefined" :state="{}" @submit="refresh()">
                 <div class="flex flex-row items-center gap-2 sm:mx-auto">
                     <div class="flex-1">
                         <label for="search" class="block text-sm font-medium leading-6"
@@ -130,7 +130,7 @@ const canSubmit = ref(true);
                             :key="not.id"
                             class="hover:bg-background relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-700 px-4 py-5 sm:px-6"
                         >
-                            <div class="flex flex-1 gap-x-4">
+                            <div class="flex flex-1 gap-x-2">
                                 <div class="min-w-0 flex-auto">
                                     <p class="py-2 pr-3 text-sm font-medium">
                                         <template v-if="not.data && not.data.link">
@@ -155,7 +155,7 @@ const canSubmit = ref(true);
                                 </div>
                             </div>
 
-                            <div class="flex items-center gap-x-4">
+                            <div class="flex items-center gap-x-2">
                                 <div class="hidden sm:flex sm:flex-col sm:items-end">
                                     <p class="mt-1 text-xs leading-5">
                                         {{ $t('common.received') }}

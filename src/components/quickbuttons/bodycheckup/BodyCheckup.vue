@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { TrashCanIcon, VectorPointSelectIcon } from 'mdi-vue3';
+import { TrashCanIcon } from 'mdi-vue3';
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import BMICalculator from '~/components/quickbuttons/bodycheckup/BMICalculator.vue';
@@ -187,19 +187,21 @@ function reset(): void {
                 />
                 <ol v-else>
                     <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
-                        <span class="mr-1 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
+                        <span class="mr-1 w-4 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
+
                         <UInput
                             v-model="pin.description"
                             type="text"
+                            block
+                            class="flex-1"
                             @focusin="
                                 focusTablet(true);
                                 selectPin(pin);
                             "
                             @focusout="focusTablet(false)"
                         />
-                        <span class="ml-1" @click="removePin(idx)">
-                            <TrashCanIcon class="size-5" />
-                        </span>
+
+                        <UButton variant="link" icon="i-mdi-trash-can" class="ml-1" @click="removePin(idx)" />
                     </li>
                 </ol>
             </div>

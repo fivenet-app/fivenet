@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { BriefcaseIcon, CalendarIcon, LockIcon, LockOpenVariantIcon, TrashCanIcon, UpdateIcon } from 'mdi-vue3';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -27,7 +26,7 @@ defineProps<{
             }"
         >
             <div class="m-2">
-                <div class="flex flex-row gap-2 truncate text-base-300">
+                <div class="flex flex-row gap-2 truncate">
                     <div class="flex flex-1 flex-row items-center justify-start">
                         <IDCopyBadge
                             :id="doc.id"
@@ -37,51 +36,49 @@ defineProps<{
                             size="xs"
                         />
                     </div>
-                    <p
-                        v-if="doc.state"
-                        class="my-auto inline-flex rounded-full bg-info-100 px-2 py-1 text-xs font-semibold leading-5 text-info-800"
-                    >
-                        {{ doc.state }}
-                    </p>
-                    <div class="flex flex-1 flex-row items-center justify-end">
-                        <div v-if="doc?.closed" class="inline-flex flex-initial gap-1">
-                            <LockIcon class="size-5 text-error-400" />
-                            <span class="text-sm font-medium text-error-400">
+
+                    <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-note-check" class="h-auto w-5" />
+                        <span>
+                            {{ doc.state }}
+                        </span>
+                    </UBadge>
+
+                    <div class="flex flex-1 flex-row items-center justify-end gap-1">
+                        <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.close', 2) }}
                             </span>
-                        </div>
-                        <div v-else class="inline-flex flex-initial gap-1">
-                            <LockOpenVariantIcon class="size-5 text-success-400" />
-                            <span class="text-sm font-medium text-success-400">
+                        </UBadge>
+                        <UBadge v-else color="green" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                            <span>
                                 {{ $t('common.open', 2) }}
                             </span>
-                        </div>
+                        </UBadge>
                     </div>
                 </div>
 
                 <div class="flex flex-row gap-2 truncate">
                     <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium">
-                        <span
-                            v-if="doc.category"
-                            class="bg-primary-100 text-primary-500 flex flex-initial flex-row gap-1 break-words rounded-full px-2 py-1"
-                        >
-                            <span
-                                class="text-primary-800 inline-flex items-center text-xs font-medium"
-                                :title="doc.category.description ?? $t('common.na')"
-                            >
+                        <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                            <span :title="doc.category.description ?? $t('common.na')">
                                 {{ doc.category.name }}
                             </span>
-                        </span>
-                        <span class="py-2 pr-3">
+                        </UBadge>
+
+                        <span class="truncate py-2 pr-3">
                             {{ doc.title }}
                         </span>
                     </h2>
                     <div v-if="doc.deletedAt" class="flex flex-1 flex-row items-center justify-center font-bold">
-                        <TrashCanIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
+                        <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="doc.updatedAt" class="flex flex-1 flex-row items-center justify-end">
-                        <UpdateIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
+                        <UIcon name="i-mdi-update" class="mr-1.5 size-5 shrink-0" />
                         <p>
                             {{ $t('common.updated') }}
                             <GenericTime :value="doc.updatedAt" :ago="true" />
@@ -93,12 +90,14 @@ defineProps<{
                     <div class="flex flex-1 flex-row items-center justify-start">
                         <CitizenInfoPopover :user="doc.creator" />
                     </div>
+
                     <div class="flex flex-1 flex-row items-center justify-center">
-                        <BriefcaseIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
+                        <UIcon name="i-mdi-briefcase" class="mr-1.5 size-5 shrink-0" />
                         {{ doc.creator?.jobLabel }}
                     </div>
+
                     <div class="flex flex-1 flex-row items-center justify-end">
-                        <CalendarIcon class="mr-1.5 size-5 shrink-0 text-base-300" />
+                        <UIcon name="i-mdi-calendar" class="mr-1.5 size-5 shrink-0" />
                         <p>
                             {{ $t('common.created_at') }}
                             <GenericTime :value="doc.createdAt" />

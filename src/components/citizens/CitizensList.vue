@@ -27,9 +27,12 @@ const query = ref<{
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`citizens-${page.value}-${jsonStringify(query.value)}`, () =>
-    listCitizens(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`citizens-${page.value}-${jsonStringify(query.value)}`, () => listCitizens());
 
 async function listCitizens(): Promise<ListCitizensResponse> {
     try {
@@ -144,7 +147,7 @@ defineShortcuts({
     <div>
         <UDashboardToolbar>
             <template #default>
-                <UForm :schema="{}" :state="{}" class="w-full" @submit="refresh()">
+                <UForm :schema="undefined" :state="{}" class="w-full" @submit="refresh()">
                     <div class="flex w-full flex-row gap-2">
                         <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
                             <UInput
@@ -255,7 +258,7 @@ defineShortcuts({
 
         <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 2)])" :retry="refresh" />
         <UTable
-            :loading="pending"
+            :loading="loading"
             :columns="columns"
             :rows="data?.users"
             :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
