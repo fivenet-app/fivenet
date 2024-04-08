@@ -279,8 +279,8 @@ onBeforeUnmount(() => {
 }
 
 .leaflet-div-icon {
-    background: none;
-    border: none;
+    background: none !important;
+    border: none !important;
 }
 
 .leaflet-div-icon svg path {
