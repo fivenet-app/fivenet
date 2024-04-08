@@ -54,7 +54,7 @@ const filteredUnits = computed(() =>
 </script>
 
 <template>
-    <USlideover>
+    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
         <UCard
             :ui="{
                 body: {

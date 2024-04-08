@@ -118,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <USlideover :overlay="false">
+    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
         <UForm :schema="schema" :state="state" class="flex flex-1" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"

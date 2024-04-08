@@ -111,7 +111,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 </script>
 
 <template>
-    <USlideover>
+    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
         <UCard
             class="flex flex-1 flex-col"
             :ui="{

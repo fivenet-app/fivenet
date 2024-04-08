@@ -5,7 +5,11 @@ const { isNotificationsSlideoverOpen } = useDashboard();
 </script>
 
 <template>
-    <UDashboardSlideover v-model="isNotificationsSlideoverOpen" title="Notifications">
+    <UDashboardSlideover
+        v-model="isNotificationsSlideoverOpen"
+        :ui="{ width: 'w-screen max-w-4xl' }"
+        :title="$t('common.notification', 2)"
+    >
         <template #default>
             <NotificationsList @clicked="isNotificationsSlideoverOpen = false" />
         </template>

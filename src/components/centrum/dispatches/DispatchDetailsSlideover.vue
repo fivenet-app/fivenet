@@ -71,7 +71,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
 </script>
 
 <template>
-    <USlideover :overlay="false">
+    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
         <UCard
             :ui="{
                 body: {
