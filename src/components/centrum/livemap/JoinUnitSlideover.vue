@@ -58,7 +58,7 @@ const filteredUnits = computed(() =>
         <UCard
             :ui="{
                 body: {
-                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
@@ -76,19 +76,17 @@ const filteredUnits = computed(() =>
             </template>
 
             <div>
-                <div>
-                    <div class="mb-2">
-                        <UFormGroup :label="$t('common.search')">
-                            <UInput
-                                v-model="queryUnit"
-                                type="text"
-                                name="search"
-                                :placeholder="$t('common.search')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-                    </div>
+                <div class="flex flex-col gap-1">
+                    <UFormGroup :label="$t('common.search')">
+                        <UInput
+                            v-model="queryUnit"
+                            type="text"
+                            name="search"
+                            :placeholder="$t('common.search')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
 
                     <div class="grid grid-cols-2 gap-2">
                         <UButton
@@ -117,9 +115,6 @@ const filteredUnits = computed(() =>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
                     <UButton
                         v-if="ownUnitId !== undefined"
                         block
@@ -129,6 +124,9 @@ const filteredUnits = computed(() =>
                         @click="onSubmitThrottle()"
                     >
                         {{ $t('common.leave') }}
+                    </UButton>
+                    <UButton color="black" block class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close', 1) }}
                     </UButton>
                 </UButtonGroup>
             </template>

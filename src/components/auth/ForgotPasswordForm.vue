@@ -65,7 +65,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.ForgotPassword.subtitle') }}
         </p>
 
-        <UForm :schema="schema" :state="state" class="space-y-4">
+        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
             <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
                 <UInput
                     v-model="state.registrationToken"
@@ -92,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <PasswordStrengthMeter :input="state.password" class="mt-2" />
             </UFormGroup>
 
-            <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
+            <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                 {{ $t('components.auth.ForgotPassword.submit_button') }}
             </UButton>
         </UForm>

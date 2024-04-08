@@ -75,7 +75,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
         <UCard
             :ui="{
                 body: {
-                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',

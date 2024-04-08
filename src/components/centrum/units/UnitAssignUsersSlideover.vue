@@ -67,7 +67,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
@@ -137,14 +137,15 @@ const onSubmitThrottle = useThrottleFn(async () => {
             </div>
 
             <template #footer>
-                <div>
+                <UButtonGroup class="inline-flex w-full">
                     <UButton color="black" block class="flex-1" @click="isOpen = false">
                         {{ $t('common.close', 1) }}
                     </UButton>
+
                     <UButton :disabled="!canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
                         {{ $t('common.update') }}
                     </UButton>
-                </div>
+                </UButtonGroup>
             </template>
         </UCard>
     </USlideover>

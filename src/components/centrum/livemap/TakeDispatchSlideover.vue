@@ -116,7 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
             class="flex flex-1 flex-col"
             :ui="{
                 body: {
-                    base: 'flex-1 max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
                     padding: 'px-1 py-2 sm:p-2',
                 },
                 ring: '',
@@ -150,7 +150,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                         </div>
                                     </dt>
                                     <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                        <div class="relative flex items-center">
+                                        <UFormGroup name="search">
                                             <UInput
                                                 v-model="queryDispatches"
                                                 type="text"
@@ -160,7 +160,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
-                                        </div>
+                                        </UFormGroup>
                                     </dd>
                                 </div>
 
@@ -197,9 +197,6 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close') }}
-                    </UButton>
                     <UButton
                         class="flex-1"
                         color="green"
@@ -209,6 +206,7 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                     >
                         {{ $t('common.accept') }}
                     </UButton>
+
                     <UButton
                         class="flex-1"
                         color="red"
@@ -217,6 +215,10 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                         @click="onSubmitThrottle(TakeDispatchResp.DECLINED)"
                     >
                         {{ $t('common.decline') }}
+                    </UButton>
+
+                    <UButton class="flex-1" @click="isOpen = false">
+                        {{ $t('common.close') }}
                     </UButton>
                 </UButtonGroup>
             </template>

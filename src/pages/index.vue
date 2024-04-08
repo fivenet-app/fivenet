@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 
@@ -25,6 +24,8 @@ onBeforeMount(async () => {
         return navigateTo(target);
     }
 });
+
+const appVersion = __APP_VERSION__.split('-')[0];
 </script>
 
 <template>
@@ -54,7 +55,14 @@ onBeforeMount(async () => {
                 "
             >
                 <template #headline>
-                    <FiveNetLogo class="mx-auto h-36 w-auto" />
+                    <UButton
+                        color="gray"
+                        to="/about"
+                        :label="$t('pages.index.whats_new_in', { version: appVersion })"
+                        trailing-icon="i-heroicons-arrow-right"
+                        size="xs"
+                        class="rounded-full"
+                    />
                 </template>
             </ULandingHero>
         </div>
