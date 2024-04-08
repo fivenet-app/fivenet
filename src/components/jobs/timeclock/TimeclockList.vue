@@ -1,21 +1,24 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
-import { ArrowRightIcon, CalendarIcon, CheckIcon, ChevronLeftIcon, ChevronRightIcon } from 'mdi-vue3';
+import { format } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
-import { User } from '~~/gen/ts/resources/users/users';
-import TimeclockListEntry from '~/components/jobs/timeclock/TimeclockListEntry.vue';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
-import { dateToDateString, getWeekNumber } from '~/utils/time';
+import { getWeekNumber } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import DatePicker from '~/components/partials/DatePicker.vue';
+import { useCompletorStore } from '~/store/completor';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import Pagination from '~/components/partials/Pagination.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
+
+const completorStore = useCompletorStore();
 
 const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All');
 
@@ -27,19 +30,29 @@ const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.
 const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
 const query = ref<{
-    user_ids?: User[];
-    from?: string;
-    to?: string;
+    user_ids?: Colleague[];
+    user?: Colleague;
+    from?: Date;
+    to?: Date;
     perDay: boolean;
 }>({
-    from: dateToDateString(currentDay.value),
-    to: canAccessAll ? dateToDateString(previousDay.value) : undefined,
+    from: currentDay.value,
+    to: canAccessAll ? previousDay.value : undefined,
     perDay: canAccessAll,
 });
-const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(
-    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user_ids?.map((u) => u.userId)}-${offset.value}`,
+const usersLoading = ref(false);
+
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(
+    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
 
@@ -49,19 +62,19 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: offset.value,
             },
-            userIds: query.value.user_ids?.map((u) => u.userId) ?? [],
+            userIds: query.value.user ? [query.value.user.userId] : query.value.user_ids?.map((u) => u.userId) ?? [],
         };
         if (query.value.perDay !== undefined) {
             req.perDay = query.value.perDay;
         }
         if (query.value.from) {
             req.from = {
-                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.from)!),
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.from),
             };
         }
         if (query.value.to) {
             req.to = {
-                timestamp: googleProtobufTimestamp.Timestamp.fromDate(fromString(query.value.to)!),
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.to),
             };
         }
 
@@ -75,41 +88,36 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     }
 }
 
-type GroupedTimeClockEntries = { date: Date; key: string; entries: TimeclockEntry[] }[];
+type GroupTimeClockEntry = { date?: Date; entry: TimeclockEntry }[];
+
 const grouped = computed(() => {
-    const groups: GroupedTimeClockEntries = [];
+    const groups: GroupTimeClockEntry = [];
+
     data.value?.entries.forEach((e) => {
         const date = toDate(e.date);
-        const idx = groups.findIndex((g) => g.key === date.toString());
+        const idx = groups.findIndex((g) => g.date === date);
         if (idx === -1) {
             groups.push({
-                date,
-                entries: [e],
-                key: date.toString(),
+                date: date,
+                entry: e,
             });
         } else {
-            groups[idx].entries.push(e);
+            groups.push({
+                date: date,
+                entry: e,
+            });
         }
     });
 
     return groups;
 });
 
-const queryTargets = ref<string>('');
-
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
-
 watch(offset, async () => refresh());
 watchDebounced(
     query.value,
     async () => {
         if (canAccessAll) {
-            if (query.value.user_ids !== undefined && query.value.user_ids.length > 0) {
+            if (query.value.user !== undefined || (query.value.user_ids !== undefined && query.value.user_ids.length > 0)) {
                 if (query.value.perDay) {
                     query.value.perDay = false;
                     query.value.to = undefined;
@@ -123,58 +131,8 @@ watchDebounced(
 
         return refresh();
     },
-    { debounce: 600, maxWait: 1400 },
+    { debounce: 200, maxWait: 1250 },
 );
-
-const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
-    `jobs-colleagues-0-${queryTargets.value}`,
-    async () => {
-        try {
-            const call = $grpc.getJobsClient().listColleagues({
-                pagination: {
-                    offset: 0n,
-                },
-                searchName: queryTargets.value,
-            });
-            const { response } = await call;
-
-            return response;
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    },
-    { immediate: false },
-);
-
-function charsGetDisplayValue(chars: User[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`));
-
-    return cs.join(', ');
-}
-
-watchDebounced(
-    queryTargets,
-    async () => {
-        if (canAccessAll) {
-            await refreshColleagues();
-            if (query.value.user_ids) {
-                colleagues.value?.colleagues.unshift(...query.value.user_ids);
-            }
-        }
-    },
-    {
-        debounce: 600,
-        maxWait: 1400,
-    },
-);
-
-onMounted(async () => {
-    if (canAccessAll) {
-        await refreshColleagues();
-    }
-});
 
 function dayForward(): void {
     currentDay.value.setDate(currentDay.value.getDate() + 1);
@@ -200,246 +158,249 @@ function updateDates(): void {
     );
     previousDay.value = new Date(previousDay.value);
 
-    query.value.from = dateToDateString(currentDay.value);
-    query.value.to = dateToDateString(previousDay.value);
+    query.value.from = currentDay.value;
+    query.value.to = previousDay.value;
 }
+
+function charsGetDisplayValue(chars: UserShort[]): string {
+    const cs: string[] = [];
+    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
+
+    return cs.join(', ');
+}
+
+const columns = computed(() =>
+    [
+        !query.value.perDay
+            ? {
+                  key: 'date',
+                  label: t('common.date'),
+              }
+            : undefined,
+        {
+            key: 'name',
+            label: t('common.name'),
+        },
+        {
+            key: 'time',
+            label: t('common.time'),
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div v-if="can('JobsTimeclockService.ListInactiveEmployees')" class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
-                <NuxtLink
-                    :to="{ name: 'jobs-timeclock-inactive' }"
-                    class="ml-auto inline-flex rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                >
-                    {{ $t('common.inactive_colleagues') }}
-                    <ArrowRightIcon class="ml-1 size-5" />
-                </NuxtLink>
-            </div>
-        </div>
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
-                        <div class="mx-auto flex flex-row gap-4">
-                            <div v-if="canAccessAll" class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.search') }}
-                                    {{ $t('common.colleague', 1) }}
-                                </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <Combobox v-model="query.user_ids" as="div" class="w-full" multiple nullable>
-                                        <div class="relative">
-                                            <ComboboxButton as="div">
-                                                <ComboboxInput
-                                                    autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :display-value="
-                                                        (chars: any) => (chars ? charsGetDisplayValue(chars) : $t('common.na'))
-                                                    "
-                                                    :placeholder="$t('common.target')"
-                                                    @change="queryTargets = $event.target.value"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </ComboboxButton>
+    <div>
+        <UForm :schema="undefined" :state="{}" @submit="refresh()">
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex w-full flex-col gap-2">
+                        <div class="flex w-full flex-col">
+                            <UButton
+                                v-if="can('JobsTimeclockService.ListInactiveEmployees')"
+                                :to="{ name: 'jobs-timeclock-inactive' }"
+                                class="place-self-end"
+                                trailing-icon="i-mdi-arrow-right"
+                            >
+                                {{ $t('common.inactive_colleagues') }}
+                            </UButton>
 
-                                            <ComboboxOptions
-                                                v-if="colleagues?.colleagues && colleagues?.colleagues?.length > 0"
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ComboboxOption
-                                                    v-for="char in colleagues?.colleagues"
-                                                    :key="char.identifier"
-                                                    v-slot="{ active, selected }"
-                                                    :value="char"
-                                                    as="char"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                            active ? 'bg-primary-500' : '',
-                                                        ]"
-                                                    >
-                                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char.firstname }} {{ char.lastname }} ({{ char?.dateofbirth }})
-                                                        </span>
+                            <div class="flex flex-row gap-2">
+                                <UFormGroup v-if="canAccessAll" class="flex-1" name="user" :label="$t('common.colleague', 2)">
+                                    <UInputMenu
+                                        ref="input"
+                                        v-model="query.user_ids"
+                                        nullable
+                                        :search="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.listColleagues({
+                                                    pagination: { offset: 0 },
+                                                    searchName: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="
+                                            query.user_ids ? charsGetDisplayValue(query.user_ids) : $t('common.owner')
+                                        "
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
 
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
-                                                        </span>
-                                                    </li>
-                                                </ComboboxOption>
-                                            </ComboboxOptions>
-                                        </div>
-                                    </Combobox>
-                                </div>
-                            </div>
-                            <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    <template v-if="query.perDay"> {{ $t('common.date') }}: </template>
-                                    <template v-else>
-                                        {{ $t('common.time_range') }}:
-                                        {{ $t('common.from') }}
-                                    </template>
-                                </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
-                                        v-model="query.from"
-                                        type="date"
-                                        name="search"
-                                        :placeholder="`${$t('common.time_range')} ${$t('common.from')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                            </div>
-                            <div v-if="!query.perDay" class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.time_range') }}:
-                                    {{ $t('common.to') }}
-                                </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
-                                        v-model="query.to"
-                                        type="date"
-                                        name="search"
-                                        :placeholder="`${$t('common.time_range')} ${$t('common.to')}`"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
+                                        <template #trailing>
+                                            <UKbd value="/" />
+                                        </template>
+                                    </UInputMenu>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    class="flex-1"
+                                    name="from"
+                                    :label="
+                                        query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`
+                                    "
+                                >
+                                    <UPopover :popper="{ placement: 'bottom-start' }">
+                                        <UButton
+                                            variant="outline"
+                                            color="gray"
+                                            block
+                                            icon="i-mdi-calendar-month"
+                                            :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        />
+
+                                        <template #panel="{ close }">
+                                            <DatePicker v-model="query.from" @close="close" />
+                                        </template>
+                                    </UPopover>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    v-if="!query.perDay"
+                                    class="flex-1"
+                                    name="to"
+                                    :label="`${$t('common.time_range')} ${$t('common.to')}`"
+                                >
+                                    <UPopover :popper="{ placement: 'bottom-start' }">
+                                        <UButton
+                                            variant="outline"
+                                            color="gray"
+                                            block
+                                            icon="i-mdi-calendar-month"
+                                            :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        />
+
+                                        <template #panel="{ close }">
+                                            <DatePicker v-model="query.to" @close="close" />
+                                        </template>
+                                    </UPopover>
+                                </UFormGroup>
                             </div>
                         </div>
-                        <div v-if="query.perDay" class="mx-auto flex flex-row gap-4 pt-2">
-                            <div class="flex-1">
-                                <button
-                                    type="button"
-                                    :disabled="futureDay > today"
-                                    :class="[
-                                        futureDay > today
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                        'relative inline-flex w-full cursor-pointer place-content-start items-center rounded-md px-3 py-2 text-sm font-semibold text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2',
-                                    ]"
-                                    @click="dayForward()"
-                                >
-                                    <ChevronLeftIcon class="size-5" aria-hidden="true" />
-                                    {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
-                                </button>
-                            </div>
-                            <div class="flex-initial">
-                                <button
-                                    type="button"
-                                    disabled
-                                    class="disabled relative flex w-full cursor-pointer flex-col place-content-end items-center rounded-md bg-base-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-base-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-500"
-                                >
-                                    <span class="inline-flex flex-row items-center gap-1">
-                                        <CalendarIcon class="size-5" aria-hidden="true" />
-                                        {{ $d(currentDay, 'date') }}
-                                    </span>
-                                    <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
-                                </button>
-                            </div>
-                            <div class="flex-1">
-                                <button
-                                    type="button"
-                                    class="relative inline-flex w-full cursor-pointer place-content-end items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                                    @click="dayBackwards()"
-                                >
-                                    {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
-                                    <ChevronRightIcon class="size-5" aria-hidden="true" />
-                                </button>
-                            </div>
+
+                        <div v-if="query.perDay" class="flex flex-row gap-2">
+                            <UButton
+                                block
+                                class="flex-1"
+                                :disabled="futureDay > today"
+                                icon="i-mdi-chevron-left"
+                                @click="dayForward()"
+                            >
+                                {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
+                            </UButton>
+
+                            <UButton
+                                disabled
+                                icon="i-mdi-calendar"
+                                class="flex flex-initial cursor-pointer flex-col place-content-end items-center"
+                            >
+                                <span>
+                                    {{ $d(currentDay, 'date') }}
+                                </span>
+                                <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
+                            </UButton>
+
+                            <UButton class="flex-1" block trailing-icon="i-mdi-chevron-right" @click="dayBackwards()">
+                                {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
+                            </UButton>
                         </div>
-                    </form>
-                </div>
-            </div>
+                    </div>
+                </template>
+            </UDashboardToolbar>
+
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.timeclock', 2)])" />
                         <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.timeclock', 2)])"
+                            v-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
                             :retry="refresh"
                         />
-                        <DataNoDataBlock
-                            v-else-if="data && data.entries && data.entries.length === 0"
-                            :focus="focusSearch"
-                            :message="$t('components.citizens.citizens_list.no_citizens')"
-                        />
                         <template v-else>
-                            <GenericTable class="min-w-full divide-y divide-base-600">
-                                <template #thead>
-                                    <tr>
-                                        <th
-                                            v-if="!query.perDay"
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.date') }}
-                                        </th>
-                                        <th
-                                            v-if="
-                                                query.user_ids === undefined ||
-                                                query.user_ids.length === 0 ||
-                                                query.user_ids?.length >= 1
-                                            "
-                                            scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                        >
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.time') }}
-                                        </th>
-                                    </tr>
+                            <UTable
+                                :loading="loading"
+                                :columns="columns"
+                                :rows="grouped"
+                                :empty-state="{
+                                    icon: 'i-mdi-timeline-clock',
+                                    label: $t('common.not_found', [$t('common.entry', 2)]),
+                                }"
+                            >
+                                <template #date-data="{ row: entry }">
+                                    <div class="inline-flex items-center">
+                                        {{ $d(entry.date, 'date') }}
+                                    </div>
                                 </template>
-                                <template #tbody>
-                                    <template v-for="group in grouped" :key="group.key">
-                                        <TimeclockListEntry
-                                            v-for="(entry, idx) in group.entries"
-                                            :key="entry.userId + toDate(entry.date).toString()"
-                                            :entry="entry"
-                                            :first="idx === 0 ? group.date : undefined"
-                                            :show-date="!query.perDay"
-                                        />
-                                    </template>
-                                </template>
-                            </GenericTable>
 
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
+                                <template #name-data="{ row: entry }">
+                                    <div class="inline-flex items-center gap-1">
+                                        <ProfilePictureImg
+                                            :url="entry.entry.user?.avatar?.url"
+                                            :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
+                                            size="sm"
+                                        />
+
+                                        <ColleagueInfoPopover :user="entry.entry.user" />
+                                    </div>
+                                </template>
+
+                                <template #time-data="{ row: entry }">
+                                    <div class="text-right">
+                                        {{
+                                            entry.entry.spentTime > 0
+                                                ? fromSecondsToFormattedDuration(
+                                                      parseFloat(
+                                                          (
+                                                              (Math.round(entry.entry.spentTime * 100) / 100) *
+                                                              60 *
+                                                              60
+                                                          ).toPrecision(2),
+                                                      ),
+                                                      { seconds: false },
+                                                  )
+                                                : ''
+                                        }}
+
+                                        <UBadge v-if="entry.entry.startTime !== undefined" color="green">
+                                            {{ $t('common.active') }}
+                                        </UBadge>
+                                    </div>
+                                </template>
+                            </UTable>
+
+                            <Pagination v-model="page" :pagination="data?.pagination" />
                         </template>
                     </div>
                 </div>
             </div>
-            <div v-if="data && data.stats" class="mb-4 flow-root">
-                <div class="mt-2 sm:flex sm:items-center">
-                    <div class="sm:flex-auto">
-                        <TimeclockStatsBlock
-                            :stats="data.stats"
-                            :weekly="data.weekly"
-                            :hide-header="true"
-                            :failed="error !== null"
-                            @refresh="refresh()"
-                        />
-                    </div>
-                </div>
-            </div>
-        </div>
+
+            <TimeclockStatsBlock
+                v-if="data && data.stats"
+                :stats="data.stats"
+                :weekly="data.weekly"
+                :hide-header="true"
+                :failed="error !== null"
+                :loading="loading"
+            />
+        </UForm>
     </div>
 </template>

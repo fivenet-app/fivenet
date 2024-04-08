@@ -1,19 +1,18 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxButton, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
-import { useRouteHash } from '@vueuse/router';
-import { CarSearchIcon, CheckIcon } from 'mdi-vue3';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { useCompletorStore } from '~/store/completor';
-import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
-import VehiclesListEntry from '~/components/vehicles/VehiclesListEntry.vue';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import LicensePlate from '../partials/LicensePlate.vue';
+import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
+import { useClipboardStore } from '~/store/clipboard';
+import { useNotificatorStore } from '~/store/notificator';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
 
 const props = withDefaults(
     defineProps<{
@@ -23,33 +22,24 @@ const props = withDefaults(
         hideCopy?: boolean;
     }>(),
     {
-        userId: 0,
+        userId: undefined,
         hideOwner: false,
         hideCitizenLink: false,
         hideCopy: false,
     },
 );
 
-const query = ref<{ plate: string; model?: string; user_id?: number }>({
-    plate: '',
-});
-const offset = ref(0n);
-
-const hash = useRouteHash();
-if (!props.hideOwner) {
-    if (hash.value !== undefined && hash.value !== null) {
-        query.value = unmarshalHashToObject(hash.value as string);
-    }
-}
-
-const { data, pending, refresh, error } = useLazyAsyncData(`vehicles-${offset.value}`, () => {
-    if (!props.hideOwner) {
-        hash.value = marshalObjectToHash(query.value);
-    }
-    return listVehicles();
+const query = ref<{ licensePlate: string; model?: string; user_id?: number }>({
+    licensePlate: '',
+    user_id: props.userId,
 });
 
-const hideModell = ref(false);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+
+const { data: data, pending: loading, refresh, error } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
+
+const hideVehicleModell = ref(false);
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
@@ -58,17 +48,17 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
                 offset: offset.value,
             },
             orderBy: [],
-            userId: props.userId && props.userId > 0 ? props.userId : query.value.user_id,
-            search: query.value.plate,
+            userId: query.value.user_id,
+            search: query.value.licensePlate,
             model: query.value.model,
         });
         const { response } = await call;
 
         if (response.vehicles.length > 0) {
             if (response.vehicles[0].model === undefined) {
-                hideModell.value = true;
+                hideVehicleModell.value = true;
             } else {
-                hideModell.value = false;
+                hideVehicleModell.value = false;
             }
         }
 
@@ -79,228 +69,179 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
     }
 }
 
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
-
 const completorStore = useCompletorStore();
 
-const queryChar = ref('');
-const selectedChar = ref<undefined | UserShort>(undefined);
-
-const { data: chars, refresh: charsRefresh } = useLazyAsyncData(
-    `chars-${queryChar.value}`,
-    () =>
-        completorStore.completeCitizens({
-            search: queryChar.value,
-        }),
-    {
-        immediate: false,
-    },
-);
+const usersLoading = ref(false);
+const selectedUser = ref<undefined | UserShort>();
+watch(selectedUser, () => {
+    if (selectedUser.value) {
+        query.value.user_id = selectedUser.value.userId;
+    } else {
+        query.value.user_id = undefined;
+    }
+});
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), {
-    debounce: 600,
-    maxWait: 1400,
-});
-watchDebounced(queryChar, async () => charsRefresh(), {
-    debounce: 600,
+    debounce: 200,
     maxWait: 1250,
 });
-watch(selectedChar, () => {
-    if (selectedChar && selectedChar.value?.userId) {
-        query.value.user_id = selectedChar.value?.userId;
-    } else {
-        query.value.user_id = 0;
-    }
+
+const clipboardStore = useClipboardStore();
+
+const notifications = useNotificatorStore();
+
+function addToClipboard(vehicle: Vehicle): void {
+    clipboardStore.addVehicle(vehicle);
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
+        description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
+        timeout: 3250,
+        type: 'info',
+    });
+}
+
+const columns = computed(() =>
+    [
+        {
+            key: 'plate',
+            label: t('common.plate'),
+        },
+        {
+            key: 'model',
+            label: t('common.model'),
+        },
+        {
+            key: 'type',
+            label: t('common.type'),
+        },
+        !props.hideOwner
+            ? {
+                  key: 'owner',
+                  label: t('common.owner'),
+              }
+            : undefined,
+        {
+            key: 'actions',
+            label: t('common.action', 2),
+            sortable: false,
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
 });
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div class="border-b-2 border-neutral/20 pb-2 sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
-                        <div class="mx-auto flex flex-row gap-4">
-                            <div class="flex-1">
-                                <label for="search" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.license_plate') }}
-                                </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
-                                        ref="searchInput"
-                                        v-model="query.plate"
-                                        type="text"
-                                        :placeholder="$t('common.license_plate')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                            </div>
-                            <div v-if="!hideModell" class="flex-1">
-                                <label for="model" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.model') }}
-                                </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
-                                        v-model="query.model"
-                                        type="text"
-                                        name="model"
-                                        :placeholder="$t('common.model')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                            </div>
-                            <div v-if="!userId" class="flex-1">
-                                <label for="owner" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.owner') }}
-                                </label>
-                                <div class="relative mt-2 items-center">
-                                    <Combobox v-model="selectedChar" as="div" nullable>
-                                        <div class="relative">
-                                            <ComboboxButton as="div">
-                                                <ComboboxInput
-                                                    autocomplete="off"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :display-value="
-                                                        (char: any) =>
-                                                            char
-                                                                ? `${char?.firstname} ${char?.lastname} (${char?.dateofbirth})`
-                                                                : ''
-                                                    "
-                                                    :placeholder="$t('common.owner')"
-                                                    @change="queryChar = $event.target.value"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </ComboboxButton>
+    <div>
+        <UDashboardToolbar>
+            <template #default>
+                <UForm :schema="undefined" :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
+                    <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
+                        <UInput
+                            v-model="query.licensePlate"
+                            ref="input"
+                            type="text"
+                            name="licensePlate"
+                            :placeholder="$t('common.license_plate')"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInput>
+                    </UFormGroup>
 
-                                            <ComboboxOptions
-                                                v-if="chars !== null && chars.length > 0"
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ComboboxOption
-                                                    v-for="char in chars"
-                                                    :key="char?.userId"
-                                                    v-slot="{ active, selected }"
-                                                    :value="char"
-                                                    as="char"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                            active ? 'bg-primary-500' : '',
-                                                        ]"
-                                                    >
-                                                        <span :class="['block truncate', selected && 'font-semibold']">
-                                                            {{ char?.firstname }}
-                                                            {{ char?.lastname }}
-                                                            ({{ char?.dateofbirth }})
-                                                        </span>
-
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
-                                                        </span>
-                                                    </li>
-                                                </ComboboxOption>
-                                            </ComboboxOptions>
-                                        </div>
-                                    </Combobox>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.vehicle', 2)])" />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])"
-                            :retry="refresh"
+                    <UFormGroup v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">
+                        <UInput
+                            v-model="query.model"
+                            type="text"
+                            name="model"
+                            :placeholder="$t('common.model')"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
                         />
-                        <DataNoDataBlock
-                            v-else-if="data?.vehicles.length === 0"
-                            :icon="CarSearchIcon"
-                            :focus="focusSearch"
-                            :type="$t('common.vehicle', 2)"
-                        />
-                        <template v-else>
-                            <GenericTable>
-                                <template #thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.plate') }}
-                                        </th>
-                                        <th
-                                            v-if="!hideModell"
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral sm:table-cell"
-                                        >
-                                            {{ $t('common.model') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
-                                        >
-                                            {{ $t('common.type') }}
-                                        </th>
-                                        <th
-                                            v-if="!hideOwner"
-                                            scope="col"
-                                            class="px-2 py-3.5 text-left text-sm font-semibold text-neutral"
-                                        >
-                                            {{ $t('common.owner') }}
-                                        </th>
-                                        <th
-                                            v-if="!hideCitizenLink && !hideCopy"
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </template>
-                                <template #tbody>
-                                    <VehiclesListEntry
-                                        v-for="vehicle in data?.vehicles"
-                                        :key="vehicle.plate"
-                                        :vehicle="vehicle"
-                                        :hide-owner="hideOwner"
-                                        :hide-citizen-link="hideCitizenLink"
-                                        :hide-copy="hideCopy"
-                                    />
-                                </template>
-                            </GenericTable>
+                    </UFormGroup>
 
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
-                        </template>
-                    </div>
+                    <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
+                        <UInputMenu
+                            v-model="selectedUser"
+                            :search="
+                                async (query: string) => {
+                                    usersLoading = true;
+                                    const users = await completorStore.completeCitizens({
+                                        search: query,
+                                    });
+                                    usersLoading = false;
+                                    return users;
+                                }
+                            "
+                            :search-attributes="['firstname', 'lastname']"
+                            block
+                            :placeholder="
+                                selectedUser
+                                    ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
+                                    : $t('common.owner')
+                            "
+                            trailing
+                            by="userId"
+                        >
+                            <template #option="{ option: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                        </UInputMenu>
+                    </UFormGroup>
+                </UForm>
+            </template>
+        </UDashboardToolbar>
+
+        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.vehicle', 2)])" :retry="refresh" />
+        <UTable
+            v-else
+            :loading="loading"
+            :columns="columns"
+            :rows="data?.vehicles"
+            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
+        >
+            <template #plate-data="{ row }">
+                <LicensePlate :plate="row.plate" class="mr-2" />
+            </template>
+            <template #type-data="{ row }">
+                {{ toTitleCase(row.type) }}
+            </template>
+            <template v-if="!hideOwner" #owner-data="{ row }">
+                <CitizenInfoPopover :user="row.owner" />
+            </template>
+            <template #actions-data="{ row }">
+                <div class="flex flex-row justify-end">
+                    <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(row)" />
+                    <UButton
+                        v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
+                        variant="link"
+                        icon="i-mdi-account-eye"
+                        :to="{
+                            name: 'citizens-id',
+                            params: { id: row.owner?.userId ?? 0 },
+                        }"
+                    />
                 </div>
-            </div>
-        </div>
+            </template>
+        </UTable>
+
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

@@ -1,27 +1,6 @@
 <script lang="ts" setup>
-import {
-    Combobox,
-    ComboboxButton,
-    ComboboxInput,
-    ComboboxOption,
-    ComboboxOptions,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-} from '@headlessui/vue';
-import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn, watchDebounced, watchOnce } from '@vueuse/core';
-import {
-    AccountMultipleIcon,
-    CheckIcon,
-    ChevronDownIcon,
-    ContentSaveIcon,
-    FileDocumentIcon,
-    LoadingIcon,
-    PlusIcon,
-} from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { type TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
@@ -47,7 +26,7 @@ import { checkDocAccess } from '~/components/documents/helpers';
 import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
-    id?: string;
+    documentId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -56,8 +35,11 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const clipboardStore = useClipboardStore();
+
 const completorStore = useCompletorStore();
+
 const documentStore = useDocumentEditorStore();
+
 const notifications = useNotificatorStore();
 
 const { t } = useI18n();
@@ -68,23 +50,26 @@ const maxAccessEntries = 10;
 
 const canEdit = ref(false);
 
-interface FormData {
-    title: string;
-    state: string;
-    content: string;
-    public: boolean;
-}
-
-const openclose = [
-    { id: 0, label: t('common.open', 2), closed: false },
-    { id: 1, label: t('common.close', 2), closed: true },
-];
-
-const doc = ref<{
-    closed: { id: number; label: string; closed: boolean };
-}>({
-    closed: openclose[0],
+const schema = z.object({
+    title: z.string().min(3).max(255),
+    state: z.union([z.string().length(0), z.string().min(3).max(32)]),
+    content: z.string().min(20).max(1750000),
+    public: z.boolean(),
+    closed: z.boolean(),
+    category: z.custom<Category>().optional(),
 });
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    title: '',
+    state: '',
+    content: '',
+    public: false,
+    closed: false,
+    category: undefined,
+});
+
 const access = ref<
     Map<
         string,
@@ -93,7 +78,7 @@ const access = ref<
             type: number;
             values: {
                 job?: string;
-                char?: number;
+                userId?: number;
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
@@ -104,19 +89,15 @@ const access = ref<
 const docAccess = ref<DocumentAccess>();
 const docCreator = ref<UserShort | undefined>();
 
-const relationManagerShow = ref<boolean>(false);
+const openRelationManager = ref<boolean>(false);
 const relationManagerData = ref<Map<string, DocumentRelation>>(new Map());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
 watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
-const referenceManagerShow = ref<boolean>(false);
+const openReferenceManager = ref<boolean>(false);
 const referenceManagerData = ref<Map<string, DocumentReference>>(new Map());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
-
-const entriesCategories = ref<Category[]>([]);
-const queryCategories = ref('');
-const selectedCategory = ref<Category | undefined>(undefined);
 
 const templateId = ref<undefined | string>();
 
@@ -141,10 +122,10 @@ onMounted(async () => {
             }
 
             const template = response.template;
-            setFieldValue('title', template.contentTitle!);
-            setFieldValue('state', template.state!);
-            setFieldValue('content', template.content.replace(/\s+/g, ' '));
-            selectedCategory.value = template?.category;
+            state.title = template.contentTitle;
+            state.state = template.state;
+            state.content = template.content;
+            state.category = template.category;
 
             if (template?.contentAccess) {
                 if (authStore.activeChar !== null) {
@@ -157,7 +138,7 @@ onMounted(async () => {
                     access.value.set(id, {
                         id,
                         type: 0,
-                        values: { char: user.userId, accessRole: user.access },
+                        values: { userId: user.userId, accessRole: user.access },
                         required: user.required,
                     });
                     accessId++;
@@ -186,9 +167,9 @@ onMounted(async () => {
 
             return;
         }
-    } else if (props.id) {
+    } else if (props.documentId) {
         try {
-            const req = { documentId: props.id };
+            const req = { documentId: props.documentId };
             const call = $grpc.getDocStoreClient().getDocument(req);
             const { response } = await call;
             const document = response.document;
@@ -196,16 +177,12 @@ onMounted(async () => {
             docCreator.value = document?.creator;
 
             if (document) {
-                setFieldValue('title', document.title);
-                setFieldValue('state', document.state);
-                setFieldValue('content', document.content);
-                doc.value.closed = openclose.find((e) => e.closed === document.closed) as {
-                    id: number;
-                    label: string;
-                    closed: boolean;
-                };
-                selectedCategory.value = document.category;
-                setFieldValue('public', document.public);
+                state.title = document.title;
+                state.state = document.state;
+                state.content = document.content;
+                state.category = document.category;
+                state.closed = document.closed;
+                state.public = document.public;
 
                 const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
@@ -221,7 +198,7 @@ onMounted(async () => {
                     access.value.set(id, {
                         id,
                         type: 0,
-                        values: { char: user.userId, accessRole: user.access },
+                        values: { userId: user.userId, accessRole: user.access },
                     });
                     accessId++;
                 });
@@ -249,12 +226,11 @@ onMounted(async () => {
         }
     } else {
         if (documentStore.$state) {
-            setFieldValue('title', documentStore.$state.title);
-            setFieldValue('state', documentStore.$state.state);
-            setFieldValue('content', documentStore.$state.content);
-            if (documentStore.$state.closed) {
-                doc.value.closed = documentStore.$state.closed;
-            }
+            state.title = document.title;
+            state.state = documentStore.$state.state;
+            state.content = documentStore.$state.content;
+            state.category = documentStore.$state.category;
+            state.closed = documentStore.$state.closed;
         }
 
         const accessId = 0;
@@ -273,7 +249,7 @@ onMounted(async () => {
         const id = i.toString();
         referenceManagerData.value.set(id, {
             id,
-            sourceDocumentId: props.id ?? '0',
+            sourceDocumentId: props.documentId ?? '0',
             targetDocumentId: doc.id!,
             targetDocument: getDocument(doc),
             creatorId: activeChar.value!.userId,
@@ -285,7 +261,7 @@ onMounted(async () => {
         const id = i.toString();
         relationManagerData.value.set(id, {
             id,
-            documentId: props.id ?? '0',
+            documentId: props.documentId ?? '0',
             targetUserId: user.userId!,
             targetUser: getUser(user),
             sourceUserId: activeChar.value!.userId,
@@ -295,13 +271,11 @@ onMounted(async () => {
     });
 
     canEdit.value = true;
-
-    findCategories();
 });
 
 const saving = ref(false);
 
-async function saveToStore(values: FormData): Promise<void> {
+async function saveToStore(values: Schema): Promise<void> {
     if (saving.value) {
         return;
     }
@@ -311,8 +285,8 @@ async function saveToStore(values: FormData): Promise<void> {
         title: values.title,
         content: values.content,
         state: values.state,
-        closed: doc.value.closed,
-        category: selectedCategory.value,
+        closed: values.closed,
+        category: values.category,
     });
 
     useTimeoutFn(() => {
@@ -320,86 +294,46 @@ async function saveToStore(values: FormData): Promise<void> {
     }, 1250);
 }
 
-async function findCategories(): Promise<void> {
-    entriesCategories.value = await completorStore.completeDocumentCategories(queryCategories.value);
-    if (selectedCategory.value && entriesCategories.value.findIndex((c) => c.id === selectedCategory.value?.id) !== 0)
-        entriesCategories.value.push(selectedCategory.value);
-}
-
 const changed = ref(false);
 
-defineRule('required', required);
-defineRule('max', max);
-defineRule('min', min);
-
-const { handleSubmit, values, setFieldValue, meta } = useForm<FormData>({
-    validationSchema: {
-        title: { required: true, min: 3, max: 255 },
-        state: { required: false, min: 2, max: 32 },
-    },
-    initialValues: {
-        public: false,
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(async (values): Promise<void> => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
     let prom: Promise<void>;
-    if (props.id === undefined) {
-        prom = createDocument(values, doc.value.closed.closed);
+    if (props.documentId === undefined) {
+        prom = createDocument(event.data);
     } else {
-        prom = updateDocument(props.id, values, doc.value.closed.closed);
+        prom = updateDocument(props.documentId, event.data);
     }
 
     await prom.finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-});
-const onSubmitThrottle = useThrottleFn(async (e) => {
-    canSubmit.value = false;
-    await onSubmit(e);
 }, 1000);
 
-watchOnce(meta, () => (changed.value = true));
 watchDebounced(
-    doc.value,
+    state,
     async () => {
         if (changed.value) {
-            saveToStore(values);
+            saveToStore(state);
+        } else {
+            changed.value = true;
         }
     },
     {
-        debounce: 1000,
+        debounce: 750,
         maxWait: 2500,
     },
 );
-watchDebounced(
-    meta,
-    async () => {
-        if (changed.value) {
-            saveToStore(values);
-        }
-    },
-    {
-        debounce: 1000,
-        maxWait: 3500,
-    },
-);
-
-watchDebounced(queryCategories, async () => findCategories(), {
-    debounce: 600,
-    maxWait: 1400,
-});
 
 const accessTypes = [
     { id: 0, name: t('common.citizen', 2) },
     { id: 1, name: t('common.job', 2) },
 ];
 
-function addDocumentAccessEntry(): void {
+function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: {
+            description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
             } as TranslateItem,
@@ -416,11 +350,11 @@ function addDocumentAccessEntry(): void {
     });
 }
 
-function removeDocumentAccessEntry(event: { id: string }): void {
+function removeAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateDocumentAccessEntryType(event: { id: string; type: number }): void {
+function updateAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -430,7 +364,7 @@ function updateDocumentAccessEntryType(event: { id: string; type: number }): voi
     access.value.set(event.id, accessEntry);
 }
 
-function updateDocumentAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
+function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -438,16 +372,16 @@ function updateDocumentAccessEntryName(event: { id: string; job?: Job; char?: Us
 
     if (event.job) {
         accessEntry.values.job = event.job.name;
-        accessEntry.values.char = undefined;
+        accessEntry.values.userId = undefined;
     } else if (event.char) {
         accessEntry.values.job = undefined;
-        accessEntry.values.char = event.char.userId;
+        accessEntry.values.userId = event.char.userId;
     }
 
     access.value.set(event.id, accessEntry);
 }
 
-function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -457,7 +391,7 @@ function updateDocumentAccessEntryRank(event: { id: string; rank: JobGrade }): v
     access.value.set(event.id, accessEntry);
 }
 
-function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -467,20 +401,18 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
     access.value.set(event.id, accessEntry);
 }
 
-async function createDocument(values: FormData, closed: boolean): Promise<void> {
+async function createDocument(values: Schema): Promise<void> {
     // Prepare request
     const req: CreateDocumentRequest = {
         title: values.title,
         content: values.content,
         contentType: DocContentType.HTML,
-        closed,
+        closed: values.closed,
         state: values.state,
         public: values.public,
         templateId: templateId.value,
+        categoryId: values.category?.id,
     };
-    if (selectedCategory.value !== undefined) {
-        req.categoryId = selectedCategory.value.id;
-    }
 
     const reqAccess: DocumentAccess = {
         jobs: [],
@@ -492,14 +424,14 @@ async function createDocument(values: FormData, closed: boolean): Promise<void> 
         }
 
         if (entry.type === 0) {
-            if (!entry.values.char) {
+            if (!entry.values.userId) {
                 return;
             }
 
             reqAccess.users.push({
                 id: '0',
                 documentId: '0',
-                userId: entry.values.char,
+                userId: entry.values.userId,
                 access: entry.values.accessRole,
             });
         } else if (entry.type === 1) {
@@ -547,9 +479,9 @@ async function createDocument(values: FormData, closed: boolean): Promise<void> 
         }
         await Promise.all(promises);
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_created.title', parameters: {} },
-            content: { key: 'notifications.document_created.content', parameters: {} },
+            description: { key: 'notifications.document_created.content', parameters: {} },
             type: 'success',
         });
         clipboardStore.clear();
@@ -565,19 +497,17 @@ async function createDocument(values: FormData, closed: boolean): Promise<void> 
     }
 }
 
-async function updateDocument(id: string, values: FormData, closed: boolean): Promise<void> {
+async function updateDocument(id: string, values: Schema): Promise<void> {
     const req: UpdateDocumentRequest = {
         documentId: id,
         title: values.title,
         content: values.content,
         contentType: DocContentType.HTML,
-        closed,
+        closed: values.closed,
         state: values.state,
         public: values.public,
+        categoryId: values.category?.id,
     };
-    if (selectedCategory.value !== undefined) {
-        req.categoryId = selectedCategory.value.id;
-    }
 
     const reqAccess: DocumentAccess = {
         jobs: [],
@@ -589,14 +519,14 @@ async function updateDocument(id: string, values: FormData, closed: boolean): Pr
         }
 
         if (entry.type === 0) {
-            if (!entry.values.char) {
+            if (!entry.values.userId) {
                 return;
             }
 
             reqAccess.users.push({
                 id: '0',
                 documentId: id,
-                userId: entry.values.char,
+                userId: entry.values.userId,
                 access: entry.values.accessRole,
             });
         } else if (entry.type === 1) {
@@ -659,9 +589,9 @@ async function updateDocument(id: string, values: FormData, closed: boolean): Pr
             });
         }
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_updated.title', parameters: {} },
-            content: { key: 'notifications.document_updated.content', parameters: {} },
+            description: { key: 'notifications.document_updated.content', parameters: {} },
             type: 'success',
         });
         clipboardStore.clear();
@@ -681,11 +611,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
 const canDo = computed(() => ({
     edit:
-        props.id === undefined
+        props.documentId === undefined
             ? true
             : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.EDIT, 'DocStoreService.UpdateDocument'),
     access:
-        props.id === undefined
+        props.documentId === undefined
             ? true
             : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
     references: can('DocStoreService.AddDocumentReference'),
@@ -705,278 +635,174 @@ console.info(
 </script>
 
 <template>
-    <div class="m-2">
-        <form @submit.prevent="onSubmitThrottle">
+    <div>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UDashboardNavbar :title="$t('pages.documents.edit.title')">
+                <template #right>
+                    <UButtonGroup class="inline-flex">
+                        <UButton
+                            color="black"
+                            :to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
+                        >
+                            {{ $t('common.back') }}
+                        </UButton>
+
+                        <UButton type="submit" :disabled="!canEdit || !canSubmit" :loading="!canSubmit">
+                            <template v-if="!documentId">
+                                {{ $t('common.create') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('common.save') }}
+                            </template>
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UDashboardNavbar>
+
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex w-full flex-col gap-2">
+                        <UFormGroup name="title" :label="$t('common.title')">
+                            <UInput
+                                v-model="state.title"
+                                type="text"
+                                size="xl"
+                                :placeholder="$t('common.title')"
+                                :disabled="!canEdit || !canDo.edit"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <div class="flex flex-row gap-2">
+                            <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                                <UInputMenu
+                                    v-model="state.category"
+                                    option-attribute="name"
+                                    :search-attributes="['name']"
+                                    block
+                                    nullable
+                                    :search="completorStore.completeDocumentCategories"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                >
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                                </UInputMenu>
+                            </UFormGroup>
+
+                            <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
+                                <UInput
+                                    v-model="state.state"
+                                    type="text"
+                                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
+                                    :disabled="!canEdit || !canDo.edit"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                                <USelectMenu
+                                    v-model="state.closed"
+                                    :disabled="!canEdit || !canDo.edit"
+                                    :options="[
+                                        { label: $t('common.open', 2), closed: false },
+                                        { label: $t('common.close', 2), closed: true },
+                                    ]"
+                                    value-attribute="closed"
+                                >
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
+                        </div>
+                    </div>
+                </template>
+            </UDashboardToolbar>
+
             <DocumentRelationManager
                 v-model="relationManagerData"
-                :open="relationManagerShow"
-                :document="id"
-                @close="relationManagerShow = false"
+                :open="openRelationManager"
+                :document="documentId"
+                @close="openRelationManager = false"
             />
             <DocumentReferenceManager
                 v-model="referenceManagerData"
-                :open="referenceManagerShow"
-                :document-id="id"
-                @close="referenceManagerShow = false"
+                :open="openReferenceManager"
+                :document-id="documentId"
+                @close="openReferenceManager = false"
             />
 
-            <div
-                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4 text-neutral"
-                :class="!(canDo.edit && canDo.relations && canDo.references) ? 'rounded-b-md' : ''"
-            >
-                <div>
-                    <label for="title" class="block text-base font-medium">
-                        {{ $t('common.title') }}
-                    </label>
-                    <VeeField
-                        name="title"
-                        type="text"
-                        :placeholder="$t('common.title')"
-                        :label="$t('common.title')"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                        :disabled="!canEdit || !canDo.edit"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
-                    <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
-                </div>
-                <div class="flex flex-row gap-2">
-                    <div class="flex-1">
-                        <label for="category" class="block text-sm font-medium">
-                            {{ $t('common.category') }}
-                        </label>
-                        <Combobox v-model="selectedCategory" as="div" :disabled="!canEdit || !canDo.edit" nullable>
-                            <div class="relative">
-                                <ComboboxButton as="div">
-                                    <ComboboxInput
-                                        autocomplete="off"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :display-value="(category: any) => category?.name"
-                                        @change="queryCategories = $event.target.value"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </ComboboxButton>
-
-                                <ComboboxOptions
-                                    v-if="entriesCategories.length > 0"
-                                    class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                >
-                                    <ComboboxOption
-                                        v-for="category in entriesCategories"
-                                        :key="category.id"
-                                        v-slot="{ active, selected }"
-                                        :value="category"
-                                        as="category"
-                                    >
-                                        <li
-                                            :class="[
-                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                active ? 'bg-primary-500' : '',
-                                            ]"
-                                        >
-                                            <span :class="['block truncate', selected && 'font-semibold']">
-                                                {{ category.name }}
-                                            </span>
-
-                                            <span
-                                                v-if="selected"
-                                                :class="[
-                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                ]"
-                                            >
-                                                <CheckIcon class="size-5" aria-hidden="true" />
-                                            </span>
-                                        </li>
-                                    </ComboboxOption>
-                                </ComboboxOptions>
-                            </div>
-                        </Combobox>
-                    </div>
-                    <div class="flex-1">
-                        <label for="state" class="block text-sm font-medium">
-                            {{ $t('common.state') }}
-                        </label>
-                        <VeeField
-                            name="state"
-                            type="text"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
-                            :label="`${$t('common.document', 1)} ${$t('common.state')}`"
-                            :disabled="!canEdit || !canDo.edit"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                        <VeeErrorMessage name="state" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                    <div class="flex-1">
-                        <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
-                        <Listbox v-model="doc.closed" as="div" :disabled="!canEdit || !canDo.edit">
-                            <div class="relative">
-                                <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                >
-                                    <span class="block truncate">
-                                        {{ openclose.find((e) => e.closed === doc.closed.closed)?.label }}</span
-                                    >
-                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
-                                    </span>
-                                </ListboxButton>
-
-                                <transition
-                                    leave-active-class="transition duration-100 ease-in"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <ListboxOptions
-                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ListboxOption
-                                            v-for="st in openclose"
-                                            :key="st.closed.toString()"
-                                            v-slot="{ active, selected }"
-                                            as="template"
-                                            :value="st"
-                                        >
-                                            <li
-                                                :class="[
-                                                    active ? 'bg-primary-500' : '',
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                ]"
-                                            >
-                                                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                                    st.label
-                                                }}</span>
-
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" aria-hidden="true" />
-                                                </span>
-                                            </li>
-                                        </ListboxOption>
-                                    </ListboxOptions>
-                                </transition>
-                            </div>
-                        </Listbox>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="canDo.edit" class="bg-base-800">
-                <VeeField
-                    v-slot="{ field }"
-                    name="content"
-                    :placeholder="$t('common.document', 1)"
-                    :label="$t('common.document', 1)"
-                    :disabled="!canEdit || !canDo.edit"
-                >
-                    <DocEditor v-bind="field" :model-value="field.value ?? ''" />
-                </VeeField>
-                <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
+            <template v-if="canDo.edit">
+                <UFormGroup name="content">
+                    <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                </UFormGroup>
 
                 <template v-if="saving">
-                    <div class="flex animate-pulse justify-center text-neutral">
-                        <ContentSaveIcon class="mr-2 h-auto w-4 animate-spin" aria-hidden="true" />
+                    <div class="flex animate-pulse justify-center">
+                        <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
                         <span>{{ $t('common.save', 2) }}...</span>
                     </div>
                 </template>
-            </div>
+            </template>
 
-            <div v-if="canDo.edit" class="flex flex-row">
-                <div class="inline-flex flex-1 rounded-md shadow-sm" role="group">
-                    <button
+            <div class="flex flex-col gap-2 px-2">
+                <UButtonGroup v-if="canDo.edit" class="mt-2 inline-flex w-full">
+                    <UButton
                         v-if="canDo.relations"
-                        type="button"
+                        class="flex-1"
                         :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex w-full justify-center rounded-bl-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                        :class="canDo.references ? '' : 'rounded-br-md'"
-                        @click="relationManagerShow = true"
+                        icon="i-mdi-account-multiple"
+                        @click="openRelationManager = true"
                     >
-                        <div class="flex justify-center">
-                            <AccountMultipleIcon
-                                class="-ml-0.5 mr-2 size-5 text-base-300 transition-colors group-hover:text-accent-200"
-                                aria-hidden="true"
-                            />
-                            {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                        </div>
-                    </button>
-                    <button
+                        {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                    </UButton>
+                    <UButton
                         v-if="canDo.references"
-                        type="button"
+                        class="flex-1"
                         :disabled="!canEdit || !canDo.edit"
-                        class="inline-flex w-full justify-center rounded-br-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                        :class="canDo.relations ? '' : 'rounded-bl-md'"
-                        @click="referenceManagerShow = true"
+                        icon="i-mdi-file-document"
+                        @click="openReferenceManager = true"
                     >
-                        <div class="flex justify-center">
-                            <FileDocumentIcon
-                                class="-ml-0.5 mr-2 size-5 text-base-300 transition-colors group-hover:text-accent-200"
-                                aria-hidden="true"
-                            />
-                            {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                        </div>
-                    </button>
+                        {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                    </UButton>
+                </UButtonGroup>
+
+                <div>
+                    <h2>
+                        {{ $t('common.access') }}
+                    </h2>
+
+                    <DocumentAccessEntry
+                        v-for="entry in access.values()"
+                        :key="entry.id"
+                        :init="entry"
+                        :access-types="accessTypes"
+                        :read-only="!canDo.access || entry.required === true"
+                        :jobs="jobs"
+                        @type-change="updateAccessEntryType($event)"
+                        @name-change="updateAccessEntryName($event)"
+                        @rank-change="updateAccessEntryRank($event)"
+                        @access-change="updateAccessEntryAccess($event)"
+                        @delete-request="removeAccessEntry($event)"
+                    />
+
+                    <UButton
+                        :disabled="!canEdit || !canDo.access"
+                        :ui="{ rounded: 'rounded-full' }"
+                        icon="i-mdi-plus"
+                        :title="$t('components.documents.document_editor.add_permission')"
+                        @click="addAccessEntry()"
+                    />
                 </div>
             </div>
-
-            <div class="my-3">
-                <h2 class="text-neutral">
-                    {{ $t('common.access') }}
-                </h2>
-                <DocumentAccessEntry
-                    v-for="entry in access.values()"
-                    :key="entry.id"
-                    :init="entry"
-                    :access-types="accessTypes"
-                    :read-only="!canDo.access || entry.required === true"
-                    :jobs="jobs"
-                    @type-change="updateDocumentAccessEntryType($event)"
-                    @name-change="updateDocumentAccessEntryName($event)"
-                    @rank-change="updateDocumentAccessEntryRank($event)"
-                    @access-change="updateDocumentAccessEntryAccess($event)"
-                    @delete-request="removeDocumentAccessEntry($event)"
-                />
-                <button
-                    type="button"
-                    :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    data-te-toggle="tooltip"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addDocumentAccessEntry()"
-                >
-                    <PlusIcon class="size-5" aria-hidden="true" />
-                </button>
-            </div>
-
-            <div class="flex pb-14">
-                <button
-                    type="submit"
-                    :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                    :class="[
-                        !canEdit || !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                    ]"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                    </template>
-                    <template v-if="!id">
-                        {{ $t('common.create') }}
-                    </template>
-                    <template v-else>
-                        {{ $t('common.save') }}
-                    </template>
-                </button>
-            </div>
-        </form>
+        </UForm>
     </div>
 </template>

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import QualificationEditor from '~/components/jobs/qualifications/QualificationEditor.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.qualifications.single.title',
@@ -13,7 +12,11 @@ definePageMeta({
 </script>
 
 <template>
-    <ContentWrapper>
-        <QualificationEditor />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.qualifications.single.title')"> </UDashboardNavbar>
+
+            <QualificationEditor />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

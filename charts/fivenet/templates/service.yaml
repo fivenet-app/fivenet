@@ -3,7 +3,7 @@ kind: Service
 metadata:
   name: {{ include "fivenet.fullname" . }}
   labels:
-    app.kubernetes.io/component: server
+    app.kubernetes.io/component: frontend
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
   type: {{ .Values.service.type }}
@@ -16,10 +16,6 @@ spec:
       port: 7070
       protocol: TCP
       targetPort: metrics
-    - name: grpc
-      port: 9090
-      protocol: TCP
-      targetPort: grpc
   selector:
-    app.kubernetes.io/component: server
+    app.kubernetes.io/component: frontend
     {{- include "fivenet.selectorLabels" . | nindent 4 }}

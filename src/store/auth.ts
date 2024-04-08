@@ -3,12 +3,14 @@ import { parseQuery } from 'vue-router';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { type JobProps } from '~~/gen/ts/resources/users/jobs';
+import { Job, type JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
+import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 
 export interface AuthState {
     accessToken: null | string;
     accessTokenExpiration: null | Date;
+    username: null | string;
     lastCharID: number;
     activeChar: null | User;
     loggingIn: boolean;
@@ -18,26 +20,28 @@ export interface AuthState {
 }
 
 export const useAuthStore = defineStore('auth', {
-    state: () => ({
-        // Persisted to Local Storage
-        accessToken: null as null | string,
-        accessTokenExpiration: null as null | Date,
-        lastCharID: 0 as number,
-        // Temporary
-        activeChar: null as null | User,
-        loggingIn: false as boolean,
-        loginError: null as null | string,
-        permissions: [] as string[],
-        jobProps: {
-            job: '',
-            theme: 'defaultTheme',
-            radioFrequency: undefined,
-            quickButtons: {},
-            logoUrl: undefined,
-        } as null | JobProps,
-    }),
+    state: () =>
+        ({
+            // Persisted to Local Storage
+            accessToken: null,
+            accessTokenExpiration: null,
+            lastCharID: 0,
+            username: null,
+            // Temporary
+            activeChar: null,
+            loggingIn: false,
+            loginError: null,
+            permissions: [],
+            jobProps: {
+                job: '',
+                theme: 'defaultTheme',
+                radioFrequency: undefined,
+                quickButtons: {},
+                logoUrl: undefined,
+            } as JobProps,
+        }) as AuthState,
     persist: {
-        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID'],
+        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID', 'username'],
     },
     actions: {
         loginStart(): void {
@@ -74,6 +78,7 @@ export const useAuthStore = defineStore('auth', {
             this.setActiveChar(null);
             this.setPermissions([]);
             this.setJobProps(undefined);
+            this.username = null;
         },
 
         // GRPC Calls
@@ -90,6 +95,7 @@ export const useAuthStore = defineStore('auth', {
 
                 this.loginStop(null);
                 this.setAccessToken(response.token, toDate(response.expires));
+                this.username = username;
             } catch (e) {
                 this.loginStop((e as RpcError).message);
                 this.setAccessToken(null, null);
@@ -105,9 +111,9 @@ export const useAuthStore = defineStore('auth', {
             } catch (e) {
                 $grpc.handleError(e as RpcError);
 
-                useNotificatorStore().dispatchNotification({
+                useNotificatorStore().add({
                     title: { key: 'notifications.auth.error_logout.title', parameters: {} },
-                    content: {
+                    description: {
                         key: 'notifications.auth.error_logout.content',
                         parameters: { msg: (e as RpcError).message },
                     },
@@ -118,7 +124,7 @@ export const useAuthStore = defineStore('auth', {
                 throw e;
             }
         },
-        async chooseCharacter(charId?: number): Promise<void> {
+        async chooseCharacter(charId?: number, redirect?: string): Promise<void> {
             if (charId === undefined) {
                 charId = this.lastCharID;
             }
@@ -140,8 +146,8 @@ export const useAuthStore = defineStore('auth', {
                 this.setPermissions(response.permissions);
                 this.setJobProps(response.jobProps);
 
-                if (useRoute().query.redirect !== undefined) {
-                    const path = useRoute().query.redirect?.toString() || '/overview';
+                if (redirect !== undefined) {
+                    const path = redirect || '/overview';
                     const url = new URL('https://example.com' + path);
                     // @ts-ignore the route should be valid, as we test it against a valid URL list
                     await navigateTo({
@@ -154,6 +160,45 @@ export const useAuthStore = defineStore('auth', {
                     const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                     await navigateTo(target);
                 }
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
+        },
+        async setSuperUserMode(superuser: boolean, job?: Job): Promise<void> {
+            const { $grpc } = useNuxtApp();
+            try {
+                const req = {
+                    superuser: superuser,
+                } as SetSuperUserModeRequest;
+
+                if (job) {
+                    req.job = job!.name;
+                }
+
+                const call = $grpc.getAuthClient().setSuperUserMode(req);
+                const { response } = await call;
+
+                if (superuser) {
+                    this.permissions.push('superuser');
+                } else {
+                    this.permissions = this.permissions.filter((p) => p !== 'superuser');
+                }
+
+                this.setAccessToken(response.token, toDate(response.expires));
+                this.setActiveChar(response.char!);
+                this.setJobProps(response.jobProps);
+
+                useNotificatorStore().add({
+                    title: { key: 'notifications.superuser_menu.setsuperusermode.title', parameters: {} },
+                    description: {
+                        key: 'notifications.superuser_menu.setsuperusermode.content',
+                        parameters: { job: job?.label ?? this.activeChar?.jobLabel ?? 'N/A' },
+                    },
+                    type: 'info',
+                });
+
+                await navigateTo({ name: 'overview' });
             } catch (e) {
                 $grpc.handleError(e as RpcError);
                 throw e;

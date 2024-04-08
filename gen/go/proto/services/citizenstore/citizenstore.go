@@ -428,7 +428,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 15)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
 	resp.Pagination = pag
 	if count.TotalCount <= 0 {
 		return resp, nil

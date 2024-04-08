@@ -16,6 +16,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
         return true;
     }
 
+    const redirect = to.query.redirect ?? to.fullPath;
     // Check if user has access token
     if (accessToken.value !== null) {
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
@@ -24,17 +25,20 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             if (lastCharID.value > 0) {
                 const { setActiveChar, setPermissions, setJobProps } = authStore;
                 try {
-                    await authStore.chooseCharacter(authStore.lastCharID);
+                    await authStore.chooseCharacter(authStore.lastCharID, redirect.toString());
                 } catch (e) {
                     setActiveChar(null);
                     setPermissions([]);
                     setJobProps(undefined);
+                    return navigateTo({
+                        name: 'auth-character-selector',
+                        query: { redirect },
+                    });
                 }
             }
 
             if (activeChar.value === null) {
                 // Only update the redirect query param if it isn't set already
-                const redirect = to.query.redirect ?? to.fullPath;
                 return navigateTo({
                     name: 'auth-character-selector',
                     query: { redirect },
@@ -52,9 +56,9 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             // User has permission
             return true;
         } else {
-            useNotificatorStore().dispatchNotification({
+            useNotificatorStore().add({
                 title: { key: 'notifications.auth.no_permission.title', parameters: {} },
-                content: {
+                description: {
                     key: 'notifications.auth.no_permission.content',
                     parameters: { path: to.name ? toTitleCase(to.name?.toString()) : to.path },
                 },
@@ -70,7 +74,6 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
     }
 
     // Only update the redirect query param if it isn't set already
-    const redirect = to.query.redirect ?? to.fullPath;
     return navigateTo({
         name: 'auth-login',
         // save the location we were at to come back later

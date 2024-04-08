@@ -10,7 +10,6 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
 import { Timestamp } from "../timestamp/timestamp";
 import { File } from "../filestore/file";
 /**
@@ -104,17 +103,17 @@ export interface JobsUserActivity {
      */
     sourceUserId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort source_user = 6;
+     * @generated from protobuf field: resources.jobs.Colleague source_user = 6;
      */
-    sourceUser?: UserShort; // @gotags: alias:"source_user"
+    sourceUser?: Colleague; // @gotags: alias:"source_user"
     /**
      * @generated from protobuf field: int32 target_user_id = 7;
      */
     targetUserId: number;
     /**
-     * @generated from protobuf field: resources.users.UserShort target_user = 8;
+     * @generated from protobuf field: resources.jobs.Colleague target_user = 8;
      */
-    targetUser?: UserShort; // @gotags: alias:"target_user"
+    targetUser?: Colleague; // @gotags: alias:"target_user"
     /**
      * @generated from protobuf field: resources.jobs.JobsUserActivityType activity_type = 9;
      */
@@ -407,9 +406,9 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "source_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 6, name: "source_user", kind: "message", T: () => UserShort },
+            { no: 6, name: "source_user", kind: "message", T: () => Colleague },
             { no: 7, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "target_user", kind: "message", T: () => UserShort },
+            { no: 8, name: "target_user", kind: "message", T: () => Colleague },
             { no: 9, name: "activity_type", kind: "enum", T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"] },
             { no: 10, name: "reason", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 11, name: "data", kind: "message", T: () => JobsUserActivityData }
@@ -444,14 +443,14 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
                 case /* int32 source_user_id */ 5:
                     message.sourceUserId = reader.int32();
                     break;
-                case /* resources.users.UserShort source_user */ 6:
-                    message.sourceUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
+                case /* resources.jobs.Colleague source_user */ 6:
+                    message.sourceUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.sourceUser);
                     break;
                 case /* int32 target_user_id */ 7:
                     message.targetUserId = reader.int32();
                     break;
-                case /* resources.users.UserShort target_user */ 8:
-                    message.targetUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
+                case /* resources.jobs.Colleague target_user */ 8:
+                    message.targetUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
                     break;
                 case /* resources.jobs.JobsUserActivityType activity_type */ 9:
                     message.activityType = reader.int32();
@@ -486,15 +485,15 @@ class JobsUserActivity$Type extends MessageType<JobsUserActivity> {
         /* int32 source_user_id = 5; */
         if (message.sourceUserId !== 0)
             writer.tag(5, WireType.Varint).int32(message.sourceUserId);
-        /* resources.users.UserShort source_user = 6; */
+        /* resources.jobs.Colleague source_user = 6; */
         if (message.sourceUser)
-            UserShort.internalBinaryWrite(message.sourceUser, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.sourceUser, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         /* int32 target_user_id = 7; */
         if (message.targetUserId !== 0)
             writer.tag(7, WireType.Varint).int32(message.targetUserId);
-        /* resources.users.UserShort target_user = 8; */
+        /* resources.jobs.Colleague target_user = 8; */
         if (message.targetUser)
-            UserShort.internalBinaryWrite(message.targetUser, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.targetUser, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         /* resources.jobs.JobsUserActivityType activity_type = 9; */
         if (message.activityType !== 0)
             writer.tag(9, WireType.Varint).int32(message.activityType);

@@ -1,17 +1,16 @@
 <script lang="ts" setup>
 import CharacterSelector from '~/components/auth/CharacterSelector.vue';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
 import { useAuthStore } from '~/store/auth';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 
 useHead({
-    title: 'components.auth.character_selector.title',
+    title: 'components.auth.CharacterSelector.title',
 });
 definePageMeta({
-    title: 'components.auth.character_selector.title',
+    title: 'components.auth.CharacterSelector.title',
+    layout: 'auth',
     requiresAuth: true,
     authOnlyToken: true,
-    showQuickButtons: false,
 });
 
 const authStore = useAuthStore();
@@ -28,7 +27,7 @@ onMounted(async () => {
 </script>
 
 <template>
-    <ContentCenterWrapper>
+    <UCard class="w-full">
         <CharacterSelector />
-    </ContentCenterWrapper>
+    </UCard>
 </template>

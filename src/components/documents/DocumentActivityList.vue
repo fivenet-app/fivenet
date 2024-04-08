@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { TicketIcon } from 'mdi-vue3';
 import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const props = defineProps<{
     documentId: string;
@@ -13,9 +12,10 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${offset.value}`, () =>
+const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () =>
     listDocumentActivity(),
 );
 
@@ -46,16 +46,16 @@ watch(offset, async () => refresh());
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-else-if="data === null || data.activity.length === 0"
-            :icon="TicketIcon"
+            icon="i-mdi-ticket"
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
         <template v-else>
-            <div class="mb-1 sm:divide-y sm:divide-base-400">
+            <div class="mb-1 divide-y divide-gray-200 dark:divide-gray-700">
                 <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
-
-            <TablePagination :pagination="data?.pagination" :refresh="refresh" @offset-change="offset = $event" />
         </template>
+
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

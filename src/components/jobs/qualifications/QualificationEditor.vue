@@ -1,20 +1,6 @@
 <script lang="ts" setup>
-import {
-    Disclosure,
-    DisclosureButton,
-    DisclosurePanel,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-    Switch,
-    SwitchGroup,
-    SwitchLabel,
-} from '@headlessui/vue';
-import { max, min, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, LoadingIcon, PlusIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import {
     AccessLevel,
@@ -22,6 +8,7 @@ import {
     type Qualification,
     QualificationRequirement,
     QualificationShort,
+    QualificationDiscordSettings,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
@@ -33,10 +20,9 @@ import QualificationRequirementEntry from '~/components/jobs/qualifications/Qual
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import DiscordLogo from '~/components/partials/logos/DiscordLogo.vue';
 
 const props = defineProps<{
-    id?: string;
+    qualificationId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -59,27 +45,29 @@ const canDo = computed(() => ({
     access: true,
 }));
 
-interface FormData {
-    weight: number;
-    abbreviation: string;
-    title: string;
-    description: string;
-    content: string;
-    discordSettingsSyncEnabled: boolean;
-    discordSettingsRoleName?: string;
-}
+const schema = z.object({
+    weight: z.number(),
+    abbreviation: z.string().min(3).max(20),
+    title: z.string().min(3).max(255),
+    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
+    content: z.string().min(20).max(750000),
+    closed: z.boolean(),
+    discordSettings: z.custom<QualificationDiscordSettings>(),
+});
 
-const openclose = [
-    { id: 0, label: t('common.open', 2), closed: false },
-    { id: 1, label: t('common.close', 2), closed: true },
-];
+type Schema = z.output<typeof schema>;
 
-const quali = ref<{
-    closed: { id: number; label: string; closed: boolean };
-    requirements: QualificationRequirement[];
-}>({
-    closed: openclose[0],
-    requirements: [],
+const state = reactive<Schema>({
+    weight: 0,
+    abbreviation: '',
+    title: '',
+    description: '',
+    content: '',
+    closed: false,
+    discordSettings: {
+        syncEnabled: false,
+        roleName: '',
+    },
 });
 
 const access = ref<
@@ -97,12 +85,13 @@ const access = ref<
     >
 >(new Map());
 const qualiAccess = ref<QualificationAccess>();
+const qualiRequirements = ref<QualificationRequirement[]>([]);
 
 onMounted(async () => {
-    if (props.id) {
+    if (props.qualificationId) {
         try {
             const call = $grpc.getQualificationsClient().getQualification({
-                qualificationId: props.id,
+                qualificationId: props.qualificationId,
             });
             const { response } = await call;
 
@@ -110,20 +99,18 @@ onMounted(async () => {
             qualiAccess.value = response.qualification?.access;
 
             if (qualification) {
-                setFieldValue('abbreviation', qualification.abbreviation);
-                setFieldValue('title', qualification.title);
-                if (qualification.description) {
-                    setFieldValue('description', qualification.description);
-                }
-                setFieldValue('content', qualification.content);
-                quali.value.closed = openclose.find((e) => e.closed === qualification.closed) as {
-                    id: number;
-                    label: string;
-                    closed: boolean;
+                state.abbreviation = qualification.abbreviation;
+                state.title = qualification.title;
+                state.description = qualification.description;
+                state.content = qualification.content;
+                state.closed = qualification.closed;
+                state.abbreviation = qualification.abbreviation;
+                state.discordSettings = qualification.discordSettings ?? {
+                    syncEnabled: false,
+                    roleName: '',
                 };
-                quali.value.requirements = qualification.requirements;
-                setFieldValue('discordSettingsSyncEnabled', qualification.discordSettings?.syncEnabled ?? false);
-                setFieldValue('discordSettingsRoleName', qualification.discordSettings?.roleName);
+
+                qualiRequirements.value = qualification.requirements;
             }
 
             if (response.qualification?.access) {
@@ -166,27 +153,24 @@ onMounted(async () => {
     canEdit.value = true;
 });
 
-async function createQualification(values: FormData): Promise<CreateQualificationResponse> {
+async function createQualification(values: Schema): Promise<CreateQualificationResponse> {
     const req = {
         qualification: {
             id: '0',
             job: '',
             weight: 0,
-            closed: quali.value.closed.closed,
+            closed: values.closed,
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
             content: values.content,
             creatorId: 0,
             creatorJob: '',
-            requirements: quali.value.requirements,
+            requirements: qualiRequirements.value,
             access: {
                 jobs: [],
             } as QualificationAccess,
-            discordSettings: {
-                syncEnabled: values.discordSettingsSyncEnabled,
-                roleName: values.discordSettingsRoleName,
-            },
+            discordSettings: values.discordSettings,
         },
     };
     access.value.forEach((entry) => {
@@ -225,27 +209,24 @@ async function createQualification(values: FormData): Promise<CreateQualificatio
     }
 }
 
-async function updateQualification(values: FormData): Promise<UpdateQualificationResponse> {
+async function updateQualification(values: Schema): Promise<UpdateQualificationResponse> {
     const req = {
         qualification: {
-            id: props.id!,
+            id: props.qualificationId!,
             job: '',
             weight: 0,
-            closed: quali.value.closed.closed,
+            closed: values.closed,
             abbreviation: values.abbreviation,
             title: values.title,
             description: values.description,
             content: values.content,
             creatorId: 0,
             creatorJob: '',
-            requirements: quali.value.requirements,
+            requirements: qualiRequirements.value,
             access: {
                 jobs: [],
             } as QualificationAccess,
-            discordSettings: {
-                syncEnabled: values.discordSettingsSyncEnabled,
-                roleName: values.discordSettingsRoleName,
-            },
+            discordSettings: values.discordSettings,
         },
     };
     access.value.forEach((entry) => {
@@ -260,7 +241,7 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
 
             req.qualification.access.jobs.push({
                 id: '0',
-                qualificationId: props.id!,
+                qualificationId: props.qualificationId!,
                 job: entry.values.job,
                 minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
                 access: entry.values.accessRole,
@@ -285,43 +266,23 @@ async function updateQualification(values: FormData): Promise<UpdateQualificatio
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
-    validationSchema: {
-        weight: {},
-        abbreviation: { required: true, min: 3, max: 20 },
-        title: { required: true, min: 3, max: 1024 },
-        description: { required: true, max: 512 },
-        content: { required: true, min: 20, max: 750000 },
-        discordSettingsSyncEnabled: {},
-        discordSettingsRoleName: { required: false, min: 3, max: 50 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(async (values): Promise<any> => {
-    if (props.id === undefined) {
-        await createQualification(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    } else {
-        await updateQualification(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    }
-});
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    if (props.qualificationId === undefined) {
+        await createQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    } else {
+        await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    }
 }, 1000);
 
 const accessTypes = [{ id: 0, name: t('common.job', 2) }];
 
-function addQualificationAccessEntry(): void {
+function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            content: {
+            description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
             } as TranslateItem,
@@ -338,11 +299,11 @@ function addQualificationAccessEntry(): void {
     });
 }
 
-function removeQualificationAccessEntry(event: { id: string }): void {
+function removeAccessEntry(event: { id: string }): void {
     access.value.delete(event.id);
 }
 
-function updateQualificationAccessEntryType(event: { id: string; type: number }): void {
+function updateAccessEntryType(event: { id: string; type: number }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -352,7 +313,7 @@ function updateQualificationAccessEntryType(event: { id: string; type: number })
     access.value.set(event.id, accessEntry);
 }
 
-function updateQualificationAccessEntryName(event: { id: string; job?: Job; req?: Qualification }): void {
+function updateAccessEntryName(event: { id: string; job?: Job; req?: Qualification }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -365,7 +326,7 @@ function updateQualificationAccessEntryName(event: { id: string; job?: Job; req?
     access.value.set(event.id, accessEntry);
 }
 
-function updateQualificationAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -375,7 +336,7 @@ function updateQualificationAccessEntryRank(event: { id: string; rank: JobGrade 
     access.value.set(event.id, accessEntry);
 }
 
-function updateQualificationAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
     const accessEntry = access.value.get(event.id);
     if (!accessEntry) {
         return;
@@ -390,294 +351,193 @@ function updateQualificationRequirement(idx: number, qualification?: Qualificati
         return;
     }
 
-    quali.value.requirements[idx].qualificationId = props.id ?? '0';
-    quali.value.requirements[idx].targetQualificationId = qualification.id;
+    qualiRequirements.value[idx].qualificationId = props.qualificationId ?? '0';
+    qualiRequirements.value[idx].targetQualificationId = qualification.id;
 }
 
 const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
-    <div class="m-2">
-        <form @submit.prevent="onSubmitThrottle">
-            <div
-                class="flex flex-col gap-2 rounded-t-lg bg-base-800 px-3 py-4 text-neutral"
-                :class="!canDo.edit ? 'rounded-b-md' : ''"
-            >
-                <div class="flex flex-row gap-2">
-                    <div class="max-w-48 shrink">
-                        <label for="abbreviation" class="block text-base font-medium">
-                            {{ $t('common.abbreviation') }}
-                        </label>
-                        <VeeField
-                            name="abbreviation"
-                            type="text"
-                            :placeholder="$t('common.abbreviation')"
-                            :label="$t('common.abbreviation')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                            :disabled="!canEdit || !canDo.edit"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                        <VeeErrorMessage name="abbreviation" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
+    <div>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
+                <template #right>
+                    <UButtonGroup class="inline-flex">
+                        <UButton
+                            color="black"
+                            :to="
+                                qualificationId
+                                    ? { name: 'jobs-qualifications-id', params: { id: qualificationId } }
+                                    : '/jobs/qualifications'
+                            "
+                        >
+                            {{ $t('common.back') }}
+                        </UButton>
 
-                    <div class="flex-1">
-                        <label for="title" class="block text-base font-medium">
-                            {{ $t('common.title') }}
-                        </label>
-                        <VeeField
-                            name="title"
-                            type="text"
-                            :placeholder="$t('common.title')"
-                            :label="$t('common.title')"
-                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-3xl sm:leading-6"
-                            :disabled="!canEdit || !canDo.edit"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                        <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                </div>
-                <div class="flex flex-row gap-2">
-                    <div class="flex-1">
-                        <label for="description" class="block text-sm font-medium">
-                            {{ $t('common.description') }}
-                        </label>
-                        <VeeField
-                            name="description"
-                            as="textarea"
-                            :placeholder="$t('common.description')"
-                            :label="$t('common.description')"
-                            class="block h-20 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:leading-6"
-                            :disabled="!canEdit || !canDo.edit"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                        <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                    <div class="min-w-32">
-                        <label for="closed" class="block text-sm font-medium"> {{ $t('common.close', 2) }}? </label>
-                        <Listbox v-model="quali.closed" as="div" :disabled="!canEdit || !canDo.edit">
-                            <div class="relative">
-                                <ListboxButton
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                >
-                                    <span class="block truncate">
-                                        {{ openclose.find((e) => e.closed === quali.closed.closed)?.label }}</span
-                                    >
-                                    <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                        <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
-                                    </span>
-                                </ListboxButton>
+                        <UButton type="submit" :disabled="!canEdit || !canSubmit" :loading="!canSubmit">
+                            <template v-if="!qualificationId">
+                                {{ $t('common.create') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('common.save') }}
+                            </template>
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UDashboardNavbar>
 
-                                <transition
-                                    leave-active-class="transition duration-100 ease-in"
-                                    leave-from-class="opacity-100"
-                                    leave-to-class="opacity-0"
-                                >
-                                    <ListboxOptions
-                                        class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                    >
-                                        <ListboxOption
-                                            v-for="st in openclose"
-                                            :key="st.closed.toString()"
-                                            v-slot="{ active, selected }"
-                                            as="template"
-                                            :value="st"
-                                        >
-                                            <li
-                                                :class="[
-                                                    active ? 'bg-primary-500' : '',
-                                                    'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                ]"
-                                            >
-                                                <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">{{
-                                                    st.label
-                                                }}</span>
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex w-full flex-col gap-2">
+                        <div class="flex w-full flex-row gap-2">
+                            <UFormGroup name="abbreviation" :label="$t('common.abbreviation')" class="max-w-48 shrink">
+                                <UInput
+                                    name="abbreviation"
+                                    type="text"
+                                    size="xl"
+                                    :placeholder="$t('common.abbreviation')"
+                                    :disabled="!canEdit || !canDo.edit"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
 
-                                                <span
-                                                    v-if="selected"
-                                                    :class="[
-                                                        active ? 'text-neutral' : 'text-primary-500',
-                                                        'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                    ]"
-                                                >
-                                                    <CheckIcon class="size-5" aria-hidden="true" />
-                                                </span>
-                                            </li>
-                                        </ListboxOption>
-                                    </ListboxOptions>
-                                </transition>
-                            </div>
-                        </Listbox>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="canDo.edit" class="bg-neutral">
-                <VeeField
-                    v-slot="{ field }"
-                    name="content"
-                    :placeholder="$t('common.content')"
-                    :label="$t('common.content')"
-                    :disabled="!canEdit || !canDo.edit"
-                >
-                    <DocEditor v-bind="field" :model-value="field.value ?? ''" />
-                </VeeField>
-                <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
-            </div>
-
-            <div class="my-3">
-                <h2 class="text-neutral">
-                    {{ $t('common.access') }}
-                </h2>
-                <QualificationAccessEntry
-                    v-for="entry in access.values()"
-                    :key="entry.id"
-                    :init="entry"
-                    :access-types="accessTypes"
-                    :read-only="!canDo.access"
-                    :jobs="jobs"
-                    @type-change="updateQualificationAccessEntryType($event)"
-                    @name-change="updateQualificationAccessEntryName($event)"
-                    @rank-change="updateQualificationAccessEntryRank($event)"
-                    @access-change="updateQualificationAccessEntryAccess($event)"
-                    @delete-request="removeQualificationAccessEntry($event)"
-                />
-                <button
-                    type="button"
-                    :disabled="!canEdit || !canDo.access"
-                    class="rounded-full bg-primary-500 p-2 text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                    data-te-toggle="tooltip"
-                    :title="$t('components.documents.document_editor.add_permission')"
-                    @click="addQualificationAccessEntry()"
-                >
-                    <PlusIcon class="size-5" aria-hidden="true" />
-                </button>
-            </div>
-
-            <div class="my-3">
-                <h2 class="text-neutral">
-                    {{ $t('common.requirements') }}
-                </h2>
-
-                <QualificationRequirementEntry
-                    v-for="(requirement, idx) in quali.requirements"
-                    :key="requirement.id"
-                    :requirement="requirement"
-                    @update-qualification="updateQualificationRequirement(idx, $event)"
-                    @remove="quali.requirements.splice(idx, 1)"
-                />
-
-                <button
-                    type="button"
-                    class="mt-2 rounded-full p-1.5 text-neutral focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    :disabled="!canSubmit"
-                    :class="
-                        !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
-                    "
-                    @click="quali.requirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
-                >
-                    <PlusIcon class="size-5" aria-hidden="true" />
-                </button>
-            </div>
-
-            <div class="my-3">
-                <h2 class="text-neutral">
-                    {{ $t('common.discord') }}
-                </h2>
-
-                <Disclosure v-slot="{ open }" as="div" class="border-neutral/20 text-neutral hover:border-neutral/70">
-                    <DisclosureButton
-                        :class="[
-                            open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                            'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                        ]"
-                    >
-                        <span class="inline-flex items-center text-base font-semibold leading-7 text-neutral">
-                            <DiscordLogo class="mr-2 h-auto w-5" aria-hidden="true" />
-                            {{ $t('common.discord') }}
-                        </span>
-                        <span class="ml-6 flex h-7 items-center">
-                            <ChevronDownIcon
-                                :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                aria-hidden="true"
-                            />
-                        </span>
-                    </DisclosureButton>
-                    <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                        <div class="mx-4 pb-2">
-                            <VeeField v-slot="{ field, handleInput }" name="discordSettingsSyncEnabled">
-                                <SwitchGroup as="div" class="flex items-center">
-                                    <Switch
-                                        :class="[
-                                            field.value ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                        ]"
-                                        :disabled="!canEdit || !canDo.edit"
-                                        @update:model-value="handleInput($event)"
-                                    >
-                                        <span class="sr-only">
-                                            {{ $t('common.absent') }}
-                                        </span>
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                field.value ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
-                            </VeeField>
-
-                            <label for="discordSettingsRoleName" class="block text-base font-medium">
-                                {{ $t('common.role') }}
-                            </label>
-                            <VeeField
-                                name="discordSettingsRoleName"
-                                type="text"
-                                :placeholder="$t('common.role')"
-                                :label="$t('common.role')"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                :disabled="!canEdit || !canDo.edit"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                            <VeeErrorMessage name="discordSettingsRoleName" as="p" class="mt-2 text-sm text-error-400" />
+                            <UFormGroup name="title" :label="$t('common.title')" class="flex-1">
+                                <UInput
+                                    name="title"
+                                    type="text"
+                                    size="xl"
+                                    :placeholder="$t('common.title')"
+                                    :disabled="!canEdit || !canDo.edit"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
                         </div>
-                    </DisclosurePanel>
-                </Disclosure>
-            </div>
 
-            <div class="flex pb-14">
-                <button
-                    type="submit"
-                    :disabled="!meta.valid || !canEdit || !canSubmit"
-                    class="flex w-full justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                    :class="[
-                        !canEdit || !meta.valid || !canSubmit
-                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                    ]"
-                >
-                    <template v-if="!canSubmit">
-                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                    </template>
-                    <template v-if="!id">
-                        {{ $t('common.create') }}
-                    </template>
-                    <template v-else>
-                        {{ $t('common.save') }}
-                    </template>
-                </button>
+                        <div class="flex w-full flex-row gap-2">
+                            <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                                <UTextarea
+                                    name="description"
+                                    block
+                                    :placeholder="$t('common.description')"
+                                    :disabled="!canEdit || !canDo.edit"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
+                                <USelectMenu
+                                    v-model="state.closed"
+                                    :disabled="!canEdit || !canDo.edit"
+                                    :options="[
+                                        { label: $t('common.open', 2), closed: false },
+                                        { label: $t('common.close', 2), closed: true },
+                                    ]"
+                                    value-attribute="closed"
+                                >
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
+                        </div>
+                    </div>
+                </template>
+            </UDashboardToolbar>
+
+            <template v-if="canDo.edit">
+                <UFormGroup name="content">
+                    <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                </UFormGroup>
+            </template>
+
+            <div class="flex flex-col gap-2 px-2">
+                <div>
+                    <h2>
+                        {{ $t('common.access') }}
+                    </h2>
+                    <QualificationAccessEntry
+                        v-for="entry in access.values()"
+                        :key="entry.id"
+                        :init="entry"
+                        :access-types="accessTypes"
+                        :read-only="!canDo.access"
+                        :jobs="jobs"
+                        @type-change="updateAccessEntryType($event)"
+                        @name-change="updateAccessEntryName($event)"
+                        @rank-change="updateAccessEntryRank($event)"
+                        @access-change="updateAccessEntryAccess($event)"
+                        @delete-request="removeAccessEntry($event)"
+                    />
+                    <UButton
+                        :ui="{ rounded: 'rounded-full' }"
+                        :disabled="!canEdit || !canDo.access"
+                        icon="i-mdi-plus"
+                        :title="$t('components.documents.document_editor.add_permission')"
+                        @click="addAccessEntry()"
+                    />
+                </div>
+
+                <div>
+                    <h2>
+                        {{ $t('common.requirements') }}
+                    </h2>
+
+                    <QualificationRequirementEntry
+                        v-for="(requirement, idx) in qualiRequirements"
+                        :key="requirement.id"
+                        :requirement="requirement"
+                        @update-qualification="updateQualificationRequirement(idx, $event)"
+                        @remove="qualiRequirements.splice(idx, 1)"
+                    />
+
+                    <UButton
+                        :ui="{ rounded: 'rounded-full' }"
+                        :disabled="!canSubmit"
+                        icon="i-mdi-plus"
+                        @click="qualiRequirements.push({ id: '0', qualificationId: '0', targetQualificationId: '0' })"
+                    />
+                </div>
+
+                <div>
+                    <h2>
+                        {{ $t('common.discord') }}
+                    </h2>
+
+                    <UAccordion :items="[{ slot: 'discord', label: $t('common.discord') }]">
+                        <template #discord>
+                            <div>
+                                <UFormGroup name="discordSettings.enabled" :label="$t('common.enabled')">
+                                    <UToggle v-model="state.discordSettings.syncEnabled" :disabled="!canEdit || !canDo.edit">
+                                        <span class="sr-only">
+                                            {{ $t('common.enabled') }}
+                                        </span>
+                                    </UToggle>
+                                    <span class="ml-3 text-sm font-medium">{{ $t('common.enabled') }}</span>
+                                </UFormGroup>
+
+                                <UFormGroup name="discordSettings.roleName" :label="$t('common.role')">
+                                    <UInput
+                                        v-model="state.discordSettings.roleName"
+                                        name="discordSettings.roleName"
+                                        type="text"
+                                        :placeholder="$t('common.role')"
+                                        :disabled="!canEdit || !canDo.edit"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+                            </div>
+                        </template>
+                    </UAccordion>
+                </div>
             </div>
-        </form>
+        </UForm>
     </div>
 </template>

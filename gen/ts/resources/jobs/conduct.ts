@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
+import { Colleague } from "./colleagues";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.jobs.ConductEntry
@@ -51,17 +51,17 @@ export interface ConductEntry {
      */
     targetUserId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort target_user = 9;
+     * @generated from protobuf field: optional resources.jobs.Colleague target_user = 9;
      */
-    targetUser?: UserShort; // @gotags: alias:"target_user"
+    targetUser?: Colleague; // @gotags: alias:"target_user"
     /**
      * @generated from protobuf field: int32 creator_id = 10;
      */
     creatorId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
+     * @generated from protobuf field: optional resources.jobs.Colleague creator = 11;
      */
-    creator?: UserShort; // @gotags: alias:"creator"
+    creator?: Colleague; // @gotags: alias:"creator"
 }
 /**
  * @generated from protobuf enum resources.jobs.ConductType
@@ -108,9 +108,9 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
             { no: 6, name: "message", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "2048" } } } },
             { no: 7, name: "expires_at", kind: "message", T: () => Timestamp },
             { no: 8, name: "target_user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 9, name: "target_user", kind: "message", T: () => UserShort },
+            { no: 9, name: "target_user", kind: "message", T: () => Colleague },
             { no: 10, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort }
+            { no: 11, name: "creator", kind: "message", T: () => Colleague }
         ]);
     }
     create(value?: PartialMessage<ConductEntry>): ConductEntry {
@@ -154,14 +154,14 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
                 case /* int32 target_user_id */ 8:
                     message.targetUserId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort target_user */ 9:
-                    message.targetUser = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
+                case /* optional resources.jobs.Colleague target_user */ 9:
+                    message.targetUser = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.targetUser);
                     break;
                 case /* int32 creator_id */ 10:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 11:
-                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                case /* optional resources.jobs.Colleague creator */ 11:
+                    message.creator = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -199,15 +199,15 @@ class ConductEntry$Type extends MessageType<ConductEntry> {
         /* int32 target_user_id = 8; */
         if (message.targetUserId !== 0)
             writer.tag(8, WireType.Varint).int32(message.targetUserId);
-        /* optional resources.users.UserShort target_user = 9; */
+        /* optional resources.jobs.Colleague target_user = 9; */
         if (message.targetUser)
-            UserShort.internalBinaryWrite(message.targetUser, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.targetUser, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
         /* int32 creator_id = 10; */
         if (message.creatorId !== 0)
             writer.tag(10, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 11; */
+        /* optional resources.jobs.Colleague creator = 11; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

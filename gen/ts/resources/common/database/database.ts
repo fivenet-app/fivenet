@@ -15,34 +15,34 @@ import { MessageType } from "@protobuf-ts/runtime";
  */
 export interface PaginationRequest {
     /**
-     * @generated from protobuf field: int64 offset = 1;
+     * @generated from protobuf field: int64 offset = 1 [jstype = JS_NUMBER];
      */
-    offset: bigint;
+    offset: number;
     /**
-     * @generated from protobuf field: optional int64 page_size = 2;
+     * @generated from protobuf field: optional int64 page_size = 2 [jstype = JS_NUMBER];
      */
-    pageSize?: bigint;
+    pageSize?: number;
 }
 /**
  * @generated from protobuf message resources.common.database.PaginationResponse
  */
 export interface PaginationResponse {
     /**
-     * @generated from protobuf field: int64 total_count = 1;
+     * @generated from protobuf field: int64 total_count = 1 [jstype = JS_NUMBER];
      */
-    totalCount: bigint;
+    totalCount: number;
     /**
-     * @generated from protobuf field: int64 offset = 2;
+     * @generated from protobuf field: int64 offset = 2 [jstype = JS_NUMBER];
      */
-    offset: bigint;
+    offset: number;
     /**
-     * @generated from protobuf field: int64 end = 3;
+     * @generated from protobuf field: int64 end = 3 [jstype = JS_NUMBER];
      */
-    end: bigint;
+    end: number;
     /**
-     * @generated from protobuf field: int64 page_size = 4;
+     * @generated from protobuf field: int64 page_size = 4 [jstype = JS_NUMBER];
      */
-    pageSize: bigint;
+    pageSize: number;
 }
 /**
  * @generated from protobuf message resources.common.database.OrderBy
@@ -61,13 +61,13 @@ export interface OrderBy {
 class PaginationRequest$Type extends MessageType<PaginationRequest> {
     constructor() {
         super("resources.common.database.PaginationRequest", [
-            { no: 1, name: "offset", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { int64: { gte: "0" } } } },
-            { no: 2, name: "page_size", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/, options: { "validate.rules": { int64: { gte: "0" } } } }
+            { no: 1, name: "offset", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { int64: { gte: "0" } } } },
+            { no: 2, name: "page_size", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { int64: { gte: "0" } } } }
         ]);
     }
     create(value?: PartialMessage<PaginationRequest>): PaginationRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.offset = 0n;
+        message.offset = 0;
         if (value !== undefined)
             reflectionMergePartial<PaginationRequest>(this, message, value);
         return message;
@@ -77,11 +77,11 @@ class PaginationRequest$Type extends MessageType<PaginationRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 offset */ 1:
-                    message.offset = reader.int64().toBigInt();
+                case /* int64 offset = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.offset = reader.int64().toNumber();
                     break;
-                case /* optional int64 page_size */ 2:
-                    message.pageSize = reader.int64().toBigInt();
+                case /* optional int64 page_size = 2 [jstype = JS_NUMBER];*/ 2:
+                    message.pageSize = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -95,10 +95,10 @@ class PaginationRequest$Type extends MessageType<PaginationRequest> {
         return message;
     }
     internalBinaryWrite(message: PaginationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 offset = 1; */
-        if (message.offset !== 0n)
+        /* int64 offset = 1 [jstype = JS_NUMBER]; */
+        if (message.offset !== 0)
             writer.tag(1, WireType.Varint).int64(message.offset);
-        /* optional int64 page_size = 2; */
+        /* optional int64 page_size = 2 [jstype = JS_NUMBER]; */
         if (message.pageSize !== undefined)
             writer.tag(2, WireType.Varint).int64(message.pageSize);
         let u = options.writeUnknownFields;
@@ -115,18 +115,18 @@ export const PaginationRequest = new PaginationRequest$Type();
 class PaginationResponse$Type extends MessageType<PaginationResponse> {
     constructor() {
         super("resources.common.database.PaginationResponse", [
-            { no: 1, name: "total_count", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 2, name: "offset", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 3, name: "end", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ },
-            { no: 4, name: "page_size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 0 /*LongType.BIGINT*/ }
+            { no: 1, name: "total_count", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "offset", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 3, name: "end", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 4, name: "page_size", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<PaginationResponse>): PaginationResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.totalCount = 0n;
-        message.offset = 0n;
-        message.end = 0n;
-        message.pageSize = 0n;
+        message.totalCount = 0;
+        message.offset = 0;
+        message.end = 0;
+        message.pageSize = 0;
         if (value !== undefined)
             reflectionMergePartial<PaginationResponse>(this, message, value);
         return message;
@@ -136,17 +136,17 @@ class PaginationResponse$Type extends MessageType<PaginationResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* int64 total_count */ 1:
-                    message.totalCount = reader.int64().toBigInt();
+                case /* int64 total_count = 1 [jstype = JS_NUMBER];*/ 1:
+                    message.totalCount = reader.int64().toNumber();
                     break;
-                case /* int64 offset */ 2:
-                    message.offset = reader.int64().toBigInt();
+                case /* int64 offset = 2 [jstype = JS_NUMBER];*/ 2:
+                    message.offset = reader.int64().toNumber();
                     break;
-                case /* int64 end */ 3:
-                    message.end = reader.int64().toBigInt();
+                case /* int64 end = 3 [jstype = JS_NUMBER];*/ 3:
+                    message.end = reader.int64().toNumber();
                     break;
-                case /* int64 page_size */ 4:
-                    message.pageSize = reader.int64().toBigInt();
+                case /* int64 page_size = 4 [jstype = JS_NUMBER];*/ 4:
+                    message.pageSize = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -160,17 +160,17 @@ class PaginationResponse$Type extends MessageType<PaginationResponse> {
         return message;
     }
     internalBinaryWrite(message: PaginationResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* int64 total_count = 1; */
-        if (message.totalCount !== 0n)
+        /* int64 total_count = 1 [jstype = JS_NUMBER]; */
+        if (message.totalCount !== 0)
             writer.tag(1, WireType.Varint).int64(message.totalCount);
-        /* int64 offset = 2; */
-        if (message.offset !== 0n)
+        /* int64 offset = 2 [jstype = JS_NUMBER]; */
+        if (message.offset !== 0)
             writer.tag(2, WireType.Varint).int64(message.offset);
-        /* int64 end = 3; */
-        if (message.end !== 0n)
+        /* int64 end = 3 [jstype = JS_NUMBER]; */
+        if (message.end !== 0)
             writer.tag(3, WireType.Varint).int64(message.end);
-        /* int64 page_size = 4; */
-        if (message.pageSize !== 0n)
+        /* int64 page_size = 4 [jstype = JS_NUMBER]; */
+        if (message.pageSize !== 0)
             writer.tag(4, WireType.Varint).int64(message.pageSize);
         let u = options.writeUnknownFields;
         if (u !== false)

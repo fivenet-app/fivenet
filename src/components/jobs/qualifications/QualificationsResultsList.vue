@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { SigmaIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import QualificationsResultsListEntry from '~/components/jobs/qualifications/QualificationsResultsListEntry.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -23,10 +22,11 @@ const props = withDefaults(
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `qualifications-results-${props.qualificationId}-${props.userId}`,
+    `qualifications-results-${page.value}-${props.qualificationId}-${props.userId}`,
     () => listQualificationsResults(props.qualificationId, props.userId, props.status),
 );
 
@@ -58,7 +58,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+        <div class="bg-background border-b border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
                     <h3 v-if="!userId" class="text-base font-semibold leading-6 text-gray-200">
@@ -67,13 +67,13 @@ watch(offset, async () => refresh());
                 </div>
             </div>
         </div>
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.result', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.result', 2)])" :retry="refresh" />
             <DataNoDataBlock
                 v-else-if="data?.results.length === 0"
                 :message="$t('common.not_found', [$t('common.result', 2)])"
-                :icon="markRaw(SigmaIcon)"
+                icon="i-mdi-sigma"
             />
 
             <template v-else>
@@ -82,15 +82,9 @@ watch(offset, async () => refresh());
                 </ul>
             </template>
         </div>
-        <div class="border-t border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+        <div class="bg-background border-t border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex items-center">
-                <TablePagination
-                    class="w-full"
-                    :pagination="data?.pagination"
-                    :show-border="false"
-                    :refresh="refresh"
-                    @offset-change="offset = $event"
-                />
+                <Pagination v-model="page" :pagination="data?.pagination" />
             </div>
         </div>
     </div>

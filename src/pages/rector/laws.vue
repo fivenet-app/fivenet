@@ -8,12 +8,15 @@ definePageMeta({
     title: 'pages.rector.laws.title',
     requiresAuth: true,
     permission: 'SuperUser',
-    showQuickButtons: false,
 });
 </script>
 
 <template>
-    <div>
-        <LawList />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.rector.laws.title')"> </UDashboardNavbar>
+
+            <LawList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

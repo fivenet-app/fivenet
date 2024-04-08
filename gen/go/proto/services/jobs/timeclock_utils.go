@@ -3,6 +3,7 @@ package jobs
 import (
 	"context"
 	"errors"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -34,7 +35,8 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.BoolExpression) ([]*jobs.TimeclockWeeklyStats, error) {
 	stmt := tTimeClock.
 		SELECT(
-			jet.CONCAT(jet.RawString("YEAR(timeclock_entry.`date`)"), jet.RawString("' - '"), jet.RawString("WEEK(timeclock_entry.`date`)")).AS("timeclock_weekly_stats.date"),
+			jet.RawString("YEAR(timeclock_entry.`date`)").AS("timeclock_weekly_stats.year"),
+			jet.RawString("WEEK(timeclock_entry.`date`)").AS("timeclock_weekly_stats.calendar_week"),
 			jet.SUM(tTimeClock.SpentTime).AS("timeclock_weekly_stats.sum"),
 			jet.AVG(tTimeClock.SpentTime).AS("timeclock_weekly_stats.avg"),
 			jet.MAX(tTimeClock.SpentTime).AS("timeclock_weekly_stats.max"),
@@ -44,10 +46,12 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 			condition,
 		)).
 		GROUP_BY(
+			jet.RawString("YEAR(timeclock_entry.`date`)"),
 			jet.RawString("WEEK(timeclock_entry.`date`)"),
 		).
 		ORDER_BY(
-			jet.RawString("`timeclock_weekly_stats.date` ASC"),
+			jet.RawString("`timeclock_weekly_stats.year` DESC"),
+			jet.RawString("`timeclock_weekly_stats.calendar_week` DESC"),
 		).
 		LIMIT(12)
 
@@ -57,6 +61,8 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 			return nil, err
 		}
 	}
+
+	slices.Reverse(dest)
 
 	return dest, nil
 }

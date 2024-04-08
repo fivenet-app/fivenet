@@ -1,39 +1,37 @@
-import { ChevronDoubleDownIcon, ChevronDoubleUpIcon, ExitRunIcon, HelpIcon, IslandIcon, NewBoxIcon } from 'mdi-vue3';
-import type { DefineComponent } from 'vue';
 import { JobsUserActivityType } from '~~/gen/ts/resources/jobs/colleagues';
 
 export function jobsUserActivityTypeBGColor(activityType: JobsUserActivityType | undefined): string {
     switch (activityType) {
         case JobsUserActivityType.ABSENCE_DATE:
-            return 'fill-yellow-300';
+            return '!text-yellow-300';
         case JobsUserActivityType.HIRED:
-            return 'fill-blue-500';
+            return '!text-blue-500';
         case JobsUserActivityType.FIRED:
-            return 'fill-red-500';
+            return '!text-red-500';
         case JobsUserActivityType.PROMOTED:
-            return 'fill-green-500';
+            return '!text-green-500';
         case JobsUserActivityType.DEMOTED:
-            return 'fill-orange-500';
+            return '!text-orange-500';
         case JobsUserActivityType.UNSPECIFIED:
         default:
-            return 'fill-info-500';
+            return '!text-info-500';
     }
 }
 
-export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | undefined): DefineComponent {
+export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | undefined): string {
     switch (activityType) {
         case JobsUserActivityType.ABSENCE_DATE:
-            return markRaw(IslandIcon);
+            return 'i-mdi-island';
         case JobsUserActivityType.HIRED:
-            return markRaw(NewBoxIcon);
+            return 'i-mdi-new-box';
         case JobsUserActivityType.FIRED:
-            return markRaw(ExitRunIcon);
+            return 'i-mdi-exit-run';
         case JobsUserActivityType.PROMOTED:
-            return markRaw(ChevronDoubleUpIcon);
+            return 'i-mdi-chevron-double-up';
         case JobsUserActivityType.DEMOTED:
-            return markRaw(ChevronDoubleDownIcon);
+            return 'i-mdi-chevron-double-down';
         case JobsUserActivityType.UNSPECIFIED:
         default:
-            return markRaw(HelpIcon);
+            return 'i-mdi-help';
     }
 }

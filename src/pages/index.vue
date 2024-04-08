@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import HeroPage from '~/components/partials/HeroPage.vue';
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 
@@ -9,6 +7,7 @@ useHead({
 });
 definePageMeta({
     title: 'common.home',
+    layout: 'landing',
     requiresAuth: false,
     showCookieOptions: true,
 });
@@ -16,42 +15,56 @@ definePageMeta({
 const authStore = useAuthStore();
 const { accessToken } = storeToRefs(authStore);
 
+const router = useRouter();
+
 onBeforeMount(async () => {
     if (accessToken.value) {
         // @ts-ignore the route should be valid, as we test it against a valid URL list
-        const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
+        const target = router.resolve(useSettingsStore().startpage ?? '/overview');
         return navigateTo(target);
     }
 });
+
+const appVersion = __APP_VERSION__.split('-')[0];
 </script>
 
 <template>
-    <HeroPage>
-        <template #default>
-            <FiveNetLogo class="mx-auto mb-2 h-36 w-auto" />
-
-            <h1 class="text-5xl font-bold tracking-tight text-neutral sm:text-6xl">
-                {{ $t('pages.index.welcome') }}
-            </h1>
-
-            <p class="mt-6 text-lg leading-8 text-neutral">
-                {{ $t('pages.index.subtext') }}
-            </p>
-
-            <div class="mt-4 flex items-center justify-center gap-x-6">
-                <NuxtLink
-                    :to="{ name: 'auth-login' }"
-                    class="w-48 max-w-96 rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                >
-                    {{ $t('components.auth.login.title') }}
-                </NuxtLink>
-                <NuxtLink
-                    :to="{ name: 'auth-registration' }"
-                    class="w-48 max-w-96 rounded-md bg-secondary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500"
-                >
-                    {{ $t('components.auth.registration_form.title') }}
-                </NuxtLink>
-            </div>
-        </template>
-    </HeroPage>
+    <div class="hero flex flex-col">
+        <div class="w-full flex-1 bg-black/50">
+            <ULandingHero
+                :title="$t('pages.index.welcome')"
+                :description="$t('pages.index.subtext')"
+                :links="
+                    !accessToken
+                        ? [
+                              {
+                                  label: $t('components.auth.LoginForm.title'),
+                                  icon: 'i-mdi-login',
+                                  size: 'lg',
+                                  to: '/auth/login',
+                              },
+                              {
+                                  label: $t('components.auth.RegistrationForm.title'),
+                                  trailingIcon: 'i-mdi-account-plus',
+                                  color: 'gray',
+                                  size: 'lg',
+                                  to: '/auth/registration',
+                              },
+                          ]
+                        : [{ label: $t('common.overview'), icon: 'i-mdi-home', size: 'lg', to: '/overview' }]
+                "
+            >
+                <template #headline>
+                    <UButton
+                        color="gray"
+                        to="/about"
+                        :label="$t('pages.index.whats_new_in', { version: appVersion })"
+                        trailing-icon="i-mdi-arrow-right"
+                        size="xs"
+                        class="rounded-full"
+                    />
+                </template>
+            </ULandingHero>
+        </div>
+    </div>
 </template>

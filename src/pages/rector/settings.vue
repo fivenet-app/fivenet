@@ -8,12 +8,13 @@ definePageMeta({
     title: 'pages.rector.settings.title',
     requiresAuth: true,
     permission: 'SuperUser',
-    showQuickButtons: false,
 });
 </script>
 
 <template>
-    <div>
-        <AppConfig />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <AppConfig />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

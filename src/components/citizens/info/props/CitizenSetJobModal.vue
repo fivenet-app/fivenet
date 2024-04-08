@@ -1,0 +1,170 @@
+<script lang="ts" setup>
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
+import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
+import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import { User, UserProps } from '~~/gen/ts/resources/users/users';
+
+const props = defineProps<{
+    user: User;
+}>();
+
+const emit = defineEmits<{
+    (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
+}>();
+
+const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
+
+const notifications = useNotificatorStore();
+
+const completorStore = useCompletorStore();
+
+const { jobs } = storeToRefs(completorStore);
+const { listJobs } = completorStore;
+
+const schema = z.object({
+    reason: z.string().min(3).max(255),
+    job: z.custom<Job>(),
+    grade: z.custom<JobGrade>().optional(),
+    reset: z.boolean(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    reason: '',
+    job: jobs.value.find((j) => j.name === props.user.job),
+    grade: jobs.value.find((j) => j.name === props.user.job)?.grades.find((g) => g.grade === props.user.jobGrade),
+    reset: false,
+});
+
+async function setJobProp(values: Schema): Promise<void> {
+    const userProps: UserProps = {
+        userId: props.user.userId,
+        jobName: values.job.name,
+        jobGradeNumber: values.grade?.grade,
+    };
+
+    if (values.reset) {
+        userProps.job = undefined;
+        userProps.jobName = undefined;
+        userProps.jobGrade = undefined;
+        userProps.jobGradeNumber = undefined;
+    }
+
+    try {
+        const call = $grpc.getCitizenStoreClient().setUserProps({
+            props: userProps,
+            reason: values.reason,
+        });
+        const { response } = await call;
+
+        emit('update:job', {
+            job: response.props?.job ?? { name: '', label: '', grades: [] },
+            grade: response.props?.jobGrade ?? { grade: 1, label: '' },
+        });
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
+
+        isOpen.value = false;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+    await setJobProp(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
+
+onBeforeMount(async () => listJobs());
+</script>
+
+<template>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
+                        </h3>
+
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
+
+                <div>
+                    <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')">
+                        <UInput
+                            v-model="state.reason"
+                            type="text"
+                            :placeholder="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
+                        <USelectMenu v-model="state.job" :options="jobs" by="label">
+                            <template #label>
+                                <template v-if="state.job">
+                                    <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                                </template>
+                            </template>
+                            <template #option="{ option: job }">
+                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
+
+                    <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
+                        <USelectMenu v-model="state.grade" :options="state.job?.grades" by="grade">
+                            <template #label>
+                                <template v-if="state.grade">
+                                    <span class="truncate">{{ state.grade?.label }} ({{ state.grade?.grade }})</span>
+                                </template>
+                            </template>
+                            <template #option="{ option: jobGrade }">
+                                <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
+                </div>
+
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save') }}
+                        </UButton>
+
+                        <UButton
+                            type="submit"
+                            block
+                            class="flex-1"
+                            color="red"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            @click="state.reset = true"
+                        >
+                            {{ $t('common.reset') }}
+                        </UButton>
+
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
+    </UModal>
+</template>

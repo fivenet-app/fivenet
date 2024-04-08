@@ -4,7 +4,6 @@ package resources.jobs;
 
 import "resources/filestore/file.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
@@ -50,9 +49,9 @@ message JobsUserActivity {
   optional resources.timestamp.Timestamp created_at = 2;
   string job = 4 [(validate.rules).string.max_len = 20];
   int32 source_user_id = 5 [(validate.rules).int32.gt = 0];
-  resources.users.UserShort source_user = 6; // @gotags: alias:"source_user"
+  Colleague source_user = 6; // @gotags: alias:"source_user"
   int32 target_user_id = 7 [(validate.rules).int32.gt = 0];
-  resources.users.UserShort target_user = 8; // @gotags: alias:"target_user"
+  Colleague target_user = 8; // @gotags: alias:"target_user"
   JobsUserActivityType activity_type = 9;
   // @sanitize
   string reason = 10 [(validate.rules).string.max_len = 255];

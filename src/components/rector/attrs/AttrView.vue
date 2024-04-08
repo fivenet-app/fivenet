@@ -1,16 +1,12 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { useConfirmDialog } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, CloseIcon, TrashCanIcon } from 'mdi-vue3';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import GenericDivider from '~/components/partials/elements/GenericDivider.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     roleId: string;
@@ -20,7 +16,11 @@ const emit = defineEmits<{
     (e: 'deleted'): void;
 }>();
 
+const { t } = useI18n();
+
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const notifications = useNotificatorStore();
 
@@ -58,9 +58,9 @@ async function deleteRole(id: string): Promise<void> {
     try {
         await $grpc.getRectorClient().deleteRole({ id });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
-            content: { key: 'notifications.rector.role_deleted.content', parameters: {} },
+            description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
             type: 'success',
         });
 
@@ -187,9 +187,9 @@ async function updatePermissions(): Promise<void> {
             attrs,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.role_updated.title', parameters: {} },
-            content: { key: 'notifications.rector.role_updated.content', parameters: {} },
+            description: { key: 'notifications.rector.role_updated.content', parameters: {} },
             type: 'success',
         });
 
@@ -236,75 +236,57 @@ watch(props, () => {
     }
 });
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteRole(id));
+const accordionCategories = computed(() =>
+    [...permCategories.value.entries()].map((category) => {
+        return {
+            label: t(`perms.${category[1]}.category`),
+            category: category[0],
+        };
+    }),
+);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(role!.id)" />
-
-    <div class="w-full py-4">
-        <div class="px-1 sm:px-2 lg:px-4">
+    <div class="w-full">
+        <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
             <DataNoDataBlock v-else-if="role === null" :type="$t('common.role', 2)" />
-            <template v-else>
-                <h2 class="text-3xl text-neutral" :title="`ID: ${role.id}`">
-                    {{ role?.jobLabel! }}
-                    <button v-if="can('RectorService.DeleteRole')" type="button" class="ml-1" @click="reveal()">
-                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
-                    </button>
-                </h2>
-                <GenericDivider :label="$t('common.permission', 2)" />
-                <div class="flex flex-col gap-4 py-2">
-                    <button
-                        type="button"
-                        :disabled="!changed"
-                        class="inline-flex justify-center rounded-md px-3 py-2 text-center font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                        :class="
-                            !changed
-                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
-                        "
-                        @click="updatePermissions()"
-                    >
-                        {{ $t('common.save', 1) }}
-                    </button>
 
-                    <Disclosure
-                        v-for="category in permCategories"
-                        :key="category"
-                        v-slot="{ open }"
-                        as="div"
-                        class="border-neutral/20 text-neutral hover:border-neutral/70"
-                    >
-                        <DisclosureButton
-                            :class="[
-                                open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                            ]"
-                        >
-                            <span class="text-base font-semibold leading-7">
-                                {{ $t(`perms.${category}.category`) }}
-                            </span>
-                            <span class="ml-6 flex h-7 items-center">
-                                <ChevronDownIcon
-                                    :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                    aria-hidden="true"
-                                />
-                            </span>
-                        </DisclosureButton>
-                        <DisclosurePanel
-                            class="-mt-2 rounded-b-lg border-2 border-t-0 border-inherit px-4 pb-2 transition-colors"
-                        >
-                            <div class="mx-auto my-2 flex flex-col gap-2">
+            <template v-else>
+                <div class="flex justify-between">
+                    <h2 class="text-3xl" :title="`ID: ${role.id}`">
+                        {{ role?.jobLabel! }}
+                    </h2>
+
+                    <UButton
+                        v-if="can('RectorService.DeleteRole')"
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteRole(role!.id),
+                            })
+                        "
+                    />
+                </div>
+
+                <UDivider :label="$t('common.attributes', 2)" />
+
+                <div class="flex flex-col gap-4 py-2">
+                    <UButton :disabled="!changed" block @click="updatePermissions()">
+                        {{ $t('common.save', 1) }}
+                    </UButton>
+
+                    <UAccordion :items="accordionCategories" multiple>
+                        <template #item="{ item: category }">
+                            <div class="flex flex-col gap-2 divide-y divide-gray-100 dark:divide-gray-800">
                                 <div
-                                    v-for="(perm, idx) in permList.filter((p) => p.category === category)"
+                                    v-for="perm in permList.filter((p) => p.category === category.category)"
                                     :key="perm.id"
                                     class="flex flex-col gap-2"
                                 >
-                                    <div class="flex flex-row gap-4">
+                                    <div class="flex flex-row gap-2">
                                         <div class="my-auto flex flex-1 flex-col">
                                             <span :title="`${$t('common.id')}: ${perm.id}`">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
@@ -313,23 +295,26 @@ onConfirm(async (id) => deleteRole(id));
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>
-                                        <div class="my-auto flex max-h-8 flex-initial flex-row">
-                                            <button
-                                                :data-active="permStates.has(perm.id) ? permStates.get(perm.id) : false"
-                                                class="rounded-l-lg bg-success-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-success-600 data-[active=true]:text-neutral hover:bg-success-600/70"
+                                        <UButtonGroup class="my-auto flex max-h-8 flex-initial flex-row">
+                                            <UButton
+                                                :disabled="permStates.has(perm.id) ? permStates.get(perm.id) : false"
+                                                color="green"
+                                                icon="i-mdi-check"
                                                 @click="updatePermissionState(perm.id, true)"
-                                            >
-                                                <CheckIcon class="size-5" aria-hidden="true" />
-                                            </button>
-                                            <button
-                                                :data-active="permStates.get(perm.id) === undefined || !permStates.get(perm.id)"
-                                                class="rounded-r-lg bg-error-600/50 p-1 text-base-300 transition-colors data-[active=true]:bg-error-600 data-[active=true]:text-neutral hover:bg-error-600/70"
+                                            />
+                                            <UButton
+                                                :disabled="
+                                                    permStates.has(perm.id)
+                                                        ? permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                        : false
+                                                "
+                                                color="red"
+                                                icon="i-mdi-close"
                                                 @click="updatePermissionState(perm.id, false)"
-                                            >
-                                                <CloseIcon class="size-5" aria-hidden="true" />
-                                            </button>
-                                        </div>
+                                            />
+                                        </UButtonGroup>
                                     </div>
+
                                     <AttrViewAttr
                                         v-for="attr in attrList.filter((a) => a.permissionId === perm.id)"
                                         :key="attr.attrId"
@@ -338,14 +323,10 @@ onConfirm(async (id) => deleteRole(id));
                                         :permission="perm"
                                         @changed="changed = true"
                                     />
-                                    <div
-                                        v-if="idx !== permList.filter((p) => p.category === category).length - 1"
-                                        class="w-full border-t border-neutral/20"
-                                    />
                                 </div>
                             </div>
-                        </DisclosurePanel>
-                    </Disclosure>
+                        </template>
+                    </UAccordion>
                 </div>
             </template>
         </div>

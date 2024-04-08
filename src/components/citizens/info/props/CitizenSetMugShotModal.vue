@@ -1,0 +1,172 @@
+<script lang="ts" setup>
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
+import SquareImg from '~/components/partials/elements/SquareImg.vue';
+import { useNotificatorStore } from '~/store/notificator';
+import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
+
+const props = defineProps<{
+    user: User;
+}>();
+
+const emit = defineEmits<{
+    (e: 'update:mugShot', value?: FilestoreFile): void;
+}>();
+
+const { $grpc } = useNuxtApp();
+
+const { isOpen } = useModal();
+
+const notifications = useNotificatorStore();
+
+const appConfig = useAppConfig();
+
+const mugShotSchema = zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images);
+const schema = z
+    .object({
+        reason: z.string().min(3).max(255),
+        mugShot: mugShotSchema,
+        reset: z.boolean(),
+    })
+    .or(
+        z.union([
+            z.object({ reason: z.string(), mugShot: z.custom<FileList>(), reset: z.boolean() }),
+            z.object({ reason: z.string(), mugShot: z.undefined(), reset: z.boolean() }),
+        ]),
+    );
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    reason: '',
+    mugShot: undefined,
+    reset: false,
+});
+
+async function setMugShot(values: Schema): Promise<void> {
+    const userProps: UserProps = {
+        userId: props.user.userId,
+    };
+    if (!values.reset) {
+        if (!values.mugShot) {
+            return;
+        }
+
+        userProps.mugShot = { data: new Uint8Array(await values.mugShot[0].arrayBuffer()) };
+    } else {
+        userProps.mugShot = { data: new Uint8Array(), delete: true };
+
+        state.reset = false;
+    }
+
+    try {
+        const call = $grpc.getCitizenStoreClient().setUserProps({
+            props: userProps,
+            reason: values.reason,
+        });
+        const { response } = await call;
+
+        emit('update:mugShot', response.props?.mugShot);
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
+
+        isOpen.value = false;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+    await setMugShot(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
+</script>
+
+<template>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
+                        </h3>
+
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
+
+                <div>
+                    <UFormGroup name="reason" :label="$t('common.reason')">
+                        <UInput
+                            v-model="state.reason"
+                            type="text"
+                            :placeholder="$t('common.reason')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="mugShot" :label="$t('common.image')">
+                        <template v-if="isNUIAvailable()">
+                            <p class="text-sm">
+                                {{ $t('system.not_supported_on_tablet.title') }}
+                            </p>
+                        </template>
+                        <template v-else>
+                            <UInput
+                                type="file"
+                                accept="image/jpeg,image/jpg,image/png"
+                                :placeholder="$t('common.image')"
+                                @change="state.mugShot = $event"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </template>
+                    </UFormGroup>
+
+                    <div class="mt-4 flex flex-1 items-center">
+                        <SquareImg
+                            :url="user?.props?.mugShot?.url"
+                            class="m-auto"
+                            size="3xl"
+                            :alt="$t('common.mug_shot')"
+                            :no-blur="true"
+                        />
+                    </div>
+                </div>
+
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save') }}
+                        </UButton>
+
+                        <UButton
+                            type="submit"
+                            block
+                            class="flex-1"
+                            color="red"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                            @click="state.reset = true"
+                        >
+                            {{ $t('common.reset') }}
+                        </UButton>
+
+                        <UButton block class="flex-1" color="black" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
+    </UModal>
+</template>

@@ -1,56 +1,56 @@
 <script lang="ts" setup>
-import {
-    Dialog,
-    DialogPanel,
-    DialogTitle,
-    Listbox,
-    ListboxButton,
-    ListboxOption,
-    ListboxOptions,
-    TransitionChild,
-    TransitionRoot,
-} from '@headlessui/vue';
-// eslint-disable-next-line camelcase
-import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CheckIcon, ChevronDownIcon, CloseIcon, LoadingIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
-    open: boolean;
     qualificationId: string;
     userId: number;
 }>();
 
 const emits = defineEmits<{
-    (e: 'close'): void;
-    (e: 'refresh'): void;
+    (e: 'refreshRequests'): void;
 }>();
+
+const { isOpen } = useModal();
 
 const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
 
-interface FormData {
-    status: ResultStatus;
-    score: number;
-    summary: string;
-}
+const availableStatus = [
+    { status: ResultStatus.SUCCESSFUL },
+    { status: ResultStatus.FAILED },
+    { status: ResultStatus.PENDING },
+];
+
+const schema = z.object({
+    status: z.nativeEnum(ResultStatus),
+    score: z.coerce.number().min(0).max(1000),
+    summary: z.string().min(3).max(255),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    status: ResultStatus.PENDING,
+    score: 0,
+    summary: '',
+});
 
 async function createOrUpdateQualificationRequest(
     qualificationId: string,
     userId: number,
-    values: FormData,
+    values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
         const call = $grpc.getQualificationsClient().createOrUpdateQualificationResult({
             result: {
                 id: '0',
-                qualificationId,
-                userId,
+                qualificationId: qualificationId,
+                userId: userId,
                 status: values.status,
                 score: values.score,
                 summary: values.summary,
@@ -60,14 +60,14 @@ async function createOrUpdateQualificationRequest(
         });
         const { response } = await call;
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
-            content: { key: 'notifications.action_successfull.content', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
             type: 'success',
         });
 
-        emits('refresh');
-        emits('close');
+        emits('refreshRequests');
+        isOpen.value = false;
 
         return response;
     } catch (e) {
@@ -76,233 +76,94 @@ async function createOrUpdateQualificationRequest(
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('min_value', min_value);
-defineRule('max_value', max_value);
-defineRule('numeric', numeric);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        status: { required: true },
-        score: { required: true, min_value: 0, max_value: 100, numeric: true },
-        summary: { required: true, min: 3, max: 255 },
-    },
-    validateOnMount: true,
-    initialValues: {
-        status: ResultStatus.PENDING,
-        score: 0,
-    },
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<any> =>
-        await createOrUpdateQualificationRequest(props.qualificationId, props.userId, values).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createOrUpdateQualificationRequest(props.qualificationId, props.userId, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
-
-const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultStatus.PENDING];
 </script>
 
 <template>
-    <TransitionRoot as="template" :show="open">
-        <Dialog as="div" class="relative z-30" @close="$emit('close')">
-            <TransitionChild
-                as="template"
-                enter="ease-out duration-300"
-                enter-from="opacity-0"
-                enter-to="opacity-100"
-                leave="ease-in duration-200"
-                leave-from="opacity-100"
-                leave-to="opacity-0"
-            >
-                <div class="fixed inset-0 bg-base-900/75 transition-opacity" />
-            </TransitionChild>
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.qualifications.request_modal.title') }}
+                        </h3>
 
-            <div class="fixed inset-0 z-30 overflow-y-auto">
-                <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-                    <TransitionChild
-                        as="template"
-                        enter="ease-out duration-300"
-                        enter-from="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                        enter-to="opacity-100 translate-y-0 sm:scale-100"
-                        leave="ease-in duration-200"
-                        leave-from="opacity-100 translate-y-0 sm:scale-100"
-                        leave-to="opacity-0 translate-y-4 sm:translate-y-0 sm:scale-95"
-                    >
-                        <DialogPanel
-                            class="relative h-112 w-full overflow-hidden rounded-lg bg-base-800 px-4 pb-4 pt-5 text-left text-neutral transition-all sm:my-8 sm:max-w-2xl sm:p-6"
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
+
+                <div>
+                    <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
+                        <USelectMenu
+                            v-model="state.status"
+                            :options="availableStatus"
+                            value-attribute="status"
+                            :placeholder="
+                                state.status
+                                    ? $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status ?? 0]}`)
+                                    : $t('common.na')
+                            "
                         >
-                            <div class="absolute right-0 top-0 block pr-4 pt-4">
-                                <button
-                                    type="button"
-                                    class="rounded-md bg-neutral text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
-                                    @click="$emit('close')"
-                                >
-                                    <span class="sr-only">{{ $t('common.close') }}</span>
-                                    <CloseIcon class="size-5" aria-hidden="true" />
-                                </button>
-                            </div>
-                            <DialogTitle as="h3" class="text-base font-semibold leading-6">
-                                {{ $t('components.qualifications.request_modal.title') }}
-                            </DialogTitle>
-                            <form @submit.prevent="onSubmitThrottle">
-                                <div class="my-2">
-                                    <div class="flex-1">
-                                        <label for="status" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.status') }}
-                                        </label>
-                                        <VeeField
-                                            v-slot="{ field }"
-                                            as="div"
-                                            name="status"
-                                            :placeholder="$t('common.status')"
-                                            :label="$t('common.status')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        >
-                                            <Listbox v-bind="field" as="div">
-                                                <div class="relative">
-                                                    <ListboxButton
-                                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    >
-                                                        <span class="block truncate">
-                                                            {{
-                                                                $t(
-                                                                    `enums.qualifications.ResultStatus.${ResultStatus[availableStatus.find((t) => t === field.value) ?? 0]}`,
-                                                                )
-                                                            }}
-                                                        </span>
-                                                        <span
-                                                            class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                                                        >
-                                                            <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
-                                                        </span>
-                                                    </ListboxButton>
+                            <template #label>
+                                <span v-if="state.status" class="truncate">{{
+                                    $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`)
+                                }}</span>
+                            </template>
+                            <template #option="{ option }">
+                                {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
 
-                                                    <transition
-                                                        leave-active-class="transition duration-100 ease-in"
-                                                        leave-from-class="opacity-100"
-                                                        leave-to-class="opacity-0"
-                                                    >
-                                                        <ListboxOptions
-                                                            class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                        >
-                                                            <ListboxOption
-                                                                v-for="stat in availableStatus"
-                                                                :key="stat"
-                                                                v-slot="{ active, selected }"
-                                                                as="template"
-                                                                :value="stat"
-                                                            >
-                                                                <li
-                                                                    :class="[
-                                                                        active ? 'bg-primary-500' : '',
-                                                                        'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                    ]"
-                                                                >
-                                                                    <span
-                                                                        :class="[
-                                                                            selected ? 'font-semibold' : 'font-normal',
-                                                                            'block truncate',
-                                                                        ]"
-                                                                    >
-                                                                        {{
-                                                                            $t(
-                                                                                `enums.qualifications.ResultStatus.${ResultStatus[stat]}`,
-                                                                            )
-                                                                        }}
-                                                                    </span>
+                    <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
+                        <UInput
+                            name="score"
+                            type="number"
+                            min="0"
+                            max="100"
+                            :placeholder="$t('common.score')"
+                            :label="$t('common.score')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
 
-                                                                    <span
-                                                                        v-if="selected"
-                                                                        :class="[
-                                                                            active ? 'text-neutral' : 'text-primary-500',
-                                                                            'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                        ]"
-                                                                    >
-                                                                        <CheckIcon class="size-5" aria-hidden="true" />
-                                                                    </span>
-                                                                </li>
-                                                            </ListboxOption>
-                                                        </ListboxOptions>
-                                                    </transition>
-                                                </div>
-                                            </Listbox>
-                                        </VeeField>
-                                        <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <label for="score" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.score') }}
-                                        </label>
-                                        <VeeField
-                                            type="number"
-                                            name="score"
-                                            min="0"
-                                            max="100"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.score')"
-                                            :label="$t('common.score')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="score" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-
-                                    <div class="flex-1">
-                                        <label for="summary" class="block text-sm font-medium leading-6 text-neutral">
-                                            {{ $t('common.summary') }}
-                                        </label>
-                                        <VeeField
-                                            as="textarea"
-                                            name="summary"
-                                            class="block h-24 w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                            :placeholder="$t('common.summary')"
-                                            :label="$t('common.summary')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                        <VeeErrorMessage name="summary" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-                                </div>
-                                <div class="absolute bottom-0 left-0 flex w-full">
-                                    <button
-                                        type="button"
-                                        class="flex-1 rounded-md bg-neutral px-3.5 py-2.5 text-sm font-semibold text-gray-900 hover:bg-gray-200"
-                                        @click="$emit('close')"
-                                    >
-                                        {{ $t('common.close', 1) }}
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        class="flex flex-1 justify-center rounded-md px-3.5 py-2.5 text-sm font-semibold text-neutral"
-                                        :disabled="!meta.valid || !canSubmit"
-                                        :class="[
-                                            !meta.valid || !canSubmit
-                                                ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                                : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                        ]"
-                                    >
-                                        <template v-if="!canSubmit">
-                                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                                        </template>
-                                        {{ $t('common.submit') }}
-                                    </button>
-                                </div>
-                            </form>
-                        </DialogPanel>
-                    </TransitionChild>
+                    <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
+                        <UTextarea
+                            name="summary"
+                            :rows="3"
+                            :placeholder="$t('common.summary')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                 </div>
-            </div>
-        </Dialog>
-    </TransitionRoot>
+
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.submit') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
+    </UModal>
 </template>

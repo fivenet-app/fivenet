@@ -1,12 +1,8 @@
 <script lang="ts" setup>
-import { CheckIcon, ChevronDownIcon } from 'mdi-vue3';
-import { Listbox, ListboxButton, ListboxOption, ListboxOptions, Switch, SwitchGroup, SwitchLabel } from '@headlessui/vue';
 import type { RoutePathSchema } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
-import { JOB_THEME_KEY, availableThemes, useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 
 const { t } = useI18n();
 
@@ -14,16 +10,16 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const settings = useSettingsStore();
-const { startpage, documents, streamerMode, audio } = storeToRefs(settings);
+const { startpage, design, streamerMode, audio } = storeToRefs(settings);
 
 const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] = [
-    { name: 'common.home', path: '/overview' },
-    { name: 'pages.citizens.title', path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
-    { name: 'pages.vehicles.title', path: '/vehicles', permission: 'DMVService.ListVehicles' },
-    { name: 'pages.documents.title', path: '/documents', permission: 'DocStoreService.ListDocuments' },
-    { name: 'pages.jobs.overview.title', path: '/jobs/overview', permission: 'JobsService.ListColleagues' },
-    { name: 'common.livemap', path: '/livemap', permission: 'LivemapperService.Stream' },
-    { name: 'common.dispatch_center', path: '/centrum', permission: 'CentrumService.TakeControl' },
+    { name: t('common.overview'), path: '/overview' },
+    { name: t('pages.citizens.title'), path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
+    { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'DMVService.ListVehicles' },
+    { name: t('pages.documents.title'), path: '/documents', permission: 'DocStoreService.ListDocuments' },
+    { name: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'JobsService.ListColleagues' },
+    { name: t('common.livemap'), path: '/livemap', permission: 'LivemapperService.Stream' },
+    { name: t('common.dispatch_center'), path: '/centrum', permission: 'CentrumService.TakeControl' },
 ];
 
 const selectedHomepage = ref<(typeof homepages)[0]>();
@@ -33,208 +29,137 @@ onBeforeMount(async () => {
     selectedHomepage.value = homepages.find((h) => h.path === startpage.value);
 });
 
-const darkModeActive = ref(documents.value.editorTheme === 'dark');
+const darkModeActive = ref(design.value.docEditorTheme === 'dark');
 
 watch(darkModeActive, async () => {
     if (darkModeActive.value) {
-        documents.value.editorTheme = 'dark';
+        design.value.docEditorTheme = 'dark';
     } else {
-        documents.value.editorTheme = 'default';
+        design.value.docEditorTheme = 'default';
     }
 });
 
-const themes = [
-    {
-        name: t('components.auth.settings_panel.app_theme.job_default_theme'),
-        key: JOB_THEME_KEY,
-    },
-    ...availableThemes,
-];
+const primaryColors = ['green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet'].map((color) => ({
+    label: color,
+    chip: color,
+}));
+
+const grayColors = computed(() =>
+    ['slate', 'cool', 'zinc', 'neutral', 'stone'].map((color) => ({ label: color, chip: color })),
+);
+
+const appConfig = useAppConfig();
+
+watch(design.value, () => {
+    appConfig.ui.primary = design.value.ui.primary;
+    appConfig.ui.gray = design.value.ui.gray;
+});
 </script>
 
 <template>
-    <GenericContainerPanel>
-        <template #title>
-            {{ $t('components.auth.settings_panel.title') }}
-        </template>
-        <template #description>
-            {{ $t('components.auth.settings_panel.subtitle') }}
-        </template>
-        <template #default>
-            <GenericContainerPanelEntry>
-                <template #title>
-                    {{ $t('common.theme') }}
-                </template>
-                <template #default>
-                    <Listbox v-model="settings.theme" as="div">
-                        <div class="relative">
-                            <ListboxButton
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                            >
-                                <span class="block truncate">
-                                    {{ themes.find((t) => t.key === settings.theme)?.name }}
-                                </span>
-                                <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                    <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
-                                </span>
-                            </ListboxButton>
+    <UDashboardPanelContent class="pb-24">
+        <UDashboardSection :title="$t('common.theme')" description="Customize the look and feel of your dashboard.">
+            <template #links>
+                <UColorModeSelect color="gray" />
+            </template>
 
-                            <transition
-                                leave-active-class="transition duration-100 ease-in"
-                                leave-from-class="opacity-100"
-                                leave-to-class="opacity-0"
-                            >
-                                <ListboxOptions
-                                    class="absolute z-10 mt-1 max-h-28 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                >
-                                    <ListboxOption
-                                        v-for="theme in themes"
-                                        :key="theme.key"
-                                        v-slot="{ active, selected }"
-                                        as="template"
-                                        :value="theme.key"
-                                    >
-                                        <li
-                                            :class="[
-                                                active ? 'bg-primary-500' : '',
-                                                'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                            ]"
-                                        >
-                                            <span :class="[selected ? 'font-semibold' : 'font-normal', 'block truncate']">
-                                                {{ theme.name }}
-                                            </span>
+            <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+                <USelectMenu
+                    v-model="design.ui.primary"
+                    :options="primaryColors"
+                    option-attribute="label"
+                    value-attribute="chip"
+                >
+                    <template #label>
+                        <span
+                            class="size-2 rounded-full"
+                            :class="`bg-${design.ui.primary}-500 dark:bg-${design.ui.primary}-400`"
+                        />
+                        <span class="truncate">{{ design.ui.primary }}</span>
+                    </template>
 
-                                            <span
-                                                v-if="selected"
-                                                :class="[
-                                                    active ? 'text-neutral' : 'text-primary-500',
-                                                    'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                ]"
-                                            >
-                                                <CheckIcon class="size-5" aria-hidden="true" />
-                                            </span>
-                                        </li>
-                                    </ListboxOption>
-                                </ListboxOptions>
-                            </transition>
-                        </div>
-                    </Listbox>
-                </template>
-            </GenericContainerPanelEntry>
-            <GenericContainerPanelEntry>
-                <template #title>
-                    {{ $t('components.auth.settings_panel.set_startpage.title') }}
-                </template>
-                <template #default>
-                    <select
-                        v-if="activeChar"
-                        v-model="selectedHomepage"
-                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    >
-                        <option
-                            v-for="page in homepages"
-                            :key="page.path"
-                            :value="page"
-                            :disabled="!(page.permission === undefined || can(page.permission))"
-                        >
-                            {{ $t(page.name ?? 'common.page') }}
-                        </option>
-                    </select>
-                    <p v-else class="text-neutral">
-                        {{ $t('components.auth.settings_panel.set_startpage.no_char_selected') }}
-                    </p>
-                </template>
-            </GenericContainerPanelEntry>
-            <GenericContainerPanelEntry>
-                <template #title>
-                    {{ $t('components.auth.settings_panel.editor_theme.title') }}
-                </template>
-                <template #default>
-                    <SwitchGroup as="div" class="flex items-center">
-                        <Switch
-                            v-model="darkModeActive"
-                            :class="[
-                                documents.editorTheme === 'dark' ? 'bg-primary-600' : 'bg-gray-200',
-                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                            ]"
-                        >
-                            <span
-                                aria-hidden="true"
-                                :class="[
-                                    documents.editorTheme === 'dark' ? 'translate-x-5' : 'translate-x-0',
-                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                ]"
-                            />
-                        </Switch>
-                        <SwitchLabel as="span" class="ml-3 text-sm">
-                            <span class="font-medium text-gray-300">{{
-                                $t('components.auth.settings_panel.editor_theme.dark_mode')
-                            }}</span>
-                        </SwitchLabel>
-                    </SwitchGroup>
-                </template>
-            </GenericContainerPanelEntry>
-            <GenericContainerPanelEntry>
-                <template #title>
-                    {{ $t('components.auth.settings_panel.streamer_mode.title') }}
-                </template>
-                <template #default>
-                    <SwitchGroup as="div" class="flex items-center">
-                        <Switch
-                            v-model="streamerMode"
-                            :class="[
-                                streamerMode ? 'bg-primary-600' : 'bg-gray-200',
-                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                            ]"
-                        >
-                            <span
-                                aria-hidden="true"
-                                :class="[
-                                    streamerMode ? 'translate-x-5' : 'translate-x-0',
-                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                ]"
-                            />
-                        </Switch>
-                        <SwitchLabel as="span" class="ml-3 text-sm">
-                            <span class="font-medium text-gray-300">{{
-                                $t('components.auth.settings_panel.streamer_mode.description')
-                            }}</span>
-                        </SwitchLabel>
-                    </SwitchGroup>
-                </template>
-            </GenericContainerPanelEntry>
-        </template>
-    </GenericContainerPanel>
+                    <template #option="{ option }">
+                        <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
+                        <span class="truncate">{{ option.label }}</span>
+                    </template>
+                </USelectMenu>
+            </UFormGroup>
 
-    <GenericContainerPanel class="mt-3">
-        <template #title>
-            {{ $t('components.auth.settings_panel.volumes.title') }}
-        </template>
-        <template #description>
-            {{ $t('components.auth.settings_panel.volumes.subtitle') }}
-        </template>
-        <template #default>
-            <GenericContainerPanelEntry>
-                <template #title>
-                    {{ $t('common.notification', 2) }}
-                </template>
-                <template #default>
-                    <label for="minmax-range" class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">
-                        {{ $t('common.volume') }}:
-                        {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
-                    </label>
-                    <input
-                        v-model="audio.notificationsVolume"
-                        type="range"
-                        step="0.01"
-                        min="0"
-                        max="1"
-                        class="h-2 w-full cursor-pointer appearance-none rounded-lg bg-gray-200 dark:bg-gray-700"
-                    />
-                </template>
-            </GenericContainerPanelEntry>
-        </template>
-    </GenericContainerPanel>
+            <UFormGroup name="grayColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+                <USelectMenu v-model="design.ui.gray" :options="grayColors" option-attribute="label" value-attribute="chip">
+                    <template #label>
+                        <span class="size-2 rounded-full" :class="`bg-${design.ui.gray}-500 dark:bg-${design.ui.gray}-400`" />
+                        <span class="truncate">{{ design.ui.gray }}</span>
+                    </template>
+
+                    <template #option="{ option }">
+                        <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
+                        <span class="truncate">{{ option.label }}</span>
+                    </template>
+                </USelectMenu>
+            </UFormGroup>
+
+            <UFormGroup
+                name="darkModeActive"
+                :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
+                class="grid grid-cols-2 items-center gap-2"
+                :ui="{ container: 'justify-self-end' }"
+            >
+                <UToggle v-model="darkModeActive">
+                    <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
+                </UToggle>
+            </UFormGroup>
+        </UDashboardSection>
+
+        <UDivider class="mb-4" />
+
+        <UDashboardSection
+            :title="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
+            :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
+        >
+            <template #links>
+                <UToggle v-model="streamerMode">
+                    <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
+                </UToggle>
+            </template>
+        </UDashboardSection>
+
+        <UDivider class="mb-4" />
+
+        <UDashboardSection :title="$t('components.auth.UserSettingsPanel.title')">
+            <UFormGroup
+                name="selectedHomepage"
+                :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
+                <USelectMenu
+                    v-if="activeChar"
+                    v-model="selectedHomepage"
+                    :options="homepages.filter((h) => h.permission === undefined || can(h.permission))"
+                    option-attribute="name"
+                />
+                <p v-else class="text-sm">
+                    {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
+                </p>
+            </UFormGroup>
+        </UDashboardSection>
+
+        <UDivider class="mb-4" />
+
+        <UDashboardSection
+            :title="$t('components.auth.UserSettingsPanel.volumes.title')"
+            :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
+        >
+            <UFormGroup
+                name="selectedHomepage"
+                :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
+                <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
+                {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
+            </UFormGroup>
+        </UDashboardSection>
+
+        <UDivider class="mb-4" />
+    </UDashboardPanelContent>
 </template>

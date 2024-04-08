@@ -1,31 +1,6 @@
 <script lang="ts" setup>
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import { useConfirmDialog, useTimeoutFn, watchOnce } from '@vueuse/core';
 import { useRouteHash } from '@vueuse/router';
-import {
-    AccountIcon,
-    AccountMultipleIcon,
-    CalendarEditIcon,
-    CalendarIcon,
-    CalendarRemoveIcon,
-    ChevronDownIcon,
-    CommentIcon,
-    CommentQuoteIcon,
-    CommentTextMultipleIcon,
-    CreationIcon,
-    FileDocumentIcon,
-    FileSearchIcon,
-    FrequentlyAskedQuestionsIcon,
-    LockIcon,
-    LockOpenVariantIcon,
-    NoteCheckIcon,
-    PencilIcon,
-    RestoreIcon,
-    ShapeIcon,
-    TrashCanIcon,
-} from 'mdi-vue3';
 import AddToButton from '~/components/clipboard/AddToButton.vue';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -44,6 +19,13 @@ import DocumentActivityList from '~/components/documents/DocumentActivityList.vu
 import DocumentRequestsModal from '~/components/documents/requests/DocumentRequestsModal.vue';
 import { useAuthStore } from '~/store/auth';
 import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
+import ConfirmModal from '../partials/ConfirmModal.vue';
+
+const props = defineProps<{
+    documentId: string;
+}>();
+
+const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
 
@@ -54,12 +36,10 @@ const notifications = useNotificatorStore();
 const authStore = useAuthStore();
 const { activeChar, isSuperuser } = storeToRefs(authStore);
 
-const props = defineProps<{
-    documentId: string;
-}>();
+const modal = useModal();
 
 const access = ref<undefined | DocumentAccess>(undefined);
-const commentCount = ref<bigint | undefined>();
+const commentCount = ref<undefined | number>();
 
 const {
     data: doc,
@@ -90,9 +70,9 @@ async function deleteDocument(id: string): Promise<void> {
             documentId: id,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_deleted.title', parameters: {} },
-            content: { key: 'notifications.document_deleted.content', parameters: {} },
+            description: { key: 'notifications.document_deleted.content', parameters: {} },
             type: 'success',
         });
 
@@ -113,15 +93,15 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
         doc.value!.closed = closed;
 
         if (!closed) {
-            notifications.dispatchNotification({
+            notifications.add({
                 title: { key: `notifications.document_toggled.open.title`, parameters: {} },
-                content: { key: `notifications.document_toggled.open.content`, parameters: {} },
+                description: { key: `notifications.document_toggled.open.content`, parameters: {} },
                 type: 'success',
             });
         } else {
-            notifications.dispatchNotification({
+            notifications.add({
                 title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
-                content: { key: `notifications.document_toggled.closed.content`, parameters: {} },
+                description: { key: `notifications.document_toggled.closed.content`, parameters: {} },
                 type: 'success',
             });
         }
@@ -137,9 +117,9 @@ async function changeDocumentOwner(id: string): Promise<void> {
             documentId: id,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.document_take_ownership.title', parameters: {} },
-            content: { key: 'notifications.document_take_ownership.content', parameters: {} },
+            description: { key: 'notifications.document_take_ownership.content', parameters: {} },
             type: 'success',
         });
 
@@ -155,10 +135,10 @@ function addToClipboard(): void {
         clipboardStore.addDocument(doc.value);
     }
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
-        content: { key: 'notifications.clipboard.document_added.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }
@@ -178,485 +158,324 @@ function disableCheckboxes(): void {
 
 watchOnce(doc, () => useTimeoutFn(disableCheckboxes, 50));
 
-const {
-    isRevealed: isRevealedChangeOwner,
-    reveal: revealChangeOwner,
-    confirm: confirmChangeOwner,
-    cancel: cancelChangeOwner,
-    onConfirm: onConfirmChangeOwner,
-} = useConfirmDialog();
-onConfirmChangeOwner(async (id: string) => changeDocumentOwner(id));
-
-const {
-    isRevealed: isRevealedDelete,
-    reveal: revealDelete,
-    confirm: confirmDelete,
-    cancel: cancelDelete,
-    onConfirm: onConfirmDelete,
-} = useConfirmDialog();
-onConfirmDelete(async (id: string) => deleteDocument(id));
-
-const openRequests = ref(false);
-
 const hash = useRouteHash();
 if (hash.value !== undefined && hash.value !== null) {
     if (hash.value.replace(/^#/, '') === 'requests') {
-        openRequests.value = true;
+        openRequestsModal();
     }
 }
+
+function openRequestsModal(): void {
+    if (access.value === undefined || doc.value === undefined) {
+        return;
+    }
+
+    modal.open(DocumentRequestsModal, {
+        access: access.value,
+        doc: doc.value!,
+    });
+}
+
+const accordionItems = [
+    { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
+    { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
+    { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
+    { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
+    { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' },
+];
 </script>
 
 <template>
-    <div class="m-2">
-        <ConfirmDialog
-            :open="isRevealedChangeOwner"
-            :cancel="cancelChangeOwner"
-            :confirm="() => confirmChangeOwner(documentId)"
-        />
-        <ConfirmDialog :open="isRevealedDelete" :cancel="cancelDelete" :confirm="() => confirmDelete(documentId)" />
+    <div>
+        <UDashboardNavbar :title="$t('pages.documents.id.title')">
+            <template #right>
+                <UButtonGroup>
+                    <IDCopyBadge
+                        :id="doc?.id ?? documentId"
+                        prefix="DOC"
+                        :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                        :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                    />
+
+                    <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
+                </UButtonGroup>
+            </template>
+        </UDashboardNavbar>
 
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <template v-else-if="error">
             <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
-            <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" />
+            <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" class="mt-2" />
         </template>
         <DataNoDataBlock
             v-else-if="doc === null"
-            :icon="FileSearchIcon"
+            icon="i-mdi-file-search"
             :message="$t('common.not_found', [$t('common.document', 2)])"
         />
 
-        <div v-else class="rounded-lg bg-base-700">
-            <DocumentRequestsModal
-                v-if="can('DocStoreService.ListDocumentReqs') && access !== undefined"
-                :open="openRequests"
-                :access="access"
-                :doc="doc"
-                @close="openRequests = false"
-                @refresh="
-                    openRequests = false;
-                    refresh();
-                "
-            />
-
-            <div class="h-full px-4 py-6 sm:px-6 lg:px-8">
-                <div>
-                    <div>
-                        <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                            <IDCopyBadge
-                                :id="doc.id"
-                                prefix="DOC"
-                                :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                                :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                            />
-
-                            <div class="flex space-x-2 self-end">
-                                <button
-                                    v-if="
-                                        can('DocStoreService.ToggleDocument') &&
-                                        checkDocAccess(
-                                            access,
-                                            doc.creator,
-                                            AccessLevel.STATUS,
-                                            'DocStoreService.ToggleDocument',
-                                        )
-                                    "
-                                    type="button"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="toggleDocument(documentId, !doc?.closed)"
-                                >
-                                    <template v-if="doc?.closed">
-                                        <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
-                                        {{ $t('common.open', 1) }}
-                                    </template>
-                                    <template v-else>
-                                        <LockIcon class="size-5 text-error-400" aria-hidden="true" />
-                                        {{ $t('common.close', 1) }}
-                                    </template>
-                                </button>
-                                <NuxtLink
-                                    v-if="
-                                        can('DocStoreService.UpdateDocument') &&
-                                        checkDocAccess(
-                                            access,
-                                            doc.creator,
-                                            AccessLevel.ACCESS,
-                                            'DocStoreService.UpdateDocument',
-                                        )
-                                    "
-                                    :to="{
-                                        name: 'documents-id-edit',
-                                        params: { id: doc.id },
-                                    }"
-                                    type="button"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                >
-                                    <PencilIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
-                                    {{ $t('common.edit') }}
-                                </NuxtLink>
-                                <button
-                                    v-if="can('DocStoreService.ListDocumentReqs')"
-                                    type="button"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="openRequests = true"
-                                >
-                                    <FrequentlyAskedQuestionsIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
-                                    {{ $t('common.request', 2) }}
-                                </button>
-                                <button
-                                    v-if="
-                                        (doc?.creatorJob === activeChar?.job || isSuperuser) &&
-                                        can('DocStoreService.ChangeDocumentOwner') &&
-                                        checkDocAccess(
-                                            access,
-                                            doc?.creator,
-                                            AccessLevel.EDIT,
-                                            'DocStoreService.ChangeDocumentOwner',
-                                        )
-                                    "
-                                    type="button"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    :class="doc?.creatorId === activeChar?.userId ? 'disabled' : ''"
-                                    :disabled="doc?.creatorId === activeChar?.userId"
-                                    @click="revealChangeOwner(documentId)"
-                                >
-                                    <CreationIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
-                                    {{ $t('components.documents.document_view.take_ownership') }}
-                                </button>
-                                <button
-                                    v-if="
-                                        can('DocStoreService.DeleteDocument') &&
-                                        checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
-                                    "
-                                    type="button"
-                                    class="inline-flex items-center gap-x-1.5 rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="revealDelete(documentId)"
-                                >
-                                    <template v-if="!doc.deletedAt">
-                                        <TrashCanIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.delete') }}
-                                    </template>
-                                    <template v-else>
-                                        <RestoreIcon class="-ml-0.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.restore') }}
-                                    </template>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="my-4">
-                            <h1 class="break-words px-0.5 py-1 text-4xl font-bold text-neutral sm:pl-1">
-                                {{ doc?.title }}
-                            </h1>
-                        </div>
-
-                        <div class="mb-2 flex gap-2">
-                            <div
-                                v-if="doc.category"
-                                class="flex flex-initial flex-row gap-1 rounded-full bg-primary-100 px-2 py-1 text-primary-500"
-                            >
-                                <ShapeIcon class="h-auto w-5" aria-hidden="true" />
-                                <span
-                                    class="inline-flex items-center text-sm font-medium text-primary-800"
-                                    :title="doc.category.description ?? $t('common.na')"
-                                >
-                                    {{ doc.category.name }}
-                                </span>
-                            </div>
-
-                            <div
-                                v-if="doc?.closed"
-                                class="flex flex-initial flex-row gap-1 rounded-full bg-error-100 px-2 py-1"
-                            >
-                                <LockIcon class="size-5 text-error-400" aria-hidden="true" />
-                                <span class="text-sm font-medium text-error-700">
-                                    {{ $t('common.close', 2) }}
-                                </span>
-                            </div>
-                            <div v-else class="flex flex-initial flex-row gap-1 rounded-full bg-success-100 px-2 py-1">
-                                <LockOpenVariantIcon class="size-5 text-success-500" aria-hidden="true" />
-                                <span class="text-sm font-medium text-success-700">
-                                    {{ $t('common.open', 2) }}
-                                </span>
-                            </div>
-
-                            <div
-                                v-if="doc?.state"
-                                class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1 text-info-500"
-                            >
-                                <NoteCheckIcon class="h-auto w-5" aria-hidden="true" />
-                                <span class="text-sm font-medium text-info-800">
-                                    {{ doc?.state }}
-                                </span>
-                            </div>
-                            <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <CommentTextMultipleIcon class="h-auto w-5" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-700">
-                                    {{
-                                        commentCount !== undefined
-                                            ? $t('common.comments', parseInt(commentCount.toString()))
-                                            : '? ' + $t('common.comment', 2)
-                                    }}
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                            <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <AccountIcon class="h-auto w-5" aria-hidden="true" />
-                                <span class="inline-flex items-center text-sm font-medium text-base-700">
-                                    {{ $t('common.created_by') }}
-                                    <CitizenInfoPopover
-                                        :user="doc.creator"
-                                        class="ml-1 font-medium text-primary-600 hover:text-primary-400"
-                                    />
-                                </span>
-                            </div>
-
-                            <div class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500">
-                                <CalendarIcon class="h-auto w-5" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-700">
-                                    {{ $t('common.created_at') }}
-                                    <GenericTime :value="doc.createdAt" type="long" />
-                                </span>
-                            </div>
-                            <div
-                                v-if="doc.updatedAt"
-                                class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
-                            >
-                                <CalendarEditIcon class="h-auto w-5" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-700">
-                                    {{ $t('common.updated_at') }}
-                                    <GenericTime :value="doc.updatedAt" type="long" />
-                                </span>
-                            </div>
-                            <div
-                                v-if="doc.deletedAt"
-                                class="flex flex-initial flex-row gap-1 rounded-full bg-base-100 px-2 py-1 text-base-500"
-                            >
-                                <CalendarRemoveIcon class="h-auto w-5" aria-hidden="true" />
-                                <span class="text-sm font-medium text-base-700">
-                                    {{ $t('common.deleted') }}
-                                    <GenericTime :value="doc.deletedAt" type="long" />
-                                </span>
-                            </div>
-                        </div>
-
-                        <div class="my-2">
-                            <h2 class="sr-only">
-                                {{ $t('common.content') }}
-                            </h2>
-                            <div class="break-words rounded-lg bg-base-800 text-neutral">
-                                <!-- eslint-disable vue/no-v-html -->
-                                <div
-                                    ref="contentRef"
-                                    class="prose prose-invert min-w-full rounded-md bg-base-900 p-4"
-                                    v-html="doc.content"
-                                ></div>
-                            </div>
-                        </div>
-
-                        <div class="my-2">
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="border-neutral/20 text-neutral hover:border-neutral/70"
-                            >
-                                <DisclosureButton
-                                    :class="[
-                                        open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                    ]"
-                                >
-                                    <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <AccountMultipleIcon class="mr-2 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.relation', 2) }}
-                                    </span>
-                                    <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </DisclosureButton>
-                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                    <div class="mx-4 pb-2">
-                                        <DocumentRelations :document-id="documentId" :show-document="false" />
-                                    </div>
-                                </DisclosurePanel>
-                            </Disclosure>
-                        </div>
-
-                        <div class="my-2">
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="border-neutral/20 text-neutral hover:border-neutral/70"
-                            >
-                                <DisclosureButton
-                                    :class="[
-                                        open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                    ]"
-                                >
-                                    <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <FileDocumentIcon class="mr-2 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.reference', 2) }}
-                                    </span>
-                                    <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </DisclosureButton>
-                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                    <div class="mx-4 pb-2">
-                                        <DocumentReferences :document-id="documentId" :show-source="false" />
-                                    </div>
-                                </DisclosurePanel>
-                            </Disclosure>
-                        </div>
-
-                        <div class="w-full">
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="w-full border-neutral/20 text-neutral hover:border-neutral/70"
-                                :default-open="true"
-                            >
-                                <DisclosureButton
-                                    :class="[
-                                        open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                    ]"
-                                >
-                                    <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <LockIcon class="mr-2 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.access') }}
-                                    </span>
-                                    <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'h-auto w-5 transition-transform']"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </DisclosureButton>
-                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                    <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
-                                        <DataNoDataBlock
-                                            v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
-                                            :icon="FileSearchIcon"
-                                            :message="$t('common.not_found', [$t('common.access', 2)])"
-                                        />
-
-                                        <div
-                                            v-for="entry in access?.jobs"
-                                            :key="entry.id"
-                                            class="flex flex-initial snap-x snap-start items-center gap-1 overflow-x-auto whitespace-nowrap rounded-full bg-info-100 px-2 py-1"
-                                        >
-                                            <span class="size-2 rounded-full bg-info-500" aria-hidden="true" />
-                                            <span class="text-sm font-medium text-info-800"
-                                                >{{ entry.jobLabel
-                                                }}<span
-                                                    v-if="entry.minimumGrade > 0"
-                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                                >
-                                                    ({{ entry.jobGradeLabel }})</span
-                                                >
-                                                -
-                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                    <div class="mx-4 flex flex-row flex-wrap gap-1 pb-2">
-                                        <div
-                                            v-for="entry in access?.users"
-                                            :key="entry.id"
-                                            class="flex flex-initial snap-start flex-row items-center gap-1 whitespace-nowrap rounded-full bg-secondary-100 px-2 py-1"
-                                        >
-                                            <span class="size-2 rounded-full bg-secondary-400" aria-hidden="true" />
-                                            <span
-                                                class="text-sm font-medium text-secondary-700"
-                                                :title="`${$t('common.id')} ${entry.userId}`"
-                                            >
-                                                {{ entry.user?.firstname }}
-                                                {{ entry.user?.lastname }} -
-                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                            </span>
-                                        </div>
-                                    </div>
-                                </DisclosurePanel>
-                            </Disclosure>
-
-                            <div id="comments" class="my-2">
-                                <div
-                                    class="w-full rounded-lg border-2 border-neutral/20 text-neutral transition-colors hover:border-neutral/70"
-                                >
-                                    <h2
-                                        class="inline-flex items-center p-2 text-left text-lg font-semibold text-neutral transition-colors"
-                                    >
-                                        <CommentIcon class="mr-2 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.comment', 2) }}
-                                    </h2>
-
-                                    <div class="px-2 pb-2">
-                                        <DocumentComments
-                                            :document-id="documentId"
-                                            :closed="doc?.closed"
-                                            :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
-                                            @counted="commentCount = $event"
-                                            @new-comment="commentCount && commentCount++"
-                                            @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div
+        <template v-else>
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                        <UButton
                             v-if="
-                                can('DocStoreService.ListDocumentActivity') &&
-                                checkDocAccess(access, doc.creator, AccessLevel.STATUS)
+                                can('DocStoreService.ToggleDocument') &&
+                                checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
                             "
-                            class="my-2"
+                            class="flex-1"
+                            block
+                            @click="toggleDocument(documentId, !doc.closed)"
                         >
-                            <Disclosure
-                                v-slot="{ open }"
-                                as="div"
-                                class="border-neutral/20 text-neutral hover:border-neutral/70"
-                            >
-                                <DisclosureButton
-                                    :class="[
-                                        open ? 'rounded-t-lg border-b-0' : 'rounded-lg',
-                                        'flex w-full items-start justify-between border-2 border-inherit p-2 text-left transition-colors',
-                                    ]"
-                                >
-                                    <span class="inline-flex items-center text-base font-semibold leading-7">
-                                        <CommentQuoteIcon class="mr-2 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('common.activity') }}
-                                    </span>
-                                    <span class="ml-6 flex h-7 items-center">
-                                        <ChevronDownIcon
-                                            :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                            aria-hidden="true"
-                                        />
-                                    </span>
-                                </DisclosureButton>
-                                <DisclosurePanel class="rounded-b-lg border-2 border-t-0 border-inherit transition-colors">
-                                    <div class="mx-4 pb-2">
-                                        <DocumentActivityList :document-id="documentId" />
-                                    </div>
-                                </DisclosurePanel>
-                            </Disclosure>
-                        </div>
+                            <template v-if="doc.closed">
+                                <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
+                                {{ $t('common.open', 1) }}
+                            </template>
+                            <template v-else>
+                                <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
+                                {{ $t('common.close', 1) }}
+                            </template>
+                        </UButton>
+                        <UButton
+                            v-if="
+                                can('DocStoreService.UpdateDocument') &&
+                                checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument')
+                            "
+                            class="flex-1"
+                            block
+                            :to="{
+                                name: 'documents-id-edit',
+                                params: { id: doc.id },
+                            }"
+                            icon="i-mdi-pencil"
+                        >
+                            {{ $t('common.edit') }}
+                        </UButton>
+                        <UButton
+                            v-if="can('DocStoreService.ListDocumentReqs')"
+                            class="flex-1"
+                            block
+                            icon="i-mdi-frequently-asked-questions"
+                            @click="openRequestsModal"
+                        >
+                            {{ $t('common.request', 2) }}
+                        </UButton>
+                        <UButton
+                            v-if="
+                                (doc?.creatorJob === activeChar?.job || isSuperuser) &&
+                                can('DocStoreService.ChangeDocumentOwner') &&
+                                checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
+                            "
+                            class="flex-1"
+                            block
+                            :disabled="doc?.creatorId === activeChar?.userId"
+                            icon="i-mdi-creation"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => changeDocumentOwner(documentId),
+                                })
+                            "
+                        >
+                            {{ $t('components.documents.document_view.take_ownership') }}
+                        </UButton>
+                        <UButton
+                            v-if="
+                                can('DocStoreService.DeleteDocument') &&
+                                checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
+                            "
+                            class="flex-1"
+                            block
+                            :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteDocument(documentId),
+                                })
+                            "
+                        >
+                            <template v-if="!doc.deletedAt">
+                                {{ $t('common.delete') }}
+                            </template>
+                            <template v-else>
+                                {{ $t('common.restore') }}
+                            </template>
+                        </UButton>
+                    </div>
+                </template>
+            </UDashboardToolbar>
+
+            <UCard>
+                <template #header>
+                    <div class="mb-4">
+                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                            {{ doc.title }}
+                        </h1>
+                    </div>
+
+                    <div class="mb-2 flex gap-2">
+                        <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                            <span :title="doc.category.description ?? $t('common.na')">
+                                {{ doc.category.name }}
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                            <span>
+                                {{ $t('common.close', 2) }}
+                            </span>
+                        </UBadge>
+                        <UBadge v-else color="green" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                            <span>
+                                {{ $t('common.open', 2) }}
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-note-check" class="h-auto w-5" />
+                            <span>
+                                {{ doc.state }}
+                            </span>
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-comment-text-multiple" class="h-auto w-5" />
+                            <span>
+                                {{
+                                    commentCount !== undefined
+                                        ? $t('common.comments', commentCount)
+                                        : '? ' + $t('common.comment', 2)
+                                }}
+                            </span>
+                        </UBadge>
+                    </div>
+
+                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-account" class="h-auto w-5" />
+                            <span class="inline-flex items-center gap-1">
+                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover :user="doc.creator" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar" class="h-auto w-5" />
+                            <span>
+                                {{ $t('common.created_at') }}
+                                <GenericTime :value="doc.createdAt" type="long" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-edit" class="h-auto w-5" />
+                            <span>
+                                {{ $t('common.updated_at') }}
+                                <GenericTime :value="doc.updatedAt" type="long" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-remove" class="h-auto w-5" />
+                            <span>
+                                {{ $t('common.deleted') }}
+                                <GenericTime :value="doc.deletedAt" type="long" />
+                            </span>
+                        </UBadge>
+                    </div>
+                </template>
+
+                <div>
+                    <h2 class="sr-only">
+                        {{ $t('common.content') }}
+                    </h2>
+                    <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                        <!-- eslint-disable vue/no-v-html -->
+                        <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
                     </div>
                 </div>
-            </div>
-        </div>
-    </div>
 
-    <AddToButton :callback="addToClipboard" :title="$t('components.clipboard.clipboard_button.add')" />
+                <template #footer>
+                    <UAccordion multiple :items="accordionItems" :unmount="true">
+                        <template #relations>
+                            <DocumentRelations :document-id="documentId" :show-source="false" />
+                        </template>
+
+                        <template #references>
+                            <DocumentReferences :document-id="documentId" :show-source="false" />
+                        </template>
+
+                        <template #access>
+                            <DataNoDataBlock
+                                v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <div v-else class="mx-4 flex flex-col gap-2">
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in access?.jobs"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-info-500" />
+                                        <span>
+                                            {{ entry.jobLabel
+                                            }}<span
+                                                v-if="entry.minimumGrade > 0"
+                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                            >
+                                                ({{ entry.jobGradeLabel }})</span
+                                            >
+                                            -
+                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in access?.users"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-amber-500" />
+                                        <span :title="`${$t('common.id')} ${entry.userId}`">
+                                            {{ entry.user?.firstname }}
+                                            {{ entry.user?.lastname }} -
+                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+                            </div>
+                        </template>
+
+                        <template #comments>
+                            <div id="comments">
+                                <DocumentComments
+                                    :document-id="documentId"
+                                    :closed="doc.closed"
+                                    :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
+                                    @counted="commentCount = $event"
+                                    @new-comment="commentCount && commentCount++"
+                                    @deleted-comment="commentCount && commentCount > 0 && commentCount--"
+                                />
+                            </div>
+                        </template>
+
+                        <template #activity>
+                            <DocumentActivityList :document-id="documentId" />
+                        </template>
+                    </UAccordion>
+                </template>
+            </UCard>
+        </template>
+    </div>
 </template>
 
 <style scoped>

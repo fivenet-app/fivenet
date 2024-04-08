@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
-import { computedAsync } from '@vueuse/core';
-import DispatchDetails from '~/components/centrum/dispatches/DispatchDetails.vue';
+import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
@@ -14,6 +13,8 @@ defineProps<{
 defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
+
+const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { dispatches, ownDispatches } = storeToRefs(centrumStore);
@@ -33,16 +34,9 @@ const dispatchesFiltered = computedAsync(async () =>
                 (m.creator?.firstname + ' ' + m.creator?.lastname).toLowerCase().includes(dispatchQuery.value)),
     ),
 );
-
-const selectedDispatch = ref<Dispatch | undefined>();
-const open = ref(false);
 </script>
 
 <template>
-    <template v-if="selectedDispatch">
-        <DispatchDetails :dispatch="selectedDispatch" :open="open" @close="open = false" @goto="$emit('goto', $event)" />
-    </template>
-
     <LLayerGroup key="your_dispatches" :name="$t('common.your_dispatches')" layer-type="overlay" :visible="true">
         <DispatchMarker
             v-for="dispatch in ownDispatches"
@@ -50,8 +44,10 @@ const open = ref(false);
             :dispatch="dispatches.get(dispatch)!"
             :size="livemap.markerSize"
             @selected="
-                selectedDispatch = $event;
-                open = true;
+                slideover.open(DispatchDetailsSlideover, {
+                    dispatch: $event,
+                    onGoto: ($event) => $emit('goto', $event),
+                })
             "
             @goto="$emit('goto', $event)"
         />
@@ -69,8 +65,10 @@ const open = ref(false);
             :dispatch="dispatch"
             :size="livemap.markerSize"
             @selected="
-                selectedDispatch = $event;
-                open = true;
+                slideover.open(DispatchDetailsSlideover, {
+                    dispatch: $event,
+                    onGoto: ($event) => $emit('goto', $event),
+                })
             "
             @goto="$emit('goto', $event)"
         />
@@ -78,17 +76,14 @@ const open = ref(false);
 
     <LControl position="bottomleft">
         <div class="flex flex-col gap-2">
-            <div>
-                <input
-                    v-model="dispatchQueryRaw"
-                    class="w-full max-w-44 rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
-                    type="text"
-                    name="searchPlayer"
-                    :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-            </div>
+            <UInput
+                v-model="dispatchQueryRaw"
+                type="text"
+                name="searchPlayer"
+                :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
+            />
         </div>
     </LControl>
 </template>

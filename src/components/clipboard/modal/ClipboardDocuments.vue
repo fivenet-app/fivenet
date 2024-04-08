@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { FileDocumentMultipleIcon, TrashCanIcon } from 'mdi-vue3';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { ClipboardDocument, useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -60,10 +59,10 @@ async function remove(item: ClipboardDocument, notify: boolean): Promise<void> {
 
     clipboardStore.removeDocument(item.id);
     if (notify) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.clipboard.document_removed.title', parameters: {} },
-            content: { key: 'notifications.clipboard.document_removed.content', parameters: {} },
-            duration: 3250,
+            description: { key: 'notifications.clipboard.document_removed.content', parameters: {} },
+            timeout: 3250,
             type: 'info',
         });
     }
@@ -77,10 +76,10 @@ async function removeAll(): Promise<void> {
     }
 
     emit('statisfied', false);
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.documents_removed.title', parameters: {} },
-        content: { key: 'notifications.clipboard.documents_removed.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.documents_removed.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }
@@ -101,71 +100,56 @@ watch(props, async (newVal) => {
     <h3 class="py-1 font-medium">{{ $t('common.document', 2) }}</h3>
     <DataNoDataBlock
         v-if="documents?.length === 0"
-        :icon="FileDocumentMultipleIcon"
+        icon="i-mdi-file-document-multiple"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
     />
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
             <tr>
-                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                <th v-if="showSelect" scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                     {{ $t('common.select', 1) }}
                 </th>
-                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                     {{ $t('common.title') }}
                 </th>
-                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-neutral">
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold">
                     {{ $t('common.creator') }}
                 </th>
                 <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-0">
                     <span class="sr-only">{{ $t('common.action', 2) }}</span>
-                    <button v-if="selected.length > 0" type="button" @click="removeAll()">
-                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
-                    </button>
+                    <UButton v-if="selected.length > 0" variant="link" icon="i-mdi-trash-can" @click="removeAll()" />
                 </th>
             </tr>
         </thead>
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in documents" :key="item.id">
-                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+                <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     <template v-if="specs && specs.max === 1">
-                        <button
-                            class="inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 sm:col-start-2"
-                            :class="
-                                selected.includes(item)
-                                    ? 'bg-accent-500 hover:bg-accent-400 focus-visible:outline-accent-500'
-                                    : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500'
-                            "
-                            @click="select(item)"
-                        >
+                        <UButton block :color="selected.includes(item) ? 'gray' : 'primary'" @click="select(item)">
                             {{
                                 !selected.includes(item)
                                     ? $t('common.select', 1).toUpperCase()
                                     : $t('common.select', 2).toUpperCase()
                             }}
-                        </button>
+                        </UButton>
                     </template>
                     <template v-else>
-                        <input
+                        <UCheckbox
                             :key="item.id"
                             v-model="selected"
                             name="selected"
                             :checked="selected.includes(item)"
                             :value="item"
-                            type="checkbox"
-                            class="size-4 rounded border-gray-300 text-primary-600 focus:ring-primary-600"
+                            @click="select(item)"
                         />
                     </template>
                 </td>
-                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-neutral sm:pl-1">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     {{ item.title }}
                 </td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-300">
-                    {{ item.creator.firstname }} {{ item.creator.lastname }}
-                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm">{{ item.creator.firstname }} {{ item.creator.lastname }}</td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                    <button type="button" @click="remove(item, true)">
-                        <TrashCanIcon class="mx-auto size-5 text-neutral" aria-hidden="true" />
-                    </button>
+                    <UButton variant="link" icon="i-mdi-trash-can" @click="remove(item, true)" />
                 </td>
             </tr>
         </tbody>

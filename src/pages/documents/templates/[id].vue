@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { type TypedRouteFromName } from '@typed-router';
 import TemplateView from '~/components/documents/templates/TemplateView.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 
 useHead({
     title: 'pages.documents.templates.view.title',
@@ -21,7 +20,11 @@ const route = useRoute('documents-templates-id');
 </script>
 
 <template>
-    <ContentWrapper>
-        <TemplateView :template-id="route.params.id as string" />
-    </ContentWrapper>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.documents.templates.view.title')"> </UDashboardNavbar>
+
+            <TemplateView :template-id="route.params.id as string" />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

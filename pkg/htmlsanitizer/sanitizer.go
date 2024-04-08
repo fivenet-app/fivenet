@@ -103,6 +103,10 @@ func New(cfg *config.Config) (*bluemonday.Policy, error) {
 			// Rewrite URLs to image proxy to proxy all requests through a single URL.
 			imgUrl, _ := url.PathUnescape(u.String())
 
+			if u.Scheme == "data" {
+				return
+			}
+
 			if u.Scheme != proxyUrl.Scheme {
 				u.Scheme = proxyUrl.Scheme
 			}

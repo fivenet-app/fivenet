@@ -1,20 +1,18 @@
 <script lang="ts" setup>
 import { type NavigationFailure } from 'vue-router';
 import type { TypedRouteFromName } from '@typed-router';
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import PageFooter from '~/components/partials/PageFooter.vue';
-import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
-import FormWrapper from '~/components/auth/FormWrapper.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
-    title: 'components.auth.login.title',
+    title: 'components.auth.LoginForm.title',
 });
 definePageMeta({
-    title: 'components.auth.login.title',
+    title: 'components.auth.LoginForm.title',
+    layout: 'auth',
     requiresAuth: false,
     showCookieOptions: true,
 });
@@ -36,9 +34,9 @@ onMounted(async () => {
         console.info('Login: Got access token via query param (oauth2 login)');
         setAccessToken(query.t as string, BigInt(query.exp as string));
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_login.success.content', parameters: {} },
+            description: { key: 'notifications.auth.oauth2_login.success.content', parameters: {} },
             type: 'info',
         });
 
@@ -47,9 +45,9 @@ onMounted(async () => {
         // `oauth2Login` can be `failed` (with `reason`)
         const reason = query.reason ?? 'N/A';
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: {} },
-            content: { key: 'notifications.auth.oauth2_login.failed.content', parameters: { msg: reason.toString() } },
+            description: { key: 'notifications.auth.oauth2_login.failed.content', parameters: { msg: reason.toString() } },
             type: 'error',
         });
     }
@@ -68,17 +66,10 @@ watch(accessToken, async (): Promise<NavigationFailure | TypedRouteFromName<'aut
 </script>
 
 <template>
-    <div class="flex h-full flex-col justify-between">
-        <ContentHeroFull>
-            <ContentCenterWrapper>
-                <FormWrapper>
-                    <template #default>
-                        <component :is="showLogin ? LoginForm : ForgotPasswordForm" @toggle="showLogin = !showLogin" />
-                    </template>
-                </FormWrapper>
-            </ContentCenterWrapper>
-        </ContentHeroFull>
+    <UCard class="w-full max-w-sm bg-white/75 backdrop-blur dark:bg-white/5">
+        <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-        <PageFooter />
-    </div>
+        <LoginForm v-if="showLogin" @toggle="showLogin = !showLogin" />
+        <ForgotPasswordForm v-else @toggle="showLogin = !showLogin" />
+    </UCard>
 </template>

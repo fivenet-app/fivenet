@@ -1,16 +1,21 @@
 <script lang="ts" setup>
-import { Switch } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
-import ColleaguesListEntry from '~/components/jobs/colleagues/ColleaguesListEntry.vue';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import type { Perms } from '~~/gen/ts/perms';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import GenericTable from '~/components/partials/elements/GenericTable.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import { useAuthStore } from '~/store/auth';
+import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const query = ref<{
     name: string;
@@ -19,9 +24,16 @@ const query = ref<{
     name: '',
     absent: false,
 });
-const offset = ref(0n);
 
-const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${offset.value}-${query.value.name}`, async () => {
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`jobs-colleagues-${page.value}-${query.value.name}`, async () => {
     try {
         const call = $grpc.getJobsClient().listColleagues({
             pagination: {
@@ -39,15 +51,8 @@ const { data, pending, refresh, error } = useLazyAsyncData(`jobs-colleagues-${of
     }
 });
 
-const searchInput = ref<HTMLInputElement | null>(null);
-function focusSearch(): void {
-    if (searchInput.value) {
-        searchInput.value.focus();
-    }
-}
-
 watch(offset, async () => refresh());
-watchDebounced(query.value, () => refresh(), { debounce: 600, maxWait: 1400 });
+watchDebounced(query.value, () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
@@ -66,135 +71,173 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
         colleague.props.absenceEnd = value.absenceEnd;
     }
 }
+
+const today = new Date();
+today.setHours(0);
+today.setMinutes(0);
+today.setSeconds(0);
+today.setMilliseconds(0);
+
+const columns = [
+    {
+        key: 'name',
+        label: t('common.name'),
+    },
+    {
+        key: 'rank',
+        label: t('common.rank'),
+    },
+    {
+        key: 'absence',
+        label: t('common.absence_date'),
+    },
+    {
+        key: 'phoneNumber',
+        label: t('common.phone_number'),
+    },
+    {
+        key: 'dateofbirth',
+        label: t('common.date_of_birth'),
+    },
+    can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])
+        ? {
+              key: 'actions',
+              label: t('common.action', 2),
+              sortable: false,
+          }
+        : undefined,
+].filter((c) => c !== undefined) as { key: string; label: string; sortable?: boolean }[];
+
+const modal = useModal();
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
     <div class="py-2 pb-4">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <form @submit.prevent="refresh()">
-                        <div class="mx-auto flex flex-row gap-4">
-                            <div class="flex-1">
-                                <label for="searchName" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.search') }}
-                                    {{ $t('common.colleague', 1) }}
-                                </label>
-                                <div class="relative mt-2 flex items-center">
-                                    <input
-                                        ref="searchInput"
-                                        v-model="query.name"
-                                        type="text"
-                                        name="searchName"
-                                        :placeholder="$t('common.name')"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                            </div>
-                            <div class="flex-initial">
-                                <label for="absent" class="block text-sm font-medium leading-6 text-neutral">
-                                    {{ $t('common.absent') }}
-                                </label>
-                                <div class="relative mt-3 flex items-center">
-                                    <Switch
-                                        v-model="query.absent"
-                                        :class="[
-                                            query.absent ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2',
-                                        ]"
-                                    >
-                                        <span class="sr-only">
-                                            {{ $t('common.absent') }}
-                                        </span>
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                query.absent ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-neutral ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.colleague', 2)])" />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock
-                            v-else-if="data?.colleagues.length === 0"
-                            :focus="focusSearch"
-                            :message="$t('components.citizens.citizens_list.no_citizens')"
-                        />
-                        <template v-else>
-                            <GenericTable>
-                                <template #thead>
-                                    <tr>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        ></th>
-                                        <th
-                                            scope="col"
-                                            class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1"
-                                        >
-                                            {{ $t('common.name') }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral lg:table-cell"
-                                        >
-                                            {{ $t('common.rank', 1) }}
-                                        </th>
-                                        <th
-                                            scope="col"
-                                            class="hidden px-2 py-3.5 text-left text-sm font-semibold text-neutral sm:block"
-                                        >
-                                            {{ $t('common.absence_date') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.phone_number') }}
-                                        </th>
-                                        <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
-                                            {{ $t('common.date_of_birth') }}
-                                        </th>
-                                        <th
-                                            v-if="can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])"
-                                            scope="col"
-                                            class="relative py-3.5 pl-3 pr-4 text-right text-sm font-semibold text-neutral sm:pr-0"
-                                        >
-                                            {{ $t('common.action', 2) }}
-                                        </th>
-                                    </tr>
-                                </template>
-                                <template #tbody>
-                                    <ColleaguesListEntry
-                                        v-for="colleague in data?.colleagues"
-                                        :key="colleague.userId"
-                                        :colleague="colleague"
-                                        @update:absence-dates="updateAbsenceDates($event)"
-                                    />
-                                </template>
-                            </GenericTable>
+                <UForm :schema="undefined" :state="{}" class="flex w-full gap-2">
+                    <UFormGroup class="flex-1" :label="$t('common.colleague', 1)">
+                        <UInput
+                            ref="input"
+                            v-model="query.name"
+                            type="text"
+                            name="searchName"
+                            :placeholder="$t('common.name')"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInput>
+                    </UFormGroup>
 
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
+                    <UFormGroup :label="$t('common.absent')">
+                        <UToggle v-model="query.absent">
+                            <span class="sr-only">
+                                {{ $t('common.absent') }}
+                            </span>
+                        </UToggle>
+                    </UFormGroup>
+                </UForm>
+            </div>
+            <div class="inline-block min-w-full px-1 py-2 align-middle">
+                <DataErrorBlock
+                    v-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.colleague', 2)])"
+                    :retry="refresh"
+                />
+                <UTable
+                    v-else
+                    :loading="loading"
+                    :columns="columns"
+                    :rows="data?.colleagues"
+                    :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+                >
+                    <template #name-data="{ row: colleague }">
+                        <div class="inline-flex items-center">
+                            <ProfilePictureImg
+                                :url="colleague.props?.mugShot?.url"
+                                :name="`${colleague.firstname} ${colleague.lastname}`"
+                                size="sm"
+                                :enable-popup="true"
+                                :alt="$t('common.avatar')"
+                                class="mr-2"
                             />
-                        </template>
-                    </div>
-                </div>
+                            <span>{{ colleague.firstname }} {{ colleague.lastname }}</span>
+                        </div>
+
+                        <dl class="font-normal lg:hidden">
+                            <dt class="sr-only">{{ $t('common.job_grade') }}</dt>
+                            <dd class="mt-1 truncate">
+                                {{ colleague.jobGradeLabel
+                                }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                            </dd>
+                        </dl>
+                    </template>
+                    <template #rank-data="{ row: colleague }">
+                        {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
+                    </template>
+                    <template #absence-data="{ row: colleague }">
+                        <dl
+                            v-if="
+                                colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()
+                            "
+                            class="font-normal"
+                        >
+                            <dd class="truncate">
+                                {{ $t('common.from') }}:
+                                <GenericTime :value="colleague.props?.absenceBegin" type="date" />
+                            </dd>
+                            <dd class="truncate">
+                                {{ $t('common.to') }}: <GenericTime :value="colleague.props?.absenceEnd" type="date" />
+                            </dd>
+                        </dl>
+                    </template>
+                    <template #phone-data="{ row: colleague }">
+                        <PhoneNumberBlock :number="colleague.phoneNumber" />
+                    </template>
+                    <template #actions-data="{ row: colleague }">
+                        <UButton
+                            v-if="
+                                can('JobsService.SetJobsUserProps') &&
+                                checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
+                            "
+                            variant="link"
+                            icon="i-mdi-island"
+                            @click="
+                                modal.open(SelfServicePropsAbsenceDateModal, {
+                                    userId: colleague.userId,
+                                    'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                                })
+                            "
+                        />
+
+                        <UButton
+                            v-if="
+                                can('JobsService.GetColleague') &&
+                                checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
+                            "
+                            variant="link"
+                            icon="i-mdi-eye"
+                            :to="{
+                                name: 'jobs-colleagues-id-actvitiy',
+                                params: { id: colleague.userId ?? 0 },
+                            }"
+                        />
+                    </template>
+                </UTable>
+
+                <Pagination v-model="page" :pagination="data?.pagination" />
             </div>
         </div>
     </div>

@@ -8,7 +8,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { data: timeclockStats, error, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
+const { data, error, pending: loading, refresh } = useLazyAsyncData(`jobs-timeclock-stats`, () => getTimeclockStats());
 
 async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
     try {
@@ -23,14 +23,20 @@ async function getTimeclockStats(): Promise<GetTimeclockStatsResponse> {
         throw e;
     }
 }
+
+const canRefresh = ref(true);
+const refreshThrottle = useThrottleFn(async () => {
+    canRefresh.value = false;
+    await refresh().finally(() => useTimeoutFn(() => (canRefresh.value = true), 400));
+}, 2500);
 </script>
 
 <template>
     <TimeclockStatsBlock
-        class="mt-4"
-        :stats="timeclockStats?.stats"
-        :weekly="timeclockStats?.weekly"
+        :stats="data?.stats"
+        :weekly="data?.weekly"
         :failed="error !== null"
-        @refresh="refresh()"
+        :loading="loading"
+        @refresh="refreshThrottle"
     />
 </template>

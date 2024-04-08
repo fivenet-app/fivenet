@@ -1,28 +1,4 @@
 <script lang="ts" setup>
-import type { DefineComponent } from 'vue';
-import { Disclosure, DisclosureButton, DisclosurePanel } from '@headlessui/vue';
-import {
-    AccountMultipleIcon,
-    ChevronDownIcon,
-    CommentEditIcon,
-    CommentPlusIcon,
-    DeleteCircleIcon,
-    DeleteCircleOutlineIcon,
-    FileAccountIcon,
-    FileMultipleIcon,
-    FileSwapOutlineIcon,
-    HelpIcon,
-    LockCheckIcon,
-    LockIcon,
-    LockOpenIcon,
-    LockOpenOutlineIcon,
-    LockPlusOutlineIcon,
-    LockQuestionIcon,
-    NewBoxIcon,
-    RefreshCircleIcon,
-    TrashCanIcon,
-    UpdateIcon,
-} from 'mdi-vue3';
 import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -33,7 +9,7 @@ defineProps<{
     entry: DocActivity;
 }>();
 
-function disclosureNeeded(activityType: DocActivityType): boolean {
+function spoilerNeeded(activityType: DocActivityType): boolean {
     switch (activityType) {
         case DocActivityType.UPDATED:
             return true;
@@ -43,65 +19,65 @@ function disclosureNeeded(activityType: DocActivityType): boolean {
     }
 }
 
-function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
+function getDocAtivityIcon(activityType: DocActivityType): string {
     switch (activityType) {
         // Base
         case DocActivityType.CREATED:
-            return NewBoxIcon;
+            return 'i-mdi-new-box';
         case DocActivityType.STATUS_OPEN:
-            return LockOpenIcon;
+            return 'i-mdi-lock-open-variant';
         case DocActivityType.STATUS_CLOSED:
-            return LockIcon;
+            return 'i-mdi-lock';
         case DocActivityType.UPDATED:
-            return UpdateIcon;
+            return 'i-mdi-update';
         case DocActivityType.RELATIONS_UPDATED:
-            return AccountMultipleIcon;
+            return 'i-mdi-account-multiple';
         case DocActivityType.REFERENCES_UPDATED:
-            return FileMultipleIcon;
+            return 'i-mdi-file-multiple';
         case DocActivityType.ACCESS_UPDATED:
-            return LockCheckIcon;
+            return 'i-mdi-lock-check';
         case DocActivityType.OWNER_CHANGED:
-            return FileAccountIcon;
+            return 'i-mdi-file-account';
         case DocActivityType.DELETED:
-            return DeleteCircleIcon;
+            return 'i-mdi-delete-circle';
 
         // Requests
         case DocActivityType.REQUESTED_ACCESS:
-            return LockPlusOutlineIcon;
+            return 'i-mdi-lock-plus-outline';
         case DocActivityType.REQUESTED_CLOSURE:
-            return LockQuestionIcon;
+            return 'i-mdi-lock-question';
         case DocActivityType.REQUESTED_OPENING:
-            return LockOpenOutlineIcon;
+            return 'i-mdi-lock-open-outline';
         case DocActivityType.REQUESTED_UPDATE:
-            return RefreshCircleIcon;
+            return 'i-mdi-refresh-circle';
         case DocActivityType.REQUESTED_OWNER_CHANGE:
-            return FileSwapOutlineIcon;
+            return 'i-mdi-file-swap-outline';
         case DocActivityType.REQUESTED_DELETION:
-            return DeleteCircleOutlineIcon;
+            return 'i-mdi-delete-circle-outline';
 
         // Comments
         case DocActivityType.COMMENT_ADDED:
-            return CommentPlusIcon;
+            return 'i-mdi-comment-plus';
         case DocActivityType.COMMENT_UPDATED:
-            return CommentEditIcon;
+            return 'i-mdi-comment-edit';
         case DocActivityType.COMMENT_DELETED:
-            return TrashCanIcon;
+            return 'i-mdi-trash-can';
 
         default:
-            return HelpIcon;
+            return 'i-mdi-help';
     }
 }
 </script>
 
 <template>
     <div class="p-1">
-        <div v-if="!disclosureNeeded(entry.activityType)" class="flex space-x-3">
+        <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" aria-hidden="true" />
+                <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="inline-flex items-center gap-2 text-sm font-medium text-neutral">
+                    <h3 class="inline-flex items-center gap-2 text-sm font-medium">
                         <span class="font-bold">
                             {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                         </span>
@@ -120,29 +96,29 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                         <GenericTime :value="entry.createdAt" type="long" />
                     </p>
                 </div>
-                <p class="inline-flex text-sm text-gray-300">
+                <p class="inline-flex text-sm">
                     {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" text-class="underline" :user="entry.creator" />
+                    <CitizenInfoPopover class="ml-1" :user="entry.creator" />
                 </p>
             </div>
         </div>
 
-        <Disclosure v-else v-slot="{ open }" as="div">
-            <DisclosureButton class="flex w-full items-start justify-between text-left transition">
-                <div class="flex w-full space-x-3">
+        <UAccordion v-else :items="[{}]">
+            <template #default="{ open }">
+                <div class="flex space-x-3">
                     <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                        <component :is="getDocAtivityIcon(entry.activityType)" class="size-7" aria-hidden="true" />
+                        <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />
                     </div>
                     <div class="flex-1 space-y-1">
                         <div class="flex items-center justify-between">
-                            <h3 class="inline-flex items-center text-sm font-medium text-neutral">
+                            <h3 class="inline-flex items-center text-sm font-medium">
                                 <span class="font-bold">
                                     {{ $t(`enums.docstore.DocActivityType.${DocActivityType[entry.activityType]}`) }}
                                 </span>
                                 <span class="ml-6 flex h-7 items-center">
-                                    <ChevronDownIcon
+                                    <UIcon
+                                        name="i-mdi-chevron-down"
                                         :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
-                                        aria-hidden="true"
                                     />
                                 </span>
                             </h3>
@@ -150,21 +126,22 @@ function getDocAtivityIcon(activityType: DocActivityType): DefineComponent {
                                 <GenericTime :value="entry.createdAt" type="long" />
                             </p>
                         </div>
-                        <p class="inline-flex text-sm text-gray-300">
+                        <p class="inline-flex text-sm">
                             {{ $t('common.created_by') }}
-                            <CitizenInfoPopover class="ml-1" text-class="underline" :user="entry.creator" />
+                            <CitizenInfoPopover class="ml-1" :user="entry.creator" />
                         </p>
                     </div>
                 </div>
-            </DisclosureButton>
-            <DisclosurePanel class="px-4 py-2">
-                <template v-if="entry.activityType === DocActivityType.UPDATED">
+            </template>
+
+            <template v-if="entry.activityType === DocActivityType.UPDATED" #item>
+                <div class="bg-background rounded-md p-2">
                     <ActivityDocUpdatedDiff
                         v-if="entry.data?.data.oneofKind === 'updated'"
                         :update="entry.data?.data.updated"
                     />
-                </template>
-            </DisclosurePanel>
-        </Disclosure>
+                </div>
+            </template>
+        </UAccordion>
     </div>
 </template>

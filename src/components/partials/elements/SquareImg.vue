@@ -1,25 +1,25 @@
 <script lang="ts" setup>
-import { imageSize, type imageSizes } from '~/components/partials/helpers';
+import type { AvatarSize } from '#ui/types';
 import { useSettingsStore } from '~/store/settings';
 
 const props = withDefaults(
     defineProps<{
         url?: string;
+        alt?: string;
         text?: string;
-        size?: imageSizes;
-        rounded?: boolean;
+        size?: AvatarSize;
         noBlur?: boolean;
+        enablePopup?: boolean;
     }>(),
     {
         url: undefined,
+        alt: '',
         text: '',
         size: 'lg',
-        rounded: false,
         noBlur: undefined,
+        enablePopup: false,
     },
 );
-
-const size = computed(() => imageSize(props.size));
 
 const settings = useSettingsStore();
 const { streamerMode } = storeToRefs(settings);
@@ -34,19 +34,18 @@ function toggleBlur(): void {
 </script>
 
 <template>
-    <span
-        class="flex items-center justify-center bg-gray-500 ring-2 ring-base-600"
-        :class="[size, rounded ? 'rounded-full' : 'rounded-md']"
-    >
-        <span v-if="!url" class="font-medium leading-none text-white">
-            <slot name="initials" />
-        </span>
-        <img
-            v-else
-            :class="[size, rounded ? 'rounded-full' : 'rounded-md', visible ? '' : 'blur']"
-            :src="url"
-            :alt="text"
-            @click="toggleBlur()"
-        />
-    </span>
+    <template v-if="!url || !enablePopup">
+        <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="url" :alt="alt" :text="text" @click="toggleBlur()" />
+    </template>
+    <UPopover v-else>
+        <UButton variant="link" :padded="false">
+            <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="url" :alt="alt" :text="text" />
+        </UButton>
+
+        <template #panel>
+            <div class="p-4">
+                <img class="w-96 max-w-full rounded-md" :src="url" :alt="alt" />
+            </div>
+        </template>
+    </UPopover>
 </template>

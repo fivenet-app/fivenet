@@ -1,27 +1,67 @@
 <script lang="ts" setup>
+import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import NotificationItem from '~/components/partials/notification/NotificationItem.vue';
+import { notificationTypeToIcon, notificationTypeToColor } from '~/components/partials/notification/helpers';
 
-const notifications = useNotificatorStore();
-const { getNotifications } = storeToRefs(notifications);
+const { t } = useI18n();
+
+const authStore = useAuthStore();
+const { accessToken, activeChar } = storeToRefs(authStore);
+
+const notificatorStore = useNotificatorStore();
+const { notifications } = storeToRefs(notificatorStore);
+const { startStream, stopStream } = notificatorStore;
+
+async function toggleStream(): Promise<void> {
+    // Only stream notifications when a user is logged in and has a character selected
+    if (accessToken.value !== null && activeChar.value !== null) {
+        return startStream();
+    } else {
+        await stopStream();
+        notificatorStore.$reset();
+    }
+}
+
+watch(accessToken, async () => toggleStream());
+watch(activeChar, async () => toggleStream());
+
+onBeforeMount(async () => toggleStream());
+
+onBeforeUnmount(async () => stopStream());
+
+const toast = useToast();
+
+watchArray(
+    notifications,
+    (_, _0, added) => {
+        added.forEach((notification) => {
+            toast.add({
+                id: notification.id,
+                title: t(notification.title.key, notification.title.parameters ?? {}),
+                description: t(notification.description.key, notification.description.parameters ?? {}),
+                icon: notificationTypeToIcon(notification.type),
+                color: notificationTypeToColor(notification.type),
+                timeout: notification.timeout ?? 3500,
+                actions: notification.onClick
+                    ? [
+                          {
+                              label: notification.onClickText
+                                  ? t(notification.onClickText.key, notification.onClickText.parameters ?? {})
+                                  : t('common.click_here'),
+                              click: notification.onClick,
+                          },
+                      ]
+                    : [],
+                callback: () => {
+                    if (notification.callback) notification.callback();
+                    if (notification.id) notificatorStore.remove(notification.id);
+                },
+            });
+        });
+    },
+    { deep: true },
+);
 </script>
-
 <template>
-    <div>
-        <slot />
-
-        <!-- Global notification live region, render this permanently at the end of the document -->
-        <div aria-live="assertive" class="pointer-events-none fixed inset-0 z-50 flex items-end px-4 py-16">
-            <div class="flex w-full flex-col items-center space-y-4">
-                <NotificationItem
-                    v-for="(notification, idx) in getNotifications.filter(
-                        (n) => n.position === undefined || n.position === 'top-right',
-                    )"
-                    :key="notification.id"
-                    :notification="notification"
-                    :class="idx > 0 ? 'mb-6' : ''"
-                />
-            </div>
-        </div>
-    </div>
+    <div></div>
 </template>

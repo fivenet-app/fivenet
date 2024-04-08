@@ -27,7 +27,7 @@ import (
 )
 
 const (
-	CommentsDefaultPageLimit = 7
+	CommentsDefaultPageSize = 8
 )
 
 var (
@@ -74,7 +74,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, CommentsDefaultPageLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, CommentsDefaultPageSize)
 	resp := &GetCommentsResponse{
 		Pagination: pag,
 		Comments:   []*documents.Comment{},
@@ -198,8 +198,13 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
+	comment, err := s.getComment(ctx, uint64(lastId))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+
 	return &PostCommentResponse{
-		Id: uint64(lastId),
+		Comment: comment,
 	}, nil
 }
 

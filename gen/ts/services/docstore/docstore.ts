@@ -350,9 +350,9 @@ export interface PostCommentRequest {
  */
 export interface PostCommentResponse {
     /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: resources.documents.Comment comment = 1;
      */
-    id: string;
+    comment?: Comment;
 }
 /**
  * @generated from protobuf message services.docstore.EditCommentRequest
@@ -2190,7 +2190,7 @@ export const GetCommentsResponse = new GetCommentsResponse$Type();
 class PostCommentRequest$Type extends MessageType<PostCommentRequest> {
     constructor() {
         super("services.docstore.PostCommentRequest", [
-            { no: 1, name: "comment", kind: "message", T: () => Comment }
+            { no: 1, name: "comment", kind: "message", T: () => Comment, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<PostCommentRequest>): PostCommentRequest {
@@ -2236,12 +2236,11 @@ export const PostCommentRequest = new PostCommentRequest$Type();
 class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
     constructor() {
         super("services.docstore.PostCommentResponse", [
-            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "comment", kind: "message", T: () => Comment }
         ]);
     }
     create(value?: PartialMessage<PostCommentResponse>): PostCommentResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.id = "0";
         if (value !== undefined)
             reflectionMergePartial<PostCommentResponse>(this, message, value);
         return message;
@@ -2251,8 +2250,8 @@ class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
-                    message.id = reader.uint64().toString();
+                case /* resources.documents.Comment comment */ 1:
+                    message.comment = Comment.internalBinaryRead(reader, reader.uint32(), options, message.comment);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -2266,9 +2265,9 @@ class PostCommentResponse$Type extends MessageType<PostCommentResponse> {
         return message;
     }
     internalBinaryWrite(message: PostCommentResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 id = 1 [jstype = JS_STRING]; */
-        if (message.id !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* resources.documents.Comment comment = 1; */
+        if (message.comment)
+            Comment.internalBinaryWrite(message.comment, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

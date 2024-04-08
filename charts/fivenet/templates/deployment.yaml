@@ -5,11 +5,11 @@ metadata:
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.fivenet.replicaCount }}
-  revisionHistoryLimit: {{ .Values.fivenet.revisionHistoryLimit }}
+  replicas: {{ .Values.frontend.replicaCount }}
+  revisionHistoryLimit: {{ .Values.frontend.revisionHistoryLimit }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: server
+      app.kubernetes.io/component: frontend
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -19,7 +19,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/component: server
+        app.kubernetes.io/component: frontend
         {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -35,31 +35,30 @@ spec:
             secretName: "{{ include "fivenet.fullname" . }}-fivenet-config"
       containers:
         - name: fivenet
+          args:
+            - frontend
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.fivenet.image.repository }}:{{ .Values.fivenet.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.fivenet.image.pullPolicy }}
+          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
           env:
-            {{- toYaml .Values.fivenet.additionalEnv | nindent 12 }}
+            {{- toYaml .Values.frontend.additionalEnv | nindent 12 }}
           ports:
             - name: http
               containerPort: 8080
               protocol: TCP
-            - name: grpc
-              containerPort: 9090
-              protocol: TCP
             - name: metrics
               containerPort: 7070
               protocol: TCP
-          {{- with .Values.fivenet.livenessProbe }}
+          {{- with .Values.frontend.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.fivenet.readinessProbe }}
+          {{- with .Values.frontend.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.fivenet.startupProbe }}
+          {{- with .Values.frontend.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
@@ -68,7 +67,7 @@ spec:
               mountPath: /config
               readOnly: true
           resources:
-            {{- toYaml .Values.fivenet.resources | nindent 12 }}
+            {{- toYaml .Values.frontend.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

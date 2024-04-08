@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
 import { JobsUserActivityType, type JobsUserActivity } from '~~/gen/ts/resources/jobs/colleagues';
+import ColleagueInfoPopover from '../ColleagueInfoPopover.vue';
 
 withDefaults(
     defineProps<{
@@ -18,15 +18,15 @@ withDefaults(
 <template>
     <div class="flex space-x-3">
         <div class="my-auto flex size-10 items-center justify-center rounded-full">
-            <component
-                :is="jobsUserActivityTypeIcon(activity.activityType)"
+            <UIcon
+                :name="jobsUserActivityTypeIcon(activity.activityType)"
                 :class="[jobsUserActivityTypeBGColor(activity.activityType), 'size-full']"
-                aria-hidden="true"
+                :inline="true"
             />
         </div>
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
-                <h3 class="text-sm font-medium text-neutral">
+                <h3 class="text-sm font-medium">
                     {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[activity.activityType]}`) }}
                     <template v-if="activity.data?.data.oneofKind !== undefined">
                         {{ ' - ' }}
@@ -47,7 +47,7 @@ withDefaults(
                 </p>
             </div>
             <div class="flex items-center justify-between">
-                <p class="flex flex-col gap-1 text-sm text-gray-300">
+                <p class="flex flex-col gap-1 text-sm">
                     <template v-if="activity.reason">
                         <div class="inline-flex gap-1">
                             <span class="font-semibold">{{ $t('common.reason') }}:</span>
@@ -57,15 +57,15 @@ withDefaults(
                         </div>
                     </template>
                     <template v-if="showTargetUser">
-                        <div class="inline-flex text-sm text-gray-300">
+                        <div class="inline-flex items-center gap-1 text-sm">
                             <span class="font-semibold">{{ $t('common.colleague') }}:</span>
-                            <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.targetUser" />
+                            <ColleagueInfoPopover :user="activity.targetUser" />
                         </div>
                     </template>
                 </p>
-                <p class="inline-flex text-sm text-gray-300">
-                    {{ $t('common.created_by') }}
-                    <CitizenInfoPopover class="ml-1" text-class="underline" :user="activity.sourceUser" />
+                <p class="inline-flex items-center gap-1 text-sm">
+                    <span>{{ $t('common.created_by') }}</span>
+                    <ColleagueInfoPopover :user="activity.sourceUser" :hide-props="true" />
                 </p>
             </div>
         </div>

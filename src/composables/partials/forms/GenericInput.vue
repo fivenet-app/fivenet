@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useVModel } from '@vueuse/core';
-
 const props = withDefaults(
     defineProps<{
         modelValue?: string;
@@ -10,10 +8,14 @@ const props = withDefaults(
     },
 );
 
+defineOptions({
+    inheritAttrs: true,
+});
+
 const emit = defineEmits(['update:modelValue']);
 const data = useVModel(props, 'modelValue', emit);
 </script>
 
 <template>
-    <input v-model="data" @focusin="focusTablet(true)" @focusout="focusTablet(false)" />
+    <UInput v-model="data" @focusin="focusTablet(true)" @focusout="focusTablet(false)" @keydown.esc="$event.target.blur()" />
 </template>

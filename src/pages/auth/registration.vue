@@ -1,31 +1,22 @@
 <script lang="ts" setup>
-import ContentCenterWrapper from '~/components/partials/ContentCenterWrapper.vue';
-import PageFooter from '~/components/partials/PageFooter.vue';
-import ContentHeroFull from '~/components/partials/ContentHeroFull.vue';
 import RegistrationForm from '~/components/auth/RegistrationForm.vue';
-import FormWrapper from '~/components/auth/FormWrapper.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
-    title: 'components.auth.registration_form.title',
+    title: 'components.auth.RegistrationForm.title',
 });
 definePageMeta({
-    title: 'components.auth.registration_form.title',
+    title: 'components.auth.RegistrationForm.title',
+    layout: 'auth',
     requiresAuth: false,
     showCookieOptions: true,
 });
 </script>
 
 <template>
-    <div class="flex h-full flex-col justify-between">
-        <ContentHeroFull>
-            <ContentCenterWrapper>
-                <FormWrapper>
-                    <template #default>
-                        <RegistrationForm />
-                    </template>
-                </FormWrapper>
-            </ContentCenterWrapper>
-        </ContentHeroFull>
-        <PageFooter />
-    </div>
+    <UCard class="w-full max-w-sm bg-white/75 backdrop-blur dark:bg-white/5">
+        <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
+
+        <RegistrationForm />
+    </UCard>
 </template>

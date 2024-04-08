@@ -2,8 +2,8 @@ syntax = "proto3";
 
 package resources.jobs;
 
+import "resources/jobs/colleagues.proto";
 import "resources/timestamp/timestamp.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/jobs;jobs";
@@ -28,7 +28,7 @@ message ConductEntry {
   string message = 6 [(validate.rules).string = {min_len: 3, max_len: 2048}];
   optional resources.timestamp.Timestamp expires_at = 7;
   int32 target_user_id = 8 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort target_user = 9; // @gotags: alias:"target_user"
+  optional resources.jobs.Colleague target_user = 9; // @gotags: alias:"target_user"
   int32 creator_id = 10 [(validate.rules).int32.gt = 0];
-  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  optional resources.jobs.Colleague creator = 11; // @gotags: alias:"creator"
 }

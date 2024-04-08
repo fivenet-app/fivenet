@@ -1,11 +1,10 @@
 <script lang="ts" setup>
-import { BulletinBoardIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -13,9 +12,10 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const offset = ref(0n);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${offset.value}`, () =>
+const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${page.value}`, () =>
     listUserActivity(),
 );
 
@@ -40,41 +40,27 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div class="flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 align-middle">
-                        <DataPendingBlock
-                            v-if="pending"
-                            :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
-                        />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock
-                            v-else-if="data?.activity.length === 0"
-                            :icon="BulletinBoardIcon"
-                            :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
-                        />
-                        <div v-else>
-                            <ul role="list" class="divide-y divide-gray-200">
-                                <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
-                                    <CitizenActivityFeedEntry :activity="activity" />
-                                </li>
-                            </ul>
+    <div>
+        <DataPendingBlock
+            v-if="pending"
+            :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
+        />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
+            :retry="refresh"
+        />
+        <DataNoDataBlock
+            v-else-if="data === null || data?.activity.length === 0"
+            :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
+            icon="i-mdi-bulletin-board"
+        />
+        <ul v-else role="list" class="divide-y divide-gray-200">
+            <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
+                <CitizenActivityFeedEntry :activity="activity" />
+            </li>
+        </ul>
 
-                            <TablePagination
-                                :pagination="data?.pagination"
-                                :refresh="refresh"
-                                @offset-change="offset = $event"
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
 </template>

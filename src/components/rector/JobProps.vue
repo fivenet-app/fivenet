@@ -1,21 +1,16 @@
 <script lang="ts" setup>
-import { Switch, SwitchGroup, SwitchLabel, Listbox, ListboxButton, ListboxOption, ListboxOptions } from '@headlessui/vue';
-import { mimes, size } from '@vee-validate/rules';
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { vMaska } from 'maska';
-import { CheckIcon, ChevronDownIcon, LoadingIcon, TuneIcon } from 'mdi-vue3';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
-import { defineRule } from 'vee-validate';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { availableThemes, useSettingsStore } from '~/store/settings';
+import { useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 
 const { $grpc } = useNuxtApp();
@@ -28,6 +23,16 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 
 const notifications = useNotificatorStore();
+
+const schema = z.object({
+    jobLogo: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    jobLogo: undefined,
+});
 
 async function getJobProps(): Promise<JobProps> {
     try {
@@ -43,17 +48,13 @@ async function getJobProps(): Promise<JobProps> {
 
 const { data: jobProps, pending, refresh, error } = useLazyAsyncData(`rector-jobprops`, () => getJobProps());
 
-interface FormData {
-    jobLogo?: Blob;
-}
-
-async function setJobProps(values: FormData): Promise<void> {
+async function setJobProps(values: Schema): Promise<void> {
     if (!jobProps.value) {
         return;
     }
 
     if (values.jobLogo) {
-        jobProps.value.logoUrl = { data: new Uint8Array(await values.jobLogo.arrayBuffer()) };
+        jobProps.value.logoUrl = { data: new Uint8Array(await values.jobLogo[0].arrayBuffer()) };
     }
 
     try {
@@ -61,9 +62,9 @@ async function setJobProps(values: FormData): Promise<void> {
             jobProps: jobProps.value,
         });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.rector.job_props.title', parameters: {} },
-            content: { key: 'notifications.rector.job_props.content', parameters: {} },
+            description: { key: 'notifications.rector.job_props.content', parameters: {} },
             type: 'success',
         });
 
@@ -77,173 +78,109 @@ async function setJobProps(values: FormData): Promise<void> {
     }
 }
 
-defineRule('mimes', mimes);
-defineRule('size', size);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        jobLogo: { required: false, mimes: ['image/jpeg', 'image/jpg', 'image/png'], size: 2000 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> => await setJobProps(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await setJobProps(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
-    <div class="mx-auto max-w-5xl py-2">
+    <div>
         <template v-if="streamerMode">
-            <GenericContainerPanel>
-                <template #title>
-                    {{ $t('system.streamer_mode.title') }}
-                </template>
-                <template #description>
-                    {{ $t('system.streamer_mode.description') }}
-                </template>
-            </GenericContainerPanel>
+            <UDashboardPanelContent class="pb-2">
+                <UDashboardSection
+                    :title="$t('system.streamer_mode.title')"
+                    :description="$t('system.streamer_mode.description')"
+                />
+            </UDashboardPanelContent>
         </template>
         <template v-else>
-            <DataPendingBlock
-                v-if="pending"
-                :message="$t('common.loading', [$t('components.rector.job_props.job_properties')])"
-            />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [`${$t('common.job', 1)} ${$t('common.prop')}`])"
-                :retry="refresh"
-            />
-            <DataNoDataBlock
-                v-else-if="jobProps === null"
-                :icon="TuneIcon"
-                :type="`${$t('common.job', 1)} ${$t('common.prop')}`"
-            />
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <DataPendingBlock
+                    v-if="pending"
+                    :message="$t('common.loading', [$t('components.rector.job_props.job_properties')])"
+                />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('components.rector.job_props.job_properties')])"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock
+                    v-else-if="jobProps === null"
+                    icon="i-mdi-tune"
+                    :type="$t('components.rector.job_props.job_properties')"
+                />
 
-            <template v-else>
-                <GenericContainerPanel>
-                    <template #title>
-                        {{ $t('components.rector.job_props.job_properties') }}
-                    </template>
-                    <template #description>
-                        {{ $t('components.rector.job_props.your_job_properties') }}
-                    </template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('common.theme') }}
-                            </template>
-                            <template #default>
-                                <Listbox v-model="jobProps.theme" as="div">
-                                    <div class="relative">
-                                        <ListboxButton
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        >
-                                            <span class="block truncate">
-                                                {{ availableThemes.find((t) => t.key === jobProps?.theme)?.name }}
-                                            </span>
-                                            <span class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
-                                                <ChevronDownIcon class="size-5 text-gray-400" aria-hidden="true" />
-                                            </span>
-                                        </ListboxButton>
+                <template v-else>
+                    <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
+                        <template #right>
+                            <UButton
+                                class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                :disabled="!canSubmit"
+                                :loading="!canSubmit"
+                                @click="onSubmitThrottle"
+                            >
+                                {{ $t('common.save', 1) }}
+                            </UButton>
+                        </template>
+                    </UDashboardNavbar>
 
-                                        <transition
-                                            leave-active-class="transition duration-100 ease-in"
-                                            leave-from-class="opacity-100"
-                                            leave-to-class="opacity-0"
-                                        >
-                                            <ListboxOptions
-                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                            >
-                                                <ListboxOption
-                                                    v-for="theme in availableThemes"
-                                                    :key="theme.key"
-                                                    v-slot="{ active, selected }"
-                                                    as="template"
-                                                    :value="theme.key"
-                                                >
-                                                    <li
-                                                        :class="[
-                                                            active ? 'bg-primary-500' : '',
-                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                        ]"
-                                                    >
-                                                        <span
-                                                            :class="[
-                                                                selected ? 'font-semibold' : 'font-normal',
-                                                                'block truncate',
-                                                            ]"
-                                                        >
-                                                            {{ theme.name }}
-                                                        </span>
+                    <UDashboardPanelContent class="pb-2">
+                        <UDashboardSection
+                            :title="$t('components.rector.job_props.job_properties')"
+                            :description="$t('components.rector.job_props.your_job_properties')"
+                        >
+                            <UFormGroup
+                                name="theme"
+                                :label="$t('common.theme')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                {{ jobProps.theme }}
+                            </UFormGroup>
 
-                                                        <span
-                                                            v-if="selected"
-                                                            :class="[
-                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                            ]"
-                                                        >
-                                                            <CheckIcon class="size-5" aria-hidden="true" />
-                                                        </span>
-                                                    </li>
-                                                </ListboxOption>
-                                            </ListboxOptions>
-                                        </transition>
-                                    </div>
-                                </Listbox>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.rector.job_props.livemap_marker_color') }}
-                            </template>
-                            <template #default>
+                            <UFormGroup
+                                name="livemapMarkerColor"
+                                :label="$t('components.rector.job_props.livemap_marker_color')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
                                 <ColorInput v-model="jobProps.livemapMarkerColor" disable-alpha format="hex" position="top" />
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('common.radio_frequency') }}
-                            </template>
-                            <template #default>
-                                <input
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="radioFrequency"
+                                :label="$t('common.radio_frequency')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
                                     v-model="jobProps.radioFrequency"
                                     v-maska
                                     data-maska="0.9"
                                     data-maska-tokens="0:\d:multiple|9:\d:multiple"
                                     type="text"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                     :placeholder="$t('common.radio_frequency')"
                                     :label="$t('common.radio_frequency')"
                                     maxlength="24"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry v-if="jobProps.quickButtons">
-                            <template #title>
-                                {{ $t('components.rector.job_props.quick_buttons') }}
-                            </template>
-                            <template #default>
-                                <fieldset class="flex flex-col gap-2">
+                            </UFormGroup>
+
+                            <UFormGroup
+                                v-if="jobProps.quickButtons"
+                                name="quickButtons"
+                                :label="$t('components.rector.job_props.quick_buttons')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <div class="flex flex-col gap-2">
                                     <div class="space-y-4">
-                                        <SwitchGroup as="div" class="flex items-center">
-                                            <Switch
-                                                v-model="jobProps.quickButtons.penaltyCalculator"
-                                                :class="[
-                                                    jobProps.quickButtons.penaltyCalculator ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
+                                        <div class="flex items-center">
+                                            <UToggle v-model="jobProps.quickButtons.penaltyCalculator">
                                                 <span
-                                                    aria-hidden="true"
                                                     :class="[
                                                         jobProps.quickButtons.penaltyCalculator
                                                             ? 'translate-x-5'
@@ -251,70 +188,52 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                                         'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
-                                                    $t('components.penaltycalculator.title')
-                                                }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
+                                            </UToggle>
+                                            <span class="ml-3 text-sm font-medium">{{
+                                                $t('components.penaltycalculator.title')
+                                            }}</span>
+                                        </div>
                                     </div>
-                                    <div class="space-y-5">
-                                        <SwitchGroup as="div" class="flex items-center">
-                                            <Switch
-                                                v-model="jobProps.quickButtons.bodyCheckup"
-                                                :class="[
-                                                    jobProps.quickButtons.bodyCheckup ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
+                                    <div class="space-y-4">
+                                        <div class="flex items-center">
+                                            <UToggle v-model="jobProps.quickButtons.bodyCheckup">
                                                 <span
-                                                    aria-hidden="true"
                                                     :class="[
                                                         jobProps.quickButtons.bodyCheckup ? 'translate-x-5' : 'translate-x-0',
                                                         'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                     ]"
                                                 />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
-                                                    $t('components.bodycheckup.title')
-                                                }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
+                                            </UToggle>
+                                            <span class="ml-3 text-sm font-medium">{{
+                                                $t('components.bodycheckup.title')
+                                            }}</span>
+                                        </div>
                                     </div>
-                                </fieldset>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('common.logo') }}
-                            </template>
-                            <template #default>
+                                </div>
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="jobLogo"
+                                :label="$t('common.logo')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
                                 <div class="flex flex-col">
                                     <template v-if="isNUIAvailable()">
-                                        <p class="text-sm text-neutral">
+                                        <p class="text-sm">
                                             {{ $t('system.not_supported_on_tablet.title') }}
                                         </p>
                                     </template>
                                     <template v-else>
-                                        <VeeField
-                                            v-slot="{ handleChange, handleBlur }"
+                                        <UInput
                                             name="jobLogo"
+                                            type="file"
+                                            accept="image/jpeg,image/jpg,image/png"
+                                            block
                                             :placeholder="$t('common.image')"
-                                            :label="$t('common.image')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
-                                        >
-                                            <input
-                                                type="file"
-                                                accept="image/jpeg,image/jpg,image/png"
-                                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                @change="handleChange"
-                                                @blur="handleBlur"
-                                            />
-                                        </VeeField>
-                                        <VeeErrorMessage name="jobLogo" as="p" class="text-sm text-error-400" />
+                                        />
                                     </template>
 
                                     <SquareImg
@@ -325,50 +244,24 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         class="mt-2"
                                     />
                                 </div>
-                            </template>
-                        </GenericContainerPanelEntry>
+                            </UFormGroup>
+                        </UDashboardSection>
+                    </UDashboardPanelContent>
 
-                        <!-- Save button -->
-                        <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
-                            <template #default>
-                                <button
-                                    type="button"
-                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :class="[
-                                        !canSubmit || !meta.valid
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                    ]"
-                                    :disabled="!canSubmit || !meta.valid"
-                                    @click="onSubmitThrottle"
-                                >
-                                    <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                                    </template>
-                                    {{ $t('common.save', 1) }}
-                                </button>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
-                <GenericContainerPanel v-if="jobProps.discordSyncSettings">
-                    <template #title>
-                        {{ $t('components.rector.job_props.discord_sync_settings.title') }}
-                    </template>
-                    <template #description>
-                        {{ $t('components.rector.job_props.discord_sync_settings.subtitle') }}
-                    </template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.rector.job_props.discord_guild_id') }}
-                            </template>
-                            <template #default>
-                                <input
+                    <UDashboardPanelContent v-if="jobProps.discordSyncSettings" class="pb-2">
+                        <UDashboardSection
+                            :title="$t('components.rector.job_props.discord_sync_settings.title')"
+                            :description="$t('components.rector.job_props.discord_sync_settings.subtitle')"
+                        >
+                            <UFormGroup
+                                name="discordGuildId"
+                                :label="$t('components.rector.job_props.discord_guild_id')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
                                     v-model="jobProps.discordGuildId"
                                     type="text"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    :class="appConfig.discord.botInviteURL === undefined ? 'disabled' : ''"
                                     :disabled="appConfig.discord.botInviteURL === undefined"
                                     :placeholder="$t('components.rector.job_props.discord_guild_id')"
                                     :label="$t('components.rector.job_props.discord_guild_id')"
@@ -376,104 +269,84 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                                <NuxtLink
+                                <UButton
                                     v-if="appConfig.discord.botInviteURL !== undefined"
+                                    block
+                                    class="mt-1"
                                     :to="appConfig.discord.botInviteURL"
                                     :external="true"
-                                    class="mt-2 flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
                                 >
                                     {{ $t('components.rector.job_props.invite_bot') }}
-                                </NuxtLink>
-                                <p v-if="jobProps.discordLastSync" class="mt-2 text-xs text-neutral">
+                                </UButton>
+                                <p v-if="jobProps.discordLastSync" class="mt-2 text-xs">
                                     {{ $t('components.rector.job_props.last_sync') }}:
                                     <GenericTime :value="jobProps.discordLastSync" />
                                 </p>
-                            </template>
-                        </GenericContainerPanelEntry>
+                            </UFormGroup>
 
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.rector.job_props.status_log') }}
-                            </template>
-                            <template #default>
-                                <SwitchGroup as="div" class="mb-1 flex items-center">
-                                    <Switch
-                                        v-model="jobProps.discordSyncSettings.statusLog"
+                            <UFormGroup
+                                name="statusLog"
+                                :label="$t('components.rector.job_props.status_log')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UToggle v-model="jobProps.discordSyncSettings.statusLog">
+                                    <span
                                         :class="[
-                                            jobProps.discordSyncSettings.statusLog ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
+                                            jobProps.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
+                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                         ]"
-                                    >
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                jobProps.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
-
-                                <template v-if="jobProps.discordSyncSettings.statusLog">
-                                    <label for="statusLogSettingsChannelId">
-                                        {{ $t('components.rector.job_props.status_log_settings.channel_id') }}:
-                                    </label>
-                                    <input
-                                        v-model="jobProps.discordSyncSettings.statusLogSettings!.channelId"
-                                        type="text"
-                                        name="statusLogSettingsChannelId"
-                                        :disabled="!jobProps.discordSyncSettings.statusLog"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                        :class="!jobProps.discordSyncSettings.statusLog ? 'disabled' : ''"
-                                        :placeholder="$t('components.rector.job_props.status_log_settings.channel_id')"
-                                        :label="$t('components.rector.job_props.status_log_settings.channel_id')"
-                                        maxlength="48"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
-                                </template>
-                            </template>
-                        </GenericContainerPanelEntry>
+                                </UToggle>
+                            </UFormGroup>
 
-                        <!-- User Info Sync Settings -->
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.rector.job_props.user_info_sync') }}
-                            </template>
-                            <template #default>
-                                <SwitchGroup as="div" class="mb-1 flex items-center">
-                                    <Switch
-                                        v-model="jobProps.discordSyncSettings.userInfoSync"
-                                        :class="[
-                                            jobProps.discordSyncSettings.userInfoSync ? 'bg-primary-600' : 'bg-gray-200',
-                                            'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                        ]"
-                                    >
-                                        <span
-                                            aria-hidden="true"
-                                            :class="[
-                                                jobProps.discordSyncSettings.userInfoSync ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </Switch>
-                                    <SwitchLabel as="span" class="ml-3 text-sm">
-                                        <span class="font-medium text-gray-300">{{ $t('common.enabled') }}</span>
-                                    </SwitchLabel>
-                                </SwitchGroup>
+                            <UFormGroup
+                                v-if="jobProps.discordSyncSettings.statusLog"
+                                name="statusLog"
+                                :label="`${$t('components.rector.job_props.status_log')} ${$t('components.rector.job_props.status_log_settings.channel_id')}`"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="jobProps.discordSyncSettings.statusLogSettings!.channelId"
+                                    type="text"
+                                    name="statusLogSettingsChannelId"
+                                    :disabled="!jobProps.discordSyncSettings.statusLog"
+                                    :placeholder="$t('components.rector.job_props.status_log_settings.channel_id')"
+                                    :label="$t('components.rector.job_props.status_log_settings.channel_id')"
+                                    maxlength="48"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
 
-                                <template v-if="jobProps.discordSyncSettings.userInfoSync">
-                                    <label for="gradeRoleFormat">
-                                        {{ $t('components.rector.job_props.user_info_sync_settings.grade_role_format') }}:
-                                    </label>
-                                    <input
-                                        v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.gradeRoleFormat"
+                            <UFormGroup
+                                name="userInfoSync"
+                                :label="$t('components.rector.job_props.user_info_sync')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UToggle v-model="jobProps.discordSyncSettings.userInfoSync">
+                                    <span class="sr-only">{{ $t('components.rector.job_props.user_info_sync') }}</span>
+                                </UToggle>
+                            </UFormGroup>
+
+                            <template
+                                v-if="
+                                    jobProps.discordSyncSettings.userInfoSync &&
+                                    jobProps.discordSyncSettings.userInfoSyncSettings
+                                "
+                            >
+                                <UFormGroup
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.user_info_sync_settings.grade_role_format')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="jobProps.discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
                                         type="text"
                                         name="gradeRoleFormat"
-                                        class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                         :placeholder="
                                             $t('components.rector.job_props.user_info_sync_settings.grade_role_format')
                                         "
@@ -482,292 +355,161 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
+                                </UFormGroup>
 
-                                    <!-- UserInfo Sync Settings -->
-                                    <SwitchGroup
-                                        v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined"
-                                        as="div"
-                                        class="mb-1 mt-2 flex items-center"
+                                <UFormGroup
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.user_info_sync_settings.employee_role_enabled')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled">
+                                        <span class="sr-only">{{
+                                            $t('components.rector.job_props.user_info_sync_settings.employee_role_enabled')
+                                        }}</span>
+                                    </UToggle>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    v-if="jobProps.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled"
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.user_info_sync_settings.employee_role_format')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
+                                        type="text"
+                                        name="employeeRoleFormat"
+                                        :placeholder="
+                                            $t('components.rector.job_props.user_info_sync_settings.employee_role_format')
+                                        "
+                                        :label="$t('components.rector.job_props.user_info_sync_settings.employee_role_format')"
+                                        maxlength="48"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_enabled')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled">
+                                        <span class="sr-only">{{
+                                            $t('components.rector.job_props.user_info_sync_settings.unemployed_enabled')
+                                        }}</span>
+                                    </UToggle>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_mode')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <USelectMenu
+                                        v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedMode"
+                                        value-attribute="value"
+                                        :options="[
+                                            {
+                                                label: $t('enums.rector.UserInfoSyncUnemployedMode.GIVE_ROLE'),
+                                                value: UserInfoSyncUnemployedMode.GIVE_ROLE,
+                                            },
+                                            {
+                                                label: $t('enums.rector.UserInfoSyncUnemployedMode.GIVE_ROLE'),
+                                                value: UserInfoSyncUnemployedMode.KICK,
+                                            },
+                                        ]"
                                     >
-                                        <Switch
-                                            v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
-                                            :class="[
-                                                jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                    ? 'bg-primary-600'
-                                                    : 'bg-gray-200',
-                                                'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                            ]"
-                                        >
-                                            <span
-                                                aria-hidden="true"
-                                                :class="[
-                                                    jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled
-                                                        ? 'translate-x-5'
-                                                        : 'translate-x-0',
-                                                    'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                ]"
-                                            />
-                                        </Switch>
-                                        <SwitchLabel as="span" class="ml-3 text-sm">
-                                            <span class="font-medium text-gray-300">{{
-                                                $t('components.rector.job_props.user_info_sync_settings.employee_role_enabled')
-                                            }}</span>
-                                        </SwitchLabel>
-                                    </SwitchGroup>
-
-                                    <div v-if="jobProps.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled">
-                                        <label for="employeeRoleFormat">
+                                        <template #label>
                                             {{
-                                                $t('components.rector.job_props.user_info_sync_settings.employee_role_format')
-                                            }}:
-                                        </label>
-                                        <input
-                                            v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
+                                                $t(
+                                                    `enums.rector.UserInfoSyncUnemployedMode.${
+                                                        UserInfoSyncUnemployedMode[
+                                                            jobProps.discordSyncSettings.userInfoSyncSettings.unemployedMode ??
+                                                                0
+                                                        ]
+                                                    }`,
+                                                )
+                                            }}
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{
+                                                $t(
+                                                    `enums.rector.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[option.value]}`,
+                                                )
+                                            }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    v-if="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_role_name')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
+                                        type="text"
+                                        name="unemployedRoleName"
+                                        :placeholder="
+                                            $t('components.rector.job_props.user_info_sync_settings.unemployed_role_name')
+                                        "
+                                        :label="$t('components.rector.job_props.user_info_sync_settings.unemployed_role_name')"
+                                        maxlength="48"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="userInfoSync"
+                                    :label="$t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="jobProps.discordSyncSettings.jobsAbsence">
+                                        <span class="sr-only">{{
+                                            $t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled')
+                                        }}</span>
+                                    </UToggle>
+                                </UFormGroup>
+
+                                <template v-if="jobProps.discordSyncSettings.jobsAbsenceSettings">
+                                    <UFormGroup
+                                        v-if="jobProps.discordSyncSettings.jobsAbsence"
+                                        name="userInfoSync"
+                                        :label="$t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_name')"
+                                        class="grid grid-cols-2 items-center gap-2"
+                                        :ui="{ container: '' }"
+                                    >
+                                        <UInput
+                                            v-model="jobProps.discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                             type="text"
-                                            name="employeeRoleFormat"
-                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                            name="jobsAbsenceRole"
                                             :placeholder="
-                                                $t('components.rector.job_props.user_info_sync_settings.employee_role_format')
+                                                $t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_name')
                                             "
                                             :label="
-                                                $t('components.rector.job_props.user_info_sync_settings.employee_role_format')
+                                                $t('components.rector.job_props.jobs_absence_settings.jobs_absence_role_name')
                                             "
                                             maxlength="48"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
-                                    </div>
-
-                                    <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings !== undefined">
-                                        <SwitchGroup as="div" class="mb-1 mt-2 flex items-center">
-                                            <Switch
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
-                                                :class="[
-                                                    jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
-                                                        ? 'bg-primary-600'
-                                                        : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
-                                                <span
-                                                    aria-hidden="true"
-                                                    :class="[
-                                                        jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
-                                                            ? 'translate-x-5'
-                                                            : 'translate-x-0',
-                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                    ]"
-                                                />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
-                                                    $t('components.rector.job_props.user_info_sync_settings.unemployed_enabled')
-                                                }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
-                                        <template v-if="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled">
-                                            <div>
-                                                <label for="unemployedMode">
-                                                    {{
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.unemployed_mode',
-                                                        )
-                                                    }}:
-                                                </label>
-
-                                                <Listbox
-                                                    v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.unemployedMode"
-                                                    as="div"
-                                                >
-                                                    <div class="relative">
-                                                        <ListboxButton
-                                                            class="block w-full rounded-md border-0 bg-base-700 py-1.5 pl-3 text-left text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                        >
-                                                            <span class="block truncate">
-                                                                {{
-                                                                    UserInfoSyncUnemployedMode[
-                                                                        jobProps.discordSyncSettings.userInfoSyncSettings!
-                                                                            .unemployedMode ?? 0
-                                                                    ]
-                                                                }}
-                                                            </span>
-                                                            <span
-                                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2"
-                                                            >
-                                                                <ChevronDownIcon
-                                                                    class="size-5 text-gray-400"
-                                                                    aria-hidden="true"
-                                                                />
-                                                            </span>
-                                                        </ListboxButton>
-
-                                                        <transition
-                                                            leave-active-class="transition duration-100 ease-in"
-                                                            leave-from-class="opacity-100"
-                                                            leave-to-class="opacity-0"
-                                                        >
-                                                            <ListboxOptions
-                                                                class="absolute z-10 mt-1 max-h-44 w-full overflow-auto rounded-md bg-base-700 py-1 text-base sm:text-sm"
-                                                            >
-                                                                <ListboxOption
-                                                                    v-for="mode in [
-                                                                        UserInfoSyncUnemployedMode.GIVE_ROLE,
-                                                                        UserInfoSyncUnemployedMode.KICK,
-                                                                    ]"
-                                                                    :key="mode"
-                                                                    v-slot="{ active, selected }"
-                                                                    as="template"
-                                                                    :value="mode"
-                                                                >
-                                                                    <li
-                                                                        :class="[
-                                                                            active ? 'bg-primary-500' : '',
-                                                                            'relative cursor-default select-none py-2 pl-8 pr-4 text-neutral',
-                                                                        ]"
-                                                                    >
-                                                                        <span
-                                                                            :class="[
-                                                                                selected ? 'font-semibold' : 'font-normal',
-                                                                                'block truncate',
-                                                                            ]"
-                                                                        >
-                                                                            {{ UserInfoSyncUnemployedMode[mode] }}
-                                                                        </span>
-
-                                                                        <span
-                                                                            v-if="selected"
-                                                                            :class="[
-                                                                                active ? 'text-neutral' : 'text-primary-500',
-                                                                                'absolute inset-y-0 left-0 flex items-center pl-1.5',
-                                                                            ]"
-                                                                        >
-                                                                            <CheckIcon class="size-5" aria-hidden="true" />
-                                                                        </span>
-                                                                    </li>
-                                                                </ListboxOption>
-                                                            </ListboxOptions>
-                                                        </transition>
-                                                    </div>
-                                                </Listbox>
-                                            </div>
-
-                                            <div>
-                                                <label for="unemployedRoleName">
-                                                    {{
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
-                                                        )
-                                                    }}:
-                                                </label>
-                                                <input
-                                                    v-model="
-                                                        jobProps.discordSyncSettings.userInfoSyncSettings!.unemployedRoleName
-                                                    "
-                                                    type="text"
-                                                    name="unemployedRoleName"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :placeholder="
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
-                                                        )
-                                                    "
-                                                    :label="
-                                                        $t(
-                                                            'components.rector.job_props.user_info_sync_settings.unemployed_role_name',
-                                                        )
-                                                    "
-                                                    maxlength="48"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </div>
-                                        </template>
-
-                                        <SwitchGroup as="div" class="mb-1 mt-2 flex items-center">
-                                            <Switch
-                                                v-model="jobProps.discordSyncSettings.jobsAbsence"
-                                                :class="[
-                                                    jobProps.discordSyncSettings.jobsAbsence ? 'bg-primary-600' : 'bg-gray-200',
-                                                    'relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-primary-600 focus:ring-offset-2',
-                                                ]"
-                                            >
-                                                <span
-                                                    aria-hidden="true"
-                                                    :class="[
-                                                        jobProps.discordSyncSettings.jobsAbsence
-                                                            ? 'translate-x-5'
-                                                            : 'translate-x-0',
-                                                        'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                    ]"
-                                                />
-                                            </Switch>
-                                            <SwitchLabel as="span" class="ml-3 text-sm">
-                                                <span class="font-medium text-gray-300">{{
-                                                    $t(
-                                                        'components.rector.job_props.jobs_absence_settings.jobs_absence_role_enabled',
-                                                    )
-                                                }}</span>
-                                            </SwitchLabel>
-                                        </SwitchGroup>
-
-                                        <template v-if="jobProps.discordSyncSettings.jobsAbsence">
-                                            <div>
-                                                <label for="jobsAbsenceRole">
-                                                    {{
-                                                        $t(
-                                                            'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
-                                                        )
-                                                    }}:
-                                                </label>
-                                                <input
-                                                    v-model="jobProps.discordSyncSettings.jobsAbsenceSettings!.absenceRole"
-                                                    type="text"
-                                                    name="jobsAbsenceRole"
-                                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                    :placeholder="
-                                                        $t(
-                                                            'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
-                                                        )
-                                                    "
-                                                    :label="
-                                                        $t(
-                                                            'components.rector.job_props.jobs_absence_settings.jobs_absence_role_name',
-                                                        )
-                                                    "
-                                                    maxlength="48"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
-                                                />
-                                            </div>
-                                        </template>
-                                    </template>
+                                    </UFormGroup>
                                 </template>
                             </template>
-                        </GenericContainerPanelEntry>
-                        <!-- Save button -->
-                        <GenericContainerPanelEntry v-if="can('RectorService.SetJobProps')">
-                            <template #default>
-                                <button
-                                    type="button"
-                                    class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :class="[
-                                        !canSubmit || !meta.valid
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                    ]"
-                                    :disabled="!canSubmit || !meta.valid"
-                                    @click="onSubmitThrottle"
-                                >
-                                    <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                                    </template>
-                                    {{ $t('common.save', 1) }}
-                                </button>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
-            </template>
+                        </UDashboardSection>
+                    </UDashboardPanelContent>
+                </template>
+            </UForm>
         </template>
     </div>
 </template>

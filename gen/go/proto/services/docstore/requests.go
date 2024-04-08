@@ -63,7 +63,7 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		}
 	}
 
-	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ActivityDefaultPageLimit)
+	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, ActivityDefaultPageSize)
 	resp := &ListDocumentReqsResponse{
 		Pagination: pag,
 		Requests:   []*documents.DocRequest{},

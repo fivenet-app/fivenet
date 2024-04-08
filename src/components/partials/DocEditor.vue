@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useTimeoutFn, useVModel } from '@vueuse/core';
 import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
 // @ts-ignore jodit-vue has no (detected) types
@@ -7,25 +6,35 @@ import { JoditEditor } from 'jodit-vue';
 import type { IJodit } from 'jodit/types/types';
 import { useSettingsStore } from '~/store/settings';
 
-const props = defineProps<{
-    modelValue: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        modelValue: string;
+        disabled?: boolean;
+    }>(),
+    {
+        disabled: false,
+    },
+);
 
 const emit = defineEmits<{
     (e: 'update:modelValue', content: string): void;
 }>();
 
+const editorRef = ref<JoditEditor | null>(null);
+
 const content = useVModel(props, 'modelValue', emit);
 
 const settingsStore = useSettingsStore();
-const { documents } = storeToRefs(settingsStore);
+const { design: theme } = storeToRefs(settingsStore);
 
 const config = {
+    readOnly: props.disabled,
+
     language: 'de',
     spellcheck: true,
     minHeight: 475,
-    editorClassName: 'prose' + (documents.value.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
-    theme: documents.value.editorTheme,
+    editorClassName: 'prose' + (theme.value.docEditorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
+    theme: theme.value.docEditorTheme,
 
     readonly: false,
     defaultActionOnPaste: 'insert_clear_html',
@@ -161,17 +170,13 @@ function setupCheckboxes(): void {
     );
 }
 
-watch(
-    props,
-    () => {
-        if (props.modelValue !== '') {
-            useTimeoutFn(setupCheckboxes, 50);
-        }
-    },
-    {
-        once: true,
-    },
-);
+watch(props, () => {
+    if (props.modelValue !== '') {
+        useTimeoutFn(setupCheckboxes, 50);
+    }
+
+    editorRef.value.editor.setReadOnly(props.disabled);
+});
 
 onBeforeUnmount(() => {
     // Remove event listeners on unmount

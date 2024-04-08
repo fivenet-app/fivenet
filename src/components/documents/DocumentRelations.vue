@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { AccountMultipleIcon, ArrowCollapseIcon } from 'mdi-vue3';
+import { ArrowCollapseIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -50,7 +50,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
         <DataNoDataBlock
             v-if="!relations || relations.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
-            :icon="AccountMultipleIcon"
+            icon="i-mdi-account-multiple"
         />
 
         <template v-else>
@@ -60,7 +60,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                     <li v-for="relation in relations" :key="relation.id" class="block bg-base-800 p-4 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" aria-hidden="true" />
+                                <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" />
                                 <span class="flex flex-col truncate text-sm">
                                     <span v-if="showDocument">
                                         <NuxtLink
@@ -73,7 +73,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         >
                                             <span
                                                 v-if="relation.document?.category"
-                                                class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                             >
                                                 {{ relation.document?.category?.name }}
                                             </span>
@@ -105,7 +105,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
-                            <table class="w-full divide-y divide-base-400 bg-base-600 text-neutral">
+                            <table class="bg-background w-full divide-y divide-base-400">
                                 <thead>
                                     <tr>
                                         <th v-if="showDocument" class="px-6 py-3 text-left text-sm font-semibold" scope="col">
@@ -129,7 +129,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                         </th>
                                     </tr>
                                 </thead>
-                                <tbody class="divide-y divide-gray-600 bg-base-700 text-neutral">
+                                <tbody class="divide-y divide-gray-600 bg-base-700">
                                     <tr v-for="relation in relations" :key="relation.id">
                                         <td v-if="showDocument" class="px-6 py-4 text-sm">
                                             <NuxtLink
@@ -142,7 +142,7 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                             >
                                                 <span
                                                     v-if="relation.document?.category"
-                                                    class="mr-1 inline-flex items-center rounded-md bg-primary-400/10 px-2 py-1 text-xs font-medium text-primary-400 ring-1 ring-inset ring-primary-400/30"
+                                                    class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
                                                 >
                                                     {{ relation.document?.category?.name }}
                                                 </span>

@@ -8,10 +8,11 @@ definePageMeta({
     title: 'common.livemap',
     requiresAuth: true,
     permission: 'LivemapperService.Stream',
-    showQuickButtons: false,
 });
 </script>
 
 <template>
-    <LivemapHolder />
+    <UDashboardPage>
+        <LivemapHolder />
+    </UDashboardPage>
 </template>

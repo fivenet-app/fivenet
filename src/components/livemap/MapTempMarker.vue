@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import { LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
-import { useTimeoutFn } from '@vueuse/core';
 import type { PointExpression } from 'leaflet';
-import { MapMarkerDownIcon } from 'mdi-vue3';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 
@@ -38,7 +36,7 @@ onBeforeUnmount(() => {
 <template>
     <LMarker v-if="location && showMarker" :lat-lng="[location.y, location.x]" :z-index-offset="90">
         <LIcon :icon-size="[livemap.markerSize, livemap.markerSize]" :icon-anchor="iconAnchor">
-            <MapMarkerDownIcon class="size-full animate-pulse fill-primary-500" aria-hidden="true" />
+            <UIcon name="i-mdi-map-marker-down" class="text-primary-500 size-full animate-pulse" />
         </LIcon>
     </LMarker>
 </template>

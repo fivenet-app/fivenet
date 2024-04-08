@@ -1,13 +1,11 @@
 <script lang="ts" setup>
-import { LockQuestionIcon } from 'mdi-vue3';
-import GenericAlert from '~/components/partials/elements/GenericAlert.vue';
 import DocumentRequestAccessModal from '~/components/documents/requests/DocumentRequestAccessModal.vue';
 
 defineProps<{
     documentId: string;
 }>();
 
-const open = ref(false);
+const modal = useModal();
 </script>
 
 <template>
@@ -15,15 +13,22 @@ const open = ref(false);
         v-if="can('DocStoreService.CreateDocumentReq') && attr('DocStoreService.CreateDocumentReq', 'Types', 'Access')"
         class="mx-auto max-w-md rounded-md"
     >
-        <DocumentRequestAccessModal :document-id="documentId" :open="open" @close="open = false" />
-
-        <GenericAlert
-            type="info"
+        <UAlert
+            color="primary"
+            icon="i-mdi-lock-question"
             :title="$t('components.documents.document_request_access.title')"
-            :message="$t('components.documents.document_request_access.message')"
-            :icon="markRaw(LockQuestionIcon)"
-            :callback-message="$t('components.documents.document_request_access.callback_message')"
-            @clicked="open = true"
+            :description="$t('components.documents.document_request_access.message')"
+            :actions="[
+                {
+                    variant: 'solid',
+                    color: 'primary',
+                    label: $t('components.documents.document_request_access.callback_message'),
+                    click: () =>
+                        modal.open(DocumentRequestAccessModal, {
+                            documentId: documentId,
+                        }),
+                },
+            ]"
         />
     </div>
 </template>

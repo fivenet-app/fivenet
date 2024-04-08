@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { BellIcon, CarEmergencyIcon } from 'mdi-vue3';
+import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -57,83 +57,104 @@ const zIndexOffset = computed(() => {
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">
             <div class="flex flex-col items-center uppercase">
                 <span
-                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-neutral bg-clip-padding text-black hover:bg-[#f4f4f4] focus:outline-none"
+                    class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-neutral-50 bg-clip-padding text-black hover:bg-[#f4f4f4]"
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="size-full" :class="dispatchClasses" aria-hidden="true" />
+                <BellIcon class="size-full" :class="dispatchClasses" />
             </div>
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <div class="mb-1 flex items-center gap-2">
-                <IDCopyBadge :id="dispatch.id" prefix="DSP" :action="selected" />
-                <button
-                    type="button"
-                    :title="$t('common.detail', 2)"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                    @click="selected(dispatch.id)"
-                >
-                    <CarEmergencyIcon class="size-5" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('common.detail', 2) }}</span>
-                </button>
-            </div>
+            <div class="flex flex-col gap-2">
+                <div class="grid grid-cols-2 gap-2">
+                    <UButton
+                        v-if="dispatch?.x && dispatch?.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        :padded="false"
+                        @click="$emit('goto', { x: dispatch?.x, y: dispatch?.y })"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.mark') }}
+                        </span>
+                    </UButton>
 
-            <ul role="list" class="flex flex-col">
-                <li>
-                    <span class="font-semibold">{{ $t('common.sent_at') }}:</span> {{ $d(toDate(dispatch.createdAt), 'short') }}
-                </li>
-                <li class="inline-flex gap-1">
-                    <span class="flex-initial">
-                        <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                    </span>
-                    <span class="flex-1">
-                        <template v-if="dispatch.anon">
-                            {{ $t('common.anon') }}
-                        </template>
-                        <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
-                        <template v-else>
-                            {{ $t('common.unknown') }}
-                        </template>
-                    </span>
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal ?? $t('common.na') }}
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
-                </li>
-                <li class="truncate">
-                    <span class="font-semibold">{{ $t('common.description') }}:</span>
-                    {{ dispatch.description ?? $t('common.na') }}
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.status') }}:</span>
-                    <span class="ml-1" :class="dispatchStatusToBGColor(dispatch.status?.status)">
-                        {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
-                    </span>
-                </li>
-                <li>
-                    <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
-                    <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
-                </li>
-                <li class="inline-flex gap-1">
-                    <span class="font-semibold">{{ $t('common.units') }}:</span>
-                    <span v-if="dispatch.units.length === 0" class="italic">{{
-                        $t('enums.centrum.StatusDispatch.UNASSIGNED')
-                    }}</span>
-                    <span v-else class="mr-1 grid grid-cols-2 gap-1">
-                        <UnitInfoPopover
-                            v-for="unit in dispatch.units"
-                            :key="unit.unitId"
-                            :unit="unit.unit"
-                            :initials-only="true"
-                            :badge="true"
-                            :assignment="unit"
-                        />
-                    </span>
-                </li>
-            </ul>
+                    <UButton
+                        :title="$t('common.detail', 2)"
+                        variant="link"
+                        icon="i-mdi-car-emergency"
+                        :padded="false"
+                        @click="selected(dispatch.id)"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.detail', 2) }}
+                        </span>
+                    </UButton>
+                </div>
+
+                <span class="font-semibold"
+                    >{{ $t('common.dispatch') }}:
+                    <IDCopyBadge :id="dispatch.id" prefix="DSP" variant="link" :padded="false" :hide-icon="true"
+                /></span>
+
+                <ul role="list">
+                    <li>
+                        <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
+                        {{ $d(toDate(dispatch.createdAt), 'short') }}
+                    </li>
+                    <li class="inline-flex gap-1">
+                        <span class="flex-initial">
+                            <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
+                        </span>
+                        <span class="flex-1">
+                            <template v-if="dispatch.anon">
+                                {{ $t('common.anon') }}
+                            </template>
+                            <CitizenInfoPopover v-else-if="dispatch.creator" :user="dispatch.creator" />
+                            <template v-else>
+                                {{ $t('common.unknown') }}
+                            </template>
+                        </span>
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal ?? $t('common.na') }}
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.message') }}:</span> {{ dispatch.message }}
+                    </li>
+                    <li class="truncate">
+                        <span class="font-semibold">{{ $t('common.description') }}:</span>
+                        {{ dispatch.description ?? $t('common.na') }}
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.status') }}:</span>
+                        <span class="ml-1" :class="dispatchStatusToBGColor(dispatch.status?.status)">
+                            {{ $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`) }}
+                        </span>
+                    </li>
+                    <li>
+                        <span class="font-semibold">{{ $t('common.attributes', 2) }}:</span>
+                        <DispatchAttributes class="ml-1" :attributes="dispatch.attributes" />
+                    </li>
+                    <li class="inline-flex gap-1">
+                        <span class="font-semibold">{{ $t('common.unit') }}:</span>
+                        <span v-if="dispatch.units.length === 0" class="italic">{{
+                            $t('enums.centrum.StatusDispatch.UNASSIGNED')
+                        }}</span>
+                        <span v-else class="mr-1 grid grid-cols-2 gap-1">
+                            <UnitInfoPopover
+                                v-for="unit in dispatch.units"
+                                :key="unit.unitId"
+                                :unit="unit.unit"
+                                :initials-only="true"
+                                :badge="true"
+                                :assignment="unit"
+                            />
+                        </span>
+                    </li>
+                </ul>
+            </div>
         </LPopup>
     </LMarker>
 </template>

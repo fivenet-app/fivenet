@@ -8,12 +8,15 @@ definePageMeta({
     title: 'pages.rector.roles.title',
     requiresAuth: true,
     permission: 'RectorService.GetRoles',
-    showQuickButtons: false,
 });
 </script>
 
 <template>
-    <div class="w-full">
-        <RolesList />
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.rector.roles.title')"> </UDashboardNavbar>
+
+            <RolesList />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

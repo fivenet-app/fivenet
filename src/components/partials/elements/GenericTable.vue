@@ -4,7 +4,7 @@ withDefaults(
         doubleHeader?: boolean;
     }>(),
     {
-        doubleHeader: true,
+        doubleHeader: false,
     },
 );
 </script>

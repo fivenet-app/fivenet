@@ -1,10 +1,8 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
-import { CloseCircleIcon } from 'mdi-vue3';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+
 const { $grpc } = useNuxtApp();
 
 defineProps<{
@@ -29,51 +27,48 @@ async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<voi
     }
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (provider) => disconnectOAuth2Connection(provider));
+const modal = useModal();
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(provider)" />
-
-    <GenericContainerPanelEntry>
-        <template #title>
-            <NuxtLink :external="true" :to="provider.homepage" target="_blank">
+    <div class="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-5 sm:py-4">
+        <dt class="text-sm font-medium">
+            <UButton variant="link" :external="true" :to="provider.homepage" target="_blank">
                 {{ provider.label }}
-            </NuxtLink>
-        </template>
-        <template #default>
+            </UButton>
+        </dt>
+        <dd class="mt-1 text-sm sm:col-span-2 sm:mt-0">
             <div v-if="account !== undefined" class="flex items-center justify-between">
-                <img
-                    :src="account.avatar"
-                    alt="Avatar"
-                    class="size-10 rounded-full bg-base-800 fill-base-300 text-base-300 ring-2 ring-neutral hover:fill-base-100 hover:text-base-100 hover:transition-colors"
-                />
+                <div class="inline-flex items-center gap-4">
+                    <UAvatar size="md" :src="account.avatar" :alt="$t('common.image')" />
 
-                <span class="text-left" :title="`ID: ${account.externalId}`">
-                    {{ account.username }}
-                </span>
+                    <span class="text-left" :title="`ID: ${account.externalId}`">
+                        {{ account.username }}
+                    </span>
+                </div>
 
-                <button
-                    type="button"
-                    class="inline-flex items-center gap-1 rounded-md bg-error-600 p-2 text-sm font-semibold text-neutral hover:bg-error-700"
-                    @click="reveal(provider)"
+                <UButton
+                    icon="i-mdi-close-circle"
+                    color="red"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => disconnectOAuth2Connection(provider),
+                        })
+                    "
                 >
-                    <CloseCircleIcon class="size-5" aria-hidden="true" />
-                    <span>{{ $t('common.disconnect') }}</span>
-                </button>
+                    {{ $t('common.disconnect') }}
+                </UButton>
             </div>
-            <div v-else>
+            <div v-else class="flex flex-row-reverse">
                 <template v-if="isNUIAvailable()">
-                    <p class="ml-4 text-end text-sm text-neutral">
+                    <p class="ml-4 text-end text-sm">
                         {{ $t('system.not_supported_on_tablet.title') }}
                     </p>
                 </template>
                 <template v-else>
-                    <OAuth2ConnectButton :provider="provider" />
+                    <OAuth2ConnectButton class="self-end" :provider="provider" />
                 </template>
             </div>
-        </template>
-    </GenericContainerPanelEntry>
+        </dd>
+    </div>
 </template>

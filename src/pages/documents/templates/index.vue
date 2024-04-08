@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
-import ContentWrapper from '~/components/partials/ContentWrapper.vue';
 import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 useHead({
@@ -18,31 +17,24 @@ async function selected(t: TemplateShort): Promise<void> {
 </script>
 
 <template>
-    <ContentWrapper>
-        <div class="py-2">
-            <div class="px-1 sm:px-2 lg:px-4">
-                <div v-if="'DocStoreService.CreateTemplate'" class="sm:flex sm:items-center">
-                    <div class="sm:flex-auto">
-                        <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                            <div v-if="can('DocStoreService.CreateTemplate')" class="flex-1">
-                                <NuxtLink
-                                    :to="{ name: 'documents-templates-create' }"
-                                    class="inline-flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                                >
-                                    {{ $t('pages.documents.templates.create_template') }}
-                                </NuxtLink>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="mt-2 flow-root">
-                    <div class="-my-2 mx-0 overflow-x-auto">
-                        <div class="inline-block min-w-full px-1 py-2 align-middle">
-                            <TemplatesList @selected="selected($event)" />
-                        </div>
-                    </div>
-                </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.documents.templates.title')">
+                <template #right>
+                    <UButton
+                        v-if="can('DocStoreService.CreateTemplate')"
+                        :to="{ name: 'documents-templates-create' }"
+                        color="gray"
+                        trailing-icon="i-mdi-plus"
+                    >
+                        {{ $t('pages.documents.templates.create_template') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
+
+            <div class="inline-block min-w-full px-1 py-2 align-middle">
+                <TemplatesList @selected="selected($event)" />
             </div>
-        </div>
-    </ContentWrapper>
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

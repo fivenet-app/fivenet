@@ -10,7 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { UserShort } from "../users/users";
+import { Colleague } from "./colleagues";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.jobs.TimeclockEntry
@@ -29,9 +29,9 @@ export interface TimeclockEntry {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 4;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 4;
      */
-    user?: UserShort;
+    user?: Colleague;
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 5;
      */
@@ -71,19 +71,23 @@ export interface TimeclockStats {
  */
 export interface TimeclockWeeklyStats {
     /**
-     * @generated from protobuf field: string date = 1;
+     * @generated from protobuf field: int32 year = 1;
      */
-    date: string;
+    year: number;
     /**
-     * @generated from protobuf field: float sum = 2;
+     * @generated from protobuf field: int32 calendar_week = 2;
+     */
+    calendarWeek: number;
+    /**
+     * @generated from protobuf field: float sum = 3;
      */
     sum: number;
     /**
-     * @generated from protobuf field: float avg = 3;
+     * @generated from protobuf field: float avg = 4;
      */
     avg: number;
     /**
-     * @generated from protobuf field: float max = 4;
+     * @generated from protobuf field: float max = 5;
      */
     max: number;
 }
@@ -94,7 +98,7 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
             { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 2, name: "date", kind: "message", T: () => Timestamp },
             { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "user", kind: "message", T: () => UserShort },
+            { no: 4, name: "user", kind: "message", T: () => Colleague },
             { no: 5, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 6, name: "end_time", kind: "message", T: () => Timestamp },
             { no: 7, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
@@ -123,8 +127,8 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
                 case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort user */ 4:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                case /* optional resources.jobs.Colleague user */ 4:
+                    message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
                 case /* optional resources.timestamp.Timestamp start_time */ 5:
                     message.startTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startTime);
@@ -156,9 +160,9 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
         /* int32 user_id = 3; */
         if (message.userId !== 0)
             writer.tag(3, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 4; */
+        /* optional resources.jobs.Colleague user = 4; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            Colleague.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         /* optional resources.timestamp.Timestamp start_time = 5; */
         if (message.startTime)
             Timestamp.internalBinaryWrite(message.startTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
@@ -253,15 +257,17 @@ export const TimeclockStats = new TimeclockStats$Type();
 class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
     constructor() {
         super("resources.jobs.TimeclockWeeklyStats", [
-            { no: 1, name: "date", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 3, name: "avg", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
-            { no: 4, name: "max", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 1, name: "year", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "calendar_week", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 4, name: "avg", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ },
+            { no: 5, name: "max", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockWeeklyStats>): TimeclockWeeklyStats {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.date = "";
+        message.year = 0;
+        message.calendarWeek = 0;
         message.sum = 0;
         message.avg = 0;
         message.max = 0;
@@ -274,16 +280,19 @@ class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string date */ 1:
-                    message.date = reader.string();
+                case /* int32 year */ 1:
+                    message.year = reader.int32();
                     break;
-                case /* float sum */ 2:
+                case /* int32 calendar_week */ 2:
+                    message.calendarWeek = reader.int32();
+                    break;
+                case /* float sum */ 3:
                     message.sum = reader.float();
                     break;
-                case /* float avg */ 3:
+                case /* float avg */ 4:
                     message.avg = reader.float();
                     break;
-                case /* float max */ 4:
+                case /* float max */ 5:
                     message.max = reader.float();
                     break;
                 default:
@@ -298,18 +307,21 @@ class TimeclockWeeklyStats$Type extends MessageType<TimeclockWeeklyStats> {
         return message;
     }
     internalBinaryWrite(message: TimeclockWeeklyStats, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string date = 1; */
-        if (message.date !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.date);
-        /* float sum = 2; */
+        /* int32 year = 1; */
+        if (message.year !== 0)
+            writer.tag(1, WireType.Varint).int32(message.year);
+        /* int32 calendar_week = 2; */
+        if (message.calendarWeek !== 0)
+            writer.tag(2, WireType.Varint).int32(message.calendarWeek);
+        /* float sum = 3; */
         if (message.sum !== 0)
-            writer.tag(2, WireType.Bit32).float(message.sum);
-        /* float avg = 3; */
+            writer.tag(3, WireType.Bit32).float(message.sum);
+        /* float avg = 4; */
         if (message.avg !== 0)
-            writer.tag(3, WireType.Bit32).float(message.avg);
-        /* float max = 4; */
+            writer.tag(4, WireType.Bit32).float(message.avg);
+        /* float max = 5; */
         if (message.max !== 0)
-            writer.tag(4, WireType.Bit32).float(message.max);
+            writer.tag(5, WireType.Bit32).float(message.max);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

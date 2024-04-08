@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { TagIcon } from 'mdi-vue3';
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -11,6 +10,7 @@ import CategoriesModal from '~/components/documents/categories/CategoriesModal.v
 const { $grpc } = useNuxtApp();
 
 const { data: categories, pending, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
+
 const items = ref<CardElements>([]);
 
 async function listCategories(): Promise<Category[]> {
@@ -29,45 +29,35 @@ watch(categories, () => {
     if (items.value) {
         items.value.length = 0;
     }
+
     categories.value?.forEach((v) => {
         items.value.push({ title: v?.name, description: v?.description });
     });
 });
 
-const selectedCategory = ref<Category>();
-const open = ref(false);
-
-async function openCategory(idx: number): Promise<void> {
-    selectedCategory.value = categories.value![idx];
-    open.value = true;
-}
+const modal = useModal();
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <CategoriesModal :category="selectedCategory" :open="open" @close="open = false" @updated="refresh()" />
+    <div>
+        <UDashboardNavbar :title="$t('pages.documents.categories.title')">
+            <template #right>
+                <UButton
+                    v-if="can('DocStoreService.CreateCategory')"
+                    color="gray"
+                    trailing-icon="i-mdi-plus"
+                    @click="
+                        modal.open(CategoriesModal, {
+                            onUpdate: refresh,
+                        })
+                    "
+                >
+                    {{ $t('components.documents.categories.modal.create_category') }}
+                </UButton>
+            </template>
+        </UDashboardNavbar>
 
-        <div class="px-1 sm:px-2 lg:px-4">
-            <div v-if="can('DocStoreService.CreateCategory')" class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <div class="mx-auto flex flex-row gap-4">
-                        <div class="flex-1">
-                            <div class="relative mt-2 flex items-center">
-                                <button
-                                    type="button"
-                                    class="inline-flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                                    @click="
-                                        selectedCategory = undefined;
-                                        open = true;
-                                    "
-                                >
-                                    {{ $t('components.documents.categories.modal.create_category') }}
-                                </button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="px-1 sm:px-2">
             <div class="mt-2 flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
@@ -79,11 +69,21 @@ async function openCategory(idx: number): Promise<void> {
                         />
                         <DataNoDataBlock
                             v-else-if="categories && categories.length === 0"
-                            :icon="TagIcon"
+                            icon="i-mdi-tag"
                             :type="$t('common.category', 2)"
                         />
                         <div v-else class="flex justify-center">
-                            <CardsList :items="items" :show-icon="true" @selected="openCategory($event)" />
+                            <CardsList
+                                :items="items"
+                                :show-icon="true"
+                                @selected="
+                                    categories &&
+                                        modal.open(CategoriesModal, {
+                                            category: categories[$event],
+                                            onUpdate: refresh,
+                                        })
+                                "
+                            />
                         </div>
                     </div>
                 </div>

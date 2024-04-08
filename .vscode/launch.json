@@ -5,13 +5,27 @@
     "version": "0.2.0",
     "configurations": [
         {
+            "name": "Launch Frontend",
+            "type": "go",
+            "request": "launch",
+            "mode": "auto",
+            "program": "${workspaceFolder}",
+            "cwd": "${workspaceFolder}",
+            "args": ["frontned"],
+            "buildFlags": "-race -a -installsuffix cgo",
+            "env": {
+                "CGO_ENABLED": "1",
+                "FIVENET_CONFIG_FILE": "./config.yaml"
+            }
+        },
+        {
             "name": "Launch Server",
             "type": "go",
             "request": "launch",
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["server"],
+            "args": ["server","--serve-frontend"],
             "buildFlags": "-race -a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
@@ -25,7 +39,7 @@
             "mode": "auto",
             "program": "${workspaceFolder}",
             "cwd": "${workspaceFolder}",
-            "args": ["worker", "--module-discord-bot=false","--module-audit-retention=false", "--module-centrum-bot=true", "--module-centrum-housekeeper=true"],
+            "args": ["worker", "--module-discord-bot=false","--module-audit-retention=false"],
             "buildFlags": "-race -a -installsuffix cgo",
             "env": {
                 "CGO_ENABLED": "1",
@@ -47,7 +61,7 @@
             }
         },
         {
-            "name": "Launch Frontend",
+            "name": "Launch UI",
             "type": "node",
             "request": "launch",
             "runtimeExecutable": "yarn",
@@ -60,8 +74,10 @@
         {
             "name": "ALL",
             "configurations": [
+                "Launch UI",
                 "Launch Frontend",
-                "Launch Server"
+                "Launch Server",
+                "Launch Worker"
             ],
             "stopAll": false
         }

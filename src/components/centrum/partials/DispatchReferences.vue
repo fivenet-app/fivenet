@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { LinkVariantIcon } from 'mdi-vue3';
 import { type DispatchReferences, DispatchReferenceType } from '~~/gen/ts/resources/centrum/dispatches';
-import DispatchDetailsByID from '~/components/centrum/dispatches/DispatchDetailsByID.vue';
+import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 
 defineProps<{
     references?: DispatchReferences;
@@ -16,7 +16,7 @@ const selectedDispatch = ref<string | undefined>();
 
 <template>
     <template v-if="references !== undefined && references?.references.length > 0">
-        <DispatchDetailsByID
+        <DispatchDetailsByIDSlideover
             v-if="selectedDispatch"
             :open="true"
             :dispatch-id="selectedDispatch"
@@ -35,16 +35,15 @@ const selectedDispatch = ref<string | undefined>();
                     }}
                 </span>
 
-                <button
-                    type="button"
+                <UButton
                     @click="
                         selectedDispatch = reference.targetDispatchId;
                         $emit('selectedDispatch', reference.targetDispatchId);
                     "
                 >
                     <span class="sr-only">{{ $t('common.open') }}</span>
-                    <LinkVariantIcon class="ml-1 size-5" aria-hidden="true" />
-                </button>
+                    <LinkVariantIcon class="ml-1 size-5" />
+                </UButton>
             </span>
         </div>
     </template>

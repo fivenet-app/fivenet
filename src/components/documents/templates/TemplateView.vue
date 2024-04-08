@@ -1,9 +1,7 @@
 <script lang="ts" setup>
-import { useConfirmDialog } from '@vueuse/core';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -11,10 +9,21 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     templateId: string;
 }>();
+
+const { $grpc } = useNuxtApp();
+
+const modal = useModal();
+
+const notifications = useNotificatorStore();
+
+const { t } = useI18n();
+
+const reqs = ref<undefined | TemplateRequirements>();
 
 const {
     data: template,
@@ -22,14 +31,6 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
-
-const { $grpc } = useNuxtApp();
-
-const notifications = useNotificatorStore();
-
-const { t } = useI18n();
-
-const reqs = ref<undefined | TemplateRequirements>();
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
@@ -54,9 +55,9 @@ async function deleteTemplate(id: string): Promise<void> {
     try {
         await $grpc.getDocStoreClient().deleteTemplate({ id });
 
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },
-            content: { key: 'notifications.templates.deleted.content', parameters: {} },
+            description: { key: 'notifications.templates.deleted.content', parameters: {} },
             type: 'success',
         });
 
@@ -96,7 +97,7 @@ const contentAccess = ref<
             type: number;
             values: {
                 job?: string;
-                char?: number;
+                userId?: number;
                 accessRole?: AccessLevel;
                 minimumGrade?: number;
             };
@@ -138,7 +139,7 @@ watch(template, () => {
             contentAccess.value.set(id, {
                 id,
                 type: 0,
-                values: { char: access.userId, accessRole: access.access },
+                values: { userId: access.userId, accessRole: access.access },
                 required: access.required,
             });
             accessId++;
@@ -164,56 +165,58 @@ watch(template, () => {
 const completorStore = useCompletorStore();
 
 const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
-
-const openPreview = ref(false);
-
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteTemplate(id));
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(templateId)" />
-
-    <TemplatePreviewModal v-if="openPreview" :id="templateId" :open="openPreview" @close="openPreview = false" />
-
     <div class="m-2">
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
-        <div v-else-if="template" class="px-1 sm:px-2 lg:px-4">
+
+        <div v-else-if="template" class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
-                <div class="inline-flex sm:flex-auto">
-                    <NuxtLink
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
-                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId.toString() } }"
-                        class="flex w-full justify-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
+                        block
+                        class="flex-1"
+                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
                     >
                         {{ $t('common.edit') }}
-                    </NuxtLink>
-                    <button
+                    </UButton>
+                    <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
-                        type="button"
-                        class="ml-4 flex w-full justify-center rounded-md bg-accent-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-accent-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                        @click="openPreview = true"
+                        block
+                        class="flex-1"
+                        color="black"
+                        @click="
+                            modal.open(TemplatePreviewModal, {
+                                templateId: templateId,
+                            })
+                        "
                     >
                         {{ $t('common.preview') }}
-                    </button>
-                    <button
+                    </UButton>
+                    <UButton
                         v-if="can('DocStoreService.DeleteTemplate')"
-                        type="submit"
-                        class="ml-4 flex w-full justify-center rounded-md bg-error-600 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-base-300"
-                        @click="reveal()"
+                        block
+                        class="flex-1"
+                        color="red"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteTemplate(templateId),
+                            })
+                        "
                     >
                         {{ $t('common.delete') }}
-                    </button>
-                </div>
+                    </UButton>
+                </UButtonGroup>
             </div>
             <div class="sm:flex sm:items-center">
                 <div>
-                    <h2 class="text-2xl text-neutral">
+                    <h2 class="text-2xl">
                         {{ template.title }}
                     </h2>
-                    <p class="text-base text-neutral">
+                    <p class="text-base">
                         <span class="font-semibold">{{ $t('common.description') }}:</span> {{ template.description }}
                     </p>
                 </div>
@@ -225,10 +228,9 @@ onConfirm(async (id) => deleteTemplate(id));
                             {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                         </h3>
                         <div class="my-2">
-                            <input
+                            <UInput
                                 type="text"
                                 name="weight"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.weight"
                                 @focusin="focusTablet(true)"
@@ -259,7 +261,7 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="contentTitle"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.contentTitle"
                                 @focusin="focusTablet(true)"
@@ -272,10 +274,10 @@ onConfirm(async (id) => deleteTemplate(id));
                             {{ $t('common.content') }} {{ $t('common.state') }}
                         </h3>
                         <div class="my-2">
-                            <input
+                            <UInput
                                 type="text"
                                 name="state"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
                                 @focusin="focusTablet(true)"
@@ -302,7 +304,6 @@ onConfirm(async (id) => deleteTemplate(id));
                             <textarea
                                 rows="4"
                                 name="content"
-                                class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.content"
                                 @focusin="focusTablet(true)"

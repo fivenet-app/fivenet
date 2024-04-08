@@ -1,27 +1,17 @@
 <script lang="ts" setup>
-import {
-    AccountAlertIcon,
-    AccountCancelIcon,
-    BriefcaseIcon,
-    CameraIcon,
-    CounterIcon,
-    FileDocumentPlusIcon,
-    LicenseIcon,
-    LinkIcon,
-} from 'mdi-vue3';
-import { ref } from 'vue';
+import { AccountAlertIcon, AccountCancelIcon, LicenseIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
-import CitizenSetJobModal from '~/components/citizens/info/CitizenSetJobModal.vue';
+import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { attr } from '~/composables/can';
 import { useClipboardStore } from '~/store/clipboard';
 import { User } from '~~/gen/ts/resources/users/users';
-import CitizenSetTrafficPointsModal from '~/components/citizens/info/CitizenSetTrafficPointsModal.vue';
-import CitizenSetWantedModal from '~/components/citizens/info/CitizenSetWantedModal.vue';
+import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/CitizenSetTrafficPointsModal.vue';
+import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { useNotificatorStore } from '~/store/notificator';
-import CitizenSetMugShotModal from '~/components/citizens/info/CitizenSetMugShotModal.vue';
+import CitizenSetMugShotModal from '~/components/citizens/info/props/CitizenSetMugShotModal.vue';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 
 const props = defineProps<{
@@ -41,21 +31,21 @@ const clipboardStore = useClipboardStore();
 
 const notifications = useNotificatorStore();
 
-const templatesOpen = ref(false);
+const modal = useModal();
 
 function openTemplates(): void {
     clipboardStore.addUser(props.user);
 
-    templatesOpen.value = true;
+    modal.open(TemplatesModal, {});
 }
 
 function copyLinkToClipboard(): void {
     copyToClipboardWrapper(w.location.href);
 
-    notifications.dispatchNotification({
+    notifications.add({
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
-        content: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
-        duration: 3250,
+        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
+        timeout: 3250,
         type: 'info',
     });
 }
@@ -68,11 +58,10 @@ const mugShotModal = ref(false);
 
 <template>
     <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div class="flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 align-middle">
-                        <TemplatesModal :open="templatesOpen" :auto-fill="true" @close="templatesOpen = false" />
                         <CitizenSetWantedModal
                             :open="setWantedModal"
                             :user="user"
@@ -105,29 +94,33 @@ const mugShotModal = ref(false);
                                         <div class="px-4 py-5 sm:p-0">
                                             <dl class="space-y-4 sm:space-y-0 sm:divide-y sm:divide-base-200">
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.date_of_birth') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         {{ user?.dateofbirth }}
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.sex') }}
                                                     </dt>
                                                     <dd
-                                                        class="mt-1 inline-flex items-center gap-2 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
+                                                        class="mt-1 inline-flex items-center gap-2 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
                                                     >
                                                         <span>{{ user?.sex!.toUpperCase() }} </span>
                                                         <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.height') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         {{ user?.height }}cm
                                                     </dd>
                                                 </div>
@@ -135,18 +128,22 @@ const mugShotModal = ref(false);
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.phone_number') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         <PhoneNumberBlock :number="user.phoneNumber" />
                                                     </dd>
                                                 </div>
                                                 <div v-if="user.visum" class="sm:flex sm:px-5 sm:py-4">
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.visum') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-blue-400 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-blue-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-blue-300"
+                                                    >
                                                         {{ user?.visum }}
                                                     </dd>
                                                 </div>
@@ -160,10 +157,12 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.blood_type') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         {{ user?.props?.bloodType ?? $t('common.na') }}
                                                     </dd>
                                                 </div>
@@ -177,11 +176,11 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.traffic_infraction_points', 2) }}
                                                     </dt>
                                                     <dd
-                                                        class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0"
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
                                                         :class="
                                                             (user?.props?.trafficInfractionPoints ?? 0) >= 10
                                                                 ? 'text-error-500'
@@ -201,10 +200,12 @@ const mugShotModal = ref(false);
                                                     "
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.fine') }}
                                                     </dt>
-                                                    <dd class="mt-1 text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         <span v-if="(user.props?.openFines ?? 0n) <= 0n">
                                                             {{ $t('common.no_open_fine') }}
                                                         </span>
@@ -222,10 +223,12 @@ const mugShotModal = ref(false);
                                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
                                                     class="sm:flex sm:px-5 sm:py-4"
                                                 >
-                                                    <dt class="text-sm font-medium text-neutral sm:w-40 sm:shrink-0 lg:w-48">
+                                                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                                                         {{ $t('common.license', 2) }}
                                                     </dt>
-                                                    <dd class="mt-1 w-full text-sm text-base-300 sm:col-span-2 sm:ml-6 sm:mt-0">
+                                                    <dd
+                                                        class="mt-1 w-full text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
+                                                    >
                                                         <span v-if="user?.licenses.length === 0">
                                                             {{ $t('common.no_licenses') }}
                                                         </span>
@@ -240,7 +243,7 @@ const mugShotModal = ref(false);
                                                                 class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                             >
                                                                 <div class="flex flex-1 items-center">
-                                                                    <LicenseIcon class="size-5 shrink-0" aria-hidden="true" />
+                                                                    <LicenseIcon class="size-5 shrink-0" />
                                                                     <span
                                                                         class="ml-2 flex-1 truncate"
                                                                         :title="`${license.type.toUpperCase()}`"
@@ -258,78 +261,81 @@ const mugShotModal = ref(false);
                             </div>
 
                             <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-0 lg:w-96">
-                                <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-error-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-error-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
-                                        @click="setWantedModal = true"
-                                    >
-                                        <AccountAlertIcon
-                                            v-if="user.props?.wanted"
-                                            class="mr-1.5 h-auto w-5"
-                                            aria-hidden="true"
-                                        />
-                                        <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" aria-hidden="true" />
-                                        {{
-                                            user.props?.wanted
-                                                ? $t('components.citizens.citizen_info_profile.revoke_wanted')
-                                                : $t('components.citizens.citizen_info_profile.set_wanted')
-                                        }}
-                                    </button>
-                                </div>
-                                <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
-                                        @click="setJobModal = true"
-                                    >
-                                        <BriefcaseIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('components.citizens.citizen_info_profile.set_job') }}
-                                    </button>
-                                </div>
-                                <div
-                                    v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')"
-                                    class="flex-initial"
+                                <UButton
+                                    v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')"
+                                    color="red"
+                                    block
+                                    @click="
+                                        modal.open(CitizenSetWantedModal, {
+                                            user: user,
+                                            'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
+                                        })
+                                    "
                                 >
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
-                                        @click="trafficPointsModal = true"
-                                    >
-                                        <CounterIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('components.citizens.citizen_info_profile.set_traffic_points') }}
-                                    </button>
-                                </div>
-                                <div v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-secondary-500 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-secondary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-secondary-500 sm:flex-1"
-                                        @click="mugShotModal = true"
-                                    >
-                                        <CameraIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('components.citizens.citizen_info_profile.set_mug_shot') }}
-                                    </button>
-                                </div>
-                                <div v-if="can('DocStoreService.CreateDocument')" class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
-                                        @click="openTemplates()"
-                                    >
-                                        <FileDocumentPlusIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('components.citizens.citizen_info_profile.create_new_document') }}
-                                    </button>
-                                </div>
-                                <div class="flex-initial">
-                                    <button
-                                        type="button"
-                                        class="inline-flex w-full shrink-0 items-center justify-center rounded-md bg-base-700 px-3 py-2 text-sm font-semibold text-neutral transition-colors hover:bg-base-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 sm:flex-1"
-                                        @click="copyLinkToClipboard()"
-                                    >
-                                        <LinkIcon class="mr-1.5 h-auto w-5" aria-hidden="true" />
-                                        {{ $t('components.citizens.citizen_info_profile.copy_profile_link') }}
-                                    </button>
-                                </div>
+                                    <AccountAlertIcon v-if="user.props?.wanted" class="mr-1.5 h-auto w-5" />
+                                    <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" />
+                                    {{
+                                        user.props?.wanted
+                                            ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                                            : $t('components.citizens.CitizenInfoProfile.set_wanted')
+                                    }}
+                                </UButton>
+
+                                <UButton
+                                    v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')"
+                                    block
+                                    icon="i-mdi-briefcase"
+                                    @click="
+                                        modal.open(CitizenSetJobModal, {
+                                            user: user,
+                                            'onUpdate:job': ($event) => $emit('update:job', $event),
+                                        })
+                                    "
+                                >
+                                    {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
+                                </UButton>
+
+                                <UButton
+                                    v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')"
+                                    block
+                                    icon="i-mdi-counter"
+                                    @click="
+                                        modal.open(CitizenSetTrafficPointsModal, {
+                                            user: user,
+                                            'onUpdate:trafficInfractionPoints': ($event) =>
+                                                $emit('update:trafficInfractionPoints', $event),
+                                        })
+                                    "
+                                >
+                                    {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
+                                </UButton>
+
+                                <UButton
+                                    v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')"
+                                    block
+                                    icon="i-mdi-camera"
+                                    @click="
+                                        modal.open(CitizenSetMugShotModal, {
+                                            user: user,
+                                            'onUpdate:mugShot': ($event) => $emit('update:mugShot', $event),
+                                        })
+                                    "
+                                >
+                                    {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
+                                </UButton>
+
+                                <UButton
+                                    v-if="can('DocStoreService.CreateDocument')"
+                                    block
+                                    icon="i-mdi-file-document-plus"
+                                    @click="openTemplates()"
+                                >
+                                    {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}
+                                </UButton>
+
+                                <UButton block icon="i-mdi-link" @click="copyLinkToClipboard()">
+                                    {{ $t('components.citizens.CitizenInfoProfile.copy_profile_link') }}
+                                </UButton>
                             </div>
                         </div>
                     </div>

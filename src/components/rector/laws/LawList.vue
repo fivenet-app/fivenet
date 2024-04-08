@@ -1,12 +1,10 @@
 <script lang="ts" setup>
-import { GavelIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import LawBookEntry from '~/components/rector/laws/LawBookEntry.vue';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
-import GenericContainer from '~/components/partials/elements/GenericContainer.vue';
 
 const completorStore = useCompletorStore();
 
@@ -51,16 +49,12 @@ function updateLaw(event: { id: string; law: Law }): void {
 
 <template>
     <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
                 <div class="w-full sm:flex-auto">
-                    <button
-                        type="button"
-                        class="w-full rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                        @click="addLawBook"
-                    >
+                    <UButton @click="addLawBook">
                         {{ $t('pages.rector.laws.add_new_law_book') }}
-                    </button>
+                    </UButton>
                 </div>
             </div>
             <div class="mt-2 flow-root">
@@ -74,21 +68,19 @@ function updateLaw(event: { id: string; law: Law }): void {
                         />
                         <DataNoDataBlock
                             v-else-if="lawBooks === null || lawBooks.length === 0"
-                            :icon="GavelIcon"
+                            icon="i-mdi-gavel"
                             :type="$t('common.law', 2)"
                         />
                         <template v-else>
                             <ul role="list" class="space-y-3">
                                 <li v-for="(book, idx) in lawBooks" :key="book.id">
-                                    <GenericContainer>
-                                        <LawBookEntry
-                                            v-model="lawBooks[idx]"
-                                            v-model:laws="lawBooks[idx].laws"
-                                            :start-in-edit="parseInt(book.id) < 0"
-                                            @update:law="updateLaw($event)"
-                                            @deleted="deletedLawBook($event)"
-                                        />
-                                    </GenericContainer>
+                                    <LawBookEntry
+                                        v-model="lawBooks[idx]"
+                                        v-model:laws="lawBooks[idx].laws"
+                                        :start-in-edit="parseInt(book.id) < 0"
+                                        @update:law="updateLaw($event)"
+                                        @deleted="deletedLawBook($event)"
+                                    />
                                 </li>
                             </ul>
                         </template>

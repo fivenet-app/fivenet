@@ -139,11 +139,11 @@ message GetCommentsResponse {
 }
 
 message PostCommentRequest {
-  resources.documents.Comment comment = 1;
+  resources.documents.Comment comment = 1 [(validate.rules).message.required = true];
 }
 
 message PostCommentResponse {
-  uint64 id = 1 [jstype = JS_STRING];
+  resources.documents.Comment comment = 1;
 }
 
 message EditCommentRequest {

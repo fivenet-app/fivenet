@@ -1,23 +1,22 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { type LeafletMouseEvent } from 'leaflet';
-import { useDebounce } from '@vueuse/core';
+import { type ContextMenuItemClickEvent, type LeafletMouseEvent, type MapOptions } from 'leaflet';
+import DispatchCreateOrUpdateSlideover from '~/components/centrum/dispatches/DispatchCreateOrUpdateSlideover.vue';
+import BaseMap from '~/components/livemap/BaseMap.vue';
+import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
+import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
+import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
+import PlayersLayer from '~/components/livemap/PlayersLayer.vue';
+import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
+import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
+import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { isNUIAvailable, setWaypoint } from '~/composables/nui';
+import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
-import BaseMap from '~/components/livemap/BaseMap.vue';
-import CreateOrUpdateMarkerModal from '~/components/livemap/CreateOrUpdateMarkerModal.vue';
-import PlayersLayer from '~/components/livemap/PlayersLayer.vue';
-import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
-import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
-import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
-import DispatchCreateOrUpdateModal from '~/components/centrum/dispatches/DispatchCreateOrUpdateModal.vue';
-import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
-import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
-import { useCentrumStore } from '~/store/centrum';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -30,6 +29,8 @@ defineEmits<{
 
 const { t } = useI18n();
 
+const slideover = useSlideover();
+
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
@@ -40,58 +41,47 @@ const { startStream } = livemapStore;
 const centrumStore = useCentrumStore();
 const { reconnecting: reconnectingCentrum } = storeToRefs(centrumStore);
 
-interface ContextmenuItem {
-    text: string;
-    callback: (e: LeafletMouseEvent) => void;
-}
-
 const mapOptions = {
     zoomControl: false,
     contextmenu: true,
     contextmenuWidth: 150,
-    contextmenuItems: [] as ContextmenuItem[],
-};
+    contextmenuItems: [],
+} as MapOptions;
 
 if (can('CentrumService.CreateDispatch')) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.create_dispatch.title'),
-        callback: (e: LeafletMouseEvent) => {
+        callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
-            openCreateDispatch.value = true;
+
+            slideover.open(DispatchCreateOrUpdateSlideover, {
+                location: { x: e.latlng.lng, y: e.latlng.lat },
+                onClose: () => (showLocationMarker.value = false),
+            });
         },
     });
 }
 if (can('LivemapperService.CreateOrUpdateMarker')) {
     mapOptions.contextmenuItems.push({
         text: t('components.livemap.create_marker.title'),
-        callback: (e: LeafletMouseEvent) => {
+        callback: (e: ContextMenuItemClickEvent) => {
             location.value = { x: e.latlng.lng, y: e.latlng.lat };
             showLocationMarker.value = true;
-            openCreateMarker.value = true;
+
+            slideover.open(MarkerCreateOrUpdateSlideover, {
+                location: { x: e.latlng.lng, y: e.latlng.lat },
+                onClose: () => (showLocationMarker.value = false),
+            });
         },
     });
 }
 if (isNUIAvailable()) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.livemap.mark_on_gps'),
-        callback: (e: LeafletMouseEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
+        callback: (e: ContextMenuItemClickEvent) => setWaypoint(e.latlng.lng, e.latlng.lat),
     });
 }
-
-const openCreateDispatch = ref(false);
-const openCreateMarker = ref(false);
-
-watch(openCreateDispatch, () => {
-    if (openCreateDispatch.value) {
-        showLocationMarker.value = false;
-    }
-});
-watch(openCreateMarker, () => {
-    if (openCreateMarker.value) {
-        showLocationMarker.value = false;
-    }
-});
 
 const selectedUserMarker = ref<MarkerInfo | undefined>();
 
@@ -124,17 +114,6 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 
 <template>
     <div class="relative z-0 size-full">
-        <DispatchCreateOrUpdateModal
-            v-if="can('CentrumService.CreateDispatch')"
-            :open="openCreateDispatch"
-            @close="openCreateDispatch = false"
-        />
-        <CreateOrUpdateMarkerModal
-            v-if="can('LivemapperService.CreateOrUpdateMarker')"
-            :open="openCreateMarker"
-            @close="openCreateMarker = false"
-        />
-
         <div
             v-if="error !== undefined || !initiated || (abort === undefined && !reconnecting)"
             class="absolute inset-0 z-20 flex items-center justify-center bg-gray-600/70"
@@ -153,9 +132,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
         >
             <template #default>
                 <LControl position="bottomright">
-                    <div class="flex flex-col gap-2">
-                        <SettingsButton />
-                    </div>
+                    <SettingsButton />
                 </LControl>
 
                 <template v-if="can('LivemapperService.Stream')">

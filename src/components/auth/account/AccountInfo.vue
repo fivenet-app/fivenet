@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AccountIcon } from 'mdi-vue3';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -8,8 +7,6 @@ import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.v
 import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.vue';
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
-import GenericContainerPanel from '~/components/partials/elements/GenericContainerPanel.vue';
-import GenericContainerPanelEntry from '~/components/partials/elements/GenericContainerPanelEntry.vue';
 import { useSettingsStore } from '~/store/settings';
 
 const { $grpc } = useNuxtApp();
@@ -30,9 +27,6 @@ async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     }
 }
 
-const changePasswordModal = ref(false);
-const changeUsernameModal = ref(false);
-
 async function removeOAuth2Connection(provider: string): Promise<void> {
     const idx = account.value?.oauth2Connections.findIndex((v) => v.providerName === provider);
     if (idx !== undefined && idx > -1) {
@@ -41,24 +35,21 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
         await refresh();
     }
 }
+
+const modal = useModal();
 </script>
 
 <template>
-    <div class="mx-auto max-w-5xl py-2">
+    <div>
         <template v-if="streamerMode">
-            <GenericContainerPanel>
-                <template #title>
-                    {{ $t('system.streamer_mode.title') }}
-                </template>
-                <template #description>
-                    {{ $t('system.streamer_mode.description') }}
-                </template>
-            </GenericContainerPanel>
+            <UDashboardPanelContent class="pb-2">
+                <UDashboardSection
+                    :title="$t('system.streamer_mode.title')"
+                    :description="$t('system.streamer_mode.description')"
+                />
+            </UDashboardPanelContent>
         </template>
         <template v-else>
-            <ChangeUsernameModal :open="changeUsernameModal" @close="changeUsernameModal = false" />
-            <ChangePasswordModal :open="changePasswordModal" @close="changePasswordModal = false" />
-
             <DataPendingBlock
                 v-if="pending"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
@@ -71,64 +62,56 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
             <DataNoDataBlock
                 v-else-if="account === null"
                 :type="`${$t('common.account')} ${$t('common.data')}`"
-                :icon="AccountIcon"
+                icon="i-mdi-account"
             />
 
             <template v-else>
-                <GenericContainerPanel>
-                    <template #title>
-                        {{ $t('components.auth.account_info.title') }}
-                    </template>
-                    <template #description>
-                        {{ $t('components.auth.account_info.subtitle') }}
-                    </template>
-                    <template #default>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('common.username') }}
-                            </template>
-                            <template #default>
-                                {{ account.account?.username }}
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.auth.account_info.license') }}
-                            </template>
-                            <template #default>
-                                {{ account.account?.license }}
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.auth.account_info.change_username') }}
-                            </template>
-                            <template #default>
-                                <button
-                                    type="button"
-                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="changeUsernameModal = true"
-                                >
-                                    {{ $t('components.auth.account_info.change_username_button') }}
-                                </button>
-                            </template>
-                        </GenericContainerPanelEntry>
-                        <GenericContainerPanelEntry>
-                            <template #title>
-                                {{ $t('components.auth.account_info.change_password') }}
-                            </template>
-                            <template #default>
-                                <button
-                                    type="button"
-                                    class="rounded-md bg-primary-500 px-3.5 py-2.5 text-sm font-semibold text-neutral hover:bg-primary-400"
-                                    @click="changePasswordModal = true"
-                                >
-                                    {{ $t('components.auth.account_info.change_password_button') }}
-                                </button>
-                            </template>
-                        </GenericContainerPanelEntry>
-                    </template>
-                </GenericContainerPanel>
+                <UDashboardPanelContent class="pb-2">
+                    <UDashboardSection
+                        :title="$t('components.auth.AccountInfo.title')"
+                        :description="$t('components.auth.AccountInfo.subtitle')"
+                    >
+                        <UFormGroup
+                            name="version"
+                            :label="$t('common.username')"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :ui="{ container: '' }"
+                        >
+                            {{ account.account?.username }}
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="version"
+                            :label="$t('components.auth.AccountInfo.license')"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :ui="{ container: '' }"
+                        >
+                            {{ account.account?.license }}
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="version"
+                            :label="$t('components.auth.AccountInfo.change_username')"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :ui="{ container: '' }"
+                        >
+                            <UButton @click="modal.open(ChangeUsernameModal, {})">
+                                {{ $t('components.auth.AccountInfo.change_username_button') }}
+                            </UButton>
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="version"
+                            :label="$t('components.auth.AccountInfo.change_password')"
+                            class="grid grid-cols-2 items-center gap-2"
+                            :ui="{ container: '' }"
+                        >
+                            <UButton @click="modal.open(ChangePasswordModal, {})">
+                                {{ $t('components.auth.AccountInfo.change_password_button') }}
+                            </UButton>
+                        </UFormGroup>
+                    </UDashboardSection>
+                </UDashboardPanelContent>
 
                 <OAuth2Connections
                     :providers="account.oauth2Providers"

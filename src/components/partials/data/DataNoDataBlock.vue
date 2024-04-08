@@ -1,17 +1,14 @@
 <script lang="ts" setup>
-import { MagnifyIcon } from 'mdi-vue3';
-import { type DefineComponent } from 'vue';
-
 const props = withDefaults(
     defineProps<{
         message?: string;
-        icon?: DefineComponent;
+        icon?: string;
         type?: string;
         focus?: Function;
     }>(),
     {
         message: undefined,
-        icon: markRaw(MagnifyIcon),
+        icon: 'i-mdi-magnify',
         type: undefined,
         focus: undefined,
     },
@@ -26,14 +23,15 @@ function click() {
 
 <template>
     <div class="w-full">
-        <button
-            type="button"
+        <UButton
+            variant="ghost"
             :disabled="!focus"
-            class="relative block w-full rounded-lg border-2 border-dashed border-base-300 p-8 text-center hover:border-base-400 focus:outline-none focus:ring-2 focus:ring-neutral focus:ring-offset-2"
+            :icon="icon"
+            block
+            class="relative block w-full rounded-lg border border-dashed border-base-300 p-8 text-center"
             @click="click()"
         >
-            <component :is="icon" class="mx-auto size-12 text-neutral" aria-hidden="true" />
-            <span class="mt-2 block text-sm font-semibold text-gray-300">
+            <span class="mt-2 block text-sm font-semibold">
                 <span v-if="message">
                     {{ message }}
                 </span>
@@ -41,6 +39,6 @@ function click() {
                     {{ $t('common.not_found', [type ?? $t('common.data')]) }}
                 </span>
             </span>
-        </button>
+        </UButton>
     </div>
 </template>

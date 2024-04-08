@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { Combobox, ComboboxInput, ComboboxOption, ComboboxOptions } from '@headlessui/vue';
-import { watchDebounced } from '@vueuse/core';
 import { useLivemapStore } from '~/store/livemap';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -15,25 +13,26 @@ type Postal = {
     code: string;
 };
 
+let postalsLoaded = false;
+const postals: Postal[] = [];
+const filteredPostals = ref<Postal[]>([]);
+
 const selectedPostal = ref<Postal | undefined>();
 const postalQuery = ref('');
-let postalsLoaded = false;
-const postals = ref<Postal[]>([]);
-const filteredPostals = ref<Postal[]>([]);
 
 async function loadPostals(): Promise<void> {
     if (postalsLoaded) {
         return;
     }
-    postalsLoaded = true;
 
     try {
         const response = await fetch('/data/postals.json');
-        postals.value.push(...((await response.json()) as Postal[]));
+        postals.push(...((await response.json()) as Postal[]));
+        postalsLoaded = true;
     } catch (_) {
-        notifications.dispatchNotification({
+        notifications.add({
             title: { key: 'notifications.livemap.failed_loading_postals.title', parameters: {} },
-            content: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },
+            description: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },
             type: 'error',
         });
         postalsLoaded = false;
@@ -47,7 +46,7 @@ async function findPostal(): Promise<void> {
 
     let results = 0;
     filteredPostals.value.length = 0;
-    filteredPostals.value = postals.value.filter((p) => {
+    filteredPostals.value = postals.filter((p) => {
         if (results >= 10) {
             return false;
         }
@@ -72,28 +71,21 @@ watchDebounced(postalQuery, () => findPostal(), {
 </script>
 
 <template>
-    <Combobox v-model="selectedPostal" as="div" class="w-full max-w-44" nullable>
-        <ComboboxInput
-            autocomplete="off"
-            class="w-full rounded-md border-2 border-black/20 bg-clip-padding p-0.5 px-1"
-            :display-value="(postal: any) => (postal ? postal?.code : '')"
-            :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
-            @change="postalQuery = $event.target.value"
-            @click="loadPostals"
-            @focusin="focusTablet(true)"
-            @focusout="focusTablet(false)"
-        />
-        <ComboboxOptions class="z-10 mt-1 w-full overflow-auto bg-neutral py-1">
-            <ComboboxOption v-for="postal in filteredPostals" :key="postal.code" v-slot="{ active }" :value="postal">
-                <li
-                    :class="[
-                        'relative cursor-default select-none py-2 pl-8 pr-4',
-                        active ? 'bg-primary-500 text-neutral' : 'text-gray-600',
-                    ]"
-                >
-                    {{ postal.code }}
-                </li>
-            </ComboboxOption>
-        </ComboboxOptions>
-    </Combobox>
+    <UInputMenu
+        v-model="selectedPostal"
+        v-model:query="postalQuery"
+        class="w-full max-w-44"
+        :options="filteredPostals"
+        nullable
+        :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
+        option-attribute="code"
+        @click="loadPostals"
+        @focusin="focusTablet(true)"
+        @focusout="focusTablet(false)"
+    >
+        <template #option-empty="{ query: search }">
+            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+        </template>
+        <template #empty> {{ $t('common.not_found', [$t('common.postal', 2)]) }} </template>
+    </UInputMenu>
 </template>

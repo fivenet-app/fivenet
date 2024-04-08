@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useIntervalFn } from '@vueuse/core';
 import { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
 
@@ -13,7 +12,7 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const offset = ref(0);
 
 const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId}-activity-${offset.value}`, () => listUnitActivity());
 

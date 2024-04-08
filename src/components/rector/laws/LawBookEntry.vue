@@ -1,11 +1,9 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CancelIcon, ContentSaveIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 import LawEntry from '~/components/rector/laws/LawEntry.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     modelValue: LawBook;
@@ -40,13 +38,19 @@ async function deleteLawBook(id: string): Promise<void> {
     }
 }
 
-interface FormData {
-    id: string;
-    name: string;
-    description?: string;
-}
+const schema = z.object({
+    name: z.string().min(3).max(128),
+    description: z.union([z.string().min(3).max(255), z.string().length(0).optional()]),
+});
 
-async function saveLawBook(id: string, values: FormData): Promise<LawBook> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    name: props.modelValue.name,
+    description: props.modelValue.description,
+});
+
+async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
     const i = parseInt(id);
 
     try {
@@ -71,30 +75,10 @@ async function saveLawBook(id: string, values: FormData): Promise<LawBook> {
     }
 }
 
-defineRule('required', required);
-defineRule('max', max);
-defineRule('min', min);
-
-const { handleSubmit, setValues } = useForm<FormData>({
-    validationSchema: {
-        name: { required: true, min: 3, max: 128 },
-        description: { required: false, min: 3, max: 255 },
-    },
-    validateOnMount: true,
-});
-setValues({
-    name: props.modelValue.name,
-    description: props.modelValue.description,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<LawBook> =>
-        await saveLawBook(props.modelValue.id, values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await saveLawBook(props.modelValue.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 function deletedLaw(id: string): void {
@@ -121,99 +105,98 @@ function addLaw(): void {
     lastNewId.value--;
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteLawBook(id));
+const modal = useModal();
 
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(modelValue.id)" />
+    <UCard>
+        <template #header>
+            <div v-if="!editing" class="flex items-center gap-x-2">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        :title="$t('common.delete')"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteLawBook(modelValue.id),
+                            })
+                        "
+                    />
+                </UButtonGroup>
 
-    <div class="my-2">
-        <div v-if="!editing" class="flex items-center gap-x-2 text-neutral">
-            <button type="button" :title="$t('common.edit')" @click="editing = true">
-                <PencilIcon class="size-5" aria-hidden="true" />
-            </button>
-            <button type="button" :title="$t('common.delete')" @click="reveal()">
-                <TrashCanIcon class="size-5" aria-hidden="true" />
-            </button>
-            <h2 class="text-xl">{{ modelValue.name }}</h2>
-            <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
-            <button
-                type="button"
-                class="ml-auto rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral hover:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500"
-                @click="addLaw"
-            >
-                {{ $t('pages.rector.laws.add_new_law') }}
-            </button>
-        </div>
-        <form v-else class="flex w-full flex-row items-start gap-x-4 text-neutral" @submit.prevent="onSubmitThrottle">
-            <button type="submit" :title="$t('common.save')">
-                <ContentSaveIcon class="size-5" aria-hidden="true" />
-            </button>
-            <button
-                type="button"
-                :title="$t('common.cancel')"
-                @click="
-                    editing = false;
-                    parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
-                "
-            >
-                <CancelIcon class="size-5" aria-hidden="true" />
-            </button>
+                <h2 class="text-xl">{{ modelValue.name }}</h2>
 
-            <div class="flex-initial">
-                <label for="name">
-                    {{ $t('common.law_book') }}
-                </label>
-                <VeeField
-                    name="name"
-                    type="text"
-                    :placeholder="$t('common.law_book')"
-                    :label="$t('common.law_book')"
-                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
+                <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
+
+                <UButton @click="addLaw">
+                    {{ $t('pages.rector.laws.add_new_law') }}
+                </UButton>
             </div>
-            <div class="flex-auto">
-                <label for="description">
-                    {{ $t('common.description') }}
-                </label>
-                <VeeField
-                    name="description"
-                    type="text"
-                    :placeholder="$t('common.description')"
-                    :label="$t('common.description')"
-                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
+            <UForm
+                v-else
+                :schema="schema"
+                :state="state"
+                class="flex w-full flex-row items-start gap-x-2"
+                @submit="onSubmitThrottle"
+            >
+                <UButton :title="$t('common.save')" variant="link" icon="i-mdi-content-save" />
+                <UButton
+                    :title="$t('common.cancel')"
+                    variant="link"
+                    icon="i-mdi-cancel"
+                    @click="
+                        editing = false;
+                        parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
+                    "
                 />
-                <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
-            </div>
-        </form>
+
+                <UFormGroup name="name" :label="$t('common.law_book')" class="flex-initial">
+                    <UInput
+                        v-model="state.name"
+                        name="name"
+                        type="text"
+                        :placeholder="$t('common.law_book')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                </UFormGroup>
+
+                <UFormGroup name="description" :label="$t('common.description')" class="flex-auto">
+                    <UInput
+                        v-model="state.description"
+                        name="description"
+                        type="text"
+                        :placeholder="$t('common.description')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                </UFormGroup>
+            </UForm>
+        </template>
+
         <table class="min-w-full divide-y divide-base-600">
             <thead>
                 <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                         {{ $t('common.action', 2) }}
                     </th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-neutral sm:pl-1">
+                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                         {{ $t('common.crime') }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.fine') }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.detention_time') }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.traffic_infraction_points', 2) }}
                     </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold text-neutral">
+                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.description') }}
                     </th>
                 </tr>
@@ -229,5 +212,5 @@ const editing = ref(props.startInEdit);
                 />
             </tbody>
         </table>
-    </div>
+    </UCard>
 </template>

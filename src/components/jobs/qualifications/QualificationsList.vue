@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { SchoolIcon } from 'mdi-vue3';
 import QualificationsListEntry from '~/components/jobs/qualifications/QualificationsListEntry.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import TablePagination from '~/components/partials/elements/TablePagination.vue';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const { $grpc } = useNuxtApp();
 
-const offset = ref(0n);
+const page = ref(1);
+const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-${offset.value}`, () => listQualifications());
+const { data, pending, refresh, error } = useLazyAsyncData(`qualifications-${page.value}`, () => listQualifications());
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
@@ -34,7 +34,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="border-b border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+        <div class="bg-background border-b border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
                 <div class="ml-4 mt-4">
                     <h3 class="text-base font-semibold leading-6 text-gray-200">
@@ -45,14 +45,14 @@ watch(offset, async () => refresh());
                     <NuxtLink
                         v-if="can('QualificationsService.CreateQualification')"
                         :to="{ name: 'jobs-qualifications-create' }"
-                        class="relative inline-flex items-center rounded-md bg-primary-500 px-3 py-2 text-sm font-semibold text-neutral shadow-sm hover:bg-primary-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-600"
+                        class="bg-primary-500 hover:bg-primary-500 relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                     >
                         {{ $t('components.qualifications.create_new_qualification') }}
                     </NuxtLink>
                 </div>
             </div>
         </div>
-        <div class="px-1 sm:px-2 lg:px-4">
+        <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
@@ -62,7 +62,7 @@ watch(offset, async () => refresh());
             <DataNoDataBlock
                 v-else-if="data?.qualifications.length === 0"
                 :message="$t('common.not_found', [$t('common.qualifications', 2)])"
-                :icon="markRaw(SchoolIcon)"
+                icon="i-mdi-school"
             />
 
             <template v-else>
@@ -75,15 +75,9 @@ watch(offset, async () => refresh());
                 </ul>
             </template>
         </div>
-        <div class="border-t border-gray-200 bg-base-600 px-4 py-5 sm:p-6">
+        <div class="bg-background border-t border-gray-200 px-4 py-5 sm:p-6">
             <div class="-ml-4 -mt-4 flex items-center">
-                <TablePagination
-                    class="w-full"
-                    :pagination="data?.pagination"
-                    :show-border="false"
-                    :refresh="refresh"
-                    @offset-change="offset = $event"
-                />
+                <Pagination v-model="page" :pagination="data?.pagination" />
             </div>
         </div>
     </div>

@@ -21,6 +21,6 @@ const route = useRoute('jobs-qualifications-id');
 
 <template>
     <div>
-        <QualificationView :id="route.params.id" />
+        <QualificationView :qualification-id="route.params.id" />
     </div>
 </template>

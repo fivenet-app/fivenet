@@ -1,36 +1,38 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
-import { localize, setLocale as veeValidateSetLocale } from '@vee-validate/i18n';
-import de from '@vee-validate/i18n/dist/locale/de.json';
-import en from '@vee-validate/i18n/dist/locale/en.json';
-import { UpdateIcon } from 'mdi-vue3';
-import { configure } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
-import { JOB_THEME_KEY, useSettingsStore } from '~/store/settings';
-import { useAuthStore } from '~/store/auth';
+import { useSettingsStore } from '~/store/settings';
+import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
+import Sounds from './components/overlays/Sounds.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
-const authStore = useAuthStore();
-const { jobProps } = storeToRefs(authStore);
-
 const settings = useSettingsStore();
-const { theme, isNUIAvailable, updateAvailable } = storeToRefs(settings);
+const { isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 const route = useRoute();
 
+const toast = useToast();
+
 const { locale: cookieLocale } = useCookieControl();
 
+const colorMode = useColorMode();
+
+const color = computed(() => (colorMode.value === 'dark' ? '#111827' : 'white'));
+
 useHead({
+    meta: [
+        { charset: 'utf-8' },
+        { name: 'viewport', content: 'width=device-width, initial-scale=1' },
+        { key: 'theme-color', name: 'theme-color', content: color },
+    ],
     htmlAttrs: {
-        class: () =>
-            (theme.value === JOB_THEME_KEY ? jobProps.value?.theme ?? 'defaultTheme' : theme.value) +
-            ' scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
+        class: 'h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'bg-body-color h-full',
+        class: 'h-full',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
@@ -40,8 +42,9 @@ useHead({
     },
 });
 useSeoMeta({
-    ogImage: '/images/open-graph-image.png',
     applicationName: 'FiveNet',
+    ogImage: '/images/social-card.png',
+    twitterImage: '/images/social-card.png',
 });
 
 if (__APP_VERSION__ !== settings.version) {
@@ -51,12 +54,11 @@ if (__APP_VERSION__ !== settings.version) {
     settings.setVersion(__APP_VERSION__);
 }
 
-configure({
-    generateMessage: localize({
-        en,
-        de,
-    }),
-});
+const appConfig = useAppConfig();
+
+// Set theme colors into app config
+appConfig.ui.primary = design.value.ui.primary;
+appConfig.ui.gray = design.value.ui.gray;
 
 // Set user setting locale on load of app
 if (settings.locale !== null) {
@@ -68,7 +70,6 @@ setLocaleGlobally(locale.value);
 
 async function setLocaleGlobally(locale: string): Promise<void> {
     settings.setLocale(locale);
-    veeValidateSetLocale(locale);
 
     // Cookie Banner Locale handling
     switch (locale.split('-', 1)[0]) {
@@ -88,43 +89,61 @@ async function onBeforeEnter(): Promise<void> {
 watch(locale, () => setLocaleGlobally(locale.value));
 
 // NUI message handling
-if (isNUIAvailable.value) {
-    onMounted(async () => window.addEventListener('message', onNUIMessage));
-    onBeforeUnmount(async () => window.removeEventListener('message', onNUIMessage));
-}
+onMounted(async () => {
+    if (isNUIAvailable.value) {
+        window.addEventListener('message', onNUIMessage);
+    }
+});
+onBeforeUnmount(async () => {
+    if (isNUIAvailable.value) {
+        window.removeEventListener('message', onNUIMessage);
+    }
+});
 
-// Open update available confirm dialog
-const open = ref(false);
+watch(updateAvailable, async () => {
+    if (!updateAvailable.value) {
+        return;
+    }
 
-watch(updateAvailable, () => (open.value = true));
-
-/* eslint vue/no-multiple-template-root: "off" */
+    toast.add({
+        title: t('system.update_available.title', { version: updateAvailable }),
+        description: t('system.update_available.content'),
+        actions: [
+            {
+                label: t('common.refresh'),
+                click: () => reloadNuxtApp({ persistState: false, force: true }),
+            },
+        ],
+        icon: 'i-mdi-update',
+        color: 'amber',
+    });
+});
 </script>
 
 <template>
-    <NuxtLayout>
-        <NuxtPage
-            :transition="{
-                name: 'page',
-                mode: 'out-in',
-                onBeforeEnter,
-            }"
+    <div>
+        <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
+
+        <NuxtLayout>
+            <NuxtPage
+                :transition="{
+                    name: 'page',
+                    mode: 'out-in',
+                    onBeforeEnter,
+                }"
+            />
+        </NuxtLayout>
+
+        <UNotifications />
+        <UModals />
+        <USlideovers />
+        <Sounds />
+
+        <NotificationProvider />
+
+        <CookieControl
+            v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
+            :locale="cookieLocale"
         />
-    </NuxtLayout>
-
-    <CookieControl
-        v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
-        :locale="cookieLocale"
-    />
-
-    <ConfirmDialog
-        v-if="updateAvailable !== false"
-        :open="open"
-        :cancel="() => (open = false)"
-        :confirm="() => reloadNuxtApp({ persistState: false, force: true })"
-        :title="$t('system.update_available.title', { version: updateAvailable })"
-        :description="$t('system.update_available.content')"
-        :icon="markRaw(UpdateIcon)"
-        @close="open = false"
-    />
+    </div>
 </template>

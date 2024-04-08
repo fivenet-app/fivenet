@@ -1,18 +1,11 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { useConfirmDialog, useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { LoadingIcon, PencilIcon, TrashCanIcon } from 'mdi-vue3';
-import { defineRule } from 'vee-validate';
-import ConfirmDialog from '~/components/partials/ConfirmDialog.vue';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-
-const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
-
-const { activeChar, permissions } = storeToRefs(authStore);
+import ConfirmModal from '../partials/ConfirmModal.vue';
 
 const props = defineProps<{
     comment: Comment;
@@ -23,13 +16,27 @@ const emit = defineEmits<{
     (e: 'deleted', comment: Comment): void;
 }>();
 
+const { $grpc } = useNuxtApp();
+
+const modal = useModal();
+
+const authStore = useAuthStore();
+
+const { activeChar, permissions } = storeToRefs(authStore);
+
 const editing = ref(false);
 
-interface FormData {
-    comment: string;
-}
+const schema = z.object({
+    comment: z.string().min(3).max(1536),
+});
 
-async function editComment(documentId: string, commentId: string, values: FormData): Promise<void> {
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    comment: '',
+});
+
+async function editComment(documentId: string, commentId: string, values: Schema): Promise<void> {
     const comment: Comment = {
         id: commentId,
         documentId,
@@ -63,25 +70,8 @@ async function deleteComment(id: string): Promise<void> {
     }
 }
 
-const { isRevealed, reveal, confirm, cancel, onConfirm } = useConfirmDialog();
-
-onConfirm(async (id) => deleteComment(id));
-
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setValues } = useForm<FormData>({
-    validationSchema: {
-        comment: { required: true, min: 3, max: 1536 },
-    },
-    validateOnMount: true,
-});
-
 function resetForm(): void {
-    setValues({
-        comment: props.comment.comment,
-    });
+    state.comment = props.comment.comment;
 }
 
 onMounted(() => resetForm());
@@ -89,21 +79,15 @@ onMounted(() => resetForm());
 watch(props, () => resetForm());
 
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await editComment(props.comment.documentId, props.comment.id, values).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await editComment(props.comment.documentId, props.comment.id, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 </script>
 
 <template>
-    <ConfirmDialog :open="isRevealed" :cancel="cancel" :confirm="() => confirm(props.comment.id)" />
-
     <li class="py-2">
         <div v-if="!editing" class="flex space-x-3">
             <div :class="[comment.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
@@ -111,23 +95,34 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                     <div class="flex items-center">
                         <CitizenInfoPopover
                             :user="comment.creator"
-                            class="text-sm font-medium text-primary-400 hover:text-primary-300"
+                            class="text-primary-400 hover:text-primary-300 text-sm font-medium"
                         />
                     </div>
-                    <div class="flex flex-1 items-center text-accent-200">
+                    <div class="flex flex-1 items-center">
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
-                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center text-base-100">
-                        <TrashCanIcon type="button" class="mr-1.5 size-5 shrink-0" aria-hidden="true" />
+                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center">
+                        <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
-                        <button v-if="can('DocStoreService.PostComment')" @click="editing = true">
-                            <PencilIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                        </button>
-                        <button v-if="can('DocStoreService.DeleteComment')" type="button" @click="reveal()">
-                            <TrashCanIcon class="ml-auto mr-2.5 h-auto w-5" aria-hidden="true" />
-                        </button>
+                        <UButton
+                            v-if="can('DocStoreService.PostComment')"
+                            variant="link"
+                            icon="i-mdi-pencil"
+                            @click="editing = true"
+                        />
+
+                        <UButton
+                            v-if="can('DocStoreService.DeleteComment')"
+                            variant="link"
+                            icon="i-mdi-trash-can"
+                            @click="
+                                modal.open(ConfirmModal, {
+                                    confirm: async () => deleteComment(comment.id),
+                                })
+                            "
+                        />
                     </div>
                 </div>
                 <p class="whitespace-pre-line break-words text-sm">
@@ -135,61 +130,28 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                 </p>
             </div>
         </div>
+
         <template v-else>
             <div v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
-                    <form class="relative" @submit.prevent="onSubmitThrottle">
-                        <div
-                            class="overflow-hidden rounded-lg shadow-sm ring-1 ring-inset ring-gray-300 focus-within:ring-2 focus-within:ring-primary-600"
-                        >
-                            <label for="comment" class="sr-only">
-                                {{ $t('components.documents.document_comment_entry.edit_comment') }}
-                            </label>
-                            <VeeField
+                    <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
+                        <UFormGroup name="comment">
+                            <UTextarea
+                                v-model="state.comment"
                                 ref="commentInput"
-                                as="textarea"
-                                rows="3"
-                                name="comment"
-                                :label="$t('common.comment')"
-                                :placeholder="$t('components.documents.document_comment_entry.edit_comment')"
-                                class="block w-full resize-none border-0 bg-transparent text-gray-50 placeholder:text-gray-400 focus:ring-0 sm:py-1.5 sm:text-sm sm:leading-6"
+                                :rows="3"
+                                :placeholder="$t('components.documents.document_comments.add_comment')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
+                        </UFormGroup>
 
-                            <!-- Spacer element to match the height of the toolbar -->
-                            <div class="py-2" aria-hidden="true">
-                                <!-- Matches height of button in toolbar (1px border + 36px content height) -->
-                                <div class="py-px">
-                                    <div class="h-9" />
-                                    <div class="ml-2">
-                                        <VeeErrorMessage name="comment" as="p" class="mt-2 text-sm text-error-400" />
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mt-2 shrink-0">
+                            <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
+                                {{ $t('common.edit') }}
+                            </UButton>
                         </div>
-
-                        <div class="absolute inset-x-0 bottom-0 flex justify-between py-2 pl-3 pr-2">
-                            <div class="flex items-center space-x-5"></div>
-                            <div class="shrink-0">
-                                <button
-                                    type="submit"
-                                    class="flex justify-center rounded-md px-3 py-2 text-sm font-semibold text-neutral shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :disabled="!meta.valid || !canSubmit"
-                                    :class="[
-                                        !meta.valid || !canSubmit
-                                            ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                            : 'bg-primary-500 hover:bg-primary-400 focus-visible:outline-primary-500',
-                                    ]"
-                                >
-                                    <template v-if="!canSubmit">
-                                        <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                                    </template>
-                                    {{ $t('common.edit') }}
-                                </button>
-                            </div>
-                        </div>
-                    </form>
+                    </UForm>
                 </div>
             </div>
         </template>

@@ -62,7 +62,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		condition = condition.AND(jet.OR(
 			tConduct.ExpiresAt.IS_NULL(),
 			tConduct.ExpiresAt.GT_EQ(
-				jet.CURRENT_TIMESTAMP(),
+				jet.CURRENT_DATE(),
 			),
 		))
 	}
@@ -118,6 +118,9 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
 			tUserUserProps.Avatar.AS("target_user.avatar"),
+			tJobsUserProps.UserID,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -135,7 +138,11 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 					tUser.ID.EQ(tConduct.TargetUserID),
 				).
 				LEFT_JOIN(tUserUserProps,
-					tUserUserProps.UserID.EQ(tUser.ID),
+					tUserUserProps.UserID.EQ(tConduct.TargetUserID),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tConduct.TargetUserID).
+						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
 				).
 				LEFT_JOIN(tCreator,
 					tCreator.ID.EQ(tConduct.CreatorID),
@@ -184,11 +191,6 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 
 	req.Entry.Job = userInfo.Job
 
-	expiresAt := jet.NULL
-	if req.Entry.ExpiresAt != nil {
-		expiresAt = jet.TimestampT(req.Entry.ExpiresAt.AsTime())
-	}
-
 	tConduct := table.FivenetJobsConduct
 	stmt := tConduct.
 		INSERT(
@@ -203,7 +205,7 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 			userInfo.Job,
 			req.Entry.Type,
 			req.Entry.Message,
-			expiresAt,
+			req.Entry.ExpiresAt,
 			req.Entry.TargetUserId,
 			userInfo.UserId,
 		)
@@ -256,17 +258,16 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 	tConduct := table.FivenetJobsConduct
 	stmt := tConduct.
 		UPDATE(
-			tConduct.Job,
 			tConduct.Type,
 			tConduct.Message,
 			tConduct.ExpiresAt,
 			tConduct.TargetUserID,
 		).
 		SET(
-			tConduct.Type.SET(jet.Int16(int16(entry.Type))),
-			tConduct.Message.SET(jet.String(entry.Message)),
-			tConduct.ExpiresAt.SET(jet.TimestampT(entry.ExpiresAt.AsTime())),
-			tConduct.TargetUserID.SET(jet.Int32(entry.TargetUserId)),
+			int16(entry.Type),
+			entry.Message,
+			entry.ExpiresAt,
+			entry.TargetUserId,
 		).
 		WHERE(jet.AND(
 			tConduct.Job.EQ(jet.String(userInfo.Job)),

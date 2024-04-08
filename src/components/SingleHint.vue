@@ -1,11 +1,8 @@
 <script lang="ts" setup generic="T extends RoutesNamesList, P extends string, E extends boolean = false">
-import { InformationSlabCircleIcon } from 'mdi-vue3';
 import type { NuxtRoute, RoutesNamesList } from '@typed-router';
-import GenericBadge from '~/components/partials/elements/GenericBadge.vue';
 
-const props = defineProps<{
+defineProps<{
     hintId: string;
-    layout?: 'horizontal' | 'vertical';
     keyboard?: boolean;
     to?: NuxtRoute<T, P, E>;
     external?: E;
@@ -14,32 +11,27 @@ const props = defineProps<{
 </script>
 
 <template>
-    <div class="pointer-events-none inset-x-0 max-w-full sm:flex sm:justify-center sm:pb-2 lg:px-1">
-        <div
-            class="pointer-events-auto flex items-center justify-between gap-x-6 bg-primary-900 px-6 py-2.5 sm:rounded-xl sm:border-2 sm:border-neutral/20 sm:py-3 sm:pl-4 sm:pr-3.5"
-        >
-            <p
-                class="inline-flex items-center gap-1 text-sm leading-6 text-white"
-                :class="layout === 'horizontal' ? 'flex-row' : 'flex-col'"
-            >
-                <span class="inline-flex items-center">
-                    <InformationSlabCircleIcon class="size-7" aria-hidden="true" />
-                    <strong class="mx-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
-                </span>
-                <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
-                <GenericBadge v-if="keyboard" class="ml-1 text-black" color="gray">
-                    <kbd class="font-sans">{{ $t(`components.hints.${hintId}.keyboard`) }}</kbd>
-                </GenericBadge>
-                <NuxtLink
-                    v-else-if="props.to"
-                    :to="props.to"
-                    :external="props.external"
-                    :target="linkTarget ?? null"
-                    class="ml-1 text-accent-200 underline"
-                >
+    <UCard
+        :ui="{
+            body: { padding: 'px-2 py-3 sm:p-3' },
+            header: { padding: 'px-2 py-3 sm:p-3' },
+            footer: { padding: 'px-2 py-2 sm:p-3' },
+        }"
+    >
+        <template #header>
+            <UIcon name="i-mdi-information-slab-circle" class="size-6" />
+            <strong class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+        </template>
+
+        <div class="mx-auto mb-2 flex items-center gap-1 text-base">
+            <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
+
+            <template v-if="keyboard || to">
+                <UKbd v-if="keyboard" class="ml-1" :value="$t(`components.hints.${hintId}.keyboard`)" />
+                <UButton v-else-if="to" variant="link" :to="to" :external="external" :target="linkTarget ?? null">
                     {{ $t('components.hints.click_me') }}
-                </NuxtLink>
-            </p>
+                </UButton>
+            </template>
         </div>
-    </div>
+    </UCard>
 </template>

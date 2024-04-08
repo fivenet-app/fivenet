@@ -1,36 +1,36 @@
-{{- if .Values.fivenet.serviceMonitor.enabled -}}
+{{- if .Values.frontend..serviceMonitor.enabled -}}
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   name: {{ include "fivenet.fullname" . }}
-{{- if .Values.fivenet.serviceMonitor.namespace }}
-  namespace: {{ .Values.fivenet.serviceMonitor.namespace }}
+{{- if .Values.frontend..serviceMonitor.namespace }}
+  namespace: {{ .Values.frontend..serviceMonitor.namespace }}
 {{- end }}
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
-  {{- if .Values.fivenet.serviceMonitor.additionalLabels }}
-    {{- toYaml .Values.fivenet.serviceMonitor.additionalLabels | nindent 4 }}
+  {{- if .Values.frontend..serviceMonitor.additionalLabels }}
+    {{- toYaml .Values.frontend..serviceMonitor.additionalLabels | nindent 4 }}
   {{- end }}
 spec:
   endpoints:
     - port: metrics
-      interval: {{ .Values.fivenet.serviceMonitor.scrapeInterval }}
-    {{- if .Values.fivenet.serviceMonitor.honorLabels }}
+      interval: {{ .Values.frontend..serviceMonitor.scrapeInterval }}
+    {{- if .Values.frontend..serviceMonitor.honorLabels }}
       honorLabels: true
     {{- end }}
-    {{- if .Values.fivenet.serviceMonitor.metricRelabelings }}
-      metricRelabelings: {{ toYaml .Values.fivenet.serviceMonitor.metricRelabelings | nindent 8 }}
+    {{- if .Values.frontend..serviceMonitor.metricRelabelings }}
+      metricRelabelings: {{ toYaml .Values.frontend..serviceMonitor.metricRelabelings | nindent 8 }}
     {{- end }}
-{{- if .Values.fivenet.serviceMonitor.namespaceSelector }}
-  namespaceSelector: {{ toYaml .Values.fivenet.serviceMonitor.namespaceSelector | nindent 4 }}
+{{- if .Values.frontend..serviceMonitor.namespaceSelector }}
+  namespaceSelector: {{ toYaml .Values.frontend..serviceMonitor.namespaceSelector | nindent 4 }}
 {{ else }}
   namespaceSelector:
     matchNames:
       - {{ .Release.Namespace }}
 {{- end }}
-{{- if .Values.fivenet.serviceMonitor.targetLabels }}
+{{- if .Values.frontend..serviceMonitor.targetLabels }}
   targetLabels:
-  {{- range .Values.fivenet.serviceMonitor.targetLabels }}
+  {{- range .Values.frontend..serviceMonitor.targetLabels }}
     - {{ . }}
   {{- end }}
 {{- end }}

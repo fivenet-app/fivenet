@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { PhoneIcon } from 'mdi-vue3';
 import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
@@ -11,9 +10,12 @@ const props = withDefaults(
         hideNumber?: boolean;
         showLabel?: boolean;
         width?: string;
+        padded?: boolean;
     }>(),
     {
-        showIcon: undefined,
+        showIcon: true,
+        hideNumber: false,
+        showLabel: false,
         width: 'w-6',
     },
 );
@@ -31,13 +33,13 @@ async function doCall(): Promise<void> {
     if (isNUIAvailable()) {
         return phoneCallNumber(props.number);
     } else {
-        notifications.dispatchNotification({
+        notifications.add({
             type: 'info',
             title: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.title',
                 parameters: {},
             },
-            content: {
+            description: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.content',
                 parameters: {},
             },
@@ -52,17 +54,12 @@ async function doCall(): Promise<void> {
     <div class="inline-flex items-center">
         <span v-if="number === undefined">N/A</span>
         <template v-else>
-            <button
-                v-if="showIcon === undefined || showIcon"
-                type="button"
-                class="mr-1 inline-flex flex-initial items-center text-primary-500 hover:text-primary-400"
-                @click="doCall"
-            >
-                <PhoneIcon class="hidden h-auto sm:block" :class="width" aria-hidden="true" />
-                <span v-if="showLabel" class="ml-1">{{ $t('common.call') }}</span>
-            </button>
+            <UButton v-if="showIcon" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
+                <span class="sr-only">{{ $t('common.call') }}</span>
+                <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
+            </UButton>
 
-            <span v-if="hideNumber === undefined || !hideNumber" :class="streamerMode ? 'blur' : ''">
+            <span v-if="!hideNumber" :class="[streamerMode ? 'blur' : '', !padded && 'ml-1']">
                 <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx" class="mr-1">{{ part }}</span>
             </span>
         </template>

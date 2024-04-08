@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { AccountIcon, GroupIcon, MapMarkerIcon } from 'mdi-vue3';
-import UnitDetails from '~/components//centrum/units/UnitDetails.vue';
+import { MapMarkerIcon } from 'mdi-vue3';
+import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
@@ -28,6 +28,8 @@ defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
+const slideover = useSlideover();
+
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -52,19 +54,9 @@ const iconAnchor = computed<PointExpression | undefined>(() => [props.size / 2, 
 const popupAnchor = computed<PointExpression>(() => (hasUnit.value ? [0, -(props.size * 1.7)] : [0, -(props.size * 0.8)]));
 
 const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.status ?? 0));
-
-const openUnit = ref(false);
 </script>
 
 <template>
-    <UnitDetails
-        v-if="hasUnit && unit !== undefined"
-        :unit="unit"
-        :open="openUnit"
-        @close="openUnit = false"
-        @goto="$emit('goto', $event)"
-    />
-
     <LMarker
         :key="`user_${marker.info!.id}`"
         :lat-lng="[marker.info!.y, marker.info!.x]"
@@ -76,18 +68,18 @@ const openUnit = ref(false);
             <div class="flex flex-col items-center uppercase">
                 <span
                     v-if="showUnitNames && unit"
-                    class="inset-0 whitespace-nowrap rounded-md border-2 border-black/20 bg-clip-padding focus:outline-none"
+                    class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-clip-padding"
                     :class="isColourBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
                     :style="{ backgroundColor: unit?.color ?? '#8d81f2' }"
                 >
                     {{ unit?.initials }}
                 </span>
-                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" aria-hidden="true" />
+                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">
                     <span
-                        class="relative inset-0 inline-flex size-3 rounded-full border-2 border-black/20"
+                        class="relative inset-0 inline-flex size-3 rounded-full border border-black/20"
                         :class="unitStatusColor"
                     ></span>
                 </span>
@@ -95,61 +87,75 @@ const openUnit = ref(false);
         </LIcon>
 
         <LPopup :options="{ closeButton: true }">
-            <div
-                v-if="can('CitizenStoreService.ListCitizens') || marker.user?.phoneNumber || hasUnit"
-                class="mb-1 flex items-center gap-2"
-            >
-                <button
-                    v-if="marker.info?.x && marker.info?.y"
-                    type="button"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                    @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
-                >
-                    <MapMarkerIcon class="size-5" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('common.mark') }}</span>
-                </button>
-                <NuxtLink
-                    v-if="can('CitizenStoreService.ListCitizens')"
-                    :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                >
-                    <AccountIcon class="size-5" aria-hidden="true" />
-                    <span class="ml-1">{{ $t('common.profile') }}</span>
-                </NuxtLink>
-                <PhoneNumberBlock
-                    v-if="marker.user?.phoneNumber"
-                    :number="marker.user?.phoneNumber"
-                    :hide-number="true"
-                    :show-label="true"
-                    width="w-4"
-                />
-                <button
-                    v-if="hasUnit"
-                    type="button"
-                    class="inline-flex items-center text-primary-500 hover:text-primary-400"
-                    @click="openUnit = true"
-                >
-                    <GroupIcon class="size-4" aria-hidden="true" />
-                    <span class="ml-1">
-                        {{ $t('common.unit') }}
-                    </span>
-                </button>
+            <div class="flex flex-col gap-2">
+                <div class="grid grid-cols-2 gap-2">
+                    <UButton
+                        v-if="marker.info?.x && marker.info?.y"
+                        variant="link"
+                        icon="i-mdi-map-marker"
+                        :padded="false"
+                        @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.mark') }}
+                        </span>
+                    </UButton>
+
+                    <UButton
+                        v-if="can('CitizenStoreService.ListCitizens')"
+                        variant="link"
+                        icon="i-mdi-account"
+                        :padded="false"
+                        :to="{ name: 'citizens-id', params: { id: marker.user?.userId ?? 0 } }"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.profile') }}
+                        </span>
+                    </UButton>
+
+                    <PhoneNumberBlock
+                        v-if="marker.user?.phoneNumber"
+                        :number="marker.user?.phoneNumber"
+                        :hide-number="true"
+                        :show-label="true"
+                        :padded="false"
+                    />
+
+                    <UButton
+                        v-if="hasUnit && unit"
+                        variant="link"
+                        icon="i-mdi-group"
+                        :padded="false"
+                        @click="
+                            slideover.open(UnitDetailsSlideover, {
+                                unit: unit,
+                                onGoto: (loc) => $emit('goto', loc),
+                            })
+                        "
+                    >
+                        <span class="truncate">
+                            {{ $t('common.unit', 1) }}
+                        </span>
+                    </UButton>
+                </div>
+
+                <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
+
+                <ul role="list">
+                    <li>
+                        <span class="font-semibold"> {{ $t('common.name') }} </span>: {{ marker.user?.firstname }}
+                        {{ marker.user?.lastname }}
+                    </li>
+                    <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
+                        <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
+                            marker.user?.jobGrade
+                        }})
+                    </li>
+                    <li v-if="unit">
+                        <span class="font-semibold">{{ $t('common.units') }}:</span> {{ unit.name }} ({{ unit.initials }})
+                    </li>
+                </ul>
             </div>
-            <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
-            <ul role="list" class="flex flex-col">
-                <li>
-                    <span class="font-semibold"> {{ $t('common.name') }} </span>: {{ marker.user?.firstname }}
-                    {{ marker.user?.lastname }}
-                </li>
-                <li v-if="(marker.user?.jobGrade ?? 0) > 0 && marker.user?.jobGradeLabel">
-                    <span class="font-semibold">{{ $t('common.rank') }}:</span> {{ marker.user?.jobGradeLabel }} ({{
-                        marker.user?.jobGrade
-                    }})
-                </li>
-                <li v-if="unit">
-                    <span class="font-semibold">{{ $t('common.unit') }}:</span> {{ unit.name }} ({{ unit.initials }})
-                </li>
-            </ul>
         </LPopup>
     </LMarker>
 </template>

@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { useThrottleFn, useTimeoutFn } from '@vueuse/core';
-import { CancelIcon, ContentSaveIcon, LoadingIcon, PencilIcon } from 'mdi-vue3';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -62,36 +60,23 @@ watch(editing, () => {
 <template>
     <div v-if="data !== null" class="w-full flex-col">
         <div class="flex items-center">
-            <h4 v-if="data.motd.length > 0 || canEdit" class="mt-2 flex-1 text-base font-semibold leading-6 text-neutral">
+            <h4 v-if="data.motd.length > 0 || canEdit" class="flex-1 text-base font-semibold leading-6">
                 {{ $t('common.motd') }}
             </h4>
 
             <template v-if="canEdit">
-                <button
-                    v-if="!editing"
-                    type="button"
-                    class="text-primary-500 hover:text-primary-400"
-                    @click="editing = !editing"
-                >
-                    <PencilIcon class="size-5" aria-hidden="true" />
-                </button>
+                <UButton v-if="!editing" variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
                 <div v-else class="flex flex-row gap-1">
-                    <button
-                        type="button"
-                        class="inline-flex flex-row text-primary-500 hover:text-primary-400"
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-content-save"
+                        :loading="!canSubmit"
                         @click="
                             onSubmitThrottle(data?.motd ?? '');
                             editing = !editing;
                         "
-                    >
-                        <ContentSaveIcon class="size-5" aria-hidden="true" />
-                        <template v-if="!canSubmit">
-                            <LoadingIcon class="mr-2 size-5 animate-spin" aria-hidden="true" />
-                        </template>
-                    </button>
-                    <button type="button" class="text-primary-500 hover:text-primary-400" @click="editing = !editing">
-                        <CancelIcon class="size-5" aria-hidden="true" />
-                    </button>
+                    />
+                    <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
                 </div>
             </template>
         </div>
@@ -105,14 +90,14 @@ watch(editing, () => {
                 </div>
             </template>
             <template v-else>
-                <textarea
+                <UTextarea
                     v-model="data.motd"
-                    rows="2"
+                    :rows="2"
+                    :maxrows="6"
                     name="content"
-                    class="w-full flex-1 rounded-md border-2 border-base-200 bg-base-700 py-1.5 text-neutral placeholder:text-accent-200 focus:ring-2 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
-                ></textarea>
+                />
             </template>
         </div>
     </div>

@@ -1,6 +1,6 @@
 <!-- eslint-disable tailwindcss/no-custom-classname -->
 <template>
-    <div class="snowflakes" aria-hidden="true">
+    <div class="snowflakes">
         <div class="snowflake">
             <div class="inner">❅</div>
         </div>

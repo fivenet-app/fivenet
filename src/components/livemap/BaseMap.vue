@@ -1,16 +1,12 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useRouteHash } from '@vueuse/router';
-import { useDebounceFn, useResizeObserver, useTimeoutFn, watchDebounced } from '@vueuse/core';
 import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 import 'leaflet-contextmenu';
-import 'leaflet-contextmenu/dist/leaflet.contextmenu.min.css';
 import { useLivemapStore } from '~/store/livemap';
 import { type ValueOf } from '~/utils/types';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
-
-const { $loading } = useNuxtApp();
 
 defineProps<{
     mapOptions?: Record<string, any>;
@@ -215,16 +211,8 @@ async function onMapReady($event: any): Promise<void> {
         isMoving.value = false;
     });
 
-    useTimeoutFn(async () => {
-        $loading.finish();
-    }, 500);
-
     emit('mapReady', map);
 }
-
-onBeforeMount(() => {
-    $loading.start();
-});
 
 onBeforeUnmount(() => {
     map = undefined;
@@ -266,7 +254,7 @@ onBeforeUnmount(() => {
             <LControlLayers />
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-            <LControl position="bottomleft" class="leaflet-control-attribution text-xs">
+            <LControl position="bottomleft" class="leaflet-control-attribution">
                 <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat }} |
                 <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong }}
             </LControl>
@@ -278,16 +266,16 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
-<style lang="scss">
+<style>
 .leaflet-container {
     font-family: var(--font-sans);
 }
 
 .leaflet-container a {
-    color: rgb(var(--colors-primary-500));
+    color: rgb(var(--color-primary-500));
 }
 .leaflet-container a:hover {
-    color: rgb(var(--colors-primary-400));
+    color: rgb(var(--color-primary-400));
 }
 
 .leaflet-div-icon {
@@ -303,6 +291,8 @@ onBeforeUnmount(() => {
 
 .leaflet-marker-icon {
     transition: transform 1s ease;
+    background: none;
+    border: none;
 }
 
 .leaflet-popup-content-wrapper {
@@ -314,5 +304,77 @@ onBeforeUnmount(() => {
 }
 .leaflet-popup-tip {
     background-color: #16171a;
+}
+
+.leaflet-control-layers-toggle {
+    background-color: rgb(var(--color-primary-500)) !important;
+}
+.leaflet-control-layers {
+    color: rgb(var(--color-primary-500));
+    background-color: rgb(var(--ui-background)) !important;
+}
+
+.leaflet-control-attribution {
+    color: rgb(var(--color-primary-500));
+    background-color: rgb(var(--ui-background)) !important;
+}
+
+.leaflet-control-attribution a {
+    color: rgb(var(--color-primary-500));
+}
+.leaflet-control-attribution a:hover {
+    color: rgb(var(--color-primary-400));
+}
+
+/* Leaflet Contextmenu */
+.leaflet-contextmenu {
+    display: none;
+    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.4);
+    -webkit-border-radius: 2px;
+    border-radius: 2px;
+    padding: 4px 0;
+    background-color: rgb(var(--ui-background));
+    cursor: default;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none;
+}
+
+.leaflet-contextmenu a.leaflet-contextmenu-item {
+    display: block;
+    color: rgb(var(--color-primary-500));
+    font-size: 12px;
+    line-height: 20px;
+    text-decoration: none;
+    padding: 0 12px;
+    cursor: default;
+    outline: none;
+}
+
+.leaflet-contextmenu a.leaflet-contextmenu-item-disabled {
+    opacity: 0.5;
+}
+
+.leaflet-contextmenu a.leaflet-contextmenu-item.over {
+    background-color: rgb(var(--color-primary-100));
+}
+
+.leaflet-contextmenu a.leaflet-contextmenu-item-disabled.over {
+    background-color: inherit;
+    border-top: 1px solid transparent;
+    border-bottom: 1px solid transparent;
+}
+
+.leaflet-contextmenu-icon {
+    margin: 2px 8px 0 0;
+    width: 16px;
+    height: 16px;
+    float: left;
+    border: 0;
+}
+
+.leaflet-contextmenu-separator {
+    border-bottom: 1px solid #ccc;
+    margin: 5px 0;
 }
 </style>

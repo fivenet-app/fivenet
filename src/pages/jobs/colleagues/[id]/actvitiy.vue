@@ -1,0 +1,24 @@
+<script lang="ts" setup>
+import type { TypedRouteFromName } from '@typed-router';
+import ColleagueActivityFeed from '~/components/jobs/colleagues/info/ColleagueActivityFeed.vue';
+
+useHead({
+    title: 'pages.citizens.id.title',
+});
+definePageMeta({
+    title: 'pages.citizens.id.title',
+    requiresAuth: true,
+    permission: 'CitizenStoreService.GetUser',
+    validate: async (route) => {
+        route = route as TypedRouteFromName<'jobs-colleagues-id-actvitiy'>;
+        // Check if the id is made up of digits
+        return /^\d+$/.test(route.params.id);
+    },
+});
+
+const route = useRoute('jobs-colleagues-id-actvitiy');
+</script>
+
+<template>
+    <ColleagueActivityFeed :user-id="parseInt(route.params.id)" />
+</template>
