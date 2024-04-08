@@ -44,7 +44,7 @@ onBeforeMount(() => bmiCalculate());
                             @focusout="focusTablet(false)"
                         />
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                            <span class="text-gray-300 sm:text-sm">cm</span>
+                            <span class="sm:text-sm">cm</span>
                         </div>
                     </div>
                 </div>
@@ -68,7 +68,7 @@ onBeforeMount(() => bmiCalculate());
                             @focusout="focusTablet(false)"
                         />
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
-                            <span class="text-gray-300 sm:text-sm">kg</span>
+                            <span class="sm:text-sm">kg</span>
                         </div>
                     </div>
                 </div>

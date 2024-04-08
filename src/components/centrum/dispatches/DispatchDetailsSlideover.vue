@@ -203,7 +203,6 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                                     :unit="unit.unit"
                                                     :assignment="unit"
                                                     class="flex items-center justify-center"
-                                                    text-class="text-gray-300"
                                                 >
                                                     <template #before>
                                                         <UIcon name="i-mdi-account-group" class="mr-1 size-5 shrink-0" />

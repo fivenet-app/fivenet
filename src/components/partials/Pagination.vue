@@ -26,7 +26,7 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 
 <template>
     <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-        <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm text-gray-300">
+        <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm">
             <template #current>
                 <span class="text-neutral font-medium">
                     {{ page }}

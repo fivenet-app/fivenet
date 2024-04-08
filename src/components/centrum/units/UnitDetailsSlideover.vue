@@ -159,11 +159,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                         class="flex items-center justify-between py-3 pl-3 pr-4"
                                     >
                                         <div class="flex flex-1 items-center">
-                                            <CitizenInfoPopover
-                                                :user="user.user"
-                                                class="flex items-center justify-center"
-                                                text-class="text-gray-300"
-                                            >
+                                            <CitizenInfoPopover :user="user.user" class="flex items-center justify-center">
                                                 <template #before>
                                                     <UIcon name="i-mdi-account" class="mr-1 size-5 shrink-0" />
                                                 </template>
