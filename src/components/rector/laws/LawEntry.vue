@@ -18,7 +18,7 @@ const { $grpc } = useNuxtApp();
 
 const schema = z.object({
     name: z.string().min(3).max(128),
-    description: z.string().min(3).max(500).optional(),
+    description: z.union([z.string().min(3).max(500), z.string().length(0).optional()]),
     fine: z.coerce.number().min(0).max(999_999_999).optional(),
     detentionTime: z.coerce.number().min(0).max(999_999_999).optional(),
     stvoPoints: z.coerce.number().min(0).max(999_999_999).optional(),

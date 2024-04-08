@@ -116,7 +116,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                 class="mb-4 sm:flex sm:items-center"
             >
                 <div class="sm:flex-auto">
-                    <UForm :state="{}" @submit="refresh()">
+                    <UForm :schema="{}" :state="{}" @submit="refresh()">
                         <div class="flex flex-row gap-2">
                             <div class="flex-1">
                                 <UFormGroup name="selectedUsers" :label="$t('common.colleague', 2)" class="flex-1">

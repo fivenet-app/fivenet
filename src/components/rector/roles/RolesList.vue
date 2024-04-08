@@ -98,7 +98,7 @@ const columns = [
                     <template v-if="can('RectorService.CreateRole')">
                         <div class="sm:flex sm:items-center">
                             <div class="sm:flex-auto">
-                                <UForm :state="{}">
+                                <UForm :schema="{}" :state="{}">
                                     <div class="flex flex-row gap-2">
                                         <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
                                             <USelectMenu v-model="selectedJobGrade" :options="availableJobGrades" by="grade">

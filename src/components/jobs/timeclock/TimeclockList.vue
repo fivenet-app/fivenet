@@ -155,7 +155,7 @@ function updateDates(): void {
 
 <template>
     <div>
-        <UForm :state="{}" @submit="refresh()">
+        <UForm :schema="{}" :state="{}" @submit="refresh()">
             <UDashboardToolbar>
                 <template #default>
                     <div class="flex w-full flex-col">

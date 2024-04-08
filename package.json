@@ -38,9 +38,6 @@
         "@unovis/ts": "^1.4.0",
         "@unovis/vue": "^1.4.0",
         "@valibot/i18n": "^0.9.0",
-        "@vee-validate/i18n": "4.12.6",
-        "@vee-validate/nuxt": "4.12.6",
-        "@vee-validate/rules": "4.12.6",
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@zxcvbn-ts/core": "3.0.4",
         "date-fns": "^3.6.0",
@@ -58,7 +55,6 @@
         "splitpanes": "3.1.5",
         "uuid": "9.0.1",
         "v-calendar": "^3.1.2",
-        "vee-validate": "4.12.6",
         "vue-color-input": "1.0.8",
         "vue-json-pretty": "2.4.0",
         "zod": "^3.22.4"

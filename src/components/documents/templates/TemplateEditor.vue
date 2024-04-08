@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, numeric, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
@@ -30,46 +30,35 @@ const { t } = useI18n();
 
 const maxAccessEntries = 10;
 
-defineRule('required', required);
-defineRule('numeric', numeric);
-defineRule('min', min);
-defineRule('max', max);
+const schema = z.object({
+    weight: z.number().min(0).max(999_999),
+    title: z.string().min(3).max(255),
+    description: z.string().min(3).max(255),
+    contentTitle: z.string().min(3).max(2048),
+    content: z.string().min(3).max(1500000),
+    contentState: z.union([z.string().min(1).max(2048), z.string().length(0)]),
+    category: z.custom<Category>().optional(),
+});
 
-interface FormData {
-    weight: number;
-    title: string;
-    description: string;
-    contentTitle: string;
-    content: string;
-    contentState: string;
-}
+type Schema = z.output<typeof schema>;
 
-const { handleSubmit, setValues, meta } = useForm<FormData>({
-    validationSchema: {
-        weight: { required: true, numeric: { min: 0, max: 4294967295 } },
-        title: { required: true, min: 3, max: 255 },
-        description: { required: true, min: 3, max: 255 },
-        contentTitle: { required: true, min: 3, max: 2048 },
-        content: { required: true, min: 3, max: 1500000 },
-        contentState: { required: false, min: 0, max: 2048 },
-    },
-    validateOnMount: true,
-    initialValues: {
-        contentState: '',
-    },
+const state = reactive<Schema>({
+    weight: 0,
+    title: '',
+    description: '',
+    contentTitle: '',
+    content: '',
+    contentState: '',
+    category: undefined,
 });
 
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await createOrUpdateTemplate(values, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createOrUpdateTemplate(event.data, props.templateId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const schema = ref<SchemaEditorValue>({
+const schemaEditor = ref<SchemaEditorValue>({
     users: {
         req: false,
         min: 0,
@@ -276,11 +265,11 @@ function createObjectSpec(v: ObjectSpecsValue): ObjectSpecs {
     return o;
 }
 
-async function createOrUpdateTemplate(values: FormData, templateId?: string): Promise<void> {
+async function createOrUpdateTemplate(values: Schema, templateId?: string): Promise<void> {
     const tRequirements: TemplateRequirements = {
-        users: createObjectSpec(schema.value.users),
-        documents: createObjectSpec(schema.value.documents),
-        vehicles: createObjectSpec(schema.value.vehicles),
+        users: createObjectSpec(schemaEditor.value.users),
+        documents: createObjectSpec(schemaEditor.value.documents),
+        vehicles: createObjectSpec(schemaEditor.value.vehicles),
     };
 
     const jobAccesses: TemplateJobAccess[] = [];
@@ -412,17 +401,13 @@ async function findCategories(): Promise<void> {
 }
 
 function setValuesFromTemplate(tpl: Template): void {
-    setValues({
-        weight: tpl.weight,
-        title: tpl.title,
-        description: tpl.description,
-        contentTitle: tpl.contentTitle,
-        content: tpl.content,
-        contentState: tpl.state,
-    });
-    if (tpl.category !== undefined) {
-        selectedCategory.value = tpl.category;
-    }
+    state.weight = tpl.weight;
+    state.title = tpl.title;
+    state.description = tpl.description;
+    state.contentTitle = tpl.contentTitle;
+    state.content = tpl.content;
+    state.contentState = tpl.state;
+    state.category = tpl.category;
 
     const tplAccess = tpl.jobAccess;
     if (tplAccess !== undefined) {
@@ -474,17 +459,17 @@ function setValuesFromTemplate(tpl: Template): void {
         });
     }
 
-    schema.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
-    schema.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
-    schema.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
+    schemaEditor.value.users.req = tpl.schema?.requirements?.users?.required ?? false;
+    schemaEditor.value.users.min = tpl.schema?.requirements?.users?.min ?? 0;
+    schemaEditor.value.users.max = tpl.schema?.requirements?.users?.max ?? 0;
 
-    schema.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
-    schema.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
-    schema.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
+    schemaEditor.value.documents.req = tpl.schema?.requirements?.documents?.required ?? false;
+    schemaEditor.value.documents.min = tpl.schema?.requirements?.documents?.min ?? 0;
+    schemaEditor.value.documents.max = tpl.schema?.requirements?.documents?.max ?? 0;
 
-    schema.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
-    schema.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
-    schema.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
+    schemaEditor.value.vehicles.req = tpl.schema?.requirements?.vehicles?.required ?? false;
+    schemaEditor.value.vehicles.min = tpl.schema?.requirements?.vehicles?.min ?? 0;
+    schemaEditor.value.vehicles.max = tpl.schema?.requirements?.vehicles?.max ?? 0;
 }
 
 onMounted(async () => {
@@ -506,9 +491,7 @@ onMounted(async () => {
             $grpc.handleError(e as RpcError);
         }
     } else {
-        setValues({
-            weight: 0,
-        });
+        state.weight = 0;
 
         access.value.set('0', {
             id: '0',
@@ -528,85 +511,92 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
 </script>
 
 <template>
-    <div class="m-2">
-        <UForm :state="{}">
+    <div>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
+                <template #right>
+                    <UButtonGroup class="inline-flex">
+                        <UButton
+                            color="black"
+                            :to="
+                                templateId
+                                    ? { name: 'documents-templates-id', params: { id: templateId } }
+                                    : `/documents/templates`
+                            "
+                        >
+                            {{ $t('common.back') }}
+                        </UButton>
+
+                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ templateId ? $t('common.save') : $t('common.create') }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UDashboardNavbar>
+
             <UCard class="bg-base-800">
                 <div>
-                    <label for="content" class="block text-sm font-medium leading-6 text-gray-100">
-                        {{ $t('common.template', 2) }} {{ $t('common.weight') }}
-                    </label>
-                    <div class="mt-2">
-                        <VeeField
+                    <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`" class="flex-1">
+                        <UInput
+                            v-model="state.weight"
                             type="number"
                             name="weight"
                             min="0"
-                            max="4294967295"
-                            :label="$t('common.weight')"
+                            max="999999"
                             :placeholder="$t('common.weight')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                    </div>
-                </div>
-                <div>
-                    <label for="title" class="mt-2 block text-sm font-medium">
-                        {{ $t('common.template') }} {{ $t('common.title') }}
-                    </label>
-                    <div>
-                        <VeeField
-                            as="textarea"
-                            rows="1"
+                    </UFormGroup>
+
+                    <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`">
+                        <UTextarea
                             name="title"
-                            :label="$t('common.title')"
+                            :rows="1"
                             :placeholder="$t('common.title')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="title" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                </div>
-                <div>
-                    <label for="description" class="mt-2 block text-sm font-medium">
-                        {{ $t('common.template') }} {{ $t('common.description') }}
-                    </label>
-                    <div>
-                        <VeeField
-                            as="textarea"
-                            rows="4"
+                    </UFormGroup>
+
+                    <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`">
+                        <UTextarea
                             name="description"
+                            :rows="4"
                             :label="$t('common.description')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
+                    </UFormGroup>
                 </div>
-                <div>
-                    <div class="my-3">
-                        <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-                        <DocumentAccessEntry
-                            v-for="entry in access.values()"
-                            :key="entry.id"
-                            :init="entry"
-                            :access-types="accessTypes"
-                            :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
-                            :jobs="jobs"
-                            @type-change="updateDocumentAccessEntryType($event)"
-                            @name-change="updateDocumentAccessEntryName($event)"
-                            @rank-change="updateDocumentAccessEntryRank($event)"
-                            @access-change="updateDocumentAccessEntryAccess($event)"
-                            @delete-request="removeDocumentAccessEntry($event)"
-                        />
-                        <UButton
-                            icon="i-mdi-plus"
-                            :title="$t('components.documents.document_editor.add_permission')"
-                            @click="addDocumentAccessEntry()"
-                        />
-                    </div>
+
+                <div class="my-3">
+                    <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+
+                    <DocumentAccessEntry
+                        v-for="entry in access.values()"
+                        :key="entry.id"
+                        :init="entry"
+                        :access-types="accessTypes"
+                        :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
+                        :jobs="jobs"
+                        @type-change="updateDocumentAccessEntryType($event)"
+                        @name-change="updateDocumentAccessEntryName($event)"
+                        @rank-change="updateDocumentAccessEntryRank($event)"
+                        @access-change="updateDocumentAccessEntryAccess($event)"
+                        @delete-request="removeDocumentAccessEntry($event)"
+                    />
+
+                    <UButton
+                        icon="i-mdi-plus"
+                        :ui="{ rounded: 'rounded-full' }"
+                        :title="$t('components.documents.document_editor.add_permission')"
+                        @click="addDocumentAccessEntry()"
+                    />
                 </div>
             </UCard>
 
-            <div class="mt-2 flex flex-col sm:flex-row">
+            <div class="my-2 flex">
                 <SingleHint
                     class="min-w-full"
                     hint-id="template_editor_templating"
@@ -618,75 +608,60 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
 
             <UCard class="bg-base-800">
                 <div>
-                    <label for="contentTitle" class="mt-2 block text-sm font-medium">
-                        {{ $t('common.content') }} {{ $t('common.title') }}
-                    </label>
-                    <div>
-                        <VeeField
-                            as="textarea"
-                            rows="2"
+                    <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" class="flex-1">
+                        <UTextarea
+                            v-model="state.contentTitle"
                             name="contentTitle"
-                            :label="$t('common.title')"
+                            :rows="2"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="contentTitle" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                </div>
+                    </UFormGroup>
 
-                <UFormGroup class="flex-1" :label="$t('common.category', 1)">
-                    <UInputMenu
-                        v-model="selectedCategory"
-                        option-attribute="name"
-                        :search-attributes="['name']"
-                        block
-                        nullable
-                        :search="completorStore.completeDocumentCategories"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                    </UInputMenu>
-                </UFormGroup>
+                    <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                        <UInputMenu
+                            v-model="state.category"
+                            option-attribute="name"
+                            :search-attributes="['name']"
+                            block
+                            nullable
+                            :search="completorStore.completeDocumentCategories"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                        </UInputMenu>
+                    </UFormGroup>
 
-                <div>
-                    <label for="contentState" class="mt-2 block text-sm font-medium">
-                        {{ $t('common.content') }} {{ $t('common.state') }}
-                    </label>
-                    <div>
-                        <VeeField
-                            as="textarea"
-                            rows="2"
+                    <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`" class="flex-1">
+                        <UTextarea
+                            v-model="state.contentState"
                             name="contentState"
-                            :label="$t('common.state')"
+                            :rows="2"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="contentState" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                </div>
-                <div>
-                    <label for="content" class="mt-2 block text-sm font-medium">
-                        {{ $t('common.content') }} {{ $t('common.template') }}
-                    </label>
-                    <div>
-                        <VeeField
-                            as="textarea"
-                            rows="6"
+                    </UFormGroup>
+
+                    <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" class="flex-1">
+                        <UTextarea
+                            v-model="state.content"
                             name="content"
-                            :label="$t('common.template')"
+                            :rows="6"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="content" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
+                    </UFormGroup>
                 </div>
-                <TemplateSchemaEditor v-model="schema" class="mt-2" />
+
+                <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+
                 <div class="my-3">
                     <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+
                     <DocumentAccessEntry
                         v-for="entry in contentAccess.values()"
                         :key="entry.id"
@@ -701,23 +676,15 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                         @delete-request="removeContentDocumentAccessEntry($event)"
                         @required-change="updateContentDocumentAccessEntryRequired($event)"
                     />
+
                     <UButton
                         icon="i-mdi-plus"
+                        :ui="{ rounded: 'rounded-full' }"
                         :title="$t('components.documents.document_editor.add_permission')"
                         @click="addContentDocumentAccessEntry()"
                     />
                 </div>
             </UCard>
-
-            <div>
-                <UButton
-                    class="mt-4 flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    :disabled="!meta.valid || !canSubmit"
-                    :loading="!canSubmit"
-                >
-                    {{ templateId ? $t('common.save') : $t('common.create') }}
-                </UButton>
-            </div>
         </UForm>
     </div>
 </template>

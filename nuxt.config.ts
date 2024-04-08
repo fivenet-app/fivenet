@@ -21,7 +21,6 @@ export default defineNuxtConfig({
         '@pinia-plugin-persistedstate/nuxt',
         '@vueuse/nuxt',
         '@dargmuesli/nuxt-cookie-control',
-        '@vee-validate/nuxt',
         'nuxt-update',
     ],
     ui: {

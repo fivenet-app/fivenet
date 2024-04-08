@@ -114,7 +114,7 @@ const modal = useModal();
     <div class="py-2 pb-4">
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
-                <UForm :state="{}" class="flex w-full gap-2">
+                <UForm :schema="{}" :state="{}" class="flex w-full gap-2">
                     <UFormGroup class="flex-1" :label="$t('common.colleague', 1)">
                         <UInput
                             v-model="query.name"

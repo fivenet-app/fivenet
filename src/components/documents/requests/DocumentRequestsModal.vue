@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import DocumentRequestsList from '~/components/documents/requests/DocumentRequestsList.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
@@ -39,22 +39,28 @@ const availableRequestTypes = computed<RequestType[]>(() =>
     requestTypes.filter((rt) => attr('DocStoreService.CreateDocumentReq', 'Types', rt.attrKey)),
 );
 
-const selectedRequestType = ref<RequestType | undefined>(availableRequestTypes.value.at(0));
+const schema = z.object({
+    reason: z.string().min(3).max(255),
+    requestType: z.custom<DocActivityType>().optional(),
+});
 
-interface FormData {
-    reason?: string;
-}
+type Schema = z.output<typeof schema>;
 
-async function createDocumentRequest(values: FormData): Promise<void> {
-    if (selectedRequestType.value === undefined) {
+const state = reactive<Schema>({
+    reason: '',
+    requestType: availableRequestTypes.value[0]?.key ?? undefined,
+});
+
+async function createDocumentRequest(values: Schema): Promise<void> {
+    if (values.requestType === undefined) {
         return;
     }
 
     try {
         const call = $grpc.getDocStoreClient().createDocumentReq({
             documentId: props.doc.id,
-            requestType: selectedRequestType.value.key,
             reason: values.reason,
+            requestType: values.requestType,
         });
         await call;
 
@@ -71,17 +77,6 @@ async function createDocumentRequest(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('max', max);
-defineRule('min', min);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        reason: { required: true, min: 3, max: 255 },
-    },
-    validateOnMount: true,
-});
-
 const canCreate =
     props.doc.creatorId !== activeChar.value?.userId &&
     availableRequestTypes.value.length > 0 &&
@@ -89,62 +84,47 @@ const canCreate =
     checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW);
 
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await createDocumentRequest(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createDocumentRequest(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.request', 2) }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('common.request', 2) }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <div>
-                <template v-if="canCreate">
-                    <UFormGroup name="reason" :label="$t('common.reason')">
-                        <UInput
-                            v-model="state.reason"
-                            type="text"
-                            :placeholder="$t('common.reason')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-                    <div class="my-2 space-y-20">
-                        <div class="flex-1">
-                            <label for="requestsType" class="block text-sm font-medium leading-6">
-                                {{ $t('common.type', 2) }}
-                            </label>
-                            <VeeField
+                <div>
+                    <template v-if="canCreate">
+                        <UFormGroup name="reason" :label="$t('common.reason')">
+                            <UInput
+                                v-model="state.reason"
                                 type="text"
-                                name="requestsType"
-                                :placeholder="$t('common.type', 2)"
-                                :label="$t('common.type', 2)"
+                                :placeholder="$t('common.reason')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
-                            >
+                            />
+                        </UFormGroup>
+
+                        <div class="my-2">
+                            <UFormGroup name="requestsType" :label="$t('common.type', 2)" class="flex-1">
                                 <USelectMenu
-                                    v-model="selectedRequestType"
+                                    v-model="state.requestType"
                                     :options="availableRequestTypes"
+                                    value-attribute="key"
                                     :placeholder="
-                                        selectedRequestType
-                                            ? $t(
-                                                  `enums.docstore.DocActivityType.${DocActivityType[selectedRequestType?.key ?? 0]}`,
-                                                  2,
-                                              )
+                                        state.requestType
+                                            ? $t(`enums.docstore.DocActivityType.${DocActivityType[state.requestType ?? 0]}`, 2)
                                             : $t('common.na')
                                     "
                                 >
@@ -160,33 +140,32 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                                         {{ $t('common.not_found', [$t('common.type', 2)]) }}
                                     </template>
                                 </USelectMenu>
-                            </VeeField>
-                            <VeeErrorMessage name="requestsType" as="p" class="mt-2 text-sm text-error-400" />
+                            </UFormGroup>
                         </div>
-                    </div>
+                    </template>
+
+                    <DocumentRequestsList :doc="doc" :access="access" @refresh="$emit('refresh')" />
+                </div>
+
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton
+                            v-if="canCreate"
+                            type="submit"
+                            block
+                            class="flex-1"
+                            :disabled="!canSubmit"
+                            :loading="!canSubmit"
+                        >
+                            {{ $t('common.add') }}
+                        </UButton>
+
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
                 </template>
-
-                <DocumentRequestsList :doc="doc" :access="access" @refresh="$emit('refresh')" />
-            </div>
-
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton
-                        v-if="canCreate"
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.add') }}
-                    </UButton>
-
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

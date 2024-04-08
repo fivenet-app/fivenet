@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
@@ -21,7 +21,17 @@ const { settings } = storeToRefs(centrumStore);
 
 const notifications = useNotificatorStore();
 
-const status = computed<number>(() => props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN);
+const schema = z.object({
+    status: z.custom<StatusUnit>(),
+    code: z.union([z.string().min(0).max(20), z.string().optional()]),
+    reason: z.union([z.string().min(3).max(255), z.string().optional()]),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    status: props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN,
+});
 
 interface FormData {
     status: number;
@@ -39,8 +49,6 @@ async function updateUnitStatus(id: string, values: FormData): Promise<void> {
         });
         await call;
 
-        setFieldValue('status', values.status.valueOf());
-
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },
             description: { key: 'notifications.centrum.sidebar.unit_status_updated.content', parameters: {} },
@@ -54,50 +62,26 @@ async function updateUnitStatus(id: string, values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setFieldValue } = useForm<FormData>({
-    validationSchema: {
-        status: { required: true },
-        code: { required: false },
-        reason: { required: false, min: 3, max: 255 },
-    },
-    initialValues: {
-        status: status.value,
-    },
-    validateOnMount: true,
-});
-
-watch(props, () => {
-    if (props.status) {
-        setFieldValue('status', props.status.valueOf());
-    }
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await updateUnitStatus(props.unit.id, values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await updateUnitStatus(props.unit.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
+
+watch(props, () => (state.status = props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN));
 
 function updateReasonField(value: string): void {
     if (value.length === 0) {
         return;
     }
 
-    setFieldValue('reason', value);
+    state.reason = value;
 }
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="{}" :state="{}" class="flex h-full flex-col divide-y divide-gray-200" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
@@ -127,40 +111,34 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <VeeField
-                                    v-slot="{ field }"
-                                    name="status"
-                                    as="div"
-                                    class="grid w-full grid-cols-2 gap-0.5"
-                                    :placeholder="$t('common.status')"
-                                    :label="$t('common.status')"
-                                >
-                                    <UButton
-                                        v-for="item in unitStatuses"
-                                        :key="item.name"
-                                        class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
-                                        :class="[
-                                            field.value == item.status
-                                                ? 'disabled bg-base-500 hover:bg-base-400'
-                                                : item.status
-                                                  ? unitStatusToBGColor(item.status)
-                                                  : '',
-                                            ,
-                                        ]"
-                                        :disabled="field.value == item.status"
-                                        @click="setFieldValue('status', item.status?.valueOf() ?? 0)"
-                                    >
-                                        <UIcon :name="item.icon" class="size-5 shrink-0" />
-                                        <span class="mt-1">
-                                            {{
-                                                item.status
-                                                    ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
-                                                    : $t(item.name)
-                                            }}
-                                        </span>
-                                    </UButton>
-                                </VeeField>
-                                <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
+                                <UFormGroup name="status">
+                                    <div class="grid w-full grid-cols-2 gap-0.5">
+                                        <UButton
+                                            v-for="item in unitStatuses"
+                                            :key="item.name"
+                                            class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
+                                            :class="[
+                                                state.status == item.status
+                                                    ? 'disabled bg-base-500 hover:bg-base-400'
+                                                    : item.status
+                                                      ? unitStatusToBGColor(item.status)
+                                                      : '',
+                                                ,
+                                            ]"
+                                            :disabled="state.status == item.status"
+                                            @click="state.status = item.status ?? StatusUnit.UNAVAILABLE"
+                                        >
+                                            <UIcon :name="item.icon" class="size-5 shrink-0" />
+                                            <span class="mt-1">
+                                                {{
+                                                    item.status
+                                                        ? $t(`enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`)
+                                                        : $t(item.name)
+                                                }}
+                                            </span>
+                                        </UButton>
+                                    </div>
+                                </UFormGroup>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -170,15 +148,17 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <VeeField
-                                    type="text"
-                                    name="code"
-                                    :placeholder="$t('common.code')"
-                                    :label="$t('common.code')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="code" as="p" class="mt-2 text-sm text-error-400" />
+                                <UFormGroup name="code" class="flex-1">
+                                    <UInput
+                                        v-model="state.code"
+                                        type="text"
+                                        name="code"
+                                        :placeholder="$t('common.code')"
+                                        :label="$t('common.code')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -188,15 +168,16 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <VeeField
-                                    type="text"
-                                    name="reason"
-                                    :placeholder="$t('common.reason')"
-                                    :label="$t('common.reason')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="reason" as="p" class="mt-2 text-sm text-error-400" />
+                                <UFormGroup name="reason" class="flex-1">
+                                    <UInput
+                                        v-model="state.reason"
+                                        type="text"
+                                        name="reason"
+                                        :placeholder="$t('common.reason')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
                             </dd>
                         </div>
                         <div
@@ -210,20 +191,13 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <select
+                                <USelectMenu
+                                    name="unitStatus"
+                                    :options="['', ...settings?.predefinedStatus.unitStatus]"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
-                                    @change="updateReasonField(($event.target as HTMLSelectElement).value)"
-                                >
-                                    <option value=""></option>
-                                    <option
-                                        v-for="(preStatus, idx) in settings?.predefinedStatus.unitStatus"
-                                        :key="idx"
-                                        :value="preStatus"
-                                    >
-                                        {{ preStatus }}
-                                    </option>
-                                </select>
+                                    @change="updateReasonField($event)"
+                                />
                             </dd>
                         </div>
                     </dl>
@@ -231,7 +205,7 @@ function updateReasonField(value: string): void {
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton type="submit" block class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.update') }}
                         </UButton>
 

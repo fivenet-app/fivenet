@@ -130,7 +130,7 @@ const columns = [
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <UForm :state="{}">
+                    <UForm :schema="{}" :state="{}" @submit="refresh()">
                         <div class="flex flex-row gap-2">
                             <UFormGroup v-if="hideUserSearch !== true" name="user" class="flex-1" :label="$t('common.target')">
                                 <UInputMenu

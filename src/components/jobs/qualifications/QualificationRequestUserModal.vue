@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import type { QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -18,6 +18,16 @@ const { $grpc } = useNuxtApp();
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
+
+const schema = z.object({
+    userComment: z.string().min(3).max(255),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    userComment: '',
+});
 
 interface FormData {
     userComment: string;
@@ -53,79 +63,52 @@ async function createOrUpdateQualificationRequest(
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        userComment: { required: true, min: 3, max: 255 },
-    },
-    validateOnMount: true,
-    initialValues: {},
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<any> =>
-        await createOrUpdateQualificationRequest(props.qualificationId, values).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createOrUpdateQualificationRequest(props.qualificationId, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.qualifications.request_modal.title') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.qualifications.request_modal.title') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
+                </template>
 
-            <div>
-                <UForm :state="{}">
-                    <div class="flex-1">
-                        <label for="userComment" class="block text-sm font-medium leading-6">
-                            {{ $t('common.message') }}
-                        </label>
-                        <VeeField
-                            as="textarea"
+                <div>
+                    <UFormGroup name="userComment" :label="$t('common.message')" class="flex-1">
+                        <UTextarea
                             name="userComment"
                             :placeholder="$t('common.message')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="userComment" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                </UForm>
-            </div>
+                    </UFormGroup>
+                </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.submit') }}
-                    </UButton>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.submit') }}
+                        </UButton>
 
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

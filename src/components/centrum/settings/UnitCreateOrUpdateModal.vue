@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
 
@@ -17,19 +17,30 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-interface FormData {
-    name: string;
-    initials: string;
-    description: string;
-    color: string;
-    attributes: string[];
-    homePostal?: string;
-}
-
 const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
+
+const schema = z.object({
+    name: z.string().min(3).max(24),
+    initials: z.string().min(2).max(4),
+    description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
+    color: z.string().length(7),
+    homePostal: z.union([z.string().min(0).max(48), z.string().optional()]),
+    attributes: z.string().array().max(5),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    name: '',
+    initials: '',
+    description: '',
+    color: '#000000',
+    attributes: [],
+});
+
 const selectedAttributes = ref<string[]>([]);
 
-async function createOrUpdateUnit(values: FormData): Promise<void> {
+async function createOrUpdateUnit(values: Schema): Promise<void> {
     try {
         const call = $grpc.getCentrumClient().createOrUpdateUnit({
             unit: {
@@ -40,7 +51,7 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
                 color: values.color,
                 description: values.description,
                 attributes: {
-                    list: selectedAttributes.value,
+                    list: values.attributes,
                 },
                 users: [],
                 homePostal: values.homePostal,
@@ -61,41 +72,20 @@ async function createOrUpdateUnit(values: FormData): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta, setFieldValue, setValues } = useForm<FormData>({
-    validationSchema: {
-        name: { required: true, min: 3, max: 24 },
-        initials: { required: true, min: 2, max: 4 },
-        description: { required: false, max: 255 },
-        homePostal: { required: false, max: 48 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await createOrUpdateUnit(values).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400)),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createOrUpdateUnit(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 async function updateUnitInForm(): Promise<void> {
     if (props.unit !== undefined) {
-        setValues({
-            name: props.unit.name,
-            initials: props.unit.initials,
-            description: props.unit.description,
-            color: props.unit.color,
-            homePostal: props.unit.homePostal,
-        });
-
-        selectedAttributes.value = props.unit.attributes?.list ?? [];
+        state.name = props.unit.name;
+        state.initials = props.unit.initials;
+        state.description = props.unit.description;
+        state.color = props.unit.color;
+        state.homePostal = props.unit.homePostal;
+        state.attributes = props.unit.attributes?.list ?? [];
     }
 }
 
@@ -106,7 +96,7 @@ onBeforeMount(async () => updateUnitInForm());
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="{}" :state="{}" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
@@ -124,103 +114,72 @@ onBeforeMount(async () => updateUnitInForm());
                 </template>
 
                 <div>
-                    <div class="text-center">
-                        <div>
-                            <div class="text-sm text-gray-100">
-                                <div class="flex-1">
-                                    <label for="name" class="block text-sm font-medium leading-6">
-                                        {{ $t('common.name') }}
-                                    </label>
-                                    <VeeField
-                                        name="name"
-                                        type="text"
-                                        :placeholder="$t('common.name')"
-                                        :label="$t('common.name')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                                <div class="flex-1">
-                                    <label for="initials" class="block text-sm font-medium leading-6">
-                                        {{ $t('common.initials') }}
-                                    </label>
-                                    <VeeField
-                                        name="initials"
-                                        type="text"
-                                        :placeholder="$t('common.initials')"
-                                        :label="$t('common.initials')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                                <div class="flex-1">
-                                    <label for="description" class="block text-sm font-medium leading-6">
-                                        {{ $t('common.description') }}
-                                    </label>
-                                    <VeeField
-                                        name="description"
-                                        type="text"
-                                        :placeholder="$t('common.description')"
-                                        :label="$t('common.description')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                                <div class="flex-1">
-                                    <label for="attributes" class="block text-sm font-medium leading-6">
-                                        {{ $t('common.attributes', 2) }}
-                                    </label>
-                                    <VeeField
-                                        name="attributes"
-                                        :placeholder="$t('common.attributes', 2)"
-                                        :label="$t('common.attributes', 2)"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    >
-                                        <USelectMenu
-                                            v-model="selectedAttributes"
-                                            multiple
-                                            nullable
-                                            :options="availableAttributes"
-                                            :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
-                                        >
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                            </template>
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
-                                            </template>
-                                        </USelectMenu>
-                                    </VeeField>
-                                </div>
-                                <div class="flex-1">
-                                    <label for="color" class="block text-sm font-medium leading-6">
-                                        {{ $t('common.color') }}
-                                    </label>
-                                    <ColorInput
-                                        :model-value="unit?.color ?? '#000000'"
-                                        disable-alpha
-                                        format="hex"
-                                        position="top"
-                                        @change="setFieldValue('color', $event)"
-                                    />
-                                </div>
-                                <div class="flex-1">
-                                    <label for="homePostal" class="block text-sm font-medium leading-6">
-                                        {{ `${$t('common.department')} ${$t('common.postal_code')}` }}
-                                    </label>
-                                    <VeeField
-                                        name="homePostal"
-                                        type="text"
-                                        :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
-                                        :label="`${$t('common.department')} ${$t('common.postal_code')}`"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                        <UInput
+                            v-model="state.name"
+                            name="name"
+                            type="text"
+                            :placeholder="$t('common.name')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="initials" :label="$t('common.initials')" class="flex-1">
+                        <UInput
+                            name="initials"
+                            type="text"
+                            :placeholder="$t('common.initials')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UInput
+                            name="description"
+                            type="text"
+                            :placeholder="$t('common.description')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="attributes" :label="$t('common.attributes', 2)" class="flex-1">
+                        <USelectMenu
+                            v-model="selectedAttributes"
+                            multiple
+                            nullable
+                            :options="availableAttributes"
+                            :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
+
+                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                        <ColorInput v-model="state.color" disable-alpha format="hex" position="top" />
+                    </UFormGroup>
+
+                    <UFormGroup
+                        name="homePostal"
+                        :label="`${$t('common.department')} ${$t('common.postal_code')}`"
+                        class="flex-1"
+                    >
+                        <UInput
+                            v-model="state.homePostal"
+                            name="homePostal"
+                            type="text"
+                            :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                 </div>
 
                 <template #footer>

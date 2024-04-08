@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, max_value, min, min_value, numeric, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -20,23 +20,37 @@ const { $grpc } = useNuxtApp();
 
 const notifications = useNotificatorStore();
 
-interface FormData {
-    status: ResultStatus;
-    score: number;
-    summary: string;
-}
+const availableStatus = [
+    { status: ResultStatus.SUCCESSFUL },
+    { status: ResultStatus.FAILED },
+    { status: ResultStatus.PENDING },
+];
+
+const schema = z.object({
+    status: z.custom<ResultStatus>(),
+    score: z.coerce.number().min(0).max(1000),
+    summary: z.string().min(3).max(255),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    status: ResultStatus.PENDING,
+    score: 0,
+    summary: '',
+});
 
 async function createOrUpdateQualificationRequest(
     qualificationId: string,
     userId: number,
-    values: FormData,
+    values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
         const call = $grpc.getQualificationsClient().createOrUpdateQualificationResult({
             result: {
                 id: '0',
-                qualificationId,
-                userId,
+                qualificationId: qualificationId,
+                userId: userId,
                 status: values.status,
                 score: values.score,
                 summary: values.summary,
@@ -62,107 +76,62 @@ async function createOrUpdateQualificationRequest(
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-defineRule('min_value', min_value);
-defineRule('max_value', max_value);
-defineRule('numeric', numeric);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        status: { required: true },
-        score: { required: true, min_value: 0, max_value: 100, numeric: true },
-        summary: { required: true, min: 3, max: 255 },
-    },
-    validateOnMount: true,
-    initialValues: {
-        status: ResultStatus.PENDING,
-        score: 0,
-    },
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<any> =>
-        await createOrUpdateQualificationRequest(props.qualificationId, props.userId, values).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await createOrUpdateQualificationRequest(props.qualificationId, props.userId, event.data).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
-
-const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultStatus.PENDING];
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
-            <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('components.qualifications.request_modal.title') }}
-                    </h3>
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+            <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+                <template #header>
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('components.qualifications.request_modal.title') }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
-                </div>
-            </template>
-
-            <div>
-                <UForm :state="{}" @submit="onSubmitThrottle">
-                    <div class="flex-1">
-                        <label for="status" class="block text-sm font-medium leading-6">
-                            {{ $t('common.status') }}
-                        </label>
-                        <VeeField
-                            v-slot="{ handleChange, field, value }"
-                            as="div"
-                            name="status"
-                            :placeholder="$t('common.status')"
-                            :label="$t('common.status')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        >
-                            <USelectMenu
-                                :model-value="value"
-                                :options="availableStatus"
-                                :placeholder="
-                                    field.value
-                                        ? $t(
-                                              `enums.qualifications.ResultStatus.${ResultStatus[availableStatus.find((t) => t === field.value) ?? 0]}`,
-                                          )
-                                        : $t('common.na')
-                                "
-                                @change="handleChange"
-                            >
-                                <template #label>
-                                    <span v-if="field.value" class="truncate">{{
-                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[field.value]}`)
-                                    }}</span>
-                                </template>
-                                <template #option="{ option }">
-                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option]}`) }}
-                                </template>
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
-                                </template>
-                            </USelectMenu>
-                        </VeeField>
-                        <VeeErrorMessage name="status" as="p" class="mt-2 text-sm text-error-400" />
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
+                </template>
 
-                    <div class="flex-1">
-                        <label for="score" class="block text-sm font-medium leading-6">
-                            {{ $t('common.score') }}
-                        </label>
-                        <VeeField
-                            type="number"
+                <div>
+                    <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
+                        <USelectMenu
+                            v-model="state.status"
+                            :options="availableStatus"
+                            value-attribute="status"
+                            :placeholder="
+                                state.status
+                                    ? $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status ?? 0]}`)
+                                    : $t('common.na')
+                            "
+                        >
+                            <template #label>
+                                <span v-if="state.status" class="truncate">{{
+                                    $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`)
+                                }}</span>
+                            </template>
+                            <template #option="{ option }">
+                                {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
+
+                    <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
+                        <UInput
                             name="score"
+                            type="number"
                             min="0"
                             max="100"
                             :placeholder="$t('common.score')"
@@ -170,44 +139,31 @@ const availableStatus = [ResultStatus.SUCCESSFUL, ResultStatus.FAILED, ResultSta
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="score" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
+                    </UFormGroup>
 
-                    <div class="flex-1">
-                        <label for="summary" class="block text-sm font-medium leading-6">
-                            {{ $t('common.summary') }}
-                        </label>
-                        <VeeField
-                            as="textarea"
+                    <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
+                        <UTextarea
                             name="summary"
-                            class="block h-24 w-full rounded-md border-0 bg-base-700 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                            :rows="3"
                             :placeholder="$t('common.summary')"
-                            :label="$t('common.summary')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
-                        <VeeErrorMessage name="summary" as="p" class="mt-2 text-sm text-error-400" />
-                    </div>
-                </UForm>
-            </div>
+                    </UFormGroup>
+                </div>
 
-            <template #footer>
-                <UButtonGroup class="inline-flex w-full">
-                    <UButton
-                        block
-                        class="flex-1"
-                        :disabled="!meta.valid || !canSubmit"
-                        :loading="!canSubmit"
-                        @click="onSubmitThrottle"
-                    >
-                        {{ $t('common.submit') }}
-                    </UButton>
+                <template #footer>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.submit') }}
+                        </UButton>
 
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-                </UButtonGroup>
-            </template>
-        </UCard>
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+                    </UButtonGroup>
+                </template>
+            </UCard>
+        </UForm>
     </UModal>
 </template>

@@ -40,7 +40,7 @@ async function deleteLawBook(id: string): Promise<void> {
 
 const schema = z.object({
     name: z.string().min(3).max(128),
-    description: z.string().min(3).max(255).optional(),
+    description: z.union([z.string().min(3).max(255), z.string().optional()]),
 });
 
 type Schema = z.output<typeof schema>;

@@ -101,7 +101,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm class="w-full" :state="{}" @submit="refresh()">
+            <UForm :schema="{}" :state="{}" class="w-full" @submit="refresh()">
                 <UFormGroup name="search" :label="$t('common.search')">
                     <UInput
                         v-model="query.title"

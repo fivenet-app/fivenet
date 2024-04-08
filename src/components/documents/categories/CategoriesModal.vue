@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { max, min, required } from '@vee-validate/rules';
-import { defineRule } from 'vee-validate';
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { Category } from '~~/gen/ts/resources/documents/category';
 
@@ -17,6 +17,18 @@ const { $grpc } = useNuxtApp();
 const notifications = useNotificatorStore();
 
 const { isOpen } = useModal();
+
+const schema = z.object({
+    name: z.string().min(3).max(128),
+    description: z.string().min(0).max(255),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    name: '',
+    description: '',
+});
 
 interface FormData {
     name: string;
@@ -91,34 +103,18 @@ async function deleteCategory(): Promise<void> {
     }
 }
 
-defineRule('required', required);
-defineRule('min', min);
-defineRule('max', max);
-
-const { handleSubmit, meta } = useForm<FormData>({
-    validationSchema: {
-        name: { required: true, min: 3, max: 128 },
-        description: { required: true, min: 0, max: 255 },
-    },
-    validateOnMount: true,
-});
-
 const canSubmit = ref(true);
-const onSubmit = handleSubmit(
-    async (values): Promise<void> =>
-        await (props.category === undefined ? createCategory(values) : updateCategory(values)).finally(() =>
-            useTimeoutFn(() => (canSubmit.value = true), 400),
-        ),
-);
-const onSubmitThrottle = useThrottleFn(async (e) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await (props.category === undefined ? createCategory(event.data) : updateCategory(event.data)).finally(() =>
+        useTimeoutFn(() => (canSubmit.value = true), 400),
+    );
 }, 1000);
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :state="{}" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">
@@ -138,46 +134,34 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
 
                 <div>
                     <div>
-                        <div class="text-sm text-gray-100">
-                            <div class="flex-1">
-                                <label for="name" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.category', 1) }}
-                                </label>
-                                <VeeField
-                                    type="text"
-                                    name="name"
-                                    :placeholder="$t('common.category', 1)"
-                                    :label="$t('common.category', 1)"
-                                    :value="category?.name"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="name" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
-                            <div class="flex-1">
-                                <label for="description" class="block text-sm font-medium leading-6">
-                                    {{ $t('common.description') }}
-                                </label>
-                                <VeeField
-                                    as="textarea"
-                                    name="description"
-                                    :placeholder="$t('common.description')"
-                                    :label="$t('common.description')"
-                                    :value="category?.description"
-                                    class="block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                                <VeeErrorMessage name="description" as="p" class="mt-2 text-sm text-error-400" />
-                            </div>
-                        </div>
+                        <UFormGroup name="name" :label="$t('common.category', 1)" class="flex-1">
+                            <UInput
+                                v-model="state.name"
+                                type="text"
+                                name="name"
+                                :placeholder="$t('common.category', 1)"
+                                :label="$t('common.category', 1)"
+                                :value="category?.name"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                            <UTextarea
+                                v-model="state.description"
+                                name="description"
+                                :placeholder="$t('common.description')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
                     </div>
                 </div>
 
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
-                        <UButton block class="flex-1" :disabled="!meta.valid || !canSubmit" :loading="!canSubmit">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ category === undefined ? $t('common.create') : $t('common.update') }}
                         </UButton>
 
@@ -185,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (e) => {
                             v-if="category !== undefined && can('DocStoreService.DeleteCategory')"
                             block
                             class="flex-1"
-                            :disabled="!meta.valid || !canSubmit"
+                            :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="deleteCategory()"
                         >

@@ -49,7 +49,7 @@ const schema = z.object({
     weight: z.number(),
     abbreviation: z.string().min(3).max(20),
     title: z.string().min(3).max(255),
-    description: z.string().min(3).max(512).optional(),
+    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.string().min(20).max(750000),
     closed: z.boolean(),
     discordSettings: z.custom<QualificationDiscordSettings>(),

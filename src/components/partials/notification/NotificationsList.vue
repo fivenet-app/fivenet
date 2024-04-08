@@ -77,7 +77,7 @@ const canSubmit = ref(true);
 <template>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <UForm :state="{}" @submit="refresh()">
+            <UForm :schema="{}" :state="{}" @submit="refresh()">
                 <div class="flex flex-row items-center gap-2 sm:mx-auto">
                     <div class="flex-1">
                         <label for="search" class="block text-sm font-medium leading-6"

@@ -24,14 +24,14 @@ const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
 const { addOrpdateMarkerMarker } = livemapStore;
 
-const markerTypes = ref<MarkerType[]>([MarkerType.CIRCLE, MarkerType.DOT, MarkerType.ICON]);
+const markerTypes = [{ type: MarkerType.CIRCLE }, { type: MarkerType.DOT }, { type: MarkerType.ICON }];
 
 const defaultExpiresAt = ref<Date>(new Date());
 defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
 
 const schema = z.object({
     name: z.string().min(3).max(255),
-    description: z.string().min(6).max(512).optional(),
+    description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
     expiresAt: z.date().optional(),
     color: z.string().length(7),
     markerType: z.number(),
@@ -238,6 +238,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.markerType"
                                         name="markerType"
                                         :options="markerTypes"
+                                        value-attribute="type"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >

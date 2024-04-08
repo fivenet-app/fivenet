@@ -135,7 +135,7 @@ const columns = [
     <div>
         <UDashboardToolbar>
             <template #default>
-                <UForm class="w-full" :state="{}" @submit="refresh()">
+                <UForm :schema="{}" :state="{}" class="w-full" @submit="refresh()">
                     <div class="flex w-full flex-row gap-2">
                         <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
                             <GenericInput
