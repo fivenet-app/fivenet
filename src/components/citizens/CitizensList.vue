@@ -129,6 +129,14 @@ const columns = [
         sortable: false,
     },
 ].filter((c) => c !== undefined);
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -138,13 +146,21 @@ const columns = [
                 <UForm :schema="{}" :state="{}" class="w-full" @submit="refresh()">
                     <div class="flex w-full flex-row gap-2">
                         <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
-                            <GenericInput
+                            <UInput
                                 v-model="query.name"
+                                ref="input"
                                 type="text"
                                 name="searchName"
-                                block
                                 :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                            />
+                                block
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                                @keydown.esc="$event.target.blur()"
+                            >
+                                <template #trailing>
+                                    <UKbd value="/" />
+                                </template>
+                            </UInput>
                         </UFormGroup>
 
                         <UFormGroup :label="$t('common.date_of_birth')">

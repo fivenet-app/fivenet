@@ -137,6 +137,7 @@ const columns = [
                     variant="link"
                 />
             </h2>
+
             <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />
         </div>
 

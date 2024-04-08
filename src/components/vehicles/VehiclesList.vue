@@ -128,6 +128,14 @@ const columns = computed(() =>
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -138,12 +146,18 @@ const columns = computed(() =>
                     <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
                         <UInput
                             v-model="query.licensePlate"
+                            ref="input"
                             type="text"
+                            name="licensePlate"
                             :placeholder="$t('common.license_plate')"
                             block
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
-                        />
+                        >
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInput>
                     </UFormGroup>
 
                     <UFormGroup v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">

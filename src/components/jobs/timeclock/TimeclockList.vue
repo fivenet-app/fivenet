@@ -151,6 +151,14 @@ function updateDates(): void {
     query.value.from = currentDay.value;
     query.value.to = previousDay.value;
 }
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -173,6 +181,7 @@ function updateDates(): void {
                                 <UFormGroup v-if="canAccessAll" class="flex-1" name="user" :label="$t('common.colleague', 2)">
                                     <UInputMenu
                                         v-model="query.user"
+                                        ref="input"
                                         :search="
                                             async (query: string) => {
                                                 usersLoading = true;
@@ -201,6 +210,10 @@ function updateDates(): void {
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
                                         <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+
+                                        <template #trailing>
+                                            <UKbd value="/" />
+                                        </template>
                                     </UInputMenu>
                                 </UFormGroup>
 

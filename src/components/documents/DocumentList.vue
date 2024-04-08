@@ -96,6 +96,14 @@ watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -105,6 +113,7 @@ watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
                 <UFormGroup name="search" :label="$t('common.search')">
                     <UInput
                         v-model="query.title"
+                        ref="input"
                         type="text"
                         name="search"
                         :placeholder="$t('common.title')"

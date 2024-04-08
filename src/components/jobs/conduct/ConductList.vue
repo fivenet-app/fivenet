@@ -123,6 +123,14 @@ const columns = [
         label: t('common.action', 2),
     },
 ];
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -135,6 +143,7 @@ const columns = [
                             <UFormGroup v-if="hideUserSearch !== true" name="user" class="flex-1" :label="$t('common.target')">
                                 <UInputMenu
                                     v-model="query.user"
+                                    ref="input"
                                     :nullable="true"
                                     :search="
                                         async (query: string) => {
@@ -165,6 +174,10 @@ const columns = [
                                     </template>
                                     <template #empty>
                                         {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                    </template>
+
+                                    <template #trailing>
+                                        <UKbd value="/" />
                                     </template>
                                 </UInputMenu>
                             </UFormGroup>

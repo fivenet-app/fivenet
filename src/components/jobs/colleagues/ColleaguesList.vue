@@ -108,6 +108,14 @@ const columns = [
 ].filter((c) => c !== undefined);
 
 const modal = useModal();
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -118,13 +126,18 @@ const modal = useModal();
                     <UFormGroup class="flex-1" :label="$t('common.colleague', 1)">
                         <UInput
                             v-model="query.name"
+                            ref="input"
                             type="text"
                             name="searchName"
                             :placeholder="$t('common.name')"
                             block
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
-                        />
+                        >
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInput>
                     </UFormGroup>
 
                     <UFormGroup :label="$t('common.absent')">

@@ -76,6 +76,14 @@ onMounted(() => {
 onBeforeUnmount(() => {
     showLocationMarker.value = false;
 });
+
+const input = ref<{ input: HTMLInputElement }>();
+
+defineShortcuts({
+    '/': () => {
+        input.value?.input?.focus();
+    },
+});
 </script>
 
 <template>
@@ -92,79 +100,63 @@ onBeforeUnmount(() => {
                             </template>
                         </BaseMap>
                     </Pane>
+
                     <Pane size="65">
-                        <div class="py-2 pb-14">
-                            <div class="px-1 sm:px-2 lg:px-4">
-                                <div class="flex max-h-full flex-col overflow-y-auto">
-                                    <div class="border-neutral/20 border-b-2 pb-2 sm:flex sm:items-center">
-                                        <div class="sm:flex-auto">
-                                            <UForm :schema="{}" :state="{}" @submit="refresh()">
-                                                <div class="flex flex-row gap-2">
-                                                    <div class="flex-1">
-                                                        <label for="search" class="block text-sm font-medium leading-6">
-                                                            {{ $t('common.postal') }}
-                                                        </label>
-                                                        <div class="relative mt-2">
-                                                            <UInput
-                                                                v-model="query.postal"
-                                                                type="text"
-                                                                :placeholder="$t('common.postal')"
-                                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                @focusin="focusTablet(true)"
-                                                                @focusout="focusTablet(false)"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                    <div class="flex-1">
-                                                        <label for="model" class="block text-sm font-medium leading-6">
-                                                            {{ $t('common.id') }}
-                                                        </label>
-                                                        <div class="relative mt-2">
-                                                            <UInput
-                                                                v-model="query.id"
-                                                                type="text"
-                                                                name="model"
-                                                                min="1"
-                                                                max="99999999999"
-                                                                :placeholder="$t('common.id')"
-                                                                class="placeholder:text-accent-200 block w-full rounded-md border-0 bg-base-700 py-1.5 pr-14 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
-                                                                @focusin="focusTablet(true)"
-                                                                @focusout="focusTablet(false)"
-                                                            />
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            </UForm>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
+                        <div class="mb-2 px-2">
+                            <UForm :schema="{}" :state="{}" @submit="refresh()" class="flex flex-row gap-2">
+                                <UFormGroup name="search" :label="$t('common.postal')" class="flex-1">
+                                    <UInput
+                                        v-model="query.postal"
+                                        ref="input"
+                                        type="text"
+                                        :placeholder="$t('common.postal')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    >
+                                        <template #trailing>
+                                            <UKbd value="/" />
+                                        </template>
+                                    </UInput>
+                                </UFormGroup>
+                                <UFormGroup name="model" :label="$t('common.id')" class="flex-1">
+                                    <UInput
+                                        v-model="query.id"
+                                        type="text"
+                                        name="model"
+                                        min="1"
+                                        max="99999999999"
+                                        :placeholder="$t('common.id')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+                            </UForm>
+                        </div>
 
-                            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
-                            <DataErrorBlock
-                                v-else-if="error"
-                                :title="$t('common.unable_to_load', [$t('common.dispatches')])"
-                                :retry="refresh"
+                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
+                        <DataErrorBlock
+                            v-else-if="error"
+                            :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                            :retry="refresh"
+                        />
+                        <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+
+                        <template v-else>
+                            <DispatchList
+                                :show-button="false"
+                                :hide-actions="true"
+                                :always-show-day="true"
+                                :dispatches="data?.dispatches"
+                                @goto="location = $event"
                             />
-                            <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
+                        </template>
 
-                            <template v-else>
-                                <DispatchList
-                                    :show-button="false"
-                                    :hide-actions="true"
-                                    :always-show-day="true"
-                                    :dispatches="data?.dispatches"
-                                    @goto="location = $event"
-                                />
-                            </template>
-
-                            <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
-                                <UPagination
-                                    v-model="page"
-                                    :page-count="data?.pagination?.pageSize ?? 0"
-                                    :total="data?.pagination?.totalCount ?? 0"
-                                />
-                            </div>
+                        <div class="flex justify-end border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+                            <UPagination
+                                v-model="page"
+                                :page-count="data?.pagination?.pageSize ?? 0"
+                                :total="data?.pagination?.totalCount ?? 0"
+                            />
                         </div>
                     </Pane>
                 </Splitpanes>

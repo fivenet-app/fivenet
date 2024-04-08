@@ -19,28 +19,21 @@ async function selected(t: TemplateShort): Promise<void> {
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.documents.templates.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('pages.documents.templates.title')">
+                <template #right>
+                    <UButton
+                        v-if="can('DocStoreService.CreateTemplate')"
+                        :to="{ name: 'documents-templates-create' }"
+                        color="gray"
+                        trailing-icon="i-mdi-plus"
+                    >
+                        {{ $t('pages.documents.templates.create_template') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
 
-            <div v-if="'DocStoreService.CreateTemplate'" class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                        <div v-if="can('DocStoreService.CreateTemplate')" class="flex-1">
-                            <NuxtLink
-                                :to="{ name: 'documents-templates-create' }"
-                                class="bg-primary-500 hover:bg-primary-400 inline-flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                            >
-                                {{ $t('pages.documents.templates.create_template') }}
-                            </NuxtLink>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <TemplatesList @selected="selected($event)" />
-                    </div>
-                </div>
+            <div class="inline-block min-w-full px-1 py-2 align-middle">
+                <TemplatesList @selected="selected($event)" />
             </div>
         </UDashboardPanel>
     </UDashboardPage>

@@ -254,7 +254,7 @@ onBeforeUnmount(() => {
             <LControlLayers />
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
-            <LControl position="bottomleft" class="leaflet-control-attribution text-xs">
+            <LControl position="bottomleft" class="leaflet-control-attribution">
                 <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat }} |
                 <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong }}
             </LControl>
@@ -304,6 +304,26 @@ onBeforeUnmount(() => {
 }
 .leaflet-popup-tip {
     background-color: #16171a;
+}
+
+.leaflet-control-layers-toggle {
+    background-color: rgb(var(--color-primary-500)) !important;
+}
+.leaflet-control-layers {
+    color: rgb(var(--color-primary-500));
+    background-color: rgb(var(--ui-background)) !important;
+}
+
+.leaflet-control-attribution {
+    color: rgb(var(--color-primary-500));
+    background-color: rgb(var(--ui-background)) !important;
+}
+
+.leaflet-control-attribution a {
+    color: rgb(var(--color-primary-500));
+}
+.leaflet-control-attribution a:hover {
+    color: rgb(var(--color-primary-400));
 }
 
 /* Leaflet Contextmenu */

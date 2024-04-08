@@ -40,11 +40,12 @@ const modal = useModal();
 
 <template>
     <div>
-        <UDashboardToolbar>
-            <template #default>
+        <UDashboardNavbar :title="$t('pages.documents.categories.title')">
+            <template #right>
                 <UButton
                     v-if="can('DocStoreService.CreateCategory')"
-                    block
+                    color="gray"
+                    trailing-icon="i-mdi-plus"
                     @click="
                         modal.open(CategoriesModal, {
                             onUpdate: refresh,
@@ -54,7 +55,7 @@ const modal = useModal();
                     {{ $t('components.documents.categories.modal.create_category') }}
                 </UButton>
             </template>
-        </UDashboardToolbar>
+        </UDashboardNavbar>
 
         <div class="px-1 sm:px-2 lg:px-4">
             <div class="mt-2 flow-root">
