@@ -119,9 +119,6 @@ export default defineNuxtConfig({
                 },
             },
         },
-        optimizeDeps: {
-            exclude: ['vue-demi'],
-        },
         plugins: [svgLoader()],
     },
     robots: {
@@ -174,17 +171,6 @@ export default defineNuxtConfig({
     piniaPersistedstate: {
         storage: 'localStorage',
         debug: false,
-    },
-    veeValidate: {
-        // disable or enable auto imports
-        autoImports: true,
-        // Use different names for components
-        componentNames: {
-            Form: 'VeeForm',
-            Field: 'VeeField',
-            FieldArray: 'VeeFieldArray',
-            ErrorMessage: 'VeeErrorMessage',
-        },
     },
     cookieControl: {
         barPosition: 'bottom-full',

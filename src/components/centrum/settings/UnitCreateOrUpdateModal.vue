@@ -24,7 +24,7 @@ const schema = z.object({
     initials: z.string().min(2).max(4),
     description: z.union([z.string().min(1).max(255), z.string().length(0).optional()]),
     color: z.string().length(7),
-    homePostal: z.union([z.string().min(0).max(48), z.string().optional()]),
+    homePostal: z.union([z.string().min(1).max(48), z.string().length(0).optional()]),
     attributes: z.string().array().max(5),
 });
 

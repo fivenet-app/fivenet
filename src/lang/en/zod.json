@@ -17,68 +17,68 @@
             "not_multiple_of": "Number must be a multiple of {multipleOf}",
             "not_finite": "Number must be finite",
             "invalid_string": {
-            "email": "Invalid {validation}",
-            "url": "Invalid {validation}",
-            "uuid": "Invalid {validation}",
-            "cuid": "Invalid {validation}",
-            "regex": "Invalid",
-            "datetime": "Invalid {validation}",
-            "startsWith": "Invalid input: must start with \"{startsWith}\"",
-            "endsWith": "Invalid input: must end with \"{endsWith}\""
+                "email": "Invalid {validation}",
+                "url": "Invalid {validation}",
+                "uuid": "Invalid {validation}",
+                "cuid": "Invalid {validation}",
+                "regex": "Invalid",
+                "datetime": "Invalid {validation}",
+                "startsWith": "Invalid input: must start with \"{startsWith}\"",
+                "endsWith": "Invalid input: must end with \"{endsWith}\""
             },
             "too_small": {
-            "array": {
-                "exact": "List must contain exactly {minimum} element(s)",
-                "inclusive": "List must contain at least {minimum} element(s)",
-                "not_inclusive": "List must contain more than {minimum} element(s)"
-            },
-            "string": {
-                "exact": "Field must contain exactly {minimum} character(s)",
-                "inclusive": "Field must contain at least {minimum} character(s)",
-                "not_inclusive": "Field must contain over {minimum} character(s)"
-            },
-            "number": {
-                "exact": "Number must be exactly {minimum}",
-                "inclusive": "Number must be greater than or equal to {minimum}",
-                "not_inclusive": "Number must be greater than {minimum}"
-            },
-            "set": {
-                "exact": "Invalid input",
-                "inclusive": "Invalid input",
-                "not_inclusive": "Invalid input"
-            },
-            "date": {
-                "exact": "Date must be exactly {minimum}",
-                "inclusive": "Date must be greater than or equal to {minimum}",
-                "not_inclusive": "Date must be greater than {minimum}"
-            }
+                "array": {
+                    "exact": "List must contain exactly {minimum} element(s)",
+                    "inclusive": "List must contain at least {minimum} element(s)",
+                    "not_inclusive": "List must contain more than {minimum} element(s)"
+                },
+                "string": {
+                    "exact": "Field must contain exactly {minimum} character(s)",
+                    "inclusive": "Field must contain at least {minimum} character(s)",
+                    "not_inclusive": "Field must contain over {minimum} character(s)"
+                },
+                "number": {
+                    "exact": "Number must be exactly {minimum}",
+                    "inclusive": "Number must be greater than or equal to {minimum}",
+                    "not_inclusive": "Number must be greater than {minimum}"
+                },
+                "set": {
+                    "exact": "Invalid input",
+                    "inclusive": "Invalid input",
+                    "not_inclusive": "Invalid input"
+                },
+                "date": {
+                    "exact": "Date must be exactly {minimum}",
+                    "inclusive": "Date must be greater than or equal to {minimum}",
+                    "not_inclusive": "Date must be greater than {minimum}"
+                }
             },
             "too_big": {
-            "array": {
-                "exact": "List must contain exactly {maximum} element(s)",
-                "inclusive": "List must contain at most {maximum} element(s)",
-                "not_inclusive": "List must contain less than {maximum} element(s)"
-            },
-            "string": {
-                "exact": "Field must contain exactly {maximum} character(s)",
-                "inclusive": "Field must contain at most {maximum} character(s)",
-                "not_inclusive": "Field must contain under {maximum} character(s)"
-            },
-            "number": {
-                "exact": "Number must be exactly {maximum}",
-                "inclusive": "Number must be less than or equal to {maximum}",
-                "not_inclusive": "Number must be less than {maximum}"
-            },
-            "set": {
-                "exact": "Invalid input",
-                "inclusive": "Invalid input",
-                "not_inclusive": "Invalid input"
-            },
-            "date": {
-                "exact": "Date must be exactly {maximum}",
-                "inclusive": "Date must be smaller than or equal to {maximum}",
-                "not_inclusive": "Date must be smaller than {maximum}"
-            }
+                "array": {
+                    "exact": "List must contain exactly {maximum} element(s)",
+                    "inclusive": "List must contain at most {maximum} element(s)",
+                    "not_inclusive": "List must contain less than {maximum} element(s)"
+                },
+                "string": {
+                    "exact": "Field must contain exactly {maximum} character(s)",
+                    "inclusive": "Field must contain at most {maximum} character(s)",
+                    "not_inclusive": "Field must contain under {maximum} character(s)"
+                },
+                "number": {
+                    "exact": "Number must be exactly {maximum}",
+                    "inclusive": "Number must be less than or equal to {maximum}",
+                    "not_inclusive": "Number must be less than {maximum}"
+                },
+                "set": {
+                    "exact": "Invalid input",
+                    "inclusive": "Invalid input",
+                    "not_inclusive": "Invalid input"
+                },
+                "date": {
+                    "exact": "Date must be exactly {maximum}",
+                    "inclusive": "Date must be smaller than or equal to {maximum}",
+                    "not_inclusive": "Date must be smaller than {maximum}"
+                }
             }
         },
         "validations": {

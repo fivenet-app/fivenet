@@ -34,7 +34,7 @@ const schema = z.object({
     description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
     expiresAt: z.date().optional(),
     color: z.string().length(7),
-    markerType: z.number(),
+    markerType: z.nativeEnum(MarkerType),
     circleRadius: z.number().gte(5).lte(250),
     circleOpacity: z.number().gte(1).lte(75).optional(),
     icon: z.string().max(64).optional(),

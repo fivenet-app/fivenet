@@ -27,7 +27,7 @@ const availableStatus = [
 ];
 
 const schema = z.object({
-    status: z.custom<ResultStatus>(),
+    status: z.nativeEnum(ResultStatus),
     score: z.coerce.number().min(0).max(1000),
     summary: z.string().min(3).max(255),
 });

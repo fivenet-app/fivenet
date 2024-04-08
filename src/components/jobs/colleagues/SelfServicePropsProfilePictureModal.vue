@@ -15,38 +15,11 @@ const notifications = useNotificatorStore();
 
 const { isOpen } = useModal();
 
-const MAX_FILE_SIZE = 2 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+const appConfig = useAppConfig();
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
-    avatar: z.custom<FileList>().superRefine((files, ctx) => {
-        if (!files || files.length === 0) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'File must be provided',
-            });
-            return false;
-        }
-
-        if (!ACCEPTED_IMAGE_TYPES.includes(files[0].type)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'File must be a valid image type',
-            });
-            return false;
-        }
-
-        if (files[0].size > MAX_FILE_SIZE) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'File must be less than 5MB',
-            });
-            return false;
-        }
-
-        return true;
-    }),
+    avatar: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images),
     reset: z.boolean(),
 });
 

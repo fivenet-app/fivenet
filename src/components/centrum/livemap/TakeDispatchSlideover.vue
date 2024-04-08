@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { useSound } from '@raffaelesgarro/vue-use-sound';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
@@ -18,9 +17,6 @@ const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
 const { dispatches, pendingDispatches, getCurrentMode } = storeToRefs(centrumStore);
-
-const settingsStore = useSettingsStore();
-const { audio: audioSettings } = storeToRefs(settingsStore);
 
 const selectedDispatches = ref<string[]>([]);
 const queryDispatches = ref('');
@@ -69,23 +65,6 @@ function selectDispatch(id: string, state: boolean): void {
         selectedDispatches.value.push(id);
     }
 }
-
-const newDispatchSound = useSound('/sounds/centrum/message-incoming.mp3', {
-    volume: audioSettings.value.notificationsVolume,
-});
-
-const debouncedPlay = useDebounceFn(() => newDispatchSound.play(), 2000, { maxWait: 5000 });
-
-const previousLength = ref(0);
-watch(pendingDispatches.value, () => {
-    if (getCurrentMode.value !== CentrumMode.SIMPLIFIED) {
-        if (previousLength.value <= pendingDispatches.value.length && pendingDispatches.value.length !== 0) {
-            debouncedPlay();
-        }
-    }
-
-    previousLength.value = pendingDispatches.value.length;
-});
 
 const canTakeDispatch = computed(
     () =>

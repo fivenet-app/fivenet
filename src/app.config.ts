@@ -56,4 +56,14 @@ export default defineAppConfig({
             check: 'i-mdi-check-circle',
         },
     },
+
+    filestore: {
+        fileSizes: {
+            rector: 5 * 1024 * 1024,
+            images: 2 * 1024 * 1024,
+        },
+        types: {
+            images: ['image/jpeg', 'image/jpg', 'image/png'],
+        },
+    },
 });

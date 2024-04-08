@@ -33,7 +33,7 @@ const availableStatus = [
 ];
 
 const schema = z.object({
-    status: z.custom<RequestStatus>(),
+    status: z.nativeEnum(RequestStatus),
     approverComment: z.string().min(3).max(255),
 });
 

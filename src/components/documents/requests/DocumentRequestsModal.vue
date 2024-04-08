@@ -41,7 +41,7 @@ const availableRequestTypes = computed<RequestType[]>(() =>
 
 const schema = z.object({
     reason: z.string().min(3).max(255),
-    requestType: z.custom<DocActivityType>().optional(),
+    requestType: z.nativeEnum(DocActivityType).optional(),
 });
 
 type Schema = z.output<typeof schema>;

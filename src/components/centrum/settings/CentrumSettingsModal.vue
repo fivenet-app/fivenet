@@ -30,8 +30,8 @@ const modes = ref<{ mode: CentrumMode; selected?: boolean }[]>([
 
 const schema = z.object({
     enabled: z.boolean(),
-    mode: z.custom<CentrumMode>(),
-    fallbackMode: z.custom<CentrumMode>(),
+    mode: z.nativeEnum(CentrumMode),
+    fallbackMode: z.nativeEnum(CentrumMode),
     unitStatus: z.string().array().max(10),
     dispatchStatus: z.string().array().max(10),
 });
@@ -165,14 +165,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="unitStatus" :label="`${$t('common.units')} ${$t('common.status')}`" class="flex-1">
                             <div class="flex flex-col gap-1">
                                 <div v-for="(_, idx) in state.unitStatus" :key="idx" class="flex items-center gap-1">
-                                    <UInput
-                                        type="text"
-                                        class="w-full flex-1"
-                                        :placeholder="$t('common.reason')"
-                                        :label="$t('common.reason')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
+                                    <UFormGroup :name="`unitStatus.${idx}`" class="flex-1">
+                                        <UInput
+                                            type="text"
+                                            class="w-full flex-1"
+                                            :placeholder="$t('common.reason')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </UFormGroup>
 
                                     <UButton
                                         :ui="{ rounded: 'rounded-full' }"
@@ -198,15 +199,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         >
                             <div class="flex flex-col gap-1">
                                 <div v-for="(_, idx) in state.dispatchStatus" :key="idx" class="flex items-center gap-1">
-                                    <UInput
-                                        v-model="state.dispatchStatus[idx]"
-                                        type="text"
-                                        class="w-full flex-1"
-                                        :placeholder="$t('common.reason')"
-                                        :label="$t('common.reason')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
+                                    <UFormGroup :name="`dispatchStatus.${idx}`" class="flex-1">
+                                        <UInput
+                                            v-model="state.dispatchStatus[idx]"
+                                            type="text"
+                                            class="w-full flex-1"
+                                            :placeholder="$t('common.reason')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </UFormGroup>
 
                                     <UButton
                                         :ui="{ rounded: 'rounded-full' }"

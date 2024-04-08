@@ -56,7 +56,7 @@ withDefaults(
         </UButton>
 
         <template #panel>
-            <div class="flex flex-col p-4">
+            <div class="flex flex-col gap-2 p-4">
                 <UButtonGroup v-if="can('CitizenStoreService.ListCitizens') || user.phoneNumber" class="inline-flex w-full">
                     <UButton
                         v-if="can('CitizenStoreService.ListCitizens')"
@@ -75,7 +75,7 @@ withDefaults(
                     />
                 </UButtonGroup>
 
-                <div class="mt-2 inline-flex flex-row gap-2">
+                <div class="inline-flex flex-row gap-2">
                     <div v-if="showAvatar === undefined || showAvatar">
                         <ProfilePictureImg :url="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
                     </div>

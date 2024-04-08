@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { useSound } from '@raffaelesgarro/vue-use-sound';
 import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon } from 'mdi-vue3';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import {
@@ -52,14 +51,6 @@ const settingsStore = useSettingsStore();
 const { livemap, audio: audioSettings } = storeToRefs(settingsStore);
 
 const canStream = can('CentrumService.Stream');
-
-const joinUnitOpen = ref(false);
-
-watch(joinUnitOpen, () => {
-    if (!joinUnitOpen.value) {
-        slideover.close();
-    }
-});
 
 const selectedDispatch = ref<string | undefined>();
 
@@ -141,7 +132,7 @@ watch(getOwnUnit, async () => {
     if (getOwnUnit.value !== undefined) {
         // User has joined an unit
         open.value = true;
-        joinUnitOpen.value = false;
+        slideover.close();
 
         if (
             jobProps.value !== undefined &&
@@ -153,13 +144,13 @@ watch(getOwnUnit, async () => {
     } else {
         // User not in an unit anymore
         open.value = false;
-        joinUnitOpen.value = false;
+        slideover.close();
     }
 });
 
 watch(open, async () => {
     if (open.value === true && getOwnUnit.value === undefined) {
-        joinUnitOpen.value = true;
+        slideover.open(JoinUnitSlideover, {});
     }
 });
 
@@ -261,12 +252,12 @@ onBeforeUnmount(async () => {
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;
 
-const attentionSound = useSound('/sounds/centrum/attention.mp3', {
-    volume: audioSettings.value.notificationsVolume,
-    playbackRate: 1.85,
-});
+const { play } = useSound();
+const debouncedPlay = useDebounceFn(async () => {
+    play({ name: 'centrum/attention', rate: 1.85 });
+}, 950);
 
-const attentionDebouncedPlay = useDebounceFn(() => attentionSound.play(), 950);
+const attentionDebouncedPlay = useDebounceFn(async () => debouncedPlay(), 950);
 
 const lastCheckupNotification = ref<Date | undefined>();
 

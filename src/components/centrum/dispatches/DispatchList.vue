@@ -10,6 +10,7 @@ import DispatchAttributes from '../partials/DispatchAttributes.vue';
 import DispatchDetailsSlideover from './DispatchDetailsSlideover.vue';
 import DispatchStatusUpdateModal from './DispatchStatusUpdateModal.vue';
 import DispatchAssignModal from './DispatchAssignModal.vue';
+import { useSettingsStore } from '~/store/settings';
 
 const props = withDefaults(
     defineProps<{
@@ -39,17 +40,13 @@ const slideover = useSlideover();
 const centrumStore = useCentrumStore();
 const { getSortedDispatches } = storeToRefs(centrumStore);
 
-/* TODO
-const settingsStore = useSettingsStore();
-const { audio: audioSettings } = storeToRefs(settingsStore);
-
-const dispatchAssistanceSound = useSound('/sounds/centrum/morse-sos.mp3', {
-    volume: audioSettings.value.notificationsVolume,
-});
-const debouncedPlay = useDebounceFn(() => dispatchAssistanceSound.play(), 950);
+const { play } = useSound();
+const debouncedPlay = useDebounceFn(async () => {
+    play({ name: 'centrum/morse-sos' });
+}, 950);
 
 const previousStatus = ref<undefined | StatusDispatch>();
-watch(props, () => {
+watchThrottled(props, () => {
     if (
         previousStatus.value !== props.dispatch.status?.status &&
         props.dispatch.status?.status === StatusDispatch.NEED_ASSISTANCE
@@ -59,7 +56,6 @@ watch(props, () => {
         debouncedPlay();
     }
 });
-*/
 
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 

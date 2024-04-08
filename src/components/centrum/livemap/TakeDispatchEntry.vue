@@ -39,8 +39,6 @@ onBeforeMount(() => {
         emits('selected', true);
     }
 });
-
-const open = ref(false);
 </script>
 
 <template>

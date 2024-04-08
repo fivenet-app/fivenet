@@ -12,39 +12,12 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ['image/jpeg', 'image/jpg', 'image/png'];
+const appConfig = useAppConfig();
 
 const schema = z.object({
     category: z.string().min(3).max(255),
     name: z.string().min(3).max(255),
-    file: z.custom<FileList>().superRefine((files, ctx) => {
-        if (!files || files.length === 0) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'File must be provided',
-            });
-            return false;
-        }
-
-        if (!ACCEPTED_IMAGE_TYPES.includes(files[0].type)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'File must be a valid image type',
-            });
-            return false;
-        }
-
-        if (files[0].size > MAX_FILE_SIZE) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'File must be less than 5MB',
-            });
-            return false;
-        }
-
-        return true;
-    }),
+    file: zodFileSingleSchema(appConfig.filestore.fileSizes.rector, appConfig.filestore.types.images),
     reset: z.boolean(),
 });
 

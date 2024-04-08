@@ -37,7 +37,7 @@ const cTypes = ref<{ status: ConductType }[]>([
 
 const schema = z.object({
     targetUserId: z.number(),
-    type: z.custom<ConductType>(),
+    type: z.nativeEnum(ConductType),
     message: z.string().min(3).max(2000),
     expiresAt: z.date().optional(),
 });

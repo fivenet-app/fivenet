@@ -9,7 +9,6 @@ import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { useNotificatorStore } from '~/store/notificator';
 import { useCompletorStore } from '~/store/completor';
 import { toDuration } from '~/utils/duration';
-import { Perms, type Auth, Website, Discord, UserTracker, JobInfo } from '~~/gen/ts/resources/rector/config';
 
 const { $grpc } = useNuxtApp();
 
@@ -37,28 +36,106 @@ const { listJobs } = completorStore;
 
 const { data: jobs } = useLazyAsyncData(`rector-appconfig-jobs`, () => listJobs());
 
-// TODO add custom validation and transformers for durations
 const schema = z.object({
-    auth: z.custom<Auth>(),
-    perms: z.custom<Perms>(),
-    website: z.custom<Website>(),
-    jobInfo: z.custom<JobInfo>(),
-    userTracker: z.custom<UserTracker>(),
-    discord: z.custom<Discord>(),
+    auth: z.object({
+        signupEnabled: z.boolean(),
+    }),
+    perms: z.object({
+        default: z
+            .object({
+                category: z.string().min(1).max(48),
+                name: z.string().min(1).max(48),
+            })
+            .array()
+            .max(25),
+    }),
+    website: z.object({
+        links: z.object({
+            privacyPolicy: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
+            imprint: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
+        }),
+    }),
+    jobInfo: z.object({
+        unemployedJob: z.object({
+            name: z.string().min(1).max(20),
+            grade: z.coerce.number().min(1).max(99),
+        }),
+        publicJobs: z.string().array().max(99),
+        hiddenJobs: z.string().array().max(99),
+    }),
+    userTracker: z.object({
+        refreshTime: zodDurationSchema,
+        dbRefreshTime: zodDurationSchema,
+        livemapJobs: z.string().array().max(99),
+    }),
+    // Discord
+    discord: z.object({
+        enabled: z.boolean(),
+        syncInterval: zodDurationSchema,
+        inviteUrl: z.union([
+            z.string().min(1).max(255).url().startsWith('https://discord.com/'),
+            z.string().length(0).optional(),
+        ]),
+    }),
+});
+
+const state = reactive<Schema>({
+    auth: {
+        signupEnabled: false,
+    },
+    perms: {
+        default: [],
+    },
+    website: {
+        links: {},
+    },
+    jobInfo: {
+        hiddenJobs: [],
+        publicJobs: [],
+        unemployedJob: {
+            name: '',
+            grade: 1,
+        },
+    },
+    userTracker: {
+        dbRefreshTime: '1s',
+        refreshTime: '3.35s',
+        livemapJobs: [],
+    },
+    // Discord
+    discord: {
+        enabled: false,
+        syncInterval: '9s',
+        inviteUrl: '',
+    },
 });
 
 type Schema = z.output<typeof schema>;
 
 async function updateAppConfig(values: Schema): Promise<void> {
-    if (!data.value?.config) {
+    if (!data.value || !data.value?.config) {
         return;
     }
 
-    data.value.config = values;
+    // Update local version of retrieved config
+    data.value.config.auth = values.auth;
+    data.value.config.perms = values.perms;
+    data.value.config.website = values.website;
+    data.value.config.jobInfo = values.jobInfo;
+    data.value.config.userTracker = {
+        livemapJobs: values.userTracker.livemapJobs,
+        dbRefreshTime: toDuration(values.userTracker.dbRefreshTime),
+        refreshTime: toDuration(values.userTracker.refreshTime),
+    };
+    data.value.config.discord = {
+        enabled: values.discord.enabled,
+        inviteUrl: values.discord.inviteUrl,
+        syncInterval: toDuration(values.discord.syncInterval),
+    };
 
     try {
         const { response } = await $grpc.getRectorConfigClient().updateAppConfig({
-            config: data.value.config,
+            config: data.value?.config,
         });
 
         notifications.add({
@@ -68,7 +145,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
         });
 
         if (response.config) {
-            data.value.config = response.config;
+            data.value = response;
         } else {
             refresh();
         }
@@ -78,62 +155,45 @@ async function updateAppConfig(values: Schema): Promise<void> {
     }
 }
 
-const { setValues } = useForm<FormData>({
-    validationSchema: {
-        permsDefault: { size: 25 },
-
-        websitePrivacyPolicy: { required: false, max: 255, url: 'https://.*' },
-        websiteLinksImprint: { required: false, max: 255, url: 'https://.*' },
-
-        jobInfoUnemployedName: { required: true, max: 20 },
-        jobInfoUnemployedGrade: { required: true, numeric: true, min_value: 1, max_value: 99 },
-
-        userTrackerRefreshTime: { required: true, max: 5, regex: /^\d+(\.\d+)?s$/ },
-        userTrackerDbRefreshTime: { required: true, max: 5, regex: /^\d+(\.\d+)?s$/ },
-
-        discordBotInviteUrl: { required: false, url: 'https://discord.com/.*' },
-        discordSyncInterval: { required: true, max: 5, regex: /^\d+(\.\d+)?s$/ },
-    },
-});
-
 function setSettingsValues(): void {
-    if (!data.value) {
+    if (!data.value || !data.value.config) {
         return;
     }
 
-    setValues({
-        permsDefault: data.value.config?.perms?.default,
-
-        websiteLinksPrivacyPolicy: data.value.config?.website?.links?.privacyPolicy,
-        websiteLinksImprint: data.value.config?.website?.links?.imprint,
-
-        jobInfoUnemployedName: data.value.config?.jobInfo?.unemployedJob?.name,
-        jobInfoUnemployedGrade: data.value.config?.jobInfo?.unemployedJob?.grade,
-
-        userTrackerRefreshTime: data.value.config?.userTracker?.refreshTime
-            ? parseFloat(
-                  data.value.config?.userTracker?.refreshTime?.seconds.toString() +
-                      '.' +
-                      (data.value.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
-              ).toString() + 's'
-            : undefined,
-        userTrackerDbRefreshTime: data.value.config?.userTracker?.dbRefreshTime
-            ? parseFloat(
-                  data.value.config?.userTracker?.dbRefreshTime?.seconds.toString() +
-                      '.' +
-                      (data.value.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
-              ).toString() + 's'
-            : undefined,
-
-        discordBotInviteUrl: data.value.config?.discord?.inviteUrl,
-        discordSyncInterval: data.value.config?.discord?.syncInterval
-            ? parseFloat(
-                  data.value.config?.discord?.syncInterval?.seconds.toString() +
-                      '.' +
-                      (data.value.config?.discord?.syncInterval?.nanos ?? 0) / 1000000,
-              ).toString() + 's'
-            : undefined,
-    });
+    if (data.value.config.auth) {
+        state.auth = data.value.config.auth;
+    }
+    if (data.value.config.perms) {
+        state.perms = data.value.config.perms;
+    }
+    if (data.value.config.website) {
+        if (data.value.config.website.links) {
+            state.website.links = data.value.config.website.links;
+        }
+    }
+    if (data.value.config.jobInfo) {
+        if (data.value.config.jobInfo.unemployedJob) {
+            state.jobInfo.unemployedJob = data.value.config.jobInfo.unemployedJob;
+        }
+        state.jobInfo.hiddenJobs = data.value.config.jobInfo.hiddenJobs;
+        state.jobInfo.publicJobs = data.value.config.jobInfo.publicJobs;
+    }
+    if (data.value.config.userTracker) {
+        if (data.value.config.userTracker.dbRefreshTime) {
+            state.userTracker.dbRefreshTime = fromDuration(data.value.config.userTracker.dbRefreshTime);
+        }
+        if (data.value.config.userTracker.refreshTime) {
+            state.userTracker.refreshTime = fromDuration(data.value.config.userTracker.refreshTime);
+        }
+        state.userTracker.livemapJobs = data.value.config.userTracker.livemapJobs;
+    }
+    if (data.value.config.discord) {
+        state.discord.enabled = data.value.config.discord.enabled;
+        if (data.value.config.discord.syncInterval) {
+            state.discord.syncInterval = fromDuration(data.value.config.discord.syncInterval);
+        }
+        state.discord.inviteUrl = data.value.config.discord.inviteUrl;
+    }
 }
 
 watchOnce(data, () => setSettingsValues());
@@ -165,359 +225,333 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <DataNoDataBlock v-else-if="data === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
-                <UDashboardNavbar :title="$t('pages.rector.settings.title')">
-                    <template #right>
-                        <UButton
-                            class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                            :disabled="!canSubmit"
-                            :loading="!canSubmit"
-                            @click="onSubmitThrottle"
-                        >
-                            {{ $t('common.save', 1) }}
-                        </UButton>
-                    </template>
-                </UDashboardNavbar>
-
-                <UDashboardPanelContent class="pb-2">
-                    <UDashboardSection
-                        :title="$t('components.rector.app_config.auth.title')"
-                        :description="$t('components.rector.app_config.auth.description')"
-                    >
-                        <UFormGroup
-                            name="authSignupEnabled"
-                            :label="$t('components.rector.app_config.auth.sign_up')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UToggle v-model="data.config!.auth!.signupEnabled">
-                                <span class="sr-only">
-                                    {{ $t('components.rector.app_config.auth.sign_up') }}
-                                </span>
-                            </UToggle>
-                        </UFormGroup>
-                    </UDashboardSection>
-
-                    <UDashboardSection
-                        :title="$t('components.rector.app_config.perms.title')"
-                        :description="$t('components.rector.app_config.perms.description')"
-                    >
-                        <UFormGroup
-                            name="permsDefaultPerms"
-                            :label="$t('components.rector.app_config.perms.default_perms')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <div class="flex flex-col gap-1">
-                                <div
-                                    v-for="(perm, idx) in data.config!.perms!.default"
-                                    :key="idx"
-                                    class="flex items-center gap-1"
-                                >
-                                    <div class="flex-1">
-                                        <UInput
-                                            v-model="perm.category"
-                                            type="text"
-                                            :placeholder="$t('common.category')"
-                                            :label="$t('common.category')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </div>
-                                    <div class="flex-1">
-                                        <UInput
-                                            v-model="perm.name"
-                                            type="text"
-                                            :placeholder="$t('common.name')"
-                                            :label="$t('common.name')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </div>
-
-                                    <UButton
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        icon="i-mdi-close"
-                                        @click="data.config!.perms!.default.splice(idx, 1)"
-                                    />
-                                </div>
-                            </div>
-
+                <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                    <UDashboardNavbar :title="$t('pages.rector.settings.title')">
+                        <template #right>
                             <UButton
-                                class="mt-2"
-                                :ui="{ rounded: 'rounded-full' }"
+                                type="submit"
+                                class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
                                 :disabled="!canSubmit"
-                                icon="i-mdi-plus"
-                                @click="data.config!.perms!.default.push({ category: '', name: '' })"
+                                :loading="!canSubmit"
                             >
+                                {{ $t('common.save', 1) }}
                             </UButton>
-                        </UFormGroup>
-                    </UDashboardSection>
+                        </template>
+                    </UDashboardNavbar>
 
-                    <UDashboardSection
-                        :title="$t('components.rector.app_config.website.title')"
-                        :description="$t('components.rector.app_config.website.description')"
-                    >
-                        <UFormGroup
-                            name="websiteLinksPrivacyPolicy"
-                            :label="$t('common.privacy_policy')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
+                    <UDashboardPanelContent class="pb-2">
+                        <UDashboardSection
+                            :title="$t('components.rector.app_config.auth.title')"
+                            :description="$t('components.rector.app_config.auth.description')"
                         >
-                            <UInput
-                                type="text"
-                                name="websiteLinksPrivacyPolicy"
-                                :value="data.config!.website!.links!.privacyPolicy"
-                                :placeholder="$t('common.privacy_policy')"
-                                :label="$t('common.privacy_policy')"
-                                maxlength="128"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="websiteLinksImprint"
-                            :label="$t('common.imprint')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                type="text"
-                                name="websiteLinksImprint"
-                                :placeholder="$t('common.imprint')"
-                                :value="data.config!.website!.links!.imprint"
-                                maxlength="128"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-                    </UDashboardSection>
-
-                    <UDashboardSection
-                        :title="$t('components.rector.app_config.job_info.title')"
-                        :description="$t('components.rector.app_config.job_info.description')"
-                    >
-                        <UFormGroup
-                            name="jobInfoUnemployedName"
-                            :label="`${$t('common.job')} ${$t('common.name')}`"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                type="text"
-                                name="jobInfoUnemployedName"
-                                :value="data.config!.jobInfo!.unemployedJob!.name"
-                                :placeholder="$t('common.job')"
-                                :label="$t('common.job')"
-                                maxlength="128"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="jobInfoUnemployedGrade"
-                            :label="$t('common.rank')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                type="number"
-                                min="1"
-                                max="99"
-                                :value="data.config!.jobInfo!.unemployedJob!.grade"
-                                name="jobInfoUnemployedGrade"
-                                :placeholder="$t('common.rank')"
-                                :label="$t('common.rank')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="jobInfoPublicJobs"
-                            :label="$t('components.rector.app_config.job_info.public_jobs')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
-                                <USelectMenu
-                                    v-model="data.config!.jobInfo!.publicJobs"
-                                    multiple
-                                    :options="jobs"
-                                    value-attribute="name"
-                                    by="label"
-                                >
-                                    <template #label>
-                                        <template v-if="data.config!.jobInfo!.publicJobs">
-                                            <span class="truncate">{{ data.config!.jobInfo!.publicJobs.join(',') }}</span>
-                                        </template>
-                                    </template>
-                                    <template #option="{ option: job }">
-                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                    </template>
-                                </USelectMenu>
-                            </UFormGroup>
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="jobInfoHiddenJobs"
-                            :label="$t('components.rector.app_config.job_info.hidden_jobs')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
-                                <USelectMenu
-                                    v-model="data.config!.jobInfo!.hiddenJobs"
-                                    multiple
-                                    :options="jobs"
-                                    value-attribute="name"
-                                    by="label"
-                                >
-                                    <template #label>
-                                        <template v-if="data.config!.jobInfo!.hiddenJobs">
-                                            <span class="truncate">{{ data.config!.jobInfo!.hiddenJobs.join(',') }}</span>
-                                        </template>
-                                    </template>
-                                    <template #option="{ option: job }">
-                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                    </template>
-                                </USelectMenu>
-                            </UFormGroup>
-                        </UFormGroup>
-                    </UDashboardSection>
-
-                    <UDashboardSection
-                        :title="$t('components.rector.app_config.user_tracker.title')"
-                        :description="$t('components.rector.app_config.user_tracker.description')"
-                    >
-                        <UFormGroup
-                            name="userTrackerRefreshTime"
-                            :label="$t('components.rector.app_config.user_tracker.refresh_time')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                name="userTrackerRefreshTime"
-                                type="text"
-                                :value="
-                                    parseFloat(
-                                        data.config?.userTracker?.refreshTime?.seconds.toString() +
-                                            '.' +
-                                            (data.config?.userTracker?.refreshTime?.nanos ?? 0) / 1000000,
-                                    ).toString() + 's'
-                                "
-                                :placeholder="$t('common.duration')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="userTrackerDbRefreshTime"
-                            :label="$t('components.rector.app_config.user_tracker.db_refresh_time')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UInput
-                                name="userTrackerDbRefreshTime"
-                                type="text"
-                                :value="
-                                    parseFloat(
-                                        data.config?.userTracker?.dbRefreshTime?.seconds.toString() +
-                                            '.' +
-                                            (data.config?.userTracker?.dbRefreshTime?.nanos ?? 0) / 1000000,
-                                    ).toString() + 's'
-                                "
-                                :placeholder="$t('common.duration')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            name="livemapJobs"
-                            :label="$t('components.rector.app_config.user_tracker.livemap_jobs')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <USelectMenu
-                                v-model="data.config!.userTracker!.livemapJobs"
-                                multiple
-                                :options="jobs"
-                                value-attribute="name"
-                                by="label"
+                            <UFormGroup
+                                name="auth.signupEnabled"
+                                :label="$t('components.rector.app_config.auth.sign_up')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
                             >
-                                <template #label>
-                                    <template v-if="data.config!.userTracker!.livemapJobs">
-                                        <span class="truncate">{{ data.config!.userTracker!.livemapJobs.join(',') }}</span>
+                                <UToggle v-model="state.auth.signupEnabled">
+                                    <span class="sr-only">
+                                        {{ $t('components.rector.app_config.auth.sign_up') }}
+                                    </span>
+                                </UToggle>
+                            </UFormGroup>
+                        </UDashboardSection>
+
+                        <UDashboardSection
+                            :title="$t('components.rector.app_config.perms.title')"
+                            :description="$t('components.rector.app_config.perms.description')"
+                        >
+                            <UFormGroup
+                                name="perms.default"
+                                :label="$t('components.rector.app_config.perms.default_perms')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <div class="flex flex-col gap-1">
+                                    <div v-for="(perm, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
+                                        <UFormGroup :name="`perms.default.${idx}.category`" class="flex-1">
+                                            <UInput
+                                                v-model="state.perms.default[idx].category"
+                                                type="text"
+                                                :placeholder="$t('common.category')"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </UFormGroup>
+
+                                        <UFormGroup :name="`perms.default.${idx}.name`" class="flex-1">
+                                            <UInput
+                                                v-model="state.perms.default[idx].name"
+                                                type="text"
+                                                :placeholder="$t('common.name')"
+                                                @focusin="focusTablet(true)"
+                                                @focusout="focusTablet(false)"
+                                            />
+                                        </UFormGroup>
+
+                                        <UButton
+                                            :ui="{ rounded: 'rounded-full' }"
+                                            icon="i-mdi-close"
+                                            @click="state.perms.default.splice(idx, 1)"
+                                        />
+                                    </div>
+                                </div>
+
+                                <UButton
+                                    class="mt-2"
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    :disabled="!canSubmit"
+                                    icon="i-mdi-plus"
+                                    @click="state.perms.default.push({ category: '', name: '' })"
+                                />
+                            </UFormGroup>
+                        </UDashboardSection>
+
+                        <UDashboardSection
+                            :title="$t('components.rector.app_config.website.title')"
+                            :description="$t('components.rector.app_config.website.description')"
+                        >
+                            <UFormGroup
+                                name="website.links.privacyPolicy"
+                                :label="$t('common.privacy_policy')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.website.links.privacyPolicy"
+                                    type="text"
+                                    :placeholder="$t('common.privacy_policy')"
+                                    maxlength="255"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="website.links.imprint"
+                                :label="$t('common.imprint')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.website.links.imprint"
+                                    type="text"
+                                    :placeholder="$t('common.imprint')"
+                                    maxlength="255"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+                        </UDashboardSection>
+
+                        <UDashboardSection
+                            :title="$t('components.rector.app_config.job_info.title')"
+                            :description="$t('components.rector.app_config.job_info.description')"
+                        >
+                            <UFormGroup
+                                name="jobInfo.unemployedJob.name"
+                                :label="`${$t('common.job')} ${$t('common.name')}`"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.jobInfo.unemployedJob.name"
+                                    type="text"
+                                    :placeholder="$t('common.job')"
+                                    maxlength="255"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="jobInfo.unemployedJob.grade"
+                                :label="$t('common.rank')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.jobInfo.unemployedJob.grade"
+                                    type="number"
+                                    min="1"
+                                    max="99"
+                                    name="jobInfoUnemployedGrade"
+                                    :placeholder="$t('common.rank')"
+                                    :label="$t('common.rank')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="jobInfo.publicJobs"
+                                :label="$t('components.rector.app_config.job_info.public_jobs')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <USelectMenu
+                                    v-model="state.jobInfo.publicJobs"
+                                    multiple
+                                    :options="jobs ?? []"
+                                    value-attribute="name"
+                                    by="label"
+                                >
+                                    <template #label>
+                                        <template v-if="state.jobInfo.publicJobs">
+                                            <span class="truncate">{{ state.jobInfo.publicJobs.join(',') }}</span>
+                                        </template>
+                                        <template v-else>
+                                            <span class="truncate">{{ $t('common.none_selected', [$t('common.job')]) }}</span>
+                                        </template>
                                     </template>
-                                </template>
-                                <template #option="{ option: job }">
-                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                </template>
-                            </USelectMenu>
-                        </UFormGroup>
-                    </UDashboardSection>
+                                    <template #option="{ option: job }">
+                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
 
-                    <UDashboardSection
-                        :title="$t('common.discord')"
-                        :description="$t('components.rector.app_config.discord.description')"
-                    >
-                        <UFormGroup
-                            name="discordEnabled"
-                            :label="$t('common.enabled')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UToggle v-model="data.config!.discord!.enabled">
-                                <span class="sr-only">
-                                    {{ $t('common.enabled') }}
-                                </span>
-                            </UToggle>
-                        </UFormGroup>
+                            <UFormGroup
+                                name="jobInfo.hiddenJobs"
+                                :label="$t('components.rector.app_config.job_info.hidden_jobs')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <USelectMenu
+                                    v-model="state.jobInfo.hiddenJobs"
+                                    multiple
+                                    :options="jobs ?? []"
+                                    value-attribute="name"
+                                    by="label"
+                                >
+                                    <template #label>
+                                        <template v-if="state.jobInfo.hiddenJobs">
+                                            <span class="truncate">{{ state.jobInfo.hiddenJobs.join(',') }}</span>
+                                        </template>
+                                        <template v-else>
+                                            <span class="truncate">{{ $t('common.none_selected', [$t('common.job')]) }}</span>
+                                        </template>
+                                    </template>
+                                    <template #option="{ option: job }">
+                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
+                        </UDashboardSection>
 
-                        <UFormGroup
-                            name="discordSyncInterval"
-                            :label="$t('components.rector.app_config.discord.sync_interval')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
+                        <UDashboardSection
+                            :title="$t('components.rector.app_config.user_tracker.title')"
+                            :description="$t('components.rector.app_config.user_tracker.description')"
                         >
-                            <UInput
-                                name="discordSyncInterval"
-                                type="text"
-                                :value="
-                                    parseFloat(
-                                        data.config?.discord?.syncInterval?.seconds.toString() +
-                                            '.' +
-                                            (data.config?.discord?.syncInterval?.nanos ?? 0) / 1000000,
-                                    ).toString() + 's'
-                                "
-                                :placeholder="$t('common.duration')"
-                                :label="$t('common.duration')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
+                            <UFormGroup
+                                name="userTracker.refreshTime"
+                                :label="$t('components.rector.app_config.user_tracker.refresh_time')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.userTracker.refreshTime"
+                                    type="text"
+                                    :placeholder="$t('common.duration')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
 
-                        <UFormGroup
-                            name="discordBotInviteUrl"
-                            :label="$t('components.rector.app_config.discord.bot_invite_url')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
+                            <UFormGroup
+                                name="userTracker.dbRefreshTime"
+                                :label="$t('components.rector.app_config.user_tracker.db_refresh_time')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.userTracker.dbRefreshTime"
+                                    type="text"
+                                    :placeholder="$t('common.duration')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="userTracker.livemapJobs"
+                                :label="$t('components.rector.app_config.user_tracker.livemap_jobs')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <USelectMenu
+                                    v-model="state.userTracker.livemapJobs"
+                                    multiple
+                                    :options="jobs ?? []"
+                                    value-attribute="name"
+                                    by="label"
+                                >
+                                    <template #label>
+                                        <template v-if="state.userTracker.livemapJobs">
+                                            <span class="truncate">{{ state.userTracker.livemapJobs.join(',') }}</span>
+                                        </template>
+                                        <template v-else>
+                                            <span class="truncate">{{ $t('common.none_selected', [$t('common.job')]) }}</span>
+                                        </template>
+                                    </template>
+                                    <template #option="{ option: job }">
+                                        <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                    </template>
+                                </USelectMenu>
+                            </UFormGroup>
+                        </UDashboardSection>
+
+                        <!-- Discord -->
+                        <UDashboardSection
+                            :title="$t('common.discord')"
+                            :description="$t('components.rector.app_config.discord.description')"
                         >
-                            <UInput
-                                type="url"
-                                name="discordBotInviteUrl"
-                                :value="data.config!.discord!.inviteUrl"
-                                :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
+                            <UFormGroup
+                                name="discordEnabled"
+                                :label="$t('common.enabled')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UToggle v-model="state.discord.enabled">
+                                    <span class="sr-only">
+                                        {{ $t('common.enabled') }}
+                                    </span>
+                                </UToggle>
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="discord.syncInterval"
+                                :label="$t('components.rector.app_config.discord.sync_interval')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.discord.syncInterval"
+                                    name="discord.syncInterval"
+                                    type="text"
+                                    :placeholder="$t('common.duration')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="discord.inviteUrl"
                                 :label="$t('components.rector.app_config.discord.bot_invite_url')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-                    </UDashboardSection>
-                </UDashboardPanelContent>
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.discord.inviteUrl"
+                                    type="text"
+                                    :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+                        </UDashboardSection>
+                    </UDashboardPanelContent>
+                </UForm>
             </template>
         </template>
     </div>

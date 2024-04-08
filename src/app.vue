@@ -4,6 +4,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
+import Sounds from './components/overlays/Sounds.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
@@ -136,6 +137,7 @@ watch(updateAvailable, async () => {
         <UNotifications />
         <UModals />
         <USlideovers />
+        <Sounds />
 
         <NotificationProvider />
 

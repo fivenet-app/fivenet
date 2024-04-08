@@ -321,6 +321,9 @@ export const useCentrumStore = defineStore('centrum', {
                     description: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
                     type: 'info',
                 });
+
+                const { play } = useSound();
+                play({ name: 'centrum/message-incoming' });
             }
         },
         removePendingDispatch(id: string): void {

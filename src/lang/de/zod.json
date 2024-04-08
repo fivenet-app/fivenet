@@ -17,68 +17,68 @@
             "not_multiple_of": "Zahl muss ein Vielfaches von {multipleOf} sein",
             "not_finite": "Zahl muss endlich sein",
             "invalid_string": {
-            "email": "Ungültige {validation}",
-            "url": "Ungültige {validation}",
-            "uuid": "Ungültige {validation}",
-            "cuid": "Ungültige {validation}",
-            "regex": "Ungültig",
-            "datetime": "Ungültiger {validation}",
-            "startsWith": "Ungültige Eingabe: muss mit \"{startsWith}\" beginnen",
-            "endsWith": "Ungültige Eingabe: muss mit \"{endsWith}\" enden"
+                "email": "Ungültige {validation}",
+                "url": "Ungültige {validation}",
+                "uuid": "Ungültige {validation}",
+                "cuid": "Ungültige {validation}",
+                "regex": "Ungültig",
+                "datetime": "Ungültiger {validation}",
+                "startsWith": "Ungültige Eingabe: muss mit \"{startsWith}\" beginnen",
+                "endsWith": "Ungültige Eingabe: muss mit \"{endsWith}\" enden"
             },
             "too_small": {
-            "array": {
-                "exact": "Liste muss genau {minimum} Element(e) enthalten",
-                "inclusive": "Liste muss mindestens {minimum} Element(e) enthalten",
-                "not_inclusive": "Liste muss mehr als {minimum} Element(e) enthalten"
-            },
-            "string": {
-                "exact": "Feld muss genau {minimum} Zeichen enthalten",
-                "inclusive": "Feld muss mindestens {minimum} Zeichen enthalten",
-                "not_inclusive": "Feld muss mehr als {minimum} Zeichen enthalten"
-            },
-            "number": {
-                "exact": "Zahl muss genau {minimum} sein",
-                "inclusive": "Zahl muss größer oder gleich {minimum} sein",
-                "not_inclusive": "Zahl muss größer als {minimum} sein"
-            },
-            "set": {
-                "exact": "Ungültige Eingabe",
-                "inclusive": "Ungültige Eingabe",
-                "not_inclusive": "Ungültige Eingabe"
-            },
-            "date": {
-                "exact": "Datum muss genau {minimum} sein",
-                "inclusive": "Datum muss größer oder gleich {minimum} sein",
-                "not_inclusive": "Datum muss größer als {minimum} sein"
-            }
+                "array": {
+                    "exact": "Liste muss genau {minimum} Element(e) enthalten",
+                    "inclusive": "Liste muss mindestens {minimum} Element(e) enthalten",
+                    "not_inclusive": "Liste muss mehr als {minimum} Element(e) enthalten"
+                },
+                "string": {
+                    "exact": "Feld muss genau {minimum} Zeichen enthalten",
+                    "inclusive": "Feld muss mindestens {minimum} Zeichen enthalten",
+                    "not_inclusive": "Feld muss mehr als {minimum} Zeichen enthalten"
+                },
+                "number": {
+                    "exact": "Zahl muss genau {minimum} sein",
+                    "inclusive": "Zahl muss größer oder gleich {minimum} sein",
+                    "not_inclusive": "Zahl muss größer als {minimum} sein"
+                },
+                "set": {
+                    "exact": "Ungültige Eingabe",
+                    "inclusive": "Ungültige Eingabe",
+                    "not_inclusive": "Ungültige Eingabe"
+                },
+                "date": {
+                    "exact": "Datum muss genau {minimum} sein",
+                    "inclusive": "Datum muss größer oder gleich {minimum} sein",
+                    "not_inclusive": "Datum muss größer als {minimum} sein"
+                }
             },
             "too_big": {
-            "array": {
-                "exact": "Liste muss genau {maximum} Element(e) enthalten",
-                "inclusive": "Liste darf höchstens {maximum} Element(e) enthalten",
-                "not_inclusive": "Liste muss weniger als {maximum} Element(e) enthalten"
-            },
-            "string": {
-                "exact": "Feld muss genau {maximum} Zeichen enthalten",
-                "inclusive": "Feld darf höchstens {maximum} Zeichen enthalten",
-                "not_inclusive": "Feld muss weniger als {maximum} Zeichen enthalten"
-            },
-            "number": {
-                "exact": "Zahl muss genau {maximum} sein",
-                "inclusive": "Zahl muss kleiner oder gleich {maximum} sein",
-                "not_inclusive": "Zahl muss kleiner als {maximum} sein"
-            },
-            "set": {
-                "exact": "Ungültige Eingabe",
-                "inclusive": "Ungültige Eingabe",
-                "not_inclusive": "Ungültige Eingabe"
-            },
-            "date": {
-                "exact": "Datum muss genau {maximum} sein",
-                "inclusive": "Datum muss kleiner oder gleich {maximum} sein",
-                "not_inclusive": "Datum muss kleiner als {maximum} sein"
-            }
+                "array": {
+                    "exact": "Liste muss genau {maximum} Element(e) enthalten",
+                    "inclusive": "Liste darf höchstens {maximum} Element(e) enthalten",
+                    "not_inclusive": "Liste muss weniger als {maximum} Element(e) enthalten"
+                },
+                "string": {
+                    "exact": "Feld muss genau {maximum} Zeichen enthalten",
+                    "inclusive": "Feld darf höchstens {maximum} Zeichen enthalten",
+                    "not_inclusive": "Feld muss weniger als {maximum} Zeichen enthalten"
+                },
+                "number": {
+                    "exact": "Zahl muss genau {maximum} sein",
+                    "inclusive": "Zahl muss kleiner oder gleich {maximum} sein",
+                    "not_inclusive": "Zahl muss kleiner als {maximum} sein"
+                },
+                "set": {
+                    "exact": "Ungültige Eingabe",
+                    "inclusive": "Ungültige Eingabe",
+                    "not_inclusive": "Ungültige Eingabe"
+                },
+                "date": {
+                    "exact": "Datum muss genau {maximum} sein",
+                    "inclusive": "Datum muss kleiner oder gleich {maximum} sein",
+                    "not_inclusive": "Datum muss kleiner als {maximum} sein"
+                }
             }
         },
         "validations": {

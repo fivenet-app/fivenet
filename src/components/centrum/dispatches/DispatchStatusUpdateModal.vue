@@ -22,9 +22,9 @@ const { settings } = storeToRefs(centrumStore);
 const notifications = useNotificatorStore();
 
 const schema = z.object({
-    status: z.custom<StatusDispatch>(),
-    code: z.union([z.string().min(0).max(20), z.string().optional()]),
-    reason: z.union([z.string().min(3).max(255), z.string().optional()]),
+    status: z.nativeEnum(StatusDispatch),
+    code: z.union([z.string().min(1).max(20), z.string().length(0).optional()]),
+    reason: z.union([z.string().min(3).max(255), z.string().length(0).optional()]),
 });
 
 type Schema = z.output<typeof schema>;
