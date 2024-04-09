@@ -20,13 +20,13 @@ const navigation = inject<NavItem[]>('navigation', []);
                     <span class="truncate font-semibold text-gray-900 dark:text-white">FiveNet - {{ $t('common.help') }}</span>
                 </UButton>
             </UDropdown>
-
-            <UButton color="black" icon="i-mdi-arrow-back" to="/">
-                {{ $t('common.back') }}
-            </UButton>
         </template>
 
         <template #right>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/">
+                {{ $t('common.back') }}
+            </UButton>
+
             <UColorModeButton />
         </template>
 
