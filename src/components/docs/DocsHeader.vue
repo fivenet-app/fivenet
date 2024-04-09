@@ -26,13 +26,7 @@ const navigation = inject<NavItem[]>('navigation', []);
             </UButton>
         </template>
 
-        <template #center>
-            <UContentSearchButton :label="`${$t('common.search')}...`" class="hidden lg:flex" />
-        </template>
-
         <template #right>
-            <UContentSearchButton :label="`${$t('common.search')}...`" class="lg:hidden" />
-
             <UColorModeButton />
         </template>
 
