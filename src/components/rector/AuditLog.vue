@@ -89,10 +89,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
 const selectedCitizens = ref<UserShort[]>([]);
 
 function charsGetDisplayValue(chars: UserShort[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`));
-
-    return cs.join(', ');
+    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
 }
 
 watch(offset, async () => refresh());

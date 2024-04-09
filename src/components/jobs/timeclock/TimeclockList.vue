@@ -31,8 +31,7 @@ const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.
 const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
 const schema = z.object({
-    userIds: z.custom<Colleague>().array().max(5).optional(),
-    user: z.custom<Colleague>().optional(),
+    users: z.custom<Colleague>().array().max(5).optional(),
     from: z.date().optional(),
     to: z.date().optional(),
     perDay: z.boolean(),
@@ -41,6 +40,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const query = ref<Schema>({
+    users: [],
     from: currentDay.value,
     to: canAccessAll ? previousDay.value : undefined,
     perDay: canAccessAll,
@@ -57,7 +57,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.userIds?.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.users?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
 
@@ -67,7 +67,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: offset.value,
             },
-            userIds: query.value.user ? [query.value.user.userId] : query.value.userIds?.map((u) => u.userId) ?? [],
+            userIds: query.value.users?.map((u) => u.userId) ?? [],
         };
         if (query.value.perDay !== undefined) {
             req.perDay = query.value.perDay;
@@ -122,7 +122,7 @@ watchDebounced(
     query.value,
     async () => {
         if (canAccessAll) {
-            if (query.value.user !== undefined || (query.value.userIds !== undefined && query.value.userIds.length > 0)) {
+            if (query.value.users !== undefined && query.value.users.length > 0) {
                 if (query.value.perDay) {
                     query.value.perDay = false;
                     query.value.to = undefined;
@@ -168,10 +168,7 @@ function updateDates(): void {
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
-
-    return cs.join(', ');
+    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
 }
 
 const columns = computed(() =>
@@ -194,12 +191,6 @@ const columns = computed(() =>
 );
 
 const input = ref<{ input: HTMLInputElement }>();
-
-defineShortcuts({
-    '/': () => {
-        input.value?.input?.focus();
-    },
-});
 </script>
 
 <template>
@@ -219,12 +210,12 @@ defineShortcuts({
                             </UButton>
 
                             <div class="flex flex-row gap-2">
-                                <UFormGroup v-if="canAccessAll" name="user" :label="$t('common.colleague', 2)" class="flex-1">
-                                    <UInputMenu
+                                <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.colleague', 2)" class="flex-1">
+                                    <USelectMenu
                                         ref="input"
-                                        v-model="query.userIds"
-                                        nullable
-                                        :search="
+                                        v-model="query.users"
+                                        multiple
+                                        :searchable="
                                             async (query: string) => {
                                                 usersLoading = true;
                                                 const colleagues = await completorStore.listColleagues({
@@ -236,7 +227,7 @@ defineShortcuts({
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="query.userIds ? charsGetDisplayValue(query.userIds) : $t('common.owner')"
+                                        :placeholder="query.users ? charsGetDisplayValue(query.users) : $t('common.owner')"
                                         trailing
                                         by="userId"
                                     >
@@ -247,11 +238,7 @@ defineShortcuts({
                                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                         </template>
                                         <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-
-                                        <template #trailing>
-                                            <UKbd value="/" />
-                                        </template>
-                                    </UInputMenu>
+                                    </USelectMenu>
                                 </UFormGroup>
 
                                 <UFormGroup

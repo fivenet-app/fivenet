@@ -73,10 +73,7 @@ watchDebounced(query, async () => refresh(), {
 });
 
 function charsGetDisplayValue(chars: Colleague[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
-
-    return cs.join(', ');
+    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
 }
 </script>
 

@@ -41,7 +41,6 @@ watch(chars, async () => {
     <template v-else>
         <UCarousel
             v-slot="{ item }"
-            class="backdrop-blur"
             :items="chars"
             arrows
             :prev-button="{

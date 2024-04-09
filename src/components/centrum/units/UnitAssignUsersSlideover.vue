@@ -56,10 +56,7 @@ async function assignUnit(): Promise<void> {
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {
-    const cs: string[] = [];
-    chars.forEach((c) => cs.push(`${c?.firstname} ${c?.lastname}`));
-
-    return cs.join(', ');
+    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
 }
 
 const canSubmit = ref(true);

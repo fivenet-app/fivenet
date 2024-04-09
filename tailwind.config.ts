@@ -86,6 +86,7 @@ export default <Partial<Config>>{
             },
             maxWidth: {
                 '8xl': '88rem',
+                screen: '100vw',
             },
             height: {
                 '112': '28rem',

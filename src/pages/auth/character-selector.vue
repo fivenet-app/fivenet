@@ -27,19 +27,21 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="flex h-full flex-col items-center justify-center">
-        <UContainer>
-            <UCard class="w-full">
+    <div>
+        <UContainer class="max-w-screen">
+            <UCard class="bg-white/75 backdrop-blur dark:bg-white/5">
                 <CharacterSelector />
             </UCard>
         </UContainer>
 
-        <UButton
-            icon="i-mdi-logout"
-            :label="$t('common.sign_out')"
-            to="/auth/logout"
-            color="white"
-            class="absolute bottom-4 z-10"
-        />
+        <div class="flex flex-col items-center justify-center">
+            <UButton
+                icon="i-mdi-logout"
+                :label="$t('common.sign_out')"
+                to="/auth/logout"
+                color="white"
+                class="absolute bottom-4 z-10"
+            />
+        </div>
     </div>
 </template>
