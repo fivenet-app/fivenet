@@ -76,6 +76,7 @@ fivenet:
       timeout: 10s
       environment: "live"
       ratio: 0.1
+      attributes: []
     http:
       listen: ":8080"
       adminListen: ":7070"

@@ -136,3 +136,49 @@ func (j *JSWrapper) PublishMsgAsync(ctx context.Context, msg *nats.Msg, opts ...
 	j.addSpanInfoToMsg(ctx, msg)
 	return j.JetStream.PublishMsgAsync(msg, opts...)
 }
+
+func GetJetstreamMsgContext(msg jetstream.Msg) (spanContext trace.SpanContext, err error) {
+	headers := msg.Headers()
+
+	var traceID trace.TraceID
+	traceID, err = trace.TraceIDFromHex(headers.Get("X-Trace-Id"))
+	if err != nil {
+		return spanContext, err
+	}
+	var spanID trace.SpanID
+	spanID, err = trace.SpanIDFromHex(headers.Get("X-Span-Id"))
+	if err != nil {
+		return spanContext, err
+	}
+
+	var spanContextConfig trace.SpanContextConfig
+	spanContextConfig.TraceID = traceID
+	spanContextConfig.SpanID = spanID
+	spanContextConfig.TraceFlags = 01
+	spanContextConfig.Remote = true
+	spanContext = trace.NewSpanContext(spanContextConfig)
+
+	return spanContext, nil
+}
+
+func GetNatsMsgContext(msg *nats.Msg) (spanContext trace.SpanContext, err error) {
+	var traceID trace.TraceID
+	traceID, err = trace.TraceIDFromHex(msg.Header.Get("X-Trace-Id"))
+	if err != nil {
+		return spanContext, err
+	}
+	var spanID trace.SpanID
+	spanID, err = trace.SpanIDFromHex(msg.Header.Get("X-Span-Id"))
+	if err != nil {
+		return spanContext, err
+	}
+
+	var spanContextConfig trace.SpanContextConfig
+	spanContextConfig.TraceID = traceID
+	spanContextConfig.SpanID = spanID
+	spanContextConfig.TraceFlags = 01
+	spanContextConfig.Remote = true
+	spanContext = trace.NewSpanContext(spanContextConfig)
+
+	return spanContext, nil
+}

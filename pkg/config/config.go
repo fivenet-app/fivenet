@@ -46,6 +46,7 @@ type Tracing struct {
 	Timeout     time.Duration   `default:"10s" yaml:"timeout"`
 	Environment string          `default:"dev" yaml:"environment"`
 	Ratio       float64         `default:"0.1" yaml:"ratio"`
+	Attributes  []string        `yaml:"attributes"`
 }
 
 type HTTP struct {

@@ -3,6 +3,8 @@ package modules
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"time"
 
 	"github.com/galexrt/fivenet/pkg/config"
@@ -76,16 +78,37 @@ func NewTracerProvider(p TracingParams) (*tracesdk.TracerProvider, error) {
 		return nil, fmt.Errorf("failed to setup tracing provider. %w", err)
 	}
 
+	hostname, err := os.Hostname()
+	if err != nil {
+		return nil, fmt.Errorf("failed to get hostname for tracer attributes. %w", err)
+	}
+
+	customAttrs := []attribute.KeyValue{
+		semconv.ServiceNamespace("fivenet"),
+		semconv.HostName(hostname),
+		attribute.String("environment", p.Config.Tracing.Environment),
+	}
+
+	for i := range p.Config.Tracing.Attributes {
+		split := strings.SplitN(p.Config.Tracing.Attributes[i], "=", 2)
+		if len(split) < 2 {
+			return nil, fmt.Errorf("failed to parse tracing attributes (%q)", p.Config.Tracing.Attributes[i])
+		}
+
+		customAttrs = append(customAttrs, attribute.String(split[0], split[1]))
+	}
+
+	attrs := resource.NewWithAttributes(
+		semconv.SchemaURL,
+		customAttrs...,
+	)
+
 	tp := tracesdk.NewTracerProvider(
 		tracesdk.WithSampler(tracesdk.TraceIDRatioBased(p.Config.Tracing.Ratio)),
 		// Always be sure to batch in production.
 		tracesdk.WithBatcher(exporter),
 		// Record information about this application in a Resource.
-		tracesdk.WithResource(resource.NewWithAttributes(
-			semconv.SchemaURL,
-			semconv.ServiceName("fivenet"),
-			attribute.String("environment", p.Config.Tracing.Environment),
-		)),
+		tracesdk.WithResource(attrs),
 	)
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {

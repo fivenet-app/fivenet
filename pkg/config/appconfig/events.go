@@ -8,6 +8,8 @@ import (
 
 	"github.com/galexrt/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
+	"go.opentelemetry.io/otel"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
 
@@ -59,6 +61,13 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 
 func (c *Config) handleMessageFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
+		remoteCtx, err := events.GetJetstreamMsgContext(msg)
+		if err != nil {
+			c.logger.Error("failed to get js msg context", zap.Error(err))
+		}
+		_, span := otel.GetTracerProvider().Tracer("centrum").Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
+		defer span.End()
+
 		if err := msg.Ack(); err != nil {
 			c.logger.Error("failed to ack message", zap.Error(err))
 		}

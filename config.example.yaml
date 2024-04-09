@@ -11,6 +11,7 @@ tracing:
   timeout: 10s
   environment: "dev"
   ratio: 0.1
+  attributes: {}
 http:
   listen: ":8080"
   adminListen: ":7070"
