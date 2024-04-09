@@ -53,7 +53,7 @@ require (
 	golang.org/x/exp v0.0.0-20240404231335-c0f41cb1a7a0
 	golang.org/x/image v0.15.0
 	golang.org/x/oauth2 v0.19.0
-	google.golang.org/grpc v1.63.1
+	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.33.0
 	gotest.tools/v3 v3.5.1
 	willnorris.com/go/imageproxy v0.11.2
