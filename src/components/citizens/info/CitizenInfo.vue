@@ -92,7 +92,11 @@ function addToClipboard(): void {
     <div>
         <UDashboardNavbar :title="$t('pages.citizens.id.title')">
             <template #right>
-                <UButtonGroup>
+                <UButtonGroup class="inline-flex">
+                    <UButton color="black" to="/citizens">
+                        {{ $t('common.back') }}
+                    </UButton>
+
                     <IDCopyBadge
                         :id="userId"
                         prefix="CIT"

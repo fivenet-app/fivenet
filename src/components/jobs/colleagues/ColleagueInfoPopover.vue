@@ -108,7 +108,7 @@ today.setMilliseconds(0);
                     />
                 </UButtonGroup>
 
-                <div class="inline-flex flex-row gap-2">
+                <div class="inline-flex flex-row gap-2 text-gray-900 dark:text-white">
                     <div v-if="showAvatar === undefined || showAvatar">
                         <ProfilePictureImg :url="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
                     </div>

@@ -278,6 +278,10 @@ onBeforeUnmount(() => {
     color: rgb(var(--color-primary-400));
 }
 
+.leaflet-map-pane {
+    z-index: 0;
+}
+
 .leaflet-div-icon {
     background: none !important;
     border: none !important;

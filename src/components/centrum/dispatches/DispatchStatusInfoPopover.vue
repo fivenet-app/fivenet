@@ -43,7 +43,7 @@ const open = ref(false);
                             {{ $t('common.detail', 2) }}
                         </UButton>
                     </div>
-                    <div>
+                    <div class="text-gray-900 dark:text-white">
                         <p class="text-base font-semibold leading-none">DSP-{{ status.dispatchId }}</p>
                         <p class="inline-flex items-center justify-center text-sm font-normal">
                             <span class="font-semibold"> {{ $t('common.status') }} </span>:

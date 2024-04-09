@@ -28,6 +28,6 @@ withDefaults(
         :text="getInitials(name)"
         :alt="alt ?? $t('common.avatar')"
         :enable-popup="enablePopup"
-        :no-blur="noBlur"
+        :no-blur="noBlur || url === undefined"
     />
 </template>

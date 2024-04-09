@@ -17,7 +17,7 @@ export default defineNuxtConfig({
         '@nuxt/content',
         '@nuxt/ui',
         '@nuxtjs/tailwindcss',
-        '@galexrt/nuxt-zod-i18n',
+        'nuxt-zod-i18n',
         '@nuxtjs/i18n',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',

@@ -29,6 +29,10 @@ onMounted(async () => {
 const preventClose = ref(false);
 
 async function switchLanguage(lang: LocaleObject): Promise<void> {
+    if (locale.value === lang.iso) {
+        return;
+    }
+
     console.debug('Switching language to:', lang.name);
     preventClose.value = true;
 

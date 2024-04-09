@@ -57,7 +57,7 @@ watch(design.value, () => {
 </script>
 
 <template>
-    <UDashboardPanelContent class="pb-24">
+    <UDashboardPanelContent>
         <UDashboardSection :title="$t('common.theme')" description="Customize the look and feel of your dashboard.">
             <template #links>
                 <UColorModeSelect color="gray" />

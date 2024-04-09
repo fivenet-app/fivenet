@@ -64,25 +64,27 @@ if (!props.hideJoin) {
         </UButton>
 
         <template v-if="!hideJoin">
-            <UButton
-                v-if="!isDisponent"
-                :disabled="!canSubmit"
-                :loading="!canSubmit"
-                icon="i-mdi-location-enter"
-                @click="onSubmitThrottle(true)"
-            >
-                {{ $t('common.join') }}
-            </UButton>
-            <UButton
-                v-else
-                :disabled="!canSubmit"
-                :loading="!canSubmit"
-                color="amber"
-                icon="i-mdi-location-exit"
-                @click="onSubmitThrottle(false)"
-            >
-                {{ $t('common.leave') }}
-            </UButton>
+            <UTooltip :text="`${$t('common.join')}/ $t('common.leave')`" :shortcuts="['C', 'Q']">
+                <UButton
+                    v-if="!isDisponent"
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    icon="i-mdi-location-enter"
+                    @click="onSubmitThrottle(true)"
+                >
+                    {{ $t('common.join') }}
+                </UButton>
+                <UButton
+                    v-else
+                    :disabled="!canSubmit"
+                    :loading="!canSubmit"
+                    color="amber"
+                    icon="i-mdi-location-exit"
+                    @click="onSubmitThrottle(false)"
+                >
+                    {{ $t('common.leave') }}
+                </UButton>
+            </UTooltip>
         </template>
     </div>
 </template>

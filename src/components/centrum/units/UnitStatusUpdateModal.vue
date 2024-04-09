@@ -197,7 +197,13 @@ function updateReasonField(value: string): void {
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                     @change="updateReasonField($event)"
-                                />
+                                >
+                                    <template #option="{ option }">
+                                        <span class="truncate">
+                                            {{ option !== '' ? option : '&nbsp;' }}
+                                        </span>
+                                    </template>
+                                </USelectMenu>
                             </dd>
                         </div>
                     </dl>

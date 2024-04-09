@@ -134,7 +134,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         "
                     >
                         <span class="truncate">
-                            {{ $t('common.unit', 1) }}
+                            {{ $t('common.unit') }}
                         </span>
                     </UButton>
                 </div>

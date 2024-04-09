@@ -44,7 +44,13 @@ function toggleBlur(): void {
 
         <template #panel>
             <div class="p-4">
-                <img class="w-96 max-w-full rounded-md" :src="url" :alt="alt" />
+                <img
+                    class="w-96 max-w-full rounded-md"
+                    :class="[visible ? '' : 'blur']"
+                    :src="url"
+                    :alt="alt"
+                    @click="toggleBlur()"
+                />
             </div>
         </template>
     </UPopover>

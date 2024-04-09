@@ -4,7 +4,6 @@ import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDe
 import DispatchMarker from '~/components/centrum/livemap/DispatchMarker.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useSettingsStore } from '~/store/settings';
-import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
     showAllDispatches?: boolean;
@@ -78,6 +77,7 @@ const dispatchesFiltered = computedAsync(async () =>
         <div class="flex flex-col gap-2">
             <UInput
                 v-model="dispatchQueryRaw"
+                class="max-w-44"
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"

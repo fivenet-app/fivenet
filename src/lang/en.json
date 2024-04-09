@@ -618,7 +618,8 @@
             "factory_reset": "Factory Reset FiveNet App",
             "version": "Version",
             "nui_info": "NUI Info",
-            "no_char_selected": "No char active, please choose a character and check again."
+            "no_char_selected": "No char active, please choose a character and check again.",
+            "test_notifications": "Test Notifications"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"

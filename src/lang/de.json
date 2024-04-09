@@ -291,8 +291,8 @@
         "money": "Geld",
         "no_open_fine": "Keine offenen Geldstrafe",
         "location": "Standort | Standorte",
-        "units": "Einheiten",
-        "unit": "Keine Einheiten | {n} Einheit | {n} Einheiten",
+        "units": "Keine Einheiten | {n} Einheit | {n} Einheiten",
+        "unit": "Einheit | Einheiten",
         "color": "Farbe",
         "initials": "Initialen",
         "updated": "Aktualisiert",
@@ -618,7 +618,8 @@
             "factory_reset": "FiveNet App auf Standard zurücksetzen",
             "version": "Version",
             "nui_info": "NUI-Info",
-            "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut."
+            "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut.",
+            "test_notifications": "Teste Benachrichtigungen"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"

@@ -62,20 +62,22 @@ withDefaults(
                         }).value
                     }}
                 </p>
-                <p class="text-sm font-medium leading-none">
-                    {{ $t('common.members') }}
-                </p>
-                <template v-if="unit.users.length === 0">
-                    <p class="text-xs font-normal">
-                        {{ $t('common.units', 0) }}
+                <div class="text-gray-900 dark:text-white">
+                    <p class="text-sm font-medium leading-none">
+                        {{ $t('common.members') }}
                     </p>
-                </template>
-                <ul v-else class="text-xs font-normal">
-                    <li v-for="user in unit.users" :key="user.userId" class="inline-flex items-center gap-1">
-                        <span>{{ user.user?.firstname }} {{ user.user?.lastname }}</span>
-                        <PhoneNumberBlock :number="user.user?.phoneNumber" :hide-number="true" />
-                    </li>
-                </ul>
+                    <template v-if="unit.users.length === 0">
+                        <p class="text-xs font-normal">
+                            {{ $t('common.units', 0) }}
+                        </p>
+                    </template>
+                    <ul v-else class="text-xs font-normal">
+                        <li v-for="user in unit.users" :key="user.userId" class="inline-flex items-center gap-1">
+                            <span>{{ user.user?.firstname }} {{ user.user?.lastname }}</span>
+                            <PhoneNumberBlock :number="user.user?.phoneNumber" :hide-number="true" />
+                        </li>
+                    </ul>
+                </div>
             </div>
         </template>
     </UPopover>

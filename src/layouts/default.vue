@@ -401,7 +401,7 @@ const quickButtons = ref({
                     label: $t('commandpalette.empty.title'),
                     queryLabel: $t('commandpalette.empty.title'),
                 }"
-                :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '#', key2: '@' })})`"
+                :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
             />
         </ClientOnly>
     </UDashboardLayout>

@@ -10,7 +10,6 @@ import DispatchAttributes from '../partials/DispatchAttributes.vue';
 import DispatchDetailsSlideover from './DispatchDetailsSlideover.vue';
 import DispatchStatusUpdateModal from './DispatchStatusUpdateModal.vue';
 import DispatchAssignModal from './DispatchAssignModal.vue';
-import { useSettingsStore } from '~/store/settings';
 
 const props = withDefaults(
     defineProps<{
@@ -187,6 +186,7 @@ const columns = [
                     </template>
                     <template #status-data="{ row: dispatch }">
                         <span
+                            class="text-gray-900 dark:text-white"
                             :class="[
                                 dispatchStatusToBGColor(dispatch.status?.status),
                                 dispatchStatusAnimate(dispatch.status?.status) ? 'animate-pulse' : '',

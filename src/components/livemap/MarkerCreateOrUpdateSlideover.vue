@@ -253,7 +253,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                         <template #option="{ option }">
                                             <span class="truncate">{{
-                                                $t(`enums.livemap.MarkerType.${MarkerType[option ?? 0]}`)
+                                                $t(`enums.livemap.MarkerType.${MarkerType[option.type ?? 0]}`)
                                             }}</span>
                                         </template>
                                     </USelectMenu>
@@ -296,11 +296,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <USelectMenu v-model="state.icon" :options="markerIcons">
                                         <template #label>
                                             <UIcon :name="state.icon" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{ state.icon }}</span>
+                                            <span class="truncate">{{
+                                                toTitleCase(state.icon.replace(/^i-\w+-/, '').replaceAll('-', ' '))
+                                            }}</span>
                                         </template>
                                         <template #option="{ option }">
                                             <UIcon :name="option" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{ option }}</span>
+                                            <span class="truncate">{{
+                                                toTitleCase(option.replace(/^i-\w+-/, '').replaceAll('-', ' '))
+                                            }}</span>
                                         </template>
                                     </USelectMenu>
                                 </UFormGroup>

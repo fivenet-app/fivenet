@@ -105,7 +105,7 @@ async function sendTestNotifications(): Promise<void> {
                         {{ $t('components.debug_info.factory_reset') }}
                     </UButton>
                     <UButton color="gray" @click="sendTestNotifications">
-                        {{ $t('components.debug_info.factory_reset') }}
+                        {{ $t('components.debug_info.test_notifications') }}
                     </UButton>
                 </UButtonGroup>
             </UFormGroup>
