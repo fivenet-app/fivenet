@@ -291,7 +291,7 @@ function openTakeDispatches(): void {
 }
 
 defineShortcuts({
-    t: openTakeDispatches,
+    t: () => getOwnUnit.value && openTakeDispatches(),
     h: () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
     's-u': () => getOwnUnit.value && updateUtStatus(getOwnUnit.value.id),
     's-d': () => getOwnUnit.value && updateDspStatus(),
