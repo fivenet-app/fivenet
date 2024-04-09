@@ -21,7 +21,7 @@ const navigation = inject<NavItem[]>('navigation', []);
                 </UButton>
             </UDropdown>
 
-            <UButton color="black" to="/">
+            <UButton color="black" icon="i-mdi-arrow-back" to="/">
                 {{ $t('common.back') }}
             </UButton>
         </template>

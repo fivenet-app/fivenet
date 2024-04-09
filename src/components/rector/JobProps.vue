@@ -116,7 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
                         <template #right>
                             <UButton
-                                class="flex w-full justify-center rounded-md px-3 py-2 text-sm font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                                trailing-icon="i-mdi-content-save"
                                 :disabled="!canSubmit"
                                 :loading="!canSubmit"
                                 @click="onSubmitThrottle"

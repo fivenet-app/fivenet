@@ -104,7 +104,7 @@ const columns = [
                         v-if="can('JobsTimeclockService.ListTimeclock')"
                         :to="{ name: 'jobs-timeclock' }"
                         icon="i-mdi-arrow-left"
-                        class="mb-2 place-self-start"
+                        class="mb-2 place-self-end"
                     >
                         {{ $t('common.timeclock') }}
                     </UButton>

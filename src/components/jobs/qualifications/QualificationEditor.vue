@@ -375,7 +375,12 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             {{ $t('common.back') }}
                         </UButton>
 
-                        <UButton type="submit" :disabled="!canEdit || !canSubmit" :loading="!canSubmit">
+                        <UButton
+                            type="submit"
+                            trailing-icon="i-mdi-content-save"
+                            :disabled="!canEdit || !canSubmit"
+                            :loading="!canSubmit"
+                        >
                             <template v-if="!qualificationId">
                                 {{ $t('common.create') }}
                             </template>

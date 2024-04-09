@@ -42,6 +42,10 @@ const modal = useModal();
     <div>
         <UDashboardNavbar :title="$t('pages.documents.categories.title')">
             <template #right>
+                <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
+                    {{ $t('common.back') }}
+                </UButton>
+
                 <UButton
                     v-if="can('DocStoreService.CreateCategory')"
                     color="gray"

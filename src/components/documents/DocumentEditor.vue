@@ -642,12 +642,18 @@ console.info(
                     <UButtonGroup class="inline-flex">
                         <UButton
                             color="black"
+                            icon="i-mdi-arrow-left"
                             :to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
                         >
                             {{ $t('common.back') }}
                         </UButton>
 
-                        <UButton type="submit" :disabled="!canEdit || !canSubmit" :loading="!canSubmit">
+                        <UButton
+                            type="submit"
+                            trailing-icon="i-mdi-content-save"
+                            :disabled="!canEdit || !canSubmit"
+                            :loading="!canSubmit"
+                        >
                             <template v-if="!documentId">
                                 {{ $t('common.create') }}
                             </template>

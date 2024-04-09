@@ -527,7 +527,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             {{ $t('common.back') }}
                         </UButton>
 
-                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ templateId ? $t('common.save') : $t('common.create') }}
                         </UButton>
                     </UButtonGroup>

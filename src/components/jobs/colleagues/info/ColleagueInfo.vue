@@ -76,7 +76,7 @@ today.setMilliseconds(0);
                             </h1>
 
                             <UButtonGroup class="inline-flex flex-initial">
-                                <UButton color="black" to="/jobs/colleagues">
+                                <UButton color="black" icon="i-mdi-arrow-back" to="/">
                                     {{ $t('common.back') }}
                                 </UButton>
 

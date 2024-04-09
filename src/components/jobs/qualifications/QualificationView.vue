@@ -81,7 +81,7 @@ const accordionItems = computed(() => {
         <UDashboardNavbar :title="$t('pages.qualifications.single.title')">
             <template #right>
                 <UButtonGroup class="inline-flex">
-                    <UButton color="black" to="/jobs/qualifications">
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/">
                         {{ $t('common.back') }}
                     </UButton>
 

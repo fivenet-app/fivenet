@@ -212,7 +212,7 @@ defineShortcuts({
                             <UButton
                                 v-if="can('JobsTimeclockService.ListInactiveEmployees')"
                                 :to="{ name: 'jobs-timeclock-inactive' }"
-                                class="place-self-end"
+                                class="mb-2 place-self-end"
                                 trailing-icon="i-mdi-arrow-right"
                             >
                                 {{ $t('common.inactive_colleagues') }}

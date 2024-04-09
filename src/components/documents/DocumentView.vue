@@ -229,7 +229,7 @@ defineShortcuts({
         <UDashboardNavbar :title="$t('pages.documents.id.title')">
             <template #right>
                 <UButtonGroup class="inline-flex">
-                    <UButton color="black" to="/documents">
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/">
                         {{ $t('common.back') }}
                     </UButton>
 
