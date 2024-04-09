@@ -1,5 +1,5 @@
 ---
-title: Document Templates
+title: Templates
 ---
 
 **Note**: A template must render out to valid HTML.

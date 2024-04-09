@@ -1,10 +1,11 @@
 <script lang="ts" setup>
-import Header from '~/components/docs/Header.vue';
-import Footer from '~/components/docs/Footer.vue';
+import type { NavItem } from '@nuxt/content/dist/runtime/types';
+import DocsHeader from '~/components/docs/DocsHeader.vue';
+import PageFooter from '~/components/partials/PageFooter.vue';
 
-const { data: navigation } = await useAsyncData('navigation', () => fetchContentNavigation(), { default: () => [] });
+const { data: navigation } = await useAsyncData<NavItem[]>('navigation', () => fetchContentNavigation(), { default: () => [] });
 
-const { data: files } = useLazyFetch<{ id: string; title: string; content: string }[]>('/docs/_content/search', {
+const { data: files } = useLazyFetch<{ id: string; title: string; content: string }[]>('/help/_content/search', {
     default: () => [],
     server: false,
 });
@@ -20,14 +21,14 @@ const searchFiles = computed(() =>
 
 <template>
     <div>
-        <Header />
+        <DocsHeader />
 
         <UMain>
             <UContainer>
                 <UPage>
                     <template #left>
                         <UAside>
-                            <UNavigationTree :links="mapContentNavigation(!navigation ? [] : navigation)" />
+                            <UNavigationTree :links="mapContentNavigation(!navigation ? [] : navigation[0].children ?? [])" />
                         </UAside>
                     </template>
 
@@ -49,6 +50,6 @@ const searchFiles = computed(() =>
             </UContainer>
         </UMain>
 
-        <Footer />
+        <PageFooter />
     </div>
 </template>

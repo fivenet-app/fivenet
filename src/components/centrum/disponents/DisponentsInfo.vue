@@ -3,7 +3,7 @@ import { useCentrumStore } from '~/store/centrum';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import DisponentsModal from '~/components/centrum/disponents/DisponentsModal.vue';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         hideJoin?: boolean;
     }>(),
@@ -38,6 +38,12 @@ const onSubmitThrottle = useThrottleFn(async (e: boolean) => {
 }, 1000);
 
 const disponentsNames = computed(() => disponents.value.map((u) => `${u.firstname} ${u.lastname}`));
+
+if (!props.hideJoin) {
+    defineShortcuts({
+        'c-q': () => onSubmitThrottle(!isDisponent.value),
+    });
+}
 </script>
 
 <template>

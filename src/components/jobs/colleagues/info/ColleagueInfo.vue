@@ -75,22 +75,32 @@ today.setMilliseconds(0);
                                 {{ colleague.colleague.firstname }} {{ colleague.colleague.lastname }}
                             </h1>
 
-                            <UButton
-                                v-if="
-                                    can('JobsService.SetJobsUserProps') &&
-                                    checkIfCanAccessColleague(activeChar!, colleague.colleague, 'JobsService.SetJobsUserProps')
-                                "
-                                icon="i-mdi-island"
-                                size="md"
-                                @click="
-                                    modal.open(SelfServicePropsAbsenceDateModal, {
-                                        userId: colleague.colleague.userId,
-                                        userProps: colleague.colleague.props,
-                                    })
-                                "
-                            >
-                                {{ $t('components.jobs.self_service.set_absence_date') }}
-                            </UButton>
+                            <UButtonGroup class="inline-flex flex-initial">
+                                <UButton color="black" to="/jobs/colleagues">
+                                    {{ $t('common.back') }}
+                                </UButton>
+
+                                <UButton
+                                    v-if="
+                                        can('JobsService.SetJobsUserProps') &&
+                                        checkIfCanAccessColleague(
+                                            activeChar!,
+                                            colleague.colleague,
+                                            'JobsService.SetJobsUserProps',
+                                        )
+                                    "
+                                    icon="i-mdi-island"
+                                    size="md"
+                                    @click="
+                                        modal.open(SelfServicePropsAbsenceDateModal, {
+                                            userId: colleague.colleague.userId,
+                                            userProps: colleague.colleague.props,
+                                        })
+                                    "
+                                >
+                                    {{ $t('components.jobs.self_service.set_absence_date') }}
+                                </UButton>
+                            </UButtonGroup>
                         </div>
                         <div class="my-2 flex flex-row items-center gap-2">
                             <UBadge>

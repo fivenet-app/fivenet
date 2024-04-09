@@ -21,8 +21,6 @@ async function getDispatch(id: string): Promise<GetDispatchResponse> {
         const call = $grpc.getCentrumClient().getDispatch({ id });
         const { response } = await call;
 
-        // TODO show notification when no dispatch
-
         return response;
     } catch (e) {
         $grpc.handleError(e as RpcError);

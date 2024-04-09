@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { AccountAlertIcon, AccountCancelIcon, LicenseIcon } from 'mdi-vue3';
 import CharSexBadge from '~/components/partials/citizens/CharSexBadge.vue';
 import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobModal.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
@@ -18,7 +17,7 @@ const props = defineProps<{
     user: User;
 }>();
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'update:wantedStatus', value: boolean): void;
     (e: 'update:job', value: { job: Job; grade: JobGrade }): void;
     (e: 'update:trafficInfractionPoints', value: number): void;
@@ -50,10 +49,55 @@ function copyLinkToClipboard(): void {
     });
 }
 
-const setJobModal = ref(false);
-const setWantedModal = ref(false);
-const trafficPointsModal = ref(false);
-const mugShotModal = ref(false);
+defineShortcuts({
+    'c-w': () => {
+        if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')) {
+            return;
+        }
+
+        modal.open(CitizenSetWantedModal, {
+            user: props.user,
+            'onUpdate:wantedStatus': ($event) => emits('update:wantedStatus', $event),
+        });
+    },
+    'c-j': () => {
+        if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')) {
+            return;
+        }
+
+        modal.open(CitizenSetJobModal, {
+            user: props.user,
+            'onUpdate:job': ($event) => emits('update:job', $event),
+        });
+    },
+    'c-p': () => {
+        if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')) {
+            return;
+        }
+
+        modal.open(CitizenSetTrafficPointsModal, {
+            user: props.user,
+            'onUpdate:trafficInfractionPoints': ($event) => emits('update:trafficInfractionPoints', $event),
+        });
+    },
+    'c-m': () => {
+        if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')) {
+            return;
+        }
+
+        modal.open(CitizenSetMugShotModal, {
+            user: props.user,
+            'onUpdate:mugShot': ($event) => emits('update:mugShot', $event),
+        });
+    },
+    'c-d': () => {
+        if (!can('DocStoreService.CreateDocument')) {
+            return;
+        }
+
+        openTemplates();
+    },
+});
 </script>
 
 <template>
@@ -62,31 +106,6 @@ const mugShotModal = ref(false);
             <div class="flow-root">
                 <div class="-my-2 mx-0 overflow-x-auto">
                     <div class="inline-block min-w-full px-1 align-middle">
-                        <CitizenSetWantedModal
-                            :open="setWantedModal"
-                            :user="user"
-                            @close="setWantedModal = false"
-                            @update:wanted-status="$emit('update:wantedStatus', $event)"
-                        />
-                        <CitizenSetJobModal
-                            :user="user"
-                            :open="setJobModal"
-                            @close="setJobModal = false"
-                            @update:job="$emit('update:job', $event)"
-                        />
-                        <CitizenSetTrafficPointsModal
-                            :open="trafficPointsModal"
-                            :user="user"
-                            @close="trafficPointsModal = false"
-                            @update:traffic-infraction-points="$emit('update:trafficInfractionPoints', $event)"
-                        />
-                        <CitizenSetMugShotModal
-                            :open="mugShotModal"
-                            :user="user"
-                            @close="mugShotModal = false"
-                            @update:mug-shot="$emit('update:mugShot', $event)"
-                        />
-
                         <div class="w-full grow lg:flex xl:px-2">
                             <div class="flex-1 xl:flex">
                                 <div class="xl:flex-1">
@@ -100,7 +119,7 @@ const mugShotModal = ref(false);
                                                     <dd
                                                         class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
                                                     >
-                                                        {{ user?.dateofbirth }}
+                                                        {{ user.dateofbirth }}
                                                     </dd>
                                                 </div>
                                                 <div class="sm:flex sm:px-5 sm:py-4">
@@ -243,7 +262,7 @@ const mugShotModal = ref(false);
                                                                 class="flex items-center justify-between py-3 pl-3 pr-4 text-sm"
                                                             >
                                                                 <div class="flex flex-1 items-center">
-                                                                    <LicenseIcon class="size-5 shrink-0" />
+                                                                    <UIcon name="i-mdi-license" class="size-5 shrink-0" />
                                                                     <span
                                                                         class="ml-2 flex-1 truncate"
                                                                         :title="`${license.type.toUpperCase()}`"
@@ -261,77 +280,109 @@ const mugShotModal = ref(false);
                             </div>
 
                             <div class="flex shrink-0 flex-col gap-2 px-2 py-4 pr-0 lg:w-96">
-                                <UButton
+                                <UTooltip
                                     v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')"
-                                    color="red"
-                                    block
-                                    @click="
-                                        modal.open(CitizenSetWantedModal, {
-                                            user: user,
-                                            'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
-                                        })
-                                    "
-                                >
-                                    <AccountAlertIcon v-if="user.props?.wanted" class="mr-1.5 h-auto w-5" />
-                                    <AccountCancelIcon v-else class="mr-1.5 h-auto w-5" />
-                                    {{
+                                    :text="
                                         user.props?.wanted
                                             ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
                                             : $t('components.citizens.CitizenInfoProfile.set_wanted')
-                                    }}
-                                </UButton>
+                                    "
+                                    :shortcuts="['C', 'W']"
+                                >
+                                    <UButton
+                                        color="red"
+                                        block
+                                        :icon="user.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
+                                        @click="
+                                            modal.open(CitizenSetWantedModal, {
+                                                user: user,
+                                                'onUpdate:wantedStatus': ($event) => $emit('update:wantedStatus', $event),
+                                            })
+                                        "
+                                    >
+                                        {{
+                                            user.props?.wanted
+                                                ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                                                : $t('components.citizens.CitizenInfoProfile.set_wanted')
+                                        }}
+                                    </UButton>
+                                </UTooltip>
 
-                                <UButton
+                                <UTooltip
                                     v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')"
-                                    block
-                                    icon="i-mdi-briefcase"
-                                    @click="
-                                        modal.open(CitizenSetJobModal, {
-                                            user: user,
-                                            'onUpdate:job': ($event) => $emit('update:job', $event),
-                                        })
-                                    "
+                                    :text="$t('components.citizens.CitizenInfoProfile.set_job')"
+                                    :shortcuts="['C', 'J']"
                                 >
-                                    {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
-                                </UButton>
+                                    <UButton
+                                        block
+                                        icon="i-mdi-briefcase"
+                                        @click="
+                                            modal.open(CitizenSetJobModal, {
+                                                user: user,
+                                                'onUpdate:job': ($event) => $emit('update:job', $event),
+                                            })
+                                        "
+                                    >
+                                        {{ $t('components.citizens.CitizenInfoProfile.set_job') }}
+                                    </UButton>
+                                </UTooltip>
 
-                                <UButton
+                                <UTooltip
                                     v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')"
-                                    block
-                                    icon="i-mdi-counter"
-                                    @click="
-                                        modal.open(CitizenSetTrafficPointsModal, {
-                                            user: user,
-                                            'onUpdate:trafficInfractionPoints': ($event) =>
-                                                $emit('update:trafficInfractionPoints', $event),
-                                        })
-                                    "
+                                    :text="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
+                                    :shortcuts="['C', 'P']"
                                 >
-                                    {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
-                                </UButton>
+                                    <UButton
+                                        block
+                                        icon="i-mdi-counter"
+                                        @click="
+                                            modal.open(CitizenSetTrafficPointsModal, {
+                                                user: user,
+                                                'onUpdate:trafficInfractionPoints': ($event) =>
+                                                    $emit('update:trafficInfractionPoints', $event),
+                                            })
+                                        "
+                                    >
+                                        {{ $t('components.citizens.CitizenInfoProfile.set_traffic_points') }}
+                                    </UButton>
+                                </UTooltip>
 
-                                <UButton
+                                <UTooltip
                                     v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')"
-                                    block
-                                    icon="i-mdi-camera"
-                                    @click="
-                                        modal.open(CitizenSetMugShotModal, {
-                                            user: user,
-                                            'onUpdate:mugShot': ($event) => $emit('update:mugShot', $event),
-                                        })
+                                    :text="
+                                        user.props?.wanted
+                                            ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                                            : $t('components.citizens.CitizenInfoProfile.set_wanted')
                                     "
+                                    :shortcuts="['C', 'M']"
                                 >
-                                    {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
-                                </UButton>
+                                    <UButton
+                                        block
+                                        icon="i-mdi-camera"
+                                        @click="
+                                            modal.open(CitizenSetMugShotModal, {
+                                                user: user,
+                                                'onUpdate:mugShot': ($event) => $emit('update:mugShot', $event),
+                                            })
+                                        "
+                                    >
+                                        {{ $t('components.citizens.CitizenInfoProfile.set_mug_shot') }}
+                                    </UButton>
+                                </UTooltip>
 
-                                <UButton
+                                <UTooltip
                                     v-if="can('DocStoreService.CreateDocument')"
-                                    block
-                                    icon="i-mdi-file-document-plus"
-                                    @click="openTemplates()"
+                                    :text="
+                                        user.props?.wanted
+                                            ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
+                                            : $t('components.citizens.CitizenInfoProfile.set_wanted')
+                                    "
+                                    :shortcuts="['C', 'D']"
                                 >
-                                    {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}
-                                </UButton>
+                                    <UButton block icon="i-mdi-file-document-plus" @click="openTemplates()">
+                                        {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}
+                                    </UButton>
+                                </UTooltip>
 
                                 <UButton block icon="i-mdi-link" @click="copyLinkToClipboard()">
                                     {{ $t('components.citizens.CitizenInfoProfile.copy_profile_link') }}

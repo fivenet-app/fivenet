@@ -160,10 +160,8 @@ export default defineNuxtConfig({
         defaultDirection: 'ltr',
         baseUrl: '',
         trailingSlash: false,
-        types: 'composition',
         compilation: {
             strictMessage: false,
-            jit: true,
         },
         parallelPlugin: true,
     },
@@ -214,12 +212,12 @@ export default defineNuxtConfig({
         sources: {
             content: {
                 driver: 'fs',
-                prefix: '/docs',
-                base: resolve(__dirname, 'docs'),
+                prefix: '/help',
+                base: resolve(__dirname, 'content'),
             },
         },
         api: {
-            baseURL: '/docs/_content',
+            baseURL: '/help/_content',
         },
         experimental: {
             search: {

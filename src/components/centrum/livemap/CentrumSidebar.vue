@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import { CarEmergencyIcon, HomeFloorBIcon, InformationOutlineIcon } from 'mdi-vue3';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import {
     dispatchStatusToBGColor,
@@ -27,7 +26,7 @@ import { useSettingsStore } from '~/store/settings';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 import DisponentsInfo from '../disponents/DisponentsInfo.vue';
 
-defineEmits<{
+const emits = defineEmits<{
     (e: 'goto', loc: Coordinate): void;
 }>();
 
@@ -48,7 +47,7 @@ const { startStream, stopStream } = centrumStore;
 const notifications = useNotificatorStore();
 
 const settingsStore = useSettingsStore();
-const { livemap, audio: audioSettings } = storeToRefs(settingsStore);
+const { livemap } = storeToRefs(settingsStore);
 
 const canStream = can('CentrumService.Stream');
 
@@ -295,6 +294,19 @@ async function checkup(): Promise<void> {
 
     lastCheckupNotification.value = now;
 }
+
+function openTakeDispatches(): void {
+    slideover.open(TakeDispatchSlideover, {
+        onGoto: ($event) => emits('goto', $event),
+    });
+}
+
+defineShortcuts({
+    t: openTakeDispatches,
+    h: () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
+    's-u': () => getOwnUnit.value && updateUtStatus(getOwnUnit.value.id),
+    's-d': () => getOwnUnit.value && updateDspStatus(),
+});
 </script>
 
 <template>
@@ -387,7 +399,7 @@ async function checkup(): Promise<void> {
                                                             @click="slideover.open(JoinUnitSlideover, {})"
                                                         >
                                                             <template v-if="getOwnUnit === undefined">
-                                                                <InformationOutlineIcon class="size-5" />
+                                                                <UIcon name="i-mdi-information-outline" class="size-5" />
                                                                 <span class="mt-1 truncate">{{
                                                                     $t('common.no_own_unit')
                                                                 }}</span>
@@ -436,16 +448,22 @@ async function checkup(): Promise<void> {
                                                                         }}
                                                                     </span>
                                                                 </UButton>
-                                                                <UButton
-                                                                    variant="soft"
-                                                                    color="primary"
-                                                                    size="xs"
-                                                                    block
+
+                                                                <UTooltip
                                                                     class="col-span-2"
-                                                                    @click="updateUtStatus(getOwnUnit.id)"
+                                                                    :text="$t('components.centrum.update_unit_status.title')"
+                                                                    :shortcuts="['S', 'U']"
                                                                 >
-                                                                    {{ $t('components.centrum.update_unit_status.title') }}
-                                                                </UButton>
+                                                                    <UButton
+                                                                        variant="soft"
+                                                                        color="primary"
+                                                                        size="xs"
+                                                                        block
+                                                                        @click="updateUtStatus(getOwnUnit.id)"
+                                                                    >
+                                                                        {{ $t('components.centrum.update_unit_status.title') }}
+                                                                    </UButton>
+                                                                </UTooltip>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -493,16 +511,28 @@ async function checkup(): Promise<void> {
                                                                         }}
                                                                     </span>
                                                                 </UButton>
-                                                                <UButton
-                                                                    variant="soft"
-                                                                    color="primary"
-                                                                    size="xs"
-                                                                    block
+
+                                                                <UTooltip
+                                                                    :text="
+                                                                        $t('components.centrum.update_dispatch_status.title')
+                                                                    "
+                                                                    :shortcuts="['S', 'D']"
                                                                     class="col-span-2"
-                                                                    @click="updateDspStatus(selectedDispatch)"
                                                                 >
-                                                                    {{ $t('components.centrum.update_dispatch_status.title') }}
-                                                                </UButton>
+                                                                    <UButton
+                                                                        variant="soft"
+                                                                        color="primary"
+                                                                        size="xs"
+                                                                        block
+                                                                        @click="updateDspStatus(selectedDispatch)"
+                                                                    >
+                                                                        {{
+                                                                            $t(
+                                                                                'components.centrum.update_dispatch_status.title',
+                                                                            )
+                                                                        }}
+                                                                    </UButton>
+                                                                </UTooltip>
                                                             </div>
                                                         </li>
                                                     </ul>
@@ -558,26 +588,32 @@ async function checkup(): Promise<void> {
                                         color="red"
                                         :show="pendingDispatches.length > 0"
                                     >
-                                        <UButton
-                                            :color="pendingDispatches.length > 0 ? 'red' : 'primary'"
-                                            size="xl"
-                                            icon="i-mdi-car-emergency"
-                                            class="flex size-12 items-center justify-center"
-                                            :class="[getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full']"
-                                            @click="
-                                                slideover.open(TakeDispatchSlideover, {
-                                                    onGoto: ($event) => $emit('goto', $event),
-                                                })
-                                            "
-                                        />
+                                        <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['T']">
+                                            <UButton
+                                                :color="pendingDispatches.length > 0 ? 'red' : 'primary'"
+                                                size="xl"
+                                                icon="i-mdi-car-emergency"
+                                                class="flex size-12 items-center justify-center"
+                                                :class="[
+                                                    getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full',
+                                                ]"
+                                                @click="openTakeDispatches"
+                                            />
+                                        </UTooltip>
                                     </UChip>
-                                    <UButton
+
+                                    <UTooltip
                                         v-if="getOwnUnit.homePostal !== undefined"
-                                        class="flex size-12 items-center justify-center rounded-r-full"
-                                        size="xl"
-                                        icon="i-mdi-home-floor-b"
-                                        @click="setWaypointPLZ(getOwnUnit.homePostal)"
-                                    />
+                                        :text="`${$t('common.mark')}: ${$t('common.department_postal')}`"
+                                        :shortcuts="['H']"
+                                    >
+                                        <UButton
+                                            class="flex size-12 items-center justify-center rounded-r-full"
+                                            size="xl"
+                                            icon="i-mdi-home-floor-b"
+                                            @click="setWaypointPLZ(getOwnUnit.homePostal)"
+                                        />
+                                    </UTooltip>
                                 </span>
                             </template>
                         </div>

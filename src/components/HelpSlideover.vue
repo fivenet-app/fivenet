@@ -17,6 +17,11 @@ const links = [
             shortcuts.value = true;
         },
     },
+    {
+        label: t('common.help'),
+        icon: 'i-mdi-book-open-blank-variant-outline',
+        to: '/help',
+    },
 ];
 
 const categories = computed(() => [
@@ -41,6 +46,49 @@ const categories = computed(() => [
             { shortcuts: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },
             { shortcuts: ['G', 'P'], name: t('common.goto_item', [t('common.control_panel')]) },
         ],
+    },
+    {
+        title: `${t('common.citizen', 2)} ${t('common.profile')}`,
+        items: [
+            {
+                shortcuts: ['C', 'W'],
+                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.revoke_wanted')}/ ${t('components.citizens.CitizenInfoProfile.set_wanted')}`,
+            },
+            { shortcuts: ['C', 'J'], name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_job')}` },
+            {
+                shortcuts: ['C', 'P'],
+                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_traffic_points')}`,
+            },
+            {
+                shortcuts: ['C', 'M'],
+                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.set_mug_shot')}`,
+            },
+            {
+                shortcuts: ['C', 'D'],
+                name: `${t('common.dialog')}: ${t('components.citizens.CitizenInfoProfile.create_new_document')}`,
+            },
+        ],
+    },
+    {
+        title: t('common.document', 2),
+        items: [
+            { shortcuts: ['D', 'T'], name: `${t('common.open', 1)}/ ${t('common.close')}` },
+            { shortcuts: ['D', 'E'], name: t('common.edit') },
+            { shortcuts: ['D', 'R'], name: t('common.request', 2) },
+        ],
+    },
+    {
+        title: t('common.livemap'),
+        items: [
+            { shortcuts: ['T'], name: `${t('common.dialog')}: ${t('components.centrum.take_dispatch.title')}` },
+            { shortcuts: ['H'], name: `${t('common.mark')}: ${t('common.department_postal')}` },
+            { shortcuts: ['S', 'U'], name: t('components.centrum.update_unit_status.title') },
+            { shortcuts: ['S', 'D'], name: t('components.centrum.update_dispatch_status.title') },
+        ],
+    },
+    {
+        title: t('common.dispatch_center'),
+        items: [{ shortcuts: ['C', 'Q'], name: `${t('common.dispatch_center')}: ${t('common.join')}/ ${t('common.leave')}` }],
     },
 ]);
 

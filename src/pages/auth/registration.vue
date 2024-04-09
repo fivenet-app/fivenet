@@ -11,6 +11,12 @@ definePageMeta({
     requiresAuth: false,
     showCookieOptions: true,
 });
+
+const { login } = useAppConfig();
+
+if (!login.signupEnabled) {
+    navigateTo({ name: 'auth-login' });
+}
 </script>
 
 <template>

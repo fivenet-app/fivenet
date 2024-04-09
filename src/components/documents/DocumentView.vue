@@ -183,13 +183,56 @@ const accordionItems = [
     { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
     { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' },
 ];
+
+defineShortcuts({
+    'd-t': () => {
+        if (
+            !doc.value ||
+            !(
+                can('DocStoreService.ToggleDocument') &&
+                checkDocAccess(access.value, doc.value.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
+            )
+        ) {
+            return;
+        }
+
+        toggleDocument(props.documentId, doc.value?.closed);
+    },
+    'd-e': () => {
+        if (
+            !doc.value ||
+            !(
+                can('DocStoreService.UpdateDocument') &&
+                checkDocAccess(access.value, doc.value.creator, AccessLevel.EDIT, 'DocStoreService.ToggleDocument')
+            )
+        ) {
+            return;
+        }
+
+        navigateTo({
+            name: 'documents-id-edit',
+            params: { id: doc.value.id },
+        });
+    },
+    'd-r': () => {
+        if (!doc.value || !can('DocStoreService.ListDocumentReqs')) {
+            return;
+        }
+
+        openRequestsModal();
+    },
+});
 </script>
 
 <template>
     <div>
         <UDashboardNavbar :title="$t('pages.documents.id.title')">
             <template #right>
-                <UButtonGroup>
+                <UButtonGroup class="inline-flex">
+                    <UButton color="black" to="/documents">
+                        {{ $t('common.back') }}
+                    </UButton>
+
                     <IDCopyBadge
                         :id="doc?.id ?? documentId"
                         prefix="DOC"
@@ -217,48 +260,59 @@ const accordionItems = [
             <UDashboardToolbar>
                 <template #default>
                     <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                        <UButton
+                        <UTooltip
                             v-if="
                                 can('DocStoreService.ToggleDocument') &&
                                 checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
                             "
                             class="flex-1"
-                            block
-                            @click="toggleDocument(documentId, !doc.closed)"
+                            :text="doc.closed ? $t('common.open', 1) : $t('common.close')"
+                            :shortcuts="['D', 'T']"
                         >
-                            <template v-if="doc.closed">
-                                <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
-                                {{ $t('common.open', 1) }}
-                            </template>
-                            <template v-else>
-                                <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
-                                {{ $t('common.close', 1) }}
-                            </template>
-                        </UButton>
-                        <UButton
+                            <UButton block @click="toggleDocument(documentId, !doc.closed)">
+                                <template v-if="doc.closed">
+                                    <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
+                                    {{ $t('common.open', 1) }}
+                                </template>
+                                <template v-else>
+                                    <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
+                                    {{ $t('common.close', 1) }}
+                                </template>
+                            </UButton>
+                        </UTooltip>
+
+                        <UTooltip
                             v-if="
                                 can('DocStoreService.UpdateDocument') &&
                                 checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument')
                             "
                             class="flex-1"
-                            block
-                            :to="{
-                                name: 'documents-id-edit',
-                                params: { id: doc.id },
-                            }"
-                            icon="i-mdi-pencil"
+                            :text="$t('common.edit')"
+                            :shortcuts="['D', 'E']"
                         >
-                            {{ $t('common.edit') }}
-                        </UButton>
-                        <UButton
+                            <UButton
+                                block
+                                :to="{
+                                    name: 'documents-id-edit',
+                                    params: { id: doc.id },
+                                }"
+                                icon="i-mdi-pencil"
+                            >
+                                {{ $t('common.edit') }}
+                            </UButton>
+                        </UTooltip>
+
+                        <UTooltip
                             v-if="can('DocStoreService.ListDocumentReqs')"
                             class="flex-1"
-                            block
-                            icon="i-mdi-frequently-asked-questions"
-                            @click="openRequestsModal"
+                            :text="$t('common.request', 2)"
+                            :shortcuts="['D', 'R']"
                         >
-                            {{ $t('common.request', 2) }}
-                        </UButton>
+                            <UButton class="flex-1" block icon="i-mdi-frequently-asked-questions" @click="openRequestsModal">
+                                {{ $t('common.request', 2) }}
+                            </UButton>
+                        </UTooltip>
+
                         <UButton
                             v-if="
                                 (doc?.creatorJob === activeChar?.job || isSuperuser) &&
@@ -277,6 +331,7 @@ const accordionItems = [
                         >
                             {{ $t('components.documents.document_view.take_ownership') }}
                         </UButton>
+
                         <UButton
                             v-if="
                                 can('DocStoreService.DeleteDocument') &&

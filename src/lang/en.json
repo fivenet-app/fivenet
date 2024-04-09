@@ -411,7 +411,9 @@
         "query_not_found": "not found.",
         "file": "File | Files",
         "entry": "Entry | Entries",
-        "qualification": "Qualification | Qualifications"
+        "qualification": "Qualification | Qualifications",
+        "toc": "Table of Contents",
+        "dialog": "Dialog | Dialogs"
     },
     "components": {
         "partials": {
@@ -2076,5 +2078,12 @@
                 "size_too_big": "File must be less than {size}MB"
             }
         }
+    },
+    "help": {
+        "hero": {
+            "title": "Need help with FiveNet?",
+            "description": "Checkout the documentation here and use the search to find the feature your are working with."
+        }
     }
+
 }
