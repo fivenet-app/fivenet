@@ -83,7 +83,11 @@ watch(design.value, () => {
                 </USelectMenu>
             </UFormGroup>
 
-            <UFormGroup name="grayColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
+            <UFormGroup
+                name="grayColor"
+                :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
                 <USelectMenu v-model="design.ui.gray" :options="grayColors" option-attribute="label" value-attribute="chip">
                     <template #label>
                         <span class="size-2 rounded-full" :class="`bg-${design.ui.gray}-500 dark:bg-${design.ui.gray}-400`" />

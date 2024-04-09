@@ -891,7 +891,8 @@
                 "streamer_mode": {
                     "title": "Streamer Mode",
                     "description": "Blur images by default and hide other information."
-                }
+                },
+                "background_color": "Background color"
             },
             "ChangeUsernameModal": {
                 "change_username": "Change Username",
