@@ -307,7 +307,7 @@ const groups = [
 
 const modal = useModal();
 
-const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
+const clipboardLink = computed<DashboardSidebarLink[]>(() =>
     [
         activeChar.value
             ? {
@@ -316,6 +316,11 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
                   click: () => modal.open(ClipboardModal, {}),
               }
             : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
+const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
+    [
         jobProps.value?.quickButtons?.penaltyCalculator
             ? {
                   label: t('components.penaltycalculator.title'),
@@ -354,6 +359,11 @@ const quickButtons = ref({
                 </template>
 
                 <UDashboardSidebarLinks :links="links" />
+
+                <template v-if="clipboardLink.length > 0">
+                    <UDivider />
+                    <UDashboardSidebarLinks :links="clipboardLink" />
+                </template>
 
                 <template v-if="quickAccessButtons.length > 0">
                     <UDivider />
