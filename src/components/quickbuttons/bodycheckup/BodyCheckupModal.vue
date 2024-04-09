@@ -2,17 +2,11 @@
 import GenericModal from '~/components/partials/elements/GenericModal.vue';
 import BodyCheckup from '~/components/quickbuttons/bodycheckup/BodyCheckup.vue';
 
-defineProps<{
-    open: boolean;
-}>();
-
-defineEmits<{
-    (e: 'close'): void;
-}>();
+const { isOpen } = useModal();
 </script>
 
 <template>
-    <GenericModal :open="open" :title="$t('components.bodycheckup.title')" @close="$emit('close')">
+    <GenericModal :open="isOpen" :title="$t('components.bodycheckup.title')" @close="isOpen = false">
         <BodyCheckup />
     </GenericModal>
 </template>

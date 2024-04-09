@@ -26,10 +26,7 @@ const sound = new Howl({
     rate: props.rate,
 });
 
-sound.on('end', () => {
-    console.log('PLAY END');
-    emits('close');
-});
+sound.on('end', () => emits('close'));
 
 sound.play();
 

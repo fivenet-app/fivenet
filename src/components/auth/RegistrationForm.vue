@@ -67,6 +67,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.RegistrationForm.subtitle') }}
         </p>
 
+        <!-- TODO Disable form completely when signup is disabled -->
+
         <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
             <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
                 <UInput

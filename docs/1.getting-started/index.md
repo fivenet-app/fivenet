@@ -1,4 +1,6 @@
-# FiveNet Documentation
+---
+title: Getting Started
+---
 
 ## Features
 

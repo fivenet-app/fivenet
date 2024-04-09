@@ -5,6 +5,8 @@ import LanguageSwitcherModal from '../partials/LanguageSwitcherModal.vue';
 
 const { t } = useI18n();
 
+const appConfig = useAppConfig();
+
 const authStore = useAuthStore();
 const { accessToken } = storeToRefs(authStore);
 
@@ -37,6 +39,7 @@ const modal = useModal();
             <template v-if="!accessToken">
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
                 <UButton
+                    v-if="appConfig.login.signupEnabled"
                     :label="$t('components.auth.RegistrationForm.title')"
                     icon="i-mdi-account-plus"
                     trailing

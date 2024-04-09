@@ -51,7 +51,6 @@ const { data: data, pending: loading, refresh, error } = useLazyAsyncData(`vehic
 const hideVehicleModell = ref(false);
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
-    console.log('listVehicles', query.value.userId);
     try {
         const call = $grpc.getDMVClient().listVehicles({
             pagination: {

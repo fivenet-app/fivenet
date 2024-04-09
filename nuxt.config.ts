@@ -1,3 +1,4 @@
+import { resolve } from 'path';
 import svgLoader from 'vite-svg-loader';
 import { STRATEGIES } from 'vue-i18n-routing';
 
@@ -13,6 +14,7 @@ export default defineNuxtConfig({
     modules: [
         'nuxt-typed-router',
         '@nuxtjs/robots',
+        '@nuxt/content',
         '@nuxt/ui',
         '@nuxtjs/tailwindcss',
         '@galexrt/nuxt-zod-i18n',
@@ -207,5 +209,30 @@ export default defineNuxtConfig({
         version: appVersion,
         checkInterval: 110,
         path: '/api/version',
+    },
+    content: {
+        sources: {
+            content: {
+                driver: 'fs',
+                prefix: '/docs',
+                base: resolve(__dirname, 'docs'),
+            },
+        },
+        api: {
+            baseURL: '/docs/_content',
+        },
+        experimental: {
+            search: {
+                indexed: false,
+            },
+        },
+    },
+    hooks: {
+        // Define `@nuxt/ui` components as global to use them in `.md` (feel free to add those you need)
+        'components:extend': (components) => {
+            const globals = components.filter((c) => ['UButton', 'UIcon'].includes(c.pascalName));
+
+            globals.forEach((c) => (c.global = true));
+        },
     },
 });

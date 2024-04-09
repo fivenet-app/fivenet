@@ -320,14 +320,14 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
             ? {
                   label: t('components.penaltycalculator.title'),
                   icon: 'i-mdi-calculator',
-                  click: () => (quickButtons.value.penaltycalculator = true),
+                  click: () => modal.open(PenaltyCalculatorModal),
               }
             : undefined,
         jobProps.value?.quickButtons?.bodyCheckup
             ? {
                   label: t('components.bodycheckup.title'),
                   icon: 'i-mdi-human',
-                  click: () => (quickButtons.value.bodycheckup = true),
+                  click: () => modal.open(BodyCheckupModal, {}),
               }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -398,8 +398,8 @@ const quickButtons = ref({
                 :groups="groups"
                 :empty-state="{
                     icon: 'i-mdi-globe-model',
-                    label: t('commandpalette.empty.title'),
-                    queryLabel: t('commandpalette.empty.title'),
+                    label: $t('commandpalette.empty.title'),
+                    queryLabel: $t('commandpalette.empty.title'),
                 }"
                 :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '#', key2: '@' })})`"
             />
