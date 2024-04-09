@@ -38,10 +38,10 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `discord.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
 | `discord.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
 | `discord.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
-| `envoy.config` | Envoy config | `{"admin":{"access_log_path":"/tmp/admin_access.log","address":{"socket_address":{"address":"0.0.0.0","port_value":9901}}},"layered_runtime":{"layers":[{"name":"static_layer_0","static_layer":{"envoy":{"resource_limits":{"listener":{"example_listener_name":{"connection_limit":5000}}}},"overload":{"global_downstream_max_connections":25000}}}]},"static_resources":{"clusters":[{"connect_timeout":"0.5s","http2_protocol_options":{},"lb_policy":"round_robin","load_assignment":{"cluster_name":"cluster_0","endpoints":[{"lb_endpoints":[{"endpoint":{"address":{"socket_address":{"address":"{{ include \"fivenet.fullname\" . }}","port_value":9090}}}}]}]},"name":"fivenet_service","type":"logical_dns"}],"listeners":[{"address":{"socket_address":{"address":"0.0.0.0","port_value":8181}},"filter_chains":[{"filters":[{"name":"envoy.filters.network.http_connection_manager","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager","codec_type":"auto","common_http_protocol_options":{"headers_with_underscores_action":"REJECT_REQUEST","idle_timeout":"1800s"},"http2_protocol_options":{"initial_connection_window_size":1048576,"initial_stream_window_size":65536,"max_concurrent_streams":200},"http_filters":[{"name":"envoy.filters.http.grpc_web","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb"}},{"name":"envoy.filters.http.cors","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"}},{"name":"envoy.filters.http.router","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"}}],"request_timeout":"0s","route_config":{"name":"local_route","virtual_hosts":[{"cors":{"allow_headers":"keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,authorization","allow_methods":"GET, PUT, DELETE, POST, OPTIONS","allow_origin_string_match":[{"safe_regex":{"google_re2":{},"regex":"\\*"}}],"expose_headers":"grpc-status,grpc-message","max_age":"1728000"},"domains":["*"],"name":"local_service","routes":[{"match":{"prefix":"/grpc/"},"route":{"cluster":"fivenet_service","idle_timeout":"0s","max_stream_duration":{"grpc_timeout_header_max":"35s"},"prefix_rewrite":"/","timeout":"0s"}}]}]},"stat_prefix":"ingress_http","stream_idle_timeout":"0s","use_remote_address":true}}]}],"name":"listener_0"}]}}` |
+| `envoy.config` | Envoy config | `{"admin":{"access_log_path":"/tmp/admin_access.log","address":{"socket_address":{"address":"0.0.0.0","port_value":9901}}},"layered_runtime":{"layers":[{"name":"static_layer_0","static_layer":{"envoy":{"resource_limits":{"listener":{"example_listener_name":{"connection_limit":5000}}}},"overload":{"global_downstream_max_connections":25000}}}]},"static_resources":{"clusters":[{"connect_timeout":"0.5s","http2_protocol_options":{},"lb_policy":"round_robin","load_assignment":{"cluster_name":"cluster_0","endpoints":[{"lb_endpoints":[{"endpoint":{"address":{"socket_address":{"address":"{{ include \"fivenet.fullname\" . }}-server","port_value":9090}}}}]}]},"name":"fivenet_service","type":"logical_dns"}],"listeners":[{"address":{"socket_address":{"address":"0.0.0.0","port_value":8181}},"filter_chains":[{"filters":[{"name":"envoy.filters.network.http_connection_manager","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.network.http_connection_manager.v3.HttpConnectionManager","codec_type":"auto","common_http_protocol_options":{"headers_with_underscores_action":"REJECT_REQUEST","idle_timeout":"1800s"},"http2_protocol_options":{"initial_connection_window_size":1048576,"initial_stream_window_size":65536,"max_concurrent_streams":200},"http_filters":[{"name":"envoy.filters.http.grpc_web","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.grpc_web.v3.GrpcWeb"}},{"name":"envoy.filters.http.cors","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.cors.v3.Cors"}},{"name":"envoy.filters.http.router","typed_config":{"@type":"type.googleapis.com/envoy.extensions.filters.http.router.v3.Router"}}],"request_timeout":"0s","route_config":{"name":"local_route","virtual_hosts":[{"cors":{"allow_headers":"keep-alive,user-agent,cache-control,content-type,content-transfer-encoding,x-accept-content-transfer-encoding,x-accept-response-streaming,x-user-agent,x-grpc-web,grpc-timeout,authorization","allow_methods":"GET, PUT, DELETE, POST, OPTIONS","allow_origin_string_match":[{"safe_regex":{"google_re2":{},"regex":"\\*"}}],"expose_headers":"grpc-status,grpc-message","max_age":"1728000"},"domains":["*"],"name":"local_service","routes":[{"match":{"prefix":"/grpc/"},"route":{"cluster":"fivenet_service","idle_timeout":"0s","max_stream_duration":{"grpc_timeout_header_max":"35s"},"prefix_rewrite":"/","timeout":"0s"}}]}]},"stat_prefix":"ingress_http","stream_idle_timeout":"0s","use_remote_address":true}}]}],"name":"listener_0"}]}}` |
 | `envoy.image.pullPolicy` |  | `"IfNotPresent"` |
 | `envoy.image.repository` |  | `"docker.io/envoyproxy/envoy"` |
-| `envoy.image.tag` |  | `"v1.29.1"` |
+| `envoy.image.tag` |  | `"v1.29.3"` |
 | `envoy.livenessProbe.httpGet.path` |  | `"/ready"` |
 | `envoy.livenessProbe.httpGet.port` |  | `"admin"` |
 | `envoy.readinessProbe.httpGet.path` |  | `"/ready"` |
@@ -55,29 +55,29 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `envoy.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
 | `envoy.startupProbe` |  | `nil` |
 | `extraObjects` | Extra objects to deploy (value evaluated as a template) | `[]` |
-| `fivenet.additionalEnv` |  | `[]` |
-| `fivenet.config` | FiveNet config | `{"audit":{"retentionDays":90},"auth":{"superuserGroups":["projektleiter","teamleitung"],"superuserUsers":[]},"cache":{"refreshTime":"2m"},"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","custom":{"columns":{"user":{"playtime":"playtime","visum":"visum"},"vehicle":{"model":"model"}},"conditions":{"user":{"filterEmptyName":false}}},"dsn":"DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin","maxIdleConns":5,"maxOpenConns":32},"discord":{"commands":{"enabled":true},"enabled":true,"groupSync":{"enabled":false,"mapping":{}},"presence":{"gameStatus":"FiveNet"},"token":"your_discord_bot_token","userInfoSync":{"employeeRoleFormat":"%s Personal","enabled":false,"gradeRoleFormat":"[%grade%] %grade_label%","ignoreJobs":[],"jobsAbsceneRoleName":"Absent","nicknameRegex":"^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"}},"dispatchCenter":{"convertJobs":[]},"grpc":{"listen":":9090"},"http":{"adminListen":":7070","links":{"imprint":"https://example.com/your_imprint/","privacyPolicy":"https://example.com/your_privacy_policy/"},"listen":":8080","publicURL":"https://fivenet.example.com","sessions":{"cookieSecret":"your_generated_cookie_secret","domain":"localhost"}},"imageProxy":{"cachePrefix":"images/","enabled":true,"options":{"allowHosts":[],"denyHosts":[]},"url":"/api/image_proxy/"},"jwt":{"secret":"your_generated_jwt_secret"},"logLevel":"INFO","mode":"release","nats":{"url":"nats://localhost:4222"},"oauth2":{"providers":[]},"storage":{"filesystem":{"path":"/data"},"s3":{"accessKeyID":"","bucketName":"","endpoint":"","prefix":"","region":"us-east-1","secretAccessKey":"","useSSL":true},"type":"filesystem"},"tracing":{"enabled":false,"environment":"live","ratio":0.1,"url":""}}` |
-| `fivenet.image.pullPolicy` |  | `"IfNotPresent"` |
-| `fivenet.image.repository` |  | `"docker.io/galexrt/fivenet"` |
-| `fivenet.image.tag` |  | `""` |
-| `fivenet.livenessProbe.failureThreshold` |  | `3` |
-| `fivenet.livenessProbe.httpGet.path` |  | `"/readiness"` |
-| `fivenet.livenessProbe.httpGet.port` |  | `"metrics"` |
-| `fivenet.livenessProbe.initialDelaySeconds` |  | `25` |
-| `fivenet.livenessProbe.periodSeconds` |  | `10` |
-| `fivenet.readinessProbe` |  | `nil` |
-| `fivenet.replicaCount` |  | `1` |
-| `fivenet.resources` |  | `{}` |
-| `fivenet.revisionHistoryLimit` |  | `1` |
-| `fivenet.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
-| `fivenet.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
-| `fivenet.serviceMonitor.namespaceSelector` |  | `nil` |
-| `fivenet.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
-| `fivenet.startupProbe.failureThreshold` |  | `30` |
-| `fivenet.startupProbe.httpGet.path` |  | `"/readiness"` |
-| `fivenet.startupProbe.httpGet.port` |  | `"metrics"` |
-| `fivenet.startupProbe.initialDelaySeconds` |  | `20` |
-| `fivenet.startupProbe.periodSeconds` |  | `10` |
+| `fivenet.config` | FiveNet config | `{"audit":{"retentionDays":90},"auth":{"superuserGroups":["projektleiter","teamleitung"],"superuserUsers":[]},"cache":{"refreshTime":"2m"},"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","custom":{"columns":{"user":{"playtime":"playtime","visum":"visum"},"vehicle":{"model":"model"}},"conditions":{"user":{"filterEmptyName":false}}},"dsn":"DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin","maxIdleConns":5,"maxOpenConns":32},"discord":{"commands":{"enabled":true},"enabled":true,"groupSync":{"enabled":false,"mapping":{}},"presence":{"gameStatus":"FiveNet"},"token":"your_discord_bot_token","userInfoSync":{"employeeRoleFormat":"%s Personal","enabled":false,"gradeRoleFormat":"[%grade%] %grade_label%","ignoreJobs":[],"jobsAbsceneRoleName":"Absent","nicknameRegex":"^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"}},"dispatchCenter":{"convertJobs":[]},"grpc":{"listen":":9090"},"http":{"adminListen":":7070","listen":":8080","publicURL":"https://fivenet.example.com","sessions":{"cookieSecret":"your_generated_cookie_secret","domain":"localhost"}},"imageProxy":{"cachePrefix":"images/","enabled":true,"options":{"allowHosts":[],"denyHosts":[]},"url":"/api/image_proxy/"},"jwt":{"secret":"your_generated_jwt_secret"},"logLevel":"INFO","mode":"release","nats":{"url":"nats://localhost:4222"},"oauth2":{"providers":[]},"storage":{"filesystem":{"path":"/data"},"s3":{"accessKeyID":"","bucketName":"","endpoint":"","prefix":"","region":"us-east-1","secretAccessKey":"","useSSL":true},"type":"filesystem"},"tracing":{"attributes":[],"enabled":false,"environment":"live","insecure":false,"ratio":0.1,"timeout":"10s","type":"stdout","url":"https://localhost:4317"}}` |
+| `frontend.additionalEnv` |  | `[]` |
+| `frontend.image.pullPolicy` |  | `"IfNotPresent"` |
+| `frontend.image.repository` |  | `"docker.io/galexrt/fivenet"` |
+| `frontend.image.tag` |  | `""` |
+| `frontend.livenessProbe.failureThreshold` |  | `3` |
+| `frontend.livenessProbe.httpGet.path` |  | `"/readiness"` |
+| `frontend.livenessProbe.httpGet.port` |  | `"metrics"` |
+| `frontend.livenessProbe.initialDelaySeconds` |  | `25` |
+| `frontend.livenessProbe.periodSeconds` |  | `10` |
+| `frontend.readinessProbe` |  | `nil` |
+| `frontend.replicaCount` |  | `1` |
+| `frontend.resources` |  | `{}` |
+| `frontend.revisionHistoryLimit` |  | `1` |
+| `frontend.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
+| `frontend.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
+| `frontend.serviceMonitor.namespaceSelector` |  | `nil` |
+| `frontend.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
+| `frontend.startupProbe.failureThreshold` |  | `30` |
+| `frontend.startupProbe.httpGet.path` |  | `"/readiness"` |
+| `frontend.startupProbe.httpGet.port` |  | `"metrics"` |
+| `frontend.startupProbe.initialDelaySeconds` |  | `20` |
+| `frontend.startupProbe.periodSeconds` |  | `10` |
 | `fullnameOverride` |  | `""` |
 | `imagePullSecrets` |  | `[]` |
 | `ingress.annotations` |  | `{}` |
@@ -97,6 +97,29 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `podAnnotations` |  | `{}` |
 | `podSecurityContext` |  | `{}` |
 | `securityContext` |  | `{}` |
+| `server.additionalEnv` |  | `[]` |
+| `server.image.pullPolicy` |  | `"IfNotPresent"` |
+| `server.image.repository` |  | `"docker.io/galexrt/fivenet"` |
+| `server.image.tag` |  | `""` |
+| `server.livenessProbe.failureThreshold` |  | `3` |
+| `server.livenessProbe.httpGet.path` |  | `"/readiness"` |
+| `server.livenessProbe.httpGet.port` |  | `"metrics"` |
+| `server.livenessProbe.initialDelaySeconds` |  | `25` |
+| `server.livenessProbe.periodSeconds` |  | `10` |
+| `server.readinessProbe` |  | `nil` |
+| `server.replicaCount` |  | `1` |
+| `server.resources` |  | `{}` |
+| `server.revisionHistoryLimit` |  | `1` |
+| `server.serveFrontend` |  | `false` |
+| `server.serviceMonitor.additionalLabels` | Additional Labels for the ServiceMonitor object | `{}` |
+| `server.serviceMonitor.enabled` | Specifies whether a prometheus-operator ServiceMonitor should be created | `false` |
+| `server.serviceMonitor.namespaceSelector` |  | `nil` |
+| `server.serviceMonitor.scrapeInterval` | Interval at which metrics should be scraped | `"30s"` |
+| `server.startupProbe.failureThreshold` |  | `30` |
+| `server.startupProbe.httpGet.path` |  | `"/readiness"` |
+| `server.startupProbe.httpGet.port` |  | `"metrics"` |
+| `server.startupProbe.initialDelaySeconds` |  | `20` |
+| `server.startupProbe.periodSeconds` |  | `10` |
 | `service.type` |  | `"ClusterIP"` |
 | `serviceAccount.annotations` |  | `{}` |
 | `serviceAccount.create` |  | `true` |
