@@ -32,7 +32,7 @@ spec:
             pathType: {{ .pathType }}
             backend:
               service:
-                name: {{ $fullName }}{{ with .service }}-{{ . }}{{ end }}
+                name: {{ if .serviceName }}{{ .serviceName }}{{ else }}{{ $fullName }}{{ with .service }}-{{ . }}{{ end }}{{ end }}
                 port:
                   name: {{ if .servicePort }}{{ .servicePort }}{{ else }}http{{ end }}
           {{- end }}
