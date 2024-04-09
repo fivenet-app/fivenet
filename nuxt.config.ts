@@ -233,4 +233,7 @@ export default defineNuxtConfig({
             globals.forEach((c) => (c.global = true));
         },
     },
+    colorMode: {
+        preference: 'dark',
+    },
 });
