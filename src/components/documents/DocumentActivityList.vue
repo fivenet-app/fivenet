@@ -51,7 +51,7 @@ watch(offset, async () => refresh());
         />
 
         <template v-else>
-            <div class="mb-1 divide-y divide-gray-200 dark:divide-gray-700">
+            <div class="mb-1 divide-y divide-gray-100 dark:divide-gray-800">
                 <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
             </div>
         </template>

@@ -152,7 +152,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                 {{ $t('common.member', unit.users.length) }}
                             </span>
                             <div v-else class="rounded-md bg-base-800">
-                                <ul role="list" class="divide-y divide-gray-200 text-sm font-medium">
+                                <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
                                     <li
                                         v-for="user in unit.users"
                                         :key="user.userId"

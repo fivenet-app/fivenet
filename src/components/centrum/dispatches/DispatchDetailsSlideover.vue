@@ -108,7 +108,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                 </div>
             </template>
 
-            <div class="divide-y divide-gray-200">
+            <div class="divide-y divide-gray-100 dark:divide-gray-800">
                 <div>
                     <dl class="divide-neutral/10 divide-y">
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -192,7 +192,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
                                 <div v-else class="mb-1 rounded-md bg-base-800">
-                                    <ul role="list" class="divide-y divide-gray-200 text-sm font-medium">
+                                    <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
                                         <li
                                             v-for="unit in dispatch.units"
                                             :key="unit.unitId"

@@ -142,7 +142,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                             :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
                         />
                         <div v-else>
-                            <ul role="list" class="divide-y divide-gray-200">
+                            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                                 <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
                                     <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
                                 </li>

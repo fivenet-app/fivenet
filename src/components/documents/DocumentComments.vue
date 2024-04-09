@@ -185,7 +185,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <ul
                 v-if="data && data.comments && data.comments.length > 0"
                 role="list"
-                class="divide-y divide-gray-200 dark:divide-gray-700"
+                class="divide-y divide-gray-100 dark:divide-gray-800"
             >
                 <DocumentCommentEntry
                     v-for="(comment, idx) in data?.comments"

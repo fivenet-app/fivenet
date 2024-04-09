@@ -92,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <div>
                     <div class="flex flex-1 flex-col justify-between gap-2">
-                        <div class="divide-y divide-gray-200 px-2 sm:px-6">
+                        <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
                             <UFormGroup name="users" :label="$t('common.colleague', 2)" class="flex-1">
                                 <USelectMenu
                                     v-model="query.users"
@@ -124,7 +124,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </UFormGroup>
 
                             <div class="overflow-hidden rounded-md bg-base-800">
-                                <ul role="list" class="divide-y divide-gray-200 text-sm font-medium text-gray-100">
+                                <ul
+                                    role="list"
+                                    class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
+                                >
                                     <li
                                         v-for="user in query.users"
                                         :key="user.userId"
