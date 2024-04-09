@@ -129,7 +129,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UTabs
                         :items="[
                             { slot: 'jobprops', label: $t('components.rector.job_props.job_properties') },
-                            { slot: 'discord', label: $t('components.rector.job_props.discord_sync_settings.title') },
+                            { slot: 'discord', label: $t('common.discord') },
                         ]"
                         class="w-full"
                     >
@@ -251,13 +251,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 />
                                             </template>
 
-                                            <SquareImg
-                                                v-if="jobProps.logoUrl?.url"
-                                                size="xl"
-                                                :url="jobProps.logoUrl.url"
-                                                :no-blur="true"
-                                                class="mt-2"
-                                            />
+                                            <div class="mt-2 flex w-full items-center justify-center">
+                                                <SquareImg
+                                                    v-if="jobProps.logoUrl?.url"
+                                                    size="3xl"
+                                                    :url="jobProps.logoUrl.url"
+                                                    :no-blur="true"
+                                                />
+                                            </div>
                                         </div>
                                     </UFormGroup>
                                 </UDashboardSection>
