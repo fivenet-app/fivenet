@@ -1,8 +1,8 @@
 # syntax=docker/dockerfile:1
-ARG NUXT_UI_PRO_LICENSE
 
 # Frontend Build
 FROM docker.io/library/node:20.12.0-alpine3.18 AS nodebuilder
+ARG NUXT_UI_PRO_LICENSE
 WORKDIR /app
 COPY . ./
 RUN rm -rf ./.nuxt/ && \

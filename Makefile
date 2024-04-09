@@ -7,8 +7,11 @@ GO ?= go
 
 .DEFAULT: run-server
 
-# Read any vars from .env file into Makefile
-$(eval export $(shell sed -ne 's/ *#.*$$//; /./ s/=.*$$// p' .env))
+# Read .env file and export the vars
+ifneq (,$(wildcard ./.env))
+    include .env
+    export
+endif
 
 # Build, Format, etc., Tools, Dependency checkouts
 
@@ -74,7 +77,7 @@ watch:
 .PHONY: build-container
 build-container:
 	docker build -t docker.io/galexrt/fivenet:latest \
-		--build-arg NUXT_UI_PRO_LICENSE=$NUXT_UI_PRO_LICENSE \
+		--build-arg NUXT_UI_PRO_LICENSE=$(NUXT_UI_PRO_LICENSE) \
 		.
 
 .PHONY: release
