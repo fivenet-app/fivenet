@@ -291,8 +291,8 @@
         "money": "Money",
         "no_open_fine": "No open fines",
         "location": "Location | Locations",
-        "unit": "Unit | Units",
         "units": "No Units | {n} Unit | {n} Units",
+        "unit": "Unit | Units",
         "color": "Color",
         "initials": "Initials",
         "updated": "Updated",
@@ -2082,8 +2082,7 @@
     "help": {
         "hero": {
             "title": "Need help with FiveNet?",
-            "description": "Checkout the documentation here and use the search to find the feature your are working with."
+            "description": "Checkout the documentation here to learn about the available features."
         }
     }
-
 }
