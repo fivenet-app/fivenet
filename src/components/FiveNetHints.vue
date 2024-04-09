@@ -37,14 +37,14 @@ const hints = shuffle([
                 <div class="mx-auto mb-2 flex items-center gap-1 text-base">
                     <span class="grow">{{ $t(`components.hints.${hint.id}.content`) }}</span>
 
-                    <template v-if="hint.keyboard || hint.to">
+                    <div v-if="hint.keyboard || hint.to" class="flex-initial">
                         <UKbd v-if="hint.keyboard" size="md">
                             {{ $t(`components.hints.${hint.id}.keyboard`) }}
                         </UKbd>
-                        <UButton v-else-if="hint.to" variant="link" :to="hint.to">
+                        <UButton v-else-if="hint.to" variant="soft" :to="hint.to">
                             {{ $t('components.hints.click_me') }}
                         </UButton>
-                    </template>
+                    </div>
                 </div>
             </template>
 

@@ -56,7 +56,7 @@ const items = computed(() => [
               }
             : undefined,
         {
-            label: t('common.language'),
+            label: t('components.language_switcher.title'),
             icon: 'i-mdi-translate',
             color: 'gray',
             click: () => modal.open(LanguageSwitcherModal, {}),
@@ -90,7 +90,7 @@ const items = computed(() => [
                 color="gray"
                 variant="ghost"
                 class="w-full"
-                :label="activeChar ? `${activeChar?.firstname} ${activeChar?.lastname}` : username"
+                :label="activeChar ? `${activeChar?.firstname} ${activeChar?.lastname}` : username ?? $t('common.na')"
                 :class="[open && 'bg-gray-50 dark:bg-gray-800']"
             >
                 <template #leading>

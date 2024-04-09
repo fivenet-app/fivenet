@@ -26,12 +26,13 @@ defineProps<{
         <div class="mx-auto mb-2 flex items-center gap-1 text-base">
             <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
 
-            <template v-if="keyboard || to">
-                <UKbd v-if="keyboard" class="ml-1" :value="$t(`components.hints.${hintId}.keyboard`)" />
-                <UButton v-else-if="to" variant="link" :to="to" :external="external" :target="linkTarget ?? null">
+            <div v-if="keyboard || to" class="flex-initial">
+                <UKbd v-if="keyboard" :value="$t(`components.hints.${hintId}.keyboard`)" />
+
+                <UButton v-else-if="to" variant="soft" :to="to" :external="external" :target="linkTarget ?? null">
                     {{ $t('components.hints.click_me') }}
                 </UButton>
-            </template>
+            </div>
         </div>
     </UCard>
 </template>
