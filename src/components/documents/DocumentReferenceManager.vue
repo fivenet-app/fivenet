@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { FileDocumentMinusIcon, OpenInNewIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -126,7 +125,7 @@ function removeReference(id: string): void {
                 <UTabs :items="tabs">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
-                            <UIcon :name="item.icon" class="h-4 w-4 shrink-0" />
+                            <UIcon :name="item.icon" class="size-4 shrink-0" />
 
                             <span class="truncate">{{ item.label }}</span>
 
@@ -192,40 +191,31 @@ function removeReference(id: string): void {
                                                     </td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                         <div class="flex flex-row gap-2">
-                                                            <div class="flex">
-                                                                <NuxtLink
-                                                                    :to="{
-                                                                        name: 'documents-id',
-                                                                        params: {
-                                                                            id: reference.targetDocumentId,
-                                                                        },
-                                                                    }"
-                                                                    target="_blank"
-                                                                    :title="
-                                                                        $t(
-                                                                            'components.documents.document_managers.open_document',
-                                                                        )
-                                                                    "
-                                                                >
-                                                                    <OpenInNewIcon
-                                                                        class="text-primary-500 hover:text-primary-300 h-auto w-5"
-                                                                    />
-                                                                </NuxtLink>
-                                                            </div>
-                                                            <div class="flex">
-                                                                <UButton
-                                                                    :title="
-                                                                        $t(
-                                                                            'components.documents.document_managers.remove_reference',
-                                                                        )
-                                                                    "
-                                                                    @click="removeReference(reference.id!)"
-                                                                >
-                                                                    <FileDocumentMinusIcon
-                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
-                                                                    />
-                                                                </UButton>
-                                                            </div>
+                                                            <UButton
+                                                                :to="{
+                                                                    name: 'documents-id',
+                                                                    params: {
+                                                                        id: reference.targetDocumentId,
+                                                                    },
+                                                                }"
+                                                                target="_blank"
+                                                                :title="
+                                                                    $t('components.documents.document_managers.open_document')
+                                                                "
+                                                                variant="link"
+                                                                icon="i-mdi-open-in-new"
+                                                            />
+
+                                                            <UButton
+                                                                :title="
+                                                                    $t(
+                                                                        'components.documents.document_managers.remove_reference',
+                                                                    )
+                                                                "
+                                                                icon="i-mdi-file-document-minus"
+                                                                color="red"
+                                                                @click="removeReference(reference.id!)"
+                                                            />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -328,10 +318,7 @@ function removeReference(id: string): void {
                             </div>
                         </template>
                         <template v-else-if="item.key === 'new'">
-                            <div>
-                                <label for="title" class="sr-only"
-                                    >{{ $t('common.document', 1) }} {{ $t('common.title') }}</label
-                                >
+                            <UFormGroup name="title" :label="$t('common.search')">
                                 <UInput
                                     v-model="queryDoc"
                                     type="text"
@@ -340,7 +327,8 @@ function removeReference(id: string): void {
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                            </div>
+                            </UFormGroup>
+
                             <div class="mt-2 flow-root">
                                 <div class="-my-2 mx-0 overflow-x-auto">
                                     <div class="inline-block min-w-full py-2 align-middle">

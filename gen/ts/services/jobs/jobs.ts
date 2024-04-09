@@ -29,9 +29,9 @@ export interface ListColleaguesRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: string search_name = 2;
+     * @generated from protobuf field: string search = 2;
      */
-    searchName: string;
+    search: string;
     /**
      * @generated from protobuf field: optional int32 user_id = 3;
      */
@@ -177,14 +177,14 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
     constructor() {
         super("services.jobs.ListColleaguesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 2, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 4, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesRequest>): ListColleaguesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.searchName = "";
+        message.search = "";
         if (value !== undefined)
             reflectionMergePartial<ListColleaguesRequest>(this, message, value);
         return message;
@@ -197,8 +197,8 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* string search_name */ 2:
-                    message.searchName = reader.string();
+                case /* string search */ 2:
+                    message.search = reader.string();
                     break;
                 case /* optional int32 user_id */ 3:
                     message.userId = reader.int32();
@@ -221,9 +221,9 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string search_name = 2; */
-        if (message.searchName !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.searchName);
+        /* string search = 2; */
+        if (message.search !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.search);
         /* optional int32 user_id = 3; */
         if (message.userId !== undefined)
             writer.tag(3, WireType.Varint).int32(message.userId);

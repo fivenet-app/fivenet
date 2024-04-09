@@ -146,14 +146,14 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		}
 	}
 
-	req.SearchName = strings.TrimSpace(req.SearchName)
-	req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
-	req.SearchName = strings.ReplaceAll(req.SearchName, " ", "%")
-	if req.SearchName != "" {
-		req.SearchName = "%" + req.SearchName + "%"
+	req.Search = strings.TrimSpace(req.Search)
+	req.Search = strings.ReplaceAll(req.Search, "%", "")
+	req.Search = strings.ReplaceAll(req.Search, " ", "%")
+	if req.Search != "" {
+		req.Search = "%" + req.Search + "%"
 		condition = condition.AND(
 			jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
-				LIKE(jet.String(req.SearchName)),
+				LIKE(jet.String(req.Search)),
 		)
 	}
 

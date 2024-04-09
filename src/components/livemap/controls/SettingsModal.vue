@@ -1,10 +1,19 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import { useSettingsStore } from '~/store/settings';
 
 const { isOpen } = useModal();
 
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
+
+const schema = z.object({
+    markerSize: z.number().min(14).max(32),
+    centerSelectedMarker: z.boolean(),
+    showUnitNames: z.boolean(),
+    showUnitStatus: z.boolean(),
+    showAllDispatches: z.boolean(),
+});
 </script>
 
 <template>
@@ -20,20 +29,19 @@ const { livemap } = storeToRefs(settingsStore);
                 </div>
             </template>
 
-            <UForm :schema="undefined" :state="{}">
+            <UForm :schema="schema" :state="livemap">
                 <UFormGroup name="centerSelectedMarker" :label="$t('components.livemap.center_selected_marker')">
                     <UToggle v-model="livemap.centerSelectedMarker">
                         <span class="sr-only">{{ $t('components.livemap.center_selected_marker') }}</span>
                     </UToggle>
                 </UFormGroup>
 
-                <UFormGroup name="livemapMarkerSize" :label="$t('components.livemap.settings.marker_size')">
+                <UFormGroup name="markerSize" :label="$t('components.livemap.settings.marker_size')">
                     <URange
                         v-model="livemap.markerSize"
-                        name="livemapMarkerSize"
                         class="my-auto h-1.5 w-full cursor-grab rounded-full"
-                        :min="16"
-                        :max="30"
+                        :min="14"
+                        :max="32"
                         :step="2"
                     />
                     <span class="text-sm">{{ livemap.markerSize }}</span>

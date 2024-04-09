@@ -181,7 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 usersLoading = true;
                                                 const colleagues = await completorStore.listColleagues({
                                                     pagination: { offset: 0 },
-                                                    searchName: query,
+                                                    search: query,
                                                 });
                                                 usersLoading = false;
                                                 return colleagues;

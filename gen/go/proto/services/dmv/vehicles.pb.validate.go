@@ -142,12 +142,34 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 
 	}
 
-	if m.Search != nil {
-		// no validation rules for Search
+	if m.LicensePlate != nil {
+
+		if utf8.RuneCountInString(m.GetLicensePlate()) > 32 {
+			err := ListVehiclesRequestValidationError{
+				field:  "LicensePlate",
+				reason: "value length must be at most 32 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.Model != nil {
-		// no validation rules for Model
+
+		if utf8.RuneCountInString(m.GetModel()) > 32 {
+			err := ListVehiclesRequestValidationError{
+				field:  "Model",
+				reason: "value length must be at most 32 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.UserId != nil {

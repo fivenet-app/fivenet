@@ -227,7 +227,7 @@ watch(selectedAccessRole, () => {
                     class="flex-1"
                     option-attribute="label"
                     :search-attributes="['name', 'label']"
-                    :options="jobs"
+                    :options="jobs ?? []"
                     :placeholder="selectedJob ? selectedJob.label : $t('common.na')"
                 >
                     <template #option-empty="{ query: search }">

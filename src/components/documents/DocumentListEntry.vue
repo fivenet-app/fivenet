@@ -61,7 +61,7 @@ defineProps<{
                 </div>
 
                 <div class="flex flex-row gap-2 truncate">
-                    <h2 class="inline-flex items-center gap-1 truncate text-xl font-medium">
+                    <div class="inline-flex items-center gap-1">
                         <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-shape" class="h-auto w-5" />
                             <span :title="doc.category.description ?? $t('common.na')">
@@ -69,14 +69,16 @@ defineProps<{
                             </span>
                         </UBadge>
 
-                        <span class="truncate py-2 pr-3">
+                        <h2 class="truncate py-2 pr-3 text-xl font-medium">
                             {{ doc.title }}
-                        </span>
-                    </h2>
+                        </h2>
+                    </div>
+
                     <div v-if="doc.deletedAt" class="flex flex-1 flex-row items-center justify-center font-bold">
                         <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
+
                     <div v-if="doc.updatedAt" class="flex flex-1 flex-row items-center justify-end">
                         <UIcon name="i-mdi-update" class="mr-1.5 size-5 shrink-0" />
                         <p>

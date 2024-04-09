@@ -30,9 +30,9 @@ export interface ListVehiclesRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: optional string search = 3;
+     * @generated from protobuf field: optional string license_plate = 3;
      */
-    search?: string;
+    licensePlate?: string;
     /**
      * @generated from protobuf field: optional string model = 4;
      */
@@ -61,8 +61,8 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
         super("services.dmv.ListVehiclesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "orderBy", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OrderBy, options: { "validate.rules": { repeated: { maxItems: "3" } } } },
-            { no: 3, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "license_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
+            { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
@@ -84,8 +84,8 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
                 case /* repeated resources.common.database.OrderBy orderBy */ 2:
                     message.orderBy.push(OrderBy.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional string search */ 3:
-                    message.search = reader.string();
+                case /* optional string license_plate */ 3:
+                    message.licensePlate = reader.string();
                     break;
                 case /* optional string model */ 4:
                     message.model = reader.string();
@@ -111,9 +111,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
         /* repeated resources.common.database.OrderBy orderBy = 2; */
         for (let i = 0; i < message.orderBy.length; i++)
             OrderBy.internalBinaryWrite(message.orderBy[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional string search = 3; */
-        if (message.search !== undefined)
-            writer.tag(3, WireType.LengthDelimited).string(message.search);
+        /* optional string license_plate = 3; */
+        if (message.licensePlate !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.licensePlate);
         /* optional string model = 4; */
         if (message.model !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.model);

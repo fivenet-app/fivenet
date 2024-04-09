@@ -60,9 +60,9 @@ message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
   // Search params
-  optional string search = 3;
-  repeated uint64 category_ids = 4 [jstype = JS_STRING];
-  repeated int32 creator_ids = 5;
+  optional string search = 3 [(validate.rules).string.max_len = 64];
+  repeated uint64 category_ids = 4 [jstype = JS_STRING, (validate.rules).repeated.max_items = 5];
+  repeated int32 creator_ids = 5 [(validate.rules).repeated.max_items = 5];
   optional resources.timestamp.Timestamp from = 6;
   optional resources.timestamp.Timestamp to = 7;
   optional bool closed = 8;

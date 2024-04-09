@@ -77,7 +77,7 @@ const filteredUnits = computed(() =>
 
             <div>
                 <div class="flex flex-col gap-1">
-                    <UFormGroup :label="$t('common.search')">
+                    <UFormGroup name="search" :label="$t('common.search')">
                         <UInput
                             v-model="queryUnit"
                             type="text"

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -16,12 +17,20 @@ const { $grpc } = useNuxtApp();
 
 const notificator = useNotificatorStore();
 
-const includeRead = ref(false);
+const schema = z.object({
+    includeRead: z.boolean(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
+    includeRead: false,
+});
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${page.value}-${includeRead.value}`, () =>
+const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${page.value}-${query.includeRead}`, () =>
     getNotifications(),
 );
 
@@ -31,7 +40,7 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
             pagination: {
                 offset: offset.value,
             },
-            includeRead: includeRead.value,
+            includeRead: query.includeRead,
         });
 
         const { response } = await call;
@@ -69,7 +78,7 @@ async function markRead(...ids: string[]): Promise<void> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(includeRead, async () => refresh(), { debounce: 500, maxWait: 1500 });
+watchDebounced(query, async () => refresh(), { debounce: 500, maxWait: 1500 });
 
 const { start: timeoutFn } = useTimeoutFn(() => (canSubmit.value = true), 400, { immediate: false });
 const canSubmit = ref(true);
@@ -78,14 +87,14 @@ const canSubmit = ref(true);
 <template>
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
-            <UForm :schema="undefined" :state="{}" @submit="refresh()">
+            <UForm :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row items-center gap-2 sm:mx-auto">
                     <div class="flex-1">
                         <label for="search" class="block text-sm font-medium leading-6"
                             >{{ $t('components.notifications.include_read') }}
                         </label>
                         <div class="relative flex items-center">
-                            <UToggle v-model="includeRead">
+                            <UToggle v-model="query.includeRead">
                                 <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
                             </UToggle>
                         </div>

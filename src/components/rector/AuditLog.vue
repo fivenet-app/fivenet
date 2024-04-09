@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { format } from 'date-fns';
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import { UserShort } from '~~/gen/ts/resources/users/users';
@@ -19,13 +20,17 @@ const { d, t } = useI18n();
 
 const completorStore = useCompletorStore();
 
-const query = ref<{
-    from?: Date;
-    to?: Date;
-    method: string;
-    service: string;
-    search: string;
-}>({
+const schema = z.object({
+    from: z.date().optional(),
+    to: z.date().optional(),
+    method: z.string().max(64),
+    service: z.string().max(64),
+    search: z.string().max(128),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = ref<Schema>({
     method: '',
     service: '',
     search: '',
@@ -170,9 +175,9 @@ const columns = [
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="undefined" :state="{}" class="w-full" @submit="refresh()">
+            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
-                    <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
+                    <UFormGroup name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`" class="flex-1">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
@@ -188,7 +193,7 @@ const columns = [
                         </UPopover>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
+                    <UFormGroup name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`" class="flex-1">
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
@@ -204,7 +209,7 @@ const columns = [
                         </UPopover>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" name="user" :label="$t('common.user')">
+                    <UFormGroup name="user" :label="$t('common.user')" class="flex-1">
                         <USelectMenu
                             v-model="selectedCitizens"
                             multiple
@@ -234,7 +239,7 @@ const columns = [
                         </USelectMenu>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" name="service" :label="$t('common.service')">
+                    <UFormGroup name="service" :label="$t('common.service')" class="flex-1">
                         <UInput
                             v-model="query.service"
                             type="text"
@@ -246,7 +251,7 @@ const columns = [
                         />
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" name="method" :label="$t('common.method')">
+                    <UFormGroup name="method" :label="$t('common.method')" class="flex-1">
                         <UInput
                             v-model="query.method"
                             type="text"
@@ -258,7 +263,7 @@ const columns = [
                         />
                     </UFormGroup>
 
-                    <UFormGroup class="flex-1" name="data" :label="$t('common.data')">
+                    <UFormGroup name="data" :label="$t('common.data')" class="flex-1">
                         <UInput
                             v-model="query.search"
                             type="text"

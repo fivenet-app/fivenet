@@ -11,7 +11,7 @@ const props = defineProps<{
 }>();
 
 const emits = defineEmits<{
-    (e: 'refreshRequests'): void;
+    (e: 'refresh'): void;
 }>();
 
 const { isOpen } = useModal();
@@ -66,7 +66,7 @@ async function createOrUpdateQualificationRequest(
             type: 'success',
         });
 
-        emits('refreshRequests');
+        emits('refresh');
         isOpen.value = false;
 
         return response;

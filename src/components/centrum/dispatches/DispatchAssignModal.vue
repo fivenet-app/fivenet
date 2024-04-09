@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon } from 'mdi-vue3';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
@@ -18,17 +19,27 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
+const schema = z.object({
+    units: z.custom<string>().array().max(10),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
+    units: [],
+});
+
 const selectedUnits = ref<string[]>(props.dispatch.units.map((du) => du.unitId));
 
 async function assignDispatch(): Promise<void> {
     try {
         const toAdd: string[] = [];
         const toRemove: string[] = [];
-        selectedUnits.value?.forEach((u) => {
+        query.units.forEach((u) => {
             toAdd.push(u);
         });
         props.dispatch.units?.forEach((u) => {
-            const idx = selectedUnits.value.findIndex((su) => su === u.unitId);
+            const idx = query.units.findIndex((su) => su === u.unitId);
             if (idx === -1) {
                 toRemove.push(u.unitId);
             }
@@ -41,7 +52,7 @@ async function assignDispatch(): Promise<void> {
         });
         await call;
 
-        selectedUnits.value.length = 0;
+        query.units.length = 0;
 
         isOpen.value = false;
     } catch (e) {
@@ -51,11 +62,11 @@ async function assignDispatch(): Promise<void> {
 }
 
 function selectUnit(item: Unit): void {
-    const idx = selectedUnits.value?.findIndex((u) => u === item.id);
+    const idx = query.units.findIndex((u) => u === item.id);
     if (idx > -1) {
-        delete selectedUnits.value[idx];
+        delete query.units[idx];
     } else {
-        selectedUnits.value.push(item.id);
+        query.units.push(item.id);
     }
 }
 
@@ -103,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="undefined" :state="{}" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="query" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
@@ -131,6 +142,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <h3 class="mb-1 text-sm">
                                 {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                             </h3>
+
                             <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
                                 <UButton
                                     v-for="unit in group.units"

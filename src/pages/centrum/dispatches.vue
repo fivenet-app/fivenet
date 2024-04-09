@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Pane, Splitpanes } from 'splitpanes';
+import { z } from 'zod';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
@@ -24,7 +25,14 @@ const { $grpc } = useNuxtApp();
 const livemapStore = useLivemapStore();
 const { location, showLocationMarker } = storeToRefs(livemapStore);
 
-const query = ref<{ postal?: string; id: string }>({
+const schema = z.object({
+    postal: z.string().trim().max(12),
+    id: z.string().trim().max(16),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
     postal: '',
     id: '',
 });
@@ -43,11 +51,11 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             notStatus: [],
             status: [],
             ids: [],
-            postal: query.value.postal?.trim().replaceAll('-', '').replace(/\D/g, ''),
+            postal: query.postal.replaceAll('-', '').replace(/\D/g, ''),
         };
 
-        if (query.value.id) {
-            const id = query.value.id?.trim().replaceAll('-', '').replace(/\D/g, '');
+        if (query.id) {
+            const id = query.id.replaceAll('-', '').replace(/\D/g, '');
             if (id.length > 0) {
                 req.ids.push(id);
             }
@@ -65,7 +73,7 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
 
 watch(offset, async () => refresh());
 
-watchDebounced(query.value, async () => refresh(), {
+watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,
 });
@@ -104,12 +112,13 @@ defineShortcuts({
 
                     <Pane size="65">
                         <div class="mb-2 px-2">
-                            <UForm :schema="undefined" :state="{}" @submit="refresh()" class="flex flex-row gap-2">
-                                <UFormGroup name="search" :label="$t('common.postal')" class="flex-1">
+                            <UForm :schema="schema" :state="query" class="flex flex-row gap-2" @submit="refresh()">
+                                <UFormGroup name="postal" :label="$t('common.postal')" class="flex-1">
                                     <UInput
-                                        v-model="query.postal"
                                         ref="input"
+                                        v-model="query.postal"
                                         type="text"
+                                        name="postal"
                                         :placeholder="$t('common.postal')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -119,11 +128,11 @@ defineShortcuts({
                                         </template>
                                     </UInput>
                                 </UFormGroup>
-                                <UFormGroup name="model" :label="$t('common.id')" class="flex-1">
+                                <UFormGroup name="id" :label="$t('common.id')" class="flex-1">
                                     <UInput
                                         v-model="query.id"
                                         type="text"
-                                        name="model"
+                                        name="id"
                                         min="1"
                                         max="99999999999"
                                         :placeholder="$t('common.id')"

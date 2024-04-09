@@ -40,14 +40,14 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	if req.UserId != nil && *req.UserId > 0 {
 		condition = condition.AND(tUser.ID.EQ(jet.Int32(*req.UserId)))
 	} else {
-		req.SearchName = strings.TrimSpace(req.SearchName)
-		req.SearchName = strings.ReplaceAll(req.SearchName, "%", "")
-		req.SearchName = strings.ReplaceAll(req.SearchName, " ", "%")
-		if req.SearchName != "" {
-			req.SearchName = "%" + req.SearchName + "%"
+		req.Search = strings.TrimSpace(req.Search)
+		req.Search = strings.ReplaceAll(req.Search, "%", "")
+		req.Search = strings.ReplaceAll(req.Search, " ", "%")
+		if req.Search != "" {
+			req.Search = "%" + req.Search + "%"
 			condition = condition.AND(
 				jet.CONCAT(tUser.Firstname, jet.String(" "), tUser.Lastname).
-					LIKE(jet.String(req.SearchName)),
+					LIKE(jet.String(req.Search)),
 			)
 		}
 	}

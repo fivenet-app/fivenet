@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import type { Perms } from '~~/gen/ts/perms';
@@ -17,10 +18,16 @@ const { t } = useI18n();
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-const query = ref<{
-    name: string;
-    absent?: boolean;
-}>({
+const modal = useModal();
+
+const schema = z.object({
+    name: z.string().max(50),
+    absent: z.boolean(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
     name: '',
     absent: false,
 });
@@ -33,14 +40,14 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-colleagues-${page.value}-${query.value.name}`, async () => {
+} = useLazyAsyncData(`jobs-colleagues-${page.value}-${query.name}`, async () => {
     try {
         const call = $grpc.getJobsClient().listColleagues({
             pagination: {
                 offset: offset.value,
             },
-            searchName: query.value.name,
-            absent: query.value.absent,
+            search: query.name,
+            absent: query.absent,
         });
         const { response } = await call;
 
@@ -52,7 +59,7 @@ const {
 });
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
     const colleague = data.value?.colleagues.find((c) => c.userId === value.userId);
@@ -108,8 +115,6 @@ const columns = [
         : undefined,
 ].filter((c) => c !== undefined) as { key: string; label: string; sortable?: boolean }[];
 
-const modal = useModal();
-
 const input = ref<{ input: HTMLInputElement }>();
 
 defineShortcuts({
@@ -123,13 +128,13 @@ defineShortcuts({
     <div class="py-2 pb-4">
         <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
-                <UForm :schema="undefined" :state="{}" class="flex w-full gap-2">
-                    <UFormGroup class="flex-1" :label="$t('common.colleague', 1)">
+                <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
+                    <UFormGroup name="name" :label="$t('common.colleague', 1)" class="flex-1">
                         <UInput
                             ref="input"
                             v-model="query.name"
                             type="text"
-                            name="searchName"
+                            name="name"
                             :placeholder="$t('common.name')"
                             block
                             @focusin="focusTablet(true)"
@@ -141,7 +146,7 @@ defineShortcuts({
                         </UInput>
                     </UFormGroup>
 
-                    <UFormGroup :label="$t('common.absent')">
+                    <UFormGroup name="absent" :label="$t('common.absent')">
                         <UToggle v-model="query.absent">
                             <span class="sr-only">
                                 {{ $t('common.absent') }}

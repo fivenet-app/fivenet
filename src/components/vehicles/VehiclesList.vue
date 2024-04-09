@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
@@ -29,9 +30,17 @@ const props = withDefaults(
     },
 );
 
-const query = ref<{ licensePlate: string; model?: string; user_id?: number }>({
+const schema = z.object({
+    licensePlate: z.string().max(32),
+    model: z.string().min(6).max(32).optional(),
+    userId: z.number().optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = ref<Schema>({
     licensePlate: '',
-    user_id: props.userId,
+    userId: props.userId,
 });
 
 const page = ref(1);
@@ -42,15 +51,16 @@ const { data: data, pending: loading, refresh, error } = useLazyAsyncData(`vehic
 const hideVehicleModell = ref(false);
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
+    console.log('listVehicles', query.value.userId);
     try {
         const call = $grpc.getDMVClient().listVehicles({
             pagination: {
                 offset: offset.value,
             },
             orderBy: [],
-            userId: query.value.user_id,
-            search: query.value.licensePlate,
+            licensePlate: query.value.licensePlate,
             model: query.value.model,
+            userId: query.value.userId,
         });
         const { response } = await call;
 
@@ -73,13 +83,7 @@ const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
 const selectedUser = ref<undefined | UserShort>();
-watch(selectedUser, () => {
-    if (selectedUser.value) {
-        query.value.user_id = selectedUser.value.userId;
-    } else {
-        query.value.user_id = undefined;
-    }
-});
+watch(selectedUser, () => (query.value.userId = selectedUser.value?.userId));
 
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), {
@@ -143,11 +147,11 @@ defineShortcuts({
     <div>
         <UDashboardToolbar>
             <template #default>
-                <UForm :schema="undefined" :state="{}" class="flex w-full flex-row gap-2" @submit="refresh()">
+                <UForm :schema="schema" :state="query" class="flex w-full flex-row gap-2" @submit="refresh()">
                     <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
                         <UInput
-                            v-model="query.licensePlate"
                             ref="input"
+                            v-model="query.licensePlate"
                             type="text"
                             name="licensePlate"
                             :placeholder="$t('common.license_plate')"
@@ -176,6 +180,7 @@ defineShortcuts({
                     <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
                         <UInputMenu
                             v-model="selectedUser"
+                            nullable
                             :search="
                                 async (query: string) => {
                                     usersLoading = true;
@@ -188,6 +193,7 @@ defineShortcuts({
                             "
                             :search-attributes="['firstname', 'lastname']"
                             block
+                            :loading="usersLoading"
                             :placeholder="
                                 selectedUser
                                     ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`

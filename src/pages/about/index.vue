@@ -133,8 +133,10 @@ const faqs = [
                                 <dl class="mt-4">
                                     <UAccordion :items="faqs" multiple>
                                         <template #item="{ item: faq }">
-                                            <!-- eslint-disable-next-line vue/no-v-html -->
-                                            <p class="text-base leading-7" v-html="faq.content"></p>
+                                            <UContainer>
+                                                <!-- eslint-disable-next-line vue/no-v-html -->
+                                                <p class="text-base leading-7" v-html="faq.content"></p>
+                                            </UContainer>
                                         </template>
                                     </UAccordion>
                                 </dl>

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { User } from '~~/gen/ts/resources/users/users';
@@ -20,13 +21,19 @@ const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
 
-type CType = { status: ConductType };
-
 const completorStore = useCompletorStore();
 
 const modal = useModal();
 
-const query = ref<{ types: CType[]; showExpired?: boolean; user?: User }>({
+const schema = z.object({
+    types: z.nativeEnum(ConductType).array().max(10),
+    showExpired: z.boolean(),
+    user: z.custom<User>().optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
     types: [],
     showExpired: false,
 });
@@ -39,15 +46,15 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 const { data, pending: loading, refresh, error } = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries());
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
-    const userIds = props.userId ? [props.userId] : query.value.user ? [query.value.user.userId] : [];
+    const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
     try {
         const call = $grpc.getJobsConductClient().listConductEntries({
             pagination: {
                 offset: offset.value,
             },
-            types: query.value.types.map((t) => t.status),
+            types: query.types,
             userIds: userIds,
-            showExpired: query.value.showExpired,
+            showExpired: query.showExpired,
         });
         const { response } = await call;
 
@@ -71,7 +78,7 @@ async function deleteConductEntry(id: string): Promise<void> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function updateEntryInPlace(entry: ConductEntry): void {
     if (data.value === null) {
@@ -84,6 +91,8 @@ function updateEntryInPlace(entry: ConductEntry): void {
         data.value.entries[idx] = entry;
     }
 }
+
+type CType = { status: ConductType };
 
 const cTypes = ref<CType[]>([
     { status: ConductType.NOTE },
@@ -139,9 +148,9 @@ defineShortcuts({
         <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
                 <div class="sm:flex-auto">
-                    <UForm :schema="undefined" :state="{}" @submit="refresh()">
+                    <UForm :schema="schema" :state="query" @submit="refresh()">
                         <div class="flex flex-row gap-2">
-                            <UFormGroup v-if="hideUserSearch !== true" name="user" class="flex-1" :label="$t('common.target')">
+                            <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.target')" class="flex-1">
                                 <UInputMenu
                                     ref="input"
                                     v-model="query.user"
@@ -151,7 +160,7 @@ defineShortcuts({
                                             usersLoading = true;
                                             const colleagues = await completorStore.listColleagues({
                                                 pagination: { offset: 0 },
-                                                searchName: query,
+                                                search: query,
                                             });
                                             usersLoading = false;
                                             return colleagues;
@@ -183,17 +192,18 @@ defineShortcuts({
                                 </UInputMenu>
                             </UFormGroup>
 
-                            <UFormGroup name="types" class="flex-1" :label="$t('common.type')">
+                            <UFormGroup name="types" :label="$t('common.type')" class="flex-1">
                                 <USelectMenu
                                     v-model="query.types"
                                     multiple
                                     nullable
                                     :options="cTypes"
+                                    value-attribute="status"
                                     :placeholder="
                                         query.types
                                             ? query.types
-                                                  .map((ct: CType) =>
-                                                      $t(`enums.jobs.ConductType.${ConductType[ct.status ?? 0]}`),
+                                                  .map((ct: ConductType) =>
+                                                      $t(`enums.jobs.ConductType.${ConductType[ct ?? 0]}`),
                                                   )
                                                   .join(', ')
                                             : $t('common.na')
@@ -213,8 +223,8 @@ defineShortcuts({
 
                             <UFormGroup
                                 name="showExpired"
-                                class="flex-initial"
                                 :label="$t('components.jobs.conduct.List.show_expired')"
+                                class="flex-initial"
                             >
                                 <UToggle v-model="query.showExpired">
                                     <span class="sr-only">
@@ -225,8 +235,8 @@ defineShortcuts({
 
                             <UFormGroup
                                 v-if="can('JobsConductService.CreateConductEntry')"
-                                class="flex-initial"
                                 :label="$t('common.create')"
+                                class="flex-initial"
                             >
                                 <UButton @click="modal.open(ConductCreateOrUpdateModal, {})">
                                     {{ $t('common.create') }}

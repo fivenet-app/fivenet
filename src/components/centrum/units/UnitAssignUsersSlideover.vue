@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
@@ -16,17 +17,25 @@ const usersLoading = ref(false);
 
 const completorStore = useCompletorStore();
 
-const selectedUsers = ref<UserShort[]>(props.unit.users.filter((u) => u !== undefined).map((u) => u.user!));
+const schema = z.object({
+    users: z.custom<UserShort>().array().max(10),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
+    users: props.unit.users.filter((u) => u !== undefined).map((u) => u.user!),
+});
 
 async function assignUnit(): Promise<void> {
     try {
         const toAdd: number[] = [];
         const toRemove: number[] = [];
-        selectedUsers.value?.forEach((u) => {
+        query.users?.forEach((u) => {
             toAdd.push(u.userId);
         });
         props.unit.users?.forEach((u) => {
-            const idx = selectedUsers.value.findIndex((su) => su.userId === u.userId);
+            const idx = query.users.findIndex((su) => su.userId === u.userId);
             if (idx === -1) {
                 toRemove.push(u.userId);
             }
@@ -62,7 +71,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
 <template>
     <USlideover :ui="{ width: 'w-screen max-w-xl' }">
-        <UForm :schema="undefined" :state="{}" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="query" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
@@ -87,9 +96,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 <div>
                     <div class="flex flex-1 flex-col justify-between gap-2">
                         <div class="divide-y divide-gray-200 px-2 sm:px-6">
-                            <UFormGroup name="selectedUsers" :label="$t('common.colleague', 2)" class="flex-1">
+                            <UFormGroup name="users" :label="$t('common.colleague', 2)" class="flex-1">
                                 <USelectMenu
-                                    v-model="selectedUsers"
+                                    v-model="query.users"
                                     multiple
                                     :searchable="
                                         async (query: string) => {
@@ -103,7 +112,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     "
                                     :search-attributes="['firstname', 'lastname']"
                                     block
-                                    :placeholder="selectedUsers ? charsGetDisplayValue(selectedUsers) : $t('common.owner')"
+                                    :placeholder="query.users ? charsGetDisplayValue(query.users) : $t('common.owner')"
                                     trailing
                                     by="userId"
                                 >
@@ -120,7 +129,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             <div class="overflow-hidden rounded-md bg-base-800">
                                 <ul role="list" class="divide-y divide-gray-200 text-sm font-medium text-gray-100">
                                     <li
-                                        v-for="user in selectedUsers"
+                                        v-for="user in query.users"
                                         :key="user.userId"
                                         class="inline-flex items-center px-6 py-4"
                                     >

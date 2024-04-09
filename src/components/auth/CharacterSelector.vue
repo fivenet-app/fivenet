@@ -4,6 +4,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';
 import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 import { useAuthStore } from '~/store/auth';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -11,7 +12,7 @@ const authStore = useAuthStore();
 
 const { chooseCharacter } = authStore;
 
-const { data: chars, pending, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
+const { data: chars, pending: loading, refresh, error } = useLazyAsyncData('chars', () => fetchCharacters());
 
 async function fetchCharacters(): Promise<User[]> {
     try {
@@ -34,8 +35,9 @@ watch(chars, async () => {
 </script>
 
 <template>
-    <DataPendingBlock v-if="pending" :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
+    <DataPendingBlock v-if="loading" :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
+    <DataNoDataBlock v-else-if="!chars" :title="$t('common.not_found', [$t('common.character', 2)])" />
     <template v-else>
         <UCarousel
             v-slot="{ item }"

@@ -1,8 +1,8 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import { vMaska } from 'maska';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { attr } from '~/composables/can';
-import GenericInput from '~/composables/partials/forms/GenericInput.vue';
 import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import type { User } from '~~/gen/ts/resources/users/users';
 import { useClipboardStore } from '~/store/clipboard';
@@ -15,14 +15,18 @@ const { $grpc } = useNuxtApp();
 
 const { t } = useI18n();
 
-const query = ref<{
-    name?: string;
-    phoneNumber?: string;
-    wanted?: boolean;
-    trafficInfractionPoints?: number;
-    fines?: number;
-    dateofbirth?: string;
-}>({});
+const schema = z.object({
+    name: z.string().optional(),
+    phoneNumber: z.string().max(20).optional(),
+    wanted: z.boolean().optional(),
+    trafficInfractionPoints: z.coerce.number().nonnegative().optional(),
+    openFines: z.coerce.number().nonnegative().optional(),
+    dateofbirth: z.string().max(10).optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = ref<Schema>({});
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -40,7 +44,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             pagination: {
                 offset: offset.value,
             },
-            searchName: query.value.name ?? '',
+            search: query.value.name ?? '',
         };
         if (query.value.wanted) {
             req.wanted = query.value.wanted;
@@ -51,8 +55,8 @@ async function listCitizens(): Promise<ListCitizensResponse> {
         if (query.value.trafficInfractionPoints) {
             req.trafficInfractionPoints = query.value.trafficInfractionPoints ?? 0;
         }
-        if (query.value.fines) {
-            req.openFines = BigInt(query.value.fines?.toString());
+        if (query.value.openFines) {
+            req.openFines = BigInt(query.value.openFines?.toString());
         }
         if (query.value.dateofbirth) {
             req.dateofbirth = query.value.dateofbirth;
@@ -147,14 +151,14 @@ defineShortcuts({
     <div>
         <UDashboardToolbar>
             <template #default>
-                <UForm :schema="undefined" :state="{}" class="w-full" @submit="refresh()">
+                <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                     <div class="flex w-full flex-row gap-2">
                         <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
                             <UInput
-                                v-model="query.name"
                                 ref="input"
+                                v-model="query.name"
                                 type="text"
-                                name="searchName"
+                                name="name"
                                 :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                                 block
                                 @focusin="focusTablet(true)"
@@ -167,7 +171,7 @@ defineShortcuts({
                             </UInput>
                         </UFormGroup>
 
-                        <UFormGroup :label="$t('common.date_of_birth')">
+                        <UFormGroup name="dateofbirth" :label="$t('common.date_of_birth')">
                             <UInput
                                 v-model="query.dateofbirth"
                                 v-maska
@@ -183,6 +187,7 @@ defineShortcuts({
 
                         <UFormGroup
                             v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
+                            name="wanted"
                             :label="$t('components.citizens.CitizensList.only_wanted')"
                         >
                             <UToggle v-model="query.wanted">
@@ -204,13 +209,14 @@ defineShortcuts({
                             <div class="flex flex-row gap-2">
                                 <UFormGroup
                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-                                    class="flex-1"
+                                    name="phoneNumber"
                                     :label="$t('common.phone_number')"
+                                    class="flex-1"
                                 >
                                     <UInput
                                         v-model="query.phoneNumber"
                                         type="tel"
-                                        name="searchPhone"
+                                        name="phoneNumber"
                                         :placeholder="$t('common.phone_number')"
                                         block
                                         @focusin="focusTablet(true)"
@@ -220,13 +226,15 @@ defineShortcuts({
 
                                 <UFormGroup
                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints')"
-                                    class="flex-1"
+                                    name="trafficInfractionPoints"
                                     :label="$t('common.traffic_infraction_points', 2)"
+                                    class="flex-1"
                                 >
                                     <UInput
                                         v-model="query.trafficInfractionPoints"
                                         type="number"
                                         name="trafficInfractionPoints"
+                                        min="0"
                                         :placeholder="$t('common.traffic_infraction_points')"
                                         block
                                         @focusin="focusTablet(true)"
@@ -236,13 +244,15 @@ defineShortcuts({
 
                                 <UFormGroup
                                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
-                                    class="flex-1"
+                                    name="openFines"
                                     :label="$t('components.citizens.CitizensList.open_fine')"
+                                    class="flex-1"
                                 >
                                     <UInput
-                                        v-model="query.fines"
+                                        v-model="query.openFines"
                                         type="number"
-                                        name="fine"
+                                        name="openFines"
+                                        min="0"
                                         :placeholder="`${$t('common.fine')}`"
                                         block
                                         @focusin="focusTablet(true)"

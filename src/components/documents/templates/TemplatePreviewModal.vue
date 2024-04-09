@@ -75,7 +75,7 @@ async function getTemplate(): Promise<Template> {
                         <label class="mb-2 block text-sm font-medium leading-6">
                             {{ $t('common.title') }}
                         </label>
-                        <h1 class="mt-4 break-words rounded-lg bg-base-800 p-2 text-2xl font-bold">
+                        <h1 class="mt-4 break-words rounded-lg p-2 text-2xl font-bold">
                             {{ template?.title }}
                         </h1>
                     </div>
@@ -83,7 +83,7 @@ async function getTemplate(): Promise<Template> {
                         <label class="mb-2 block text-sm font-medium leading-6">
                             {{ $t('common.state') }}
                         </label>
-                        <p class="mt-4 break-words rounded-lg bg-base-800 p-2 text-base font-bold">
+                        <p class="mt-4 break-words rounded-lg p-2 text-base font-bold">
                             {{ template?.state }}
                         </p>
                     </div>
@@ -91,7 +91,7 @@ async function getTemplate(): Promise<Template> {
                     <label class="mb-2 block text-sm font-medium leading-6">
                         {{ $t('common.content') }}
                     </label>
-                    <div class="mt-4 break-words rounded-lg bg-base-800 p-2">
+                    <div class="mt-4 break-words rounded-lg p-2">
                         <!-- eslint-disable-next-line vue/no-v-html -->
                         <p v-html="template?.content"></p>
                     </div>

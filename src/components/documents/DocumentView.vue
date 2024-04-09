@@ -398,78 +398,88 @@ const accordionItems = [
                 <template #footer>
                     <UAccordion multiple :items="accordionItems" :unmount="true">
                         <template #relations>
-                            <DocumentRelations :document-id="documentId" :show-source="false" />
+                            <UContainer>
+                                <DocumentRelations :document-id="documentId" :show-document="false" />
+                            </UContainer>
                         </template>
 
                         <template #references>
-                            <DocumentReferences :document-id="documentId" :show-source="false" />
+                            <UContainer>
+                                <DocumentReferences :document-id="documentId" :show-source="false" />
+                            </UContainer>
                         </template>
 
                         <template #access>
-                            <DataNoDataBlock
-                                v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
-                                icon="i-mdi-file-search"
-                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                            />
+                            <UContainer>
+                                <DataNoDataBlock
+                                    v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
+                                    icon="i-mdi-file-search"
+                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                />
 
-                            <div v-else class="mx-4 flex flex-col gap-2">
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in access?.jobs"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-info-500" />
-                                        <span>
-                                            {{ entry.jobLabel
-                                            }}<span
-                                                v-if="entry.minimumGrade > 0"
-                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                            >
-                                                ({{ entry.jobGradeLabel }})</span
-                                            >
-                                            -
-                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
+                                <div v-else class="flex flex-col gap-2">
+                                    <div class="flex flex-row flex-wrap gap-1">
+                                        <UBadge
+                                            v-for="entry in access?.jobs"
+                                            :key="entry.id"
+                                            color="black"
+                                            class="inline-flex gap-1"
+                                            size="md"
+                                        >
+                                            <span class="size-2 rounded-full bg-info-500" />
+                                            <span>
+                                                {{ entry.jobLabel
+                                                }}<span
+                                                    v-if="entry.minimumGrade > 0"
+                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                                >
+                                                    ({{ entry.jobGradeLabel }})</span
+                                                >
+                                                -
+                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            </span>
+                                        </UBadge>
+                                    </div>
 
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in access?.users"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-amber-500" />
-                                        <span :title="`${$t('common.id')} ${entry.userId}`">
-                                            {{ entry.user?.firstname }}
-                                            {{ entry.user?.lastname }} -
-                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
+                                    <div class="flex flex-row flex-wrap gap-1">
+                                        <UBadge
+                                            v-for="entry in access?.users"
+                                            :key="entry.id"
+                                            color="black"
+                                            class="inline-flex gap-1"
+                                            size="md"
+                                        >
+                                            <span class="size-2 rounded-full bg-amber-500" />
+                                            <span :title="`${$t('common.id')} ${entry.userId}`">
+                                                {{ entry.user?.firstname }}
+                                                {{ entry.user?.lastname }} -
+                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            </span>
+                                        </UBadge>
+                                    </div>
                                 </div>
-                            </div>
+                            </UContainer>
                         </template>
 
                         <template #comments>
-                            <div id="comments">
-                                <DocumentComments
-                                    :document-id="documentId"
-                                    :closed="doc.closed"
-                                    :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
-                                    @counted="commentCount = $event"
-                                    @new-comment="commentCount && commentCount++"
-                                    @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                                />
-                            </div>
+                            <UContainer>
+                                <div id="comments">
+                                    <DocumentComments
+                                        :document-id="documentId"
+                                        :closed="doc.closed"
+                                        :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
+                                        @counted="commentCount = $event"
+                                        @new-comment="commentCount && commentCount++"
+                                        @deleted-comment="commentCount && commentCount > 0 && commentCount--"
+                                    />
+                                </div>
+                            </UContainer>
                         </template>
 
                         <template #activity>
-                            <DocumentActivityList :document-id="documentId" />
+                            <UContainer>
+                                <DocumentActivityList :document-id="documentId" />
+                            </UContainer>
                         </template>
                     </UAccordion>
                 </template>

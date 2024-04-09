@@ -28,9 +28,9 @@ export interface ListCitizensRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: string search_name = 2;
+     * @generated from protobuf field: string search = 2;
      */
-    searchName: string;
+    search: string;
     /**
      * @generated from protobuf field: optional bool wanted = 3;
      */
@@ -156,7 +156,7 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
     constructor() {
         super("services.citizenstore.ListCitizensRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "search_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 2, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 5, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
@@ -166,7 +166,7 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
     }
     create(value?: PartialMessage<ListCitizensRequest>): ListCitizensRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.searchName = "";
+        message.search = "";
         if (value !== undefined)
             reflectionMergePartial<ListCitizensRequest>(this, message, value);
         return message;
@@ -179,8 +179,8 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* string search_name */ 2:
-                    message.searchName = reader.string();
+                case /* string search */ 2:
+                    message.search = reader.string();
                     break;
                 case /* optional bool wanted */ 3:
                     message.wanted = reader.bool();
@@ -212,9 +212,9 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string search_name = 2; */
-        if (message.searchName !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.searchName);
+        /* string search = 2; */
+        if (message.search !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.search);
         /* optional bool wanted = 3; */
         if (message.wanted !== undefined)
             writer.tag(3, WireType.Varint).bool(message.wanted);

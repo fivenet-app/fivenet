@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -25,13 +26,20 @@ const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
 
+const schema = z.object({
+    colleagues: z.custom<Colleague>().array().max(10),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = reactive<Schema>({
+    colleagues: [],
+});
+
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const selectedUsers = ref<Colleague[]>([]);
-const selectedUsersIds = computed(() =>
-    props.userId !== undefined ? [props.userId] : selectedUsers.value.map((u) => u.userId),
-);
+const selectedUsersIds = computed(() => (props.userId !== undefined ? [props.userId] : query.colleagues.map((u) => u.userId)));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
     `jobs-colleague-${selectedUsersIds.value.join(',')}-${page.value}`,
@@ -55,48 +63,11 @@ async function listColleagueActivity(userIds: number[]): Promise<ListColleagueAc
 
 watch(offset, () => refresh());
 
-const queryColleagueNameRaw = ref<string>('');
-const queryColleagueName = computed(() => queryColleagueNameRaw.value.trim());
-
-const { data: colleagues, refresh: refreshColleagues } = useLazyAsyncData(
-    `jobs-colleagues-${offset.value}-${queryColleagueName.value}`,
-    async () => {
-        try {
-            const call = $grpc.getJobsClient().listColleagues({
-                pagination: {
-                    offset: offset.value,
-                },
-                searchName: queryColleagueName.value,
-            });
-            const { response } = await call;
-
-            return response;
-        } catch (e) {
-            $grpc.handleError(e as RpcError);
-            throw e;
-        }
-    },
-);
-
-watchDebounced(
-    queryColleagueName,
-    async () => {
-        await refreshColleagues();
-        if (props.userId === undefined && selectedUsers.value) {
-            colleagues.value?.colleagues.unshift(...selectedUsers.value);
-        }
-    },
-    {
-        debounce: 500,
-        maxWait: 1250,
-    },
-);
-
 const accessAttrs = attrList('JobsService.GetColleague', 'Access');
 const colleagueSearchAttrs = ['own', 'lower_rank', 'same_rank', 'any'];
 
 watch(props, async () => refresh());
-watchDebounced(selectedUsers, async () => refresh(), {
+watchDebounced(query, async () => refresh(), {
     debounce: 500,
     maxWait: 1250,
 });
@@ -117,17 +88,17 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                 class="mb-4 sm:flex sm:items-center"
             >
                 <div class="sm:flex-auto">
-                    <UForm :schema="undefined" :state="{}" @submit="refresh()">
+                    <UForm :schema="schema" :state="query" @submit="refresh()">
                         <div class="flex flex-row gap-2">
                             <div class="flex-1">
-                                <UFormGroup name="selectedUsers" :label="$t('common.colleague', 2)" class="flex-1">
+                                <UFormGroup name="colleagues" :label="$t('common.colleague', 2)" class="flex-1">
                                     <USelectMenu
-                                        v-model="selectedUsers"
+                                        v-model="query.colleagues"
                                         multiple
                                         :searchable="
                                             async (query: string) => {
                                                 usersLoading = true;
-                                                const colleagues = await completorStore.completeCitizens({
+                                                const colleagues = await completorStore.listColleagues({
                                                     search: query,
                                                 });
                                                 usersLoading = false;
@@ -136,7 +107,9 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="selectedUsers ? charsGetDisplayValue(selectedUsers) : $t('common.owner')"
+                                        :placeholder="
+                                            query.colleagues ? charsGetDisplayValue(query.colleagues) : $t('common.owner')
+                                        "
                                         trailing
                                         by="userId"
                                     >

@@ -1,7 +1,8 @@
-import type { ButtonColor } from '#ui/types';
+import type { BadgeColor, ButtonColor } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -126,6 +127,21 @@ export function refToColor(ref: DocReference): ButtonColor {
     }
 }
 
+export function refToBadge(ref: DocReference): BadgeColor {
+    switch (ref) {
+        case DocReference.LINKED:
+            return 'blue';
+        case DocReference.SOLVES:
+            return 'green';
+        case DocReference.CLOSES:
+            return 'red';
+        case DocReference.DEPRECATES:
+            return 'amber';
+        default:
+            return 'black';
+    }
+}
+
 // Document Relations
 
 export function relationToIcon(ref: DocRelation): string {
@@ -151,5 +167,69 @@ export function relationToColor(ref: DocRelation): ButtonColor {
             return 'red';
         default:
             return 'black';
+    }
+}
+
+export function relationToBadge(ref: DocRelation): BadgeColor {
+    switch (ref) {
+        case DocRelation.MENTIONED:
+            return 'blue';
+        case DocRelation.TARGETS:
+            return 'amber';
+        case DocRelation.CAUSED:
+            return 'red';
+        default:
+            return 'black';
+    }
+}
+
+// Document Activity
+
+export function getDocAtivityIcon(activityType: DocActivityType): string {
+    switch (activityType) {
+        // Base
+        case DocActivityType.CREATED:
+            return 'i-mdi-new-box';
+        case DocActivityType.STATUS_OPEN:
+            return 'i-mdi-lock-open-variant';
+        case DocActivityType.STATUS_CLOSED:
+            return 'i-mdi-lock';
+        case DocActivityType.UPDATED:
+            return 'i-mdi-update';
+        case DocActivityType.RELATIONS_UPDATED:
+            return 'i-mdi-account-multiple';
+        case DocActivityType.REFERENCES_UPDATED:
+            return 'i-mdi-file-multiple';
+        case DocActivityType.ACCESS_UPDATED:
+            return 'i-mdi-lock-check';
+        case DocActivityType.OWNER_CHANGED:
+            return 'i-mdi-file-account';
+        case DocActivityType.DELETED:
+            return 'i-mdi-delete-circle';
+
+        // Requests
+        case DocActivityType.REQUESTED_ACCESS:
+            return 'i-mdi-lock-plus-outline';
+        case DocActivityType.REQUESTED_CLOSURE:
+            return 'i-mdi-lock-question';
+        case DocActivityType.REQUESTED_OPENING:
+            return 'i-mdi-lock-open-outline';
+        case DocActivityType.REQUESTED_UPDATE:
+            return 'i-mdi-refresh-circle';
+        case DocActivityType.REQUESTED_OWNER_CHANGE:
+            return 'i-mdi-file-swap-outline';
+        case DocActivityType.REQUESTED_DELETION:
+            return 'i-mdi-delete-circle-outline';
+
+        // Comments
+        case DocActivityType.COMMENT_ADDED:
+            return 'i-mdi-comment-plus';
+        case DocActivityType.COMMENT_UPDATED:
+            return 'i-mdi-comment-edit';
+        case DocActivityType.COMMENT_DELETED:
+            return 'i-mdi-trash-can';
+
+        default:
+            return 'i-mdi-help';
     }
 }

@@ -4,6 +4,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { getDocAtivityIcon } from './helpers';
 
 defineProps<{
     entry: DocActivity;
@@ -16,55 +17,6 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
 
         default:
             return false;
-    }
-}
-
-function getDocAtivityIcon(activityType: DocActivityType): string {
-    switch (activityType) {
-        // Base
-        case DocActivityType.CREATED:
-            return 'i-mdi-new-box';
-        case DocActivityType.STATUS_OPEN:
-            return 'i-mdi-lock-open-variant';
-        case DocActivityType.STATUS_CLOSED:
-            return 'i-mdi-lock';
-        case DocActivityType.UPDATED:
-            return 'i-mdi-update';
-        case DocActivityType.RELATIONS_UPDATED:
-            return 'i-mdi-account-multiple';
-        case DocActivityType.REFERENCES_UPDATED:
-            return 'i-mdi-file-multiple';
-        case DocActivityType.ACCESS_UPDATED:
-            return 'i-mdi-lock-check';
-        case DocActivityType.OWNER_CHANGED:
-            return 'i-mdi-file-account';
-        case DocActivityType.DELETED:
-            return 'i-mdi-delete-circle';
-
-        // Requests
-        case DocActivityType.REQUESTED_ACCESS:
-            return 'i-mdi-lock-plus-outline';
-        case DocActivityType.REQUESTED_CLOSURE:
-            return 'i-mdi-lock-question';
-        case DocActivityType.REQUESTED_OPENING:
-            return 'i-mdi-lock-open-outline';
-        case DocActivityType.REQUESTED_UPDATE:
-            return 'i-mdi-refresh-circle';
-        case DocActivityType.REQUESTED_OWNER_CHANGE:
-            return 'i-mdi-file-swap-outline';
-        case DocActivityType.REQUESTED_DELETION:
-            return 'i-mdi-delete-circle-outline';
-
-        // Comments
-        case DocActivityType.COMMENT_ADDED:
-            return 'i-mdi-comment-plus';
-        case DocActivityType.COMMENT_UPDATED:
-            return 'i-mdi-comment-edit';
-        case DocActivityType.COMMENT_DELETED:
-            return 'i-mdi-trash-can';
-
-        default:
-            return 'i-mdi-help';
     }
 }
 </script>

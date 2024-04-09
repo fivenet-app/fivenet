@@ -13,7 +13,7 @@ option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/jobs;jobs"
 message ListColleaguesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
-  string search_name = 2 [(validate.rules).string.max_len = 50];
+  string search = 2 [(validate.rules).string.max_len = 50];
   optional int32 user_id = 3;
   optional bool absent = 4;
 }

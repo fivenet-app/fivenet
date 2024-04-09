@@ -285,7 +285,7 @@ const groups = [
                                 offset: 0,
                                 pageSize: 10,
                             },
-                            searchName: query,
+                            search: query,
                         });
                         const { response } = await call;
 

@@ -1,5 +1,4 @@
 <script setup lang="ts">
-import { AccountMinusIcon, OpenInNewIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
@@ -69,7 +68,7 @@ async function listCitizens(): Promise<User[]> {
                 offset: 0,
                 pageSize: 8,
             },
-            searchName: queryCitizens.value,
+            search: queryCitizens.value,
         });
         const { response } = await call;
 
@@ -176,40 +175,29 @@ function removeRelation(id: string): void {
                                                     </td>
                                                     <td class="whitespace-nowrap px-3 py-4 text-sm">
                                                         <div class="flex flex-row gap-2">
-                                                            <div class="flex">
-                                                                <NuxtLink
-                                                                    :to="{
-                                                                        name: 'citizens-id',
-                                                                        params: {
-                                                                            id: relation.targetUserId,
-                                                                        },
-                                                                    }"
-                                                                    target="_blank"
-                                                                    :title="
-                                                                        $t(
-                                                                            'components.documents.document_managers.open_citizen',
-                                                                        )
-                                                                    "
-                                                                >
-                                                                    <OpenInNewIcon
-                                                                        class="text-primary-500 hover:text-primary-300 h-auto w-5"
-                                                                    />
-                                                                </NuxtLink>
-                                                            </div>
-                                                            <div class="flex">
-                                                                <UButton
-                                                                    :title="
-                                                                        $t(
-                                                                            'components.documents.document_managers.remove_relation',
-                                                                        )
-                                                                    "
-                                                                    @click="removeRelation(relation.id!)"
-                                                                >
-                                                                    <AccountMinusIcon
-                                                                        class="h-auto w-5 text-error-400 hover:text-error-200"
-                                                                    />
-                                                                </UButton>
-                                                            </div>
+                                                            <UButton
+                                                                :to="{
+                                                                    name: 'citizens-id',
+                                                                    params: {
+                                                                        id: relation.targetUserId,
+                                                                    },
+                                                                }"
+                                                                target="_blank"
+                                                                :title="
+                                                                    $t('components.documents.document_managers.open_citizen')
+                                                                "
+                                                                variant="link"
+                                                                icon="i-mdi-open-in-new"
+                                                            />
+                                                            <UButton
+                                                                :title="
+                                                                    $t('components.documents.document_managers.remove_relation')
+                                                                "
+                                                                variant="link"
+                                                                icon="i-mdi-account-minus"
+                                                                color="red"
+                                                                @click="removeRelation(relation.id!)"
+                                                            />
                                                         </div>
                                                     </td>
                                                 </tr>
@@ -292,8 +280,7 @@ function removeRelation(id: string): void {
                         </template>
 
                         <template v-else-if="item.key === 'new'">
-                            <div>
-                                <label for="name" class="sr-only">Name</label>
+                            <UFormGroup name="name" :label="$t('common.search')">
                                 <UInput
                                     v-model="queryCitizens"
                                     type="text"
@@ -302,7 +289,8 @@ function removeRelation(id: string): void {
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 />
-                            </div>
+                            </UFormGroup>
+
                             <div class="mt-2 flow-root">
                                 <div class="-my-2 mx-0 overflow-x-auto">
                                     <div class="inline-block min-w-full py-2 align-middle">

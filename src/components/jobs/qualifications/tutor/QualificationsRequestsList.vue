@@ -155,7 +155,7 @@ const columns = [
                                 modal.open(QualificationRequestTutorModal, {
                                     request: request,
                                     status: RequestStatus.DENIED,
-                                    onRefreshRequests: refresh,
+                                    onRefresh: refresh,
                                 })
                             "
                         />
@@ -169,7 +169,7 @@ const columns = [
                                 modal.open(QualificationRequestTutorModal, {
                                     request: request,
                                     status: RequestStatus.ACCEPTED,
-                                    onRefreshRequests: refresh,
+                                    onRefresh: refresh,
                                 })
                             "
                         />
@@ -183,7 +183,7 @@ const columns = [
                                 modal.open(QualificationResultTutorModal, {
                                     qualificationId: request.qualificationId,
                                     userId: request.userId,
-                                    onRefreshRequests: refresh,
+                                    onRefresh: refresh,
                                 })
                             "
                         />

@@ -68,11 +68,12 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	condition := jet.Bool(true)
 	userCondition := tUsers.Identifier.EQ(tVehicles.Owner)
-	if req.Search != nil && *req.Search != "" {
+	if req.LicensePlate != nil && *req.LicensePlate != "" {
 		condition = jet.AND(condition, tVehicles.Plate.LIKE(jet.String(
-			strings.ReplaceAll(*req.Search, "%", "")+"%",
+			strings.ReplaceAll(*req.LicensePlate, "%", "")+"%",
 		)))
 	}
+
 	// Make sure the model column is available
 	modelColumn := s.customDB.Columns.Vehicle.GetModel(tVehicles.Alias())
 	if modelColumn != nil && req.Model != nil && *req.Model != "" {
@@ -80,6 +81,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 			strings.ReplaceAll(*req.Model, "%", "")+"%",
 		)))
 	}
+
 	if req.UserId != nil && *req.UserId != 0 {
 		condition = jet.AND(condition,
 			tUsers.Identifier.EQ(tVehicles.Owner),

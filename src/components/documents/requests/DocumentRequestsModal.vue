@@ -197,7 +197,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :request="request"
                                     :can-update="canUpdate"
                                     :can-delete="canDelete"
-                                    @refresh="refresh()"
+                                    @refresh-requests="refresh()"
                                 />
                             </ul>
                         </template>

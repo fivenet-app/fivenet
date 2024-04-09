@@ -1383,8 +1383,41 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 
 	}
 
+	if len(m.GetCategoryIds()) > 5 {
+		err := ListDocumentsRequestValidationError{
+			field:  "CategoryIds",
+			reason: "value must contain no more than 5 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(m.GetCreatorIds()) > 5 {
+		err := ListDocumentsRequestValidationError{
+			field:  "CreatorIds",
+			reason: "value must contain no more than 5 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.Search != nil {
-		// no validation rules for Search
+
+		if utf8.RuneCountInString(m.GetSearch()) > 64 {
+			err := ListDocumentsRequestValidationError{
+				field:  "Search",
+				reason: "value length must be at most 64 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.From != nil {

@@ -307,64 +307,72 @@ const accordionItems = computed(() => {
                 <template #footer>
                     <UAccordion :items="accordionItems" multiple>
                         <template v-if="qualification.result && qualification.result.id !== '0'" #result>
-                            <div class="flex flex-col gap-1">
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.result') }}:</span>
-                                    {{
-                                        $t(
-                                            `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
-                                        )
-                                    }}
+                            <UContainer>
+                                <div class="flex flex-col gap-1">
+                                    <div>
+                                        <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                        {{
+                                            $t(
+                                                `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
+                                            )
+                                        }}
+                                    </div>
+                                    <div>
+                                        <span class="font-semibold">{{ $t('common.summary') }}:</span>
+                                        {{ qualification.result?.summary }}
+                                    </div>
+                                    <div class="inline-flex gap-1">
+                                        <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                        <CitizenInfoPopover :user="qualification.result?.creator" />
+                                    </div>
                                 </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.summary') }}:</span>
-                                    {{ qualification.result?.summary }}
-                                </div>
-                                <div class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
-                                    <CitizenInfoPopover :user="qualification.result?.creator" />
-                                </div>
-                            </div>
+                            </UContainer>
                         </template>
 
                         <template #access>
-                            <DataNoDataBlock
-                                v-if="!qualification.access || qualification.access?.jobs.length === 0"
-                                icon="i-mdi-file-search"
-                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                            />
-                            <div v-else class="mx-4 flex flex-col gap-2">
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="entry in qualification.access?.jobs"
-                                        :key="entry.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-info-500" />
-                                        <span>
-                                            {{ entry.jobLabel
-                                            }}<span
-                                                v-if="entry.minimumGrade > 0"
-                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                            >
-                                                ({{ entry.jobGradeLabel }})</span
-                                            >
-                                            -
-                                            {{ $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                        </span>
-                                    </UBadge>
+                            <UContainer>
+                                <DataNoDataBlock
+                                    v-if="!qualification.access || qualification.access?.jobs.length === 0"
+                                    icon="i-mdi-file-search"
+                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                                />
+                                <div v-else class="mx-4 flex flex-col gap-2">
+                                    <div class="flex flex-row flex-wrap gap-1">
+                                        <UBadge
+                                            v-for="entry in qualification.access?.jobs"
+                                            :key="entry.id"
+                                            color="black"
+                                            class="inline-flex gap-1"
+                                            size="md"
+                                        >
+                                            <span class="size-2 rounded-full bg-info-500" />
+                                            <span>
+                                                {{ entry.jobLabel
+                                                }}<span
+                                                    v-if="entry.minimumGrade > 0"
+                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                                >
+                                                    ({{ entry.jobGradeLabel }})</span
+                                                >
+                                                -
+                                                {{ $t(`enums.qualifications.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                            </span>
+                                        </UBadge>
+                                    </div>
                                 </div>
-                            </div>
+                            </UContainer>
                         </template>
 
                         <template v-if="canDo.grade" #requests>
-                            <QualificationsRequestsList :qualification-id="qualification.id" />
+                            <UContainer>
+                                <QualificationsRequestsList :qualification-id="qualification.id" />
+                            </UContainer>
                         </template>
 
                         <template v-if="canDo.grade" #results>
-                            <QualificationsResultsList :qualification-id="qualification.id" />
+                            <UContainer>
+                                <QualificationsResultsList :qualification-id="qualification.id" />
+                            </UContainer>
                         </template>
                     </UAccordion>
                 </template>

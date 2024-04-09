@@ -6,8 +6,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-
-const { $grpc } = useNuxtApp();
+import { relationToBadge } from './helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -21,9 +20,13 @@ const props = withDefaults(
     },
 );
 
+const { $grpc } = useNuxtApp();
+
+const { t } = useI18n();
+
 const {
     data: relations,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}-relations`, () => getDocumentRelations());
@@ -41,11 +44,40 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
         throw e;
     }
 }
+
+const columns = computed(() =>
+    [
+        props.showDocument
+            ? {
+                  key: 'document',
+                  label: t('common.document'),
+              }
+            : undefined,
+        {
+            key: 'targetUser',
+            label: t('common.target'),
+        },
+        {
+            key: 'relation',
+            label: t('common.relation', 1),
+        },
+        props.showSource
+            ? {
+                  key: 'sourceUser',
+                  label: t('common.creator'),
+              }
+            : undefined,
+        {
+            key: 'date',
+            label: t('common.date'),
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 </script>
 
 <template>
     <div>
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.relation', 2)])" />
+        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.relation', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.relation', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-if="!relations || relations.length === 0"
@@ -55,9 +87,9 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
 
         <template v-else>
             <!-- Relations list (smallest breakpoint only) -->
-            <div class="text-neutral sm:hidden">
+            <div class="sm:hidden">
                 <ul role="list" class="divide-y divide-gray-600 overflow-hidden rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.id" class="block bg-base-800 p-4 hover:bg-base-700">
+                    <li v-for="relation in relations" :key="relation.id" class="block p-4 hover:bg-base-700">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" />
@@ -70,14 +102,17 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                                                     id: relation.documentId,
                                                 },
                                             }"
+                                            class="inline-flex items-center gap-1 truncate"
                                         >
-                                            <span
-                                                v-if="relation.document?.category"
-                                                class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                                            >
-                                                {{ relation.document?.category?.name }}
+                                            <UBadge v-if="relation.document?.category" class="inline-flex gap-1" size="md">
+                                                <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                                                <span :title="relation.document?.category.description ?? $t('common.na')">
+                                                    {{ relation.document?.category.name }}
+                                                </span>
+                                            </UBadge>
+                                            <span>
+                                                {{ relation.document?.title }}
                                             </span>
-                                            {{ relation.document?.title }}
                                         </NuxtLink>
                                     </span>
                                     <span>
@@ -105,74 +140,55 @@ async function getDocumentRelations(): Promise<DocumentRelation[]> {
                 <div>
                     <div class="flex flex-col">
                         <div class="w-full overflow-hidden overflow-x-auto align-middle">
-                            <table class="bg-background w-full divide-y divide-base-400">
-                                <thead>
-                                    <tr>
-                                        <th v-if="showDocument" class="px-6 py-3 text-left text-sm font-semibold" scope="col">
-                                            {{ $t('common.document', 1) }}
-                                        </th>
-                                        <th class="px-6 py-3 text-left text-sm font-semibold" scope="col">
-                                            {{ $t('common.target') }}
-                                        </th>
-                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
-                                            {{ $t('common.relation', 1) }}
-                                        </th>
-                                        <th
-                                            v-if="showSource"
-                                            class="hidden px-6 py-3 text-left text-sm font-semibold md:block"
-                                            scope="col"
-                                        >
-                                            {{ $t('common.creator') }}
-                                        </th>
-                                        <th class="px-6 py-3 text-right text-sm font-semibold" scope="col">
-                                            {{ $t('common.date') }}
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody class="divide-y divide-gray-600 bg-base-700">
-                                    <tr v-for="relation in relations" :key="relation.id">
-                                        <td v-if="showDocument" class="px-6 py-4 text-sm">
-                                            <NuxtLink
-                                                :to="{
-                                                    name: 'documents-id',
-                                                    params: {
-                                                        id: relation.documentId,
-                                                    },
-                                                }"
-                                            >
-                                                <span
-                                                    v-if="relation.document?.category"
-                                                    class="bg-primary-400/10 text-primary-400 ring-primary-400/30 mr-1 inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset"
-                                                >
-                                                    {{ relation.document?.category?.name }}
-                                                </span>
-                                                {{ relation.document?.title }}
-                                            </NuxtLink>
-                                        </td>
-                                        <td class="px-6 py-4 text-sm">
-                                            <div class="flex">
-                                                <span class="inline-flex items-center gap-1">
-                                                    <CitizenInfoPopover :user="relation.targetUser" />
-                                                    ({{ relation.targetUser?.dateofbirth }})
-                                                </span>
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
-                                            <span class="font-medium">
-                                                {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                            <UTable
+                                :loading="loading"
+                                :columns="columns"
+                                :rows="relations"
+                                :empty-state="{
+                                    icon: 'i-mdi-account',
+                                    label: $t('common.not_found', [$t('common.relation', 2)]),
+                                }"
+                            >
+                                <template v-if="showDocument" #document-data="{ row: relation }">
+                                    <NuxtLink
+                                        :to="{
+                                            name: 'documents-id',
+                                            params: {
+                                                id: relation.documentId,
+                                            },
+                                        }"
+                                        class="inline-flex items-center gap-1 truncate"
+                                    >
+                                        <UBadge v-if="relation.document?.category" class="inline-flex gap-1" size="md">
+                                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                                            <span :title="relation.document?.category.description ?? $t('common.na')">
+                                                {{ relation.document?.category.name }}
                                             </span>
-                                        </td>
-                                        <td v-if="showSource" class="hidden whitespace-nowrap px-6 py-4 text-sm md:block">
-                                            <div class="flex">
-                                                <CitizenInfoPopover :user="relation.sourceUser" />
-                                            </div>
-                                        </td>
-                                        <td class="whitespace-nowrap px-6 py-4 text-right text-sm">
-                                            <GenericTime :value="relation.createdAt" />
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
+                                        </UBadge>
+
+                                        <span>
+                                            {{ relation.document?.title }}
+                                        </span>
+                                    </NuxtLink>
+                                </template>
+                                <template #targetUser-data="{ row: relation }">
+                                    <span class="inline-flex items-center gap-1">
+                                        <CitizenInfoPopover :user="relation.targetUser" />
+                                        ({{ relation.targetUser?.dateofbirth }})
+                                    </span>
+                                </template>
+                                <template #relation-data="{ row: relation }">
+                                    <UBadge :color="relationToBadge(relation.relation)">
+                                        {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+                                    </UBadge>
+                                </template>
+                                <template v-if="showSource" #sourceUser-data="{ row: relation }">
+                                    <CitizenInfoPopover :user="relation.sourceUser" />
+                                </template>
+                                <template #date-data="{ row: relation }">
+                                    <GenericTime :value="relation.createdAt" />
+                                </template>
+                            </UTable>
                         </div>
                     </div>
                 </div>

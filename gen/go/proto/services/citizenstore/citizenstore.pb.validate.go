@@ -97,9 +97,9 @@ func (m *ListCitizensRequest) validate(all bool) error {
 		}
 	}
 
-	if utf8.RuneCountInString(m.GetSearchName()) > 50 {
+	if utf8.RuneCountInString(m.GetSearch()) > 50 {
 		err := ListCitizensRequestValidationError{
-			field:  "SearchName",
+			field:  "Search",
 			reason: "value length must be at most 50 runes",
 		}
 		if !all {

@@ -2472,8 +2472,30 @@ func (m *ListDispatchesRequest) validate(all bool) error {
 
 	}
 
+	if len(m.GetIds()) > 10 {
+		err := ListDispatchesRequestValidationError{
+			field:  "Ids",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.Postal != nil {
-		// no validation rules for Postal
+
+		if utf8.RuneCountInString(m.GetPostal()) > 12 {
+			err := ListDispatchesRequestValidationError{
+				field:  "Postal",
+				reason: "value length must be at most 12 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

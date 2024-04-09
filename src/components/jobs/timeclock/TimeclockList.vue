@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { format } from 'date-fns';
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
@@ -29,13 +30,17 @@ const currentDay = ref(new Date(today.getFullYear(), today.getMonth(), today.get
 const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1));
 const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
-const query = ref<{
-    user_ids?: Colleague[];
-    user?: Colleague;
-    from?: Date;
-    to?: Date;
-    perDay: boolean;
-}>({
+const schema = z.object({
+    userIds: z.custom<Colleague>().array().max(5).optional(),
+    user: z.custom<Colleague>().optional(),
+    from: z.date().optional(),
+    to: z.date().optional(),
+    perDay: z.boolean(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = ref<Schema>({
     from: currentDay.value,
     to: canAccessAll ? previousDay.value : undefined,
     perDay: canAccessAll,
@@ -52,7 +57,7 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.user_ids?.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.user ?? query.value.userIds?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
 
@@ -62,7 +67,7 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: offset.value,
             },
-            userIds: query.value.user ? [query.value.user.userId] : query.value.user_ids?.map((u) => u.userId) ?? [],
+            userIds: query.value.user ? [query.value.user.userId] : query.value.userIds?.map((u) => u.userId) ?? [],
         };
         if (query.value.perDay !== undefined) {
             req.perDay = query.value.perDay;
@@ -117,7 +122,7 @@ watchDebounced(
     query.value,
     async () => {
         if (canAccessAll) {
-            if (query.value.user !== undefined || (query.value.user_ids !== undefined && query.value.user_ids.length > 0)) {
+            if (query.value.user !== undefined || (query.value.userIds !== undefined && query.value.userIds.length > 0)) {
                 if (query.value.perDay) {
                     query.value.perDay = false;
                     query.value.to = undefined;
@@ -199,7 +204,7 @@ defineShortcuts({
 
 <template>
     <div>
-        <UForm :schema="undefined" :state="{}" @submit="refresh()">
+        <UForm :schema="schema" :state="query" @submit="refresh()">
             <UDashboardToolbar>
                 <template #default>
                     <div class="flex w-full flex-col gap-2">
@@ -214,17 +219,17 @@ defineShortcuts({
                             </UButton>
 
                             <div class="flex flex-row gap-2">
-                                <UFormGroup v-if="canAccessAll" class="flex-1" name="user" :label="$t('common.colleague', 2)">
+                                <UFormGroup v-if="canAccessAll" name="user" :label="$t('common.colleague', 2)" class="flex-1">
                                     <UInputMenu
                                         ref="input"
-                                        v-model="query.user_ids"
+                                        v-model="query.userIds"
                                         nullable
                                         :search="
                                             async (query: string) => {
                                                 usersLoading = true;
                                                 const colleagues = await completorStore.listColleagues({
                                                     pagination: { offset: 0 },
-                                                    searchName: query,
+                                                    search: query,
                                                 });
                                                 usersLoading = false;
                                                 return colleagues;
@@ -232,9 +237,7 @@ defineShortcuts({
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="
-                                            query.user_ids ? charsGetDisplayValue(query.user_ids) : $t('common.owner')
-                                        "
+                                        :placeholder="query.userIds ? charsGetDisplayValue(query.userIds) : $t('common.owner')"
                                         trailing
                                         by="userId"
                                     >
@@ -253,11 +256,11 @@ defineShortcuts({
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    class="flex-1"
                                     name="from"
                                     :label="
                                         query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`
                                     "
+                                    class="flex-1"
                                 >
                                     <UPopover :popper="{ placement: 'bottom-start' }">
                                         <UButton
@@ -276,9 +279,9 @@ defineShortcuts({
 
                                 <UFormGroup
                                     v-if="!query.perDay"
-                                    class="flex-1"
                                     name="to"
                                     :label="`${$t('common.time_range')} ${$t('common.to')}`"
+                                    class="flex-1"
                                 >
                                     <UPopover :popper="{ placement: 'bottom-start' }">
                                         <UButton

@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import { watchDebounced } from '@vueuse/shared';
 import { format } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -20,21 +21,28 @@ const completorStore = useCompletorStore();
 const { t } = useI18n();
 
 type OpenClose = { id: number; label: string; closed?: boolean };
+
 const openclose: OpenClose[] = [
     { id: 0, label: t('common.not_selected') },
     { id: 1, label: t('common.open', 2), closed: false },
     { id: 2, label: t('common.close', 2), closed: true },
 ];
 
-const query = ref<{
-    documentIds?: string;
-    title?: string;
-    creator?: UserShort;
-    from?: Date;
-    to?: Date;
-    closed?: boolean;
-    category?: Category;
-}>({});
+const schema = z.object({
+    documentIds: z.string().max(16).optional(),
+    title: z.string().max(64),
+    creator: z.custom<UserShort>().optional(),
+    from: z.date().optional(),
+    to: z.date().optional(),
+    closed: z.boolean().optional(),
+    category: z.custom<Category>().optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = ref<Schema>({
+    title: '',
+});
 
 const queryClosed = ref<OpenClose>(openclose[0]);
 
@@ -110,13 +118,13 @@ defineShortcuts({
 <template>
     <UDashboardToolbar>
         <template #default>
-            <UForm :schema="undefined" :state="{}" class="w-full" @submit="refresh()">
-                <UFormGroup name="search" :label="$t('common.search')">
+            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+                <UFormGroup name="title" :label="$t('common.search')">
                     <UInput
-                        v-model="query.title"
                         ref="input"
+                        v-model="query.title"
                         type="text"
-                        name="search"
+                        name="title"
                         :placeholder="$t('common.title')"
                         block
                         @focusin="focusTablet(true)"
@@ -146,7 +154,7 @@ defineShortcuts({
                                 <UInput
                                     v-model="query.documentIds"
                                     type="text"
-                                    name="search"
+                                    name="documentIds"
                                     placeholder="DOC-..."
                                     block
                                     @focusin="focusTablet(true)"
@@ -187,6 +195,7 @@ defineShortcuts({
                                     "
                                     :search-attributes="['firstname', 'lastname']"
                                     block
+                                    nullable
                                     :placeholder="
                                         query.creator
                                             ? `${query.creator?.firstname} ${query.creator?.lastname} (${query.creator?.dateofbirth})`
@@ -205,9 +214,10 @@ defineShortcuts({
                                 </UInputMenu>
                             </UFormGroup>
                         </div>
+
                         <div class="flex flex-row flex-wrap gap-2">
-                            <UFormGroup class="flex-1" :label="$t('common.close', 2)">
-                                <USelectMenu v-model="queryClosed" :options="openclose" />
+                            <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
+                                <USelectMenu v-model="query.closed" :options="openclose" value-attribute="closed" />
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">

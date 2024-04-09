@@ -512,7 +512,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
                     <UAccordion :items="[{ slot: 'discord', label: $t('common.discord') }]">
                         <template #discord>
-                            <div>
+                            <UContainer>
                                 <UFormGroup name="discordSettings.enabled" :label="$t('common.enabled')">
                                     <UToggle v-model="state.discordSettings.syncEnabled" :disabled="!canEdit || !canDo.edit">
                                         <span class="sr-only">
@@ -533,7 +533,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                         @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
-                            </div>
+                            </UContainer>
                         </template>
                     </UAccordion>
                 </div>

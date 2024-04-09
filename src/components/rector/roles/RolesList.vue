@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
@@ -37,21 +38,29 @@ async function getRoles(): Promise<Role[]> {
 const job = ref<Job | undefined>();
 watchOnce(roles, async () => (job.value = await getJobByName(activeChar.value!.job)));
 
-const selectedJobGrade = ref<JobGrade | undefined>(undefined);
+const schema = z.object({
+    jobGrade: z.custom<JobGrade>().optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    jobGrade: undefined,
+});
 
 const availableJobGrades = computed(
     () => job.value?.grades.filter((g) => (roles.value?.findIndex((r) => r.grade === g.grade) ?? -1) === -1) ?? [],
 );
 
 async function createRole(): Promise<void> {
-    if (selectedJobGrade.value === undefined || selectedJobGrade.value.grade <= 0) {
+    if (state.jobGrade === undefined || state.jobGrade.grade <= 0) {
         return;
     }
 
     try {
         const call = $grpc.getRectorClient().createRole({
             job: activeChar.value!.job,
-            grade: selectedJobGrade.value.grade,
+            grade: state.jobGrade.grade,
         });
         const { response } = await call;
 
@@ -98,14 +107,14 @@ const columns = [
                     <template v-if="can('RectorService.CreateRole')">
                         <div class="sm:flex sm:items-center">
                             <div class="sm:flex-auto">
-                                <UForm :schema="undefined" :state="{}">
+                                <UForm :schema="schema" :state="state" @submit="refresh()">
                                     <div class="flex flex-row gap-2">
-                                        <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
-                                            <USelectMenu v-model="selectedJobGrade" :options="availableJobGrades" by="grade">
+                                        <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
+                                            <USelectMenu v-model="state.jobGrade" :options="availableJobGrades" by="grade">
                                                 <template #label>
-                                                    <template v-if="selectedJobGrade">
+                                                    <template v-if="state.jobGrade">
                                                         <span class="truncate"
-                                                            >{{ selectedJobGrade?.label }} ({{ selectedJobGrade?.grade }})</span
+                                                            >{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span
                                                         >
                                                     </template>
                                                 </template>
@@ -117,7 +126,7 @@ const columns = [
 
                                         <div class="flex flex-initial flex-col justify-end">
                                             <UButton
-                                                :disabled="selectedJobGrade === undefined || selectedJobGrade!.grade <= 0"
+                                                :disabled="state.jobGrade === undefined || state.jobGrade!.grade <= 0"
                                                 @click="createRole()"
                                             >
                                                 {{ $t('common.create') }}

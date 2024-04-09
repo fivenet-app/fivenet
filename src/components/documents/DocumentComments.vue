@@ -2,17 +2,11 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { useAuthStore } from '~/store/auth';
 import { type Comment } from '~~/gen/ts/resources/documents/comment';
 import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-
-const { $grpc } = useNuxtApp();
-const authStore = useAuthStore();
-
-const { activeChar } = storeToRefs(authStore);
 
 const props = withDefaults(
     defineProps<{
@@ -31,6 +25,8 @@ const emit = defineEmits<{
     (e: 'newComment'): void;
     (e: 'deletedComment'): void;
 }>();
+
+const { $grpc } = useNuxtApp();
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -145,7 +141,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UContainer>
+    <div>
         <div ref="commentsEl">
             <template v-if="can('DocStoreService.PostComment')">
                 <div v-if="!closed && canComment" class="flex items-start space-x-4">
@@ -153,8 +149,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                             <UFormGroup name="comment">
                                 <UTextarea
-                                    v-model="state.comment"
                                     ref="commentInput"
+                                    v-model="state.comment"
                                     :rows="3"
                                     :placeholder="$t('components.documents.document_comments.add_comment')"
                                     @focusin="focusTablet(true)"
@@ -173,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </div>
 
-        <div>
+        <div class="mt-2">
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.comment', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
@@ -207,5 +203,5 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </div>
         </div>
-    </UContainer>
+    </div>
 </template>
