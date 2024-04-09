@@ -49,13 +49,16 @@ ingress:
   hosts:
     - host: chart-example.local
       paths:
+        - path: /api
+          pathType: Prefix
+          service: server
+          servicePort: http
         - path: /grpc
           pathType: Prefix
           service: envoy
           servicePort: grpc
         - path: /
           pathType: Prefix
-          #service: frontend
   tls: []
   #  - secretName: chart-example-tls
   #    hosts:

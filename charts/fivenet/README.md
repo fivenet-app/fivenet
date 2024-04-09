@@ -84,12 +84,16 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `ingress.className` |  | `"nginx"` |
 | `ingress.enabled` |  | `true` |
 | `ingress.hosts[0].host` |  | `"chart-example.local"` |
-| `ingress.hosts[0].paths[0].path` |  | `"/grpc"` |
+| `ingress.hosts[0].paths[0].path` |  | `"/api"` |
 | `ingress.hosts[0].paths[0].pathType` |  | `"Prefix"` |
-| `ingress.hosts[0].paths[0].service` |  | `"envoy"` |
-| `ingress.hosts[0].paths[0].servicePort` |  | `"grpc"` |
-| `ingress.hosts[0].paths[1].path` |  | `"/"` |
+| `ingress.hosts[0].paths[0].service` |  | `"server"` |
+| `ingress.hosts[0].paths[0].servicePort` |  | `"http"` |
+| `ingress.hosts[0].paths[1].path` |  | `"/grpc"` |
 | `ingress.hosts[0].paths[1].pathType` |  | `"Prefix"` |
+| `ingress.hosts[0].paths[1].service` |  | `"envoy"` |
+| `ingress.hosts[0].paths[1].servicePort` |  | `"grpc"` |
+| `ingress.hosts[0].paths[2].path` |  | `"/"` |
+| `ingress.hosts[0].paths[2].pathType` |  | `"Prefix"` |
 | `ingress.tls` |  | `[]` |
 | `nameOverride` |  | `""` |
 | `nats` | NATS server/cluster config values: https://artifacthub.io/packages/helm/nats/nats#values | `{"config":{"cluster":{"enabled":true,"replicas":3},"jetstream":{"enabled":true,"fileStore":{"enabled":true,"pvc":{"enabled":true,"size":"5Gi"}},"memoryStore":{"enabled":true,"maxSize":"64Mi"}},"merge":{"accounts":{"fivenet":{"jetstream":"enabled","users":[{"password":"fivenet","user":"fivenet"}]}},"max_payload":3145728}},"enabled":true,"promExporter":{"enabled":true,"image":{"repository":"docker.io/natsio/prometheus-nats-exporter","tag":"0.14.0"},"patch":[{"op":"replace","path":"/args","value":["-port=7777","-channelz","-connz","-routez","-subz","-varz","-prefix=nats","-serverz","-use_internal_server_id","-jsz=streams","-ri=15","http://localhost:8222/"]}],"podMonitor":{"enabled":false,"patch":[{"op":"add","path":"/spec/podMetricsEndpoints/0/interval","value":"30s"}]}}}` |
