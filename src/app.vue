@@ -106,7 +106,7 @@ watch(updateAvailable, async () => {
     }
 
     toast.add({
-        title: t('system.update_available.title', { version: updateAvailable }),
+        title: t('system.update_available.title', { version: updateAvailable.value }),
         description: t('system.update_available.content'),
         actions: [
             {
