@@ -129,7 +129,7 @@ defineShortcuts({
         <div class="px-1 sm:px-2">
             <div class="sm:flex sm:items-center">
                 <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-                    <UFormGroup name="name" :label="$t('common.colleague', 1)" class="flex-1">
+                    <UFormGroup name="name" :label="$t('common.search')" class="flex-1">
                         <UInput
                             ref="input"
                             v-model="query.name"

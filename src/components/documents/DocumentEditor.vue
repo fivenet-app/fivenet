@@ -758,6 +758,7 @@ console.info(
                     <UButton
                         v-if="canDo.relations"
                         class="flex-1"
+                        block
                         :disabled="!canEdit || !canDo.edit"
                         icon="i-mdi-account-multiple"
                         @click="openRelationManager = true"
@@ -767,6 +768,7 @@ console.info(
                     <UButton
                         v-if="canDo.references"
                         class="flex-1"
+                        block
                         :disabled="!canEdit || !canDo.edit"
                         icon="i-mdi-file-document"
                         @click="openReferenceManager = true"

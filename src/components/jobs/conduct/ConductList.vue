@@ -159,7 +159,6 @@ defineShortcuts({
                                         async (query: string) => {
                                             usersLoading = true;
                                             const colleagues = await completorStore.listColleagues({
-                                                pagination: { offset: 0 },
                                                 search: query,
                                             });
                                             usersLoading = false;

@@ -67,6 +67,10 @@ export const useCompletorStore = defineStore('completor', {
             );
         },
         async listColleagues(req: ListColleaguesRequest): Promise<Colleague[]> {
+            if (!req.pagination) {
+                req.pagination = { offset: 0 };
+            }
+
             const { $grpc } = useNuxtApp();
             try {
                 const call = $grpc.getJobsClient().listColleagues(req);
