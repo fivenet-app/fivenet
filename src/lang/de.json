@@ -2,7 +2,8 @@
     "pages": {
         "index": {
             "welcome": "Willkommen bei FiveNet!",
-            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Karte Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit."
+            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Karte Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit.",
+            "whats_new_in": "Siehe die Neuerungen in Version {version}"
         },
         "overview": {
             "features": {
@@ -290,8 +291,8 @@
         "money": "Geld",
         "no_open_fine": "Keine offenen Geldstrafe",
         "location": "Standort | Standorte",
-        "unit": "Einheit | Einheiten",
-        "units": "Keine Einheiten | {n} Einheit | {n} Einheiten",
+        "units": "Einheiten",
+        "unit": "Keine Einheiten | {n} Einheit | {n} Einheiten",
         "color": "Farbe",
         "initials": "Initialen",
         "updated": "Aktualisiert",
@@ -410,7 +411,9 @@
         "query_not_found": "nicht gefunden.",
         "file": "Datei | Dateien",
         "entry": "Eintrag | Einträge",
-        "qualification": "Qualifizierung | Qualifizierungen"
+        "qualification": "Qualifizierung | Qualifizierungen",
+        "toc": "Inhaltsverzeichnis",
+        "dialog": "Dialog | Dialogs"
     },
     "components": {
         "partials": {
@@ -1261,6 +1264,12 @@
                 "title": "SuperUser Modus",
                 "content": "SuperUser Modus gewechselt (current job: {job})."
             }
+        },
+        "system": {
+            "test_notification": {
+                "title": "Test-Benachrichtigung {index}",
+                "content": "Dies ist eine Test-Benachrichtigung der {type} Art."
+            }
         }
     },
     "perms": {
@@ -2043,7 +2052,7 @@
         "rector": {
             "UserInfoSyncUnemployedMode": {
                 "GIVE_ROLE": "Rolle vergeben",
-                "KICK": "Kicken"
+                "KICK": "Kick"
             }
         }
     },
@@ -2057,5 +2066,23 @@
             "navigation": "Navigation"
         },
         "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
+    },
+    "zodI18n": {
+        "custom": {
+            "duration": {
+                "invalid": "Ungültiges Dauerformat, muss im Format \"1.23s\" sein und mindestens \"0.01s\" betragen"
+            },
+            "filelist": {
+                "required": "Datei muss ausgewählt sein",
+                "wrong_file_type": "Die Datei muss einer der gültigen Dateitypen sein: {types}",
+                "size_too_big": "Datei darf nicht größer als {size}MB sein."
+            }
+        }
+    },
+    "help": {
+        "hero": {
+            "title": "Brauchen Sie Hilfe mit FiveNet?",
+            "description": "Lesen Sie hier die Dokumentation, um mehr über die verfügbaren Funktionen zu erfahren."
+        }
     }
 }
