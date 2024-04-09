@@ -891,7 +891,8 @@
                 "streamer_mode": {
                     "title": "Streamer-Modus",
                     "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
-                }
+                },
+                "background_color": "Hintergrundfarbe"
             },
             "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",
