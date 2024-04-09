@@ -266,7 +266,7 @@ defineShortcuts({
                                 checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
                             "
                             class="flex-1"
-                            :text="doc.closed ? $t('common.open', 1) : $t('common.close')"
+                            :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
                             :shortcuts="['D', 'T']"
                         >
                             <UButton block @click="toggleDocument(documentId, !doc.closed)">

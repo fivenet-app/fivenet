@@ -100,7 +100,7 @@ defineShortcuts({
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.dispatches')"> </UDashboardNavbar>
 
-            <UMain>
+            <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
                 <Splitpanes class="relative">
                     <Pane min-size="25">
                         <BaseMap :map-options="{ zoomControl: false }">
@@ -111,60 +111,63 @@ defineShortcuts({
                     </Pane>
 
                     <Pane size="65">
-                        <div class="mb-2 px-2">
-                            <UForm :schema="schema" :state="query" class="flex flex-row gap-2" @submit="refresh()">
-                                <UFormGroup name="postal" :label="$t('common.postal')" class="flex-1">
-                                    <UInput
-                                        ref="input"
-                                        v-model="query.postal"
-                                        type="text"
-                                        name="postal"
-                                        :placeholder="$t('common.postal')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    >
-                                        <template #trailing>
-                                            <UKbd value="/" />
-                                        </template>
-                                    </UInput>
-                                </UFormGroup>
-                                <UFormGroup name="id" :label="$t('common.id')" class="flex-1">
-                                    <UInput
-                                        v-model="query.id"
-                                        type="text"
-                                        name="id"
-                                        min="1"
-                                        max="99999999999"
-                                        :placeholder="$t('common.id')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </UFormGroup>
-                            </UForm>
-                        </div>
+                        <div class="max-h-full overflow-y-auto">
+                            <div class="mb-2 px-2">
+                                <UForm :schema="schema" :state="query" class="flex flex-row gap-2" @submit="refresh()">
+                                    <UFormGroup name="postal" :label="$t('common.postal')" class="flex-1">
+                                        <UInput
+                                            ref="input"
+                                            v-model="query.postal"
+                                            type="text"
+                                            name="postal"
+                                            :placeholder="$t('common.postal')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        >
+                                            <template #trailing>
+                                                <UKbd value="/" />
+                                            </template>
+                                        </UInput>
+                                    </UFormGroup>
+                                    <UFormGroup name="id" :label="$t('common.id')" class="flex-1">
+                                        <UInput
+                                            v-model="query.id"
+                                            type="text"
+                                            name="id"
+                                            min="1"
+                                            max="99999999999"
+                                            :placeholder="$t('common.id')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </UFormGroup>
+                                </UForm>
+                            </div>
 
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.dispatches')])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
-
-                        <template v-else>
-                            <DispatchList
-                                :show-button="false"
-                                :hide-actions="true"
-                                :always-show-day="true"
-                                :dispatches="data?.dispatches"
-                                @goto="location = $event"
+                            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
+                            <DataErrorBlock
+                                v-else-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.dispatches')])"
+                                :retry="refresh"
                             />
-                        </template>
+                            <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
 
-                        <Pagination v-model="page" :pagination="data?.pagination" />
+                            <template v-else>
+                                <Pagination v-model="page" :pagination="data?.pagination" />
+
+                                <DispatchList
+                                    class="overflow-y-auto"
+                                    :show-button="false"
+                                    :hide-actions="true"
+                                    :always-show-day="true"
+                                    :dispatches="data?.dispatches"
+                                    @goto="location = $event"
+                                />
+                            </template>
+                        </div>
                     </Pane>
                 </Splitpanes>
-            </UMain>
+            </div>
         </UDashboardPanel>
     </UDashboardPage>
 </template>

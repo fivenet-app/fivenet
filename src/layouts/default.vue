@@ -337,11 +337,6 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
-
-const quickButtons = ref({
-    bodycheckup: false,
-    penaltycalculator: false,
-});
 </script>
 
 <template>
@@ -397,10 +392,6 @@ const quickButtons = ref({
         <HelpSlideover />
         <!-- ~/components/NotificationsSlideover.vue -->
         <NotificationsSlideover />
-
-        <!-- Quick Buttons -->
-        <BodyCheckupModal :open="quickButtons.bodycheckup" @close="quickButtons.bodycheckup = false" />
-        <PenaltyCalculatorModal :open="quickButtons.penaltycalculator" @close="quickButtons.penaltycalculator = false" />
 
         <ClientOnly>
             <LazyUDashboardSearch

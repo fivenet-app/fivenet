@@ -172,7 +172,7 @@ function setupCheckboxes(): void {
 
 watch(props, () => {
     if (props.modelValue !== '') {
-        useTimeoutFn(setupCheckboxes, 50);
+        useTimeoutFn(setupCheckboxes, 75);
     }
 
     editorRef.value.editor.setReadOnly(props.disabled);
