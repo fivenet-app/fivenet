@@ -88,32 +88,21 @@ const canSubmit = ref(true);
     <div class="sm:flex sm:items-center">
         <div class="sm:flex-auto">
             <UForm :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex flex-row items-center gap-2 sm:mx-auto">
-                    <div class="flex-1">
-                        <label for="search" class="block text-sm font-medium leading-6"
-                            >{{ $t('components.notifications.include_read') }}
-                        </label>
-                        <div class="relative flex items-center">
-                            <UToggle v-model="query.includeRead">
-                                <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
-                            </UToggle>
-                        </div>
-                    </div>
-                    <div class="flex-initial">
+                <div class="flex flex-row items-center gap-2">
+                    <UFormGroup name="search" :label="$t('components.notifications.include_read')" class="flex-1">
+                        <UToggle v-model="query.includeRead">
+                            <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
+                        </UToggle>
+                    </UFormGroup>
+
+                    <UFormGroup class="flex-initial">
                         <UButton
-                            variant="link"
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
-                            class="inline-flex rounded-md px-3 py-2 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                            :class="
-                                !canSubmit || data?.notifications === undefined || data?.notifications.length === 0
-                                    ? 'disabled bg-base-500 hover:bg-base-400 focus-visible:outline-base-500'
-                                    : 'bg-primary-500 hover:bg-primary-400'
-                            "
                             @click="markAllRead().finally(timeoutFn)"
                         >
                             {{ $t('components.notifications.mark_all_read') }}
                         </UButton>
-                    </div>
+                    </UFormGroup>
                 </div>
             </UForm>
         </div>
