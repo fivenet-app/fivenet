@@ -8,7 +8,7 @@ import PageFooter from '~/components/partials/PageFooter.vue';
         <div class="flex h-full flex-col items-center justify-center">
             <div class="gradient" />
 
-            <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" class="absolute top-4" />
+            <UButton icon="i-mdi-home" :label="$t('common.home')" to="/" color="black" class="absolute top-4 z-10" />
 
             <slot />
         </div>

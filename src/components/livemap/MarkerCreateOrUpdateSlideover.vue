@@ -203,11 +203,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             color="gray"
                                             block
                                             icon="i-mdi-calendar-month"
-                                            :label="state.expiresAt ? format(state.expiresAt, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                            :label="
+                                                state.expiresAt
+                                                    ? format(state.expiresAt, 'dd.MM.yyyy HH:mm')
+                                                    : 'dd.mm.yyyy HH:mm'
+                                            "
                                         />
 
                                         <template #panel="{ close }">
-                                            <DatePicker v-model="state.expiresAt" @close="close" />
+                                            <DatePicker v-model="state.expiresAt" mode="dateTime" is24hr @close="close" />
                                         </template>
                                     </UPopover>
                                 </UFormGroup>

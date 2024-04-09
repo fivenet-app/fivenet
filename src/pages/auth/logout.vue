@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
-import PageFooter from '~/components/partials/PageFooter.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
@@ -16,8 +15,14 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { doLogout } = authStore;
+const { accessToken } = storeToRefs(authStore);
 
 onMounted(async () => {
+    if (!accessToken.value) {
+        navigateTo({ name: 'auth-login' });
+        return;
+    }
+
     try {
         await doLogout();
     } finally {
@@ -32,19 +37,11 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="flex size-full flex-col">
-        <div class="hero w-full flex-1">
-            <UContainer class="h-full bg-black/50">
-                <UPage>
-                    <ULandingHero :title="$t('pages.auth.logout.header')" :description="$t('components.auth.logout.subtitle')">
-                        <template #headline>
-                            <FiveNetLogo class="mx-auto h-36 w-auto" />
-                        </template>
-                    </ULandingHero>
-                </UPage>
-            </UContainer>
-        </div>
-
-        <PageFooter />
-    </div>
+    <UPage class="w-full flex-1">
+        <ULandingHero :title="$t('pages.auth.logout.header')" :description="$t('pages.auth.logout.subtitle')">
+            <template #headline>
+                <FiveNetLogo class="mx-auto h-36 w-auto" />
+            </template>
+        </ULandingHero>
+    </UPage>
 </template>

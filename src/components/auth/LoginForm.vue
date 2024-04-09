@@ -101,7 +101,7 @@ watch(
                     {{ $t('components.auth.LoginForm.social_login_disabled') }}
                 </p>
                 <div v-for="provider in appConfig.login.providers" :key="provider.name">
-                    <UButton v-if="!socialLoginEnabled" block :disabled="!socialLoginEnabled">
+                    <UButton v-if="!socialLoginEnabled" block :disabled="!socialLoginEnabled || !canSubmit">
                         {{ provider.label }} {{ $t('common.login') }}
                     </UButton>
                     <UButton
@@ -109,7 +109,7 @@ watch(
                         block
                         :external="true"
                         :to="`/api/oauth2/login/${provider.name}`"
-                        :disabled="!socialLoginEnabled"
+                        :disabled="!socialLoginEnabled || !canSubmit"
                     >
                         {{ provider.label }} {{ $t('common.login') }}
                     </UButton>
@@ -120,18 +120,19 @@ watch(
         <UAlert
             v-if="loginError"
             class="mt-2"
+            icon="i-mdi-alert"
             :title="$t('components.auth.LoginForm.login_error')"
             :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
             color="red"
         />
 
         <div class="mt-6">
-            <UButton block @click="$emit('toggle')">
+            <UButton block :disabled="!canSubmit" @click="$emit('toggle')">
                 {{ $t('components.auth.LoginForm.forgot_password') }}
             </UButton>
         </div>
         <div v-if="appConfig.login.signupEnabled" class="mt-6">
-            <UButton block :to="{ name: 'auth-registration' }">
+            <UButton block :disabled="!canSubmit" :to="{ name: 'auth-registration' }">
                 {{ $t('components.auth.LoginForm.register_account') }}
             </UButton>
         </div>
