@@ -227,11 +227,11 @@ defineShortcuts({
                                         color="gray"
                                         block
                                         icon="i-mdi-calendar-month"
-                                        :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        :label="query.from ? format(query.from, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePicker v-model="query.from" @close="close" />
+                                        <DatePicker v-model="query.from" mode="dateTime" is24hr @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>
@@ -242,11 +242,11 @@ defineShortcuts({
                                         color="gray"
                                         block
                                         icon="i-mdi-calendar-month"
-                                        :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                        :label="query.to ? format(query.to, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePicker v-model="query.to" @close="close" />
+                                        <DatePicker v-model="query.to" mode="dateTime" is24hr @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>
