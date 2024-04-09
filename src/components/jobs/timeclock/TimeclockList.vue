@@ -321,7 +321,7 @@ const input = ref<{ input: HTMLInputElement }>();
                     <div class="inline-block min-w-full px-1 py-2 align-middle">
                         <DataErrorBlock
                             v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.citizen', 2)])"
+                            :title="$t('common.unable_to_load', [$t('common.entry', 2)])"
                             :retry="refresh"
                         />
                         <template v-else>
