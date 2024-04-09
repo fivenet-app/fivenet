@@ -64,7 +64,7 @@ if (!props.hideJoin) {
         </UButton>
 
         <template v-if="!hideJoin">
-            <UTooltip :text="`${$t('common.join')}/ $t('common.leave')`" :shortcuts="['C', 'Q']">
+            <UTooltip :text="`${$t('common.join')}/ ${$t('common.leave')}`" :shortcuts="['C', 'Q']">
                 <UButton
                     v-if="!isDisponent"
                     :disabled="!canSubmit"

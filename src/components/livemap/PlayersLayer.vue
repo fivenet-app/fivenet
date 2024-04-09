@@ -31,21 +31,18 @@ const { startStream, stopStream } = livemapStore;
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
-const { start, stop } = useTimeoutFn(async () => startStream(), 150);
-
-onBeforeMount(async () => start());
-
-onBeforeUnmount(async () => {
-    stop();
-    stopStream();
-    livemapStore.$reset();
+onBeforeMount(async () => {
+    useTimeoutFn(async () => startStream(), 50);
 });
+
+const route = useRoute();
+watch(route, () => stopStream());
 
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());
 
 const playerMarkersFiltered = computedAsync(async () =>
-    [...markersUsers.value.values()].filter(
+    [...(markersUsers.value.values() ?? [])].filter(
         (m) =>
             playerQuery.value === '' || (m.user?.firstname + ' ' + m.user?.lastname).toLowerCase().includes(playerQuery.value),
     ),

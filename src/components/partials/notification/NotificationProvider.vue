@@ -25,7 +25,7 @@ async function toggleStream(): Promise<void> {
 watch(accessToken, async () => toggleStream());
 watch(activeChar, async () => toggleStream());
 
-onBeforeMount(async () => toggleStream());
+onMounted(async () => toggleStream());
 
 onBeforeUnmount(async () => stopStream());
 

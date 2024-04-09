@@ -227,26 +227,15 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
     maxWait: 200,
 });
 
-const { resume, pause } = useIntervalFn(() => checkup(), 1 * 60 * 1000);
-
-const { start, stop } = useTimeoutFn(async () => startStream(), 650);
-
-onBeforeMount(async () => {
+onBeforeMount(() => {
     if (canStream) {
-        start();
-        resume();
-    } else {
-        pause();
-        stop();
+        useIntervalFn(() => checkup(), 1 * 60 * 1000);
+        useTimeoutFn(async () => startStream(), 550);
     }
 });
 
-onBeforeUnmount(async () => {
-    pause();
-    stop();
-    stopStream();
-    centrumStore.$reset();
-});
+const route = useRoute();
+watch(route, () => stopStream());
 
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;

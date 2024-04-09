@@ -25,9 +25,7 @@ const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] =
 const selectedHomepage = ref<(typeof homepages)[0]>();
 watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ?? '/overview'));
 
-onBeforeMount(async () => {
-    selectedHomepage.value = homepages.find((h) => h.path === startpage.value);
-});
+onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
 
 const darkModeActive = ref(design.value.docEditorTheme === 'dark');
 

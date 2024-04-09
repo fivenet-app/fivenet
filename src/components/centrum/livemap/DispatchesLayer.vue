@@ -25,7 +25,7 @@ const dispatchQueryRaw = ref<string>('');
 const dispatchQuery = computed(() => dispatchQueryRaw.value.trim().toLowerCase());
 
 const dispatchesFiltered = computedAsync(async () =>
-    [...dispatches.value.values()].filter(
+    [...(dispatches.value.values() ?? [])].filter(
         (m) =>
             !ownDispatches.value.includes(m.id) &&
             (m.id.startsWith(dispatchQuery.value) ||

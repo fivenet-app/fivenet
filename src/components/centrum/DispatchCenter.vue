@@ -21,12 +21,10 @@ const { startStream, stopStream } = centrumStore;
 const livemapStore = useLivemapStore();
 const { location } = storeToRefs(livemapStore);
 
-onBeforeMount(async () => useTimeoutFn(async () => startStream(true), 250));
+onMounted(async () => useTimeoutFn(async () => startStream(true), 250));
 
-onBeforeUnmount(async () => {
-    stopStream();
-    centrumStore.$reset();
-});
+const route = useRoute();
+watch(route, () => stopStream());
 
 function goto(e: Coordinate) {
     location.value = e;
