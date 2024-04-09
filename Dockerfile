@@ -1,4 +1,5 @@
 # syntax=docker/dockerfile:1
+ARG NUXT_UI_PRO_LICENSE
 
 # Frontend Build
 FROM docker.io/library/node:20.12.0-alpine3.18 AS nodebuilder
@@ -6,7 +7,7 @@ WORKDIR /app
 COPY . ./
 RUN rm -rf ./.nuxt/ && \
     apk add --no-cache git && \
-    yarn && yarn generate
+    yarn && NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} yarn generate
 
 # Backend Build
 FROM docker.io/library/golang:1.21.8 AS gobuilder
