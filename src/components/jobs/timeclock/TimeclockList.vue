@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { format } from 'date-fns';
+import { format, addDays, subDays } from 'date-fns';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -25,26 +25,25 @@ const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All')
 
 const now = new Date();
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-const currentDay = ref(new Date(today.getFullYear(), today.getMonth(), today.getDate()));
-
-const futureDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1));
-const previousDay = ref(new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1));
 
 const schema = z.object({
     users: z.custom<Colleague>().array().max(5).optional(),
-    from: z.date().optional(),
+    from: z.date(),
     to: z.date().optional(),
     perDay: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
 
-const query = ref<Schema>({
+const query = reactive<Schema>({
     users: [],
-    from: currentDay.value,
-    to: canAccessAll ? previousDay.value : undefined,
-    perDay: canAccessAll,
+    from: new Date(),
+    to: subDays(now, 1),
+    perDay: true,
 });
+
+const futureDay = computed(() => addDays(query.from, 1));
+const previousDay = computed(() => subDays(query.from, 1));
 
 const usersLoading = ref(false);
 
@@ -57,9 +56,11 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-timeclock-${query.value.from}-${query.value.to}-${query.value.perDay}-${query.value.users?.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${query.from}-${query.to}-${query.perDay}-${query.users?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
 );
+
+const perDayView = computed(() => !canAccessAll || !(query.users !== undefined && query.users.length > 0));
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     try {
@@ -67,19 +68,21 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             pagination: {
                 offset: offset.value,
             },
-            userIds: query.value.users?.map((u) => u.userId) ?? [],
+            userIds: query.users?.map((u) => u.userId) ?? [],
         };
-        if (query.value.perDay !== undefined) {
-            req.perDay = query.value.perDay;
-        }
-        if (query.value.from) {
-            req.from = {
-                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.from),
-            };
-        }
-        if (query.value.to) {
+
+        req.from = {
+            timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.from),
+        };
+
+        req.perDay = perDayView.value;
+        if (req.perDay) {
             req.to = {
-                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.value.to),
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(subDays(query.from, 1)),
+            };
+        } else if (query.to) {
+            req.to = {
+                timestamp: googleProtobufTimestamp.Timestamp.fromDate(query.to),
             };
         }
 
@@ -118,53 +121,16 @@ const grouped = computed(() => {
 });
 
 watch(offset, async () => refresh());
-watchDebounced(
-    query.value,
-    async () => {
-        if (canAccessAll) {
-            if (query.value.users !== undefined && query.value.users.length > 0) {
-                if (query.value.perDay) {
-                    query.value.perDay = false;
-                    query.value.to = undefined;
-                }
-            } else {
-                query.value.perDay = true;
-            }
-        } else {
-            query.value.perDay = false;
-        }
-
-        return refresh();
-    },
-    { debounce: 200, maxWait: 1250 },
-);
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function dayForward(): void {
-    currentDay.value.setDate(currentDay.value.getDate() + 1);
-    currentDay.value = new Date(currentDay.value);
-
-    updateDates();
+    query.from = addDays(query.from, 1);
+    query.to = addDays(query.to ?? new Date(), 1);
 }
 
 function dayBackwards(): void {
-    currentDay.value.setDate(currentDay.value.getDate() - 1);
-    currentDay.value = new Date(currentDay.value);
-
-    updateDates();
-}
-
-function updateDates(): void {
-    futureDay.value.setTime(
-        new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() + 1).getTime(),
-    );
-    futureDay.value = new Date(futureDay.value);
-    previousDay.value.setTime(
-        new Date(currentDay.value.getFullYear(), currentDay.value.getMonth(), currentDay.value.getDate() - 1).getTime(),
-    );
-    previousDay.value = new Date(previousDay.value);
-
-    query.value.from = currentDay.value;
-    query.value.to = previousDay.value;
+    query.from = subDays(query.from, 1);
+    query.to = subDays(query.to ?? new Date(), 1);
 }
 
 function charsGetDisplayValue(chars: UserShort[]): string {
@@ -173,7 +139,7 @@ function charsGetDisplayValue(chars: UserShort[]): string {
 
 const columns = computed(() =>
     [
-        !query.value.perDay
+        !perDayView.value
             ? {
                   key: 'date',
                   label: t('common.date'),
@@ -243,9 +209,7 @@ const input = ref<{ input: HTMLInputElement }>();
 
                                 <UFormGroup
                                     name="from"
-                                    :label="
-                                        query.perDay ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`
-                                    "
+                                    :label="perDayView ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`"
                                     class="flex-1"
                                 >
                                     <UPopover :popper="{ placement: 'bottom-start' }">
@@ -264,7 +228,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    v-if="!query.perDay"
+                                    v-if="!perDayView"
                                     name="to"
                                     :label="`${$t('common.time_range')} ${$t('common.to')}`"
                                     class="flex-1"
@@ -286,7 +250,7 @@ const input = ref<{ input: HTMLInputElement }>();
                             </div>
                         </div>
 
-                        <div v-if="query.perDay" class="flex flex-row gap-2">
+                        <div v-if="perDayView" class="flex flex-row gap-2">
                             <UButton
                                 block
                                 class="flex-1"
@@ -303,9 +267,9 @@ const input = ref<{ input: HTMLInputElement }>();
                                 class="flex flex-initial cursor-pointer flex-col place-content-end items-center"
                             >
                                 <span>
-                                    {{ $d(currentDay, 'date') }}
+                                    {{ $d(query.from, 'date') }}
                                 </span>
-                                <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(currentDay) }}</span>
+                                <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(query.from) }}</span>
                             </UButton>
 
                             <UButton class="flex-1" block trailing-icon="i-mdi-chevron-right" @click="dayBackwards()">

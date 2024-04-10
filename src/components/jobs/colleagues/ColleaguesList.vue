@@ -169,7 +169,7 @@ defineShortcuts({
                     :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
                 >
                     <template #name-data="{ row: colleague }">
-                        <div class="inline-flex items-center">
+                        <div class="inline-flex items-center text-gray-900 dark:text-white">
                             <ProfilePictureImg
                                 :url="colleague.props?.mugShot?.url"
                                 :name="`${colleague.firstname} ${colleague.lastname}`"

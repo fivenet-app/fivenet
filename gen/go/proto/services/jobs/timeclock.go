@@ -63,12 +63,12 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	}
 
 	if req.From != nil {
-		condition = condition.AND(tTimeClock.Date.LT_EQ(
+		condition = condition.AND(tTimeClock.Date.GT_EQ(
 			jet.DateT(timeutils.TruncateToDay(req.From.AsTime())),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(tTimeClock.Date.GT_EQ(
+		condition = condition.AND(tTimeClock.Date.LT_EQ(
 			jet.DateT(timeutils.TruncateToNight(req.To.AsTime())),
 		))
 	}
