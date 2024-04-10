@@ -76,10 +76,7 @@ jobs:
           NUXT_PUBLIC_SITE_URL: "https://fivenet.app/"
           NUXT_UI_PRO_LICENSE: "${{ secrets.NUXT_UI_PRO_LICENSE }}"
         run: |
-          yarn build
-          ls -ahl ..
-          ls -ahl ../gh-pages
-          ls -ahl ../..
+          yarn generate
           cp ../gh-pages/index.yaml ./.output/public/
 
       - name: Deploy
