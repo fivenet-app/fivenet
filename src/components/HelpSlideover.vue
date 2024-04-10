@@ -17,11 +17,11 @@ const links = [
             shortcuts.value = true;
         },
     },
-    {
+    /*{
         label: t('common.help'),
         icon: 'i-mdi-book-open-blank-variant-outline',
         to: '/help',
-    },
+    },*/
 ];
 
 const categories = computed(() => [

@@ -1,4 +1,3 @@
-import { resolve } from 'path';
 import svgLoader from 'vite-svg-loader';
 import { STRATEGIES } from 'vue-i18n-routing';
 
@@ -8,13 +7,12 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 export default defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
-    ssr: true,
+    ssr: false,
     extends: ['@nuxt/ui-pro'],
     // @ts-ignore ts2589 one of the modules probably has a typing issue
     modules: [
         'nuxt-typed-router',
         '@nuxtjs/robots',
-        '@nuxt/content',
         '@nuxt/ui',
         '@nuxtjs/tailwindcss',
         'nuxt-zod-i18n',
@@ -176,38 +174,7 @@ export default defineNuxtConfig({
         checkInterval: 110,
         path: '/api/version',
     },
-    content: {
-        sources: {
-            content: {
-                driver: 'fs',
-                prefix: '/help',
-                base: resolve(__dirname, 'content'),
-            },
-        },
-        api: {
-            baseURL: '/help/_content',
-        },
-        experimental: {
-            search: {
-                indexed: false,
-            },
-        },
-    },
-    hooks: {
-        // Define `@nuxt/ui` components as global to use them in `.md` (feel free to add those you need)
-        'components:extend': (components) => {
-            const globals = components.filter((c) => ['UButton', 'UIcon'].includes(c.pascalName));
-
-            globals.forEach((c) => (c.global = true));
-        },
-    },
     colorMode: {
         preference: 'dark',
-    },
-    nitro: {
-        prerender: {
-            crawlLinks: true,
-            routes: ['/help'],
-        },
     },
 });
