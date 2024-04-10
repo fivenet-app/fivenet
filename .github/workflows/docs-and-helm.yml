@@ -33,7 +33,7 @@ jobs:
           CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
 
   docs:
-    needs: helm
+    needs: helm-release
     runs-on: ubuntu-latest
     permissions:
       contents: write
