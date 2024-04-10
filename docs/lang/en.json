@@ -3,7 +3,8 @@
         "index": {
             "welcome": "Welcome to FiveNet!",
             "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a map of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet.",
-            "whats_new_in": "See what's new in {version}"
+            "whats_new_in": "See what's new in {version}",
+            "logos": "Used by great RP Communities"
         },
         "notfound": {
             "go_back": "Go back home"

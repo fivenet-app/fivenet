@@ -15,6 +15,10 @@ const { t } = useI18n();
 
 const appVersion = __APP_VERSION__.split('-')[0];
 
+const route = useRoute();
+
+const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne());
+
 const links = [{ label: t('common.docs'), icon: 'i-mdi-book-open-variant-outline', size: 'lg', to: '/getting-started' }];
 
 const features = {
@@ -95,6 +99,16 @@ const features = {
                         class="rounded-full"
                     />
                 </template>
+
+                <ULandingLogos :title="$t('pages.index.logos')" align="center">
+                    <ULink v-for="icon in page.logos.icons" :key="icon" variant="link">
+                        <img
+                            :src="`/images/communities/${icon.image}`"
+                            :alt="icon.alt"
+                            class="h-12 w-12 flex-shrink-0 text-gray-900 lg:h-20 lg:w-20 dark:text-white"
+                        />
+                    </ULink>
+                </ULandingLogos>
             </ULandingHero>
 
             <ULandingSection :title="features.title" :links="features.links">

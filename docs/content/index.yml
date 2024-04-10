@@ -1,0 +1,8 @@
+logos:
+  icons:
+    - image: "modernv.png"
+      alt: "ModernV"
+      to: "https://modernv.net/"
+    - image: "flashliferp.png"
+      alt: "Flashlife Roleplay"
+      to: "https://discord.gg/nmd6FC7n"
