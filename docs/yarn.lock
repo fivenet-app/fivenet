@@ -764,7 +764,7 @@
     "@intlify/shared" "9.11.1"
     source-map-js "^1.0.2"
 
-"@intlify/shared@9.11.1", "@intlify/shared@^9.4.0", "@intlify/shared@^9.9.0":
+"@intlify/shared@9.11.1", "@intlify/shared@^9.4.0", "@intlify/shared@^9.4.1", "@intlify/shared@^9.9.0":
   version "9.11.1"
   resolved "https://registry.yarnpkg.com/@intlify/shared/-/shared-9.11.1.tgz#03e9ae5a90d62df4800f307d9f1dfc34b6fd8cbc"
   integrity sha512-yuDG82vjgId2oasNRgZ0PKJrF65zlL33MNyITP5itbLcP4AYOR/NcIuD+/DiI+GHXdxASMKJU0ZiITLc6RC+qw==
@@ -791,6 +791,18 @@
   version "0.12.0"
   resolved "https://registry.yarnpkg.com/@intlify/utils/-/utils-0.12.0.tgz#74ef0723048151687447342e90fbc3b26a7de3ff"
   integrity sha512-yCBNcuZQ49iInqmWC2xfW0rgEQyNtCM8C8KcWKTXxyscgUE1+48gjLgZZqP75MjhlApxwph7ZMWLqyABkSgxQA==
+
+"@intlify/vue-i18n-bridge@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@intlify/vue-i18n-bridge/-/vue-i18n-bridge-1.1.0.tgz#8296a2de47d7f5281cc88d2a330e5e49720918ff"
+  integrity sha512-yBwGpr70Rc56pjsPdtvNRi/ju0P9h3670EkCOuxAzKKR5OH61uF9LprLUGmph/Uy2TXBO2DKqpnJBFXyXJQKeg==
+
+"@intlify/vue-router-bridge@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@intlify/vue-router-bridge/-/vue-router-bridge-1.1.0.tgz#3b61b295d32974722878afec5aa52c6e1af0da13"
+  integrity sha512-EX+KndT9VS3muMdZWFmc99D8nUaWTOXr322a8zNf5HnMCbpbogdifWYW8hat+nVE73St/gcDbPz6u5smVUPoQg==
+  dependencies:
+    vue-demi ">=0.13.5 < 1.0.0"
 
 "@ioredis/commands@^1.1.1":
   version "1.2.0"
@@ -9798,7 +9810,7 @@ vue-component-type-helpers@1.8.27:
   resolved "https://registry.yarnpkg.com/vue-component-type-helpers/-/vue-component-type-helpers-1.8.27.tgz#e816c82dcffac8bca58833c120ba395c325dfa68"
   integrity sha512-0vOfAtI67UjeO1G6UiX5Kd76CqaQ67wrRZiOe7UAb9Jm6GzlUr/fC7CV90XfwapJRjpCMaZFhv1V0ajWRmE9Dg==
 
-vue-demi@>=0.14.5, vue-demi@>=0.14.7:
+"vue-demi@>=0.13.5 < 1.0.0", vue-demi@>=0.14.5, vue-demi@>=0.14.7:
   version "0.14.7"
   resolved "https://registry.yarnpkg.com/vue-demi/-/vue-demi-0.14.7.tgz#8317536b3ef74c5b09f268f7782e70194567d8f2"
   integrity sha512-EOG8KXDQNwkJILkx/gPcoL/7vH+hORoBaKgGe+6W7VFMvCYJfmF2dGbvgDroVnI8LU7/kTu8mbjRZGBU1z9NTA==
@@ -9820,6 +9832,17 @@ vue-eslint-parser@^9.4.2:
     esquery "^1.4.0"
     lodash "^4.17.21"
     semver "^7.3.6"
+
+vue-i18n-routing@^1.2.0:
+  version "1.2.0"
+  resolved "https://registry.yarnpkg.com/vue-i18n-routing/-/vue-i18n-routing-1.2.0.tgz#52278a70db1d29a55d4cf6b7a8f6186b416ef5b6"
+  integrity sha512-pn+bIFRMX5BN1BVQJ5rn05dYVnBhU/QnkxhjEJAe9HnYtJhDubetvoY+yfgDNWwesNWfHbbvsilsgSGL6DJyeA==
+  dependencies:
+    "@intlify/shared" "^9.4.1"
+    "@intlify/vue-i18n-bridge" "^1.1.0"
+    "@intlify/vue-router-bridge" "^1.1.0"
+    ufo "^1.2.0"
+    vue-demi ">=0.13.5 < 1.0.0"
 
 vue-i18n@^9.9.0:
   version "9.11.1"
