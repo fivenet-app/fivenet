@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import '~/assets/css/herofull-pattern.css';
 
+const { data: page } = await useAsyncData('index', () => queryContent('/').findOne());
+
 useHead({
     title: 'common.home',
 });
@@ -14,10 +16,6 @@ definePageMeta({
 const { t } = useI18n();
 
 const appVersion = __APP_VERSION__.split('-')[0];
-
-const route = useRoute();
-
-const { data: page } = await useAsyncData(route.path, () => queryContent(route.path).findOne());
 
 const links = [{ label: t('common.docs'), icon: 'i-mdi-book-open-variant-outline', size: 'lg', to: '/getting-started' }];
 
