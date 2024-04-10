@@ -84,9 +84,6 @@ export default defineNuxtConfig({
     devtools: {
         enabled: true,
         vscode: {},
-        timeline: {
-            enabled: true,
-        },
     },
     vite: {
         define: {

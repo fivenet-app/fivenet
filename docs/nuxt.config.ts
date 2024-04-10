@@ -5,11 +5,11 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+    telemetry: false,
     extends: ['@nuxt/ui-pro'],
     modules: [
         '@nuxt/content',
         '@nuxt/ui',
-        '@nuxt/fonts',
         '@nuxtjs/i18n',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
@@ -45,6 +45,18 @@ export default defineNuxtConfig({
     typescript: {
         strict: false,
     },
+    css: [
+        // DM Sans font (all weights)
+        '@fontsource/dm-sans/100.css',
+        '@fontsource/dm-sans/200.css',
+        '@fontsource/dm-sans/300.css',
+        '@fontsource/dm-sans/400.css',
+        '@fontsource/dm-sans/500.css',
+        '@fontsource/dm-sans/600.css',
+        '@fontsource/dm-sans/700.css',
+        '@fontsource/dm-sans/800.css',
+        '@fontsource/dm-sans/900.css',
+    ],
     vite: {
         define: {
             __APP_VERSION__: `"${appVersion}"`,
@@ -86,7 +98,6 @@ export default defineNuxtConfig({
         },
         parallelPlugin: true,
     },
-
     piniaPersistedstate: {
         storage: 'localStorage',
         debug: false,

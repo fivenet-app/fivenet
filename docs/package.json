@@ -12,12 +12,12 @@
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
+    "@fontsource/dm-sans": "^5.0.20",
     "@iconify-json/flagpack": "^1.1.14",
     "@iconify-json/heroicons": "^1.1.20",
     "@iconify-json/mdi": "^1.1.66",
     "@iconify-json/simple-icons": "^1.1.99",
     "@nuxt/content": "^2.12.1",
-    "@nuxt/fonts": "^0.6.1",
     "@nuxt/ui-pro": "^1.1.0",
     "emoji-blast": "^0.10.0",
     "nuxt": "^3.11.2",
