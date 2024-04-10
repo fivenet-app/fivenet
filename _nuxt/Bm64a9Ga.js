@@ -1,0 +1,1 @@
+import{l as n,c as s,g as c,e as o,ai as t,b as r,by as l}from"./UMJw8WaL.js";const d={};function _(e,i){const a=l;return r(),s("div",null,[c(a),o("div",null,[t(e.$slots,"default")])])}const m=n(d,[["render",_]]);export{m as default};
