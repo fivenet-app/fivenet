@@ -66,6 +66,11 @@ const features = {
             to: '/user-guides/centrum',
         },
         {
+            title: t('docs.features.items.i18n.title'),
+            description: t('docs.features.items.i18n.description'),
+            icon: 'i-mdi-language',
+        },
+        {
             title: t('docs.features.items.nuxt3_ui.title'),
             description: t('docs.features.items.nuxt3_ui.description'),
             icon: 'i-simple-icons-nuxtdotjs',

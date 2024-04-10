@@ -61,7 +61,7 @@
                 },
                 "jobs": {
                     "title": "Jobs",
-                    "description": "Infos about your job and employee management."
+                    "description": "Infos about your job and employee management (e.g., conduct register, timeclock)."
                 },
                 "livemap": {
                     "title": "Livemap",
@@ -71,9 +71,13 @@
                     "title": "Dispatch Center",
                     "description": "Dispatch Center, for dispatching Dispatches to colleagues, managing units and dispatches."
                 },
+                "i18n": {
+                    "title": "Multi-Language UI",
+                    "description": "Multiple languages available for the UI."
+                },
                 "nuxt3_ui": {
                     "title": "Nuxt 3 + Nuxt UI Pro",
-                    "description": "Powered by Nuxt 3 and Nuxt UI Pro for optimal performances."
+                    "description": "Powered by Nuxt 3 and Nuxt UI Pro for optimal performance."
                 }
             }
         }

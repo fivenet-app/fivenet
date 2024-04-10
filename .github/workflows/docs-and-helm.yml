@@ -55,6 +55,7 @@ jobs:
           submodules: true
           sparse-checkout: |
             index.yaml
+          ref: 'gh-pages'
           path: 'gh-pages'
 
       - name: Cache dependencies
