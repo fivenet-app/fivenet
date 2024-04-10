@@ -91,7 +91,7 @@ const columns = computed(() =>
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },
                             }"
-                            class="block p-4 hover:bg-base-700"
+                            class="block p-4 hover:bg-base-900"
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">

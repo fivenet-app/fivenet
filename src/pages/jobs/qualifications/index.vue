@@ -15,16 +15,16 @@ definePageMeta({
 
 <template>
     <div>
-        <div class="py-2 pb-14">
+        <UContainer>
             <div class="px-1 sm:px-2">
-                <div class="grid gap-2 md:grid-cols-2">
-                    <QualificationsList />
-
+                <div class="flex flex-col gap-2">
                     <QualificationsResultsList />
 
                     <QualificationsRequestsList />
+
+                    <QualificationsList />
                 </div>
             </div>
-        </div>
+        </UContainer>
     </div>
 </template>

@@ -57,17 +57,16 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="bg-background border-b border-gray-200 px-4 py-5 sm:p-6">
-            <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-                <div class="ml-4 mt-4">
-                    <h3 v-if="!userId" class="text-base font-semibold leading-6 text-gray-200">
-                        {{ $t('components.qualifications.user_qualifications') }}
-                    </h3>
-                </div>
+    <UCard>
+        <template #header>
+            <div class="flex items-center justify-between">
+                <h3 class="text-2xl font-semibold leading-6">
+                    {{ $t('components.qualifications.user_qualifications') }}
+                </h3>
             </div>
-        </div>
-        <div class="px-1 sm:px-2">
+        </template>
+
+        <div>
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.result', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.result', 2)])" :retry="refresh" />
             <DataNoDataBlock
@@ -77,15 +76,14 @@ watch(offset, async () => refresh());
             />
 
             <template v-else>
-                <ul role="list" class="divide-y divide-gray-100">
+                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                     <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
                 </ul>
             </template>
         </div>
-        <div class="bg-background border-t border-gray-200 px-4 py-5 sm:p-6">
-            <div class="-ml-4 -mt-4 flex items-center">
-                <Pagination v-model="page" :pagination="data?.pagination" />
-            </div>
-        </div>
-    </div>
+
+        <template #footer>
+            <Pagination v-model="page" :pagination="data?.pagination" disable-border />
+        </template>
+    </UCard>
 </template>

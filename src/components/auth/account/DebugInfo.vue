@@ -127,7 +127,7 @@ async function sendTestNotifications(): Promise<void> {
                         <p v-if="!activeChar">
                             {{ $t('components.debug_info.no_char_selected') }}
                         </p>
-                        <ul v-else role="list" class="divide-y divide-gray-100">
+                        <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                             <li
                                 v-for="perm in permissions"
                                 :key="perm"

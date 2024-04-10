@@ -33,26 +33,20 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div class="overflow-hidden rounded-lg bg-base-700 shadow">
-        <div class="bg-background border-b border-gray-200 px-4 py-5 sm:p-6">
-            <div class="-ml-4 -mt-4 flex flex-wrap items-center justify-between sm:flex-nowrap">
-                <div class="ml-4 mt-4">
-                    <h3 class="text-base font-semibold leading-6 text-gray-200">
-                        {{ $t('components.qualifications.all_qualifications') }}
-                    </h3>
-                </div>
-                <div class="ml-4 mt-4 shrink-0">
-                    <NuxtLink
-                        v-if="can('QualificationsService.CreateQualification')"
-                        :to="{ name: 'jobs-qualifications-create' }"
-                        class="bg-primary-500 hover:bg-primary-500 relative inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold shadow-sm focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                    >
-                        {{ $t('components.qualifications.create_new_qualification') }}
-                    </NuxtLink>
-                </div>
+    <UCard>
+        <template #header>
+            <div class="flex items-center justify-between">
+                <h3 class="text-2xl font-semibold leading-6">
+                    {{ $t('components.qualifications.all_qualifications') }}
+                </h3>
+
+                <UButton v-if="can('QualificationsService.CreateQualification')" :to="{ name: 'jobs-qualifications-create' }">
+                    {{ $t('components.qualifications.create_new_qualification') }}
+                </UButton>
             </div>
-        </div>
-        <div class="px-1 sm:px-2">
+        </template>
+
+        <div>
             <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
@@ -66,7 +60,7 @@ watch(offset, async () => refresh());
             />
 
             <template v-else>
-                <ul role="list" class="divide-y divide-gray-100">
+                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                     <QualificationsListEntry
                         v-for="qualification in data?.qualifications"
                         :key="qualification.id"
@@ -75,10 +69,9 @@ watch(offset, async () => refresh());
                 </ul>
             </template>
         </div>
-        <div class="bg-background border-t border-gray-200 px-4 py-5 sm:p-6">
-            <div class="-ml-4 -mt-4 flex items-center">
-                <Pagination v-model="page" :pagination="data?.pagination" />
-            </div>
-        </div>
-    </div>
+
+        <template #footer>
+            <Pagination v-model="page" :pagination="data?.pagination" disable-border />
+        </template>
+    </UCard>
 </template>

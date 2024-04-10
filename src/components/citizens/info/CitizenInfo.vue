@@ -165,27 +165,35 @@ function addToClipboard(): void {
                         </template>
 
                         <template #profile>
-                            <CitizenProfile
-                                :user="user"
-                                @update:wanted-status="user.props!.wanted = $event"
-                                @update:job="
-                                    user.job = $event.job.name;
-                                    user.jobLabel = $event.job.label;
-                                    user.jobGrade = $event.grade.grade;
-                                    user.jobGradeLabel = $event.grade.label;
-                                "
-                                @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                                @update:mug-shot="user.props!.mugShot = $event"
-                            />
+                            <UContainer>
+                                <CitizenProfile
+                                    :user="user"
+                                    @update:wanted-status="user.props!.wanted = $event"
+                                    @update:job="
+                                        user.job = $event.job.name;
+                                        user.jobLabel = $event.job.label;
+                                        user.jobGrade = $event.grade.grade;
+                                        user.jobGradeLabel = $event.grade.label;
+                                    "
+                                    @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                                    @update:mug-shot="user.props!.mugShot = $event"
+                                />
+                            </UContainer>
                         </template>
                         <template v-if="can('DMVService.ListVehicles')" #vehicles>
-                            <CitizenVehicles :user-id="user.userId" />
+                            <UContainer>
+                                <CitizenVehicles :user-id="user.userId" />
+                            </UContainer>
                         </template>
                         <template v-if="can('DocStoreService.ListUserDocuments')" #documents>
-                            <CitizenDocuments :user-id="user.userId" />
+                            <UContainer>
+                                <CitizenDocuments :user-id="user.userId" />
+                            </UContainer>
                         </template>
                         <template v-if="can('CitizenStoreService.ListUserActivity')" #activity>
-                            <CitizenActivityFeed :user-id="user.userId" />
+                            <UContainer>
+                                <CitizenActivityFeed :user-id="user.userId" />
+                            </UContainer>
                         </template>
                     </UTabs>
                 </div>

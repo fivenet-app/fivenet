@@ -1,3 +1,4 @@
+<!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
 import type { PaginationResponse } from '~~/gen/ts/resources/common/database/database';
 
@@ -6,9 +7,11 @@ const props = withDefaults(
         modelValue: number;
         pagination: PaginationResponse | undefined | null;
         infinite?: boolean;
+        disableBorder?: boolean;
     }>(),
     {
         infinite: false,
+        disableBorder: false,
     },
 );
 
@@ -25,7 +28,10 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
 </script>
 
 <template>
-    <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 dark:border-gray-700">
+    <div
+        class="flex justify-between px-3 py-3.5"
+        :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
+    >
         <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm">
             <template #current>
                 <span class="text-neutral font-medium">

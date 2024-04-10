@@ -126,7 +126,7 @@ const canSubmit = ref(true);
                         <li
                             v-for="not in data?.notifications"
                             :key="not.id"
-                            class="hover:bg-background relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-700 px-4 py-5 sm:px-6"
+                            class="hover:bg-background relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-900 px-4 py-5 sm:px-6"
                         >
                             <div class="flex flex-1 gap-x-2">
                                 <div class="min-w-0 flex-auto">

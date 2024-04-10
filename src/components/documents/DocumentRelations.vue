@@ -89,7 +89,7 @@ const columns = computed(() =>
             <!-- Relations list (smallest breakpoint only) -->
             <div class="sm:hidden">
                 <ul role="list" class="divide-y divide-gray-600 overflow-hidden rounded-lg sm:hidden">
-                    <li v-for="relation in relations" :key="relation.id" class="block p-4 hover:bg-base-700">
+                    <li v-for="relation in relations" :key="relation.id" class="block p-4 hover:bg-base-900">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
                                 <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" />
