@@ -95,7 +95,7 @@ const links = computed<(DashboardSidebarLink & { permission?: Perms | Perms[] })
                 },
                 {
                     label: t('common.conduct_register', 2),
-                    to: '/jobs/qualifications',
+                    to: '/jobs/conduct',
                     permission: 'JobsConductService.ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
