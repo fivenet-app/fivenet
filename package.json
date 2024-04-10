@@ -60,7 +60,7 @@
         "zod": "^3.22.4"
     },
     "devDependencies": {
-        "@dargmuesli/nuxt-cookie-control": "8.1.0",
+        "@dargmuesli/nuxt-cookie-control": "8.1.1",
         "@nuxt/content": "^2.12.1",
         "@nuxt/devtools": "1.1.5",
         "@nuxt/eslint-config": "^0.3.4",
