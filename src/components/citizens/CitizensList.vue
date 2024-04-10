@@ -101,8 +101,8 @@ const columns = [
     {
         key: 'sex',
         label: t('common.sex'),
-        class: 'hidden lg:block',
-        rowClass: 'hidden lg:block',
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')
         ? { key: 'phoneNumber', label: t('common.phone_number') }
@@ -110,8 +110,8 @@ const columns = [
     {
         key: 'dateofbirth',
         label: t('common.date_of_birth'),
-        class: 'hidden lg:block',
-        rowClass: 'hidden lg:block',
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')
         ? {
@@ -128,8 +128,8 @@ const columns = [
     {
         key: 'height',
         label: t('common.height'),
-        class: 'hidden lg:block',
-        rowClass: 'hidden lg:block',
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     {
         key: 'actions',
