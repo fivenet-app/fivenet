@@ -12,7 +12,7 @@ const open = ref(cookiesState.value === undefined);
     <div>
         <UCard
             v-if="open"
-            class="absolute inset-x-0 bottom-8 z-20 mx-auto w-full max-w-lg bg-white/75 backdrop-blur dark:bg-white/5"
+            class="fixed inset-x-0 bottom-8 z-20 mx-auto w-full max-w-lg bg-white/75 backdrop-blur dark:bg-white/5"
         >
             <template #header>
                 <div class="flex items-center justify-between">
@@ -92,7 +92,7 @@ const open = ref(cookiesState.value === undefined);
             :ui="{ rounded: 'rounded-full' }"
             icon="i-mdi-cookie-cog"
             size="xl"
-            class="absolute bottom-10 right-6"
+            class="fixed bottom-10 right-6"
             @click="open = true"
         />
     </div>
