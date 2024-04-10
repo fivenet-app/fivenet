@@ -368,7 +368,7 @@ defineShortcuts({
                                                                     >
                                                                     {{ getOwnUnit.name }}</span
                                                                 >
-                                                                <span class="truncate text-sm">
+                                                                <span class="truncate text-xs">
                                                                     <span class="font-semibold"
                                                                         >{{ $t('common.status') }}:</span
                                                                     >
@@ -380,6 +380,7 @@ defineShortcuts({
                                                                 </span>
                                                             </UButton>
                                                         </template>
+
                                                         <UButton
                                                             variant="soft"
                                                             color="primary"
@@ -404,30 +405,28 @@ defineShortcuts({
                                             <template v-if="getOwnUnit !== undefined">
                                                 <li>
                                                     <ul role="list" class="-mx-1 space-y-0.5">
-                                                        <div class="inline-flex items-center text-xs font-semibold leading-6">
+                                                        <li class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.units') }}
                                                             <UIcon
                                                                 v-if="!canSubmitUnitStatus"
                                                                 name="i-mdi-loading"
                                                                 class="ml-1 size-4 animate-spin"
                                                             />
-                                                        </div>
+                                                        </li>
                                                         <li>
                                                             <div class="grid grid-cols-2 gap-0.5">
                                                                 <UButton
                                                                     v-for="item in unitStatuses"
                                                                     :key="item.name"
+                                                                    size="xs"
                                                                     :disabled="!canSubmitUnitStatus"
                                                                     :icon="item.icon"
-                                                                    :class="[
-                                                                        !canSubmitUnitStatus ? 'disabled' : '',
-                                                                        item.status && unitStatusToBGColor(item.status),
-                                                                    ]"
+                                                                    :class="[item.status && unitStatusToBGColor(item.status)]"
                                                                     @click="
                                                                         onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)
                                                                     "
                                                                 >
-                                                                    <span class="mt-1">
+                                                                    <span class="mt-0.5 line-clamp-2">
                                                                         {{
                                                                             item.status
                                                                                 ? $t(
@@ -460,14 +459,14 @@ defineShortcuts({
 
                                                 <li>
                                                     <ul role="list" class="-mx-1 space-y-0.5">
-                                                        <div class="inline-flex items-center text-xs font-semibold leading-6">
+                                                        <li class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
                                                             <UIcon
                                                                 v-if="!canSubmitDispatchStatus"
                                                                 name="i-mdi-loading"
                                                                 class="ml-1 size-4 animate-spin"
                                                             />
-                                                        </div>
+                                                        </li>
                                                         <li>
                                                             <div class="grid grid-cols-2 gap-0.5">
                                                                 <UButton
@@ -475,10 +474,10 @@ defineShortcuts({
                                                                         (s) => s.status !== StatusDispatch.CANCELLED,
                                                                     )"
                                                                     :key="item.name"
+                                                                    size="xs"
                                                                     :disabled="!canSubmitDispatchStatus"
                                                                     :icon="item.icon"
                                                                     :class="[
-                                                                        !canSubmitDispatchStatus ? 'disabled' : '',
                                                                         item.status && dispatchStatusToBGColor(item.status),
                                                                     ]"
                                                                     @click="
@@ -488,7 +487,7 @@ defineShortcuts({
                                                                         )
                                                                     "
                                                                 >
-                                                                    <span class="mt-1">
+                                                                    <span class="mt-0.5 line-clamp-2">
                                                                         {{
                                                                             item.status
                                                                                 ? $t(

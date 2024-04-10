@@ -176,13 +176,17 @@ function openRequestsModal(): void {
     });
 }
 
-const accordionItems = [
-    { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
-    { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
-    { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
-    { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
-    { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' },
-];
+const accordionItems = computed(() =>
+    [
+        { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
+        { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
+        { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
+        { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
+        can('DocStoreService.ListDocumentActivity')
+            ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 
 defineShortcuts({
     'd-t': () => {
@@ -531,7 +535,7 @@ defineShortcuts({
                             </UContainer>
                         </template>
 
-                        <template #activity>
+                        <template v-if="can('DocStoreService.ListDocumentActivity')" #activity>
                             <UContainer>
                                 <DocumentActivityList :document-id="documentId" />
                             </UContainer>

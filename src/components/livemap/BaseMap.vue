@@ -266,7 +266,7 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
-<style>
+<style lang="css">
 .leaflet-container {
     font-family: var(--font-sans);
 }

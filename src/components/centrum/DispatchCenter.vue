@@ -6,7 +6,6 @@ import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
@@ -19,19 +18,15 @@ const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
 
 const livemapStore = useLivemapStore();
-const { location } = storeToRefs(livemapStore);
+const { goto } = livemapStore;
 
 onMounted(async () => useTimeoutFn(async () => startStream(true), 250));
 
 const route = useRoute();
 watch(route, () => stopStream());
 
-function goto(e: Coordinate) {
-    location.value = e;
-
-    // Set in-game waypoint via NUI
-    setWaypoint(e.x, e.y);
-}
+const mount = ref(false);
+onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 </script>
 
 <template>
@@ -42,9 +37,9 @@ function goto(e: Coordinate) {
             </template>
         </UDashboardNavbar>
 
-        <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
-            <Splitpanes class="relative">
-                <Pane min-size="25">
+        <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] w-full overflow-hidden">
+            <Splitpanes v-if="mount" class="relative">
+                <Pane :min-size="25">
                     <div class="relative z-0 size-full">
                         <div
                             v-if="error !== undefined || (abort === undefined && !reconnecting)"
@@ -72,18 +67,18 @@ function goto(e: Coordinate) {
                         </LivemapBase>
                     </div>
                 </Pane>
-                <Pane min-size="40" size="70">
+                <Pane :min-size="40" :size="70">
                     <Splitpanes horizontal>
-                        <Pane size="58" min-size="2">
+                        <Pane :size="58" :min-size="2">
                             <DispatchList :show-button="true" @goto="goto($event)" />
                         </Pane>
-                        <Pane size="26" min-size="2">
+                        <Pane :size="26" :min-size="2">
                             <UnitList @goto="goto($event)" />
                         </Pane>
-                        <Pane size="8" min-size="2">
+                        <Pane :size="8" :min-size="2">
                             <MarkersList @goto="goto($event)" />
                         </Pane>
-                        <Pane size="8" min-size="2">
+                        <Pane :size="8" :min-size="2">
                             <CentrumFeed :items="feed" @goto="goto($event)" />
                         </Pane>
                     </Splitpanes>
@@ -93,7 +88,7 @@ function goto(e: Coordinate) {
     </UDashboardPanel>
 </template>
 
-<style>
+<style lang="css">
 .splitpanes--vertical > .splitpanes__splitter {
     min-width: 3px;
     background-color: rgb(var(--color-gray-800));

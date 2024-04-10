@@ -293,7 +293,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UButton
-                                    class="hover:bg-neutral/20 rounded px-2 py-1 text-sm font-semibold"
+                                    class="rounded px-2 py-1 text-sm font-semibold"
                                     :class="dispatchStatusColors"
                                     @click="modal.open(DispatchStatusUpdateModal, { dispatchId: dispatch.id })"
                                 >

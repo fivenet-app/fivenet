@@ -277,6 +277,13 @@ export const useLivemapStore = defineStore('livemap', {
         deleteMarkerMarker(id: string): void {
             this.markersMarkers.delete(id);
         },
+
+        async goto(loc: Coordinate): Promise<void> {
+            this.location = loc;
+
+            // Set in-game waypoint via NUI
+            return setWaypoint(loc.x, loc.y);
+        },
     },
 });
 

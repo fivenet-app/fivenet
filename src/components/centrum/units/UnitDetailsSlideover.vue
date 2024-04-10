@@ -82,7 +82,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <UButton
-                                class="hover:bg-neutral/20 rounded px-2 py-1 text-sm font-semibold shadow-sm"
+                                class="rounded px-2 py-1 text-sm font-semibold shadow-sm"
                                 :class="unitStatusColors"
                                 @click="
                                     modal.open(UnitStatusUpdateModal, {
@@ -149,7 +149,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                         </dt>
                         <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                             <span v-if="unit.users.length === 0" class="block">
-                                {{ $t('common.member', unit.users.length) }}
+                                {{ $t('common.member', 0) }}
                             </span>
                             <div v-else class="rounded-md bg-base-800">
                                 <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">

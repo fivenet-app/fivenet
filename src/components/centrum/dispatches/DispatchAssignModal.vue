@@ -26,10 +26,8 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
-    units: [],
+    units: [...props.dispatch.units.map((du) => du.unitId)],
 });
-
-const selectedUnits = ref<string[]>(props.dispatch.units.map((du) => du.unitId));
 
 async function assignDispatch(): Promise<void> {
     try {
@@ -63,10 +61,10 @@ async function assignDispatch(): Promise<void> {
 
 function selectUnit(item: Unit): void {
     const idx = query.units.findIndex((u) => u === item.id);
-    if (idx > -1) {
-        delete query.units[idx];
-    } else {
+    if (idx === -1) {
         query.units.push(item.id);
+    } else {
+        delete query.units[idx];
     }
 }
 
@@ -151,15 +149,16 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
                                     :class="[
                                         unitStatusToBGColor(unit.status?.status),
-                                        unit.users.length === 0 ? 'disabled !bg-error-600' : '',
+                                        unit.users.length === 0 ? '!bg-error-600' : '',
                                     ]"
                                     @click="selectUnit(unit)"
                                 >
-                                    <CheckIcon v-if="selectedUnits?.findIndex((u) => u && u === unit.id) > -1" class="size-5" />
+                                    <CheckIcon v-if="query.units.includes(unit.id)" class="size-5" />
                                     <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
                                     <CancelIcon v-else class="size-5" />
 
                                     <div class="ml-0.5 flex w-full flex-col place-items-start">
+                                        {{ unit.users.length === 0 }}
                                         <span class="font-bold">
                                             {{ unit.initials }}
                                         </span>

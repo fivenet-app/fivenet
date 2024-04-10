@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { Pane, Splitpanes } from 'splitpanes';
+import 'splitpanes/dist/splitpanes.css';
 import { z } from 'zod';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
 import Pagination from '~/components/partials/Pagination.vue';
@@ -91,6 +92,9 @@ defineShortcuts({
         input.value?.input?.focus();
     },
 });
+
+const mount = ref(false);
+onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 </script>
 
 <template>
@@ -99,8 +103,8 @@ defineShortcuts({
             <UDashboardNavbar :title="$t('common.dispatches')"> </UDashboardNavbar>
 
             <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
-                <Splitpanes class="relative">
-                    <Pane min-size="25">
+                <Splitpanes v-if="mount" class="relative">
+                    <Pane :min-size="25">
                         <ClientOnly>
                             <LazyLivemapBaseMap :map-options="{ zoomControl: false }">
                                 <template #default>
@@ -110,7 +114,7 @@ defineShortcuts({
                         </ClientOnly>
                     </Pane>
 
-                    <Pane size="65">
+                    <Pane :size="65">
                         <div class="max-h-full overflow-y-auto">
                             <div class="mb-2 px-2">
                                 <UForm :schema="schema" :state="query" class="flex flex-row gap-2" @submit="refresh()">
@@ -173,13 +177,91 @@ defineShortcuts({
 </template>
 
 <style>
-.splitpanes--vertical > .splitpanes__splitter {
-    min-width: 3px;
-    background-color: rgb(var(--color-gray-800));
+.PanelGroupWrapper {
+    height: 20rem;
+    background-color: grey;
 }
 
-.splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 3px;
-    background-color: rgb(var(--color-gray-800));
+.PanelGroup {
+    font-size: 2rem;
+}
+
+.Panel {
+    display: flex;
+    flex-direction: row;
+    font-size: 2rem;
+}
+
+.PanelColumn,
+.PanelRow {
+    display: flex;
+}
+.PanelColumn {
+    flex-direction: column;
+}
+.PanelRow {
+    flex-direction: row;
+}
+
+.Centered {
+    flex: 1 1 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-panel-background);
+    border-radius: 0.5rem;
+    overflow: auto;
+    font-size: 1rem;
+    padding: 0.5rem;
+    word-break: break-all;
+}
+
+.ResizeHandle {
+    background-color: red;
+}
+
+.Overflow {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    padding: 1rem;
+
+    /* Firefox fixes */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-scroll-thumb) transparent;
+}
+
+.Button,
+.ButtonDisabled {
+    background-color: var(--color-button-background);
+    color: var(--color-default);
+    border: none;
+    border-radius: 0.5rem;
+    padding: 0.25rem 0.5rem;
+}
+.Button:hover {
+    background-color: var(--color-button-background-hover);
+}
+.ButtonDisabled {
+    opacity: 0.5;
+}
+
+.Buttons {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 1ch;
+    margin-bottom: 1rem;
+}
+
+.Capitalize {
+    text-transform: capitalize;
+}
+
+.WarningBlock {
+    display: inline-block;
+    background: var(--color-warning-background);
+    padding: 0.25em 1ch;
+    border-radius: 0.5rem;
 }
 </style>

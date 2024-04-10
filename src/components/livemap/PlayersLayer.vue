@@ -60,7 +60,7 @@ const playerMarkersFiltered = computedAsync(async () =>
         "
     >
         <PlayerMarker
-            v-for="marker in playerMarkersFiltered.filter((m) => m.info?.job === job.name)"
+            v-for="marker in playerMarkersFiltered?.filter((m) => m.info?.job === job.name)"
             :key="marker.info!.id"
             :marker="marker"
             :size="livemap.markerSize"
