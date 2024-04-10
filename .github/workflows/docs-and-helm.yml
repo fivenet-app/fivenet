@@ -76,10 +76,9 @@ jobs:
           NUXT_UI_PRO_LICENSE: "${{ secrets.NUXT_UI_PRO_LICENSE }}"
         run: |
           yarn build
-          echo here
-          ls -ahl
-          echo before
           ls -ahl ..
+          ls -ahl ../gh-pages
+          ls -ahl ../..
           cp ../gh-pages/index.yaml ./.output/public/
 
       - name: Deploy
