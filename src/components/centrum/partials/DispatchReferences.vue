@@ -8,21 +8,16 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'selectedDispatch', dspId: string): void;
+    (e: 'goto', loc: Coordinate): void;
 }>();
+
+const modal = useModal();
 
 const selectedDispatch = ref<string | undefined>();
 </script>
 
 <template>
     <template v-if="references !== undefined && references?.references.length > 0">
-        <DispatchDetailsByIDSlideover
-            v-if="selectedDispatch"
-            :open="true"
-            :dispatch-id="selectedDispatch"
-            @close="selectedDispatch = undefined"
-        />
-
         <div class="grid grid-cols-2 gap-1">
             <span
                 v-for="reference in references?.references"
@@ -38,7 +33,11 @@ const selectedDispatch = ref<string | undefined>();
                 <UButton
                     @click="
                         selectedDispatch = reference.targetDispatchId;
-                        $emit('selectedDispatch', reference.targetDispatchId);
+                        modal.open(DispatchDetailsByIDSlideover, {
+                            dispatchId: reference.targetDispatchId,
+                            onGoto: ($event) => $emit('goto', $event),
+                            onClose: () => (selectedDispatch = undefined),
+                        });
                     "
                 >
                     <span class="sr-only">{{ $t('common.open') }}</span>

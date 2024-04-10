@@ -40,7 +40,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                 </span>
 
                 <span class="inline-flex items-center">
@@ -66,7 +66,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -93,7 +93,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -120,7 +120,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -147,7 +147,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -174,7 +174,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -201,7 +201,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -227,7 +227,7 @@ defineEmits<{
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -254,7 +254,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -281,7 +281,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -308,7 +308,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -335,7 +335,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -362,7 +362,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 

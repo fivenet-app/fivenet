@@ -180,7 +180,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                 {{ $t('common.reference', 2) }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
-                                <DispatchReferences :references="dispatch.references" />
+                                <DispatchReferences :references="dispatch.references" @goto="$emit('goto', $event)" />
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">

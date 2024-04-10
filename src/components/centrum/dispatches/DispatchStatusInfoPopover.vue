@@ -8,7 +8,11 @@ defineProps<{
     buttonClass?: unknown;
 }>();
 
-const open = ref(false);
+defineEmits<{
+    (e: 'goto', loc: Coordinate): void;
+}>();
+
+const modal = useModal();
 </script>
 
 <template>
@@ -20,8 +24,6 @@ const open = ref(false);
         </span>
     </template>
     <template v-else>
-        <DispatchDetailsByIDSlideover :open="open" :dispatch-id="status.dispatchId" @close="open = false" />
-
         <UPopover>
             <UButton
                 variant="link"
@@ -39,7 +41,17 @@ const open = ref(false);
             <template #panel>
                 <div class="p-4">
                     <div class="mb-2 flex items-center gap-2">
-                        <UButton variant="link" icon="i-mdi-car-emergency" :title="$t('common.detail', 2)" @click="open = true">
+                        <UButton
+                            variant="link"
+                            icon="i-mdi-car-emergency"
+                            :title="$t('common.detail', 2)"
+                            @click="
+                                modal.open(DispatchDetailsByIDSlideover, {
+                                    dispatchId: status.dispatchId,
+                                    onGoto: ($event) => $emit('goto', $event),
+                                })
+                            "
+                        >
                             {{ $t('common.detail', 2) }}
                         </UButton>
                     </div>
