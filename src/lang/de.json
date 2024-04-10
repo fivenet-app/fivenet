@@ -892,7 +892,7 @@
                     "title": "Streamer-Modus",
                     "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
                 },
-                "background_color": "Hintergrundfarbe"
+                "background_color": "Hintergrund-Farbe"
             },
             "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",
@@ -944,6 +944,12 @@
                 },
                 "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person"
             }
+        },
+        "CookieControl": {
+            "title": "Wir nutzen Cookies!",
+            "subtitle": "Der Hauptzweck unserer Cookies besteht darin, Ihnen die Anmeldung über unsere Social-Login-Anbieter zu ermöglichen. Weitere Informationen zu Cookies und Ihren Daten finden Sie in unserer Datenschutzerklärung.",
+            "description": "Bitte beachten Sie, dass die Funktion \"Lokale Daten entfernen\" je nach der Funktionalität Ihres Browsers möglicherweise nicht alle Daten entfernen kann.",
+            "clear_data": "Lokale Daten entfernen"
         }
     },
     "notifications": {
