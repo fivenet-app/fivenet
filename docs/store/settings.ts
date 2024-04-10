@@ -3,7 +3,7 @@ import { defineStore, type StoreDefinition } from 'pinia';
 export interface SettingsState {
     version: string;
     locale: string | null;
-    cookiesState: undefined | null | boolean;
+    cookiesState: null | boolean;
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -11,7 +11,7 @@ export const useSettingsStore = defineStore('settings', {
         ({
             version: __APP_VERSION__ as string,
             locale: null,
-            cookiesState: undefined,
+            cookiesState: null,
         }) as SettingsState,
     persist: {
         paths: ['version', 'locale', 'cookiesState'],

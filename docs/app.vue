@@ -1,9 +1,9 @@
 <script setup lang="ts">
 import type { NavItem, ParsedContent } from '@nuxt/content/dist/runtime/types';
 
-const { seo } = useAppConfig();
+const { t } = useI18n();
 
-const { data: navigation } = await useAsyncData<NavItem[]>('navigation', () => fetchContentNavigation(queryContent('/docs')), {
+const { data: navigation } = await useAsyncData<NavItem[]>('navigation', () => fetchContentNavigation(), {
     default: () => [],
 });
 const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
@@ -17,13 +17,24 @@ useHead({
     htmlAttrs: {
         lang: 'en',
     },
+    titleTemplate: (title?: string) => {
+        if (title?.includes('.')) {
+            title = t(title);
+        }
+        return title ? `${title} - FiveNet` : 'FiveNet';
+    },
 });
 
 useSeoMeta({
-    titleTemplate: `%s - ${seo?.siteName}`,
-    ogSiteName: seo?.siteName,
-    ogImage: 'https://docs-template.nuxt.dev/social-card.png',
-    twitterImage: 'https://docs-template.nuxt.dev/social-card.png',
+    titleTemplate: (title?: string) => {
+        if (title?.includes('.')) {
+            title = t(title);
+        }
+        return title ? `${title} - FiveNet` : 'FiveNet';
+    },
+    ogSiteName: 'FiveNet',
+    ogImage: '/images/social-card.png',
+    twitterImage: '/images/social-card.png',
     twitterCard: 'summary_large_image',
 });
 

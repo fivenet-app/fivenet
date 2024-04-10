@@ -15,7 +15,7 @@ export default defineAppConfig({
     // Nuxt UI app config
     ui: {
         primary: 'blue',
-        gray: 'cool',
+        gray: 'slate',
         tooltip: {
             default: {
                 openDelay: 500,

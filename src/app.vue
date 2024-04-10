@@ -41,6 +41,7 @@ useSeoMeta({
     applicationName: 'FiveNet',
     ogImage: '/images/social-card.png',
     twitterImage: '/images/social-card.png',
+    twitterCard: 'summary_large_image',
 });
 
 if (__APP_VERSION__ !== settings.version) {

@@ -26,6 +26,12 @@
                 "edit": "Editier die Seite",
                 "star": "Star on GitHub"
             }
+        },
+        "help": {
+            "hero": {
+                "title": "Brauchen Sie Hilfe mit FiveNet?",
+                "description": "Lesen Sie hier die Dokumentation, um mehr über die verfügbaren Funktionen zu erfahren."
+            }
         }
     },
     "components": {

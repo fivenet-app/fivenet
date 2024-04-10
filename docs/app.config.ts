@@ -1,6 +1,6 @@
 export default defineAppConfig({
     ui: {
-        primary: 'green',
+        primary: 'malibu',
         gray: 'slate',
         footer: {
             bottom: {
@@ -8,9 +8,20 @@ export default defineAppConfig({
                 wrapper: 'border-t border-gray-200 dark:border-gray-800',
             },
         },
-    },
-    seo: {
-        siteName: 'FiveNet',
+        icons: {
+            dynamic: true,
+            // Nuxt UI Pro Icons
+            dark: 'i-mdi-moon-and-stars',
+            light: 'i-mdi-weather-sunny',
+            system: 'i-mdi-computer',
+            search: 'i-mdi-search',
+            external: 'i-mdi-external-link',
+            chevron: 'i-mdi-chevron-down',
+            hash: 'i-mdi-hashtag',
+            menu: 'i-mdi-menu',
+            close: 'i-mdi-window-close',
+            check: 'i-mdi-check-circle',
+        },
     },
     toc: {
         bottom: {

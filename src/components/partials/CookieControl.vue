@@ -7,7 +7,7 @@ const { cookiesState } = storeToRefs(settingsStore);
 
 const { links } = useAppConfig();
 
-const open = ref(cookiesState.value === undefined);
+const open = ref(cookiesState.value === null);
 </script>
 
 <template>
@@ -39,11 +39,18 @@ const open = ref(cookiesState.value === undefined);
                 <p>{{ $t('components.CookieControl.subtitle') }}</p>
 
                 <UButtonGroup class="inline-flex w-full flex-1">
-                    <UButton variant="link" block class="flex-1" :to="links.privacyPolicy" :external="true">
+                    <UButton
+                        v-if="links.privacyPolicy"
+                        variant="link"
+                        block
+                        class="flex-1"
+                        :to="links.privacyPolicy"
+                        :external="true"
+                    >
                         {{ $t('common.privacy_policy') }}
                     </UButton>
 
-                    <UButton variant="link" block class="flex-1" :to="links.imprint" :external="true">
+                    <UButton v-if="links.imprint" variant="link" block class="flex-1" :to="links.imprint" :external="true">
                         {{ $t('common.imprint') }}
                     </UButton>
 

@@ -20,12 +20,9 @@ useHead({
     },
 });
 
-const { data: navigation } = await useAsyncData<NavItem[]>('navigation', () => fetchContentNavigation(queryContent('/docs')), {
+const { data: navigation } = await useAsyncData<NavItem[]>('navigation', () => fetchContentNavigation(), {
     default: () => [],
-    transform: (items) => items[0]?.children ?? [],
 });
-
-console.log(navigation.value);
 
 const { data: files } = useLazyFetch<ParsedContent[]>('/api/search.json', {
     default: () => [],
@@ -42,7 +39,7 @@ provide('navigation', navigation);
         <UMain>
             <UContainer>
                 <UPage>
-                    <UPageError :error="error" />
+                    <UPageError :error="error" :clear-button="{ label: $t('pages.notfound.go_back') }" />
                 </UPage>
             </UContainer>
         </UMain>
@@ -53,6 +50,9 @@ provide('navigation', navigation);
             <LazyUContentSearch :files="files" :navigation="navigation" />
         </ClientOnly>
 
+        <UModals />
         <UNotifications />
+
+        <CookieControl />
     </div>
 </template>

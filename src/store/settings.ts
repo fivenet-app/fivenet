@@ -4,7 +4,7 @@ export interface SettingsState {
     version: string;
     updateAvailable: false | string;
     locale: string | null;
-    cookiesState: undefined | null | boolean;
+    cookiesState: null | boolean;
 
     nuiEnabled: boolean;
     nuiResourceName: string | undefined;
@@ -39,7 +39,7 @@ export const useSettingsStore = defineStore('settings', {
             version: __APP_VERSION__ as string,
             updateAvailable: false,
             locale: null,
-            cookiesState: undefined,
+            cookiesState: null,
 
             nuiEnabled: false,
             nuiResourceName: undefined,

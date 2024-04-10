@@ -3,18 +3,17 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "nuxt build",
-    "dev": "nuxt dev",
-    "generate": "nuxt generate",
-    "preview": "nuxt preview",
-    "postinstall": "nuxt prepare",
+    "build": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') nuxt build",
+    "dev": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') nuxt dev",
+    "generate": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') nuxt generate",
+    "preview": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') nuxt preview",
+    "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') nuxt prepare",
     "lint": "eslint .",
     "typecheck": "nuxt typecheck"
   },
   "dependencies": {
     "@fontsource/dm-sans": "^5.0.20",
     "@iconify-json/flagpack": "^1.1.14",
-    "@iconify-json/heroicons": "^1.1.20",
     "@iconify-json/mdi": "^1.1.66",
     "@iconify-json/simple-icons": "^1.1.99",
     "@nuxt/content": "^2.12.1",

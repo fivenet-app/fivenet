@@ -1,0 +1,79 @@
+<link rel="stylesheet" href="/css/herofull-pattern.css" />
+
+<style>
+    .loader {
+        position: fixed;
+        left: 0;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        z-index: 99999999;
+        user-select: none;
+    }
+    .loader-overlay {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        min-height: 100vh;
+        flex-direction: column;
+    }
+    .loader-overlay-img {
+        margin: 25px auto;
+    }
+    .loader-overlay img {
+        max-width: 92px;
+    }
+    .loader-spinner {
+        margin: 25px auto;
+    }
+    .loader-spinner svg {
+        height: 92px;
+        max-width: 92px;
+        fill: #ffffff;
+        animation-name: spin;
+        animation-duration: 900ms;
+        animation-iteration-count: infinite;
+        animation-timing-function: linear;
+    }
+
+    @-moz-keyframes spin {
+        from {
+            -moz-transform: rotate(0deg);
+        }
+        to {
+            -moz-transform: rotate(360deg);
+        }
+    }
+    @-webkit-keyframes spin {
+        from {
+            -webkit-transform: rotate(0deg);
+        }
+        to {
+            -webkit-transform: rotate(360deg);
+        }
+    }
+    @keyframes spin {
+        from {
+            transform: rotate(0deg);
+        }
+        to {
+            transform: rotate(360deg);
+        }
+    }
+</style>
+
+<div class="loader hero">
+    <div class="loader-overlay hero-overlay">
+        <div class="loader-overlay-img">
+            <img src="/images/logo-200x200.png" alt="FiveNet Logo" />
+        </div>
+
+        <div class="loader-spinner">
+            <!-- Material Design Icons - Loading Icon -->
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                <path d="M12,4V2A10,10 0 0,0 2,12H4A8,8 0 0,1 12,4Z" />
+            </svg>
+        </div>
+    </div>
+</div>

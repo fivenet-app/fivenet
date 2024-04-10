@@ -2086,11 +2086,5 @@
                 "size_too_big": "Datei darf nicht größer als {size}MB sein."
             }
         }
-    },
-    "help": {
-        "hero": {
-            "title": "Brauchen Sie Hilfe mit FiveNet?",
-            "description": "Lesen Sie hier die Dokumentation, um mehr über die verfügbaren Funktionen zu erfahren."
-        }
     }
 }

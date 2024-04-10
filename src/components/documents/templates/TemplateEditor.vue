@@ -600,7 +600,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                 <SingleHint
                     class="min-w-full"
                     hint-id="template_editor_templating"
-                    to="https://github.com/galexrt/fivenet/blob/main/docs/features/documents_templates.md"
+                    to="https://fivenet.app/user-guides/documents/templates"
                     :external="true"
                     link-target="_blank"
                 />

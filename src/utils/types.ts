@@ -13,8 +13,6 @@ export type CardElement = {
     to?: RoutesNamedLocations;
     permission?: Perms;
     icon?: string;
-    iconForeground?: string;
-    iconBackground?: string;
 };
 
 export type CardElements = CardElement[];

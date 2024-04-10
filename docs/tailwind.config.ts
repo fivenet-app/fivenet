@@ -1,27 +1,27 @@
-import type { Config } from 'tailwindcss'
-import defaultTheme from 'tailwindcss/defaultTheme'
+import type { Config } from 'tailwindcss';
+import defaultTheme from 'tailwindcss/defaultTheme';
 
 export default <Partial<Config>>{
-  theme: {
-    extend: {
-      fontFamily: {
-        sans: ['DM Sans', ...defaultTheme.fontFamily.sans]
-      },
-      colors: {
-        green: {
-          50: '#EFFDF5',
-          100: '#D9FBE8',
-          200: '#B3F5D1',
-          300: '#75EDAE',
-          400: '#00DC82',
-          500: '#00C16A',
-          600: '#00A155',
-          700: '#007F45',
-          800: '#016538',
-          900: '#0A5331',
-          950: '#052e16'
-        }
-      }
-    }
-  }
-}
+    theme: {
+        extend: {
+            fontFamily: {
+                sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
+            },
+            colors: {
+                malibu: {
+                    '50': '#f0f9ff',
+                    '100': '#dff2ff',
+                    '200': '#b8e5ff',
+                    '300': '#65cbff',
+                    '400': '#33bcfd',
+                    '500': '#09a4ee',
+                    '600': '#0082cc',
+                    '700': '#0068a5',
+                    '800': '#045888',
+                    '900': '#0a4970',
+                    '950': '#062e4b',
+                },
+            },
+        },
+    },
+};

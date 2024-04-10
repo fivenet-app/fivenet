@@ -1,4 +1,3 @@
-import { resolve } from 'path';
 import { STRATEGIES } from 'vue-i18n-routing';
 
 const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
@@ -16,15 +15,6 @@ export default defineNuxtConfig({
         '@nuxthq/studio',
         'nuxt-og-image',
     ],
-    content: {
-        sources: {
-            content: {
-                driver: 'fs',
-                prefix: '/docs',
-                base: resolve(__dirname, 'content'),
-            },
-        },
-    },
     hooks: {
         // Define `@nuxt/ui` components as global to use them in `.md` (feel free to add those you need)
         'components:extend': (components) => {
@@ -34,7 +24,8 @@ export default defineNuxtConfig({
         },
     },
     ui: {
-        icons: ['mdi', 'heroicons', 'simple-icons', 'flagpack'],
+        icons: ['mdi', 'simple-icons', 'flagpack'],
+        safelistColors: ['primary', 'malibu'],
     },
     routeRules: {
         '/api/search.json': { prerender: true },
