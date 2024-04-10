@@ -63,6 +63,7 @@ export default defineNuxtConfig({
             compilerOptions: {
                 removeComments: true,
             },
+            exclude: ['../docs'],
         },
     },
     imports: {

@@ -13,6 +13,7 @@ import 'vue-json-pretty/lib/styles.css';
 import { useNotificatorStore } from '~/store/notificator';
 import DatePicker from '~/components/partials/DatePicker.vue';
 import Pagination from '../partials/Pagination.vue';
+import type { JSONDataType } from 'vue-json-pretty/types/utils';
 
 const { $grpc } = useNuxtApp();
 
@@ -302,7 +303,7 @@ const columns = [
                 <span v-if="!row.data">N/A</span>
                 <span v-else>
                     <VueJsonPretty
-                        :data="JSON.parse(row.data!)"
+                        :data="JSON.parse(row.data!) as JSONDataType"
                         :show-icon="true"
                         :show-length="true"
                         :virtual="true"
