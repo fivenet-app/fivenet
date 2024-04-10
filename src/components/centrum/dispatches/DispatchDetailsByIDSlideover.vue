@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
+import { useCentrumStore } from '~/store/centrum';
 
 const props = defineProps<{
     dispatchId: string;
@@ -12,11 +13,22 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const centrumStore = useCentrumStore();
+const { dispatches } = storeToRefs(centrumStore);
+
 const { isOpen } = useSlideover();
 
-const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
+const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId), {
+    immediate: false,
+});
 
 async function getDispatch(id: string): Promise<GetDispatchResponse> {
+    if (dispatches.value.has(id)) {
+        return {
+            dispatch: dispatches.value.get(id),
+        };
+    }
+
     try {
         const call = $grpc.getCentrumClient().getDispatch({ id });
         const { response } = await call;

@@ -35,6 +35,8 @@ async function sendTestNotifications(): Promise<void> {
         });
     });
 }
+
+const version = __APP_VERSION__;
 </script>
 
 <template>
@@ -46,7 +48,7 @@ async function sendTestNotifications(): Promise<void> {
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
-                {{ settings.version }}
+                {{ version }}/ {{ settings.version }}
             </UFormGroup>
 
             <UFormGroup

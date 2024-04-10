@@ -60,7 +60,7 @@
     },
     "devDependencies": {
         "@nuxt/devtools": "1.1.5",
-        "@nuxt/eslint-config": "^0.3.5",
+        "@nuxt/eslint-config": "^0.3.6",
         "@nuxtjs/i18n": "8.3.0",
         "@nuxtjs/tailwindcss": "6.11.4",
         "@pinia-plugin-persistedstate/nuxt": "1.2.0",

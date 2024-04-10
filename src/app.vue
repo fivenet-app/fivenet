@@ -52,7 +52,6 @@ if (__APP_VERSION__ !== settings.version) {
 }
 
 const appConfig = useAppConfig();
-
 // Set theme colors into app config
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
