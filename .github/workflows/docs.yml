@@ -36,9 +36,11 @@ jobs:
             ${{ runner.os }}-node-docs-
 
       - name: Get JS dependencies
+        working-directory: ./docs
         run: yarn
 
       - name: Build site
+        working-directory: ./docs
         env:
           NUXT_PUBLIC_SITE_URL: "https://fivenet.app/"
         run: yarn build
@@ -46,5 +48,5 @@ jobs:
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         with:
-          publish_dir: ./.output/public/
+          publish_dir: ./docs/.output/public/
           cname: fivenet.app
