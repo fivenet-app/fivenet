@@ -1,30 +1,39 @@
 <script setup lang="ts">
+import { useSettingsStore } from '~/store/settings';
+
 const { isHelpSlideoverOpen } = useDashboard();
 const { metaSymbol } = useShortcuts();
 
 const { t } = useI18n();
 
+const settingsStore = useSettingsStore();
+const { isNUIAvailable } = storeToRefs(settingsStore);
+
 const shortcuts = ref(false);
 const query = ref('');
 
-const links = [
-    {
-        label: t('common.shortcuts'),
-        icon: 'i-mdi-key',
-        trailingIcon: 'i-mdi-arrow-right',
-        color: 'gray',
-        onClick: () => {
-            shortcuts.value = true;
+const links = computed(() =>
+    [
+        {
+            label: t('common.shortcuts'),
+            icon: 'i-mdi-key',
+            trailingIcon: 'i-mdi-arrow-right',
+            color: 'gray',
+            onClick: () => {
+                shortcuts.value = true;
+            },
         },
-    },
-    {
-        label: t('common.help'),
-        icon: 'i-mdi-book-open-blank-variant-outline',
-        trailingIcon: 'i-mdi-external-link',
-        to: 'https://fivenet.app/docs',
-        external: true,
-    },
-];
+        !isNUIAvailable.value
+            ? {
+                  label: t('common.help'),
+                  icon: 'i-mdi-book-open-blank-variant-outline',
+                  trailingIcon: 'i-mdi-external-link',
+                  to: 'https://fivenet.app/docs',
+                  external: true,
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 
 const categories = computed(() => [
     {
