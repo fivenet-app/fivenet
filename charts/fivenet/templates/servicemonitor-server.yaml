@@ -2,7 +2,7 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
-  name: {{ include "fivenet.fullname" . }}
+  name: {{ include "fivenet.fullname" . }}-server
 {{- if .Values.server.serviceMonitor.namespace }}
   namespace: {{ .Values.server.serviceMonitor.namespace }}
 {{- end }}
