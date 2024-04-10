@@ -122,6 +122,7 @@ gen-sql:
 
 .PHONY: gen-proto
 gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
+mkdir -p ./gen/go/proto
 	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
@@ -143,12 +144,13 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 		-exec protoc-go-inject-tag \
 			-input={} \;
 
+	mkdir -p ./gen/ts
 	PATH="$$PATH:./internal/cmd/protoc-gen-fronthelper/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--ts_out=./gen/ts \
-		--ts_opt=optimize_speed,long_type_bigint \
+		--ts_opt=optimize_speed,long_type_number,force_server_none \
 		--fronthelper_opt=paths=source_relative \
 		--fronthelper_out=./gen/ts \
 		$(shell find proto/ -iname "*.proto")

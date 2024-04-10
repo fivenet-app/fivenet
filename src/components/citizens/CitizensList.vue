@@ -36,7 +36,7 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`citizens-${page.value}-${jsonStringify(query.value)}`, () => listCitizens());
+} = useLazyAsyncData(`citizens-${page.value}-${JSON.stringify(query.value)}`, () => listCitizens());
 
 async function listCitizens(): Promise<ListCitizensResponse> {
     try {
@@ -56,7 +56,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             req.trafficInfractionPoints = query.value.trafficInfractionPoints ?? 0;
         }
         if (query.value.openFines) {
-            req.openFines = BigInt(query.value.openFines?.toString());
+            req.openFines = query.value.openFines ?? 0;
         }
         if (query.value.dateofbirth) {
             req.dateofbirth = query.value.dateofbirth;
@@ -309,8 +309,8 @@ defineShortcuts({
                 <PhoneNumberBlock :number="citizen.phoneNumber" />
             </template>
             <template #openFines-data="{ row: citizen }">
-                <template v-if="(citizen.props?.openFines ?? 0n) > 0n">
-                    {{ $n(parseInt((citizen?.props?.openFines ?? 0n).toString()), 'currency') }}
+                <template v-if="(citizen.props?.openFines ?? 0) > 0">
+                    {{ $n(parseInt((citizen?.props?.openFines ?? 0).toString()), 'currency') }}
                 </template>
             </template>
             <template #height-data="{ row: citizen }"> {{ citizen.height }}cm </template>

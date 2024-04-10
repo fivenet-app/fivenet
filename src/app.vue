@@ -4,18 +4,14 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
-import Sounds from './components/overlays/Sounds.vue';
+import CookieControl from '~/components/partials/CookieControl.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
-const settings = useSettingsStore();
-const { isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
-
-const route = useRoute();
-
 const toast = useToast();
 
-const { locale: cookieLocale } = useCookieControl();
+const settings = useSettingsStore();
+const { isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 const colorMode = useColorMode();
 
@@ -60,6 +56,10 @@ const appConfig = useAppConfig();
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
 
+async function setLocaleGlobally(locale: string): Promise<void> {
+    settings.setLocale(locale);
+}
+
 // Set user setting locale on load of app
 if (settings.locale !== null) {
     locale.value = settings.locale;
@@ -68,34 +68,20 @@ if (settings.locale !== null) {
 }
 setLocaleGlobally(locale.value);
 
-async function setLocaleGlobally(locale: string): Promise<void> {
-    settings.setLocale(locale);
-
-    // Cookie Banner Locale handling
-    switch (locale.split('-', 1)[0]) {
-        case 'de':
-            cookieLocale.value = 'de';
-            break;
-        default:
-            cookieLocale.value = 'en';
-            break;
-    }
-}
+watch(locale, () => setLocaleGlobally(locale.value));
 
 async function onBeforeEnter(): Promise<void> {
     await finalizePendingLocaleChange();
 }
 
-watch(locale, () => setLocaleGlobally(locale.value));
-
 // NUI message handling
 onMounted(async () => {
-    if (isNUIAvailable.value) {
+    if (process.client && isNUIAvailable.value) {
         window.addEventListener('message', onNUIMessage);
     }
 });
 onBeforeUnmount(async () => {
-    if (isNUIAvailable.value) {
+    if (process.client && isNUIAvailable.value) {
         window.removeEventListener('message', onNUIMessage);
     }
 });
@@ -118,6 +104,8 @@ watch(updateAvailable, async () => {
         color: 'amber',
     });
 });
+
+const route = useRoute();
 </script>
 
 <template>
@@ -137,13 +125,13 @@ watch(updateAvailable, async () => {
         <UNotifications />
         <UModals />
         <USlideovers />
-        <Sounds />
+
+        <ClientOnly>
+            <LazyOverlaysSounds />
+        </ClientOnly>
 
         <NotificationProvider />
 
-        <CookieControl
-            v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions"
-            :locale="cookieLocale"
-        />
+        <CookieControl v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
     </div>
 </template>

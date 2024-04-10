@@ -8,7 +8,7 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 export default defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
-    ssr: false,
+    ssr: true,
     extends: ['@nuxt/ui-pro'],
     // @ts-ignore ts2589 one of the modules probably has a typing issue
     modules: [
@@ -22,7 +22,6 @@ export default defineNuxtConfig({
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         '@vueuse/nuxt',
-        '@dargmuesli/nuxt-cookie-control',
         'nuxt-update',
     ],
     ui: {
@@ -172,37 +171,6 @@ export default defineNuxtConfig({
         storage: 'localStorage',
         debug: false,
     },
-    cookieControl: {
-        barPosition: 'bottom-full',
-        closeModalOnClickOutside: true,
-        isControlButtonEnabled: true,
-        colors: {
-            // Tailwind CSS - bg-accent-600
-            modalBackground: '#1f236e',
-            controlButtonBackground: '#1f236e',
-            // Tailwind CSS - bg-accent-600 + bg-accent-100/10
-            controlButtonHoverBackground: '#32357b',
-            controlButtonIconColor: '#fff',
-            controlButtonIconHoverColor: '#fff',
-            modalTextColor: '#fff',
-        },
-        locales: ['en', 'de'],
-        cookies: {
-            necessary: [],
-            optional: [
-                {
-                    name: 'Social Login Cookies',
-                    description: 'Cookies used for FiveNet Social Login functionality.',
-                    id: 'social_login',
-                    targetCookieIds: ['fivenet_oauth2_state'],
-                    links: {
-                        '/privacy_policy': 'Privacy Policy',
-                        '/imprint': 'Imprint',
-                    },
-                },
-            ],
-        },
-    },
     update: {
         version: appVersion,
         checkInterval: 110,
@@ -235,5 +203,11 @@ export default defineNuxtConfig({
     },
     colorMode: {
         preference: 'dark',
+    },
+    nitro: {
+        prerender: {
+            crawlLinks: true,
+            routes: ['/help'],
+        },
     },
 });

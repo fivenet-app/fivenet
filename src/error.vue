@@ -37,7 +37,7 @@ function copyError(): void {
         return;
     }
 
-    copyToClipboardWrapper(jsonStringify(props.error));
+    copyToClipboardWrapper(JSON.stringify(props.error));
 }
 </script>
 

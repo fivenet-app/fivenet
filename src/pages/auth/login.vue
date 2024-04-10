@@ -32,7 +32,7 @@ onMounted(async () => {
     // `t` and `exp` set, means social login was successful
     if (query.t && query.t !== '' && query.exp && query.exp !== '') {
         console.info('Login: Got access token via query param (oauth2 login)');
-        setAccessToken(query.t as string, BigInt(query.exp as string));
+        setAccessToken(query.t as string, query.exp as string);
 
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },

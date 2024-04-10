@@ -18,9 +18,7 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
             state: '',
             category: undefined,
         }) as DocumentEditorState,
-    persist: {
-        serializer: jsonSerializer,
-    },
+    persist: true,
     actions: {
         save(doc: DocumentEditorState): void {
             this.title = doc.title;

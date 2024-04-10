@@ -22,7 +22,7 @@ export const zodDurationSchema = z
         }
 
         const val = toDuration(duration);
-        if (val.seconds < 0 || val.nanos < 0 || (val.seconds === 0n && val.nanos > 0)) {
+        if (val.seconds < 0 || val.nanos < 0 || (val.seconds === 0 && val.nanos > 0)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'zodI18n.custom.duration.invalid',

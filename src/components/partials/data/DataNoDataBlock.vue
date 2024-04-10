@@ -22,23 +22,21 @@ function click() {
 </script>
 
 <template>
-    <div class="w-full">
-        <UButton
-            variant="ghost"
-            :disabled="!focus"
-            :icon="icon"
-            block
-            class="relative block w-full rounded-lg border border-dashed border-base-300 p-8 text-center"
-            @click="click()"
-        >
-            <span class="mt-2 block text-sm font-semibold">
-                <span v-if="message">
-                    {{ message }}
-                </span>
-                <span v-else>
-                    {{ $t('common.not_found', [type ?? $t('common.data')]) }}
-                </span>
+    <UButton
+        variant="ghost"
+        :disabled="!focus"
+        :icon="icon"
+        block
+        class="relative block w-full rounded-lg border border-dashed border-base-300 p-8 text-center"
+        @click="click()"
+    >
+        <span class="mt-2 block text-sm font-semibold">
+            <span v-if="message">
+                {{ message }}
             </span>
-        </UButton>
-    </div>
+            <span v-else>
+                {{ $t('common.not_found', [type ?? $t('common.data')]) }}
+            </span>
+        </span>
+    </UButton>
 </template>

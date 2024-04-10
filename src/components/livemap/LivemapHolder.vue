@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import CentrumSidebar from '~/components/centrum/livemap/CentrumSidebar.vue';
 import { setWaypoint } from '~/composables/nui';
 import { useLivemapStore } from '~/store/livemap';
 
@@ -23,5 +22,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <CentrumSidebar @goto="goto($event)" />
+    <ClientOnly>
+        <LazyCentrumLivemapCentrumSidebar @goto="goto($event)" />
+    </ClientOnly>
 </template>

@@ -51,10 +51,10 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = false;
             this.loginError = errorMessage;
         },
-        setAccessToken(accessToken: null | string, expiration: null | bigint | Date): void {
+        setAccessToken(accessToken: null | string, expiration: null | string | Date): void {
             this.accessToken = accessToken;
-            if (typeof expiration === 'bigint') {
-                expiration = new Date(expiration.toString());
+            if (typeof expiration === 'string') {
+                expiration = new Date(expiration);
             }
             this.accessTokenExpiration = expiration;
         },

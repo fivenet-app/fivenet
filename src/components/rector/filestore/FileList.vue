@@ -153,7 +153,7 @@ const columns = [
                         />
                     </template>
                     <template #fileSize-data="{ row: file }">
-                        {{ formatBytesBigInt(file.size) }}
+                        {{ formatBytes(file.size) }}
                     </template>
                     <template #updatedAt-data="{ row: file }">
                         <GenericTime :value="toDate(file.lastModified)" />

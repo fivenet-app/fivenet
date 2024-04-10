@@ -122,6 +122,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :title="$t('components.auth.RegistrationForm.create_error')"
             :message="accountError.startsWith('errors.') ? $t(accountError) : accountError"
             color="red"
+            :close-button="{
+                icon: 'i-mdi-window-close',
+                color: 'gray',
+                variant: 'link',
+                padded: false,
+            }"
+            @close="accountError = ''"
         />
     </div>
 </template>

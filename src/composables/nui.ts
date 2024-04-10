@@ -11,7 +11,7 @@ function getParentResourceName(): string {
 }
 
 export async function fetchNUI<T = any, V = any>(event: string, data: T): Promise<V> {
-    const body = jsonStringify(data);
+    const body = JSON.stringify(data);
     console.debug(`NUI: Fetch ${event}: ${body}`);
     // @ts-ignore FiveM NUI functions
     const resp = await fetch(`https://${getParentResourceName()}/${event}`, {

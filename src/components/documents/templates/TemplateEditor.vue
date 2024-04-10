@@ -430,7 +430,7 @@ function setValuesFromTemplate(tpl: Template): void {
 
     const ctAccess = tpl.contentAccess;
     if (ctAccess !== undefined) {
-        let accessId = 0n;
+        let accessId = 0;
 
         ctAccess.users.forEach((access) => {
             const id = accessId.toString();

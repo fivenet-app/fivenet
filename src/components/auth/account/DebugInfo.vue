@@ -18,7 +18,9 @@ const notifications = useNotificatorStore();
 async function resetLocalStorage(): Promise<void> {
     clearAuthInfo();
 
-    window.localStorage.clear();
+    if (process.client) {
+        window.localStorage.clear();
+    }
 
     await navigateTo({ name: 'index' });
 }

@@ -2,6 +2,10 @@ import { type RouteLocationNormalized } from 'vue-router';
 import { useSettingsStore } from '~/store/settings';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
+    if (import.meta.server) {
+        return;
+    }
+
     const route = from ?? to;
 
     if (route.query?.nui !== undefined) {

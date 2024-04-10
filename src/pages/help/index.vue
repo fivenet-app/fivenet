@@ -17,5 +17,8 @@ definePageMeta({
                 <MDC :value="$t('help.hero.title')" />
             </template>
         </ULandingHero>
+
+        <NuxtLink to="/help/citizens"> Citizens </NuxtLink>
+        <NuxtLink to="/help/vehicles"> Vehicles </NuxtLink>
     </div>
 </template>

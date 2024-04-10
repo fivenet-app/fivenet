@@ -35,11 +35,16 @@ watch(chars, async () => {
 </script>
 
 <template>
-    <DataPendingBlock v-if="loading" :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])" />
-    <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
-    <DataNoDataBlock v-else-if="!chars" :title="$t('common.not_found', [$t('common.character', 2)])" />
-    <template v-else>
+    <div>
+        <DataPendingBlock
+            v-if="loading"
+            :message="$t('common.loading', [`${$t('common.your')} ${$t('common.character', 2)}`])"
+        />
+        <DataErrorBlock v-else-if="error" :title="$t('common.not_found', [$t('common.character', 2)])" :retry="refresh" />
+        <DataNoDataBlock v-else-if="!chars" :title="$t('common.not_found', [$t('common.character', 2)])" />
+
         <UCarousel
+            v-else
             v-slot="{ item }"
             :items="chars"
             arrows
@@ -55,5 +60,5 @@ watch(chars, async () => {
         >
             <CharacterSelectorCard :key="item.userId" :char="item" />
         </UCarousel>
-    </template>
+    </div>
 </template>

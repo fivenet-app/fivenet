@@ -31,7 +31,3 @@ export function formatBytes(bytes: number, decimals = 2) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
-
-export function formatBytesBigInt(bytes: bigint, decimals = 2) {
-    return formatBytes(parseInt(bytes.toString()), decimals);
-}

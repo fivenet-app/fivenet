@@ -109,6 +109,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             :title="$t('components.auth.ForgotPassword.create_error')"
             :message="getErrorMessage(accountError)"
             color="red"
+            :close-button="{
+                icon: 'i-mdi-window-close',
+                color: 'gray',
+                variant: 'link',
+                padded: false,
+            }"
+            @close="accountError = ''"
         />
     </div>
 </template>

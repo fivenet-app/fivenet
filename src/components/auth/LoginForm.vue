@@ -14,10 +14,8 @@ const authStore = useAuthStore();
 const { loginError } = storeToRefs(authStore);
 const { doLogin } = authStore;
 
-const configStore = useSettingsStore();
-const { isNUIAvailable } = storeToRefs(configStore);
-
-const { cookiesEnabledIds } = useCookieControl();
+const settingsStore = useSettingsStore();
+const { hasCookiesAccepted, isNUIAvailable } = storeToRefs(settingsStore);
 
 const schema = z.object({
     username: z
@@ -41,24 +39,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     await doLogin(event.data.username, event.data.password).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
-const socialLoginEnabled = ref(false);
-if (isNUIAvailable.value) {
-    socialLoginEnabled.value = true;
-} else if (cookiesEnabledIds.value?.includes('social_login')) {
-    socialLoginEnabled.value = true;
-}
+const socialLoginEnabled = ref(hasCookiesAccepted.value && !isNUIAvailable.value);
 
-watch(
-    () => cookiesEnabledIds.value,
-    (current, previous) => {
-        if (!previous?.includes('social_login') && current?.includes('social_login')) {
-            socialLoginEnabled.value = true;
-        } else {
-            socialLoginEnabled.value = false;
-        }
-    },
-    { deep: true },
-);
+watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.value && !isNUIAvailable.value));
 </script>
 
 <template>
@@ -100,20 +83,23 @@ watch(
                 <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
                     {{ $t('components.auth.LoginForm.social_login_disabled') }}
                 </p>
-                <div v-for="provider in appConfig.login.providers" :key="provider.name">
-                    <UButton v-if="!socialLoginEnabled" block :disabled="!socialLoginEnabled || !canSubmit">
-                        {{ provider.label }} {{ $t('common.login') }}
-                    </UButton>
-                    <UButton
-                        v-else
-                        block
-                        :external="true"
-                        :to="`/api/oauth2/login/${provider.name}`"
-                        :disabled="!socialLoginEnabled || !canSubmit"
-                    >
-                        {{ provider.label }} {{ $t('common.login') }}
-                    </UButton>
-                </div>
+
+                <template v-else>
+                    <div v-for="provider in appConfig.login.providers" :key="provider.name">
+                        <UButton v-if="!socialLoginEnabled" block :disabled="!socialLoginEnabled || !canSubmit">
+                            {{ provider.label }} {{ $t('common.login') }}
+                        </UButton>
+                        <UButton
+                            v-else
+                            block
+                            :external="true"
+                            :to="`/api/oauth2/login/${provider.name}`"
+                            :disabled="!socialLoginEnabled || !canSubmit"
+                        >
+                            {{ provider.label }} {{ $t('common.login') }}
+                        </UButton>
+                    </div>
+                </template>
             </template>
         </div>
 
@@ -124,6 +110,13 @@ watch(
             :title="$t('components.auth.LoginForm.login_error')"
             :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
             color="red"
+            :close-button="{
+                icon: 'i-mdi-window-close',
+                color: 'gray',
+                variant: 'link',
+                padded: false,
+            }"
+            @close="loginError = ''"
         />
 
         <div class="mt-6">

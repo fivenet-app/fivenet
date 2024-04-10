@@ -119,7 +119,7 @@ Event: \`${EventType[logEntry.state]}\`
     if (logEntry.data) {
         text += `Data:
 \`\`\`json
-${jsonStringify(jsonParse(logEntry.data!), 2)}
+${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
 \`\`\`
 `;
     } else {
@@ -302,7 +302,7 @@ const columns = [
                 <span v-if="!row.data">N/A</span>
                 <span v-else>
                     <VueJsonPretty
-                        :data="jsonParse(row.data!)"
+                        :data="JSON.parse(row.data!)"
                         :show-icon="true"
                         :show-length="true"
                         :virtual="true"

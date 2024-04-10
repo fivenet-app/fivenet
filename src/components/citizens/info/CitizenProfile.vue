@@ -225,13 +225,13 @@ defineShortcuts({
                                                     <dd
                                                         class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300"
                                                     >
-                                                        <span v-if="(user.props?.openFines ?? 0n) <= 0n">
+                                                        <span v-if="(user.props?.openFines ?? 0) <= 0">
                                                             {{ $t('common.no_open_fine') }}
                                                         </span>
                                                         <span v-else class="text-error-500">
                                                             {{
                                                                 $n(
-                                                                    parseInt((user?.props?.openFines ?? 0n).toString()),
+                                                                    parseInt((user?.props?.openFines ?? 0).toString()),
                                                                     'currency',
                                                                 )
                                                             }}

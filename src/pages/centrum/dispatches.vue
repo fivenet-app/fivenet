@@ -2,8 +2,6 @@
 import { Pane, Splitpanes } from 'splitpanes';
 import { z } from 'zod';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
-import BaseMap from '~/components/livemap/BaseMap.vue';
-import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -103,11 +101,13 @@ defineShortcuts({
             <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
                 <Splitpanes class="relative">
                     <Pane min-size="25">
-                        <BaseMap :map-options="{ zoomControl: false }">
-                            <template #default>
-                                <MapTempMarker />
-                            </template>
-                        </BaseMap>
+                        <ClientOnly>
+                            <LazyLivemapBaseMap :map-options="{ zoomControl: false }">
+                                <template #default>
+                                    <LazyLivemapMapTempMarker />
+                                </template>
+                            </LazyLivemapBaseMap>
+                        </ClientOnly>
                     </Pane>
 
                     <Pane size="65">
