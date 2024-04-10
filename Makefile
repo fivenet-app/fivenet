@@ -122,7 +122,7 @@ gen-sql:
 
 .PHONY: gen-proto
 gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
-mkdir -p ./gen/go/proto
+	mkdir -p ./gen/go/proto
 	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
 	npx protoc \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
@@ -135,7 +135,7 @@ mkdir -p ./gen/go/proto
 		--validate_out="lang=go:./gen/go/proto" \
 		--customizer_opt=paths=source_relative \
 		--customizer_out=./gen/go/proto \
-		--doc_opt=html,grpc-api.html \
+		--doc_opt=markdown,grpc-api.md \
 		--doc_out=./docs \
 		$(shell find proto/ -iname "*.proto")
 
@@ -177,7 +177,7 @@ fmt-js:
 gen-licenses: go-licenses
 	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
 	go-licenses report ./... --ignore $$($(GO) list -m) --include_tests \
-        --ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
+		--ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
 		--template internal/scripts/go-licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
 
 .PHONY: gen-tiles

@@ -1,0 +1,38 @@
+{
+    "pages": {
+        "index": {
+            "welcome": "Willkommen bei FiveNet!",
+            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Karte Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit.",
+            "whats_new_in": "Siehe die Neuerungen in Version {version}"
+        }
+    },
+    "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
+    "common": {
+        "home": "Startseite",
+        "docs": "Dokumentation",
+        "toc": "Table of Contents",
+        "community": "Community",
+        "language": "Sprache"
+    },
+    "notifications": {
+        "language_switched": {
+            "title": "Sprache gewechselt",
+            "content": "Sprache wird zu {name} gewechselt."
+        }
+    },
+    "docs": {
+        "toc": {
+            "bottom": {
+                "edit": "Editier die Seite",
+                "star": "Star on GitHub"
+            }
+        }
+    },
+    "components": {
+        "CookieControl": {
+            "title": "Wir nutzen Cookies!",
+            "subtitle": "Der Hauptzweck unserer Cookies besteht darin, für analytische Zwecke Navigationen auf der Website zu tracken.",
+            "description": "Der beste Weg die Website Daten zu entfernen, ist es die Browser-eigene \"Website Daten löschen\"-Funktion zu nutzen."
+        }
+    }
+}

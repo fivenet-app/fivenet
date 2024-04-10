@@ -72,6 +72,7 @@ export const useSettingsStore = defineStore('settings', {
         paths: [
             'version',
             'locale',
+            'cookiesState',
             'nuiEnabled',
             'nuiResourceName',
             'livemap',

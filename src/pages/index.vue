@@ -2,6 +2,7 @@
 import type { Button } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
+import '~/assets/css/herofull-pattern.css';
 
 useHead({
     title: 'common.home',

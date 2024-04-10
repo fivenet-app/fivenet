@@ -5,5 +5,5 @@ defineOptions({
 </script>
 
 <template>
-    <img src="/images/logo.png" alt="FiveNet Logo" title="FiveNet" class="themeBaddieOrange:invert" />
+    <img src="/images/logo.png" alt="FiveNet Logo" title="FiveNet" />
 </template>

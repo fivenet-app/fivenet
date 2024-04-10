@@ -46,10 +46,6 @@ const open = ref(cookiesState.value === undefined);
                     <UButton variant="link" block class="flex-1" :to="links.imprint" :external="true">
                         {{ $t('common.imprint') }}
                     </UButton>
-
-                    <UButton variant="link" block class="flex-1" to="/api/clear-site-data">
-                        {{ $t('components.CookieControl.clear_data') }}
-                    </UButton>
                 </UButtonGroup>
 
                 <p class="text-xs">{{ $t('components.CookieControl.description') }}</p>

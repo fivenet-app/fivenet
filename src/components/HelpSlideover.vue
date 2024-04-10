@@ -17,11 +17,13 @@ const links = [
             shortcuts.value = true;
         },
     },
-    /*{
+    {
         label: t('common.help'),
         icon: 'i-mdi-book-open-blank-variant-outline',
-        to: '/help',
-    },*/
+        trailingIcon: 'i-mdi-external-link',
+        to: 'https://fivenet.app/docs',
+        external: true,
+    },
 ];
 
 const categories = computed(() => [

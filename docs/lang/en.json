@@ -1,0 +1,43 @@
+{
+    "pages": {
+        "index": {
+            "welcome": "Welcome to FiveNet!",
+            "subtext": "From searching the state's citizen and vehicles database, filling documents for investigations, court, and a map of your colleagues and dispatches. All that and more is (mostly) ready in this net, the FiveNet.",
+            "whats_new_in": "See what's new in {version}"
+        }
+    },
+    "copyright": "Copyright © {year} Galexrt All rights reserved.",
+    "common": {
+        "home": "Home",
+        "docs": "Docs",
+        "toc": "Table of Contents",
+        "community": "Community",
+        "language": "Language",
+        "close": "Close",
+        "decline": "Decline",
+        "accept": "Accept",
+        "imprint": "Imprint",
+        "privacy_policy": "Privacy Policy"
+    },
+    "notifications": {
+        "language_switched": {
+            "title": "Language switched",
+            "content": "The language will be switched to {name}."
+        }
+    },
+    "docs": {
+        "toc": {
+            "bottom": {
+                "edit": "Edit this page",
+                "star": "Star on GitHub"
+            }
+        }
+    },
+    "components": {
+        "CookieControl": {
+            "title": "We use cookies!",
+            "subtitle": "The main purpose of our cookies is to have a basic user tracking for analytical purposes.",
+            "description": "The best way to remove this websites data is to use the clear website data function of your browser."
+        }
+    }
+}
