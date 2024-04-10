@@ -1,0 +1,90 @@
+name: Helm and Docs Publish
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  helm-release:
+    # Depending on default permission settings for your org (contents being read-only or read-write for workloads), you will have to add permissions
+    # see: https://docs.github.com/en/actions/security-guides/automatic-token-authentication#modifying-the-permissions-for-the-github_token
+    permissions:
+      contents: write
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config user.name "$GITHUB_ACTOR"
+          git config user.email "$GITHUB_ACTOR@users.noreply.github.com"
+
+      - name: Install Helm
+        uses: azure/setup-helm@v4
+        with:
+          version: v3.8.1
+
+      - name: Run chart-releaser
+        uses: helm/chart-releaser-action@v1.6.0
+        env:
+          CR_TOKEN: "${{ secrets.GITHUB_TOKEN }}"
+
+  docs:
+    needs: helm
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    concurrency:
+      group: ${{ github.workflow }}-${{ github.ref }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+
+      - uses: actions/checkout@v4
+        with:
+          submodules: true
+          sparse-checkout: |
+            index.yaml
+          path: 'gh-pages'
+
+      - name: Cache dependencies
+        uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-node-docs-${{ hashFiles('**/package-lock.json') }}
+          restore-keys: |
+            ${{ runner.os }}-node-docs-
+
+      - name: Get JS dependencies
+        working-directory: ./docs
+        run: yarn
+
+      - name: Build site
+        working-directory: ./docs
+        env:
+          NUXT_PUBLIC_SITE_URL: "https://fivenet.app/"
+          NUXT_UI_PRO_LICENSE: "${{ secrets.NUXT_UI_PRO_LICENSE }}"
+        run: |
+          yarn build
+          echo here
+          ls -ahl
+          echo before
+          ls -ahl ..
+          cp ../gh-pages/index.yaml ./.output/public/
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./docs/.output/public/
+          cname: fivenet.app
