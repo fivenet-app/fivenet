@@ -2,6 +2,12 @@ import { useAuthStore } from '~/store/auth';
 import slug from '~/utils/slugify';
 import type { Perms } from '~~/gen/ts/perms';
 
+/**
+ *
+ * @param perm one or more perms t ocheck
+ * @param mode default 'oneof'
+ * @returns boolean
+ */
 export function can(perm: Perms | Perms[], mode?: 'oneof' | 'all'): boolean {
     return checkPerm(perm, mode);
 }

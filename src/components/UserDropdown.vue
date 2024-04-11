@@ -36,11 +36,9 @@ const items = computed(() => [
             label: t('common.commandpalette'),
             icon: 'i-mdi-terminal',
             shortcuts: [metaSymbol.value, 'K'],
-            click: () => {
-                isDashboardSearchModalOpen.value = true;
-            },
+            click: () => (isDashboardSearchModalOpen.value = true),
         },
-        can('CanBeSuper') || can('SuperUser')
+        can(['CanBeSuper', 'SuperUser'])
             ? {
                   label: t('common.superuser') + ': ' + isSuperuser.value,
                   icon: 'i-mdi-square-root',
