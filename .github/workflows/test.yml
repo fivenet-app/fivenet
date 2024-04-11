@@ -38,4 +38,6 @@ jobs:
         run: yarn typecheck
 
       - name: Run yarn build
+        env:
+          NUXT_UI_PRO_LICENSE: "${{ secrets.NUXT_UI_PRO_LICENSE }}"
         run: yarn build
