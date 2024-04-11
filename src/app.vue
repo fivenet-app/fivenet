@@ -112,6 +112,7 @@ watch(updateAvailable, async () => {
         ],
         icon: 'i-mdi-update',
         color: 'amber',
+        timeout: 15000,
     });
 });
 
