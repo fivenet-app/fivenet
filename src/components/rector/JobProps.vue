@@ -25,7 +25,7 @@ const authStore = useAuthStore();
 const notifications = useNotificatorStore();
 
 const schema = z.object({
-    jobLogo: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images),
+    jobLogo: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images, true),
 });
 
 type Schema = z.output<typeof schema>;
@@ -116,10 +116,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
                         <template #right>
                             <UButton
+                                type="submit"
                                 trailing-icon="i-mdi-content-save"
                                 :disabled="!canSubmit"
                                 :loading="!canSubmit"
-                                @click="onSubmitThrottle"
                             >
                                 {{ $t('common.save', 1) }}
                             </UButton>

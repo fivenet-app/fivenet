@@ -36,9 +36,14 @@ export const zodDurationSchema = z
 export function zodFileSingleSchema(
     fileSize: number,
     types: string[],
+    optional?: boolean,
 ): z.ZodEffects<z.ZodType<FileList, z.ZodTypeDef, FileList>, FileList, FileList> {
     return z.custom<FileList>().superRefine((files, ctx) => {
-        if (!files || files.length === 0) {
+        if (optional && (!files || files.length === 0)) {
+            return true;
+        }
+
+        if (!optional && (!files || files.length === 0)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'zodI18n.custom.filelist.required',

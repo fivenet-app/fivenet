@@ -287,7 +287,7 @@ const tabs = [
                                     >
                                         <div class="flex flex-col gap-1">
                                             <div
-                                                v-for="(perm, idx) in state.perms.default"
+                                                v-for="(_, idx) in state.perms.default"
                                                 :key="idx"
                                                 class="flex items-center gap-1"
                                             >
