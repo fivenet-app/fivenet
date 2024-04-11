@@ -1,4 +1,3 @@
-import svgLoader from 'vite-svg-loader';
 import { STRATEGIES } from 'vue-i18n-routing';
 
 const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
@@ -56,8 +55,10 @@ export default defineNuxtConfig({
         exposeConfig: true,
         configPath: './tailwind.config.ts',
     },
+    colorMode: {
+        preference: 'dark',
+    },
     typescript: {
-        typeCheck: false,
         strict: true,
         tsConfig: {
             compilerOptions: {
@@ -84,7 +85,9 @@ export default defineNuxtConfig({
     },
     devtools: {
         enabled: true,
-        vscode: {},
+        vscode: {
+            enabled: true,
+        },
     },
     vite: {
         define: {
@@ -94,7 +97,6 @@ export default defineNuxtConfig({
             commonjsOptions: {
                 transformMixedEsModules: true,
             },
-            manifest: true,
             terserOptions: {
                 compress: {
                     drop_console: true,
@@ -103,10 +105,12 @@ export default defineNuxtConfig({
             },
         },
         server: {
-            hmr: {
-                protocol: 'ws',
-            },
             proxy: {
+                '/api/icons': {
+                    target: 'https://api.iconify.design',
+                    rewrite: (path) => path.replace(/^\/api\/icons/, ''),
+                    changeOrigin: true,
+                },
                 '/api': 'http://localhost:8080',
                 '/grpc': {
                     target: 'http://localhost:8181',
@@ -116,7 +120,6 @@ export default defineNuxtConfig({
                 },
             },
         },
-        plugins: [svgLoader()],
     },
     robots: {
         rules: {
@@ -148,7 +151,6 @@ export default defineNuxtConfig({
                 icon: 'i-flagpack-de',
             },
         ],
-        debug: false,
         lazy: true,
         langDir: './lang',
         defaultLocale: 'de',
@@ -165,14 +167,10 @@ export default defineNuxtConfig({
     },
     piniaPersistedstate: {
         storage: 'localStorage',
-        debug: false,
     },
     update: {
         version: appVersion,
         checkInterval: 110,
         path: '/api/version',
-    },
-    colorMode: {
-        preference: 'dark',
     },
 });

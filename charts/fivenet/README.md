@@ -57,6 +57,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `extraObjects` | Extra objects to deploy (value evaluated as a template) | `[]` |
 | `fivenet.config` | FiveNet config | `{"audit":{"retentionDays":90},"auth":{"superuserGroups":["projektleiter","teamleitung"],"superuserUsers":[]},"cache":{"refreshTime":"2m"},"database":{"connMaxIdleTime":"15m","connMaxLifetime":"60m","custom":{"columns":{"user":{"playtime":"playtime","visum":"visum"},"vehicle":{"model":"model"}},"conditions":{"user":{"filterEmptyName":false}}},"dsn":"DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin","maxIdleConns":5,"maxOpenConns":32},"discord":{"commands":{"enabled":true},"enabled":true,"groupSync":{"enabled":false,"mapping":{}},"presence":{"gameStatus":"FiveNet"},"token":"your_discord_bot_token","userInfoSync":{"employeeRoleFormat":"%s Personal","enabled":false,"gradeRoleFormat":"[%grade%] %grade_label%","ignoreJobs":[],"jobsAbsceneRoleName":"Absent","nicknameRegex":"^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"}},"dispatchCenter":{"convertJobs":[]},"grpc":{"listen":":9090"},"http":{"adminListen":":7070","listen":":8080","publicURL":"https://fivenet.example.com","sessions":{"cookieSecret":"your_generated_cookie_secret","domain":"localhost"}},"imageProxy":{"cachePrefix":"images/","enabled":true,"options":{"allowHosts":[],"denyHosts":[]},"url":"/api/image_proxy/"},"jwt":{"secret":"your_generated_jwt_secret"},"logLevel":"INFO","mode":"release","nats":{"url":"nats://localhost:4222"},"oauth2":{"providers":[]},"storage":{"filesystem":{"path":"/data"},"s3":{"accessKeyID":"","bucketName":"","endpoint":"","prefix":"","region":"us-east-1","secretAccessKey":"","useSSL":true},"type":"filesystem"},"tracing":{"attributes":[],"enabled":false,"environment":"live","insecure":false,"ratio":0.1,"timeout":"10s","type":"stdout","url":"https://localhost:4317"}}` |
 | `frontend.additionalEnv` |  | `[]` |
+| `frontend.enabled` |  | `true` |
 | `frontend.image.pullPolicy` |  | `"IfNotPresent"` |
 | `frontend.image.repository` |  | `"docker.io/galexrt/fivenet"` |
 | `frontend.image.tag` |  | `""` |
@@ -79,6 +80,33 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `frontend.startupProbe.initialDelaySeconds` |  | `20` |
 | `frontend.startupProbe.periodSeconds` |  | `10` |
 | `fullnameOverride` |  | `""` |
+| `iconify.additionalEnv[0].name` |  | `"ICONIFY_SOURCE"` |
+| `iconify.additionalEnv[0].value` |  | `"full"` |
+| `iconify.additionalEnv[1].name` |  | `"REDIRECT_INDEX"` |
+| `iconify.additionalEnv[1].value` |  | `"/about"` |
+| `iconify.additionalEnv[2].name` |  | `"ALLOW_UPDATE"` |
+| `iconify.additionalEnv[2].value` |  | `"false"` |
+| `iconify.additionalEnv[3].name` |  | `"ENABLE_ICON_LISTS"` |
+| `iconify.additionalEnv[3].value` |  | `"false"` |
+| `iconify.additionalEnv[4].name` |  | `"ENABLE_SEARCH_ENGINE"` |
+| `iconify.additionalEnv[4].value` |  | `"false"` |
+| `iconify.enabled` |  | `true` |
+| `iconify.image.pullPolicy` |  | `"IfNotPresent"` |
+| `iconify.image.repository` |  | `"docker.io/iconify/api"` |
+| `iconify.image.tag` |  | `"latest"` |
+| `iconify.ingress.annotations."nginx.ingress.kubernetes.io/rewrite-target"` |  | `"/$2"` |
+| `iconify.ingress.className` |  | `"nginx"` |
+| `iconify.ingress.enabled` |  | `true` |
+| `iconify.ingress.hosts[0].host` |  | `"chart-example.local"` |
+| `iconify.ingress.hosts[0].paths[0].path` |  | `"/api/icons(/|$)(.*)"` |
+| `iconify.ingress.hosts[0].paths[0].pathType` |  | `"Prefix"` |
+| `iconify.ingress.tls` |  | `[]` |
+| `iconify.livenessProbe` |  | `nil` |
+| `iconify.readinessProbe` |  | `nil` |
+| `iconify.replicaCount` |  | `1` |
+| `iconify.resources` |  | `{}` |
+| `iconify.revisionHistoryLimit` |  | `1` |
+| `iconify.startupProbe` |  | `nil` |
 | `imagePullSecrets` |  | `[]` |
 | `ingress.annotations` |  | `{}` |
 | `ingress.className` |  | `"nginx"` |
@@ -102,6 +130,7 @@ The following table lists the configurable parameters of the FiveNet chart and t
 | `podSecurityContext` |  | `{}` |
 | `securityContext` |  | `{}` |
 | `server.additionalEnv` |  | `[]` |
+| `server.enabled` |  | `true` |
 | `server.image.pullPolicy` |  | `"IfNotPresent"` |
 | `server.image.repository` |  | `"docker.io/galexrt/fivenet"` |
 | `server.image.tag` |  | `""` |

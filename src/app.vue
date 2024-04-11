@@ -8,6 +8,17 @@ import CookieControl from '~/components/partials/CookieControl.vue';
 
 const { t, locale, finalizePendingLocaleChange } = useI18n();
 
+const appConfig = useAppConfig();
+
+if (!appConfig.nuxtIcon.iconifyApiOptions) {
+    appConfig.nuxtIcon.iconifyApiOptions = {
+        url: window.location.protocol + '//' + window.location.host + '/api/icons',
+        publicApiFallback: false,
+    };
+} else {
+    appConfig.nuxtIcon.iconifyApiOptions.url = window.location.protocol + '//' + window.location.host + '/api/icons';
+}
+
 const toast = useToast();
 
 const settings = useSettingsStore();
@@ -51,7 +62,6 @@ if (__APP_VERSION__ !== settings.version) {
     settings.setVersion(__APP_VERSION__);
 }
 
-const appConfig = useAppConfig();
 // Set theme colors into app config
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;

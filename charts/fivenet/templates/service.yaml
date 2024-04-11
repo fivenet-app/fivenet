@@ -16,6 +16,10 @@ spec:
       port: 7070
       protocol: TCP
       targetPort: metrics
+    - name: iconify
+      port: 3000
+      protocol: TCP
+      targetPort: iconify
   selector:
     app.kubernetes.io/component: frontend
     {{- include "fivenet.selectorLabels" . | nindent 4 }}

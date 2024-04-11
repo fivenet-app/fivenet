@@ -1,16 +1,16 @@
-{{- if .Values.server.enabled -}}
+{{- if .Values.iconify.enabled -}}
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ include "fivenet.fullname" . }}
+  name: {{ include "fivenet.fullname" . }}-iconify
   labels:
     {{- include "fivenet.labels" . | nindent 4 }}
 spec:
-  replicas: {{ .Values.frontend.replicaCount }}
-  revisionHistoryLimit: {{ .Values.frontend.revisionHistoryLimit }}
+  replicas: {{ .Values.iconify.replicaCount }}
+  revisionHistoryLimit: {{ .Values.iconify.revisionHistoryLimit }}
   selector:
     matchLabels:
-      app.kubernetes.io/component: frontend
+      app.kubernetes.io/component: iconify
       {{- include "fivenet.selectorLabels" . | nindent 6 }}
   template:
     metadata:
@@ -20,7 +20,7 @@ spec:
         {{- toYaml . | nindent 8 }}
       {{- end }}
       labels:
-        app.kubernetes.io/component: frontend
+        app.kubernetes.io/component: iconify
         {{- include "fivenet.selectorLabels" . | nindent 8 }}
     spec:
       {{- with .Values.imagePullSecrets }}
@@ -30,45 +30,32 @@ spec:
       serviceAccountName: {{ include "fivenet.serviceAccountName" . }}
       securityContext:
         {{- toYaml .Values.podSecurityContext | nindent 8 }}
-      volumes:
-        - name: fivenet-config
-          secret:
-            secretName: "{{ include "fivenet.fullname" . }}-fivenet-config"
       containers:
-        - name: fivenet
-          args:
-            - frontend
+        - name: iconify
           securityContext:
             {{- toYaml .Values.securityContext | nindent 12 }}
-          image: "{{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag | default .Chart.AppVersion }}"
-          imagePullPolicy: {{ .Values.frontend.image.pullPolicy }}
+          image: "{{ .Values.iconify.image.repository }}:{{ .Values.iconify.image.tag | default "latest" }}"
+          imagePullPolicy: {{ .Values.iconify.image.pullPolicy }}
           env:
-            {{- toYaml .Values.frontend.additionalEnv | nindent 12 }}
+            {{- toYaml .Values.iconify.additionalEnv | nindent 12 }}
           ports:
             - name: http
-              containerPort: 8080
+              containerPort: 3000
               protocol: TCP
-            - name: metrics
-              containerPort: 7070
-              protocol: TCP
-          {{- with .Values.frontend.livenessProbe }}
+          {{- with .Values.iconify.livenessProbe }}
           livenessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.frontend.readinessProbe }}
+          {{- with .Values.iconify.readinessProbe }}
           readinessProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          {{- with .Values.frontend.startupProbe }}
+          {{- with .Values.iconify.startupProbe }}
           startupProbe:
             {{- toYaml . | nindent 12 }}
           {{- end }}
-          volumeMounts:
-            - name: fivenet-config
-              mountPath: /config
-              readOnly: true
           resources:
-            {{- toYaml .Values.frontend.resources | nindent 12 }}
+            {{- toYaml .Values.iconify.resources | nindent 12 }}
       {{- with .Values.nodeSelector }}
       nodeSelector:
         {{- toYaml . | nindent 8 }}

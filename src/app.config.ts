@@ -56,6 +56,12 @@ export default defineAppConfig({
             check: 'i-mdi-check-circle',
         },
     },
+    nuxtIcon: {
+        iconifyApiOptions: {
+            url: '/api/icons',
+            publicApiFallback: false,
+        },
+    },
 
     filestore: {
         fileSizes: {

@@ -1,0 +1,19 @@
+{{- if .Values.iconify.enabled -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ include "fivenet.fullname" . }}-iconify
+  labels:
+    app.kubernetes.io/component: iconify
+    {{- include "fivenet.labels" . | nindent 4 }}
+spec:
+  type: {{ .Values.service.type }}
+  ports:
+    - name: http
+      port: 3000
+      protocol: TCP
+      targetPort: http
+  selector:
+    app.kubernetes.io/component: iconify
+    {{- include "fivenet.selectorLabels" . | nindent 4 }}
+{{- end }}

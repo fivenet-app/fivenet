@@ -194,6 +194,7 @@ fivenet:
         enabled: true
 
 frontend:
+  enabled: true
   replicaCount: 1
   revisionHistoryLimit: 1
   image:
@@ -244,7 +245,56 @@ frontend:
     scrapeInterval: 30s
     # honorLabels: true
 
+iconify:
+  enabled: true
+  ingress:
+    enabled: true
+    className: "nginx"
+    annotations:
+      nginx.ingress.kubernetes.io/rewrite-target: /$2
+    hosts:
+      - host: chart-example.local
+        paths:
+          - path: /api/icons(/|$)(.*)
+            pathType: Prefix
+    tls: []
+    #  - secretName: chart-example-tls
+    #    hosts:
+    #      - chart-example.local
+  replicaCount: 1
+  revisionHistoryLimit: 1
+  image:
+    repository: docker.io/iconify/api
+    pullPolicy: IfNotPresent
+    tag: latest
+  resources: {}
+    # We usually recommend not to specify default resources and to leave this as a conscious
+    # choice for the user. This also increases chances charts run on environments with little
+    # resources, such as Minikube. If you do want to specify resources, uncomment the following
+    # lines, adjust them as necessary, and remove the curly braces after 'resources:'.
+    # limits:
+    #   cpu: 100m
+    #   memory: 128Mi
+    # requests:
+    #   cpu: 100m
+    #   memory: 128Mi
+  livenessProbe: null
+  readinessProbe: null
+  startupProbe: null
+  additionalEnv:
+    - name: ICONIFY_SOURCE
+      value: "full"
+    - name: REDIRECT_INDEX
+      value: "/about"
+    - name: ALLOW_UPDATE
+      value: "false"
+    - name: ENABLE_ICON_LISTS
+      value: "false"
+    - name: ENABLE_SEARCH_ENGINE
+      value: "false"
+
 server:
+  enabled: true
   serveFrontend: false
   replicaCount: 1
   revisionHistoryLimit: 1
