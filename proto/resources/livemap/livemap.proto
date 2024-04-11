@@ -64,7 +64,7 @@ message MarkerData {
 
 message CircleMarker {
   int32 radius = 1;
-  optional float oapcity = 2;
+  optional float opacity = 2;
 }
 
 message Coords {

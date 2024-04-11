@@ -46,8 +46,8 @@ async function createDispatch(values: Schema): Promise<void> {
                 attributes: {
                     list: [],
                 },
-                x: props.location ? props.location.x : storeLocation.value?.x ?? 0,
-                y: props.location ? props.location.y : storeLocation.value?.y ?? 0,
+                x: props.location?.x ?? storeLocation.value?.x ?? 0,
+                y: props.location?.y ?? storeLocation.value?.y ?? 0,
                 units: [],
             },
         });

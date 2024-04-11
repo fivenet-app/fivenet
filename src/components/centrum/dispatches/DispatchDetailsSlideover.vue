@@ -143,7 +143,6 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                         {{ dispatch.postal ?? $t('common.na') }}
                                     </span>
                                     <UButton
-                                        v-if="dispatch.x && dispatch.y"
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"
@@ -152,7 +151,6 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                     >
                                         {{ $t('common.go_to_location') }}
                                     </UButton>
-                                    <span v-else>{{ $t('common.no_location') }}</span>
                                 </div>
                             </dd>
                         </div>
@@ -268,7 +266,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                         {{ dispatch.status?.postal ?? $t('common.na') }}
                                     </span>
                                     <UButton
-                                        v-if="dispatch.status?.x && dispatch.status?.y"
+                                        v-if="dispatch.status?.x !== undefined && dispatch.status?.y !== undefined"
                                         size="xs"
                                         variant="link"
                                         icon="i-mdi-map-marker"

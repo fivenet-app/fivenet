@@ -158,9 +158,9 @@ export interface CircleMarker {
      */
     radius: number;
     /**
-     * @generated from protobuf field: optional float oapcity = 2;
+     * @generated from protobuf field: optional float opacity = 2;
      */
-    oapcity?: number;
+    opacity?: number;
 }
 /**
  * @generated from protobuf message resources.livemap.Coords
@@ -556,7 +556,7 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
     constructor() {
         super("resources.livemap.CircleMarker", [
             { no: 1, name: "radius", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 2, name: "oapcity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
+            { no: 2, name: "opacity", kind: "scalar", opt: true, T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<CircleMarker>): CircleMarker {
@@ -574,8 +574,8 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
                 case /* int32 radius */ 1:
                     message.radius = reader.int32();
                     break;
-                case /* optional float oapcity */ 2:
-                    message.oapcity = reader.float();
+                case /* optional float opacity */ 2:
+                    message.opacity = reader.float();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -592,9 +592,9 @@ class CircleMarker$Type extends MessageType<CircleMarker> {
         /* int32 radius = 1; */
         if (message.radius !== 0)
             writer.tag(1, WireType.Varint).int32(message.radius);
-        /* optional float oapcity = 2; */
-        if (message.oapcity !== undefined)
-            writer.tag(2, WireType.Bit32).float(message.oapcity);
+        /* optional float opacity = 2; */
+        if (message.opacity !== undefined)
+            writer.tag(2, WireType.Bit32).float(message.opacity);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

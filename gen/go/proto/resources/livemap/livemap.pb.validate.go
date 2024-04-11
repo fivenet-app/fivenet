@@ -908,8 +908,8 @@ func (m *CircleMarker) validate(all bool) error {
 
 	// no validation rules for Radius
 
-	if m.Oapcity != nil {
-		// no validation rules for Oapcity
+	if m.Opacity != nil {
+		// no validation rules for Opacity
 	}
 
 	if len(errors) > 0 {

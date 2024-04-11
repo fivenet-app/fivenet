@@ -44,7 +44,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -71,7 +71,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -98,7 +98,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -125,7 +125,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -152,7 +152,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -179,7 +179,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -206,7 +206,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -232,7 +232,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -259,7 +259,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -286,7 +286,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -313,7 +313,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -340,7 +340,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
@@ -367,7 +367,7 @@ const { goto } = useLivemapStore();
 
                 <span class="inline-flex items-center">
                     <UButton
-                        v-if="item.x && item.y"
+                        v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"

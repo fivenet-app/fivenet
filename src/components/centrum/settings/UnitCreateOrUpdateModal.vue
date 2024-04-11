@@ -79,14 +79,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 async function updateUnitInForm(): Promise<void> {
-    if (props.unit !== undefined) {
-        state.name = props.unit.name;
-        state.initials = props.unit.initials;
-        state.description = props.unit.description;
-        state.color = props.unit.color;
-        state.homePostal = props.unit.homePostal;
-        state.attributes = props.unit.attributes?.list ?? [];
+    if (props.unit === undefined) {
+        return;
     }
+
+    state.name = props.unit.name;
+    state.initials = props.unit.initials;
+    state.description = props.unit.description;
+    state.color = props.unit.color;
+    state.homePostal = props.unit.homePostal;
+    state.attributes = props.unit.attributes?.list ?? [];
 }
 
 watch(props, async () => updateUnitInForm());

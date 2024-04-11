@@ -122,7 +122,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     {{ unit.status?.postal ?? $t('common.na') }}
                                 </span>
                                 <UButton
-                                    v-if="unit.status?.x && unit.status?.y"
+                                    v-if="unit.status?.x !== undefined && unit.status?.y !== undefined"
                                     size="xs"
                                     variant="link"
                                     icon="i-mdi-map-marker"

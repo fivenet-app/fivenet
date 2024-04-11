@@ -10,10 +10,7 @@ import ColorPicker from '../partials/ColorPicker.vue';
 
 const props = defineProps<{
     location?: Coordinate;
-}>();
-
-const emit = defineEmits<{
-    (e: 'close'): void;
+    marker?: MarkerMarker;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -43,29 +40,38 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive({
-    name: '',
-    description: undefined,
-    expiresAt: defaultExpiresAt.value,
-    color: '#ee4b2b',
-    markerType: MarkerType.CIRCLE,
-    circleRadius: 50,
-    circleOpacity: 15,
-    icon: 'i-mdi-help',
+    name: props.marker?.info?.name ?? '',
+    description: props.marker?.info?.description,
+    expiresAt: props.marker?.expiresAt ? toDate(props.marker?.expiresAt) : defaultExpiresAt.value,
+    color: props.marker?.info?.color ?? '#ee4b2b',
+    markerType: props.marker?.type ?? MarkerType.CIRCLE,
+    circleRadius:
+        props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.radius
+            ? props.marker?.data?.data.circle.radius
+            : 50,
+    circleOpacity:
+        props.marker?.data?.data.oneofKind === 'circle' && props.marker?.data?.data.circle.opacity
+            ? props.marker?.data?.data.circle.opacity
+            : 15,
+    icon:
+        props.marker?.data?.data.oneofKind === 'icon' && props.marker?.data?.data.icon.icon
+            ? props.marker?.data?.data.icon.icon
+            : 'i-mdi-help',
 });
 
-async function createMarker(values: Schema): Promise<void> {
+async function createOrUpdateMarker(values: Schema): Promise<void> {
     const expiresAt = values.expiresAt ? toTimestamp(values.expiresAt) : undefined;
 
     try {
         const marker: MarkerMarker = {
             info: {
-                id: '0',
+                id: props.marker?.info?.id ?? '0',
                 job: '',
                 jobLabel: '',
                 name: values.name,
                 description: values.description,
-                x: props.location ? props.location.x : storeLocation.value?.x ?? 0,
-                y: props.location ? props.location.y : storeLocation.value?.y ?? 0,
+                x: props.marker?.info?.x ?? props.location?.x ?? storeLocation.value?.x ?? 0,
+                y: props.marker?.info?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0,
                 color: values.color,
             },
             expiresAt,
@@ -78,7 +84,7 @@ async function createMarker(values: Schema): Promise<void> {
                     oneofKind: 'circle',
                     circle: {
                         radius: values.circleRadius,
-                        oapcity: values.circleOpacity ?? 3,
+                        opacity: values.circleOpacity ?? 3,
                     },
                 },
             };
@@ -102,7 +108,6 @@ async function createMarker(values: Schema): Promise<void> {
             addOrpdateMarkerMarker(response.marker);
         }
 
-        emit('close');
         isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -113,7 +118,7 @@ async function createMarker(values: Schema): Promise<void> {
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await createMarker(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await createOrUpdateMarker(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 
@@ -134,19 +139,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.livemap.create_marker.title') }}
+                            {{
+                                !marker
+                                    ? $t('components.livemap.create_marker.title')
+                                    : $t('components.livemap.update_marker.title')
+                            }}
                         </h3>
 
-                        <UButton
-                            color="gray"
-                            variant="ghost"
-                            icon="i-mdi-window-close"
-                            class="-my-1"
-                            @click="
-                                $emit('close');
-                                isOpen = false;
-                            "
-                        />
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -316,7 +316,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #footer>
                     <UButtonGroup class="inline-flex w-full">
                         <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ $t('common.create') }}
+                            {{ !marker ? $t('common.create') : $t('common.save') }}
                         </UButton>
 
                         <UButton

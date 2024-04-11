@@ -32,7 +32,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         :radius="marker.data?.data.circle.radius / 0.6931471805599453"
         :color="marker.info?.color ?? '#ffffff'"
         :fill-color="marker.info?.color ?? '#ffffff'"
-        :fill-opacity="(marker.data.data.circle.oapcity ?? 15) / 100"
+        :fill-opacity="(marker.data.data.circle.opacity ?? 15) / 100"
     >
         <MarkerMarkerPopup :marker="marker" />
     </LCircle>

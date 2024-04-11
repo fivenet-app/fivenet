@@ -92,7 +92,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
             <div class="flex flex-col gap-2">
                 <div class="grid grid-cols-2 gap-2">
                     <UButton
-                        v-if="marker.info?.x && marker.info?.y"
+                        v-if="marker.info?.x !== undefined && marker.info?.y !== undefined"
                         variant="link"
                         icon="i-mdi-map-marker"
                         :padded="false"

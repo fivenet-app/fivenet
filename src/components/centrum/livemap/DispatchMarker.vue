@@ -71,7 +71,7 @@ const zIndexOffset = computed(() => {
             <div class="flex flex-col gap-2">
                 <div class="grid grid-cols-2 gap-2">
                     <UButton
-                        v-if="dispatch?.x && dispatch?.y"
+                        v-if="dispatch?.x !== undefined && dispatch?.y !== undefined"
                         variant="link"
                         icon="i-mdi-map-marker"
                         :padded="false"

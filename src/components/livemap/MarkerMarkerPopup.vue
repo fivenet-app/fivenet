@@ -5,6 +5,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
 import ConfirmModal from '../partials/ConfirmModal.vue';
+import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
 defineProps<{
     marker: MarkerMarker;
@@ -35,15 +36,31 @@ async function deleteMarker(id: string): Promise<void> {
 <template>
     <LPopup :options="{ closeButton: true }">
         <div class="flex flex-col gap-2">
-            <div class="grid grid-cols-2 gap-2">
+            <div class="grid grid-cols-3 gap-1">
                 <UButton
-                    v-if="marker.info?.x && marker.info?.y"
+                    v-if="marker.info?.x !== undefined && marker.info?.y !== undefined"
                     variant="link"
                     icon="i-mdi-map-marker"
                     @click="goto({ x: marker.info?.x, y: marker.info?.y })"
                 >
                     <span class="truncate">
                         {{ $t('common.mark') }}
+                    </span>
+                </UButton>
+
+                <UButton
+                    v-if="can('LivemapperService.CreateOrUpdateMarker')"
+                    :title="$t('common.edit')"
+                    variant="link"
+                    icon="i-mdi-pencil"
+                    @click="
+                        modal.open(MarkerCreateOrUpdateSlideover, {
+                            marker: marker,
+                        })
+                    "
+                >
+                    <span class="truncate">
+                        {{ $t('common.edit') }}
                     </span>
                 </UButton>
 
