@@ -278,7 +278,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				notFound = append(notFound, toAdd[i])
 			}
 
-			users, err := s.resolveUserShortsByIds(ctx, notFound)
+			users, err := s.resolveUserShortsByIds(ctx, notFound...)
 			if err != nil {
 				return nil, false, err
 			}
@@ -553,11 +553,15 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tUnitStatus.
 				LEFT_JOIN(tUsers,
 					tUsers.ID.EQ(tUnitStatus.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUnitStatus.UserID),
 				),
 		).
 		WHERE(

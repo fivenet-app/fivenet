@@ -49,7 +49,9 @@ func (e *Enricher) EnrichJobInfo(usr common.IJobInfo) {
 		}
 	} else {
 		usr.SetJobLabel("N/A")
+		usr.SetJob(e.appCfg.Get().JobInfo.UnemployedJob.Name)
 		usr.SetJobGradeLabel("N/A")
+		usr.SetJobGrade(e.appCfg.Get().JobInfo.UnemployedJob.Grade)
 	}
 }
 

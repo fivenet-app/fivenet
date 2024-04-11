@@ -147,7 +147,9 @@ const columns = [
                             <template v-else>
                                 <UTable :columns="columns" :rows="sortedRoles" :loading="loading">
                                     <template #rank-data="{ row: role }">
-                                        <span>{{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})</span>
+                                        <div class="text-gray-900 dark:text-white">
+                                            {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
+                                        </div>
                                     </template>
                                     <template #actions-data="{ row: role }">
                                         <div class="text-right">

@@ -14,6 +14,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/coords/postals"
 	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/tracker"
@@ -35,14 +36,15 @@ type Server struct {
 	wg     sync.WaitGroup
 	jsCons jetstream.ConsumeContext
 
-	tracer  trace.Tracer
-	db      *sql.DB
-	ps      perms.Permissions
-	aud     audit.IAuditer
-	js      *events.JSWrapper
-	tracker tracker.ITracker
-	postals postals.Postals
-	appCfg  appconfig.IConfig
+	tracer   trace.Tracer
+	db       *sql.DB
+	ps       perms.Permissions
+	aud      audit.IAuditer
+	js       *events.JSWrapper
+	tracker  tracker.ITracker
+	postals  postals.Postals
+	appCfg   appconfig.IConfig
+	enricher *mstlystcdata.UserAwareEnricher
 
 	brokersMutex sync.RWMutex
 	brokers      map[string]*broker.Broker[*StreamResponse]
@@ -66,6 +68,7 @@ type Params struct {
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
 	Manager   *manager.Manager
+	Enricher  *mstlystcdata.UserAwareEnricher
 }
 
 func NewServer(p Params) (*Server, error) {
@@ -79,13 +82,14 @@ func NewServer(p Params) (*Server, error) {
 
 		tracer: p.TP.Tracer("centrum-cache"),
 
-		db:      p.DB,
-		ps:      p.Perms,
-		aud:     p.Audit,
-		js:      p.JS,
-		tracker: p.Tracker,
-		postals: p.Postals,
-		appCfg:  p.AppConfig,
+		db:       p.DB,
+		ps:       p.Perms,
+		aud:      p.Audit,
+		js:       p.JS,
+		tracker:  p.Tracker,
+		postals:  p.Postals,
+		appCfg:   p.AppConfig,
+		enricher: p.Enricher,
 
 		brokersMutex: sync.RWMutex{},
 		brokers:      brokers,

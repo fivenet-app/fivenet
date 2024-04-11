@@ -535,11 +535,16 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tDispatchStatus.
 				LEFT_JOIN(tUsers,
 					tUsers.ID.EQ(tDispatchStatus.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tDispatchStatus.UserID).
+						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
 		WHERE(
@@ -555,6 +560,7 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId != nil && *resp.Activity[i].UnitId > 0 {
 			var err error
@@ -562,6 +568,10 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
+		}
+
+		if resp.Activity[i].User != nil {
+			jobInfoFn(resp.Activity[i].User)
 		}
 	}
 

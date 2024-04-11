@@ -88,11 +88,16 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 			tUsers.Job,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tCentrumUsers.
 				INNER_JOIN(tUsers,
 					tUsers.ID.EQ(tCentrumUsers.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tCentrumUsers.UserID).
+						AND(tUsers.Job.EQ(jet.String(job))),
 				),
 		)
 

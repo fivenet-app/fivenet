@@ -24,8 +24,14 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
-		FROM(tUsers).
+		FROM(
+			tUsers.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUsers.ID),
+				),
+		).
 		WHERE(
 			tUsers.ID.EQ(jet.Int32(u)),
 		).
@@ -44,7 +50,7 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 }
 
 func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*users.UserShort, error) {
-	us, err := s.resolveUserShortsByIds(ctx, []int32{u})
+	us, err := s.resolveUserShortsByIds(ctx, u)
 	if err != nil {
 		return nil, err
 	}
@@ -52,7 +58,7 @@ func (s *Manager) resolveUserShortById(ctx context.Context, u int32) (*users.Use
 	return us[0], nil
 }
 
-func (s *Manager) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*users.UserShort, error) {
+func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*users.UserShort, error) {
 	if len(u) == 0 {
 		return nil, nil
 	}
@@ -73,8 +79,14 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*use
 			tUsers.JobGrade,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
-		FROM(tUsers).
+		FROM(
+			tUsers.
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUsers.ID),
+				),
+		).
 		WHERE(
 			tUsers.ID.IN(userIds...),
 		).
@@ -83,6 +95,12 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u []int32) ([]*use
 	dest := []*users.UserShort{}
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, fmt.Errorf("failed to resolve usershorts by ids %+v: %w", u, err)
+	}
+
+	for i := 0; i < len(dest); i++ {
+		if dest[i] != nil {
+			s.enricher.EnrichJobInfo(dest[i])
+		}
 	}
 
 	return dest, nil
@@ -98,7 +116,7 @@ func (s *Manager) resolveUsersForUnit(ctx context.Context, u *[]*centrum.UnitAss
 		return nil
 	}
 
-	us, err := s.resolveUserShortsByIds(ctx, userIds)
+	us, err := s.resolveUserShortsByIds(ctx, userIds...)
 	if err != nil {
 		return err
 	}

@@ -26,6 +26,7 @@ import (
 var (
 	tUnitStatus = table.FivenetCentrumUnitsStatus.AS("unitstatus")
 	tUsers      = table.Users.AS("usershort")
+	tUserProps  = table.FivenetUserProps
 	tUnits      = table.FivenetCentrumUnits.AS("unit")
 )
 
@@ -308,11 +309,16 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUsers.Sex,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tUnitStatus.
 				LEFT_JOIN(tUsers,
 					tUsers.ID.EQ(tUnitStatus.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUnitStatus.UserID).
+						AND(tUsers.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
 		WHERE(
@@ -328,6 +334,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Activity); i++ {
 		if resp.Activity[i].UnitId > 0 && resp.Activity[i].User != nil {
 			unit, err := s.state.GetUnit(ctx, userInfo.Job, resp.Activity[i].UnitId)
@@ -337,6 +344,10 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 
 			newUnit := proto.Clone(unit)
 			resp.Activity[i].Unit = newUnit.(*centrum.Unit)
+		}
+
+		if resp.Activity[i].User != nil {
+			jobInfoFn(resp.Activity[i].User)
 		}
 	}
 
