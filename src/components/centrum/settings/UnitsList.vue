@@ -3,9 +3,9 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
 import CentrumSettingsModal from '~/components/centrum/settings/CentrumSettingsModal.vue';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
-import ColorInput from 'vue-color-input/dist/color-input.esm';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import UnitAttributes from '../partials/UnitAttributes.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -117,11 +117,16 @@ const columns = [
                             :rows="units?.units"
                             :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.units', 2)]) }"
                         >
+                            <template #name-data="{ row: unit }">
+                                <div class="text-gray-900 dark:text-white">
+                                    {{ unit.name }}
+                                </div>
+                            </template>
                             <template #attributes-data="{ row: unit }">
                                 <UnitAttributes :attributes="unit.attributes" />
                             </template>
                             <template #color-data="{ row: unit }">
-                                <ColorInput v-model="unit.color" disabled format="hex" class="h-6" />
+                                <ColorPicker v-model="unit.color" disabled hide-icon />
                             </template>
                             <template #homePostal-data="{ row: unit }">
                                 {{ unit.homePostal ?? $t('common.na') }}

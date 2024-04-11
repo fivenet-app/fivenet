@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { Unit } from '~~/gen/ts/resources/centrum/units';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 
 const props = defineProps<{
     unit?: Unit;
@@ -127,6 +127,7 @@ onMounted(async () => updateUnitInForm());
 
                     <UFormGroup name="initials" :label="$t('common.initials')" class="flex-1">
                         <UInput
+                            v-model="state.initials"
                             name="initials"
                             type="text"
                             :placeholder="$t('common.initials')"
@@ -137,6 +138,7 @@ onMounted(async () => updateUnitInForm());
 
                     <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
                         <UInput
+                            v-model="state.description"
                             name="description"
                             type="text"
                             :placeholder="$t('common.description')"
@@ -147,7 +149,7 @@ onMounted(async () => updateUnitInForm());
 
                     <UFormGroup name="attributes" :label="$t('common.attributes', 2)" class="flex-1">
                         <USelectMenu
-                            v-model="selectedAttributes"
+                            v-model="state.attributes"
                             multiple
                             nullable
                             :options="availableAttributes"
@@ -163,7 +165,7 @@ onMounted(async () => updateUnitInForm());
                     </UFormGroup>
 
                     <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
-                        <ColorInput v-model="state.color" disable-alpha format="hex" position="top" />
+                        <ColorPicker v-model="state.color" />
                     </UFormGroup>
 
                     <UFormGroup

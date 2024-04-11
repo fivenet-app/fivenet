@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { vMaska } from 'maska';
-import ColorInput from 'vue-color-input/dist/color-input.esm';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -12,6 +11,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
+import ColorPicker from '../partials/ColorPicker.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -154,12 +154,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="grid grid-cols-2 items-center gap-2"
                                         :ui="{ container: '' }"
                                     >
-                                        <ColorInput
-                                            v-model="jobProps.livemapMarkerColor"
-                                            disable-alpha
-                                            format="hex"
-                                            position="top"
-                                        />
+                                        <ColorPicker v-model="jobProps.livemapMarkerColor" />
                                     </UFormGroup>
 
                                     <UFormGroup

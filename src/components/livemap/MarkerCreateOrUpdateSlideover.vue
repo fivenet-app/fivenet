@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import ColorInput from 'vue-color-input/dist/color-input.esm';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
 import DatePicker from '../partials/DatePicker.vue';
 import { format } from 'date-fns';
+import ColorPicker from '../partials/ColorPicker.vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -226,7 +226,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="color">
-                                    <ColorInput v-model="state.color" disable-alpha format="hex" position="top" />
+                                    <ColorPicker v-model="state.color" />
                                 </UFormGroup>
                             </dd>
                         </div>
