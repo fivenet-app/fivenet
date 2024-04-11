@@ -8,6 +8,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -21,8 +22,9 @@ const props = withDefaults(
 
 const emit = defineEmits<{
     (e: 'selected', dsp: Dispatch): void;
-    (e: 'goto', loc: Coordinate): void;
 }>();
+
+const { goto } = useLivemapStore();
 
 const iconAnchor: PointExpression = [props.size / 2, props.size * 1.65];
 const popupAnchor: PointExpression = [0, -(props.size * 1.7)];
@@ -73,7 +75,7 @@ const zIndexOffset = computed(() => {
                         variant="link"
                         icon="i-mdi-map-marker"
                         :padded="false"
-                        @click="$emit('goto', { x: dispatch?.x, y: dispatch?.y })"
+                        @click="goto({ x: dispatch?.x, y: dispatch?.y })"
                     >
                         <span class="truncate">
                             {{ $t('common.mark') }}

@@ -3,6 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 defineProps<{
     activityLength: number;
@@ -10,9 +11,7 @@ defineProps<{
     activityItemIdx: number;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
+const { goto } = useLivemapStore();
 </script>
 
 <template>
@@ -41,7 +40,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -66,7 +65,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -91,7 +90,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -116,7 +115,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -141,7 +140,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -166,7 +165,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -191,7 +190,7 @@ defineEmits<{
                         v-if="item.x && item.y"
                         variant="link"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>

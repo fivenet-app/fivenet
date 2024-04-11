@@ -56,13 +56,9 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                             />
                         </div>
 
-                        <LivemapBase :show-unit-names="true" :show-unit-status="true" @goto="goto($event)">
+                        <LivemapBase :show-unit-names="true" :show-unit-status="true">
                             <template #default>
-                                <DispatchesLayer
-                                    v-if="can('CentrumService.Stream')"
-                                    :show-all-dispatches="true"
-                                    @goto="goto($event)"
-                                />
+                                <DispatchesLayer v-if="can('CentrumService.Stream')" :show-all-dispatches="true" />
                             </template>
                         </LivemapBase>
                     </div>
@@ -70,16 +66,16 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                 <Pane :min-size="40" :size="70">
                     <Splitpanes horizontal>
                         <Pane :size="58" :min-size="2">
-                            <DispatchList :show-button="true" @goto="goto($event)" />
+                            <DispatchList :show-button="true" />
                         </Pane>
                         <Pane :size="26" :min-size="2">
-                            <UnitList @goto="goto($event)" />
+                            <UnitList />
                         </Pane>
                         <Pane :size="8" :min-size="2">
-                            <MarkersList @goto="goto($event)" />
+                            <MarkersList />
                         </Pane>
                         <Pane :size="8" :min-size="2">
-                            <CentrumFeed :items="feed" @goto="goto($event)" />
+                            <CentrumFeed :items="feed" />
                         </Pane>
                     </Splitpanes>
                 </Pane>

@@ -3,6 +3,7 @@ import DispatchStatusInfoPopover from '~/components/centrum/dispatches/DispatchS
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useLivemapStore } from '~/store/livemap';
 import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 withDefaults(
@@ -17,9 +18,7 @@ withDefaults(
     },
 );
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
+const { goto } = useLivemapStore();
 </script>
 
 <template>
@@ -40,7 +39,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                 </span>
 
                 <span class="inline-flex items-center">
@@ -49,7 +48,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -66,7 +65,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -76,7 +75,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -93,7 +92,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -103,7 +102,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -120,7 +119,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -130,7 +129,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -147,7 +146,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -157,7 +156,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -174,7 +173,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -184,7 +183,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -201,7 +200,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -211,7 +210,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -227,7 +226,7 @@ defineEmits<{
             <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -237,7 +236,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -254,7 +253,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -264,7 +263,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -281,7 +280,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -291,7 +290,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -308,7 +307,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -318,7 +317,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -335,7 +334,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -345,7 +344,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>
@@ -362,7 +361,7 @@ defineEmits<{
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
-                    <DispatchStatusInfoPopover v-if="showId" :status="item" @goto="$emit('goto', $event)" />
+                    <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
@@ -372,7 +371,7 @@ defineEmits<{
                         variant="link"
                         size="xs"
                         icon="i-mdi-map-marker"
-                        @click="$emit('goto', { x: item.x, y: item.y })"
+                        @click="goto({ x: item.x, y: item.y })"
                     />
                     <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
                 </span>

@@ -5,16 +5,12 @@ import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
 
 const livemapStore = useLivemapStore();
-const { deleteMarkerMarker } = livemapStore;
+const { deleteMarkerMarker, goto } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
 
 async function deleteMarker(id: string): Promise<void> {
@@ -98,7 +94,7 @@ const columns = [
                             variant="link"
                             icon="i-mdi-map-marker"
                             :title="$t('common.mark')"
-                            @click="$emit('goto', { x: marker.info!.x, y: marker.info!.y })"
+                            @click="goto({ x: marker.info!.x, y: marker.info!.y })"
                         >
                             <span class="sr-only">{{ $t('common.mark') }}</span>
                         </UButton>

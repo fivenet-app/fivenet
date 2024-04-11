@@ -165,7 +165,6 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                     :hide-actions="true"
                                     :always-show-day="true"
                                     :dispatches="data?.dispatches"
-                                    @goto="location = $event"
                                 />
                             </template>
                         </div>

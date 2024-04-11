@@ -5,11 +5,6 @@ import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
-import { useSettingsStore } from '~/store/settings';
-
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
 
 const { $grpc } = useNuxtApp();
 
@@ -147,7 +142,6 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                 :dispatch="dispatches.get(pd)!"
                                 :preselected="false"
                                 @selected="selectDispatch(pd, $event)"
-                                @goto="$emit('goto', $event)"
                             />
                         </template>
                     </template>
@@ -164,7 +158,6 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                 :key="pd"
                                 :dispatch="dispatches.get(pd)!"
                                 @selected="selectDispatch(pd, $event)"
-                                @goto="$emit('goto', $event)"
                             />
                         </template>
                     </template>

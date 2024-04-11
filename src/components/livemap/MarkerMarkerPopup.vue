@@ -10,16 +10,12 @@ defineProps<{
     marker: MarkerMarker;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { $grpc } = useNuxtApp();
 
 const modal = useModal();
 
 const livemapStore = useLivemapStore();
-const { deleteMarkerMarker } = livemapStore;
+const { deleteMarkerMarker, goto } = livemapStore;
 
 async function deleteMarker(id: string): Promise<void> {
     try {
@@ -44,7 +40,7 @@ async function deleteMarker(id: string): Promise<void> {
                     v-if="marker.info?.x && marker.info?.y"
                     variant="link"
                     icon="i-mdi-map-marker"
-                    @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
+                    @click="goto({ x: marker.info?.x, y: marker.info?.y })"
                 >
                     <span class="truncate">
                         {{ $t('common.mark') }}

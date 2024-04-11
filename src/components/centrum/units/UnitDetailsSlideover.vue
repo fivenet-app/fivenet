@@ -7,18 +7,17 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitAttributes from '../partials/UnitAttributes.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = defineProps<{
     unit: Unit;
     statusSelected?: StatusUnit;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const slideover = useSlideover();
 const { isOpen } = useSlideover();
+
+const { goto } = useLivemapStore();
 
 const modal = useModal();
 
@@ -127,7 +126,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     variant="link"
                                     icon="i-mdi-map-marker"
                                     :padded="false"
-                                    @click="$emit('goto', { x: unit.status?.x, y: unit.status?.y })"
+                                    @click="goto({ x: unit.status?.x, y: unit.status?.y })"
                                 >
                                     {{ $t('common.go_to_location') }}
                                 </UButton>
@@ -187,7 +186,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                     </div>
                 </dl>
 
-                <UnitFeed :unit-id="unit.id" @goto="$emit('goto', $event)" />
+                <UnitFeed :unit-id="unit.id" />
             </div>
 
             <template #footer>

@@ -9,10 +9,6 @@ defineProps<{
     showAllDispatches?: boolean;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const slideover = useSlideover();
 
 const centrumStore = useCentrumStore();
@@ -45,10 +41,8 @@ const dispatchesFiltered = computedAsync(async () =>
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatch: $event,
-                    onGoto: ($event) => $emit('goto', $event),
                 })
             "
-            @goto="$emit('goto', $event)"
         />
     </LLayerGroup>
 
@@ -66,10 +60,8 @@ const dispatchesFiltered = computedAsync(async () =>
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatch: $event,
-                    onGoto: ($event) => $emit('goto', $event),
                 })
             "
-            @goto="$emit('goto', $event)"
         />
     </LLayerGroup>
 

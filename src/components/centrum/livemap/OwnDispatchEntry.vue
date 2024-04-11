@@ -3,6 +3,7 @@ import { CarEmergencyIcon } from 'mdi-vue3';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useLivemapStore } from '~/store/livemap';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
@@ -11,9 +12,10 @@ defineProps<{
 }>();
 
 defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
     (e: 'update:selectedDispatch', dsp: string | undefined): void;
 }>();
+
+const { goto } = useLivemapStore();
 
 const slideover = useSlideover();
 </script>
@@ -30,7 +32,7 @@ const slideover = useSlideover();
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
 
-            <UButton variant="link" icon="i-mdi-map-marker" @click="$emit('goto', { x: dispatch.x, y: dispatch.y })" />
+            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
         </div>
         <UButton
             color="red"
@@ -39,7 +41,6 @@ const slideover = useSlideover();
             @click="
                 slideover.open(DispatchDetailsSlideover, {
                     dispatch: dispatch,
-                    onGoto: ($event) => $emit('goto', $event),
                 })
             "
         >

@@ -18,7 +18,6 @@ const props = withDefaults(
 
 defineEmits<{
     (e: 'selected'): void;
-    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const iconAnchor = ref<PointExpression>([props.size / 2, props.size]);
@@ -35,7 +34,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         :fill-color="marker.info?.color ?? '#ffffff'"
         :fill-opacity="(marker.data.data.circle.oapcity ?? 15) / 100"
     >
-        <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
+        <MarkerMarkerPopup :marker="marker" />
     </LCircle>
 
     <LMarker
@@ -55,7 +54,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
             />
         </LIcon>
 
-        <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
+        <MarkerMarkerPopup :marker="marker" />
     </LMarker>
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
@@ -63,6 +62,6 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
             <MapMarkerQuestionIcon :fill="marker.info?.color ?? 'currentColor'" class="h-auto w-full" />
         </LIcon>
 
-        <MarkerMarkerPopup :marker="marker" @goto="$emit('goto', $event)" />
+        <MarkerMarkerPopup :marker="marker" />
     </LMarker>
 </template>

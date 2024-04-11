@@ -7,10 +7,6 @@ import { statusOrder, type GroupedUnits } from '~/components/centrum/helpers';
 const centrumStore = useCentrumStore();
 const { getSortedUnits } = storeToRefs(centrumStore);
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const grouped = computedAsync(async () => {
     const groups: GroupedUnits = [];
     getSortedUnits.value.forEach((e) => {
@@ -66,7 +62,7 @@ const grouped = computedAsync(async () => {
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                 </p>
                 <ul role="list" class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2">
-                    <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" @goto="$emit('goto', $event)" />
+                    <UnitListEntry v-for="unit in group.units" :key="unit.id" :unit="unit" />
                 </ul>
             </template>
         </div>

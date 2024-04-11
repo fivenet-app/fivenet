@@ -23,10 +23,6 @@ defineProps<{
     showUnitStatus?: boolean;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { t } = useI18n();
 
 const slideover = useSlideover();
@@ -140,9 +136,8 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
                         :show-unit-names="showUnitNames"
                         :show-unit-status="showUnitStatus"
                         @user-selected="selectedUserMarker = $event.info"
-                        @goto="$emit('goto', $event)"
                     />
-                    <MarkersLayer @goto="$emit('goto', $event)" />
+                    <MarkersLayer />
                 </template>
 
                 <MapTempMarker />

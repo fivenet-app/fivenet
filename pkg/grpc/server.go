@@ -3,6 +3,7 @@ package grpc
 import (
 	"context"
 	"fmt"
+	"math"
 	"net"
 	"time"
 
@@ -29,6 +30,7 @@ import (
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 )
 
@@ -105,6 +107,14 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	otelgrpcHandler := otelgrpc.NewServerHandler()
 
 	srv := grpc.NewServer(
+		grpc.KeepaliveParams(keepalive.ServerParameters{
+			MaxConnectionIdle:     0,
+			MaxConnectionAge:      time.Duration(math.MaxInt64),
+			MaxConnectionAgeGrace: time.Duration(math.MaxInt64),
+			Time:                  60 * time.Minute,
+			Timeout:               20 * time.Second,
+		}),
+		grpc.MaxConcurrentStreams(128),
 		grpc.StatsHandler(otelgrpcHandler),
 		grpc.ChainUnaryInterceptor(
 			srvMetrics.UnaryServerInterceptor(grpcprom.WithExemplarFromContext(exemplarFromContext)),

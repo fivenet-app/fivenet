@@ -13,13 +13,10 @@ import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = defineProps<{
     dispatch: Dispatch;
-}>();
-
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -27,6 +24,8 @@ const { $grpc } = useNuxtApp();
 const modal = useModal();
 
 const { isOpen } = useSlideover();
+
+const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
@@ -149,7 +148,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                         variant="link"
                                         icon="i-mdi-map-marker"
                                         :padded="false"
-                                        @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                                        @click="goto({ x: dispatch.x, y: dispatch.y })"
                                     >
                                         {{ $t('common.go_to_location') }}
                                     </UButton>
@@ -180,7 +179,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                 {{ $t('common.reference', 2) }}
                             </dt>
                             <dd class="mt-2 text-sm sm:col-span-2 sm:mt-0">
-                                <DispatchReferences :references="dispatch.references" @goto="$emit('goto', $event)" />
+                                <DispatchReferences :references="dispatch.references" />
                             </dd>
                         </div>
                         <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
@@ -275,7 +274,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                         icon="i-mdi-map-marker"
                                         :padded="false"
                                         @click="
-                                            $emit('goto', {
+                                            goto({
                                                 x: dispatch.status?.x,
                                                 y: dispatch.status?.y,
                                             })
@@ -323,7 +322,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                     </dl>
                 </div>
 
-                <DispatchFeed :dispatch-id="dispatch.id" @goto="$emit('goto', $event)" />
+                <DispatchFeed :dispatch-id="dispatch.id" />
             </div>
 
             <template #footer>

@@ -7,10 +7,6 @@ defineProps<{
     references?: DispatchReferences;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const modal = useModal();
 
 const selectedDispatch = ref<string | undefined>();
@@ -35,7 +31,6 @@ const selectedDispatch = ref<string | undefined>();
                         selectedDispatch = reference.targetDispatchId;
                         modal.open(DispatchDetailsByIDSlideover, {
                             dispatchId: reference.targetDispatchId,
-                            onGoto: ($event) => $emit('goto', $event),
                             onClose: () => (selectedDispatch = undefined),
                         });
                     "

@@ -8,10 +8,6 @@ defineProps<{
     buttonClass?: unknown;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const modal = useModal();
 </script>
 
@@ -48,7 +44,6 @@ const modal = useModal();
                             @click="
                                 modal.open(DispatchDetailsByIDSlideover, {
                                     dispatchId: status.dispatchId,
-                                    onGoto: ($event) => $emit('goto', $event),
                                 })
                             "
                         >

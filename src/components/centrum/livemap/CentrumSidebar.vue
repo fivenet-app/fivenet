@@ -26,10 +26,6 @@ import { useSettingsStore } from '~/store/settings';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 import DisponentsInfo from '../disponents/DisponentsInfo.vue';
 
-const emits = defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { $grpc } = useNuxtApp();
 
 const modal = useModal();
@@ -285,9 +281,7 @@ async function checkup(): Promise<void> {
 }
 
 function openTakeDispatches(): void {
-    slideover.open(TakeDispatchSlideover, {
-        onGoto: ($event) => emits('goto', $event),
-    });
+    slideover.open(TakeDispatchSlideover, {});
 }
 
 defineShortcuts({
@@ -308,11 +302,11 @@ defineShortcuts({
 
         <UMain>
             <div class="relative z-0 size-full">
-                <LivemapBase @goto="$emit('goto', $event)">
+                <LivemapBase >
                     <template v-if="canStream" #default>
                         <DispatchesLayer
                             :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
-                            @goto="$emit('goto', $event)"
+
                         />
 
                         <LControl position="bottomright">
@@ -358,7 +352,6 @@ defineShortcuts({
                                                                 @click="
                                                                     slideover.open(UnitDetailsSlideover, {
                                                                         unit: getOwnUnit,
-                                                                        onGoto: ($event) => $emit('goto', $event),
                                                                     })
                                                                 "
                                                             >
@@ -550,7 +543,7 @@ defineShortcuts({
                                                                 :key="id"
                                                                 v-model:selected-dispatch="selectedDispatch"
                                                                 :dispatch="dispatches.get(id)!"
-                                                                @goto="$emit('goto', $event)"
+
                                                             />
                                                         </template>
                                                     </ul>

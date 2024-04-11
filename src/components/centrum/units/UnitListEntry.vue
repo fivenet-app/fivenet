@@ -8,10 +8,6 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const slideover = useSlideover();
 
 const unitColorHex = computed(() => hexToRgb(props.unit.color) ?? ({ r: 0, g: 0, b: 0 } as RGB));
@@ -24,7 +20,6 @@ const isBright = computed(() => isColourBright(unitColorHex.value));
         @click="
             slideover.open(UnitDetailsSlideover, {
                 unit: unit,
-                onGoto: (loc) => $emit('goto', loc),
             })
         "
     >

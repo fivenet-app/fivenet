@@ -7,6 +7,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -20,8 +21,9 @@ const props = withDefaults(
 
 const emits = defineEmits<{
     (e: 'selected', state: boolean): void;
-    (e: 'goto', loc: Coordinate): void;
 }>();
+
+const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
@@ -55,7 +57,6 @@ onBeforeMount(() => {
                         () =>
                             slideover.open(DispatchDetailsSlideover, {
                                 dispatch: dispatch,
-                                onGoto: ($event) => $emit('goto', $event),
                             })
                     "
                 />
@@ -103,7 +104,7 @@ onBeforeMount(() => {
                             variant="link"
                             icon="i-mdi-map-marker"
                             :padded="false"
-                            @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                            @click="goto({ x: dispatch.x, y: dispatch.y })"
                         >
                             {{ $t('common.go_to_location') }}
                         </UButton>

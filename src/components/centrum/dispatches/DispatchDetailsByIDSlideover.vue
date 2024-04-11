@@ -7,10 +7,6 @@ const props = defineProps<{
     dispatchId: string;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { $grpc } = useNuxtApp();
 
 const centrumStore = useCentrumStore();
@@ -45,5 +41,5 @@ watch(props, () => refresh());
 </script>
 
 <template>
-    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch="data.dispatch" @goto="$emit('goto', $event)" />
+    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch="data.dispatch" />
 </template>

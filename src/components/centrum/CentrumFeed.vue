@@ -7,10 +7,6 @@ import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
 defineProps<{
     items: (DispatchStatus | UnitStatus)[];
 }>();
-
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
 </script>
 
 <template>
@@ -30,7 +26,6 @@ defineEmits<{
                         :item="activityItem"
                         :activity-item-idx="activityItemIdx"
                         :show-id="true"
-                        @goto="$emit('goto', $event)"
                     />
                     <UnitFeedItem
                         v-else
@@ -38,7 +33,6 @@ defineEmits<{
                         :activity-length="items?.length ?? 0"
                         :item="activityItem"
                         :activity-item-idx="activityItemIdx"
-                        @goto="$emit('goto', $event)"
                     />
                 </template>
             </ul>

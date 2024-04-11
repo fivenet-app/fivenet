@@ -8,6 +8,7 @@ import { unitStatusToBGColor } from '~/components/centrum/helpers';
 import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { useAuthStore } from '~/store/auth';
 import { useCentrumStore } from '~/store/centrum';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -25,13 +26,14 @@ const props = withDefaults(
 
 defineEmits<{
     (e: 'selected'): void;
-    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const slideover = useSlideover();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
@@ -94,7 +96,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         variant="link"
                         icon="i-mdi-map-marker"
                         :padded="false"
-                        @click="$emit('goto', { x: marker.info?.x, y: marker.info?.y })"
+                        @click="goto({ x: marker.info?.x, y: marker.info?.y })"
                     >
                         <span class="truncate">
                             {{ $t('common.mark') }}
@@ -129,7 +131,6 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         @click="
                             slideover.open(UnitDetailsSlideover, {
                                 unit: unit,
-                                onGoto: (loc) => $emit('goto', loc),
                             })
                         "
                     >

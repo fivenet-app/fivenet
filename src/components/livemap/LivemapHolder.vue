@@ -2,7 +2,6 @@
 import { useLivemapStore } from '~/store/livemap';
 
 const livemapStore = useLivemapStore();
-const { goto } = livemapStore;
 const { offsetLocationZoom } = storeToRefs(livemapStore);
 
 onMounted(() => {
@@ -16,6 +15,6 @@ onBeforeUnmount(() => {
 
 <template>
     <ClientOnly>
-        <LazyCentrumLivemapCentrumSidebar @goto="goto($event)" />
+        <LazyCentrumLivemapCentrumSidebar />
     </ClientOnly>
 </template>

@@ -6,10 +6,6 @@ const props = defineProps<{
     dispatchId?: string;
 }>();
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { $grpc } = useNuxtApp();
 
 const offset = ref(0);
@@ -59,7 +55,6 @@ const { pause, resume } = useIntervalFn(async () => {
                             :activity-length="data?.activity?.length ?? 0"
                             :item="activityItem"
                             :activity-item-idx="activityItemIdx"
-                            @goto="$emit('goto', $event)"
                         />
                     </ul>
                 </div>

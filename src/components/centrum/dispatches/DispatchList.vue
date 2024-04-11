@@ -10,6 +10,7 @@ import DispatchAttributes from '../partials/DispatchAttributes.vue';
 import DispatchDetailsSlideover from './DispatchDetailsSlideover.vue';
 import DispatchStatusUpdateModal from './DispatchStatusUpdateModal.vue';
 import DispatchAssignModal from './DispatchAssignModal.vue';
+import { useLivemapStore } from '~/store/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -26,15 +27,13 @@ const props = withDefaults(
     },
 );
 
-defineEmits<{
-    (e: 'goto', loc: Coordinate): void;
-}>();
-
 const { t } = useI18n();
 
 const modal = useModal();
 
 const slideover = useSlideover();
+
+const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
 const { getSortedDispatches } = storeToRefs(centrumStore);
@@ -151,7 +150,7 @@ const columns = [
                                 variant="link"
                                 icon="i-mdi-map-marker"
                                 :title="$t('common.go_to_location')"
-                                @click="$emit('goto', { x: dispatch.x, y: dispatch.y })"
+                                @click="goto({ x: dispatch.x, y: dispatch.y })"
                             />
 
                             <UButton
@@ -175,7 +174,6 @@ const columns = [
                                 @click="
                                     slideover.open(DispatchDetailsSlideover, {
                                         dispatch: dispatch,
-                                        onGoto: (loc) => $emit('goto', loc),
                                     })
                                 "
                             />

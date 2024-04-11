@@ -7,7 +7,6 @@ import MarkerMarker from '~/components/livemap/MarkerMarker.vue';
 
 defineEmits<{
     (e: 'markerSelected', marker: Marker): void;
-    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const livemapStore = useLivemapStore();
@@ -31,7 +30,6 @@ const { livemap } = storeToRefs(settingsStore);
             :marker="marker"
             :size="livemap.markerSize"
             @selected="$emit('markerSelected', marker)"
-            @goto="$emit('goto', $event)"
         />
     </LLayerGroup>
 </template>

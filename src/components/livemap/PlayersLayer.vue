@@ -21,7 +21,6 @@ withDefaults(
 
 defineEmits<{
     (e: 'userSelected', marker: UserMarker): void;
-    (e: 'goto', loc: Coordinate): void;
 }>();
 
 const livemapStore = useLivemapStore();
@@ -67,7 +66,6 @@ const playerMarkersFiltered = computedAsync(async () =>
             :show-unit-names="showUnitNames || livemap.showUnitNames"
             :show-unit-status="showUnitStatus || livemap.showUnitStatus"
             @selected="$emit('userSelected', marker)"
-            @goto="$emit('goto', $event)"
         />
     </LLayerGroup>
 
