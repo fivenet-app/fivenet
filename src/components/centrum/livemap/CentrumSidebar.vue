@@ -418,15 +418,17 @@ defineShortcuts({
                                                                 <UButton
                                                                     v-for="item in unitStatuses"
                                                                     :key="item.name"
+                                                                    :ui="{ gap: 'gap-x-0.5', padding: { xs: 'px-1.5 py-1.5' } }"
                                                                     size="xs"
                                                                     :disabled="!canSubmitUnitStatus"
                                                                     :icon="item.icon"
                                                                     :class="[item.status && unitStatusToBGColor(item.status)]"
+                                                                    truncate
                                                                     @click="
                                                                         onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)
                                                                     "
                                                                 >
-                                                                    <span class="mt-0.5 line-clamp-2">
+                                                                    <span class="line-clamp-2">
                                                                         {{
                                                                             item.status
                                                                                 ? $t(
@@ -474,6 +476,7 @@ defineShortcuts({
                                                                         (s) => s.status !== StatusDispatch.CANCELLED,
                                                                     )"
                                                                     :key="item.name"
+                                                                    :ui="{ gap: 'gap-x-0.5', padding: { xs: 'px-1.5 py-1.5' } }"
                                                                     size="xs"
                                                                     :disabled="!canSubmitDispatchStatus"
                                                                     :icon="item.icon"
@@ -527,9 +530,9 @@ defineShortcuts({
                                                 </li>
 
                                                 <li>
-                                                    <div class="text-xs font-semibold leading-6">
+                                                    <li class="inline-flex items-center text-xs font-semibold leading-6">
                                                         {{ $t('common.your_dispatches') }}
-                                                    </div>
+                                                    </li>
                                                     <ul role="list" class="-mx-1 space-y-0.5">
                                                         <li v-if="getSortedOwnDispatches.length === 0">
                                                             <UButton

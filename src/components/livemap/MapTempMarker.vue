@@ -14,19 +14,14 @@ const iconAnchor: PointExpression = [livemap.value.markerSize / 2, livemap.value
 
 const showMarker = ref(false);
 
-const { start, stop } = useTimeoutFn(() => {
-    if (!showLocationMarker.value) {
-        showMarker.value = false;
-    }
-}, 6000);
+const { start } = useTimeoutFn(() => (showMarker.value = false), 5000, { immediate: false });
 
 watch(location, () => {
-    showMarker.value = showLocationMarker.value || true;
+    showMarker.value = showLocationMarker.value;
     start();
 });
 
-onBeforeUnmount(() => {
-    stop();
+watch(showLocationMarker, () => {
     if (!showLocationMarker.value) {
         showMarker.value = false;
     }
@@ -35,7 +30,11 @@ onBeforeUnmount(() => {
 
 <template>
     <LMarker v-if="location && showMarker" :lat-lng="[location.y, location.x]" :z-index-offset="90">
-        <LIcon :icon-size="[livemap.markerSize, livemap.markerSize]" :icon-anchor="iconAnchor">
+        <LIcon
+            :icon-size="[livemap.markerSize, livemap.markerSize]"
+            :icon-anchor="iconAnchor"
+            class-name="!pointer-events-none"
+        >
             <UIcon name="i-mdi-map-marker-down" class="text-primary-500 size-full animate-pulse" />
         </LIcon>
     </LMarker>

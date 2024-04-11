@@ -58,7 +58,12 @@ const counts = computedAsync(() => {
 
 <template>
     <UPopover>
-        <UButton variant="ghost" class="inline-flex items-center" trailing-icon="i-mdi-chevron-down">
+        <UButton
+            :ui="{ icon: { base: 'max-md:!hidden' } }"
+            variant="ghost"
+            class="inline-flex items-center"
+            trailing-icon="i-mdi-chevron-down"
+        >
             {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
         </UButton>
 
