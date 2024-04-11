@@ -17,7 +17,9 @@ const date: Date = props.value instanceof Date ? props.value : toDate(props.valu
 </script>
 
 <template>
-    <time :datetime="date.toLocaleTimeString()" :title="!ago ? $d(date, type) : useLocaleTimeAgo(date).value">
-        {{ !ago ? $d(date, type) : useLocaleTimeAgo(date).value }}
-    </time>
+    <UTooltip :text="$d(date, 'long')">
+        <time :datetime="date.toLocaleTimeString()">
+            {{ !ago ? $d(date, type) : useLocaleTimeAgo(date).value }}
+        </time>
+    </UTooltip>
 </template>

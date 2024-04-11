@@ -188,7 +188,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                 <span v-if="dispatch.units.length === 0" class="block">
                                     {{ $t('common.units', dispatch.units.length) }}
                                 </span>
-                                <div v-else class="mb-1 rounded-md bg-base-800">
+                                <div v-else class="mb-1 rounded-md bg-base-900">
                                     <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
                                         <li
                                             v-for="unit in dispatch.units"

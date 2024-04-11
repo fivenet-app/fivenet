@@ -22,7 +22,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
 </script>
 
 <template>
-    <UCard :key="char.userId" class="mx-4 flex w-full min-w-[28rem] max-w-md flex-col rounded-lg bg-base-800">
+    <UCard :key="char.userId" class="mx-4 flex w-full min-w-[28rem] max-w-md flex-col">
         <template #header>
             <div class="flex flex-col">
                 <div class="mx-auto inline-flex items-center gap-2">

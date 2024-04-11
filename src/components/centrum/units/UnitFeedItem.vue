@@ -46,7 +46,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.USER_REMOVED">
@@ -71,7 +71,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.UNAVAILABLE">
@@ -96,7 +96,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.AVAILABLE">
@@ -121,7 +121,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.ON_BREAK">
@@ -146,7 +146,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else-if="item.status === StatusUnit.BUSY">
@@ -171,7 +171,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
         <template v-else>
@@ -196,7 +196,7 @@ const { goto } = useLivemapStore();
                 </span>
             </p>
             <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
-                <GenericTime :value="item.createdAt" :type="'compact'" />
+                <GenericTime :value="item.createdAt" type="compact" />
             </span>
         </template>
     </li>

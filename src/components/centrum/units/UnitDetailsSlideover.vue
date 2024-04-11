@@ -121,6 +121,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     {{ $t('common.postal') }}:
                                     {{ unit.status?.postal ?? $t('common.na') }}
                                 </span>
+
                                 <UButton
                                     v-if="unit.status?.x !== undefined && unit.status?.y !== undefined"
                                     size="xs"
@@ -151,7 +152,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                             <span v-if="unit.users.length === 0" class="block">
                                 {{ $t('common.member', 0) }}
                             </span>
-                            <div v-else class="rounded-md bg-base-800">
+                            <div v-else class="rounded-md bg-base-900">
                                 <ul role="list" class="divide-y divide-gray-100 text-sm font-medium dark:divide-gray-800">
                                     <li
                                         v-for="user in unit.users"
