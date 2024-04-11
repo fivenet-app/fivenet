@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
-import UnitAssignUsersSlideover from '~/components/centrum/units/UnitAssignUsersSlideover.vue';
+import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -8,6 +8,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitAttributes from '../partials/UnitAttributes.vue';
 import { useLivemapStore } from '~/store/livemap';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const props = defineProps<{
     unit: Unit;
@@ -158,11 +159,11 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                         class="flex items-center justify-between py-3 pl-3 pr-4"
                                     >
                                         <div class="flex flex-1 items-center">
-                                            <CitizenInfoPopover :user="user.user" class="flex items-center justify-center">
-                                                <template #before>
-                                                    <UIcon name="i-mdi-account" class="mr-1 size-5 shrink-0" />
-                                                </template>
-                                            </CitizenInfoPopover>
+                                            <CitizenInfoPopover
+                                                :user="user.user"
+                                                show-avatar-in-name
+                                                class="flex items-center justify-center"
+                                            />
                                         </div>
                                     </li>
                                 </ul>
@@ -174,7 +175,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                                     icon="i-mdi-pencil"
                                     truncate
                                     @click="
-                                        slideover.open(UnitAssignUsersSlideover, {
+                                        modal.open(UnitAssignUsersModal, {
                                             unit: unit,
                                         })
                                     "

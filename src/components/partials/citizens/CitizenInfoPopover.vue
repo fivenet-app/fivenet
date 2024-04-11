@@ -11,12 +11,14 @@ withDefaults(
         textClass?: unknown;
         buttonClass?: unknown;
         showAvatar?: boolean;
+        showAvatarInName?: boolean;
         trailing?: boolean;
     }>(),
     {
         textClass: '' as any,
         buttonClass: '' as any,
         showAvatar: undefined,
+        showAvatarInName: false,
         trailing: true,
     },
 );
@@ -34,6 +36,14 @@ withDefaults(
         <span class="inline-flex items-center">
             <slot name="before" />
             <UButton variant="link" :padded="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
+                <ProfilePictureImg
+                    v-if="showAvatarInName"
+                    :src="user.avatar?.url"
+                    :name="`${user.firstname} ${user.lastname}`"
+                    class="mr-1"
+                    size="xs"
+                />
+
                 {{ user.firstname }} {{ user.lastname }}
             </UButton>
             <span v-if="user.phoneNumber">
@@ -51,6 +61,15 @@ withDefaults(
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
             <slot name="before" />
+
+            <ProfilePictureImg
+                v-if="showAvatarInName"
+                :src="user.avatar?.url"
+                :name="`${user.firstname} ${user.lastname}`"
+                class="mr-1"
+                size="xs"
+            />
+
             <span class="truncate" :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>
             <slot name="after" />
         </UButton>

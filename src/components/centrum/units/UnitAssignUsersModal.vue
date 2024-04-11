@@ -11,7 +11,7 @@ const props = defineProps<{
 
 const { $grpc } = useNuxtApp();
 
-const { isOpen } = useSlideover();
+const { isOpen } = useModal();
 
 const usersLoading = ref(false);
 
@@ -67,13 +67,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UForm :schema="schema" :state="query" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
                     body: {
-                        base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
                         padding: 'px-1 py-2 sm:p-2',
                     },
                     ring: '',
@@ -123,7 +122,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 </USelectMenu>
                             </UFormGroup>
 
-                            <div class="overflow-hidden rounded-md bg-base-800">
+                            <div class="mt-2 overflow-hidden rounded-md bg-base-800">
                                 <ul
                                     role="list"
                                     class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
@@ -133,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                         :key="user.userId"
                                         class="inline-flex items-center px-6 py-4"
                                     >
-                                        <CitizenInfoPopover :user="user" />
+                                        <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
                                     </li>
                                 </ul>
                             </div>
@@ -147,12 +146,12 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             {{ $t('common.close', 1) }}
                         </UButton>
 
-                        <UButton type="submit" :disabled="!canSubmit" :loading="!canSubmit">
+                        <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                             {{ $t('common.update') }}
                         </UButton>
                     </UButtonGroup>
                 </template>
             </UCard>
         </UForm>
-    </USlideover>
+    </UModal>
 </template>
