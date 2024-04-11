@@ -7,6 +7,7 @@ import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import Pagination from '../partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -103,10 +104,6 @@ async function removeComment(comment: Comment): Promise<void> {
         return;
     }
 
-    if (!can('DocStoreService.DeleteComment')) {
-        return;
-    }
-
     const idx = data.value.comments.findIndex((c) => {
         return c.id === comment.id;
     });
@@ -125,7 +122,7 @@ watchOnce(isVisible, () => refresh());
 
 const commentInput = ref<HTMLInputElement | null>(null);
 
-function focusComment(): void {
+function focusCommentField(): void {
     if (commentInput.value) {
         commentInput.value.focus();
     }
@@ -180,7 +177,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 v-if="!data || !data.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 icon="i-mdi-comment-text-multiple"
-                :focus="focusComment"
+                :focus="focusCommentField"
             />
             <ul
                 v-if="data && data.comments && data.comments.length > 0"
@@ -195,13 +192,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </ul>
 
-            <div class="flex justify-end px-3 py-3.5">
-                <UPagination
-                    v-model="page"
-                    :page-count="data?.pagination?.pageSize ?? 0"
-                    :total="data?.pagination?.totalCount ?? 0"
-                />
-            </div>
+            <Pagination v-model="page" :pagination="data?.pagination" disable-border />
         </div>
     </div>
 </template>

@@ -40,6 +40,7 @@ const (
 
 var (
 	tUsers       = table.Users
+	tUserProps   = table.FivenetUserProps
 	tCreator     = tUsers.AS("creator")
 	tDocument    = table.FivenetDocuments.AS("document")
 	tDUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")

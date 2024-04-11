@@ -6,6 +6,7 @@ import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '../partials/ConfirmModal.vue';
+import { useNotificatorStore } from '~/store/notificator';
 
 const props = defineProps<{
     comment: Comment;
@@ -21,8 +22,9 @@ const { $grpc } = useNuxtApp();
 const modal = useModal();
 
 const authStore = useAuthStore();
-
 const { activeChar, permissions } = storeToRefs(authStore);
+
+const notifications = useNotificatorStore();
 
 const editing = ref(false);
 
@@ -63,6 +65,12 @@ async function deleteComment(id: string): Promise<void> {
             commentId: id,
         });
 
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
+
         emit('deleted', props.comment);
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -93,18 +101,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <div :class="[comment.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <CitizenInfoPopover
-                            :user="comment.creator"
-                            class="text-primary-400 hover:text-primary-300 text-sm font-medium"
-                        />
+                        <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />
                     </div>
+
                     <div class="flex flex-1 items-center">
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
+
                     <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center">
                         <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
                         {{ $t('common.deleted') }}
                     </div>
+
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <UButton
                             v-if="can('DocStoreService.PostComment')"
@@ -125,6 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         />
                     </div>
                 </div>
+
                 <p class="whitespace-pre-line break-words text-sm">
                     {{ comment.comment }}
                 </p>
@@ -139,7 +148,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UTextarea
                                 v-model="state.comment"
                                 ref="commentInput"
-                                :rows="3"
+                                :rows="5"
                                 :placeholder="$t('components.documents.document_comments.add_comment')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"

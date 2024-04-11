@@ -15,6 +15,7 @@ import (
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/notifi"
 	"github.com/galexrt/fivenet/pkg/perms"
@@ -96,6 +97,7 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 		tCreator.JobGrade,
 		tCreator.Firstname,
 		tCreator.Lastname,
+		tUserProps.Avatar.AS("creator.avatar"),
 	}
 	if userInfo.SuperUser {
 		columns = append(columns, tDComments.DeletedAt)
@@ -110,6 +112,9 @@ func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*Get
 			tDComments.
 				LEFT_JOIN(tCreator,
 					tDComments.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tCreator.ID),
 				),
 		).
 		WHERE(condition).
@@ -198,10 +203,11 @@ func (s *Server) PostComment(ctx context.Context, req *PostCommentRequest) (*Pos
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
-	comment, err := s.getComment(ctx, uint64(lastId))
+	comment, err := s.getComment(ctx, uint64(lastId), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
+	comment.CreatorJob = ""
 
 	return &PostCommentResponse{
 		Comment: comment,
@@ -231,7 +237,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 		return nil, errorsdocstore.ErrCommentEditDenied
 	}
 
-	comment, err := s.getComment(ctx, req.Comment.Id)
+	comment, err := s.getComment(ctx, req.Comment.Id, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -275,7 +281,7 @@ func (s *Server) EditComment(ctx context.Context, req *EditCommentRequest) (*Edi
 	}, nil
 }
 
-func (s *Server) getComment(ctx context.Context, id uint64) (*documents.Comment, error) {
+func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.UserInfo) (*documents.Comment, error) {
 	comment := &documents.Comment{}
 
 	tDComments := tDComments.AS("comment")
@@ -284,12 +290,26 @@ func (s *Server) getComment(ctx context.Context, id uint64) (*documents.Comment,
 			tDComments.ID,
 			tDComments.CreatedAt,
 			tDComments.UpdatedAt,
+			tDComments.DocumentID,
 			tDComments.Comment,
 			tDComments.CreatorID,
 			tDComments.CreatorJob,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(
-			tDComments,
+			tDComments.
+				LEFT_JOIN(tCreator,
+					tDComments.CreatorID.EQ(tCreator.ID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tCreator.ID),
+				),
 		).
 		WHERE(
 			tDComments.ID.EQ(jet.Uint64(id)),
@@ -298,6 +318,10 @@ func (s *Server) getComment(ctx context.Context, id uint64) (*documents.Comment,
 
 	if err := stmt.QueryContext(ctx, s.db, comment); err != nil {
 		return nil, err
+	}
+
+	if comment.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, comment.Creator)
 	}
 
 	return comment, nil
@@ -317,7 +341,7 @@ func (s *Server) DeleteComment(ctx context.Context, req *DeleteCommentRequest) (
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	comment, err := s.getComment(ctx, req.CommentId)
+	comment, err := s.getComment(ctx, req.CommentId, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
