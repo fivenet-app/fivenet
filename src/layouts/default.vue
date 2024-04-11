@@ -341,7 +341,7 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
 
 <template>
     <UDashboardLayout>
-        <UDashboardPanel :width="225" :resizable="{ min: 175, max: 275 }" collapsible>
+        <UDashboardPanel :width="225" :resizable="{ min: 175, max: 350 }" collapsible>
             <UDashboardNavbar class="!border-transparent" :ui="{ left: 'flex-1' }">
                 <template #left>
                     <TopLogoDropdown />

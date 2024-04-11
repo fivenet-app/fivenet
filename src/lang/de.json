@@ -128,6 +128,12 @@
                 "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
                 "header": "Abgemeldet"
             }
+        },
+        "dereferer": {
+            "title": "Weiterleitung",
+            "subtitle": "Du verlässt FiveNet.",
+            "description": "Bitte beachte, dass du auf eine Webseite geleitet wirst, für deren Inhalt wir nicht verantwortlich sind und auf die unsere Datenschutzbestimmungen keine Anwendung finden.",
+            "goto": "Falls die automatische Weiterleitung nicht funktioniert, klicke bitte hier!"
         }
     },
     "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
