@@ -36,7 +36,7 @@ async function deleteMarker(id: string): Promise<void> {
 <template>
     <LPopup :options="{ closeButton: true }">
         <div class="flex flex-col gap-2">
-            <div class="grid grid-cols-3 gap-1">
+            <div class="grid grid-cols-2 gap-1">
                 <UButton
                     v-if="marker.info?.x !== undefined && marker.info?.y !== undefined"
                     variant="link"
