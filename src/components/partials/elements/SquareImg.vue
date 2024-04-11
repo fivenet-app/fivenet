@@ -4,7 +4,7 @@ import { useSettingsStore } from '~/store/settings';
 
 const props = withDefaults(
     defineProps<{
-        url?: string;
+        src?: string;
         alt?: string;
         text?: string;
         size?: AvatarSize;
@@ -12,7 +12,7 @@ const props = withDefaults(
         enablePopup?: boolean;
     }>(),
     {
-        url: undefined,
+        src: undefined,
         alt: '',
         text: '',
         size: 'lg',
@@ -34,12 +34,12 @@ function toggleBlur(): void {
 </script>
 
 <template>
-    <template v-if="!url || !enablePopup">
-        <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="url" :alt="alt" :text="text" @click="toggleBlur()" />
+    <template v-if="!src || !enablePopup">
+        <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="src" :alt="alt" :text="text" @click="toggleBlur()" />
     </template>
     <UPopover v-else>
         <UButton variant="link" :padded="false">
-            <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="url" :alt="alt" :text="text" />
+            <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="src" :alt="alt" :text="text" />
         </UButton>
 
         <template #panel>
@@ -47,7 +47,7 @@ function toggleBlur(): void {
                 <img
                     class="w-96 max-w-full rounded-md"
                     :class="[visible ? '' : 'blur']"
-                    :src="url"
+                    :src="src"
                     :alt="alt"
                     @click="toggleBlur()"
                 />

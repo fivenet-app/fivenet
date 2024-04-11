@@ -134,7 +134,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div class="mt-4 flex flex-1 items-center">
                         <SquareImg
-                            :url="user?.props?.mugShot?.url"
+                            :src="user?.props?.mugShot?.url"
                             class="m-auto"
                             size="3xl"
                             :alt="$t('common.mug_shot')"

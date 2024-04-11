@@ -4,7 +4,7 @@ import SquareImg from '~/components/partials/elements/SquareImg.vue';
 
 withDefaults(
     defineProps<{
-        url?: string;
+        src?: string;
         name: string;
         size?: AvatarSize;
         enablePopup?: boolean;
@@ -23,11 +23,11 @@ withDefaults(
 
 <template>
     <SquareImg
-        :url="url"
+        :src="src"
         :size="size"
         :text="getInitials(name)"
         :alt="alt ?? $t('common.avatar')"
         :enable-popup="enablePopup"
-        :no-blur="noBlur || url === undefined"
+        :no-blur="noBlur || src === undefined"
     />
 </template>

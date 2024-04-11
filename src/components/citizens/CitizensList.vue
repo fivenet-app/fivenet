@@ -276,7 +276,7 @@ defineShortcuts({
             <template #name-data="{ row: citizen }">
                 <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
                     <ProfilePictureImg
-                        :url="citizen.props?.mugShot?.url"
+                        :src="citizen.props?.mugShot?.url"
                         :name="`${citizen.firstname} ${citizen.lastname}`"
                         :alt="$t('common.mug_shot')"
                         :enable-popup="true"

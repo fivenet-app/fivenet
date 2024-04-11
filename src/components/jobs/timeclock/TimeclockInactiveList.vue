@@ -138,7 +138,7 @@ const columns = [
             <template #name-data="{ row: colleague }">
                 <div class="inline-flex items-center">
                     <ProfilePictureImg
-                        :url="colleague.avatar?.url"
+                        :src="colleague.avatar?.url"
                         :name="`${colleague.firstname} ${colleague.lastname}`"
                         size="sm"
                         :enable-popup="true"

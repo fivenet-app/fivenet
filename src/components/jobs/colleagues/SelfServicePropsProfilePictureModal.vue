@@ -116,7 +116,7 @@ const nuiAvailable = ref(isNUIAvailable());
                     <div class="flex flex-1 items-center">
                         <ProfilePictureImg
                             class="m-auto"
-                            :url="activeChar?.avatar?.url"
+                            :src="activeChar?.avatar?.url"
                             :name="`${activeChar?.firstname} ${activeChar?.lastname}`"
                             size="3xl"
                             :no-blur="true"

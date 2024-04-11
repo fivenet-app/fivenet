@@ -255,7 +255,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 <SquareImg
                                                     v-if="jobProps.logoUrl?.url"
                                                     size="3xl"
-                                                    :url="jobProps.logoUrl.url"
+                                                    :src="jobProps.logoUrl.url"
                                                     :no-blur="true"
                                                 />
                                             </div>

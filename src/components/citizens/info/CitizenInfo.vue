@@ -123,7 +123,7 @@ function addToClipboard(): void {
                 <div class="mb-14">
                     <div class="my-4 flex gap-4 px-4">
                         <ProfilePictureImg
-                            :url="user.props?.mugShot?.url"
+                            :src="user.props?.mugShot?.url"
                             :name="`${user.firstname} ${user.lastname}`"
                             :alt="$t('common.mug_shot')"
                             :enable-popup="true"
@@ -136,6 +136,7 @@ function addToClipboard(): void {
                                     {{ user?.firstname }} {{ user?.lastname }}
                                 </h1>
                             </div>
+
                             <div class="inline-flex gap-2">
                                 <UBadge>
                                     {{ user.jobLabel }}

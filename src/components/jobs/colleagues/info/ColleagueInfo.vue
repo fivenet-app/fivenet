@@ -64,11 +64,12 @@ today.setMilliseconds(0);
             <div class="mb-6">
                 <div class="my-4 flex gap-4 px-4">
                     <ProfilePictureImg
-                        :url="colleague.colleague.avatar?.url"
+                        :src="colleague.colleague.avatar?.url"
                         :name="`${colleague.colleague.firstname} ${colleague.colleague.lastname}`"
-                        size="xl"
+                        size="3xl"
                         :enable-popup="true"
                     />
+
                     <div class="w-full">
                         <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                             <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
@@ -102,6 +103,7 @@ today.setMilliseconds(0);
                                 </UButton>
                             </UButtonGroup>
                         </div>
+
                         <div class="my-2 flex flex-row items-center gap-2">
                             <UBadge>
                                 {{ colleague.colleague.jobLabel }}

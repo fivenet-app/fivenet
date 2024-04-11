@@ -171,7 +171,7 @@ defineShortcuts({
                     <template #name-data="{ row: colleague }">
                         <div class="inline-flex items-center text-gray-900 dark:text-white">
                             <ProfilePictureImg
-                                :url="colleague.props?.mugShot?.url"
+                                :src="colleague?.avatar?.url"
                                 :name="`${colleague.firstname} ${colleague.lastname}`"
                                 size="sm"
                                 :enable-popup="true"

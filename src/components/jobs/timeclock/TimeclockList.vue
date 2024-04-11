@@ -307,7 +307,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                 <template #name-data="{ row: entry }">
                                     <div class="inline-flex items-center gap-1">
                                         <ProfilePictureImg
-                                            :url="entry.entry.user?.avatar?.url"
+                                            :src="entry.entry.user?.avatar?.url"
                                             :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
                                             size="sm"
                                         />
