@@ -131,9 +131,9 @@
         },
         "dereferer": {
             "title": "Weiterleitung",
-            "subtitle": "Du verlässt FiveNet.",
-            "description": "Bitte beachte, dass du auf eine Webseite geleitet wirst, für deren Inhalt wir nicht verantwortlich sind und auf die unsere Datenschutzbestimmungen keine Anwendung finden.",
-            "goto": "Falls die automatische Weiterleitung nicht funktioniert, klicke bitte hier!"
+            "subtitle": "Sie verlassen nun FiveNet.",
+            "description": "Bitte beachten Sie, dass Sie auf eine Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
+            "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!"
         }
     },
     "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
@@ -565,6 +565,15 @@
                 "jobs_absence_settings": {
                     "jobs_absence_role_enabled": "Verwalte die Abwesenheitsrolle",
                     "jobs_absence_role_name": "Abwesenheitsrolle"
+                },
+                "group_sync_settings": {
+                    "title": "Gruppen-Synchronisierungseinstellungen",
+                    "subtitle": "Einstellungen für die Gruppen-Synchronisierung.",
+                    "ignored_role_ids": {
+                        "title": "Ignorierte Rollen IDs",
+                        "description": "Bei Benutzern mit einer dieser Rollen werden keine Gruppen synchronisiert (dies betrifft nur die Gruppensynchronisierung und nicht die Synchronisierung der Benutzerinfos).",
+                        "field": "Ignorierte Rollen ID"
+                    }
                 }
             },
             "role_view": {
@@ -892,13 +901,15 @@
                 },
                 "volumes": {
                     "title": "Lautstärke-Einstellungen",
-                    "subtitle": "Stelle die Lautstärke von Sounds ein."
+                    "subtitle": "Stelle die Lautstärke von Sounds ein.",
+                    "notifications_volume": "Benachrichtungsvolumen"
                 },
                 "streamer_mode": {
                     "title": "Streamer-Modus",
                     "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
                 },
-                "background_color": "Hintergrund-Farbe"
+                "background_color": "Hintergrund-Farbe",
+                "customization": "Passen Sie das Aussehen von FiveNet an."
             },
             "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",
