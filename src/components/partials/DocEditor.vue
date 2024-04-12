@@ -191,11 +191,13 @@ watch(props, () => {
 </script>
 
 <template>
-    <JoditEditor ref="editorRef" v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
+    <div class="documentEditor">
+        <JoditEditor ref="editorRef" v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
+    </div>
 </template>
 
-<style>
-.jodit-wysiwyg {
+<style scoped>
+.documentEditor:deep(.jodit-wysiwyg) {
     min-width: 100%;
 
     * {

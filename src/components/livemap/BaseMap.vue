@@ -220,7 +220,7 @@ onBeforeUnmount(() => {
 </script>
 
 <template>
-    <div ref="mapContainer" class="flex h-full flex-row" :style="{ backgroundColor }">
+    <div ref="mapContainer" class="mapContainer flex h-full flex-row" :style="{ backgroundColor }">
         <LMap
             v-model:zoom="zoom"
             v-model:center="center"
@@ -266,119 +266,119 @@ onBeforeUnmount(() => {
     </div>
 </template>
 
-<style lang="css">
-.leaflet-container {
+<style scoped>
+.mapContainer:deep(.leaflet-container) {
     font-family: var(--font-sans);
-}
 
-.leaflet-container a {
-    color: rgb(var(--color-primary-500));
-}
-.leaflet-container a:hover {
-    color: rgb(var(--color-primary-400));
-}
+    .leaflet-container a {
+        color: rgb(var(--color-primary-500));
+    }
+    .leaflet-container a:hover {
+        color: rgb(var(--color-primary-400));
+    }
 
-.leaflet-map-pane {
-    z-index: 0;
-}
+    .leaflet-map-pane {
+        z-index: 0;
+    }
 
-.leaflet-div-icon {
-    background: none !important;
-    border: none !important;
-}
+    .leaflet-div-icon {
+        background: none !important;
+        border: none !important;
+    }
 
-.leaflet-div-icon svg path {
-    stroke: #000000;
-    stroke-width: 0.75px;
-    stroke-linejoin: round;
-}
+    .leaflet-div-icon svg path {
+        stroke: #000000;
+        stroke-width: 0.75px;
+        stroke-linejoin: round;
+    }
 
-.leaflet-marker-icon {
-    transition: transform 1s ease;
-    background: none;
-    border: none;
-}
+    .leaflet-marker-icon {
+        transition: transform 1s ease;
+        background: none;
+        border: none;
+    }
 
-.leaflet-popup-content-wrapper {
-    background-color: #16171a;
-    color: #ffffff;
-}
-.leaflet-popup-content p {
-    margin: 0.25em 0;
-}
-.leaflet-popup-tip {
-    background-color: #16171a;
-}
+    .leaflet-popup-content-wrapper {
+        background-color: #16171a;
+        color: #ffffff;
+    }
+    .leaflet-popup-content p {
+        margin: 0.25em 0;
+    }
+    .leaflet-popup-tip {
+        background-color: #16171a;
+    }
 
-.leaflet-control-layers-toggle {
-    background-color: rgb(var(--color-primary-500)) !important;
-}
-.leaflet-control-layers {
-    color: rgb(var(--color-primary-500));
-    background-color: rgb(var(--ui-background)) !important;
-}
+    .leaflet-control-layers-toggle {
+        background-color: rgb(var(--color-primary-500)) !important;
+    }
+    .leaflet-control-layers {
+        color: rgb(var(--color-primary-500));
+        background-color: rgb(var(--ui-background)) !important;
+    }
 
-.leaflet-control-attribution {
-    color: rgb(var(--color-primary-500));
-    background-color: rgb(var(--ui-background)) !important;
-}
+    .leaflet-control-attribution {
+        color: rgb(var(--color-primary-500));
+        background-color: rgb(var(--ui-background)) !important;
+    }
 
-.leaflet-control-attribution a {
-    color: rgb(var(--color-primary-500));
-}
-.leaflet-control-attribution a:hover {
-    color: rgb(var(--color-primary-400));
-}
+    .leaflet-control-attribution a {
+        color: rgb(var(--color-primary-500));
+    }
+    .leaflet-control-attribution a:hover {
+        color: rgb(var(--color-primary-400));
+    }
 
-/* Leaflet Contextmenu */
-.leaflet-contextmenu {
-    display: none;
-    box-shadow: 0 1px 7px rgba(0, 0, 0, 0.4);
-    -webkit-border-radius: 2px;
-    border-radius: 2px;
-    padding: 4px 0;
-    background-color: rgb(var(--ui-background));
-    cursor: default;
-    -webkit-user-select: none;
-    -moz-user-select: none;
-    user-select: none;
-}
+    /* Leaflet Contextmenu */
+    .leaflet-contextmenu {
+        display: none;
+        box-shadow: 0 1px 7px rgba(0, 0, 0, 0.4);
+        -webkit-border-radius: 2px;
+        border-radius: 2px;
+        padding: 4px 0;
+        background-color: rgb(var(--ui-background));
+        cursor: default;
+        -webkit-user-select: none;
+        -moz-user-select: none;
+        user-select: none;
+    }
 
-.leaflet-contextmenu a.leaflet-contextmenu-item {
-    display: block;
-    color: rgb(var(--color-primary-500));
-    font-size: 12px;
-    line-height: 20px;
-    text-decoration: none;
-    padding: 0 12px;
-    cursor: default;
-    outline: none;
-}
+    .leaflet-contextmenu a.leaflet-contextmenu-item {
+        display: block;
+        color: rgb(var(--color-primary-500));
+        font-size: 12px;
+        line-height: 20px;
+        text-decoration: none;
+        padding: 0 12px;
+        cursor: default;
+        outline: none;
+    }
 
-.leaflet-contextmenu a.leaflet-contextmenu-item-disabled {
-    opacity: 0.5;
-}
+    .leaflet-contextmenu a.leaflet-contextmenu-item-disabled {
+        opacity: 0.5;
+    }
 
-.leaflet-contextmenu a.leaflet-contextmenu-item.over {
-    background-color: rgb(var(--color-primary-100));
-}
+    .leaflet-contextmenu a.leaflet-contextmenu-item.over {
+        background-color: rgb(var(--color-primary-100));
+    }
 
-.leaflet-contextmenu a.leaflet-contextmenu-item-disabled.over {
-    background-color: inherit;
-    border-top: 1px solid transparent;
-    border-bottom: 1px solid transparent;
-}
+    .leaflet-contextmenu a.leaflet-contextmenu-item-disabled.over {
+        background-color: inherit;
+        border-top: 1px solid transparent;
+        border-bottom: 1px solid transparent;
+    }
 
-.leaflet-contextmenu-icon {
-    margin: 2px 8px 0 0;
-    width: 16px;
-    height: 16px;
-    float: left;
-    border: 0;
-}
+    .leaflet-contextmenu-icon {
+        margin: 2px 8px 0 0;
+        width: 16px;
+        height: 16px;
+        float: left;
+        border: 0;
+    }
 
-.leaflet-contextmenu-separator {
-    border-bottom: 1px solid #ccc;
-    margin: 5px 0;
+    .leaflet-contextmenu-separator {
+        border-bottom: 1px solid #ccc;
+        margin: 5px 0;
+    }
 }
 </style>

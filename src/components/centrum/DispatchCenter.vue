@@ -7,7 +7,6 @@ import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { useLivemapStore } from '~/store/livemap';
 import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import MarkersList from '~/components/centrum/MarkersList.vue';
@@ -16,9 +15,6 @@ import DisponentsInfo from './disponents/DisponentsInfo.vue';
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
 const { startStream, stopStream } = centrumStore;
-
-const livemapStore = useLivemapStore();
-const { goto } = livemapStore;
 
 onMounted(async () => useTimeoutFn(async () => startStream(true), 250));
 
@@ -83,15 +79,3 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         </div>
     </UDashboardPanel>
 </template>
-
-<style lang="css">
-.splitpanes--vertical > .splitpanes__splitter {
-    min-width: 3px;
-    background-color: rgb(var(--color-gray-800));
-}
-
-.splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 3px;
-    background-color: rgb(var(--color-gray-800));
-}
-</style>

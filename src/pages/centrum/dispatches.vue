@@ -22,7 +22,7 @@ definePageMeta({
 const { $grpc } = useNuxtApp();
 
 const livemapStore = useLivemapStore();
-const { location, showLocationMarker } = storeToRefs(livemapStore);
+const { showLocationMarker } = storeToRefs(livemapStore);
 
 const schema = z.object({
     postal: z.string().trim().max(12),
@@ -174,93 +174,3 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         </UDashboardPanel>
     </UDashboardPage>
 </template>
-
-<style>
-.PanelGroupWrapper {
-    height: 20rem;
-    background-color: grey;
-}
-
-.PanelGroup {
-    font-size: 2rem;
-}
-
-.Panel {
-    display: flex;
-    flex-direction: row;
-    font-size: 2rem;
-}
-
-.PanelColumn,
-.PanelRow {
-    display: flex;
-}
-.PanelColumn {
-    flex-direction: column;
-}
-.PanelRow {
-    flex-direction: row;
-}
-
-.Centered {
-    flex: 1 1 auto;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: var(--color-panel-background);
-    border-radius: 0.5rem;
-    overflow: auto;
-    font-size: 1rem;
-    padding: 0.5rem;
-    word-break: break-all;
-}
-
-.ResizeHandle {
-    background-color: red;
-}
-
-.Overflow {
-    width: 100%;
-    height: 100%;
-    overflow: auto;
-    padding: 1rem;
-
-    /* Firefox fixes */
-    scrollbar-width: thin;
-    scrollbar-color: var(--color-scroll-thumb) transparent;
-}
-
-.Button,
-.ButtonDisabled {
-    background-color: var(--color-button-background);
-    color: var(--color-default);
-    border: none;
-    border-radius: 0.5rem;
-    padding: 0.25rem 0.5rem;
-}
-.Button:hover {
-    background-color: var(--color-button-background-hover);
-}
-.ButtonDisabled {
-    opacity: 0.5;
-}
-
-.Buttons {
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: 1ch;
-    margin-bottom: 1rem;
-}
-
-.Capitalize {
-    text-transform: capitalize;
-}
-
-.WarningBlock {
-    display: inline-block;
-    background: var(--color-warning-background);
-    padding: 0.25em 1ch;
-    border-radius: 0.5rem;
-}
-</style>

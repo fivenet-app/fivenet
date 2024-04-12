@@ -550,3 +550,18 @@ defineShortcuts({
         </template>
     </div>
 </template>
+
+<style scoped>
+.documentView:deep(.documentView) {
+    .prose {
+        * {
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
+    }
+
+    input[type='checkbox']:checked {
+        opacity: 1;
+    }
+}
+</style>

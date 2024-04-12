@@ -14,17 +14,11 @@
     }
 }
 
-@layer utilities {}
-
-.documentView {
-    .prose {
-        * {
-            margin-top: 4px;
-            margin-bottom: 4px;
-        }
-    }
-
-    input[type='checkbox']:checked {
-        opacity: 1;
+@layer utilities {
+    /* Splitpanes Styling */
+    .splitpanes__splitter {
+        min-width: 3px;
+        background-color: rgb(var(--color-gray-800));
     }
 }
+
