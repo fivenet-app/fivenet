@@ -309,7 +309,7 @@ const accordionItems = computed(() => {
                 </div>
 
                 <template #footer>
-                    <UAccordion :items="accordionItems" multiple>
+                    <UAccordion :items="accordionItems" multiple :unmount="true">
                         <template v-if="qualification.result && qualification.result.id !== '0'" #result>
                             <UContainer>
                                 <div class="flex flex-col gap-1">
