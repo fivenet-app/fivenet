@@ -97,6 +97,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </template>
         <template v-else>
             <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
+                    <template v-if="!!jobProps" #right>
+                        <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save', 1) }}
+                        </UButton>
+                    </template>
+                </UDashboardNavbar>
+
                 <DataPendingBlock
                     v-if="pending"
                     :message="$t('common.loading', [$t('components.rector.job_props.job_properties')])"
@@ -113,19 +121,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
 
                 <template v-else>
-                    <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
-                        <template #right>
-                            <UButton
-                                type="submit"
-                                trailing-icon="i-mdi-content-save"
-                                :disabled="!canSubmit"
-                                :loading="!canSubmit"
-                            >
-                                {{ $t('common.save', 1) }}
-                            </UButton>
-                        </template>
-                    </UDashboardNavbar>
-
                     <UTabs
                         :items="[
                             {

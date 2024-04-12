@@ -19,7 +19,7 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const notifications = useNotificatorStore();
 
-const { data, pending, refresh, error } = useLazyAsyncData(`rector-appconfig`, () => getAppConfig());
+const { data: config, pending, refresh, error } = useLazyAsyncData(`rector-appconfig`, () => getAppConfig());
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
@@ -115,21 +115,21 @@ const state = reactive<Schema>({
 type Schema = z.output<typeof schema>;
 
 async function updateAppConfig(values: Schema): Promise<void> {
-    if (!data.value || !data.value?.config) {
+    if (!config.value || !config.value?.config) {
         return;
     }
 
     // Update local version of retrieved config
-    data.value.config.auth = values.auth;
-    data.value.config.perms = values.perms;
-    data.value.config.website = values.website;
-    data.value.config.jobInfo = values.jobInfo;
-    data.value.config.userTracker = {
+    config.value.config.auth = values.auth;
+    config.value.config.perms = values.perms;
+    config.value.config.website = values.website;
+    config.value.config.jobInfo = values.jobInfo;
+    config.value.config.userTracker = {
         livemapJobs: values.userTracker.livemapJobs,
         dbRefreshTime: toDuration(values.userTracker.dbRefreshTime),
         refreshTime: toDuration(values.userTracker.refreshTime),
     };
-    data.value.config.discord = {
+    config.value.config.discord = {
         enabled: values.discord.enabled,
         inviteUrl: values.discord.inviteUrl,
         syncInterval: toDuration(values.discord.syncInterval),
@@ -137,7 +137,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
 
     try {
         const { response } = await $grpc.getRectorConfigClient().updateAppConfig({
-            config: data.value?.config,
+            config: config.value?.config,
         });
 
         notifications.add({
@@ -147,7 +147,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
         });
 
         if (response.config) {
-            data.value = response;
+            config.value = response;
         } else {
             refresh();
         }
@@ -158,47 +158,47 @@ async function updateAppConfig(values: Schema): Promise<void> {
 }
 
 function setSettingsValues(): void {
-    if (!data.value || !data.value.config) {
+    if (!config.value || !config.value.config) {
         return;
     }
 
-    if (data.value.config.auth) {
-        state.auth = data.value.config.auth;
+    if (config.value.config.auth) {
+        state.auth = config.value.config.auth;
     }
-    if (data.value.config.perms) {
-        state.perms = data.value.config.perms;
+    if (config.value.config.perms) {
+        state.perms = config.value.config.perms;
     }
-    if (data.value.config.website) {
-        if (data.value.config.website.links) {
-            state.website.links = data.value.config.website.links;
+    if (config.value.config.website) {
+        if (config.value.config.website.links) {
+            state.website.links = config.value.config.website.links;
         }
     }
-    if (data.value.config.jobInfo) {
-        if (data.value.config.jobInfo.unemployedJob) {
-            state.jobInfo.unemployedJob = data.value.config.jobInfo.unemployedJob;
+    if (config.value.config.jobInfo) {
+        if (config.value.config.jobInfo.unemployedJob) {
+            state.jobInfo.unemployedJob = config.value.config.jobInfo.unemployedJob;
         }
-        state.jobInfo.hiddenJobs = data.value.config.jobInfo.hiddenJobs;
-        state.jobInfo.publicJobs = data.value.config.jobInfo.publicJobs;
+        state.jobInfo.hiddenJobs = config.value.config.jobInfo.hiddenJobs;
+        state.jobInfo.publicJobs = config.value.config.jobInfo.publicJobs;
     }
-    if (data.value.config.userTracker) {
-        if (data.value.config.userTracker.dbRefreshTime) {
-            state.userTracker.dbRefreshTime = fromDuration(data.value.config.userTracker.dbRefreshTime);
+    if (config.value.config.userTracker) {
+        if (config.value.config.userTracker.dbRefreshTime) {
+            state.userTracker.dbRefreshTime = fromDuration(config.value.config.userTracker.dbRefreshTime);
         }
-        if (data.value.config.userTracker.refreshTime) {
-            state.userTracker.refreshTime = fromDuration(data.value.config.userTracker.refreshTime);
+        if (config.value.config.userTracker.refreshTime) {
+            state.userTracker.refreshTime = fromDuration(config.value.config.userTracker.refreshTime);
         }
-        state.userTracker.livemapJobs = data.value.config.userTracker.livemapJobs;
+        state.userTracker.livemapJobs = config.value.config.userTracker.livemapJobs;
     }
-    if (data.value.config.discord) {
-        state.discord.enabled = data.value.config.discord.enabled;
-        if (data.value.config.discord.syncInterval) {
-            state.discord.syncInterval = fromDuration(data.value.config.discord.syncInterval);
+    if (config.value.config.discord) {
+        state.discord.enabled = config.value.config.discord.enabled;
+        if (config.value.config.discord.syncInterval) {
+            state.discord.syncInterval = fromDuration(config.value.config.discord.syncInterval);
         }
-        state.discord.inviteUrl = data.value.config.discord.inviteUrl;
+        state.discord.inviteUrl = config.value.config.discord.inviteUrl;
     }
 }
 
-watchOnce(data, () => setSettingsValues());
+watchOnce(config, () => setSettingsValues());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -227,29 +227,24 @@ const tabs = [
             </UDashboardPanelContent>
         </template>
         <template v-else>
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.setting', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.setting', 2)])"
-                :retry="refresh"
-            />
-            <DataNoDataBlock v-else-if="data === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+                <UDashboardNavbar :title="$t('pages.rector.settings.title')">
+                    <template v-if="config" #right>
+                        <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+                            {{ $t('common.save', 1) }}
+                        </UButton>
+                    </template>
+                </UDashboardNavbar>
 
-            <template v-else>
-                <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-                    <UDashboardNavbar :title="$t('pages.rector.settings.title')">
-                        <template #right>
-                            <UButton
-                                type="submit"
-                                trailing-icon="i-mdi-content-save"
-                                :disabled="!canSubmit"
-                                :loading="!canSubmit"
-                            >
-                                {{ $t('common.save', 1) }}
-                            </UButton>
-                        </template>
-                    </UDashboardNavbar>
+                <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.setting', 2)])" />
+                <DataErrorBlock
+                    v-else-if="error"
+                    :title="$t('common.unable_to_load', [$t('common.setting', 2)])"
+                    :retry="refresh"
+                />
+                <DataNoDataBlock v-else-if="config === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
+                <template v-else>
                     <UTabs :items="tabs" class="w-full">
                         <template #default="{ item, selected }">
                             <div class="relative flex items-center gap-2 truncate">
@@ -608,8 +603,8 @@ const tabs = [
                             </UDashboardPanelContent>
                         </template>
                     </UTabs>
-                </UForm>
-            </template>
+                </template>
+            </UForm>
         </template>
     </div>
 </template>

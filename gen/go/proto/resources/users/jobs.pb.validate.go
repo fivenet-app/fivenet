@@ -1430,6 +1430,22 @@ func (m *GroupSyncSettings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	for idx, item := range m.GetIgnoredRoleIds() {
+		_, _ = idx, item
+
+		if utf8.RuneCountInString(item) > 24 {
+			err := GroupSyncSettingsValidationError{
+				field:  fmt.Sprintf("IgnoredRoleIds[%v]", idx),
+				reason: "value length must be at most 24 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return GroupSyncSettingsMultiError(errors)
 	}

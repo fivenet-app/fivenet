@@ -801,7 +801,7 @@ export const JobsAbsenceSettings = new JobsAbsenceSettings$Type();
 class GroupSyncSettings$Type extends MessageType<GroupSyncSettings> {
     constructor() {
         super("resources.users.GroupSyncSettings", [
-            { no: 1, name: "ignored_role_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "25" } } } }
+            { no: 1, name: "ignored_role_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "25", items: { string: { maxLen: "24" } } } } } }
         ]);
     }
     create(value?: PartialMessage<GroupSyncSettings>): GroupSyncSettings {
