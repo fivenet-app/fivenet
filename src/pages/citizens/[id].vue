@@ -20,9 +20,5 @@ const route = useRoute('citizens-id');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <CitizenInfo :user-id="parseInt(route.params.id)" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <CitizenInfo :user-id="parseInt(route.params.id)" />
 </template>

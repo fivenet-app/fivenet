@@ -52,7 +52,11 @@ const props = defineProps<{
                             }"
                         >
                             {{ $t('common.document', 1) }}
-                            <IDCopyBadge :id="activity.newValue !== '' ? activity.newValue : activity.oldValue" prefix="DOC" />
+                            <IDCopyBadge
+                                :id="activity.newValue !== '' ? activity.newValue : activity.oldValue"
+                                prefix="DOC"
+                                size="xs"
+                            />
                         </UButton>
                     </h3>
                     <p class="text-sm">
