@@ -116,6 +116,18 @@ const plugins = [
                 });
         },
     },
+    {
+        name: 'checkboxes',
+        callback: (editor: IJodit) => {
+            editor.events.on('afterInit', () => setupCheckboxes(editor.editor));
+
+            // Listen to first change event (it should be the document contents) and stop listening
+            function changeListener(): void {
+                setupCheckboxes(editor.editor);
+            }
+            editor.events.one('change', changeListener);
+        },
+    },
 ];
 
 const extraButtons = [
@@ -123,7 +135,7 @@ const extraButtons = [
     {
         name: 'insertCheckbox',
         iconURL: '/images/components/partials/doceditor/format-list-checkbox.svg',
-        exec: function (editor: IJodit) {
+        exec: (editor: IJodit) => {
             const label = document.createElement('label');
             label.setAttribute('contenteditable', 'false');
             const empty = document.createElement('span');
@@ -132,12 +144,7 @@ const extraButtons = [
             const input = document.createElement('input');
             input.setAttribute('type', 'checkbox');
             input.setAttribute('checked', 'true');
-            input.onchange = (ev) => {
-                if (ev.target === null) {
-                    return;
-                }
-                setCheckboxState(ev.target as HTMLInputElement);
-            };
+            input.onchange = setCheckboxState;
 
             label.appendChild(input);
             label.appendChild(empty);
@@ -147,7 +154,18 @@ const extraButtons = [
     },
 ];
 
-function setCheckboxState(target: HTMLInputElement): void {
+function setupCheckboxes(editor: HTMLElement): void {
+    editor.querySelectorAll('.jodit-wysiwyg input[type=checkbox]').forEach((el) => {
+        (el as HTMLInputElement).onchange = setCheckboxState;
+    });
+}
+
+function setCheckboxState(event: Event): void {
+    if (event.target === null) {
+        return;
+    }
+    const target = event.target as HTMLInputElement;
+
     const attr = target.getAttribute('checked');
     const checked = attr !== null ? Boolean(attr) : false;
     if (checked) {
@@ -157,31 +175,18 @@ function setCheckboxState(target: HTMLInputElement): void {
     }
 }
 
-function setupCheckboxes(): void {
-    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
-    checkboxes.forEach(
-        (el) =>
-            (el.onchange = (ev) => {
-                if (ev.target === null) {
-                    return;
-                }
-                setCheckboxState(ev.target as HTMLInputElement);
-            }),
-    );
-}
+watch(
+    props,
+    () => {
+        if (props.modelValue !== '') {
+            useTimeoutFn(() => setupCheckboxes(editorRef.value.editor.editor as HTMLElement), 75);
+        }
+    },
+    { once: true },
+);
 
 watch(props, () => {
-    if (props.modelValue !== '') {
-        useTimeoutFn(setupCheckboxes, 75);
-    }
-
     editorRef.value.editor.setReadOnly(props.disabled);
-});
-
-onBeforeUnmount(() => {
-    // Remove event listeners on unmount
-    const checkboxes: NodeListOf<HTMLInputElement> = document.querySelectorAll('.jodit-wysiwyg input[type=checkbox]');
-    checkboxes.forEach((el) => (el.onchange = null));
 });
 </script>
 

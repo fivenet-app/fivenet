@@ -17,7 +17,6 @@ defineOptions({
 const color = computed({
     get: () => props.modelValue,
     set: (value) => {
-        console.log(value);
         emit('update:model-value', value);
         emit('close');
     },

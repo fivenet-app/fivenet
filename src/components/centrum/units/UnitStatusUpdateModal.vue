@@ -119,7 +119,7 @@ function updateReasonField(value: string): void {
                                             class="hover:bg-primary-100/10 group my-0.5 flex w-full flex-col items-center rounded-md p-1.5 text-xs font-medium hover:transition-all"
                                             :class="[
                                                 state.status == item.status
-                                                    ? 'disabled bg-base-500 hover:bg-base-400'
+                                                    ? 'bg-base-500 hover:bg-base-400'
                                                     : item.status
                                                       ? unitStatusToBGColor(item.status)
                                                       : '',

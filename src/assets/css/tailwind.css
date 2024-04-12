@@ -14,21 +14,17 @@
     }
 }
 
-@layer utilities {
-    .upsidedown {
-        transform: rotate(180deg) !important;
+@layer utilities {}
+
+.documentView {
+    .prose {
+        * {
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
     }
 
-    .disabled {
-        cursor: not-allowed;
-    }
-
-    .remove-arrow::-webkit-inner-spin-button,
-    .remove-arrow::-webkit-outer-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    }
-    .remove-arrow {
-        -moz-appearance: textfield;
+    input[type='checkbox']:checked {
+        opacity: 1;
     }
 }

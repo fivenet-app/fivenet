@@ -119,7 +119,7 @@ function updateReasonField(value: string): void {
                                             :class="[
                                                 idx >= dispatchStatuses.length - 1 ? 'col-span-2' : '',
                                                 state.status == item.status
-                                                    ? 'disabled bg-base-500 hover:bg-base-400'
+                                                    ? 'bg-base-500 hover:bg-base-400'
                                                     : item.status
                                                       ? dispatchStatusToBGColor(item.status)
                                                       : '',

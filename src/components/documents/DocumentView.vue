@@ -152,7 +152,7 @@ function disableCheckboxes(): void {
     const checkboxes: NodeListOf<HTMLInputElement> = contentRef.value.querySelectorAll('input[type=checkbox]');
     checkboxes.forEach((el) => {
         el.setAttribute('disabled', 'disabled');
-        el.onchange = (ev) => ev.preventDefault();
+        el.classList.add('form-checkbox');
     });
 }
 
@@ -450,7 +450,11 @@ defineShortcuts({
                     </h2>
                     <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                         <!-- eslint-disable vue/no-v-html -->
-                        <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
+                        <div
+                            ref="contentRef"
+                            class="documentView prose prose-invert min-w-full px-4 py-2"
+                            v-html="doc.content"
+                        ></div>
                     </div>
                 </div>
 
@@ -546,12 +550,3 @@ defineShortcuts({
         </template>
     </div>
 </template>
-
-<style scoped>
-.prose {
-    * {
-        margin-top: 4px;
-        margin-bottom: 4px;
-    }
-}
-</style>

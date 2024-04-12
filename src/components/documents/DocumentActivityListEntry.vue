@@ -70,7 +70,7 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
                                 <span class="ml-6 flex h-7 items-center">
                                     <UIcon
                                         name="i-mdi-chevron-down"
-                                        :class="[open ? 'upsidedown' : '', 'size-5 transition-transform']"
+                                        :class="[open ? '!rotate-180' : '', 'size-5 transition-transform']"
                                     />
                                 </span>
                             </h3>
