@@ -33,6 +33,7 @@ const color = computed({
             :icon="!hideIcon ? 'i-mdi-palette' : ''"
             :label="!hideIcon ? '' : '&nbsp;'"
             :style="{ backgroundColor: color }"
+            :class="$attrs.class"
         />
 
         <template #panel>

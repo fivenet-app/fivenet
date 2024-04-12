@@ -542,38 +542,41 @@
                 "your_job_properties": "Your job's FiveNet properties.",
                 "livemap_marker_color": "Map Marker Color",
                 "quick_buttons": "Quick Access Buttons",
-                "discord_guild_id": "Discord Guild/ Server ID",
-                "invite_bot": "Invite Bot",
-                "last_sync": "Last Sync",
-                "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
-                "user_info_sync_settings": {
-                    "employee_role_enabled": "Create and manage Employee Role",
-                    "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
-                    "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
-                    "unemployed_enabled": "Manage the unemployed role",
-                    "unemployed_mode": "Mode for handling unemployed users",
-                    "unemployed_role_name": "Unemployed Role Name"
-                },
-                "status_log": "Status Log",
-                "status_log_settings": {
-                    "channel_id": "Channel ID"
-                },
                 "discord_sync_settings": {
                     "title": "Discord Sync Settings",
-                    "subtitle": "Manage the Discord Bot Sync settings."
-                },
-                "jobs_absence_settings": {
-                    "jobs_absence_role_enabled": "Manage the absence role",
-                    "jobs_absence_role_name": "Absence Role"
-                },
-                "group_sync_settings": {
-                    "title": "Group Sync Settings",
-                    "subtitle": "Options for the group sync bot.",
-                    "ignored_role_ids": {
-                        "title": "Ignored Role ID",
-                        "description": "Users with one of these roles are not going to get groups synced (only affects the group sync and not the user info sync.)",
-                        "field": "Ignored Role ID"
+                    "subtitle": "Manage the Discord Bot Sync settings.",
+                    "discord_guild_id": "Discord Guild/ Server ID",
+                    "invite_bot": "Invite Bot",
+                    "last_sync": "Last Sync",
+                    "user_info_sync": "User Info Sync (Names and Job Grade Roles)",
+                    "user_info_sync_settings": {
+                        "employee_role_enabled": "Create and manage Employee Role",
+                        "employee_role_format": "Employee Role format (%s will be replaced by your job's name)",
+                        "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
+                        "unemployed_enabled": "Manage the unemployed role",
+                        "unemployed_mode": "Mode for handling unemployed users",
+                        "unemployed_role_name": "Unemployed Role Name"
+                    },
+                    "status_log": "Status Log",
+                    "status_log_settings": {
+                        "channel_id": "Channel ID"
+                    },
+                    "jobs_absence_settings": {
+                        "jobs_absence_role_enabled": "Manage the absence role",
+                        "jobs_absence_role_name": "Absence Role"
+                    },
+                    "group_sync_settings": {
+                        "title": "Group Sync Settings",
+                        "subtitle": "Options for the group sync bot.",
+                        "ignored_role_ids": {
+                            "title": "Ignored Role ID",
+                            "description": "Users with one of these roles are not going to get groups synced (only affects the group sync and not the user info sync.)",
+                            "field": "Ignored Role ID"
+                        }
                     }
+                },
+                "citizen_attributes": {
+                    "title": "Citizen Attributes"
                 }
             },
             "role_view": {

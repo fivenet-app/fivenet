@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
+import { CitizenAttributes } from "./jobs";
 import { JobGrade } from "./jobs";
 import { Job } from "./jobs";
 import { File } from "../filestore/file";
@@ -193,6 +194,10 @@ export interface UserProps {
      * @generated from protobuf field: optional resources.filestore.File mug_shot = 11;
      */
     mugShot?: File;
+    /**
+     * @generated from protobuf field: optional resources.users.CitizenAttributes attributes = 12;
+     */
+    attributes?: CitizenAttributes;
 }
 /**
  * @generated from protobuf message resources.users.UserActivity
@@ -617,7 +622,8 @@ class UserProps$Type extends MessageType<UserProps> {
             { no: 7, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
             { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
             { no: 9, name: "blood_type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
-            { no: 11, name: "mug_shot", kind: "message", T: () => File }
+            { no: 11, name: "mug_shot", kind: "message", T: () => File },
+            { no: 12, name: "attributes", kind: "message", T: () => CitizenAttributes }
         ]);
     }
     create(value?: PartialMessage<UserProps>): UserProps {
@@ -662,6 +668,9 @@ class UserProps$Type extends MessageType<UserProps> {
                 case /* optional resources.filestore.File mug_shot */ 11:
                     message.mugShot = File.internalBinaryRead(reader, reader.uint32(), options, message.mugShot);
                     break;
+                case /* optional resources.users.CitizenAttributes attributes */ 12:
+                    message.attributes = CitizenAttributes.internalBinaryRead(reader, reader.uint32(), options, message.attributes);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -704,6 +713,9 @@ class UserProps$Type extends MessageType<UserProps> {
         /* optional resources.filestore.File mug_shot = 11; */
         if (message.mugShot)
             File.internalBinaryWrite(message.mugShot, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.users.CitizenAttributes attributes = 12; */
+        if (message.attributes)
+            CitizenAttributes.internalBinaryWrite(message.attributes, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

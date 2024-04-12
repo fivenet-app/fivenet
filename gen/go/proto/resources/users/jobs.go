@@ -49,6 +49,13 @@ func (x *JobProps) Default(job string) {
 		x.LivemapMarkerColor = DefaultLivemapMarkerColor
 	}
 
+	if x.CitizenAttributes == nil {
+		x.CitizenAttributes = &CitizenAttributes{
+			List: []*CitizenAttribute{},
+		}
+	}
+
+	// Discord Sync Settings
 	if x.DiscordSyncSettings == nil {
 		x.DiscordSyncSettings = &DiscordSyncSettings{
 			UserInfoSync: false,
@@ -142,6 +149,27 @@ func (x *DiscordSyncSettings) Value() (driver.Value, error) {
 
 func (x *DiscordSyncSettings) IsStatusLogEnabled() bool {
 	return x.StatusLog && x.StatusLogSettings != nil && x.StatusLogSettings.ChannelId != nil
+}
+
+// Scan implements driver.Valuer for protobuf CitizenAttribute.
+func (x *CitizenAttribute) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Value marshals the value into driver.Valuer.
+func (x *CitizenAttribute) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.Marshal(x)
+	return string(out), err
 }
 
 // Scan implements driver.Valuer for protobuf JobSettings.

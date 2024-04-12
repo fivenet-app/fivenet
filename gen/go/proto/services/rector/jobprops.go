@@ -8,6 +8,7 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	citizenstorepermkeys "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	errorsrector "github.com/galexrt/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -110,6 +111,12 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		}
 	} else {
 		req.JobProps.LogoUrl = jobProps.JobProps.LogoUrl
+	}
+
+	if !s.ps.Can(userInfo, citizenstorepermkeys.CitizenStoreServicePerm, citizenstorepermkeys.CitizenStoreServiceSetUserPropsPerm) {
+		req.JobProps.CitizenAttributes = nil
+	} else {
+		// TODO get user's job props and check added attributes against it
 	}
 
 	stmt := tJobProps.

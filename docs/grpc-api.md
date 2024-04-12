@@ -149,6 +149,8 @@
     - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
+    - [CitizenAttribute](#resources-users-CitizenAttribute)
+    - [CitizenAttributes](#resources-users-CitizenAttributes)
     - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
     - [GroupSyncSettings](#resources-users-GroupSyncSettings)
     - [Job](#resources-users-Job)
@@ -2592,6 +2594,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | open_fines | [int64](#int64) | optional |  |
 | blood_type | [string](#string) | optional |  |
 | mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
 
 
 
@@ -2650,6 +2653,37 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 <p align="right"><a href="#top">Top</a></p>
 
 ## resources/users/jobs.proto
+
+
+
+<a name="resources-users-CitizenAttribute"></a>
+
+### CitizenAttribute
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-CitizenAttributes"></a>
+
+### CitizenAttributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
+
+
+
 
 
 
@@ -2743,6 +2777,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | motd | [string](#string) | optional |  |
 | logo_url | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | settings | [JobSettings](#resources-users-JobSettings) |  |  |
+| citizen_attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
 
 
 

@@ -251,6 +251,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_user_props` (
   `blood_type` varchar(3) DEFAULT NULL,
   `avatar` varchar(128) DEFAULT NULL,
   `mug_shot` varchar(128) DEFAULT NULL,
+  `attributes` text DEFAULT NULL,
   UNIQUE KEY `idx_fivenet_user_props_unique` (`user_id`),
   KEY `idx_fivenet_user_props_wanted` (`wanted`),
   KEY `idx_fivenet_user_props_avatar` (`avatar`),

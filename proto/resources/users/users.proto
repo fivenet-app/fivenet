@@ -78,6 +78,7 @@ message UserProps {
   optional int64 open_fines = 8;
   optional string blood_type = 9;
   optional resources.filestore.File mug_shot = 11;
+  optional resources.users.CitizenAttributes attributes = 12;
 }
 
 enum UserActivityType {

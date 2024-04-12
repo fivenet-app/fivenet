@@ -98,6 +98,10 @@ export interface JobProps {
      * @generated from protobuf field: resources.users.JobSettings settings = 12;
      */
     settings?: JobSettings;
+    /**
+     * @generated from protobuf field: optional resources.users.CitizenAttributes citizen_attributes = 13;
+     */
+    citizenAttributes?: CitizenAttributes;
 }
 /**
  * @generated from protobuf message resources.users.QuickButtons
@@ -205,6 +209,28 @@ export interface GroupSyncSettings {
  * @generated from protobuf message resources.users.JobSettings
  */
 export interface JobSettings {
+}
+/**
+ * @generated from protobuf message resources.users.CitizenAttributes
+ */
+export interface CitizenAttributes {
+    /**
+     * @generated from protobuf field: repeated resources.users.CitizenAttribute list = 1;
+     */
+    list: CitizenAttribute[];
+}
+/**
+ * @generated from protobuf message resources.users.CitizenAttribute
+ */
+export interface CitizenAttribute {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string color = 2;
+     */
+    color: string;
 }
 /**
  * @generated from protobuf enum resources.users.UserInfoSyncUnemployedMode
@@ -363,7 +389,8 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
             { no: 10, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 11, name: "logo_url", kind: "message", T: () => File },
-            { no: 12, name: "settings", kind: "message", T: () => JobSettings }
+            { no: 12, name: "settings", kind: "message", T: () => JobSettings },
+            { no: 13, name: "citizen_attributes", kind: "message", T: () => CitizenAttributes }
         ]);
     }
     create(value?: PartialMessage<JobProps>): JobProps {
@@ -416,6 +443,9 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* resources.users.JobSettings settings */ 12:
                     message.settings = JobSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
+                case /* optional resources.users.CitizenAttributes citizen_attributes */ 13:
+                    message.citizenAttributes = CitizenAttributes.internalBinaryRead(reader, reader.uint32(), options, message.citizenAttributes);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -464,6 +494,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* resources.users.JobSettings settings = 12; */
         if (message.settings)
             JobSettings.internalBinaryWrite(message.settings, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.users.CitizenAttributes citizen_attributes = 13; */
+        if (message.citizenAttributes)
+            CitizenAttributes.internalBinaryWrite(message.citizenAttributes, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -869,3 +902,105 @@ class JobSettings$Type extends MessageType<JobSettings> {
  * @generated MessageType for protobuf message resources.users.JobSettings
  */
 export const JobSettings = new JobSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CitizenAttributes$Type extends MessageType<CitizenAttributes> {
+    constructor() {
+        super("resources.users.CitizenAttributes", [
+            { no: 1, name: "list", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CitizenAttribute }
+        ]);
+    }
+    create(value?: PartialMessage<CitizenAttributes>): CitizenAttributes {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.list = [];
+        if (value !== undefined)
+            reflectionMergePartial<CitizenAttributes>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenAttributes): CitizenAttributes {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.users.CitizenAttribute list */ 1:
+                    message.list.push(CitizenAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CitizenAttributes, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.CitizenAttribute list = 1; */
+        for (let i = 0; i < message.list.length; i++)
+            CitizenAttribute.internalBinaryWrite(message.list[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.CitizenAttributes
+ */
+export const CitizenAttributes = new CitizenAttributes$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CitizenAttribute$Type extends MessageType<CitizenAttribute> {
+    constructor() {
+        super("resources.users.CitizenAttribute", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 2, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CitizenAttribute>): CitizenAttribute {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.color = "";
+        if (value !== undefined)
+            reflectionMergePartial<CitizenAttribute>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenAttribute): CitizenAttribute {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string color */ 2:
+                    message.color = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CitizenAttribute, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string color = 2; */
+        if (message.color !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.color);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.CitizenAttribute
+ */
+export const CitizenAttribute = new CitizenAttribute$Type();

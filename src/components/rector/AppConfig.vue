@@ -44,11 +44,12 @@ const schema = z.object({
     }),
     perms: z.object({
         default: z
-            .object({
-                category: z.string().min(1).max(48),
-                name: z.string().min(1).max(48),
-            })
-            .array()
+            .array(
+                z.object({
+                    category: z.string().min(1).max(48),
+                    name: z.string().min(1).max(48),
+                }),
+            )
             .max(25),
     }),
     website: z.object({
@@ -70,7 +71,6 @@ const schema = z.object({
         dbRefreshTime: zodDurationSchema,
         livemapJobs: z.string().array().max(99),
     }),
-    // Discord
     discord: z.object({
         enabled: z.boolean(),
         syncInterval: zodDurationSchema,
@@ -80,6 +80,8 @@ const schema = z.object({
         ]),
     }),
 });
+
+type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     auth: {
@@ -111,8 +113,6 @@ const state = reactive<Schema>({
         inviteUrl: '',
     },
 });
-
-type Schema = z.output<typeof schema>;
 
 async function updateAppConfig(values: Schema): Promise<void> {
     if (!config.value || !config.value?.config) {
@@ -328,7 +328,6 @@ const tabs = [
                                         </div>
 
                                         <UButton
-                                            class="mt-2"
                                             :ui="{ rounded: 'rounded-full' }"
                                             :disabled="!canSubmit"
                                             icon="i-mdi-plus"

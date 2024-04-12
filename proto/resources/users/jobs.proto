@@ -35,6 +35,7 @@ message JobProps {
   optional string motd = 10 [(validate.rules).string.max_len = 1024];
   optional resources.filestore.File logo_url = 11;
   JobSettings settings = 12;
+  optional CitizenAttributes citizen_attributes = 13;
 }
 
 message QuickButtons {
@@ -84,3 +85,15 @@ message GroupSyncSettings {
 }
 
 message JobSettings {}
+
+message CitizenAttributes {
+  repeated CitizenAttribute list = 1;
+}
+
+message CitizenAttribute {
+  string name = 1 [(validate.rules).string.max_len = 48];
+  string color = 2 [(validate.rules).string = {
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
+  }];
+}

@@ -481,11 +481,12 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         @access-change="updateAccessEntryAccess($event)"
                         @delete-request="removeAccessEntry($event)"
                     />
+
                     <UButton
                         :ui="{ rounded: 'rounded-full' }"
+                        :title="$t('components.documents.document_editor.add_permission')"
                         :disabled="!canEdit || !canDo.access"
                         icon="i-mdi-plus"
-                        :title="$t('components.documents.document_editor.add_permission')"
                         @click="addAccessEntry()"
                     />
                 </div>
