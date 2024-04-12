@@ -295,7 +295,7 @@
         "fine": "Strafe",
         "detention_time": "Gefängniszeit",
         "money": "Geld",
-        "no_open_fine": "Keine offenen Geldstrafe",
+        "no_open_fine": "Keine offenen Geldstrafen",
         "location": "Standort | Standorte",
         "units": "Keine Einheiten | {n} Einheit | {n} Einheiten",
         "unit": "Einheit | Einheiten",
