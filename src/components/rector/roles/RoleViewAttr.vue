@@ -201,7 +201,10 @@ onBeforeMount(async () => {
 
 <template>
     <div v-if="attribute">
-        <UAccordion :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]">
+        <UAccordion
+            variant="outline"
+            :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]"
+        >
             <template #item>
                 <div class="flex flex-col gap-2">
                     <div

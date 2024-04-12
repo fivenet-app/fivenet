@@ -272,7 +272,12 @@ const accordionCategories = computed(() =>
                 <UDivider :label="$t('common.permission', 2)" />
 
                 <div class="flex flex-col gap-4 py-2">
-                    <UButton :disabled="!changed" block @click="updatePermissions()">
+                    <UButton
+                        v-if="can('RectorService.UpdateRolePerms')"
+                        :disabled="!changed"
+                        block
+                        @click="updatePermissions()"
+                    >
                         {{ $t('common.save', 1) }}
                     </UButton>
 
