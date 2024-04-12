@@ -30,6 +30,6 @@
     "@pinia/nuxt": "^0.5.1",
     "eslint": "^9.0.0",
     "vue-i18n-routing": "^1.2.0",
-    "vue-tsc": "^2.0.12"
+    "vue-tsc": "^2.0.13"
   }
 }

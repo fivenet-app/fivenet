@@ -14,6 +14,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { Perms } from '~~/gen/ts/perms';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import CitizenActions from './CitizenActions.vue';
+import CitizenSetAttributes from './CitizenSetAttributes.vue';
 
 const props = defineProps<{
     userId: number;
@@ -25,8 +26,6 @@ const { t } = useI18n();
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
-
-const modal = useModal();
 
 const tabs: { slot: string; label: string; icon: string; permission: Perms }[] = [
     {
@@ -229,21 +228,41 @@ function addToClipboard(): void {
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
-                <!-- Register shortcuts for the citizens actions here as it will always be available not like the profile tab content -->
-                <CitizenActions
-                    v-if="user"
-                    :user="user"
-                    register-shortcuts
-                    @update:wanted-status="user.props!.wanted = $event"
-                    @update:job="
-                        user.job = $event.job.name;
-                        user.jobLabel = $event.job.label;
-                        user.jobGrade = $event.grade.grade;
-                        user.jobGradeLabel = $event.grade.label;
-                    "
-                    @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                    @update:mug-shot="user.props!.mugShot = $event"
-                />
+                <div class="flex flex-1 flex-col">
+                    <template v-if="user">
+                        <UDashboardSection
+                            :ui="{
+                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                            }"
+                            :title="$t('common.action', 2)"
+                        >
+                            <!-- Register shortcuts for the citizens actions here as it will always be available not like the profile tab content -->
+                            <CitizenActions
+                                :user="user"
+                                register-shortcuts
+                                @update:wanted-status="user.props!.wanted = $event"
+                                @update:job="
+                                    user.job = $event.job.name;
+                                    user.jobLabel = $event.job.label;
+                                    user.jobGrade = $event.grade.grade;
+                                    user.jobGradeLabel = $event.grade.label;
+                                "
+                                @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                                @update:mug-shot="user.props!.mugShot = $event"
+                            />
+                        </UDashboardSection>
+
+                        <UDashboardSection
+                            v-if="false"
+                            :ui="{
+                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
+                            }"
+                            :title="$t('common.attributes', 2)"
+                        >
+                            <CitizenSetAttributes />
+                        </UDashboardSection>
+                    </template>
+                </div>
             </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>

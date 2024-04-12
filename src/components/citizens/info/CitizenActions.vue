@@ -109,7 +109,7 @@ if (props.registerShortcuts) {
 </script>
 
 <template>
-    <div class="flex min-w-80 flex-1 flex-col gap-2">
+    <div class="flex w-full min-w-80 flex-col gap-2">
         <UTooltip
             v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')"
             :text="
