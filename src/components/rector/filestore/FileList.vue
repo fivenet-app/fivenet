@@ -98,7 +98,7 @@ const columns = [
 <template>
     <div>
         <template v-if="streamerMode">
-            <UDashboardPanelContent class="pb-2">
+            <UDashboardPanelContent class="pb-24">
                 <UDashboardSection
                     :title="$t('system.streamer_mode.title')"
                     :description="$t('system.streamer_mode.description')"

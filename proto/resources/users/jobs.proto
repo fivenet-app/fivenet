@@ -51,6 +51,8 @@ message DiscordSyncSettings {
 
   bool jobs_absence = 5;
   optional JobsAbsenceSettings jobs_absence_settings = 6;
+
+  optional GroupSyncSettings group_sync_settings = 7;
 }
 
 enum UserInfoSyncUnemployedMode {
@@ -75,6 +77,10 @@ message StatusLogSettings {
 
 message JobsAbsenceSettings {
   string absence_role = 1 [(validate.rules).string.max_len = 48];
+}
+
+message GroupSyncSettings {
+  repeated string ignored_role_ids = 1 [(validate.rules).repeated.max_items = 25];
 }
 
 message JobSettings {}

@@ -24,6 +24,8 @@ type GroupSync struct {
 
 	groupsToSync map[string]config.DiscordGroupRole
 
+	ignoredRoleIds []string
+
 	roles map[string]*discordgo.Role
 }
 
@@ -41,6 +43,8 @@ func NewGroupSync(base *BaseModule) (Module, error) {
 
 func (g *GroupSync) Run(settings *users.DiscordSyncSettings) ([]*discordgo.MessageEmbed, error) {
 	logs := []*discordgo.MessageEmbed{}
+
+	g.ignoredRoleIds = settings.GroupSyncSettings.IgnoredRoleIds
 
 	ls, err := g.createGroupRoles()
 	if err != nil {
@@ -244,6 +248,19 @@ func (g *GroupSync) checkIfUserHasCharInJob(identifier string, job string) (bool
 }
 
 func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) ([]*discordgo.MessageEmbed, error) {
+	for _, ignoredRole := range g.ignoredRoleIds {
+		// If member is in an ignored role, we skip adding/setting roles from the user
+		if slices.Contains(member.Roles, ignoredRole) {
+			return []*discordgo.MessageEmbed{{
+				Type:        discordgo.EmbedTypeRich,
+				Title:       fmt.Sprintf("Group Sync: Ignoring %s (%q) member", member.User.ID, member.User.Username),
+				Description: fmt.Sprintf("Ignored because member is in an ignored role (%s).", ignoredRole),
+				Author:      embeds.EmbedAuthor,
+				Color:       embeds.ColorInfo,
+			}}, nil
+		}
+	}
+
 	dcRole, ok := g.groupsToSync[group]
 	if !ok {
 		return nil, fmt.Errorf("no discord role mapping found for server group %s", group)
@@ -278,30 +295,39 @@ func (g *GroupSync) cleanupUserGroupMembers(logs []*discordgo.MessageEmbed, user
 		return logs, err
 	}
 
+outer:
 	for i := 0; i < len(guild.Members); i++ {
 		for _, role := range g.roles {
+			member := guild.Members[i]
+
+			for _, ignoredRole := range g.ignoredRoleIds {
+				// If member is in an ignored role, we skip removing roles from the user
+				if slices.Contains(member.Roles, ignoredRole) {
+					continue outer
+				}
+			}
+
 			// If user isn't in one of the synced groups, continue
 			if !slices.Contains(guild.Members[i].Roles, role.ID) {
 				continue
 			}
 
 			// If user is in the servergroup, all is okay, otherwise remove user from role
-			user := guild.Members[i].User
 			if slices.ContainsFunc(users, func(in *GroupSyncUser) bool {
-				return in.ExternalID == user.ID && g.groupsToSync[in.Group].RoleName == role.Name && !in.SameJob
+				return in.ExternalID == member.User.ID && g.groupsToSync[in.Group].RoleName == role.Name && !in.SameJob
 			}) {
 				continue
 			}
 
-			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, user.ID, role.ID); err != nil {
+			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
 				return logs, fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
 			}
 
 			// Add log about user being removed from synced role
 			logs = append(logs, &discordgo.MessageEmbed{
 				Type:        discordgo.EmbedTypeRich,
-				Title:       fmt.Sprintf("Group Sync: Removed %s (%q) member", user.ID, user.Username),
-				Description: fmt.Sprintf("Removed %s (%q) from %s role", user.ID, user.Username, role.Name),
+				Title:       fmt.Sprintf("Group Sync: Removed %s (%q) member", member.User.ID, member.User.Username),
+				Description: fmt.Sprintf("Removed %s (%q) from %s role", member.User.ID, member.User.Username, role.Name),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorInfo,
 			})

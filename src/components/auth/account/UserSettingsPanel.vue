@@ -55,8 +55,8 @@ watch(design.value, () => {
 </script>
 
 <template>
-    <UDashboardPanelContent>
-        <UDashboardSection :title="$t('common.theme')" description="Customize the look and feel of your dashboard.">
+    <UDashboardPanelContent class="pb-24">
+        <UDashboardSection :title="$t('common.theme')" :description="$t('components.auth.UserSettingsPanel.customization')">
             <template #links>
                 <UColorModeSelect color="gray" />
             </template>
@@ -105,30 +105,23 @@ watch(design.value, () => {
                 name="darkModeActive"
                 :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
                 class="grid grid-cols-2 items-center gap-2"
-                :ui="{ container: 'justify-self-end' }"
             >
                 <UToggle v-model="darkModeActive">
                     <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
                 </UToggle>
             </UFormGroup>
-        </UDashboardSection>
 
-        <UDivider class="mb-4" />
-
-        <UDashboardSection
-            :title="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
-            :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
-        >
-            <template #links>
-                <UToggle v-model="streamerMode">
+            <UFormGroup
+                name="streamerMode"
+                :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
+                :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
+                <UToggle v-model="streamerMode" name="streamerMode">
                     <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
                 </UToggle>
-            </template>
-        </UDashboardSection>
+            </UFormGroup>
 
-        <UDivider class="mb-4" />
-
-        <UDashboardSection :title="$t('components.auth.UserSettingsPanel.title')">
             <UFormGroup
                 name="selectedHomepage"
                 :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
@@ -153,15 +146,13 @@ watch(design.value, () => {
             :description="$t('components.auth.UserSettingsPanel.volumes.subtitle')"
         >
             <UFormGroup
-                name="selectedHomepage"
-                :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
+                name="notificationsVolume"
+                :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
                 class="grid grid-cols-2 items-center gap-2"
             >
                 <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
                 {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
             </UFormGroup>
         </UDashboardSection>
-
-        <UDivider class="mb-4" />
     </UDashboardPanelContent>
 </template>

@@ -207,19 +207,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const tabs = [
-    { slot: 'auth', label: t('components.rector.app_config.auth.title') },
-    { slot: 'perms', label: t('components.rector.app_config.perms.title') },
-    { slot: 'website', label: t('components.rector.app_config.website.title') },
-    { slot: 'jobInfo', label: t('components.rector.app_config.job_info.title') },
-    { slot: 'userTracker', label: t('components.rector.app_config.user_tracker.title') },
-    { slot: 'discord', label: t('common.discord') },
+    { slot: 'auth', label: t('components.rector.app_config.auth.title'), icon: 'i-mdi-login' },
+    { slot: 'perms', label: t('components.rector.app_config.perms.title'), icon: 'i-mdi-user-access-control' },
+    { slot: 'website', label: t('components.rector.app_config.website.title'), icon: 'i-mdi-spider-web' },
+    { slot: 'jobInfo', label: t('components.rector.app_config.job_info.title'), icon: 'i-mdi-briefcase' },
+    { slot: 'userTracker', label: t('components.rector.app_config.user_tracker.title'), icon: 'i-mdi-track-changes' },
+    { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord' },
 ];
 </script>
 
 <template>
     <div>
         <template v-if="streamerMode">
-            <UDashboardPanelContent class="pb-2">
+            <UDashboardPanelContent class="pb-24">
                 <UDashboardSection
                     :title="$t('system.streamer_mode.title')"
                     :description="$t('system.streamer_mode.description')"
@@ -251,8 +251,21 @@ const tabs = [
                     </UDashboardNavbar>
 
                     <UTabs :items="tabs" class="w-full">
+                        <template #default="{ item, selected }">
+                            <div class="relative flex items-center gap-2 truncate">
+                                <UIcon :name="item.icon" class="size-4 shrink-0" />
+
+                                <span class="truncate">{{ item.label }}</span>
+
+                                <span
+                                    v-if="selected"
+                                    class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
+                                />
+                            </div>
+                        </template>
+
                         <template #auth>
-                            <UDashboardPanelContent class="pb-2">
+                            <UDashboardPanelContent class="pb-24">
                                 <UDashboardSection
                                     :title="$t('components.rector.app_config.auth.title')"
                                     :description="$t('components.rector.app_config.auth.description')"
@@ -274,7 +287,7 @@ const tabs = [
                         </template>
 
                         <template #perms>
-                            <UDashboardPanelContent class="pb-2">
+                            <UDashboardPanelContent class="pb-24">
                                 <UDashboardSection
                                     :title="$t('components.rector.app_config.perms.title')"
                                     :description="$t('components.rector.app_config.perms.description')"
@@ -332,7 +345,7 @@ const tabs = [
                         </template>
 
                         <template #website>
-                            <UDashboardPanelContent class="pb-2">
+                            <UDashboardPanelContent class="pb-24">
                                 <UDashboardSection
                                     :title="$t('components.rector.app_config.website.title')"
                                     :description="$t('components.rector.app_config.website.description')"
@@ -373,7 +386,7 @@ const tabs = [
                         </template>
 
                         <template #jobInfo>
-                            <UDashboardPanelContent class="pb-2">
+                            <UDashboardPanelContent class="pb-24">
                                 <UDashboardSection
                                     :title="$t('components.rector.app_config.job_info.title')"
                                     :description="$t('components.rector.app_config.job_info.description')"
@@ -475,7 +488,7 @@ const tabs = [
                         </template>
 
                         <template #userTracker>
-                            <UDashboardPanelContent class="pb-2">
+                            <UDashboardPanelContent class="pb-24">
                                 <UDashboardSection
                                     :title="$t('components.rector.app_config.user_tracker.title')"
                                     :description="$t('components.rector.app_config.user_tracker.description')"
@@ -543,7 +556,7 @@ const tabs = [
                         </template>
 
                         <template #discord>
-                            <UDashboardPanelContent class="pb-2">
+                            <UDashboardPanelContent class="pb-24">
                                 <UDashboardSection
                                     :title="$t('common.discord')"
                                     :description="$t('components.rector.app_config.discord.description')"

@@ -140,6 +140,10 @@ export interface DiscordSyncSettings {
      * @generated from protobuf field: optional resources.users.JobsAbsenceSettings jobs_absence_settings = 6;
      */
     jobsAbsenceSettings?: JobsAbsenceSettings;
+    /**
+     * @generated from protobuf field: optional resources.users.GroupSyncSettings group_sync_settings = 7;
+     */
+    groupSyncSettings?: GroupSyncSettings;
 }
 /**
  * @generated from protobuf message resources.users.UserInfoSyncSettings
@@ -187,6 +191,15 @@ export interface JobsAbsenceSettings {
      * @generated from protobuf field: string absence_role = 1;
      */
     absenceRole: string;
+}
+/**
+ * @generated from protobuf message resources.users.GroupSyncSettings
+ */
+export interface GroupSyncSettings {
+    /**
+     * @generated from protobuf field: repeated string ignored_role_ids = 1;
+     */
+    ignoredRoleIds: string[];
 }
 /**
  * @generated from protobuf message resources.users.JobSettings
@@ -525,7 +538,8 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
             { no: 3, name: "status_log", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 4, name: "status_log_settings", kind: "message", T: () => StatusLogSettings },
             { no: 5, name: "jobs_absence", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings }
+            { no: 6, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings },
+            { no: 7, name: "group_sync_settings", kind: "message", T: () => GroupSyncSettings }
         ]);
     }
     create(value?: PartialMessage<DiscordSyncSettings>): DiscordSyncSettings {
@@ -560,6 +574,9 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
                 case /* optional resources.users.JobsAbsenceSettings jobs_absence_settings */ 6:
                     message.jobsAbsenceSettings = JobsAbsenceSettings.internalBinaryRead(reader, reader.uint32(), options, message.jobsAbsenceSettings);
                     break;
+                case /* optional resources.users.GroupSyncSettings group_sync_settings */ 7:
+                    message.groupSyncSettings = GroupSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.groupSyncSettings);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -590,6 +607,9 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
         /* optional resources.users.JobsAbsenceSettings jobs_absence_settings = 6; */
         if (message.jobsAbsenceSettings)
             JobsAbsenceSettings.internalBinaryWrite(message.jobsAbsenceSettings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.users.GroupSyncSettings group_sync_settings = 7; */
+        if (message.groupSyncSettings)
+            GroupSyncSettings.internalBinaryWrite(message.groupSyncSettings, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -777,6 +797,53 @@ class JobsAbsenceSettings$Type extends MessageType<JobsAbsenceSettings> {
  * @generated MessageType for protobuf message resources.users.JobsAbsenceSettings
  */
 export const JobsAbsenceSettings = new JobsAbsenceSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GroupSyncSettings$Type extends MessageType<GroupSyncSettings> {
+    constructor() {
+        super("resources.users.GroupSyncSettings", [
+            { no: 1, name: "ignored_role_ids", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "25" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GroupSyncSettings>): GroupSyncSettings {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.ignoredRoleIds = [];
+        if (value !== undefined)
+            reflectionMergePartial<GroupSyncSettings>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GroupSyncSettings): GroupSyncSettings {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated string ignored_role_ids */ 1:
+                    message.ignoredRoleIds.push(reader.string());
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GroupSyncSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated string ignored_role_ids = 1; */
+        for (let i = 0; i < message.ignoredRoleIds.length; i++)
+            writer.tag(1, WireType.LengthDelimited).string(message.ignoredRoleIds[i]);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.GroupSyncSettings
+ */
+export const GroupSyncSettings = new GroupSyncSettings$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class JobSettings$Type extends MessageType<JobSettings> {
     constructor() {

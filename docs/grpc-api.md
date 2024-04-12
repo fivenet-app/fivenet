@@ -10,37 +10,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/centrum/general.proto](#resources_centrum_general-proto)
-    - [Attributes](#resources-centrum-Attributes)
-    - [Disponents](#resources-centrum-Disponents)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
-- [resources/centrum/units.proto](#resources_centrum_units-proto)
-    - [Unit](#resources-centrum-Unit)
-    - [UnitAssignment](#resources-centrum-UnitAssignment)
-    - [UnitAssignments](#resources-centrum-UnitAssignments)
-    - [UnitStatus](#resources-centrum-UnitStatus)
-  
-    - [StatusUnit](#resources-centrum-StatusUnit)
-  
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-  
-    - [CentrumMode](#resources-centrum-CentrumMode)
-  
-- [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
-    - [Dispatch](#resources-centrum-Dispatch)
-    - [DispatchAssignment](#resources-centrum-DispatchAssignment)
-    - [DispatchAssignments](#resources-centrum-DispatchAssignments)
-    - [DispatchReference](#resources-centrum-DispatchReference)
-    - [DispatchReferences](#resources-centrum-DispatchReferences)
-    - [DispatchStatus](#resources-centrum-DispatchStatus)
-  
-    - [DispatchReferenceType](#resources-centrum-DispatchReferenceType)
-    - [StatusDispatch](#resources-centrum-StatusDispatch)
-    - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
-  
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [OrderBy](#resources-common-database-OrderBy)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
@@ -181,6 +150,7 @@
   
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
+    - [GroupSyncSettings](#resources-users-GroupSyncSettings)
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
     - [JobProps](#resources-users-JobProps)
@@ -194,6 +164,37 @@
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
+  
+- [resources/centrum/general.proto](#resources_centrum_general-proto)
+    - [Attributes](#resources-centrum-Attributes)
+    - [Disponents](#resources-centrum-Disponents)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
+- [resources/centrum/units.proto](#resources_centrum_units-proto)
+    - [Unit](#resources-centrum-Unit)
+    - [UnitAssignment](#resources-centrum-UnitAssignment)
+    - [UnitAssignments](#resources-centrum-UnitAssignments)
+    - [UnitStatus](#resources-centrum-UnitStatus)
+  
+    - [StatusUnit](#resources-centrum-StatusUnit)
+  
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
+  
+- [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
+    - [Dispatch](#resources-centrum-Dispatch)
+    - [DispatchAssignment](#resources-centrum-DispatchAssignment)
+    - [DispatchAssignments](#resources-centrum-DispatchAssignments)
+    - [DispatchReference](#resources-centrum-DispatchReference)
+    - [DispatchReferences](#resources-centrum-DispatchReferences)
+    - [DispatchStatus](#resources-centrum-DispatchStatus)
+  
+    - [DispatchReferenceType](#resources-centrum-DispatchReferenceType)
+    - [StatusDispatch](#resources-centrum-StatusDispatch)
+    - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
@@ -629,451 +630,6 @@
 
 
  
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_general-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/general.proto
-
-
-
-<a name="resources-centrum-Attributes"></a>
-
-### Attributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Disponents"></a>
-
-### Disponents
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| user_id | [int32](#int32) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_units-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/units.proto
-
-
-
-<a name="resources-centrum-Unit"></a>
-
-### Unit
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| name | [string](#string) |  | @sanitize |
-| initials | [string](#string) |  | @sanitize |
-| color | [string](#string) |  |  |
-| description | [string](#string) | optional | @sanitize |
-| status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
-| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
-| home_postal | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignment"></a>
-
-### UnitAssignment
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
-| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;user_id&#34; |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignments"></a>
-
-### UnitAssignments
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitStatus"></a>
-
-### UnitStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| unit_id | [uint64](#uint64) |  |  |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| status | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
-| reason | [string](#string) | optional | @sanitize |
-| code | [string](#string) | optional | @sanitize |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| x | [double](#double) | optional |  |
-| y | [double](#double) | optional |  |
-| postal | [string](#string) | optional | @sanitize |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-StatusUnit"></a>
-
-### StatusUnit
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| STATUS_UNIT_UNSPECIFIED | 0 |  |
-| STATUS_UNIT_UNKNOWN | 1 |  |
-| STATUS_UNIT_USER_ADDED | 2 |  |
-| STATUS_UNIT_USER_REMOVED | 3 |  |
-| STATUS_UNIT_UNAVAILABLE | 4 |  |
-| STATUS_UNIT_AVAILABLE | 5 |  |
-| STATUS_UNIT_ON_BREAK | 6 |  |
-| STATUS_UNIT_BUSY | 7 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/settings.proto
-
-
-
-<a name="resources-centrum-PredefinedStatus"></a>
-
-### PredefinedStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_status | [string](#string) | repeated |  |
-| dispatch_status | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| enabled | [bool](#bool) |  |  |
-| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-CentrumMode"></a>
-
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CENTRUM_MODE_UNSPECIFIED | 0 |  |
-| CENTRUM_MODE_MANUAL | 1 |  |
-| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
-| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
-| CENTRUM_MODE_SIMPLIFIED | 4 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_dispatches-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/dispatches.proto
-
-
-
-<a name="resources-centrum-Dispatch"></a>
-
-### Dispatch
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| status | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
-| message | [string](#string) |  | @sanitize |
-| description | [string](#string) | optional | @sanitize |
-| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
-| x | [double](#double) |  |  |
-| y | [double](#double) |  |  |
-| postal | [string](#string) | optional | @sanitize |
-| anon | [bool](#bool) |  |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.User](#resources-users-User) | optional |  |
-| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
-| references | [DispatchReferences](#resources-centrum-DispatchReferences) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchAssignment"></a>
-
-### DispatchAssignment
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;dispatch_id&#34; |
-| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchAssignments"></a>
-
-### DispatchAssignments
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchReference"></a>
-
-### DispatchReference
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| target_dispatch_id | [uint64](#uint64) |  |  |
-| reference_type | [DispatchReferenceType](#resources-centrum-DispatchReferenceType) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchReferences"></a>
-
-### DispatchReferences
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| references | [DispatchReference](#resources-centrum-DispatchReference) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchStatus"></a>
-
-### DispatchStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| dispatch_id | [uint64](#uint64) |  |  |
-| unit_id | [uint64](#uint64) | optional |  |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| status | [StatusDispatch](#resources-centrum-StatusDispatch) |  |  |
-| reason | [string](#string) | optional | @sanitize |
-| code | [string](#string) | optional | @sanitize |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| x | [double](#double) | optional |  |
-| y | [double](#double) | optional |  |
-| postal | [string](#string) | optional | @sanitize |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-DispatchReferenceType"></a>
-
-### DispatchReferenceType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| DISPATCH_REFERENCE_TYPE_UNSPECIFIED | 0 |  |
-| DISPATCH_REFERENCE_TYPE_REFERENCED | 1 |  |
-| DISPATCH_REFERENCE_TYPE_DUPLICATED_BY | 2 |  |
-| DISPATCH_REFERENCE_TYPE_DUPLICATE_OF | 3 |  |
-
-
-
-<a name="resources-centrum-StatusDispatch"></a>
-
-### StatusDispatch
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| STATUS_DISPATCH_UNSPECIFIED | 0 |  |
-| STATUS_DISPATCH_NEW | 1 |  |
-| STATUS_DISPATCH_UNASSIGNED | 2 |  |
-| STATUS_DISPATCH_UPDATED | 3 |  |
-| STATUS_DISPATCH_UNIT_ASSIGNED | 4 |  |
-| STATUS_DISPATCH_UNIT_UNASSIGNED | 5 |  |
-| STATUS_DISPATCH_UNIT_ACCEPTED | 6 |  |
-| STATUS_DISPATCH_UNIT_DECLINED | 7 |  |
-| STATUS_DISPATCH_EN_ROUTE | 8 |  |
-| STATUS_DISPATCH_ON_SCENE | 9 |  |
-| STATUS_DISPATCH_NEED_ASSISTANCE | 10 |  |
-| STATUS_DISPATCH_COMPLETED | 11 |  |
-| STATUS_DISPATCH_CANCELLED | 12 |  |
-| STATUS_DISPATCH_ARCHIVED | 13 |  |
-
-
-
-<a name="resources-centrum-TakeDispatchResp"></a>
-
-### TakeDispatchResp
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| TAKE_DISPATCH_RESP_UNSPECIFIED | 0 |  |
-| TAKE_DISPATCH_RESP_TIMEOUT | 1 |  |
-| TAKE_DISPATCH_RESP_ACCEPTED | 2 |  |
-| TAKE_DISPATCH_RESP_DECLINED | 3 |  |
-
 
  
 
@@ -3111,6 +2667,22 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | status_log_settings | [StatusLogSettings](#resources-users-StatusLogSettings) | optional |  |
 | jobs_absence | [bool](#bool) |  |  |
 | jobs_absence_settings | [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings) | optional |  |
+| group_sync_settings | [GroupSyncSettings](#resources-users-GroupSyncSettings) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-GroupSyncSettings"></a>
+
+### GroupSyncSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| ignored_role_ids | [string](#string) | repeated |  |
 
 
 
@@ -3300,6 +2872,451 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_general-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/general.proto
+
+
+
+<a name="resources-centrum-Attributes"></a>
+
+### Attributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| user_id | [int32](#int32) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_units-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/units.proto
+
+
+
+<a name="resources-centrum-Unit"></a>
+
+### Unit
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| name | [string](#string) |  | @sanitize |
+| initials | [string](#string) |  | @sanitize |
+| color | [string](#string) |  |  |
+| description | [string](#string) | optional | @sanitize |
+| status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
+| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
+| home_postal | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignment"></a>
+
+### UnitAssignment
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
+| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;user_id&#34; |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignments"></a>
+
+### UnitAssignments
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitStatus"></a>
+
+### UnitStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| unit_id | [uint64](#uint64) |  |  |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| status | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
+| reason | [string](#string) | optional | @sanitize |
+| code | [string](#string) | optional | @sanitize |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| x | [double](#double) | optional |  |
+| y | [double](#double) | optional |  |
+| postal | [string](#string) | optional | @sanitize |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-StatusUnit"></a>
+
+### StatusUnit
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STATUS_UNIT_UNSPECIFIED | 0 |  |
+| STATUS_UNIT_UNKNOWN | 1 |  |
+| STATUS_UNIT_USER_ADDED | 2 |  |
+| STATUS_UNIT_USER_REMOVED | 3 |  |
+| STATUS_UNIT_UNAVAILABLE | 4 |  |
+| STATUS_UNIT_AVAILABLE | 5 |  |
+| STATUS_UNIT_ON_BREAK | 6 |  |
+| STATUS_UNIT_BUSY | 7 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_status | [string](#string) | repeated |  |
+| dispatch_status | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CENTRUM_MODE_UNSPECIFIED | 0 |  |
+| CENTRUM_MODE_MANUAL | 1 |  |
+| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
+| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
+| CENTRUM_MODE_SIMPLIFIED | 4 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_dispatches-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/dispatches.proto
+
+
+
+<a name="resources-centrum-Dispatch"></a>
+
+### Dispatch
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| status | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
+| message | [string](#string) |  | @sanitize |
+| description | [string](#string) | optional | @sanitize |
+| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
+| x | [double](#double) |  |  |
+| y | [double](#double) |  |  |
+| postal | [string](#string) | optional | @sanitize |
+| anon | [bool](#bool) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.User](#resources-users-User) | optional |  |
+| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
+| references | [DispatchReferences](#resources-centrum-DispatchReferences) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchAssignment"></a>
+
+### DispatchAssignment
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;dispatch_id&#34; |
+| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchAssignments"></a>
+
+### DispatchAssignments
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchReference"></a>
+
+### DispatchReference
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| target_dispatch_id | [uint64](#uint64) |  |  |
+| reference_type | [DispatchReferenceType](#resources-centrum-DispatchReferenceType) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchReferences"></a>
+
+### DispatchReferences
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| references | [DispatchReference](#resources-centrum-DispatchReference) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchStatus"></a>
+
+### DispatchStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| dispatch_id | [uint64](#uint64) |  |  |
+| unit_id | [uint64](#uint64) | optional |  |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| status | [StatusDispatch](#resources-centrum-StatusDispatch) |  |  |
+| reason | [string](#string) | optional | @sanitize |
+| code | [string](#string) | optional | @sanitize |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| x | [double](#double) | optional |  |
+| y | [double](#double) | optional |  |
+| postal | [string](#string) | optional | @sanitize |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-DispatchReferenceType"></a>
+
+### DispatchReferenceType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| DISPATCH_REFERENCE_TYPE_UNSPECIFIED | 0 |  |
+| DISPATCH_REFERENCE_TYPE_REFERENCED | 1 |  |
+| DISPATCH_REFERENCE_TYPE_DUPLICATED_BY | 2 |  |
+| DISPATCH_REFERENCE_TYPE_DUPLICATE_OF | 3 |  |
+
+
+
+<a name="resources-centrum-StatusDispatch"></a>
+
+### StatusDispatch
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STATUS_DISPATCH_UNSPECIFIED | 0 |  |
+| STATUS_DISPATCH_NEW | 1 |  |
+| STATUS_DISPATCH_UNASSIGNED | 2 |  |
+| STATUS_DISPATCH_UPDATED | 3 |  |
+| STATUS_DISPATCH_UNIT_ASSIGNED | 4 |  |
+| STATUS_DISPATCH_UNIT_UNASSIGNED | 5 |  |
+| STATUS_DISPATCH_UNIT_ACCEPTED | 6 |  |
+| STATUS_DISPATCH_UNIT_DECLINED | 7 |  |
+| STATUS_DISPATCH_EN_ROUTE | 8 |  |
+| STATUS_DISPATCH_ON_SCENE | 9 |  |
+| STATUS_DISPATCH_NEED_ASSISTANCE | 10 |  |
+| STATUS_DISPATCH_COMPLETED | 11 |  |
+| STATUS_DISPATCH_CANCELLED | 12 |  |
+| STATUS_DISPATCH_ARCHIVED | 13 |  |
+
+
+
+<a name="resources-centrum-TakeDispatchResp"></a>
+
+### TakeDispatchResp
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TAKE_DISPATCH_RESP_UNSPECIFIED | 0 |  |
+| TAKE_DISPATCH_RESP_TIMEOUT | 1 |  |
+| TAKE_DISPATCH_RESP_ACCEPTED | 2 |  |
+| TAKE_DISPATCH_RESP_DECLINED | 3 |  |
+
 
  
 

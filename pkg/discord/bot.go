@@ -43,12 +43,26 @@ var BotModule = fx.Module("discord_bot",
 )
 
 var (
-	lastSyncMetric = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	metricLastSync = promauto.NewGaugeVec(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,
 		Subsystem: "discord_bot",
 		Name:      "last_sync",
 		Help:      "Last time sync has completed.",
 	}, []string{"job", "status"})
+
+	metricGuildsTotal = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: admin.MetricsNamespace,
+		Subsystem: "discord_bot",
+		Name:      "guilds_total_count",
+		Help:      "Total count of Discord guilds being ready.",
+	})
+
+	metricGuildsReady = promauto.NewGauge(prometheus.GaugeOpts{
+		Namespace: admin.MetricsNamespace,
+		Subsystem: "discord_bot",
+		Name:      "guilds_ready_count",
+		Help:      "Count of Discord guilds being ready.",
+	})
 )
 
 type BotParams struct {
@@ -238,6 +252,7 @@ func (b *Bot) Sync() error {
 			func() {
 				ctx, span := b.tracer.Start(b.ctx, "discord_bot")
 				defer span.End()
+
 				if err := b.runSync(ctx); err != nil {
 					b.logger.Error("failed to sync discord", zap.Error(err))
 				}
@@ -331,6 +346,20 @@ func (b *Bot) runSync(ctx context.Context) error {
 		return err
 	}
 
+	totalCount := float64(0)
+	readyCount := float64(0)
+	b.activeGuilds.Range(func(key string, value *Guild) bool {
+		totalCount++
+		if !value.guild.Unavailable {
+			readyCount++
+		}
+
+		return true
+	})
+
+	metricGuildsTotal.Add(totalCount)
+	metricGuildsReady.Add(readyCount)
+
 	errs := multierr.Combine()
 
 	// Run at max 3 syncs at once
@@ -351,9 +380,9 @@ func (b *Bot) runSync(ctx context.Context) error {
 					logger.Error("error during sync", zap.Error(err))
 					errs = multierr.Append(errs, err)
 
-					lastSyncMetric.WithLabelValues(g.Job, "failed").SetToCurrentTime()
+					metricLastSync.WithLabelValues(g.Job, "failed").SetToCurrentTime()
 				} else {
-					lastSyncMetric.WithLabelValues(g.Job, "success").SetToCurrentTime()
+					metricLastSync.WithLabelValues(g.Job, "success").SetToCurrentTime()
 				}
 
 				if err := b.setLastSyncInterval(ctx, g.Job); err != nil {

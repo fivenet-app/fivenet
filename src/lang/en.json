@@ -565,6 +565,15 @@
                 "jobs_absence_settings": {
                     "jobs_absence_role_enabled": "Manage the absence role",
                     "jobs_absence_role_name": "Absence Role"
+                },
+                "group_sync_settings": {
+                    "title": "Group Sync Settings",
+                    "subtitle": "Options for the group sync bot.",
+                    "ignored_role_ids": {
+                        "title": "Ignored Role ID",
+                        "description": "Users with one of these roles are not going to get groups synced (only affects the group sync and not the user info sync.)",
+                        "field": "Ignored Role ID"
+                    }
                 }
             },
             "role_view": {
@@ -892,13 +901,15 @@
                 },
                 "volumes": {
                     "title": "Volume Control",
-                    "subtitle": "Control sound volumes."
+                    "subtitle": "Control sound volumes.",
+                    "notifications_volume": "Notifications Volume"
                 },
                 "streamer_mode": {
                     "title": "Streamer Mode",
                     "description": "Blur images by default and hide other information."
                 },
-                "background_color": "Background color"
+                "background_color": "Background color",
+                "customization": "Customize the look and feel of FiveNet."
             },
             "ChangeUsernameModal": {
                 "change_username": "Change Username",

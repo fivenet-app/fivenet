@@ -213,6 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UButton
                                         :ui="{ rounded: 'rounded-full' }"
                                         icon="i-mdi-close"
+                                        :disabled="!canSubmit"
                                         @click="state.dispatchStatus.splice(idx, 1)"
                                     />
                                 </div>

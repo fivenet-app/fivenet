@@ -286,33 +286,43 @@ const accordionCategories = computed(() =>
                                 >
                                     <div class="flex flex-row gap-2">
                                         <div class="my-auto flex flex-1 flex-col">
-                                            <span :title="`${$t('common.id')}: ${perm.id}`">
+                                            <span
+                                                :title="`${$t('common.id')}: ${perm.id}`"
+                                                class="text-gray-900 dark:text-white"
+                                            >
                                                 {{ $t(`perms.${perm.category}.${perm.name}.key`) }}
                                             </span>
                                             <span class="text-base-500">
                                                 {{ $t(`perms.${perm.category}.${perm.name}.description`) }}
                                             </span>
                                         </div>
-                                        <UButtonGroup class="my-auto flex max-h-8 flex-initial flex-row">
+
+                                        <UButtonGroup class="inline-flex flex-initial">
                                             <UButton
-                                                :disabled="permStates.has(perm.id) ? permStates.get(perm.id) : false"
                                                 color="green"
+                                                :variant="permStates.get(perm.id) ? 'solid' : 'soft'"
                                                 icon="i-mdi-check"
                                                 @click="updatePermissionState(perm.id, true)"
                                             />
+
                                             <UButton
-                                                :disabled="!permStates.has(perm.id) || permStates.get(perm.id) === undefined"
-                                                color="gray"
+                                                color="black"
+                                                :variant="
+                                                    !permStates.has(perm.id) || permStates.get(perm.id) === undefined
+                                                        ? 'solid'
+                                                        : 'soft'
+                                                "
                                                 icon="i-mdi-minus"
                                                 @click="updatePermissionState(perm.id, undefined)"
                                             />
+
                                             <UButton
-                                                :disabled="
-                                                    permStates.has(perm.id)
-                                                        ? permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
-                                                        : false
-                                                "
                                                 color="red"
+                                                :variant="
+                                                    permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                        ? 'solid'
+                                                        : 'soft'
+                                                "
                                                 icon="i-mdi-close"
                                                 @click="updatePermissionState(perm.id, false)"
                                             />

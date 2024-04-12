@@ -89,6 +89,13 @@ func (x *JobProps) Default(job string) {
 			AbsenceRole: DefaultJobsAbsenceRoleName,
 		}
 	}
+
+	// Group Sync Settings
+	if x.DiscordSyncSettings.GroupSyncSettings == nil {
+		x.DiscordSyncSettings.GroupSyncSettings = &GroupSyncSettings{
+			IgnoredRoleIds: []string{},
+		}
+	}
 }
 
 // Scan implements driver.Valuer for protobuf QuickButtons.

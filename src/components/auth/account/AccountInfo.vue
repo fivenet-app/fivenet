@@ -42,7 +42,7 @@ const modal = useModal();
 <template>
     <div>
         <template v-if="streamerMode">
-            <UDashboardPanelContent class="pb-2">
+            <UDashboardPanelContent class="pb-24">
                 <UDashboardSection
                     :title="$t('system.streamer_mode.title')"
                     :description="$t('system.streamer_mode.description')"
@@ -66,60 +66,96 @@ const modal = useModal();
             />
 
             <template v-else>
-                <UDashboardPanelContent class="pb-2">
-                    <UDashboardSection
-                        :title="$t('components.auth.AccountInfo.title')"
-                        :description="$t('components.auth.AccountInfo.subtitle')"
-                    >
-                        <UFormGroup
-                            name="version"
-                            :label="$t('common.username')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            {{ account.account?.username }}
-                        </UFormGroup>
+                <UTabs
+                    :items="[
+                        {
+                            slot: 'accountInfo',
+                            label: $t('components.auth.AccountInfo.title'),
+                            icon: 'i-mdi-info',
+                        },
+                        {
+                            slot: 'oauth2Connections',
+                            label: $t('components.auth.OAuth2Connections.title'),
+                            icon: 'i-simple-icons-discord',
+                        },
+                        { slot: 'debugInfo', label: $t('components.debug_info.title'), icon: 'i-mdi-connection' },
+                    ]"
+                    class="w-full"
+                >
+                    <template #default="{ item, selected }">
+                        <div class="relative flex items-center gap-2 truncate">
+                            <UIcon :name="item.icon" class="size-4 shrink-0" />
 
-                        <UFormGroup
-                            name="version"
-                            :label="$t('components.auth.AccountInfo.license')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            {{ account.account?.license }}
-                        </UFormGroup>
+                            <span class="truncate">{{ item.label }}</span>
 
-                        <UFormGroup
-                            name="version"
-                            :label="$t('components.auth.AccountInfo.change_username')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UButton @click="modal.open(ChangeUsernameModal, {})">
-                                {{ $t('components.auth.AccountInfo.change_username_button') }}
-                            </UButton>
-                        </UFormGroup>
+                            <span
+                                v-if="selected"
+                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
+                            />
+                        </div>
+                    </template>
 
-                        <UFormGroup
-                            name="version"
-                            :label="$t('components.auth.AccountInfo.change_password')"
-                            class="grid grid-cols-2 items-center gap-2"
-                            :ui="{ container: '' }"
-                        >
-                            <UButton @click="modal.open(ChangePasswordModal, {})">
-                                {{ $t('components.auth.AccountInfo.change_password_button') }}
-                            </UButton>
-                        </UFormGroup>
-                    </UDashboardSection>
-                </UDashboardPanelContent>
+                    <template #accountInfo>
+                        <UDashboardPanelContent>
+                            <UDashboardSection
+                                :title="$t('components.auth.AccountInfo.title')"
+                                :description="$t('components.auth.AccountInfo.subtitle')"
+                            >
+                                <UFormGroup
+                                    name="version"
+                                    :label="$t('common.username')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    {{ account.account?.username }}
+                                </UFormGroup>
 
-                <OAuth2Connections
-                    :providers="account.oauth2Providers"
-                    :connections="account.oauth2Connections"
-                    @disconnected="removeOAuth2Connection($event)"
-                />
+                                <UFormGroup
+                                    name="version"
+                                    :label="$t('components.auth.AccountInfo.license')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    {{ account.account?.license }}
+                                </UFormGroup>
 
-                <DebugInfo />
+                                <UFormGroup
+                                    name="version"
+                                    :label="$t('components.auth.AccountInfo.change_username')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UButton @click="modal.open(ChangeUsernameModal, {})">
+                                        {{ $t('components.auth.AccountInfo.change_username_button') }}
+                                    </UButton>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="version"
+                                    :label="$t('components.auth.AccountInfo.change_password')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UButton @click="modal.open(ChangePasswordModal, {})">
+                                        {{ $t('components.auth.AccountInfo.change_password_button') }}
+                                    </UButton>
+                                </UFormGroup>
+                            </UDashboardSection>
+                        </UDashboardPanelContent>
+                    </template>
+
+                    <template #oauth2Connections>
+                        <OAuth2Connections
+                            :providers="account.oauth2Providers"
+                            :connections="account.oauth2Connections"
+                            @disconnected="removeOAuth2Connection($event)"
+                        />
+                    </template>
+
+                    <template #debugInfo>
+                        <DebugInfo />
+                    </template>
+                </UTabs>
             </template>
         </template>
     </div>
