@@ -62,12 +62,12 @@ today.setMilliseconds(0);
 
         <template v-else>
             <div class="mb-6">
-                <div class="my-4 flex gap-4 px-4">
+                <div class="my-4 flex gap-2 px-4">
                     <ProfilePictureImg
                         :src="colleague.colleague.avatar?.url"
                         :name="`${colleague.colleague.firstname} ${colleague.colleague.lastname}`"
-                        size="3xl"
                         :enable-popup="true"
+                        size="3xl"
                     />
 
                     <div class="w-full">

@@ -123,89 +123,87 @@ function addToClipboard(): void {
                 />
                 <DataNoDataBlock v-else-if="user === null" />
                 <div v-else>
-                    <div>
-                        <div class="my-4 flex gap-4 px-4">
-                            <ProfilePictureImg
-                                :src="user?.props?.mugShot?.url"
-                                :name="`${user.firstname} ${user.lastname}`"
-                                :alt="$t('common.mug_shot')"
-                                :enable-popup="true"
-                                size="3xl"
-                            />
+                    <div class="mb-4 flex gap-2 px-4">
+                        <ProfilePictureImg
+                            :src="user?.props?.mugShot?.url"
+                            :name="`${user.firstname} ${user.lastname}`"
+                            :alt="$t('common.mug_shot')"
+                            :enable-popup="true"
+                            size="3xl"
+                        />
 
-                            <div class="w-full">
-                                <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                                    <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                                        {{ user?.firstname }} {{ user?.lastname }}
-                                    </h1>
-                                </div>
+                        <div class="w-full">
+                            <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                                <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                                    {{ user?.firstname }} {{ user?.lastname }}
+                                </h1>
+                            </div>
 
-                                <div class="inline-flex gap-2">
-                                    <UBadge>
-                                        {{ user.jobLabel }}
-                                        <template v-if="user.jobGrade > 0">
-                                            ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</template
-                                        >
-                                    </UBadge>
-                                    <UBadge v-if="user?.props?.wanted" color="red">
-                                        {{ $t('common.wanted').toUpperCase() }}
-                                    </UBadge>
-                                </div>
+                            <div class="inline-flex gap-2">
+                                <UBadge>
+                                    {{ user.jobLabel }}
+                                    <template v-if="user.jobGrade > 0">
+                                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</template
+                                    >
+                                </UBadge>
+                                <UBadge v-if="user?.props?.wanted" color="red">
+                                    {{ $t('common.wanted').toUpperCase() }}
+                                </UBadge>
                             </div>
                         </div>
-
-                        <UTabs :items="tabs" class="w-full" :unmount="true">
-                            <template #default="{ item, selected }">
-                                <div class="relative flex items-center gap-2 truncate">
-                                    <UIcon :name="item.icon" class="size-4 shrink-0" />
-
-                                    <span class="truncate">{{ item.label }}</span>
-
-                                    <span
-                                        v-if="selected"
-                                        class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
-                                    />
-                                </div>
-                            </template>
-
-                            <template #profile>
-                                <UContainer>
-                                    <CitizenProfile :user="user" />
-
-                                    <UDivider class="mb-2" />
-
-                                    <CitizenActions
-                                        class="flex lg:hidden"
-                                        :user="user"
-                                        @update:wanted-status="user.props!.wanted = $event"
-                                        @update:job="
-                                            user.job = $event.job.name;
-                                            user.jobLabel = $event.job.label;
-                                            user.jobGrade = $event.grade.grade;
-                                            user.jobGradeLabel = $event.grade.label;
-                                        "
-                                        @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                                        @update:mug-shot="user.props!.mugShot = $event"
-                                    />
-                                </UContainer>
-                            </template>
-                            <template v-if="can('DMVService.ListVehicles')" #vehicles>
-                                <UContainer>
-                                    <CitizenVehicles :user-id="user.userId" />
-                                </UContainer>
-                            </template>
-                            <template v-if="can('DocStoreService.ListUserDocuments')" #documents>
-                                <UContainer>
-                                    <CitizenDocuments :user-id="user.userId" />
-                                </UContainer>
-                            </template>
-                            <template v-if="can('CitizenStoreService.ListUserActivity')" #activity>
-                                <UContainer>
-                                    <CitizenActivityFeed :user-id="user.userId" />
-                                </UContainer>
-                            </template>
-                        </UTabs>
                     </div>
+
+                    <UTabs :items="tabs" class="w-full" :unmount="true">
+                        <template #default="{ item, selected }">
+                            <div class="relative flex items-center gap-2 truncate">
+                                <UIcon :name="item.icon" class="size-4 shrink-0" />
+
+                                <span class="truncate">{{ item.label }}</span>
+
+                                <span
+                                    v-if="selected"
+                                    class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
+                                />
+                            </div>
+                        </template>
+
+                        <template #profile>
+                            <UContainer>
+                                <CitizenProfile :user="user" />
+
+                                <UDivider class="mb-2 flex lg:hidden" />
+
+                                <CitizenActions
+                                    class="flex lg:hidden"
+                                    :user="user"
+                                    @update:wanted-status="user.props!.wanted = $event"
+                                    @update:job="
+                                        user.job = $event.job.name;
+                                        user.jobLabel = $event.job.label;
+                                        user.jobGrade = $event.grade.grade;
+                                        user.jobGradeLabel = $event.grade.label;
+                                    "
+                                    @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
+                                    @update:mug-shot="user.props!.mugShot = $event"
+                                />
+                            </UContainer>
+                        </template>
+                        <template v-if="can('DMVService.ListVehicles')" #vehicles>
+                            <UContainer>
+                                <CitizenVehicles :user-id="user.userId" />
+                            </UContainer>
+                        </template>
+                        <template v-if="can('DocStoreService.ListUserDocuments')" #documents>
+                            <UContainer>
+                                <CitizenDocuments :user-id="user.userId" />
+                            </UContainer>
+                        </template>
+                        <template v-if="can('CitizenStoreService.ListUserActivity')" #activity>
+                            <UContainer>
+                                <CitizenActivityFeed :user-id="user.userId" />
+                            </UContainer>
+                        </template>
+                    </UTabs>
                 </div>
             </UDashboardPanelContent>
         </UDashboardPanel>

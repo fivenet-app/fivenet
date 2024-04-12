@@ -21,6 +21,7 @@ defineProps<{
                         {{ user.dateofbirth }}
                     </dd>
                 </div>
+
                 <div class="sm:flex sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.sex') }}
@@ -32,6 +33,7 @@ defineProps<{
                         <CharSexBadge :sex="user?.sex ? user?.sex : ''" />
                     </dd>
                 </div>
+
                 <div class="sm:flex sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.height') }}
@@ -40,6 +42,7 @@ defineProps<{
                         {{ user?.height }}cm
                     </dd>
                 </div>
+
                 <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')" class="sm:flex sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.phone_number') }}
@@ -48,6 +51,7 @@ defineProps<{
                         <PhoneNumberBlock :number="user.phoneNumber" />
                     </dd>
                 </div>
+
                 <div v-if="user.visum" class="sm:flex sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.visum') }}
@@ -56,6 +60,7 @@ defineProps<{
                         {{ user?.visum }}
                     </dd>
                 </div>
+
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.BloodType')"
                     class="sm:flex sm:px-5 sm:py-4"
@@ -67,6 +72,7 @@ defineProps<{
                         {{ user?.props?.bloodType ?? $t('common.na') }}
                     </dd>
                 </div>
+
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
                     class="sm:flex sm:px-5 sm:py-4"
@@ -81,6 +87,7 @@ defineProps<{
                         {{ $t('common.point', user?.props?.trafficInfractionPoints ?? 0) }}
                     </dd>
                 </div>
+
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
                     class="sm:flex sm:px-5 sm:py-4"
@@ -97,6 +104,7 @@ defineProps<{
                         </span>
                     </dd>
                 </div>
+
                 <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')" class="sm:flex sm:px-5 sm:py-4">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.license', 2) }}
