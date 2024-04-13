@@ -1322,7 +1322,8 @@
                     "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
                     "UserProps_OpenFines": "Offene Geldstrafen",
                     "UserProps_BloodType": "Blutgruppe",
-                    "UserProps_MugShot": "Fahndungsfoto"
+                    "UserProps_MugShot": "Fahndungsfoto",
+                    "UserProps_Attributes": "Attribute"
                 },
                 "attrs_types": {
                     "Fields": "Felder"
@@ -1346,7 +1347,8 @@
                     "Wanted": "Gesuchter Status",
                     "Job": "Job",
                     "TrafficInfractionPoints": "Verkehrspunkte",
-                    "MugShot": "Fahndungsfoto"
+                    "MugShot": "Fahndungsfoto",
+                    "Attributes": "Attribute"
                 },
                 "attrs_types": {
                     "Fields": "Bürger Eigenschaften"
@@ -1358,6 +1360,10 @@
                 "attrs_types": {
                     "Jobs": "Fraktionen"
                 }
+            },
+            "ManageCitizenAttributes": {
+                "key": "Verwalte Bürger-Attribute",
+                "description": "Erstellen, Aktualisieren und Löschen von Bürger-Attribute."
             }
         },
         "CompletorService": {
@@ -1373,6 +1379,13 @@
             "CompleteDocumentCategories": {
                 "key": "Auflisten von Dokumentkategorien",
                 "description": "Auflisten der Dokumentkategorien von bestimmten Jobs.",
+                "attrs_types": {
+                    "Jobs": "Fraktionen"
+                }
+            },
+            "CompleteCitizenAttributes": {
+                "key": "Auflisten von Bürger-Attributen zur Autovervollständigung",
+                "description": "Autovervollständigen von Bürger-Attributen von mehreren Fraktionen.",
                 "attrs_types": {
                     "Jobs": "Fraktionen"
                 }
