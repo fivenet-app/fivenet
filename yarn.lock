@@ -6642,10 +6642,10 @@ jodit-vue@3.1.0:
   dependencies:
     jodit "^3.24.5"
 
-jodit@4.0.18:
-  version "4.0.18"
-  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.0.18.tgz#353e5a9de012b26891ca39789c83f3f8ec481220"
-  integrity sha512-S2Eorn+7ZhIFEaPMDwoBpLhTwli/NP9FwSWY7AbsBvAy3nnltwczxRkcfXGCYyrdlqua1Mml3MPTuQtOT8SGBg==
+jodit@4.1.8:
+  version "4.1.8"
+  resolved "https://registry.yarnpkg.com/jodit/-/jodit-4.1.8.tgz#824a96f891742bc7180c7a369d47e361c0325438"
+  integrity sha512-zt2sRmQH+2bs5kz695Kf/hruYEiR2QRU/LEvm03kpjHDCEHPCm9jfq9hMDjG8hjGo2Gq8kyuWz2nU5FvX5pebA==
   dependencies:
     autobind-decorator "^2.4.0"
 
