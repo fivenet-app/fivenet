@@ -914,9 +914,9 @@
                 "background_color": "Background color",
                 "customization": "Customize the look and feel of FiveNet.",
                 "documents_lists_style": {
-                    "title": "Dokumenten-Listen-Stil",
-                    "single": "Single",
-                    "double": "Double"
+                    "title": "Document List Style",
+                    "single": "Single Column",
+                    "double": "Double Column (Big Screens)"
                 }
             },
             "ChangeUsernameModal": {
