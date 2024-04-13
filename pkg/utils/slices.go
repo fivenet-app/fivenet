@@ -1,0 +1,75 @@
+package utils
+
+func RemoveSliceDuplicates[T comparable](in []T) []T {
+	allKeys := make(map[T]bool)
+	list := []T{}
+
+	for _, item := range in {
+		if _, value := allKeys[item]; !value {
+			allKeys[item] = true
+			list = append(list, item)
+		}
+	}
+
+	return list
+}
+
+// SlicesDifference duplicates of values are ignored
+func SlicesDifference[T comparable](a, b []T) ([]T, []T) {
+	temp := map[T]int{}
+	for _, s := range a {
+		if _, ok := temp[s]; !ok {
+			temp[s] = 0
+		}
+	}
+	for _, s := range b {
+		if _, ok := temp[s]; !ok {
+			temp[s] = -1
+		} else {
+			temp[s] = 1
+		}
+	}
+
+	added, removed := []T{}, []T{}
+	for s, v := range temp {
+		if v == 0 {
+			removed = append(removed, s)
+		} else if v < 0 {
+			added = append(added, s)
+		}
+	}
+
+	return added, removed
+}
+
+func SlicesDifferenceFunc[T comparable](a, b []T, keyFn func(in T) string) ([]T, []T) {
+	temp := map[string]int{}
+	vals := map[string]T{}
+	for _, i := range a {
+		s := keyFn(i)
+		if _, ok := temp[s]; !ok {
+			temp[s] = 0
+			vals[s] = i
+		}
+	}
+	for _, i := range b {
+		s := keyFn(i)
+		if _, ok := temp[s]; !ok {
+			temp[s] = -1
+			vals[s] = i
+		} else {
+			temp[s] = 1
+		}
+	}
+
+	added, removed := []T{}, []T{}
+	for s, v := range temp {
+		if v == 0 {
+			removed = append(removed, vals[s])
+		} else if v < 0 {
+			added = append(added, vals[s])
+		}
+	}
+
+	return added, removed
+}

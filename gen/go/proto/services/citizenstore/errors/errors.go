@@ -15,4 +15,5 @@ var (
 	ErrPropsJobInvalid          = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobInvalid")
 	ErrPropsTrafficPointsDenied = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsTrafficPointsDenied")
 	ErrPropsMugShotDenied       = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsMugShotDenied")
+	ErrPropsAttributesDenied    = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsAttributesDenied")
 )

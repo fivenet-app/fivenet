@@ -1060,3 +1060,258 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListLawBooksResponseValidationError{}
+
+// Validate checks the field values on CompleteCitizenAttributesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *CompleteCitizenAttributesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteCitizenAttributesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// CompleteCitizenAttributesRequestMultiError, or nil if none found.
+func (m *CompleteCitizenAttributesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteCitizenAttributesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetSearch()) > 32 {
+		err := CompleteCitizenAttributesRequestValidationError{
+			field:  "Search",
+			reason: "value length must be at most 32 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return CompleteCitizenAttributesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteCitizenAttributesRequestMultiError is an error wrapping multiple
+// validation errors returned by
+// CompleteCitizenAttributesRequest.ValidateAll() if the designated
+// constraints aren't met.
+type CompleteCitizenAttributesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteCitizenAttributesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteCitizenAttributesRequestMultiError) AllErrors() []error { return m }
+
+// CompleteCitizenAttributesRequestValidationError is the validation error
+// returned by CompleteCitizenAttributesRequest.Validate if the designated
+// constraints aren't met.
+type CompleteCitizenAttributesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteCitizenAttributesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteCitizenAttributesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteCitizenAttributesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteCitizenAttributesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteCitizenAttributesRequestValidationError) ErrorName() string {
+	return "CompleteCitizenAttributesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteCitizenAttributesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteCitizenAttributesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteCitizenAttributesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteCitizenAttributesRequestValidationError{}
+
+// Validate checks the field values on CompleteCitizenAttributesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *CompleteCitizenAttributesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CompleteCitizenAttributesResponse
+// with the rules defined in the proto definition for this message. If any
+// rules are violated, the result is a list of violation errors wrapped in
+// CompleteCitizenAttributesResponseMultiError, or nil if none found.
+func (m *CompleteCitizenAttributesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CompleteCitizenAttributesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CompleteCitizenAttributesResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CompleteCitizenAttributesResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CompleteCitizenAttributesResponseValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CompleteCitizenAttributesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CompleteCitizenAttributesResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// CompleteCitizenAttributesResponse.ValidateAll() if the designated
+// constraints aren't met.
+type CompleteCitizenAttributesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CompleteCitizenAttributesResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CompleteCitizenAttributesResponseMultiError) AllErrors() []error { return m }
+
+// CompleteCitizenAttributesResponseValidationError is the validation error
+// returned by CompleteCitizenAttributesResponse.Validate if the designated
+// constraints aren't met.
+type CompleteCitizenAttributesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CompleteCitizenAttributesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CompleteCitizenAttributesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CompleteCitizenAttributesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CompleteCitizenAttributesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CompleteCitizenAttributesResponseValidationError) ErrorName() string {
+	return "CompleteCitizenAttributesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CompleteCitizenAttributesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCompleteCitizenAttributesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CompleteCitizenAttributesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CompleteCitizenAttributesResponseValidationError{}

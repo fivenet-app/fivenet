@@ -123,7 +123,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
                             <template #empty>
-                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                                {{ $t('common.not_found', [$t('common.status')]) }}
                             </template>
                         </USelectMenu>
                     </UFormGroup>

@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   `livemap_marker_color` char(7) DEFAULT "#5c7aff",
   `quick_buttons` varchar(255) DEFAULT NULL,
   `radio_frequency` varchar(24) DEFAULT NULL,
-  `discord_guild_id` bigint(20) unsigned DEFAULT NULL,
+  `discord_guild_id` varchar(128) DEFAULT NULL,
   `discord_last_sync` datetime(3) DEFAULT NULL,
   `discord_sync_settings` longtext DEFAULT NULL,
   `motd` text DEFAULT NULL,
@@ -18,6 +18,15 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   UNIQUE KEY `idx_fivenet_job_props_unique` (`job`),
   KEY `idx_fivenet_job_props_discord_guild_id` (`discord_guild_id`),
   KEY `idx_fivenet_job_props_logo_url` (`logo_url`)
+) ENGINE=InnoDB;
+
+-- Table: fivenet_job_citizen_attributes
+CREATE TABLE IF NOT EXISTS `fivenet_job_citizen_attributes` (
+  `job` varchar(20) NOT NULL,
+  `name` varchar(32) NOT NULL,
+  `color` char(7) DEFAULT "#5c7aff",
+  PRIMARY KEY `idx_fivenet_job_citizen_attributes_unique` (`job`, `name`),
+  KEY `idx_fivenet_job_citizen_attributes_name` (`name`)
 ) ENGINE=InnoDB;
 
 COMMIT;

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type RGB, hexToRgb, isColourBright, stringToColour } from '~/utils/colour';
+import { RGBBlack, hexToRgb, isColourBright, stringToColour } from '~/utils/colour';
 
 const props = withDefaults(
     defineProps<{
@@ -18,7 +18,7 @@ const props = withDefaults(
 
 const backgroundColor = stringToColour(props.plate);
 
-const inverseColor = hexToRgb(backgroundColor) ?? ({ r: 0, g: 0, b: 0 } as RGB);
+const inverseColor = hexToRgb(backgroundColor, RGBBlack)!;
 const year =
     props.year ??
     '201' +

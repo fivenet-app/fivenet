@@ -48,7 +48,7 @@ function getMarkerColor(): string {
 
 const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
 const unitInverseColor = computed(() => {
-    return hexToRgb(unit.value?.color ?? '#8d81f2') ?? ({ r: 0, g: 0, b: 0 } as RGB);
+    return hexToRgb(unit.value?.color ?? '#8d81f2', RGBBlack)!;
 });
 
 const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);

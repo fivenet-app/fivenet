@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
-import { type RGB } from '~/utils/colour';
+import { RGBBlack } from '~/utils/colour';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
 
@@ -10,7 +10,7 @@ const props = defineProps<{
 
 const slideover = useSlideover();
 
-const unitColorHex = computed(() => hexToRgb(props.unit.color) ?? ({ r: 0, g: 0, b: 0 } as RGB));
+const unitColorHex = computed(() => hexToRgb(props.unit.color, RGBBlack)!);
 const isBright = computed(() => isColourBright(unitColorHex.value));
 </script>
 

@@ -77,9 +77,9 @@ func (g *UserInfo) Run(settings *pbusers.DiscordSyncSettings) ([]*discordgo.Mess
 	}
 
 	g.employeeRoleEnabled = settings.UserInfoSyncSettings.EmployeeRoleEnabled
-	g.employeeRoleFormat = *settings.UserInfoSyncSettings.EmployeeRoleFormat
-	g.gradeRoleFormat = *settings.UserInfoSyncSettings.GradeRoleFormat
-	g.unemployedRoleName = *settings.UserInfoSyncSettings.UnemployedRoleName
+	g.employeeRoleFormat = settings.UserInfoSyncSettings.EmployeeRoleFormat
+	g.gradeRoleFormat = settings.UserInfoSyncSettings.GradeRoleFormat
+	g.unemployedRoleName = settings.UserInfoSyncSettings.UnemployedRoleName
 	g.unemployedMode = settings.UserInfoSyncSettings.UnemployedMode
 
 	g.jobsAbsenceEnabled = settings.JobsAbsence

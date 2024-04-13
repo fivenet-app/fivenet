@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CitizenAttribute } from "../../resources/users/users";
 import { File } from "../../resources/filestore/file";
 import { UserProps } from "../../resources/users/users";
 import { UserActivity } from "../../resources/users/users";
@@ -150,6 +151,24 @@ export interface SetProfilePictureResponse {
      * @generated from protobuf field: resources.filestore.File avatar = 1;
      */
     avatar?: File;
+}
+/**
+ * @generated from protobuf message services.citizenstore.ManageCitizenAttributesRequest
+ */
+export interface ManageCitizenAttributesRequest {
+    /**
+     * @generated from protobuf field: repeated resources.users.CitizenAttribute attributes = 1;
+     */
+    attributes: CitizenAttribute[];
+}
+/**
+ * @generated from protobuf message services.citizenstore.ManageCitizenAttributesResponse
+ */
+export interface ManageCitizenAttributesResponse {
+    /**
+     * @generated from protobuf field: repeated resources.users.CitizenAttribute attributes = 1;
+     */
+    attributes: CitizenAttribute[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
@@ -687,6 +706,100 @@ class SetProfilePictureResponse$Type extends MessageType<SetProfilePictureRespon
  * @generated MessageType for protobuf message services.citizenstore.SetProfilePictureResponse
  */
 export const SetProfilePictureResponse = new SetProfilePictureResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ManageCitizenAttributesRequest$Type extends MessageType<ManageCitizenAttributesRequest> {
+    constructor() {
+        super("services.citizenstore.ManageCitizenAttributesRequest", [
+            { no: 1, name: "attributes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CitizenAttribute }
+        ]);
+    }
+    create(value?: PartialMessage<ManageCitizenAttributesRequest>): ManageCitizenAttributesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.attributes = [];
+        if (value !== undefined)
+            reflectionMergePartial<ManageCitizenAttributesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageCitizenAttributesRequest): ManageCitizenAttributesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.users.CitizenAttribute attributes */ 1:
+                    message.attributes.push(CitizenAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ManageCitizenAttributesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.CitizenAttribute attributes = 1; */
+        for (let i = 0; i < message.attributes.length; i++)
+            CitizenAttribute.internalBinaryWrite(message.attributes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizenstore.ManageCitizenAttributesRequest
+ */
+export const ManageCitizenAttributesRequest = new ManageCitizenAttributesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ManageCitizenAttributesResponse$Type extends MessageType<ManageCitizenAttributesResponse> {
+    constructor() {
+        super("services.citizenstore.ManageCitizenAttributesResponse", [
+            { no: 1, name: "attributes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CitizenAttribute }
+        ]);
+    }
+    create(value?: PartialMessage<ManageCitizenAttributesResponse>): ManageCitizenAttributesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.attributes = [];
+        if (value !== undefined)
+            reflectionMergePartial<ManageCitizenAttributesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ManageCitizenAttributesResponse): ManageCitizenAttributesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.users.CitizenAttribute attributes */ 1:
+                    message.attributes.push(CitizenAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ManageCitizenAttributesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.CitizenAttribute attributes = 1; */
+        for (let i = 0; i < message.attributes.length; i++)
+            CitizenAttribute.internalBinaryWrite(message.attributes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.citizenstore.ManageCitizenAttributesResponse
+ */
+export const ManageCitizenAttributesResponse = new ManageCitizenAttributesResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.citizenstore.CitizenStoreService
  */
@@ -695,5 +808,6 @@ export const CitizenStoreService = new ServiceType("services.citizenstore.Citize
     { name: "GetUser", options: {}, I: GetUserRequest, O: GetUserResponse },
     { name: "ListUserActivity", options: {}, I: ListUserActivityRequest, O: ListUserActivityResponse },
     { name: "SetUserProps", options: {}, I: SetUserPropsRequest, O: SetUserPropsResponse },
-    { name: "SetProfilePicture", options: {}, I: SetProfilePictureRequest, O: SetProfilePictureResponse }
+    { name: "SetProfilePicture", options: {}, I: SetProfilePictureRequest, O: SetProfilePictureResponse },
+    { name: "ManageCitizenAttributes", options: {}, I: ManageCitizenAttributesRequest, O: ManageCitizenAttributesResponse }
 ]);

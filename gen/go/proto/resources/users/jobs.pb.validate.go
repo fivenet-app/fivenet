@@ -594,39 +594,6 @@ func (m *JobProps) validate(all bool) error {
 
 	}
 
-	if m.CitizenAttributes != nil {
-
-		if all {
-			switch v := interface{}(m.GetCitizenAttributes()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, JobPropsValidationError{
-						field:  "CitizenAttributes",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, JobPropsValidationError{
-						field:  "CitizenAttributes",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCitizenAttributes()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return JobPropsValidationError{
-					field:  "CitizenAttributes",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(errors) > 0 {
 		return JobPropsMultiError(errors)
 	}
@@ -833,140 +800,124 @@ func (m *DiscordSyncSettings) validate(all bool) error {
 
 	// no validation rules for UserInfoSync
 
-	// no validation rules for StatusLog
-
-	// no validation rules for JobsAbsence
-
-	if m.UserInfoSyncSettings != nil {
-
-		if all {
-			switch v := interface{}(m.GetUserInfoSyncSettings()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "UserInfoSyncSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "UserInfoSyncSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUserInfoSyncSettings()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return DiscordSyncSettingsValidationError{
+	if all {
+		switch v := interface{}(m.GetUserInfoSyncSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
 					field:  "UserInfoSyncSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
+					field:  "UserInfoSyncSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
-
+	} else if v, ok := interface{}(m.GetUserInfoSyncSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DiscordSyncSettingsValidationError{
+				field:  "UserInfoSyncSettings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
-	if m.StatusLogSettings != nil {
+	// no validation rules for StatusLog
 
-		if all {
-			switch v := interface{}(m.GetStatusLogSettings()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "StatusLogSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "StatusLogSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetStatusLogSettings()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return DiscordSyncSettingsValidationError{
+	if all {
+		switch v := interface{}(m.GetStatusLogSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
 					field:  "StatusLogSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
+					field:  "StatusLogSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
-
+	} else if v, ok := interface{}(m.GetStatusLogSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DiscordSyncSettingsValidationError{
+				field:  "StatusLogSettings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
-	if m.JobsAbsenceSettings != nil {
+	// no validation rules for JobsAbsence
 
-		if all {
-			switch v := interface{}(m.GetJobsAbsenceSettings()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "JobsAbsenceSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "JobsAbsenceSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetJobsAbsenceSettings()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return DiscordSyncSettingsValidationError{
+	if all {
+		switch v := interface{}(m.GetJobsAbsenceSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
 					field:  "JobsAbsenceSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
+					field:  "JobsAbsenceSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
-
+	} else if v, ok := interface{}(m.GetJobsAbsenceSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DiscordSyncSettingsValidationError{
+				field:  "JobsAbsenceSettings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
-	if m.GroupSyncSettings != nil {
-
-		if all {
-			switch v := interface{}(m.GetGroupSyncSettings()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "GroupSyncSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, DiscordSyncSettingsValidationError{
-						field:  "GroupSyncSettings",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetGroupSyncSettings()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return DiscordSyncSettingsValidationError{
+	if all {
+		switch v := interface{}(m.GetGroupSyncSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
 					field:  "GroupSyncSettings",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DiscordSyncSettingsValidationError{
+					field:  "GroupSyncSettings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
-
+	} else if v, ok := interface{}(m.GetGroupSyncSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DiscordSyncSettingsValidationError{
+				field:  "GroupSyncSettings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {
@@ -1073,6 +1024,28 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 
 	// no validation rules for EmployeeRoleEnabled
 
+	if utf8.RuneCountInString(m.GetEmployeeRoleFormat()) > 48 {
+		err := UserInfoSyncSettingsValidationError{
+			field:  "EmployeeRoleFormat",
+			reason: "value length must be at most 48 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if utf8.RuneCountInString(m.GetGradeRoleFormat()) > 48 {
+		err := UserInfoSyncSettingsValidationError{
+			field:  "GradeRoleFormat",
+			reason: "value length must be at most 48 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	// no validation rules for UnemployedEnabled
 
 	if _, ok := UserInfoSyncUnemployedMode_name[int32(m.GetUnemployedMode())]; !ok {
@@ -1086,49 +1059,15 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if m.EmployeeRoleFormat != nil {
-
-		if utf8.RuneCountInString(m.GetEmployeeRoleFormat()) > 48 {
-			err := UserInfoSyncSettingsValidationError{
-				field:  "EmployeeRoleFormat",
-				reason: "value length must be at most 48 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+	if utf8.RuneCountInString(m.GetUnemployedRoleName()) > 48 {
+		err := UserInfoSyncSettingsValidationError{
+			field:  "UnemployedRoleName",
+			reason: "value length must be at most 48 runes",
 		}
-
-	}
-
-	if m.GradeRoleFormat != nil {
-
-		if utf8.RuneCountInString(m.GetGradeRoleFormat()) > 48 {
-			err := UserInfoSyncSettingsValidationError{
-				field:  "GradeRoleFormat",
-				reason: "value length must be at most 48 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
+		if !all {
+			return err
 		}
-
-	}
-
-	if m.UnemployedRoleName != nil {
-
-		if utf8.RuneCountInString(m.GetUnemployedRoleName()) > 48 {
-			err := UserInfoSyncSettingsValidationError{
-				field:  "UnemployedRoleName",
-				reason: "value length must be at most 48 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {
@@ -1233,9 +1172,7 @@ func (m *StatusLogSettings) validate(all bool) error {
 
 	var errors []error
 
-	if m.ChannelId != nil {
-		// no validation rules for ChannelId
-	}
+	// no validation rules for ChannelId
 
 	if len(errors) > 0 {
 		return StatusLogSettingsMultiError(errors)
@@ -1657,275 +1594,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = JobSettingsValidationError{}
-
-// Validate checks the field values on CitizenAttributes with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *CitizenAttributes) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CitizenAttributes with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CitizenAttributesMultiError, or nil if none found.
-func (m *CitizenAttributes) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CitizenAttributes) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	for idx, item := range m.GetList() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, CitizenAttributesValidationError{
-						field:  fmt.Sprintf("List[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, CitizenAttributesValidationError{
-						field:  fmt.Sprintf("List[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return CitizenAttributesValidationError{
-					field:  fmt.Sprintf("List[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return CitizenAttributesMultiError(errors)
-	}
-
-	return nil
-}
-
-// CitizenAttributesMultiError is an error wrapping multiple validation errors
-// returned by CitizenAttributes.ValidateAll() if the designated constraints
-// aren't met.
-type CitizenAttributesMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CitizenAttributesMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CitizenAttributesMultiError) AllErrors() []error { return m }
-
-// CitizenAttributesValidationError is the validation error returned by
-// CitizenAttributes.Validate if the designated constraints aren't met.
-type CitizenAttributesValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CitizenAttributesValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CitizenAttributesValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CitizenAttributesValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CitizenAttributesValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CitizenAttributesValidationError) ErrorName() string {
-	return "CitizenAttributesValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e CitizenAttributesValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCitizenAttributes.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CitizenAttributesValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CitizenAttributesValidationError{}
-
-// Validate checks the field values on CitizenAttribute with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *CitizenAttribute) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on CitizenAttribute with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// CitizenAttributeMultiError, or nil if none found.
-func (m *CitizenAttribute) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *CitizenAttribute) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	if utf8.RuneCountInString(m.GetName()) > 48 {
-		err := CitizenAttributeValidationError{
-			field:  "Name",
-			reason: "value length must be at most 48 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if utf8.RuneCountInString(m.GetColor()) != 7 {
-		err := CitizenAttributeValidationError{
-			field:  "Color",
-			reason: "value length must be 7 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-
-	}
-
-	if !_CitizenAttribute_Color_Pattern.MatchString(m.GetColor()) {
-		err := CitizenAttributeValidationError{
-			field:  "Color",
-			reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if len(errors) > 0 {
-		return CitizenAttributeMultiError(errors)
-	}
-
-	return nil
-}
-
-// CitizenAttributeMultiError is an error wrapping multiple validation errors
-// returned by CitizenAttribute.ValidateAll() if the designated constraints
-// aren't met.
-type CitizenAttributeMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m CitizenAttributeMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m CitizenAttributeMultiError) AllErrors() []error { return m }
-
-// CitizenAttributeValidationError is the validation error returned by
-// CitizenAttribute.Validate if the designated constraints aren't met.
-type CitizenAttributeValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e CitizenAttributeValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e CitizenAttributeValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e CitizenAttributeValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e CitizenAttributeValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e CitizenAttributeValidationError) ErrorName() string { return "CitizenAttributeValidationError" }
-
-// Error satisfies the builtin error interface
-func (e CitizenAttributeValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sCitizenAttribute.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = CitizenAttributeValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = CitizenAttributeValidationError{}
-
-var _CitizenAttribute_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")

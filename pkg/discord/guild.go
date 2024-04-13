@@ -112,7 +112,7 @@ func (g *Guild) Run() error {
 
 	errs := multierr.Combine()
 	if settings.IsStatusLogEnabled() {
-		if err := g.sendStartStatusLog(*settings.StatusLogSettings.ChannelId); err != nil {
+		if err := g.sendStartStatusLog(settings.StatusLogSettings.ChannelId); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 	}
@@ -130,11 +130,11 @@ func (g *Guild) Run() error {
 	}
 
 	if settings.IsStatusLogEnabled() {
-		if err := g.sendStatusLog(*settings.StatusLogSettings.ChannelId, logs); err != nil {
+		if err := g.sendStatusLog(settings.StatusLogSettings.ChannelId, logs); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
-		if err := g.sendEndStatusLog(*settings.StatusLogSettings.ChannelId, time.Since(start), errs); err != nil {
+		if err := g.sendEndStatusLog(settings.StatusLogSettings.ChannelId, time.Since(start), errs); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 	}

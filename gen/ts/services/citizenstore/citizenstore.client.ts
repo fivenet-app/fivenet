@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CitizenStoreService } from "./citizenstore";
+import type { ManageCitizenAttributesResponse } from "./citizenstore";
+import type { ManageCitizenAttributesRequest } from "./citizenstore";
 import type { SetProfilePictureResponse } from "./citizenstore";
 import type { SetProfilePictureRequest } from "./citizenstore";
 import type { SetUserPropsResponse } from "./citizenstore";
@@ -22,7 +24,7 @@ import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
  */
 export interface ICitizenStoreServiceClient {
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -40,7 +42,7 @@ export interface ICitizenStoreServiceClient {
      */
     listUserActivity(input: ListUserActivityRequest, options?: RpcOptions): UnaryCall<ListUserActivityRequest, ListUserActivityResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
      *
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
@@ -51,6 +53,12 @@ export interface ICitizenStoreServiceClient {
      * @generated from protobuf rpc: SetProfilePicture(services.citizenstore.SetProfilePictureRequest) returns (services.citizenstore.SetProfilePictureResponse);
      */
     setProfilePicture(input: SetProfilePictureRequest, options?: RpcOptions): UnaryCall<SetProfilePictureRequest, SetProfilePictureResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ManageCitizenAttributes(services.citizenstore.ManageCitizenAttributesRequest) returns (services.citizenstore.ManageCitizenAttributesResponse);
+     */
+    manageCitizenAttributes(input: ManageCitizenAttributesRequest, options?: RpcOptions): UnaryCall<ManageCitizenAttributesRequest, ManageCitizenAttributesResponse>;
 }
 /**
  * @generated from protobuf service services.citizenstore.CitizenStoreService
@@ -62,7 +70,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     constructor(private readonly _transport: RpcTransport) {
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
+     * @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
      *
      * @generated from protobuf rpc: ListCitizens(services.citizenstore.ListCitizensRequest) returns (services.citizenstore.ListCitizensResponse);
      */
@@ -89,7 +97,7 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
         return stackIntercept<ListUserActivityRequest, ListUserActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
+     * @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
      *
      * @generated from protobuf rpc: SetUserProps(services.citizenstore.SetUserPropsRequest) returns (services.citizenstore.SetUserPropsResponse);
      */
@@ -105,5 +113,14 @@ export class CitizenStoreServiceClient implements ICitizenStoreServiceClient, Se
     setProfilePicture(input: SetProfilePictureRequest, options?: RpcOptions): UnaryCall<SetProfilePictureRequest, SetProfilePictureResponse> {
         const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<SetProfilePictureRequest, SetProfilePictureResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ManageCitizenAttributes(services.citizenstore.ManageCitizenAttributesRequest) returns (services.citizenstore.ManageCitizenAttributesResponse);
+     */
+    manageCitizenAttributes(input: ManageCitizenAttributesRequest, options?: RpcOptions): UnaryCall<ManageCitizenAttributesRequest, ManageCitizenAttributesResponse> {
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ManageCitizenAttributesRequest, ManageCitizenAttributesResponse>("unary", this._transport, method, opt, input);
     }
 }

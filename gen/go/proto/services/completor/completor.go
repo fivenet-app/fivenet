@@ -25,8 +25,9 @@ import (
 )
 
 var (
-	tUsers    = table.Users.AS("usershort")
-	tCategory = table.FivenetDocumentsCategories.AS("category")
+	tUsers                = table.Users.AS("usershort")
+	tCategory             = table.FivenetDocumentsCategories.AS("category")
+	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )
 
 var (
@@ -238,4 +239,61 @@ func (s *Server) ListLawBooks(ctx context.Context, req *ListLawBooksRequest) (*L
 	return &ListLawBooksResponse{
 		Books: s.data.GetLawBooks(),
 	}, nil
+}
+
+func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCitizenAttributesRequest) (*CompleteCitizenAttributesResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, ErrFailedSearch)
+	}
+	var jobs perms.StringList
+	if jobsAttr != nil {
+		jobs = jobsAttr.([]string)
+	}
+
+	if len(jobs) == 0 {
+		jobs = append(jobs, userInfo.Job)
+	}
+
+	req.Search = strings.TrimSpace(req.Search)
+	req.Search = strings.ReplaceAll(req.Search, "%", "")
+	req.Search = strings.ReplaceAll(req.Search, " ", "%")
+
+	jobsExp := make([]jet.Expression, len(jobs))
+	for i := 0; i < len(jobs); i++ {
+		jobsExp[i] = jet.String(jobs[i])
+	}
+
+	condition := tJobCitizenAttributes.Job.IN(jobsExp...)
+
+	if req.Search != "" {
+		req.Search = "%" + req.Search + "%"
+		condition = condition.AND(tJobCitizenAttributes.Name.LIKE(jet.String(req.Search)))
+	}
+
+	stmt := tJobCitizenAttributes.
+		SELECT(
+			tJobCitizenAttributes.Job,
+			tJobCitizenAttributes.Name,
+			tJobCitizenAttributes.Color,
+		).
+		FROM(tJobCitizenAttributes).
+		WHERE(condition).
+		ORDER_BY(
+			tJobCitizenAttributes.Name.DESC(),
+		).
+		LIMIT(10)
+
+	resp := &CompleteCitizenAttributesResponse{
+		Attributes: []*users.CitizenAttribute{},
+	}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, ErrFailedSearch)
+		}
+	}
+
+	return resp, nil
 }

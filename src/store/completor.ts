@@ -3,6 +3,7 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 import { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
 import { Job } from '~~/gen/ts/resources/users/jobs';
+import type { CitizenAttribute } from '~~/gen/ts/resources/users/users';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
 import { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
@@ -109,6 +110,22 @@ export const useCompletorStore = defineStore('completor', {
                 const { response } = await call;
 
                 return response.books;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
+        },
+
+        // Citizens Attributes
+        async completeCitizensAttributes(search: string): Promise<CitizenAttribute[]> {
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getCompletorClient().completeCitizenAttributes({
+                    search: search,
+                });
+                const { response } = await call;
+
+                return response.attributes;
             } catch (e) {
                 $grpc.handleError(e as RpcError);
                 throw e;

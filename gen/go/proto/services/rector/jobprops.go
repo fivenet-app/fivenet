@@ -8,7 +8,6 @@ import (
 	"github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
 	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	citizenstorepermkeys "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
 	errorsrector "github.com/galexrt/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
@@ -25,6 +24,17 @@ var (
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	jobProps, err := s.getJobProps(ctx, userInfo.Job)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
+	}
+
+	return &GetJobPropsResponse{
+		JobProps: jobProps,
+	}, nil
+}
+
+func (s *Server) getJobProps(ctx context.Context, job string) (*users.JobProps, error) {
 	tJobProps := table.FivenetJobProps.AS("jobprops")
 	stmt := tJobProps.
 		SELECT(
@@ -41,27 +51,24 @@ func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*Get
 		).
 		FROM(tJobProps).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(userInfo.Job)),
+			tJobProps.Job.EQ(jet.String(job)),
 		).
 		LIMIT(1)
 
-	resp := &GetJobPropsResponse{
-		JobProps: &users.JobProps{},
-	}
-	if err := stmt.QueryContext(ctx, s.db, resp.JobProps); err != nil {
+	dest := &users.JobProps{}
+	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
+			return nil, err
 		}
 	}
 
-	resp.JobProps.Default(userInfo.Job)
+	dest.Default(job)
 
-	if resp.JobProps != nil {
-		s.enricher.EnrichJobName(resp.JobProps)
-	}
+	s.enricher.EnrichJobName(dest)
 
-	return resp, nil
+	return dest, nil
 }
+
 func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*SetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -113,12 +120,6 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 		req.JobProps.LogoUrl = jobProps.JobProps.LogoUrl
 	}
 
-	if !s.ps.Can(userInfo, citizenstorepermkeys.CitizenStoreServicePerm, citizenstorepermkeys.CitizenStoreServiceSetUserPropsPerm) {
-		req.JobProps.CitizenAttributes = nil
-	} else {
-		// TODO get user's job props and check added attributes against it
-	}
-
 	stmt := tJobProps.
 		INSERT(
 			tJobProps.Job,
@@ -145,7 +146,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			tJobProps.LivemapMarkerColor.SET(jet.String(req.JobProps.LivemapMarkerColor)),
 			tJobProps.RadioFrequency.SET(jet.StringExp(jet.Raw("VALUES(`radio_frequency`)"))),
 			tJobProps.QuickButtons.SET(jet.StringExp(jet.Raw("VALUES(`quick_buttons`)"))),
-			tJobProps.DiscordGuildID.SET(jet.IntExp(jet.Raw("VALUES(`discord_guild_id`)"))),
+			tJobProps.DiscordGuildID.SET(jet.StringExp(jet.Raw("VALUES(`discord_guild_id`)"))),
 			tJobProps.DiscordSyncSettings.SET(jet.StringExp(jet.Raw("VALUES(`discord_sync_settings`)"))),
 			tJobProps.LogoURL.SET(jet.StringExp(jet.Raw("VALUES(`logo_url`)"))),
 		)

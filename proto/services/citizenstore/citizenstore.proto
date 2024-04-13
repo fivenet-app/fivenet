@@ -65,16 +65,27 @@ message SetProfilePictureResponse {
   resources.filestore.File avatar = 1;
 }
 
+message ManageCitizenAttributesRequest {
+  repeated resources.users.CitizenAttribute attributes = 1;
+}
+
+message ManageCitizenAttributesResponse {
+  repeated resources.users.CitizenAttribute attributes = 1;
+}
+
 service CitizenStoreService {
-  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
+  // @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
   rpc ListCitizens(ListCitizensRequest) returns (ListCitizensResponse);
   // @perm: Attrs=Jobs/JobGradeList
   rpc GetUser(GetUserRequest) returns (GetUserResponse);
   // @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
   rpc ListUserActivity(ListUserActivityRequest) returns (ListUserActivityResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
+  // @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
   rpc SetUserProps(SetUserPropsRequest) returns (SetUserPropsResponse);
 
   // @perm: Name=Any
   rpc SetProfilePicture(SetProfilePictureRequest) returns (SetProfilePictureResponse);
+
+  // @perm
+  rpc ManageCitizenAttributes(ManageCitizenAttributesRequest) returns (ManageCitizenAttributesResponse);
 }

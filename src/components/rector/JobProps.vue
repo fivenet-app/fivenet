@@ -25,26 +25,71 @@ const authStore = useAuthStore();
 const notifications = useNotificatorStore();
 
 const schema = z.object({
-    jobLogo: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images, true).optional(),
-    citizenAttributes: z.object({
-        list: z
-            .object({
-                name: z.string().min(1).max(24),
-                color: z.string().length(7),
-            })
-            .array()
-            .max(15),
+    livemapMarkerColor: z.string().length(7),
+    quickButtons: z.object({
+        penaltyCalculator: z.boolean(),
+        bodyCheckup: z.boolean(),
     }),
-    // TODO add whole job props structure
+    radioFrequency: z.string(),
+    discordGuildId: z.string(),
+    discordSyncSettings: z.object({
+        userInfoSync: z.boolean(),
+        userInfoSyncSettings: z.object({
+            employeeRoleEnabled: z.boolean(),
+            employeeRoleFormat: z.string(),
+            gradeRoleFormat: z.string(),
+            unemployedEnabled: z.boolean(),
+            unemployedMode: z.nativeEnum(UserInfoSyncUnemployedMode),
+            unemployedRoleName: z.string(),
+        }),
+        statusLog: z.boolean(),
+        statusLogSettings: z.object({
+            channelId: z.string(),
+        }),
+        jobsAbsence: z.boolean(),
+        jobsAbsenceSettings: z.object({
+            absenceRole: z.string(),
+        }),
+        groupSyncSettings: z.object({
+            ignoredRoleIds: z.string().array().max(20),
+        }),
+    }),
+    logoUrl: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images, true).optional(),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    jobLogo: undefined,
-    citizenAttributes: {
-        list: [],
+    livemapMarkerColor: '',
+    quickButtons: {
+        penaltyCalculator: false,
+        bodyCheckup: false,
     },
+    radioFrequency: '',
+    discordGuildId: '',
+    discordSyncSettings: {
+        userInfoSync: false,
+        userInfoSyncSettings: {
+            employeeRoleEnabled: false,
+            employeeRoleFormat: '',
+            gradeRoleFormat: '',
+            unemployedEnabled: false,
+            unemployedMode: UserInfoSyncUnemployedMode.GIVE_ROLE,
+            unemployedRoleName: '',
+        },
+        statusLog: false,
+        statusLogSettings: {
+            channelId: '',
+        },
+        jobsAbsence: false,
+        jobsAbsenceSettings: {
+            absenceRole: '',
+        },
+        groupSyncSettings: {
+            ignoredRoleIds: [],
+        },
+    },
+    logoUrl: undefined,
 });
 
 async function getJobProps(): Promise<JobProps> {
@@ -66,11 +111,9 @@ async function setJobProps(values: Schema): Promise<void> {
         return;
     }
 
-    if (values.jobLogo) {
-        jobProps.value.logoUrl = { data: new Uint8Array(await values.jobLogo[0].arrayBuffer()) };
+    if (values.logoUrl) {
+        jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
     }
-    jobProps.value.citizenAttributes = values.citizenAttributes;
-    console.log('citizenAttributes', values.citizenAttributes);
 
     try {
         const { response } = await $grpc.getRectorClient().setJobProps({
@@ -93,11 +136,43 @@ async function setJobProps(values: Schema): Promise<void> {
     }
 }
 
-watch(jobProps, () => {
-    if (jobProps.value?.citizenAttributes) {
-        state.citizenAttributes = jobProps.value.citizenAttributes;
+function setSettingsValues(): void {
+    if (!jobProps.value) {
+        return;
     }
-});
+
+    if (jobProps.value.livemapMarkerColor) {
+        state.livemapMarkerColor = jobProps.value.livemapMarkerColor;
+    }
+    if (jobProps.value.quickButtons) {
+        state.quickButtons = jobProps.value.quickButtons;
+    }
+    if (jobProps.value.radioFrequency) {
+        state.radioFrequency = jobProps.value.radioFrequency;
+    }
+    if (jobProps.value.discordGuildId) {
+        state.discordGuildId = jobProps.value.discordGuildId;
+    }
+    if (jobProps.value.discordSyncSettings) {
+        state.discordSyncSettings.statusLog = jobProps.value.discordSyncSettings.statusLog;
+        if (jobProps.value.discordSyncSettings.statusLogSettings) {
+            state.discordSyncSettings.statusLogSettings = jobProps.value.discordSyncSettings.statusLogSettings;
+        }
+        state.discordSyncSettings.userInfoSync = jobProps.value.discordSyncSettings.userInfoSync;
+        if (jobProps.value.discordSyncSettings.userInfoSyncSettings) {
+            state.discordSyncSettings.userInfoSyncSettings = jobProps.value.discordSyncSettings.userInfoSyncSettings;
+        }
+        state.discordSyncSettings.jobsAbsence = jobProps.value.discordSyncSettings.jobsAbsence;
+        if (jobProps.value.discordSyncSettings.jobsAbsenceSettings) {
+            state.discordSyncSettings.jobsAbsenceSettings = jobProps.value.discordSyncSettings.jobsAbsenceSettings;
+        }
+        if (jobProps.value.discordSyncSettings.groupSyncSettings) {
+            state.discordSyncSettings.groupSyncSettings = jobProps.value.discordSyncSettings.groupSyncSettings;
+        }
+    }
+}
+
+watch(jobProps, () => setSettingsValues());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -173,21 +248,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :description="$t('components.rector.job_props.your_job_properties')"
                                 >
                                     <UFormGroup
-                                        name="theme"
-                                        :label="$t('common.theme')"
-                                        class="grid grid-cols-2 items-center gap-2"
-                                        :ui="{ container: '' }"
-                                    >
-                                        {{ jobProps.theme }}
-                                    </UFormGroup>
-
-                                    <UFormGroup
                                         name="livemapMarkerColor"
                                         :label="$t('components.rector.job_props.livemap_marker_color')"
                                         class="grid grid-cols-2 items-center gap-2"
                                         :ui="{ container: '' }"
                                     >
-                                        <ColorPicker v-model="jobProps.livemapMarkerColor" />
+                                        <ColorPicker v-model="state.livemapMarkerColor" />
                                     </UFormGroup>
 
                                     <UFormGroup
@@ -197,7 +263,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :ui="{ container: '' }"
                                     >
                                         <UInput
-                                            v-model="jobProps.radioFrequency"
+                                            v-model="state.radioFrequency"
                                             v-maska
                                             data-maska="0.9"
                                             data-maska-tokens="0:\d:multiple|9:\d:multiple"
@@ -220,10 +286,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <div class="flex flex-col gap-2">
                                             <div class="space-y-4">
                                                 <div class="flex items-center">
-                                                    <UToggle v-model="jobProps.quickButtons.penaltyCalculator">
+                                                    <UToggle v-model="state.quickButtons.penaltyCalculator">
                                                         <span
                                                             :class="[
-                                                                jobProps.quickButtons.penaltyCalculator
+                                                                state.quickButtons.penaltyCalculator
                                                                     ? 'translate-x-5'
                                                                     : 'translate-x-0',
                                                                 'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
@@ -237,10 +303,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </div>
                                             <div class="space-y-4">
                                                 <div class="flex items-center">
-                                                    <UToggle v-model="jobProps.quickButtons.bodyCheckup">
+                                                    <UToggle v-model="state.quickButtons.bodyCheckup">
                                                         <span
                                                             :class="[
-                                                                jobProps.quickButtons.bodyCheckup
+                                                                state.quickButtons.bodyCheckup
                                                                     ? 'translate-x-5'
                                                                     : 'translate-x-0',
                                                                 'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
@@ -274,7 +340,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     accept="image/jpeg,image/jpg,image/png"
                                                     block
                                                     :placeholder="$t('common.image')"
-                                                    @change="state.jobLogo = $event"
+                                                    @change="state.logoUrl = $event"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />
@@ -289,56 +355,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 />
                                             </div>
                                         </div>
-                                    </UFormGroup>
-
-                                    <UFormGroup
-                                        v-if="jobProps.citizenAttributes?.list && can('CitizenStoreService.SetUserProps')"
-                                        name="citizenAttributes.list"
-                                        :label="$t('components.rector.job_props.citizen_attributes.title')"
-                                        class="grid grid-cols-2 items-center gap-2"
-                                        :ui="{ container: '' }"
-                                    >
-                                        <div class="flex flex-col gap-1">
-                                            <div
-                                                v-for="(_, idx) in state.citizenAttributes.list"
-                                                :key="idx"
-                                                class="flex items-center gap-1"
-                                            >
-                                                <UFormGroup :name="`citizenAttributes.list.${idx}.name`" class="flex-1">
-                                                    <UInput
-                                                        v-model="state.citizenAttributes.list[idx].name"
-                                                        :name="`citizenAttributes.list.${idx}.name`"
-                                                        type="text"
-                                                        class="w-full flex-1"
-                                                        :placeholder="$t('common.attributes', 1)"
-                                                        @focusin="focusTablet(true)"
-                                                        @focusout="focusTablet(false)"
-                                                    />
-                                                </UFormGroup>
-
-                                                <UFormGroup :name="`citizenAttributes.list.${idx}.color`">
-                                                    <ColorPicker
-                                                        v-model="state.citizenAttributes.list[idx].color"
-                                                        :name="`citizenAttributes.list.${idx}.color`"
-                                                        class="min-w-16"
-                                                    />
-                                                </UFormGroup>
-
-                                                <UButton
-                                                    :ui="{ rounded: 'rounded-full' }"
-                                                    :disabled="!canSubmit"
-                                                    icon="i-mdi-close"
-                                                    @click="state.citizenAttributes.list.splice(idx, 1)"
-                                                />
-                                            </div>
-                                        </div>
-
-                                        <UButton
-                                            :ui="{ rounded: 'rounded-full' }"
-                                            :disabled="!canSubmit"
-                                            icon="i-mdi-plus"
-                                            @click="state.citizenAttributes.list.push({ name: '', color: '#ffffff' })"
-                                        />
                                     </UFormGroup>
                                 </UDashboardSection>
                             </UDashboardPanelContent>
@@ -357,7 +373,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :ui="{ container: '' }"
                                     >
                                         <UInput
-                                            v-model="jobProps.discordGuildId"
+                                            v-model="state.discordGuildId"
                                             type="text"
                                             :disabled="appConfig.discord.botInviteURL === undefined"
                                             :placeholder="
@@ -389,10 +405,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="grid grid-cols-2 items-center gap-2"
                                         :ui="{ container: '' }"
                                     >
-                                        <UToggle v-model="jobProps.discordSyncSettings.statusLog">
+                                        <UToggle v-model="state.discordSyncSettings.statusLog">
                                             <span
                                                 :class="[
-                                                    jobProps.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
+                                                    state.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
                                                     'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
                                                 ]"
                                             />
@@ -406,10 +422,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :ui="{ container: '' }"
                                     >
                                         <UInput
-                                            v-model="jobProps.discordSyncSettings.statusLogSettings!.channelId"
+                                            v-model="state.discordSyncSettings.statusLogSettings!.channelId"
                                             type="text"
                                             name="statusLogSettingsChannelId"
-                                            :disabled="!jobProps.discordSyncSettings.statusLog"
+                                            :disabled="!state.discordSyncSettings.statusLog"
                                             :placeholder="
                                                 $t(
                                                     'components.rector.job_props.discord_sync_settings.status_log_settings.channel_id',
@@ -432,7 +448,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="grid grid-cols-2 items-center gap-2"
                                         :ui="{ container: '' }"
                                     >
-                                        <UToggle v-model="jobProps.discordSyncSettings.userInfoSync">
+                                        <UToggle v-model="state.discordSyncSettings.userInfoSync">
                                             <span class="sr-only">{{
                                                 $t('components.rector.job_props.discord_sync_settings.user_info_sync')
                                             }}</span>
@@ -451,10 +467,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <UInput
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings.gradeRoleFormat"
                                                 type="text"
                                                 name="gradeRoleFormat"
-                                                :disabled="!jobProps.discordSyncSettings.userInfoSync"
+                                                :disabled="!state.discordSyncSettings.userInfoSync"
                                                 :placeholder="
                                                     $t(
                                                         'components.rector.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format',
@@ -477,8 +493,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <UToggle
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
-                                                :disabled="!jobProps.discordSyncSettings.userInfoSync"
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings.employeeRoleEnabled"
+                                                :disabled="!state.discordSyncSettings.userInfoSync"
                                             >
                                                 <span class="sr-only">{{
                                                     $t(
@@ -499,12 +515,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <UInput
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings!.employeeRoleFormat"
                                                 type="text"
                                                 name="employeeRoleFormat"
                                                 :disabled="
-                                                    !jobProps.discordSyncSettings.userInfoSync ||
-                                                    !jobProps.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled
+                                                    !state.discordSyncSettings.userInfoSync ||
+                                                    !state.discordSyncSettings.userInfoSyncSettings?.employeeRoleEnabled
                                                 "
                                                 :placeholder="
                                                     $t(
@@ -528,8 +544,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <UToggle
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
-                                                :disabled="!jobProps.discordSyncSettings.userInfoSync"
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled"
+                                                :disabled="!state.discordSyncSettings.userInfoSync"
                                             >
                                                 <span class="sr-only">{{
                                                     $t(
@@ -550,10 +566,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <USelectMenu
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedMode"
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedMode"
                                                 :disabled="
-                                                    !jobProps.discordSyncSettings.userInfoSync ||
-                                                    !jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
+                                                    !state.discordSyncSettings.userInfoSync ||
+                                                    !state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
                                                 "
                                                 value-attribute="value"
                                                 :options="[
@@ -572,7 +588,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         $t(
                                                             `enums.rector.UserInfoSyncUnemployedMode.${
                                                                 UserInfoSyncUnemployedMode[
-                                                                    jobProps.discordSyncSettings.userInfoSyncSettings
+                                                                    state.discordSyncSettings.userInfoSyncSettings
                                                                         .unemployedMode ?? 0
                                                                 ]
                                                             }`,
@@ -601,12 +617,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <UInput
-                                                v-model="jobProps.discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedRoleName"
                                                 type="text"
                                                 name="unemployedRoleName"
                                                 :disabled="
-                                                    !jobProps.discordSyncSettings.userInfoSync ||
-                                                    !jobProps.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
+                                                    !state.discordSyncSettings.userInfoSync ||
+                                                    !state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
                                                 "
                                                 :placeholder="
                                                     $t(
@@ -630,8 +646,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :ui="{ container: '' }"
                                         >
                                             <UToggle
-                                                v-model="jobProps.discordSyncSettings.jobsAbsence"
-                                                :disabled="!jobProps.discordSyncSettings.userInfoSync"
+                                                v-model="state.discordSyncSettings.jobsAbsence"
+                                                :disabled="!state.discordSyncSettings.userInfoSync"
                                             >
                                                 <span class="sr-only">{{
                                                     $t(
@@ -653,12 +669,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 :ui="{ container: '' }"
                                             >
                                                 <UInput
-                                                    v-model="jobProps.discordSyncSettings.jobsAbsenceSettings.absenceRole"
+                                                    v-model="state.discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                                     type="text"
                                                     name="jobsAbsenceRole"
                                                     :disabled="
-                                                        !jobProps.discordSyncSettings.userInfoSync ||
-                                                        !jobProps.discordSyncSettings.jobsAbsence
+                                                        !state.discordSyncSettings.userInfoSync ||
+                                                        !state.discordSyncSettings.jobsAbsence
                                                     "
                                                     :placeholder="
                                                         $t(
@@ -698,20 +714,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     >
                                         <div class="flex flex-col gap-1">
                                             <div
-                                                v-for="(_, idx) in jobProps.discordSyncSettings.groupSyncSettings
-                                                    .ignoredRoleIds"
+                                                v-for="(_, idx) in state.discordSyncSettings.groupSyncSettings.ignoredRoleIds"
                                                 :key="idx"
                                                 class="flex items-center gap-1"
                                             >
                                                 <UFormGroup :name="`citizenAttributes.list.${idx}.name`" class="flex-1">
                                                     <UInput
                                                         v-model="
-                                                            jobProps.discordSyncSettings.groupSyncSettings.ignoredRoleIds[idx]
+                                                            state.discordSyncSettings.groupSyncSettings.ignoredRoleIds[idx]
                                                         "
                                                         :name="`groupSyncSettingsIgnoredIds.${idx}`"
                                                         type="text"
                                                         class="w-full"
-                                                        :disabled="!jobProps.discordSyncSettings.userInfoSync"
+                                                        :disabled="!state.discordSyncSettings.userInfoSync"
                                                         :placeholder="
                                                             $t(
                                                                 'components.rector.job_props.discord_sync_settings.group_sync_settings.ignored_role_ids.field',
@@ -728,7 +743,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     :disabled="!canSubmit"
                                                     icon="i-mdi-close"
                                                     @click="
-                                                        jobProps.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(
+                                                        state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.splice(
                                                             idx,
                                                             1,
                                                         )
@@ -740,8 +755,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <UButton
                                             :ui="{ rounded: 'rounded-full' }"
                                             :disabled="!canSubmit"
+                                            :class="
+                                                state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.length ? 'mt-2' : ''
+                                            "
                                             icon="i-mdi-plus"
-                                            @click="jobProps.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.push('')"
+                                            @click="state.discordSyncSettings?.groupSyncSettings.ignoredRoleIds.push('')"
                                         />
                                     </UFormGroup>
                                 </UDashboardSection>

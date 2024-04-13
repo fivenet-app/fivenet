@@ -20,6 +20,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import type { CitizenAttributes } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -210,6 +211,61 @@ const props = defineProps<{
             </div>
         </div>
     </template>
+    <template v-else-if="activity.key === 'UserProps.Attributes'">
+        <div class="flex space-x-3">
+            <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                <UIcon name="i-mdi-tag" class="size-full text-amber-200" />
+            </div>
+            <div class="flex-1 space-y-1">
+                <div class="flex items-center justify-between">
+                    <h3 class="inline-flex flex-col gap-1 text-sm font-medium">
+                        <span>
+                            {{ $t('components.citizens.CitizenInfoActivityFeedEntry.userprops_attributes_updated') }}
+                        </span>
+
+                        <div class="inline-flex gap-1">
+                            <UBadge
+                                v-for="attribute in (JSON.parse(activity.oldValue) as CitizenAttributes)?.list"
+                                :key="attribute.name"
+                                :style="{ backgroundColor: attribute.color }"
+                                class="justify-between gap-2 line-through"
+                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                size="xs"
+                            >
+                                {{ attribute.name }}
+                            </UBadge>
+
+                            <UBadge
+                                v-for="attribute in (JSON.parse(activity.newValue) as CitizenAttributes)?.list"
+                                :key="attribute.name"
+                                :style="{ backgroundColor: attribute.color }"
+                                class="justify-between gap-2"
+                                :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
+                                size="xs"
+                            >
+                                {{ attribute.name }}
+                            </UBadge>
+                        </div>
+                    </h3>
+                    <p class="text-sm">
+                        <GenericTime :value="activity.createdAt" type="long" />
+                    </p>
+                </div>
+                <div class="flex items-center justify-between">
+                    <p class="inline-flex gap-1 text-sm">
+                        <span class="font-semibold">{{ $t('common.reason') }}:</span>
+                        <span>
+                            {{ activity.reason }}
+                        </span>
+                    </p>
+                    <p class="inline-flex text-sm">
+                        {{ $t('common.created_by') }}
+                        <CitizenInfoPopover class="ml-1" :user="activity.sourceUser" />
+                    </p>
+                </div>
+            </div>
+        </div>
+    </template>
     <template v-else-if="activity.key === 'Plugin.Licenses'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
@@ -297,7 +353,7 @@ const props = defineProps<{
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
-                    <h3 class="text-sm font-medium">
+                    <h3 class="inline-flex gap-1 text-sm font-medium">
                         <template v-if="activity.newValue === '0'">
                             {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_billing_fines.paid') }}
                         </template>
@@ -307,6 +363,7 @@ const props = defineProps<{
                         <template v-else>
                             {{ $t('components.citizens.CitizenInfoActivityFeedEntry.plugin_billing_fines.created') }}
                         </template>
+
                         <span>
                             {{ $n(parseInt(props.activity.newValue), 'currency') }}
                         </span>

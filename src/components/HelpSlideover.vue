@@ -59,7 +59,7 @@ const categories = computed(() => [
         ],
     },
     {
-        title: `${t('common.citizen', 2)} ${t('common.profile')}`,
+        title: t('pages.citizens.id.title'),
         items: [
             {
                 shortcuts: ['C', 'W'],

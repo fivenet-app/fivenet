@@ -109,7 +109,7 @@ if (props.registerShortcuts) {
 </script>
 
 <template>
-    <div class="flex w-full min-w-80 flex-col gap-2">
+    <div class="flex w-full flex-col gap-2">
         <UTooltip
             v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')"
             :text="
@@ -122,6 +122,7 @@ if (props.registerShortcuts) {
             <UButton
                 color="red"
                 block
+                truncate
                 :icon="user?.props?.wanted ? 'i-mdi-account-alert' : 'i-mdi-account-cancel'"
                 @click="
                     modal.open(CitizenSetWantedModal, {

@@ -13,9 +13,9 @@ const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
 
-const usersLoading = ref(false);
-
 const completorStore = useCompletorStore();
+
+const usersLoading = ref(false);
 
 const schema = z.object({
     users: z.custom<UserShort>().array().max(10),

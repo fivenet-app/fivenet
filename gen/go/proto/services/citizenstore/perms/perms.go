@@ -16,6 +16,7 @@ const (
 	CitizenStoreServiceListCitizensFieldsPermField     perms.Key  = "Fields"
 	CitizenStoreServiceListUserActivityPerm            perms.Name = "ListUserActivity"
 	CitizenStoreServiceListUserActivityFieldsPermField perms.Key  = "Fields"
+	CitizenStoreServiceManageCitizenAttributesPerm     perms.Name = "ManageCitizenAttributes"
 	CitizenStoreServiceSetUserPropsPerm                perms.Name = "SetUserProps"
 	CitizenStoreServiceSetUserPropsFieldsPermField     perms.Key  = "Fields"
 )

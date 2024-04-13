@@ -15,11 +15,11 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'update:modelValue', offset: number): void;
 }>();
 
-const page = useVModel(props, 'modelValue', emit);
+const page = useVModel(props, 'modelValue', emits);
 
 const total = computed(() => props.pagination?.totalCount ?? 0);
 const pageSize = computed(() => props.pagination?.pageSize ?? 1);

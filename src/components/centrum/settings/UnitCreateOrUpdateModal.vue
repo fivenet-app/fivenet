@@ -161,7 +161,7 @@ onMounted(async () => updateUnitInForm());
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                             </template>
                             <template #empty>
-                                {{ $t('common.not_found', [$t('common.attributes', 1)]) }}
+                                {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
                             </template>
                         </USelectMenu>
                     </UFormGroup>

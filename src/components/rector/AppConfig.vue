@@ -198,7 +198,7 @@ function setSettingsValues(): void {
     }
 }
 
-watchOnce(config, () => setSettingsValues());
+watch(config, () => setSettingsValues());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

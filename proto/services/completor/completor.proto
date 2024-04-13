@@ -45,6 +45,14 @@ message ListLawBooksResponse {
   repeated resources.laws.LawBook books = 1;
 }
 
+message CompleteCitizenAttributesRequest {
+  string search = 1 [(validate.rules).string.max_len = 32];
+}
+
+message CompleteCitizenAttributesResponse {
+  repeated resources.users.CitizenAttribute attributes = 1;
+}
+
 service CompletorService {
   // @perm
   rpc CompleteCitizens(CompleteCitizensRequest) returns (CompleteCitizensRespoonse);
@@ -54,4 +62,7 @@ service CompletorService {
   rpc CompleteDocumentCategories(CompleteDocumentCategoriesRequest) returns (CompleteDocumentCategoriesResponse);
   // @perm: Name=Any
   rpc ListLawBooks(ListLawBooksRequest) returns (ListLawBooksResponse);
+
+  // @perm: Attrs=Jobs/JobList
+  rpc CompleteCitizenAttributes(CompleteCitizenAttributesRequest) returns (CompleteCitizenAttributesResponse);
 }

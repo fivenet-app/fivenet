@@ -14,7 +14,8 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { Perms } from '~~/gen/ts/perms';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import CitizenActions from './CitizenActions.vue';
-import CitizenSetAttributes from './CitizenSetAttributes.vue';
+import CitizenSetAttributes from './props/CitizenSetAttributes.vue';
+import type { CitizenAttribute } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     userId: number;
@@ -88,11 +89,39 @@ function addToClipboard(): void {
         type: 'info',
     });
 }
+
+function addAttributes(attributes: CitizenAttribute[]): void {
+    if (!user.value!.props) {
+        user.value!.props = {
+            userId: user.value!.userId,
+        };
+    }
+    if (!user.value!.props?.attributes) {
+        user.value!.props.attributes = {
+            list: [],
+        };
+    }
+    user.value?.props!.attributes?.list.push(...attributes);
+}
+
+function removeAttributes(attributes: CitizenAttribute[]): void {
+    attributes.forEach((attribute) => {
+        const idx = user.value?.props?.attributes?.list.findIndex((a) => a.name === attribute.name);
+        if (idx !== undefined && idx > -1) {
+            user.value?.props?.attributes?.list.splice(idx, 1);
+        }
+    });
+}
+
+const isOpen = ref(false);
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
+    <UDashboardPage class="h-full">
+        <UDashboardPanel
+            class="h-full flex-shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
+            grow
+        >
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
                 <template #right>
                     <UButtonGroup class="inline-flex lg:hidden">
@@ -122,7 +151,7 @@ function addToClipboard(): void {
                 />
                 <DataNoDataBlock v-else-if="user === null" />
                 <div v-else>
-                    <div class="mb-4 flex gap-2 px-4">
+                    <div class="mb-4 flex items-center gap-2 px-4">
                         <ProfilePictureImg
                             :src="user?.props?.mugShot?.url"
                             :name="`${user.firstname} ${user.lastname}`"
@@ -131,7 +160,7 @@ function addToClipboard(): void {
                             size="3xl"
                         />
 
-                        <div class="w-full">
+                        <div class="w-full flex-1">
                             <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                                 <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
                                     {{ user?.firstname }} {{ user?.lastname }}
@@ -145,11 +174,16 @@ function addToClipboard(): void {
                                         ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</template
                                     >
                                 </UBadge>
+
                                 <UBadge v-if="user?.props?.wanted" color="red">
                                     {{ $t('common.wanted').toUpperCase() }}
                                 </UBadge>
                             </div>
                         </div>
+
+                        <UButton class="lg:hidden" icon="i-mdi-menu" @click="isOpen = true">
+                            {{ $t('common.action', 2) }}
+                        </UButton>
                     </div>
 
                     <UTabs :items="tabs" class="w-full" :unmount="true">
@@ -169,22 +203,6 @@ function addToClipboard(): void {
                         <template #profile>
                             <UContainer>
                                 <CitizenProfile :user="user" />
-
-                                <UDivider class="mb-2 flex lg:hidden" />
-
-                                <CitizenActions
-                                    class="flex lg:hidden"
-                                    :user="user"
-                                    @update:wanted-status="user.props!.wanted = $event"
-                                    @update:job="
-                                        user.job = $event.job.name;
-                                        user.jobLabel = $event.job.label;
-                                        user.jobGrade = $event.grade.grade;
-                                        user.jobGradeLabel = $event.grade.label;
-                                    "
-                                    @update:traffic-infraction-points="user.props!.trafficInfractionPoints = $event"
-                                    @update:mug-shot="user.props!.mugShot = $event"
-                                />
                             </UContainer>
                         </template>
                         <template v-if="can('DMVService.ListVehicles')" #vehicles>
@@ -207,7 +225,7 @@ function addToClipboard(): void {
             </UDashboardPanelContent>
         </UDashboardPanel>
 
-        <UDashboardPanel v-if="user" collapsible side="right">
+        <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right">
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup class="hidden lg:inline-flex">
@@ -253,13 +271,12 @@ function addToClipboard(): void {
                         </UDashboardSection>
 
                         <UDashboardSection
-                            v-if="false"
                             :ui="{
                                 wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
                             }"
                             :title="$t('common.attributes', 2)"
                         >
-                            <CitizenSetAttributes />
+                            <CitizenSetAttributes :user-id="user.userId" v-model="user.props!.attributes" />
                         </UDashboardSection>
                     </template>
                 </div>

@@ -15,14 +15,17 @@ import (
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/errors"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
+	permscompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor/perms"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
 	"github.com/galexrt/fivenet/pkg/mstlystcdata"
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/storage"
+	"github.com/galexrt/fivenet/pkg/utils"
 	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
@@ -32,6 +35,8 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -41,6 +46,8 @@ var (
 
 	tUserProps    = table.FivenetUserProps
 	tUserActivity = table.FivenetUserActivity
+
+	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )
 
 var ZeroTrafficInfractionPoints uint32 = 0
@@ -286,6 +293,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.BloodType)
 		case "UserProps.MugShot":
 			selectors = append(selectors, tUserProps.MugShot)
+		case "UserProps.Attributes":
+			selectors = append(selectors, tUserProps.Attributes)
 		}
 	}
 
@@ -521,6 +530,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
+
 	if props.Wanted == nil {
 		wanted := false
 		props.Wanted = &wanted
@@ -534,6 +544,11 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 	if props.TrafficInfractionPoints == nil {
 		props.TrafficInfractionPoints = &ZeroTrafficInfractionPoints
+	}
+	if props.Attributes == nil {
+		props.Attributes = &users.CitizenAttributes{
+			List: []*users.CitizenAttribute{},
+		}
 	}
 
 	props.Job, props.JobGrade = s.enricher.GetJobGrade(*props.JobName, *props.JobGradeNumber)
@@ -643,6 +658,38 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		req.Props.MugShot = props.MugShot
 	}
 
+	if req.Props.Attributes != nil {
+		if !slices.Contains(fields, "Attributes") {
+			return nil, errorscitizenstore.ErrPropsAttributesDenied
+		}
+
+		if req.Props.Attributes.List == nil {
+			req.Props.Attributes.List = []*users.CitizenAttribute{}
+		}
+
+		req.Props.Attributes.List = utils.RemoveSliceDuplicates(req.Props.Attributes.List)
+		slices.SortFunc(req.Props.Attributes.List, func(a, b *users.CitizenAttribute) int {
+			return strings.Compare(a.Name, b.Name)
+		})
+
+		added, _ := utils.SlicesDifferenceFunc(props.Attributes.List, req.Props.Attributes.List,
+			func(in *users.CitizenAttribute) string {
+				return in.Name
+			})
+
+		valid, err := s.validateCitizenAttributes(ctx, userInfo, added)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+		if !valid {
+			return nil, errorscitizenstore.ErrPropsAttributesDenied
+		}
+
+		updateSets = append(updateSets, tUserProps.Attributes.SET(jet.StringExp(jet.Raw("VALUES(`attributes`)"))))
+	} else {
+		req.Props.Attributes = props.Attributes
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -659,6 +706,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.MugShot,
+			tUserProps.Attributes,
 		).
 		VALUES(
 			req.Props.UserId,
@@ -667,6 +715,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			req.Props.JobGradeNumber,
 			req.Props.TrafficInfractionPoints,
 			req.Props.MugShot,
+			req.Props.Attributes,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -714,6 +763,31 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
+	if !proto.Equal(req.Props.Attributes, props.Attributes) {
+		added, removed := utils.SlicesDifferenceFunc(props.Attributes.List, req.Props.Attributes.List,
+			func(in *users.CitizenAttribute) string {
+				return in.Name
+			})
+
+		addedOut, err := protojson.Marshal(&users.CitizenAttributes{
+			List: added,
+		})
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+		removedOut, err := protojson.Marshal(&users.CitizenAttributes{
+			List: removed,
+		})
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+
+		if err := s.addUserActivity(ctx, tx,
+			userInfo.UserId, req.Props.UserId, users.UserActivityType_USER_ACTIVITY_TYPE_CHANGED, "UserProps.Attributes",
+			string(removedOut), string(addedOut), req.Reason); err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -754,6 +828,7 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.MugShot,
+			tUserProps.Attributes,
 		).
 		FROM(tUserProps).
 		WHERE(
@@ -882,4 +957,134 @@ func (s *Server) getUserAvatar(ctx context.Context, userId int32) (*filestore.Fi
 	}
 
 	return dest.Avatar, nil
+}
+
+func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	resp := &ManageCitizenAttributesResponse{
+		Attributes: []*users.CitizenAttribute{},
+	}
+
+	stmt := tJobCitizenAttributes.
+		SELECT(
+			tJobCitizenAttributes.Name,
+			tJobCitizenAttributes.Color,
+		).
+		FROM(tJobCitizenAttributes).
+		WHERE(
+			tJobCitizenAttributes.Job.EQ(jet.String(userInfo.Job)),
+		)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+	}
+
+	added, removed := utils.SlicesDifferenceFunc(resp.Attributes, req.Attributes,
+		func(in *users.CitizenAttribute) string {
+			return in.Name
+		})
+
+	for i := 0; i < len(added); i++ {
+		req.Attributes[i].Job = &userInfo.Job
+	}
+
+	tJobCitizenAttributes := table.FivenetJobCitizenAttributes
+	insertStmt := tJobCitizenAttributes.
+		INSERT().
+		MODELS(req.Attributes).
+		ON_DUPLICATE_KEY_UPDATE(
+			tJobCitizenAttributes.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
+			tJobCitizenAttributes.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
+			tJobCitizenAttributes.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
+		)
+
+	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+	}
+
+	if len(removed) > 0 {
+		names := make([]jet.Expression, len(removed))
+
+		for i := range removed {
+			names[i] = jet.String(removed[i].Name)
+		}
+
+		deleteStmt := tJobCitizenAttributes.
+			DELETE().
+			WHERE(jet.AND(
+				tJobCitizenAttributes.Job.EQ(jet.String(userInfo.Job)),
+				tJobCitizenAttributes.Name.IN(names...),
+			)).
+			LIMIT(int64(len(removed)))
+
+		if _, err := deleteStmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+	}
+
+	resp.Attributes = []*users.CitizenAttribute{}
+	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+	}
+
+	return resp, nil
+}
+
+func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attributes []*users.CitizenAttribute) (bool, error) {
+	if len(attributes) == 0 {
+		return true, nil
+	}
+
+	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+	if err != nil {
+		return false, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+	}
+	var jobs perms.StringList
+	if jobsAttr != nil {
+		jobs = jobsAttr.([]string)
+	}
+
+	if len(jobs) == 0 {
+		jobs = append(jobs, userInfo.Job)
+	}
+
+	jobsExp := make([]jet.Expression, len(jobs))
+	for i := 0; i < len(jobs); i++ {
+		jobsExp[i] = jet.String(jobs[i])
+	}
+
+	namesExp := make([]jet.Expression, len(attributes))
+	for i := 0; i < len(attributes); i++ {
+		namesExp[i] = jet.String(attributes[i].Name)
+	}
+
+	stmt := tJobCitizenAttributes.
+		SELECT(
+			jet.COUNT(tJobCitizenAttributes.Job).AS("count"),
+		).
+		FROM(tJobCitizenAttributes).
+		WHERE(jet.AND(
+			tJobCitizenAttributes.Job.IN(jobsExp...),
+			tJobCitizenAttributes.Name.IN(namesExp...),
+		)).
+		ORDER_BY(
+			tJobCitizenAttributes.Name.DESC(),
+		).
+		LIMIT(10)
+
+	dest := struct {
+		Count int
+	}{}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return false, err
+		}
+	}
+
+	return len(attributes) == dest.Count, nil
 }

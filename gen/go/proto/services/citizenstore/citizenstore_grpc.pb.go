@@ -19,27 +19,30 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CitizenStoreService_ListCitizens_FullMethodName      = "/services.citizenstore.CitizenStoreService/ListCitizens"
-	CitizenStoreService_GetUser_FullMethodName           = "/services.citizenstore.CitizenStoreService/GetUser"
-	CitizenStoreService_ListUserActivity_FullMethodName  = "/services.citizenstore.CitizenStoreService/ListUserActivity"
-	CitizenStoreService_SetUserProps_FullMethodName      = "/services.citizenstore.CitizenStoreService/SetUserProps"
-	CitizenStoreService_SetProfilePicture_FullMethodName = "/services.citizenstore.CitizenStoreService/SetProfilePicture"
+	CitizenStoreService_ListCitizens_FullMethodName            = "/services.citizenstore.CitizenStoreService/ListCitizens"
+	CitizenStoreService_GetUser_FullMethodName                 = "/services.citizenstore.CitizenStoreService/GetUser"
+	CitizenStoreService_ListUserActivity_FullMethodName        = "/services.citizenstore.CitizenStoreService/ListUserActivity"
+	CitizenStoreService_SetUserProps_FullMethodName            = "/services.citizenstore.CitizenStoreService/SetUserProps"
+	CitizenStoreService_SetProfilePicture_FullMethodName       = "/services.citizenstore.CitizenStoreService/SetProfilePicture"
+	CitizenStoreService_ManageCitizenAttributes_FullMethodName = "/services.citizenstore.CitizenStoreService/ManageCitizenAttributes"
 )
 
 // CitizenStoreServiceClient is the client API for CitizenStoreService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CitizenStoreServiceClient interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
 	ListCitizens(ctx context.Context, in *ListCitizensRequest, opts ...grpc.CallOption) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(ctx context.Context, in *GetUserRequest, opts ...grpc.CallOption) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(ctx context.Context, in *ListUserActivityRequest, opts ...grpc.CallOption) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
+	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
 	SetUserProps(ctx context.Context, in *SetUserPropsRequest, opts ...grpc.CallOption) (*SetUserPropsResponse, error)
 	// @perm: Name=Any
 	SetProfilePicture(ctx context.Context, in *SetProfilePictureRequest, opts ...grpc.CallOption) (*SetProfilePictureResponse, error)
+	// @perm
+	ManageCitizenAttributes(ctx context.Context, in *ManageCitizenAttributesRequest, opts ...grpc.CallOption) (*ManageCitizenAttributesResponse, error)
 }
 
 type citizenStoreServiceClient struct {
@@ -95,20 +98,31 @@ func (c *citizenStoreServiceClient) SetProfilePicture(ctx context.Context, in *S
 	return out, nil
 }
 
+func (c *citizenStoreServiceClient) ManageCitizenAttributes(ctx context.Context, in *ManageCitizenAttributesRequest, opts ...grpc.CallOption) (*ManageCitizenAttributesResponse, error) {
+	out := new(ManageCitizenAttributesResponse)
+	err := c.cc.Invoke(ctx, CitizenStoreService_ManageCitizenAttributes_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CitizenStoreServiceServer is the server API for CitizenStoreService service.
 // All implementations must embed UnimplementedCitizenStoreServiceServer
 // for forward compatibility
 type CitizenStoreServiceServer interface {
-	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot"}
+	// @perm: Attrs=Fields/StringList:[]string{"PhoneNumber", "Licenses", "UserProps.Wanted", "UserProps.Job", "UserProps.TrafficInfractionPoints", "UserProps.OpenFines", "UserProps.BloodType", "UserProps.MugShot", "UserProps.Attributes"}
 	ListCitizens(context.Context, *ListCitizensRequest) (*ListCitizensResponse, error)
 	// @perm: Attrs=Jobs/JobGradeList
 	GetUser(context.Context, *GetUserRequest) (*GetUserResponse, error)
 	// @perm: Attrs=Fields/StringList:[]string{"SourceUser", "Own"}
 	ListUserActivity(context.Context, *ListUserActivityRequest) (*ListUserActivityResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot"}
+	// @perm: Attrs=Fields/StringList:[]string{"Wanted", "Job", "TrafficInfractionPoints", "MugShot", "Attributes"}
 	SetUserProps(context.Context, *SetUserPropsRequest) (*SetUserPropsResponse, error)
 	// @perm: Name=Any
 	SetProfilePicture(context.Context, *SetProfilePictureRequest) (*SetProfilePictureResponse, error)
+	// @perm
+	ManageCitizenAttributes(context.Context, *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error)
 	mustEmbedUnimplementedCitizenStoreServiceServer()
 }
 
@@ -130,6 +144,9 @@ func (UnimplementedCitizenStoreServiceServer) SetUserProps(context.Context, *Set
 }
 func (UnimplementedCitizenStoreServiceServer) SetProfilePicture(context.Context, *SetProfilePictureRequest) (*SetProfilePictureResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method SetProfilePicture not implemented")
+}
+func (UnimplementedCitizenStoreServiceServer) ManageCitizenAttributes(context.Context, *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ManageCitizenAttributes not implemented")
 }
 func (UnimplementedCitizenStoreServiceServer) mustEmbedUnimplementedCitizenStoreServiceServer() {}
 
@@ -234,6 +251,24 @@ func _CitizenStoreService_SetProfilePicture_Handler(srv interface{}, ctx context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CitizenStoreService_ManageCitizenAttributes_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ManageCitizenAttributesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CitizenStoreServiceServer).ManageCitizenAttributes(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CitizenStoreService_ManageCitizenAttributes_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CitizenStoreServiceServer).ManageCitizenAttributes(ctx, req.(*ManageCitizenAttributesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CitizenStoreService_ServiceDesc is the grpc.ServiceDesc for CitizenStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -260,6 +295,10 @@ var CitizenStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "SetProfilePicture",
 			Handler:    _CitizenStoreService_SetProfilePicture_Handler,
+		},
+		{
+			MethodName: "ManageCitizenAttributes",
+			Handler:    _CitizenStoreService_ManageCitizenAttributes_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

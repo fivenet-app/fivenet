@@ -25,6 +25,16 @@ func init() {
 		// Service: CompletorService
 		{
 			Category: permkeys.CompletorServicePerm,
+			Name:     permkeys.CompletorServiceCompleteCitizenAttributesPerm,
+			Attrs: []perms.Attr{
+				{
+					Key:  permkeys.CompletorServiceCompleteCitizenAttributesJobsPermField,
+					Type: permissions.JobListAttributeType,
+				},
+			},
+		},
+		{
+			Category: permkeys.CompletorServicePerm,
 			Name:     permkeys.CompletorServiceCompleteCitizensPerm,
 			Attrs:    []perms.Attr{},
 		},

@@ -71,6 +71,4 @@ message Discord {
     gte: {seconds: 60},
   }];
   optional string invite_url = 3 [(validate.rules).string.max_len = 255];
-
-  // TODO add more discord sync base options
 }

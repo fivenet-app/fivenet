@@ -11,7 +11,6 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Timestamp } from "../timestamp/timestamp";
-import { CitizenAttributes } from "./jobs";
 import { JobGrade } from "./jobs";
 import { Job } from "./jobs";
 import { File } from "../filestore/file";
@@ -243,6 +242,32 @@ export interface UserActivity {
      * @generated from protobuf field: string reason = 9;
      */
     reason: string; // @gotags: alias:"fivenet_user_activity.reason"
+}
+/**
+ * @generated from protobuf message resources.users.CitizenAttributes
+ */
+export interface CitizenAttributes {
+    /**
+     * @generated from protobuf field: repeated resources.users.CitizenAttribute list = 1;
+     */
+    list: CitizenAttribute[];
+}
+/**
+ * @generated from protobuf message resources.users.CitizenAttribute
+ */
+export interface CitizenAttribute {
+    /**
+     * @generated from protobuf field: optional string job = 1;
+     */
+    job?: string;
+    /**
+     * @generated from protobuf field: string name = 2;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string color = 3;
+     */
+    color: string;
 }
 /**
  * @generated from protobuf enum resources.users.UserActivityType
@@ -834,3 +859,112 @@ class UserActivity$Type extends MessageType<UserActivity> {
  * @generated MessageType for protobuf message resources.users.UserActivity
  */
 export const UserActivity = new UserActivity$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CitizenAttributes$Type extends MessageType<CitizenAttributes> {
+    constructor() {
+        super("resources.users.CitizenAttributes", [
+            { no: 1, name: "list", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CitizenAttribute, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CitizenAttributes>): CitizenAttributes {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.list = [];
+        if (value !== undefined)
+            reflectionMergePartial<CitizenAttributes>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenAttributes): CitizenAttributes {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.users.CitizenAttribute list */ 1:
+                    message.list.push(CitizenAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CitizenAttributes, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.CitizenAttribute list = 1; */
+        for (let i = 0; i < message.list.length; i++)
+            CitizenAttribute.internalBinaryWrite(message.list[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.CitizenAttributes
+ */
+export const CitizenAttributes = new CitizenAttributes$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CitizenAttribute$Type extends MessageType<CitizenAttribute> {
+    constructor() {
+        super("resources.users.CitizenAttribute", [
+            { no: 1, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 3, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CitizenAttribute>): CitizenAttribute {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.color = "";
+        if (value !== undefined)
+            reflectionMergePartial<CitizenAttribute>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CitizenAttribute): CitizenAttribute {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional string job */ 1:
+                    message.job = reader.string();
+                    break;
+                case /* string name */ 2:
+                    message.name = reader.string();
+                    break;
+                case /* string color */ 3:
+                    message.color = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CitizenAttribute, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional string job = 1; */
+        if (message.job !== undefined)
+            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* string name = 2; */
+        if (message.name !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.name);
+        /* string color = 3; */
+        if (message.color !== "")
+            writer.tag(3, WireType.LengthDelimited).string(message.color);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.CitizenAttribute
+ */
+export const CitizenAttribute = new CitizenAttribute$Type();

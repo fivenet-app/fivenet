@@ -12,8 +12,8 @@ defineProps<{
 <template>
     <div class="w-full grow lg:flex">
         <div class="flex-1 px-4 py-5 sm:p-0">
-            <dl class="space-y-4 divide-y divide-gray-100 sm:space-y-0 dark:divide-gray-800">
-                <div class="sm:flex sm:px-5 sm:py-4">
+            <dl class="space-y-4 sm:space-y-0 xl:grid xl:grid-cols-2">
+                <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.date_of_birth') }}
                     </dt>
@@ -22,7 +22,7 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div class="sm:flex sm:px-5 sm:py-4">
+                <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.sex') }}
                     </dt>
@@ -34,7 +34,7 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div class="sm:flex sm:px-5 sm:py-4">
+                <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.height') }}
                     </dt>
@@ -43,7 +43,10 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')" class="sm:flex sm:px-5 sm:py-4">
+                <div
+                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
+                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.phone_number') }}
                     </dt>
@@ -52,7 +55,7 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div v-if="user.visum" class="sm:flex sm:px-5 sm:py-4">
+                <div v-if="user.visum" class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.visum') }}
                     </dt>
@@ -63,7 +66,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.BloodType')"
-                    class="sm:flex sm:px-5 sm:py-4"
+                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.blood_type') }}
@@ -75,7 +78,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
-                    class="sm:flex sm:px-5 sm:py-4"
+                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.traffic_infraction_points', 2) }}
@@ -90,7 +93,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
-                    class="sm:flex sm:px-5 sm:py-4"
+                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.fine') }}
@@ -105,7 +108,40 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')" class="sm:flex sm:px-5 sm:py-4">
+                <div
+                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes')"
+                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
+                    <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
+                        {{ $t('common.attributes', 2) }}
+                    </dt>
+                    <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
+                        <p v-if="!user.props?.attributes?.list.length" class="text-sm leading-6">
+                            {{ $t('common.none', [$t('common.attributes', 2)]) }}
+                        </p>
+                        <template v-else>
+                            <div class="flex max-w-80 flex-row flex-wrap gap-1">
+                                <UBadge
+                                    v-for="attribute in user.props?.attributes?.list"
+                                    :key="attribute.name"
+                                    :style="{ backgroundColor: attribute.color }"
+                                    class="justify-between gap-2"
+                                    :class="
+                                        isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'
+                                    "
+                                    size="md"
+                                >
+                                    {{ attribute.name }}
+                                </UBadge>
+                            </div>
+                        </template>
+                    </dd>
+                </div>
+
+                <div
+                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
+                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.license', 2) }}
                     </dt>

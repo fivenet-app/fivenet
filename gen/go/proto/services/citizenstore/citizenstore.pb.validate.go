@@ -1502,3 +1502,277 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = SetProfilePictureResponseValidationError{}
+
+// Validate checks the field values on ManageCitizenAttributesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ManageCitizenAttributesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ManageCitizenAttributesRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ManageCitizenAttributesRequestMultiError, or nil if none found.
+func (m *ManageCitizenAttributesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ManageCitizenAttributesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ManageCitizenAttributesRequestValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ManageCitizenAttributesRequestValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ManageCitizenAttributesRequestValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ManageCitizenAttributesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ManageCitizenAttributesRequestMultiError is an error wrapping multiple
+// validation errors returned by ManageCitizenAttributesRequest.ValidateAll()
+// if the designated constraints aren't met.
+type ManageCitizenAttributesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ManageCitizenAttributesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ManageCitizenAttributesRequestMultiError) AllErrors() []error { return m }
+
+// ManageCitizenAttributesRequestValidationError is the validation error
+// returned by ManageCitizenAttributesRequest.Validate if the designated
+// constraints aren't met.
+type ManageCitizenAttributesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ManageCitizenAttributesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ManageCitizenAttributesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ManageCitizenAttributesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ManageCitizenAttributesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ManageCitizenAttributesRequestValidationError) ErrorName() string {
+	return "ManageCitizenAttributesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ManageCitizenAttributesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sManageCitizenAttributesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ManageCitizenAttributesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ManageCitizenAttributesRequestValidationError{}
+
+// Validate checks the field values on ManageCitizenAttributesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ManageCitizenAttributesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ManageCitizenAttributesResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ManageCitizenAttributesResponseMultiError, or nil if none found.
+func (m *ManageCitizenAttributesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ManageCitizenAttributesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetAttributes() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ManageCitizenAttributesResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ManageCitizenAttributesResponseValidationError{
+						field:  fmt.Sprintf("Attributes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ManageCitizenAttributesResponseValidationError{
+					field:  fmt.Sprintf("Attributes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ManageCitizenAttributesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ManageCitizenAttributesResponseMultiError is an error wrapping multiple
+// validation errors returned by ManageCitizenAttributesResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ManageCitizenAttributesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ManageCitizenAttributesResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ManageCitizenAttributesResponseMultiError) AllErrors() []error { return m }
+
+// ManageCitizenAttributesResponseValidationError is the validation error
+// returned by ManageCitizenAttributesResponse.Validate if the designated
+// constraints aren't met.
+type ManageCitizenAttributesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ManageCitizenAttributesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ManageCitizenAttributesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ManageCitizenAttributesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ManageCitizenAttributesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ManageCitizenAttributesResponseValidationError) ErrorName() string {
+	return "ManageCitizenAttributesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ManageCitizenAttributesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sManageCitizenAttributesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ManageCitizenAttributesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ManageCitizenAttributesResponseValidationError{}

@@ -164,7 +164,7 @@ func (s *Server) Stream(req *StreamRequest, srv LivemapperService_StreamServer) 
 			markersJobs = append(markersJobs, job)
 			return true
 		})
-		markersJobs = utils.RemoveDuplicates(markersJobs)
+		markersJobs = utils.RemoveSliceDuplicates(markersJobs)
 	}
 
 	var usersJobs map[string]int32

@@ -11,6 +11,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CitizenAttribute } from "../../resources/users/users";
 import { LawBook } from "../../resources/laws/laws";
 import { Category } from "../../resources/documents/category";
 import { Job } from "../../resources/users/jobs";
@@ -102,6 +103,24 @@ export interface ListLawBooksResponse {
      * @generated from protobuf field: repeated resources.laws.LawBook books = 1;
      */
     books: LawBook[];
+}
+/**
+ * @generated from protobuf message services.completor.CompleteCitizenAttributesRequest
+ */
+export interface CompleteCitizenAttributesRequest {
+    /**
+     * @generated from protobuf field: string search = 1;
+     */
+    search: string;
+}
+/**
+ * @generated from protobuf message services.completor.CompleteCitizenAttributesResponse
+ */
+export interface CompleteCitizenAttributesResponse {
+    /**
+     * @generated from protobuf field: repeated resources.users.CitizenAttribute attributes = 1;
+     */
+    attributes: CitizenAttribute[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class CompleteCitizensRequest$Type extends MessageType<CompleteCitizensRequest> {
@@ -491,6 +510,100 @@ class ListLawBooksResponse$Type extends MessageType<ListLawBooksResponse> {
  * @generated MessageType for protobuf message services.completor.ListLawBooksResponse
  */
 export const ListLawBooksResponse = new ListLawBooksResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CompleteCitizenAttributesRequest$Type extends MessageType<CompleteCitizenAttributesRequest> {
+    constructor() {
+        super("services.completor.CompleteCitizenAttributesRequest", [
+            { no: 1, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CompleteCitizenAttributesRequest>): CompleteCitizenAttributesRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.search = "";
+        if (value !== undefined)
+            reflectionMergePartial<CompleteCitizenAttributesRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CompleteCitizenAttributesRequest): CompleteCitizenAttributesRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string search */ 1:
+                    message.search = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CompleteCitizenAttributesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string search = 1; */
+        if (message.search !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.search);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.completor.CompleteCitizenAttributesRequest
+ */
+export const CompleteCitizenAttributesRequest = new CompleteCitizenAttributesRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CompleteCitizenAttributesResponse$Type extends MessageType<CompleteCitizenAttributesResponse> {
+    constructor() {
+        super("services.completor.CompleteCitizenAttributesResponse", [
+            { no: 1, name: "attributes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CitizenAttribute }
+        ]);
+    }
+    create(value?: PartialMessage<CompleteCitizenAttributesResponse>): CompleteCitizenAttributesResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.attributes = [];
+        if (value !== undefined)
+            reflectionMergePartial<CompleteCitizenAttributesResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CompleteCitizenAttributesResponse): CompleteCitizenAttributesResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* repeated resources.users.CitizenAttribute attributes */ 1:
+                    message.attributes.push(CitizenAttribute.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CompleteCitizenAttributesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.CitizenAttribute attributes = 1; */
+        for (let i = 0; i < message.attributes.length; i++)
+            CitizenAttribute.internalBinaryWrite(message.attributes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.completor.CompleteCitizenAttributesResponse
+ */
+export const CompleteCitizenAttributesResponse = new CompleteCitizenAttributesResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.completor.CompletorService
  */
@@ -498,5 +611,6 @@ export const CompletorService = new ServiceType("services.completor.CompletorSer
     { name: "CompleteCitizens", options: {}, I: CompleteCitizensRequest, O: CompleteCitizensRespoonse },
     { name: "CompleteJobs", options: {}, I: CompleteJobsRequest, O: CompleteJobsResponse },
     { name: "CompleteDocumentCategories", options: {}, I: CompleteDocumentCategoriesRequest, O: CompleteDocumentCategoriesResponse },
-    { name: "ListLawBooks", options: {}, I: ListLawBooksRequest, O: ListLawBooksResponse }
+    { name: "ListLawBooks", options: {}, I: ListLawBooksRequest, O: ListLawBooksResponse },
+    { name: "CompleteCitizenAttributes", options: {}, I: CompleteCitizenAttributesRequest, O: CompleteCitizenAttributesResponse }
 ]);
