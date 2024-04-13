@@ -3,7 +3,7 @@ module github.com/galexrt/fivenet
 go 1.21.8
 
 require (
-	github.com/Code-Hex/go-generics-cache v1.3.1
+	github.com/Code-Hex/go-generics-cache v1.4.0
 	github.com/Masterminds/sprig/v3 v3.2.3
 	github.com/XSAM/otelsql v0.29.0
 	github.com/alecthomas/kong v0.9.0
