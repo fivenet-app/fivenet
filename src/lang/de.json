@@ -912,7 +912,12 @@
                     "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
                 },
                 "background_color": "Hintergrund-Farbe",
-                "customization": "Passen Sie das Aussehen von FiveNet an."
+                "customization": "Passen Sie das Aussehen von FiveNet an.",
+                "documents_lists_style": {
+                    "title": "Dokumenten-Listen-Stil",
+                    "single": "Einzelspalte",
+                    "double": "Doppelspalte (Großansicht)"
+                }
             },
             "ChangeUsernameModal": {
                 "change_username": "Benutzername ändern",
