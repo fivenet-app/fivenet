@@ -55,7 +55,7 @@ export const useSettingsStore = defineStore('settings', {
             design: {
                 documents: {
                     editorTheme: 'default',
-                    listStyle: 'double',
+                    listStyle: 'single',
                 },
                 ui: {
                     primary: 'sky',
