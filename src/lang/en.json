@@ -912,7 +912,12 @@
                     "description": "Blur images by default and hide other information."
                 },
                 "background_color": "Background color",
-                "customization": "Customize the look and feel of FiveNet."
+                "customization": "Customize the look and feel of FiveNet.",
+                "documents_lists_style": {
+                    "title": "Dokumenten-Listen-Stil",
+                    "single": "Single",
+                    "double": "Double"
+                }
             },
             "ChangeUsernameModal": {
                 "change_username": "Change Username",

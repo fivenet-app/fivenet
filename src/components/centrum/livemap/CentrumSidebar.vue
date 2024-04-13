@@ -230,8 +230,7 @@ onBeforeMount(() => {
     }
 });
 
-const route = useRoute();
-watch(route, () => stopStream());
+onBeforeUnmount(() => stopStream());
 
 const unitCheckupStatusAge = 12.5 * 60 * 1000;
 const unitCheckupStatusReping = 15 * 60 * 1000;

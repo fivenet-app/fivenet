@@ -34,8 +34,7 @@ onBeforeMount(async () => {
     useTimeoutFn(async () => startStream(), 50);
 });
 
-const route = useRoute();
-watch(route, () => stopStream());
+onBeforeUnmount(() => stopStream());
 
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());

@@ -177,12 +177,12 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 
 <style scoped>
 .splitpanes--vertical > .splitpanes__splitter {
-    min-width: 3px;
+    min-width: 2px;
     background-color: rgb(var(--color-gray-800));
 }
 
 .splitpanes--horizontal > .splitpanes__splitter {
-    min-height: 3px;
+    min-height: 2px;
     background-color: rgb(var(--color-gray-800));
 }
 </style>

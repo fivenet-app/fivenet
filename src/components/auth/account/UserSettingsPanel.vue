@@ -27,13 +27,23 @@ watch(selectedHomepage, () => (startpage.value = selectedHomepage.value?.path ??
 
 onBeforeMount(async () => (selectedHomepage.value = homepages.find((h) => h.path === startpage.value)));
 
-const darkModeActive = ref(design.value.docEditorTheme === 'dark');
+const darkModeActive = ref(design.value.documents.editorTheme === 'dark');
 
 watch(darkModeActive, async () => {
     if (darkModeActive.value) {
-        design.value.docEditorTheme = 'dark';
+        design.value.documents.editorTheme = 'dark';
     } else {
-        design.value.docEditorTheme = 'default';
+        design.value.documents.editorTheme = 'default';
+    }
+});
+
+const designDocumentsListStyle = ref(design.value.documents.listStyle === 'double');
+
+watch(designDocumentsListStyle, async () => {
+    if (designDocumentsListStyle.value) {
+        design.value.documents.listStyle = 'double';
+    } else {
+        design.value.documents.listStyle = 'single';
     }
 });
 
@@ -109,6 +119,20 @@ watch(design.value, () => {
                 <UToggle v-model="darkModeActive">
                     <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
                 </UToggle>
+            </UFormGroup>
+
+            <UFormGroup
+                name="designDocumentsListStyle"
+                :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
+                <div class="inline-flex items-center gap-2">
+                    <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
+                    <UToggle v-model="designDocumentsListStyle">
+                        <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.documents_lists_style.title') }}</span>
+                    </UToggle>
+                    <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
+                </div>
             </UFormGroup>
 
             <UFormGroup

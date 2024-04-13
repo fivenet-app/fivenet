@@ -13,6 +13,10 @@ const props = defineProps<{
     marker?: MarkerMarker;
 }>();
 
+const emits = defineEmits<{
+    (e: 'close'): void;
+}>();
+
 const { $grpc } = useNuxtApp();
 
 const { isOpen } = useSlideover();
@@ -109,6 +113,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
         }
 
         isOpen.value = false;
+        emits('close');
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -146,7 +151,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton
+                            color="gray"
+                            variant="ghost"
+                            icon="i-mdi-window-close"
+                            class="-my-1"
+                            @click="
+                                isOpen = false;
+                                emits('close');
+                            "
+                        />
                     </div>
                 </template>
 
@@ -324,8 +338,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             block
                             class="flex-1"
                             @click="
-                                $emit('close');
                                 isOpen = false;
+                                $emit('close');
                             "
                         >
                             {{ $t('common.close', 1) }}

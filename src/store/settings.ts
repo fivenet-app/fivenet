@@ -17,7 +17,10 @@ export interface SettingsState {
     };
     startpage: string;
     design: {
-        docEditorTheme: 'default' | 'dark';
+        documents: {
+            editorTheme: 'default' | 'dark';
+            listStyle: 'single' | 'double';
+        };
         ui: {
             primary: string;
             gray: string;
@@ -27,9 +30,7 @@ export interface SettingsState {
         notificationsVolume: number;
     };
     streamerMode: boolean;
-    featureGates: {
-        desktop: boolean;
-    };
+    featureGates: {};
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -52,7 +53,10 @@ export const useSettingsStore = defineStore('settings', {
             },
             startpage: '/overview',
             design: {
-                docEditorTheme: 'default',
+                documents: {
+                    editorTheme: 'default',
+                    listStyle: 'double',
+                },
                 ui: {
                     primary: 'sky',
                     gray: 'cool',
@@ -62,9 +66,7 @@ export const useSettingsStore = defineStore('settings', {
                 notificationsVolume: 0.15,
             },
             streamerMode: false,
-            featureGates: {
-                desktop: false,
-            },
+            featureGates: {},
         }) as SettingsState,
     persist: {
         paths: [

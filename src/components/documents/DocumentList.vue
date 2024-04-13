@@ -13,12 +13,16 @@ import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DatePicker from '~/components/partials/DatePicker.vue';
 import Pagination from '../partials/Pagination.vue';
+import { useSettingsStore } from '~/store/settings';
 
 const { $grpc } = useNuxtApp();
 
+const { t } = useI18n();
+
 const completorStore = useCompletorStore();
 
-const { t } = useI18n();
+const settingsStore = useSettingsStore();
+const { design } = storeToRefs(settingsStore);
 
 type OpenClose = { id: number; label: string; closed?: boolean };
 
@@ -261,11 +265,15 @@ defineShortcuts({
         <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
-        <template v-else>
-            <ul role="list" class="flex flex-col gap-1 2xl:grid 2xl:grid-cols-2">
-                <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
-            </ul>
-        </template>
+
+        <ul
+            v-else
+            role="list"
+            class="flex flex-col gap-1"
+            :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
+        >
+            <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
+        </ul>
 
         <Pagination v-model="page" :pagination="data?.pagination" />
     </div>

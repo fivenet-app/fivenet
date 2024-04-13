@@ -33,8 +33,8 @@ const config = {
     language: 'de',
     spellcheck: true,
     minHeight: 475,
-    editorClassName: 'prose' + (theme.value.docEditorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
-    theme: theme.value.docEditorTheme,
+    editorClassName: 'prose' + (theme.value.documents.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
+    theme: theme.value.documents.editorTheme,
 
     readonly: false,
     defaultActionOnPaste: 'insert_clear_html',
