@@ -1312,7 +1312,7 @@
         "CitizenStoreService": {
             "category": "Citizens",
             "ListCitizens": {
-                "key": "ListCitizens",
+                "key": "List Citizens",
                 "description": "List and search through citizens.",
                 "attrs": {
                     "PhoneNumber": "Phone Number",
@@ -1322,14 +1322,15 @@
                     "UserProps_TrafficInfractionPoints": "Traffic Points",
                     "UserProps_OpenFines": "Open Fines",
                     "UserProps_BloodType": "Blood Type",
-                    "UserProps_MugShot": "Mug Shot"
+                    "UserProps_MugShot": "Mug Shot",
+                    "UserProps_Attributes": "Attributes"
                 },
                 "attrs_types": {
                     "Fields": "Fields"
                 }
             },
             "ListUserActivity": {
-                "key": "ListUserActivity",
+                "key": "List User Activity",
                 "description": "Citizen Info Activity Feed",
                 "attrs": {
                     "SourceUser": "Source User",
@@ -1340,24 +1341,29 @@
                 }
             },
             "SetUserProps": {
-                "key": "SetUserProps",
+                "key": "Set User Properties",
                 "description": "Set Citizen Props (e.g., wanted status, suspected job).",
                 "attrs": {
                     "Wanted": "Wanted Status",
                     "Job": "Job",
                     "TrafficInfractionPoints": "Traffic Points",
-                    "MugShot": "Mug Shot"
+                    "MugShot": "Mug Shot",
+                    "Attributes": "Attributes"
                 },
                 "attrs_types": {
                     "Fields": "User Properties Fields"
                 }
             },
             "GetUser": {
-                "key": "GetUser",
+                "key": "Get User",
                 "description": "View a citizen's.",
                 "attrs_types": {
                     "Jobs": "Factions"
                 }
+            },
+            "ManageCitizenAttributes": {
+                "key": "Manage Citizen Attributes",
+                "description": "Create, update and delete citizens attributes."
             }
         },
         "CompletorService": {
@@ -1373,6 +1379,13 @@
             "CompleteDocumentCategories": {
                 "key": "List document categories",
                 "description": "Complete a document categories.",
+                "attrs_types": {
+                    "Jobs": "Factions"
+                }
+            },
+            "CompleteCitizenAttributes": {
+                "key": "List job's citizen attributes",
+                "description": "Complete citizen attributes from multiple jobs.",
                 "attrs_types": {
                     "Jobs": "Factions"
                 }
