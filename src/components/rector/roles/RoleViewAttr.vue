@@ -105,6 +105,10 @@ if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
 const currentValue = states.value.get(id.value)!;
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 
+if (id.value === '5' && currentValue.validValues.oneofKind === 'jobList') {
+    console.log(currentValue.validValues.jobList.strings);
+}
+
 async function toggleStringListValue(value: string): Promise<void> {
     if (currentValue.validValues.oneofKind !== 'stringList') {
         return;
@@ -204,6 +208,7 @@ onBeforeMount(async () => {
         <UAccordion
             variant="outline"
             :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]"
+            :unmount="true"
         >
             <template #item>
                 <div class="flex flex-col gap-2">

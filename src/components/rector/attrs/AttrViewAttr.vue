@@ -161,6 +161,7 @@ onBeforeMount(async () => {
         <UAccordion
             variant="outline"
             :items="[{ label: $t(`perms.${attribute.category}.${attribute.name}.attrs_types.${attribute.key}`) }]"
+            :unmount="true"
         >
             <template #item>
                 <div class="flex flex-col gap-2">
