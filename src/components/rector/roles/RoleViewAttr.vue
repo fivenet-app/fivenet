@@ -105,10 +105,6 @@ if (!states.value.has(id.value) || states.value.get(id.value) === undefined) {
 const currentValue = states.value.get(id.value)!;
 const validValues = ref<AttributeValues | undefined>(props.attribute.validValues);
 
-if (id.value === '5' && currentValue.validValues.oneofKind === 'jobList') {
-    console.log(currentValue.validValues.jobList.strings);
-}
-
 async function toggleStringListValue(value: string): Promise<void> {
     if (currentValue.validValues.oneofKind !== 'stringList') {
         return;

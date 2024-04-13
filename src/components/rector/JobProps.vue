@@ -192,7 +192,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </UDashboardPanelContent>
         </template>
         <template v-else>
-            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle" @error="console.log('error', $event)">
+            <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
                 <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
                     <template v-if="!!jobProps" #right>
                         <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
