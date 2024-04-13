@@ -174,3 +174,15 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         </UDashboardPanel>
     </UDashboardPage>
 </template>
+
+<style scoped>
+.splitpanes--vertical > .splitpanes__splitter {
+    min-width: 3px;
+    background-color: rgb(var(--color-gray-800));
+}
+
+.splitpanes--horizontal > .splitpanes__splitter {
+    min-height: 3px;
+    background-color: rgb(var(--color-gray-800));
+}
+</style>

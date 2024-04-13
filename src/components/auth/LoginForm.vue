@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
+import { useCookiesStore } from '~/store/cookies';
 
 defineEmits<{
     (e: 'toggle'): void;
@@ -15,7 +16,10 @@ const { loginError } = storeToRefs(authStore);
 const { doLogin } = authStore;
 
 const settingsStore = useSettingsStore();
-const { hasCookiesAccepted, isNUIAvailable } = storeToRefs(settingsStore);
+const { isNUIAvailable } = storeToRefs(settingsStore);
+
+const cookiesStore = useCookiesStore();
+const { hasCookiesAccepted } = storeToRefs(cookiesStore);
 
 const schema = z.object({
     username: z

@@ -4,7 +4,6 @@ export interface SettingsState {
     version: string;
     updateAvailable: false | string;
     locale: string | null;
-    cookiesState: null | boolean;
 
     nuiEnabled: boolean;
     nuiResourceName: string | undefined;
@@ -39,7 +38,6 @@ export const useSettingsStore = defineStore('settings', {
             version: __APP_VERSION__,
             updateAvailable: false,
             locale: null,
-            cookiesState: null,
 
             nuiEnabled: false,
             nuiResourceName: undefined,
@@ -72,7 +70,6 @@ export const useSettingsStore = defineStore('settings', {
         paths: [
             'version',
             'locale',
-            'cookiesState',
             'nuiEnabled',
             'nuiResourceName',
             'livemap',
@@ -100,9 +97,6 @@ export const useSettingsStore = defineStore('settings', {
         },
     },
     getters: {
-        hasCookiesAccepted(state): boolean {
-            return state.cookiesState === true;
-        },
         isNUIAvailable(state): boolean {
             return state.nuiEnabled ?? false;
         },

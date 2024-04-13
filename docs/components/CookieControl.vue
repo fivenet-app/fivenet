@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useSettingsStore } from '~/store/settings';
 import { emojiBlast } from 'emoji-blast';
+import { useCookiesStore } from '~/store/cookies';
 
-const settingsStore = useSettingsStore();
-const { cookiesState } = storeToRefs(settingsStore);
+const cookiesStore = useCookiesStore();
+const { cookiesState } = storeToRefs(cookiesStore);
 
 const { links } = useAppConfig();
 

@@ -33,7 +33,10 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
             </template>
         </UDashboardNavbar>
 
-        <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] w-full overflow-hidden">
+        <div
+            ref="splitpanesContainer"
+            class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] w-full overflow-hidden"
+        >
             <Splitpanes v-if="mount" class="relative">
                 <Pane :min-size="25">
                     <div class="relative z-0 size-full">
@@ -79,3 +82,15 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         </div>
     </UDashboardPanel>
 </template>
+
+<style>
+.splitpanes--vertical > .splitpanes__splitter {
+    min-width: 3px;
+    background-color: rgb(var(--color-gray-800));
+}
+
+.splitpanes--horizontal > .splitpanes__splitter {
+    min-height: 3px;
+    background-color: rgb(var(--color-gray-800));
+}
+</style>

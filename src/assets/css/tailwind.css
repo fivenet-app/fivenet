@@ -13,12 +13,3 @@
         font-style: italic;
     }
 }
-
-@layer utilities {
-    /* Splitpanes Styling */
-    .splitpanes__splitter {
-        min-width: 3px;
-        background-color: rgb(var(--color-gray-800));
-    }
-}
-
