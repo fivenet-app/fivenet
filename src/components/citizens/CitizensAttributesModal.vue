@@ -33,6 +33,8 @@ async function manageCitizenAttributes(values: Schema): Promise<ManageCitizenAtt
 
         state.value = response.attributes;
 
+        isOpen.value = false;
+
         return response;
     } catch (e) {
         $grpc.handleError(e as RpcError);

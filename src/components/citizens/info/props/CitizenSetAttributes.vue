@@ -114,7 +114,7 @@ watch(state, () => {
                     :class="isColourBright(hexToRgb(attribute.color, RGBBlack)!) ? '!text-black' : '!text-white'"
                     size="lg"
                 >
-                    <span>
+                    <span class="truncate">
                         {{ attribute.name }}
                     </span>
 
