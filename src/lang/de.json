@@ -962,7 +962,8 @@
                     "removed": "Strafe entfernt",
                     "created": "Strafe erstellt"
                 },
-                "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person"
+                "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person",
+                "userprops_attributes_updated": "Bürger-Attribute aktualisiert"
             }
         },
         "CookieControl": {
@@ -1828,10 +1829,11 @@
             "ErrReasonRequired": "Ein Grund muss gegeben sein!",
             "ErrPropsWantedDenied": "Sie haben keine Berechtigung den Bürger zur Fahndung auszuschreiben!",
             "ErrPropsJobDenied": "Sie haben keine Berechtigung den Beruf des Bürgers zusetzen!",
-            "ErrPropsJobPublic": "Sie haben können keinen Staatsberuf für den Bürger setzen!",
-            "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang gegeben!",
+            "ErrPropsJobPublic": "Sie können keinen Staatsberuf für den Bürger-Beruf setzen!",
+            "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
             "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
-            "ErrPropsMugShotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!"
+            "ErrPropsMugShotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
+            "ErrPropsAttributesDenied": "Sie haben keine Berechtigung die Bürger-Attribute zusetzen!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
