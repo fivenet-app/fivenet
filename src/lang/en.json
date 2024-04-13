@@ -962,7 +962,8 @@
                     "removed": "Fine removed",
                     "created": "Fine created"
                 },
-                "userprops_mug_shot_set": "Set the citizen's mug shot picture"
+                "userprops_mug_shot_set": "Set the citizen's mug shot picture",
+                "userprops_attributes_updated": "Updated the citizen's attributes"
             }
         },
         "CookieControl": {
@@ -1831,7 +1832,8 @@
             "ErrPropsJobPublic": "You can't set a state job!",
             "ErrPropsJobInvalid": "Invalid job or job rank set!",
             "ErrPropsTrafficPointsDenied": "You are not allowed to set a user's traffic infraction points!",
-            "ErrPropsMugShotDenied": "You are not allowed to set a user's mug shot!"
+            "ErrPropsMugShotDenied": "You are not allowed to set a user's mug shot!",
+            "ErrPropsAttributesDenied": "You are not allowed to set a user's attributes!"
         },
         "CompletorService": {
             "ErrFailedSearch": "Failed to search the data!"
