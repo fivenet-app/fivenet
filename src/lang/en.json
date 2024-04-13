@@ -1363,7 +1363,7 @@
             },
             "ManageCitizenAttributes": {
                 "key": "Manage Citizen Attributes",
-                "description": "Manage citizens attributes in their profiles."
+                "description": "Create, update and delete citizens attributes."
             }
         },
         "CompletorService": {
