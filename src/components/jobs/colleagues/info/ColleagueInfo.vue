@@ -61,72 +61,66 @@ today.setMilliseconds(0);
         <DataNoDataBlock v-else-if="colleague === null || !colleague.colleague" />
 
         <template v-else>
-            <div class="mb-6">
-                <div class="my-4 flex gap-2 px-4">
-                    <ProfilePictureImg
-                        :src="colleague.colleague.avatar?.url"
-                        :name="`${colleague.colleague.firstname} ${colleague.colleague.lastname}`"
-                        :enable-popup="true"
-                        size="3xl"
-                    />
+            <div class="mb-4 flex items-center gap-2 px-4">
+                <ProfilePictureImg
+                    :src="colleague.colleague.avatar?.url"
+                    :name="`${colleague.colleague.firstname} ${colleague.colleague.lastname}`"
+                    :enable-popup="true"
+                    size="3xl"
+                />
 
-                    <div class="w-full">
-                        <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                            <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                                {{ colleague.colleague.firstname }} {{ colleague.colleague.lastname }}
-                            </h1>
+                <div class="w-full flex-1">
+                    <div class="flex snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                        <h1 class="flex-1 break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                            {{ colleague.colleague.firstname }} {{ colleague.colleague.lastname }}
+                        </h1>
+                    </div>
 
-                            <UButtonGroup class="inline-flex flex-initial">
-                                <UButton color="black" icon="i-mdi-arrow-back" to="/">
-                                    {{ $t('common.back') }}
-                                </UButton>
-
-                                <UButton
-                                    v-if="
-                                        can('JobsService.SetJobsUserProps') &&
-                                        checkIfCanAccessColleague(
-                                            activeChar!,
-                                            colleague.colleague,
-                                            'JobsService.SetJobsUserProps',
-                                        )
-                                    "
-                                    icon="i-mdi-island"
-                                    size="md"
-                                    @click="
-                                        modal.open(SelfServicePropsAbsenceDateModal, {
-                                            userId: colleague.colleague.userId,
-                                            userProps: colleague.colleague.props,
-                                        })
-                                    "
-                                >
-                                    {{ $t('components.jobs.self_service.set_absence_date') }}
-                                </UButton>
-                            </UButtonGroup>
-                        </div>
-
-                        <div class="my-2 flex flex-row items-center gap-2">
-                            <UBadge>
-                                {{ colleague.colleague.jobLabel }}
-                                <span v-if="colleague.colleague.jobGrade > 0" class="ml-1">
-                                    ({{ $t('common.rank') }}: {{ colleague.colleague.jobGradeLabel }})</span
-                                >
-                            </UBadge>
-
-                            <UBadge
-                                v-if="
-                                    colleague.colleague.props?.absenceEnd &&
-                                    toDate(colleague.colleague.props?.absenceEnd).getTime() >= today.getTime()
-                                "
-                                class="inline-flex items-center gap-1 rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                    <div class="inline-flex gap-2">
+                        <UBadge>
+                            {{ colleague.colleague.jobLabel }}
+                            <span v-if="colleague.colleague.jobGrade > 0" class="ml-1">
+                                ({{ $t('common.rank') }}: {{ colleague.colleague.jobGradeLabel }})</span
                             >
-                                <IslandIcon class="size-5" />
-                                <GenericTime :value="colleague.colleague.props?.absenceBegin" type="date" />
-                                <span>{{ $t('common.to') }}</span>
-                                <GenericTime :value="colleague.colleague.props?.absenceEnd" type="date" />
-                            </UBadge>
-                        </div>
+                        </UBadge>
+
+                        <UBadge
+                            v-if="
+                                colleague.colleague.props?.absenceEnd &&
+                                toDate(colleague.colleague.props?.absenceEnd).getTime() >= today.getTime()
+                            "
+                            class="inline-flex items-center gap-1 rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                        >
+                            <IslandIcon class="size-5" />
+                            <GenericTime :value="colleague.colleague.props?.absenceBegin" type="date" />
+                            <span>{{ $t('common.to') }}</span>
+                            <GenericTime :value="colleague.colleague.props?.absenceEnd" type="date" />
+                        </UBadge>
                     </div>
                 </div>
+
+                <UButtonGroup class="inline-flex flex-initial">
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/">
+                        {{ $t('common.back') }}
+                    </UButton>
+
+                    <UButton
+                        v-if="
+                            can('JobsService.SetJobsUserProps') &&
+                            checkIfCanAccessColleague(activeChar!, colleague.colleague, 'JobsService.SetJobsUserProps')
+                        "
+                        icon="i-mdi-island"
+                        size="md"
+                        @click="
+                            modal.open(SelfServicePropsAbsenceDateModal, {
+                                userId: colleague.colleague.userId,
+                                userProps: colleague.colleague.props,
+                            })
+                        "
+                    >
+                        {{ $t('components.jobs.self_service.set_absence_date') }}
+                    </UButton>
+                </UButtonGroup>
             </div>
         </template>
     </div>

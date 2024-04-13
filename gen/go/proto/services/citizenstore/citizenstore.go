@@ -982,12 +982,12 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 		}
 	}
 
-	added, removed := utils.SlicesDifferenceFunc(resp.Attributes, req.Attributes,
+	_, removed := utils.SlicesDifferenceFunc(resp.Attributes, req.Attributes,
 		func(in *users.CitizenAttribute) string {
 			return in.Name
 		})
 
-	for i := 0; i < len(added); i++ {
+	for i := 0; i < len(req.Attributes); i++ {
 		req.Attributes[i].Job = &userInfo.Job
 	}
 

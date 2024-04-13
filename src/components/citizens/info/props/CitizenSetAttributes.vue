@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
-import type { CitizenAttribute, CitizenAttributes } from '~~/gen/ts/resources/users/users';
+import type { CitizenAttributes } from '~~/gen/ts/resources/users/users';
 import type { UserProps } from '~~/gen/ts/resources/users/users';
 import { useCompletorStore } from '~/store/completor';
 
@@ -138,9 +138,8 @@ watch(state, () => {
             </div>
         </template>
 
-        <UFormGroup name="attributes">
+        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenAttributes')" name="attributes">
             <USelectMenu
-                v-if="canDo.set"
                 v-model="state.attributes"
                 multiple
                 :searchable="

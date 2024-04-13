@@ -51,18 +51,20 @@ const links = [
 </script>
 
 <template>
-    <div>
-        <ColleagueInfo :user-id="parseInt(route.params.id)" />
+    <UDashboardPage class="h-full">
+        <UDashboardPanelContent>
+            <ColleagueInfo :user-id="parseInt(route.params.id)" />
 
-        <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800" />
+            <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800" />
 
-        <NuxtLayout name="blank">
-            <NuxtPage
-                :transition="{
-                    name: 'page',
-                    mode: 'out-in',
-                }"
-            />
-        </NuxtLayout>
-    </div>
+            <NuxtLayout name="blank">
+                <NuxtPage
+                    :transition="{
+                        name: 'page',
+                        mode: 'out-in',
+                    }"
+                />
+            </NuxtLayout>
+        </UDashboardPanelContent>
+    </UDashboardPage>
 </template>

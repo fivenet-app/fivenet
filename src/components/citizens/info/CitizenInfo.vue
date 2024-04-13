@@ -15,7 +15,6 @@ import type { Perms } from '~~/gen/ts/perms';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import CitizenActions from './CitizenActions.vue';
 import CitizenSetAttributes from './props/CitizenSetAttributes.vue';
-import type { CitizenAttribute } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     userId: number;
@@ -87,29 +86,6 @@ function addToClipboard(): void {
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
         timeout: 3250,
         type: 'info',
-    });
-}
-
-function addAttributes(attributes: CitizenAttribute[]): void {
-    if (!user.value!.props) {
-        user.value!.props = {
-            userId: user.value!.userId,
-        };
-    }
-    if (!user.value!.props?.attributes) {
-        user.value!.props.attributes = {
-            list: [],
-        };
-    }
-    user.value?.props!.attributes?.list.push(...attributes);
-}
-
-function removeAttributes(attributes: CitizenAttribute[]): void {
-    attributes.forEach((attribute) => {
-        const idx = user.value?.props?.attributes?.list.findIndex((a) => a.name === attribute.name);
-        if (idx !== undefined && idx > -1) {
-            user.value?.props?.attributes?.list.splice(idx, 1);
-        }
     });
 }
 
@@ -225,7 +201,7 @@ const isOpen = ref(false);
             </UDashboardPanelContent>
         </UDashboardPanel>
 
-        <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right">
+        <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right" class="max-w-72 flex-1">
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup class="hidden lg:inline-flex">
@@ -271,6 +247,10 @@ const isOpen = ref(false);
                         </UDashboardSection>
 
                         <UDashboardSection
+                            v-if="
+                                can('CitizenStoreService.GetUser') &&
+                                attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes')
+                            "
                             :ui="{
                                 wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',
                             }"
