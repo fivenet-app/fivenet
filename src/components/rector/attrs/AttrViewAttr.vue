@@ -180,7 +180,7 @@ onBeforeMount(async () => {
                             <UCheckbox
                                 :name="value"
                                 :model-value="!!currentValue.validValues.stringList.strings.find((v) => v === value)"
-                                class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
+                                class="my-auto size-4 rounded border-base-300"
                                 @click="toggleStringListValue(value)"
                             />
                             <span class="ml-1">{{
@@ -201,7 +201,7 @@ onBeforeMount(async () => {
                             <UCheckbox
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues.jobList?.strings.find((v) => v === job.name)"
-                                class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
+                                class="my-auto size-4 rounded border-base-300"
                                 @click="toggleJobListValue(job.name)"
                             />
                             <span class="ml-1">{{ job.label }}</span>
@@ -219,7 +219,7 @@ onBeforeMount(async () => {
                             <UCheckbox
                                 :name="job.name"
                                 :model-value="!!currentValue.validValues?.jobGradeList.jobs[job.name]"
-                                class="text-primary-500 focus:ring-primary-500 my-auto size-4 rounded border-base-300"
+                                class="my-auto size-4 rounded border-base-300"
                                 @change="toggleJobGradeValue(job, $event)"
                             />
                             <span class="my-auto flex-1">{{ job.label }}</span>

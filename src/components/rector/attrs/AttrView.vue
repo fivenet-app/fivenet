@@ -183,8 +183,8 @@ async function updatePermissions(): Promise<void> {
     try {
         await $grpc.getRectorClient().updateRoleLimits({
             roleId: props.roleId,
-            perms,
-            attrs,
+            perms: perms,
+            attrs: attrs,
         });
 
         notifications.add({

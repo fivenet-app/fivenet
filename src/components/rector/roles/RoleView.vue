@@ -181,8 +181,8 @@ async function updatePermissions(): Promise<void> {
     try {
         await $grpc.getRectorClient().updateRolePerms({
             id: props.roleId,
-            perms,
-            attrs,
+            perms: perms,
+            attrs: attrs,
         });
 
         notifications.add({
@@ -214,9 +214,12 @@ async function initializeRoleView(): Promise<void> {
     await getPermissions(props.roleId);
     await propogatePermissionStates();
 
-    attrStates.value.clear();
     attrList.value.forEach((attr) => {
         attrStates.value.set(attr.attrId, attr.value);
+
+        if (attr.attrId === '5' && attr.value?.validValues.oneofKind === 'jobList') {
+            console.log('ROLE VIEW', attr.value?.validValues.jobList.strings);
+        }
     });
 
     role.value?.attributes.forEach((attr) => {
@@ -224,9 +227,7 @@ async function initializeRoleView(): Promise<void> {
     });
 }
 
-watch(role, async () => {
-    initializeRoleView();
-});
+watch(role, async () => initializeRoleView());
 
 watch(props, () => {
     if (role.value === null || role.value.id !== props.roleId) {

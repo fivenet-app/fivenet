@@ -3,6 +3,7 @@ package perms
 import (
 	"context"
 	"fmt"
+	"slices"
 
 	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
 	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
@@ -325,7 +326,7 @@ func (p *Perms) Attr(userInfo *userinfo.UserInfo, category Category, name Name, 
 	return nil, fmt.Errorf("unknown role attribute type")
 }
 
-func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string) ([]*permissions.RoleAttribute, error) {
+func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, job string) []*permissions.RoleAttribute {
 	res := make([]*permissions.RoleAttribute, len(in))
 	for i := 0; i < len(in); i++ {
 		res[i] = &permissions.RoleAttribute{
@@ -358,7 +359,7 @@ func (p *Perms) convertRawToRoleAttributes(in []*permissions.RawRoleAttribute, j
 		}
 	}
 
-	return res, nil
+	return res
 }
 
 func (p *Perms) convertRawValue(targetVal *permissions.AttributeValues, rawVal string, aType permissions.AttributeTypes) error {
@@ -395,7 +396,23 @@ func (p *Perms) GetAllAttributes(ctx context.Context, job string, grade int32) (
 		}
 	}
 
-	return p.convertRawToRoleAttributes(dest, job)
+	attrs := p.convertRawToRoleAttributes(dest, job)
+
+	roleAttrs, err := p.GetRoleAttributes(job, grade)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, attr := range attrs {
+		idx := slices.IndexFunc(roleAttrs, func(ra *permissions.RoleAttribute) bool {
+			return ra.AttrId == attr.AttrId
+		})
+		if idx > -1 {
+			attr.Value = roleAttrs[idx].Value
+		}
+	}
+
+	return attrs, nil
 }
 
 func (p *Perms) GetRoleAttributes(job string, grade int32) ([]*permissions.RoleAttribute, error) {
