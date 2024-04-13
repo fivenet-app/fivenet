@@ -59,7 +59,7 @@ export const useSettingsStore = defineStore('settings', {
                 },
                 ui: {
                     primary: 'sky',
-                    gray: 'cool',
+                    gray: 'neutral',
                 },
             },
             audio: {
