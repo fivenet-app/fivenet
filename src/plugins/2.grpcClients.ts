@@ -29,12 +29,16 @@ import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestor
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 
-export default defineNuxtPlugin(() => {
-    return {
-        provide: {
-            grpc: new GRPCClients(),
-        },
-    };
+export default defineNuxtPlugin({
+    name: 'grpcClients',
+    parallel: true,
+    async setup(_) {
+        return {
+            provide: {
+                grpc: new GRPCClients(),
+            },
+        };
+    },
 });
 
 export class AuthInterceptor implements RpcInterceptor {

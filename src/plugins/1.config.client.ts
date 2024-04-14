@@ -25,7 +25,10 @@ async function loadConfig(): Promise<void> {
 }
 
 export default defineNuxtPlugin({
+    name: 'config',
+    parallel: true,
     async setup(_) {
         await loadConfig();
+        return {};
     },
 });
