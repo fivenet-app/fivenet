@@ -5,7 +5,7 @@ import { addDays, format } from 'date-fns';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import DatePicker from '~/components/partials/DatePicker.vue';
+import DatePicker from '~/components/partials/DatePicker.client.vue';
 
 const props = defineProps<{
     userId: number;

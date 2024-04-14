@@ -101,11 +101,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <USelectMenu
                             v-model="state.accessLevel"
                             :options="accessLevels"
-                            :placeholder="
-                                state.accessLevel
-                                    ? $t(`enums.docstore.AccessLevel.${AccessLevel[state.accessLevel]}`)
-                                    : $t('common.na')
-                            "
+                            :placeholder="$t('common.access')"
+                            :searchable-placeholder="$t('common.search_field')"
                         >
                             <template #label>
                                 <span v-if="state.accessLevel" class="truncate">{{

@@ -166,13 +166,10 @@ defineShortcuts({
                                     "
                                     :search-attributes="['firstname', 'lastname']"
                                     block
-                                    :placeholder="
-                                        query.user
-                                            ? `${query.user?.firstname} ${query.user?.lastname} (${query.user?.dateofbirth})`
-                                            : $t('common.target')
-                                    "
+                                    :placeholder="$t('common.target')"
                                     trailing
                                     by="userId"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
@@ -197,15 +194,8 @@ defineShortcuts({
                                     nullable
                                     :options="cTypes"
                                     value-attribute="status"
-                                    :placeholder="
-                                        query.types
-                                            ? query.types
-                                                  .map((ct: ConductType) =>
-                                                      $t(`enums.jobs.ConductType.${ConductType[ct ?? 0]}`),
-                                                  )
-                                                  .join(', ')
-                                            : $t('common.na')
-                                    "
+                                    :placeholder="$t('common.na')"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option="{ option }">
                                         <span class="truncate" :class="conductTypesToBGColor(option.status)">

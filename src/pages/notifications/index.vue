@@ -13,7 +13,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.notifications.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('components.notifications.title')" />
 
             <div class="mx-4">
                 <NotificationsList />

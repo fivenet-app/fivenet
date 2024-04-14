@@ -11,8 +11,8 @@ import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import { useNotificatorStore } from '~/store/notificator';
-import DatePicker from '~/components/partials/DatePicker.vue';
-import Pagination from '../partials/Pagination.vue';
+import DatePicker from '~/components/partials/DatePicker.client.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 
 const { $grpc } = useNuxtApp();
@@ -223,9 +223,10 @@ const columns = [
                             "
                             :search-attributes="['firstname', 'lastname']"
                             block
-                            :placeholder="selectedCitizens ? charsGetDisplayValue(selectedCitizens) : $t('common.user', 2)"
+                            :placeholder="$t('common.user', 2)"
                             trailing
                             by="userId"
+                            :searchable-placeholder="$t('common.search_field')"
                         >
                             <template #option="{ option: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

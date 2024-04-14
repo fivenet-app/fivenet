@@ -9,14 +9,12 @@ withDefaults(
         user: ClipboardUser | User | UserShort | undefined;
         noPopover?: boolean;
         textClass?: unknown;
-        buttonClass?: unknown;
         showAvatar?: boolean;
         showAvatarInName?: boolean;
         trailing?: boolean;
     }>(),
     {
         textClass: '' as any,
-        buttonClass: '' as any,
         showAvatar: undefined,
         showAvatarInName: false,
         trailing: true,
@@ -57,7 +55,6 @@ withDefaults(
             variant="link"
             :padded="false"
             class="inline-flex items-center"
-            :class="buttonClass"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
             <slot name="before" />

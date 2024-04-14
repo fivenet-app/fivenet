@@ -100,7 +100,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.dispatches')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('common.dispatches')" />
 
             <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
                 <Splitpanes v-if="mount" class="relative">

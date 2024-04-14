@@ -77,6 +77,7 @@ watch(design.value, () => {
                     :options="primaryColors"
                     option-attribute="label"
                     value-attribute="chip"
+                    :searchable-placeholder="$t('common.search_field')"
                 >
                     <template #label>
                         <span
@@ -98,7 +99,13 @@ watch(design.value, () => {
                 :label="$t('components.auth.UserSettingsPanel.background_color')"
                 class="grid grid-cols-2 items-center gap-2"
             >
-                <USelectMenu v-model="design.ui.gray" :options="grayColors" option-attribute="label" value-attribute="chip">
+                <USelectMenu
+                    v-model="design.ui.gray"
+                    :options="grayColors"
+                    option-attribute="label"
+                    value-attribute="chip"
+                    :searchable-placeholder="$t('common.search_field')"
+                >
                     <template #label>
                         <span class="size-2 rounded-full" :class="`bg-${design.ui.gray}-500 dark:bg-${design.ui.gray}-400`" />
                         <span class="truncate">{{ design.ui.gray }}</span>
@@ -156,6 +163,7 @@ watch(design.value, () => {
                     v-model="selectedHomepage"
                     :options="homepages.filter((h) => h.permission === undefined || can(h.permission))"
                     option-attribute="name"
+                    :searchable-placeholder="$t('common.search_field')"
                 />
                 <p v-else class="text-sm">
                     {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}

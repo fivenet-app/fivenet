@@ -7,9 +7,9 @@ import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/ci
 import type { User } from '~~/gen/ts/resources/users/users';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
-import PhoneNumberBlock from '../partials/citizens/PhoneNumberBlock.vue';
-import ProfilePictureImg from '../partials/citizens/ProfilePictureImg.vue';
-import Pagination from '../partials/Pagination.vue';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -150,120 +150,118 @@ defineShortcuts({
 <template>
     <div>
         <UDashboardToolbar>
-            <template #default>
-                <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
-                    <div class="flex w-full flex-row gap-2">
-                        <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
-                            <UInput
-                                ref="input"
-                                v-model="query.name"
-                                type="text"
-                                name="name"
-                                :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                block
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                                @keydown.esc="$event.target.blur()"
-                            >
-                                <template #trailing>
-                                    <UKbd value="/" />
-                                </template>
-                            </UInput>
-                        </UFormGroup>
-
-                        <UFormGroup name="dateofbirth" :label="$t('common.date_of_birth')">
-                            <UInput
-                                v-model="query.dateofbirth"
-                                v-maska
-                                type="text"
-                                name="dateofbirth"
-                                data-maska="##.##.####"
-                                :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
-                                block
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormGroup>
-
-                        <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
-                            name="wanted"
-                            :label="$t('components.citizens.CitizensList.only_wanted')"
+            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+                <div class="flex w-full flex-row gap-2">
+                    <UFormGroup class="flex-1" :label="`${$t('common.citizen', 1)} ${$t('common.name')}`">
+                        <UInput
+                            ref="input"
+                            v-model="query.name"
+                            type="text"
+                            name="name"
+                            :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                            @keydown.esc="$event.target.blur()"
                         >
-                            <UToggle v-model="query.wanted">
-                                <span class="sr-only">
-                                    {{ $t('components.citizens.CitizensList.only_wanted') }}
-                                </span>
-                            </UToggle>
-                        </UFormGroup>
-                    </div>
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInput>
+                    </UFormGroup>
 
-                    <UAccordion
-                        class="mt-2"
-                        color="white"
-                        variant="soft"
-                        size="sm"
-                        :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                    <UFormGroup name="dateofbirth" :label="$t('common.date_of_birth')">
+                        <UInput
+                            v-model="query.dateofbirth"
+                            v-maska
+                            type="text"
+                            name="dateofbirth"
+                            data-maska="##.##.####"
+                            :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
+                            block
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup
+                        v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
+                        name="wanted"
+                        :label="$t('components.citizens.CitizensList.only_wanted')"
                     >
-                        <template #search>
-                            <div class="flex flex-row gap-2">
-                                <UFormGroup
-                                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
+                        <UToggle v-model="query.wanted">
+                            <span class="sr-only">
+                                {{ $t('components.citizens.CitizensList.only_wanted') }}
+                            </span>
+                        </UToggle>
+                    </UFormGroup>
+                </div>
+
+                <UAccordion
+                    class="mt-2"
+                    color="white"
+                    variant="soft"
+                    size="sm"
+                    :items="[{ label: $t('common.advanced_search'), slot: 'search' }]"
+                >
+                    <template #search>
+                        <div class="flex flex-row gap-2">
+                            <UFormGroup
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
+                                name="phoneNumber"
+                                :label="$t('common.phone_number')"
+                                class="flex-1"
+                            >
+                                <UInput
+                                    v-model="query.phoneNumber"
+                                    type="tel"
                                     name="phoneNumber"
-                                    :label="$t('common.phone_number')"
-                                    class="flex-1"
-                                >
-                                    <UInput
-                                        v-model="query.phoneNumber"
-                                        type="tel"
-                                        name="phoneNumber"
-                                        :placeholder="$t('common.phone_number')"
-                                        block
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </UFormGroup>
+                                    :placeholder="$t('common.phone_number')"
+                                    block
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
 
-                                <UFormGroup
-                                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints')"
+                            <UFormGroup
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints')"
+                                name="trafficInfractionPoints"
+                                :label="$t('common.traffic_infraction_points', 2)"
+                                class="flex-1"
+                            >
+                                <UInput
+                                    v-model="query.trafficInfractionPoints"
+                                    type="number"
                                     name="trafficInfractionPoints"
-                                    :label="$t('common.traffic_infraction_points', 2)"
-                                    class="flex-1"
-                                >
-                                    <UInput
-                                        v-model="query.trafficInfractionPoints"
-                                        type="number"
-                                        name="trafficInfractionPoints"
-                                        min="0"
-                                        :placeholder="$t('common.traffic_infraction_points')"
-                                        block
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </UFormGroup>
+                                    min="0"
+                                    :placeholder="$t('common.traffic_infraction_points')"
+                                    block
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
 
-                                <UFormGroup
-                                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+                            <UFormGroup
+                                v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+                                name="openFines"
+                                :label="$t('components.citizens.CitizensList.open_fine')"
+                                class="flex-1"
+                            >
+                                <UInput
+                                    v-model="query.openFines"
+                                    type="number"
                                     name="openFines"
-                                    :label="$t('components.citizens.CitizensList.open_fine')"
-                                    class="flex-1"
-                                >
-                                    <UInput
-                                        v-model="query.openFines"
-                                        type="number"
-                                        name="openFines"
-                                        min="0"
-                                        :placeholder="`${$t('common.fine')}`"
-                                        block
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
-                                </UFormGroup>
-                            </div>
-                        </template>
-                    </UAccordion>
-                </UForm>
-            </template>
+                                    min="0"
+                                    :placeholder="`${$t('common.fine')}`"
+                                    block
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
+                                />
+                            </UFormGroup>
+                        </div>
+                    </template>
+                </UAccordion>
+            </UForm>
         </UDashboardToolbar>
 
         <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 2)])" :retry="refresh" />

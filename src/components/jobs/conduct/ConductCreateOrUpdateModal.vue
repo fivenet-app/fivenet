@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { useCompletorStore } from '~/store/completor';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import DatePicker from '~/components/partials/DatePicker.vue';
+import DatePicker from '~/components/partials/DatePicker.client.vue';
 import { conductTypesToBGColor } from './helpers';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -162,6 +162,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.type"
                                         :options="cTypes"
                                         value-attribute="status"
+                                        :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
@@ -201,13 +202,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="
-                                            selectedUser
-                                                ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
-                                                : $t('common.target')
-                                        "
+                                        :placeholder="$t('common.target')"
                                         trailing
                                         by="userId"
+                                        :searchable-placeholder="$t('common.search_field')"
                                     >
                                         <template #option="{ option: user }">
                                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

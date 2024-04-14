@@ -627,6 +627,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             block
                             nullable
                             :search="completorStore.completeDocumentCategories"
+                            :searchable-placeholder="$t('common.search_field')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >

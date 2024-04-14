@@ -10,14 +10,12 @@ withDefaults(
         user: Colleague | undefined;
         noPopover?: boolean;
         textClass?: unknown;
-        buttonClass?: unknown;
         showAvatar?: boolean;
         trailing?: boolean;
         hideProps?: boolean;
     }>(),
     {
         textClass: '' as any,
-        buttonClass: '' as any,
         showAvatar: undefined,
         trailing: true,
         hideProps: false,
@@ -66,7 +64,6 @@ today.setMilliseconds(0);
             variant="link"
             :padded="false"
             class="inline-flex items-center"
-            :class="buttonClass"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
             <slot name="before" />

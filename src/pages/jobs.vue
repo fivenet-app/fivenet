@@ -62,7 +62,7 @@ const links = [
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.jobs.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('pages.jobs.title')" />
 
             <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800" />
 

@@ -193,7 +193,8 @@ function updateReasonField(value: string): void {
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <USelectMenu
                                     name="unitStatus"
-                                    :options="['', ...settings?.predefinedStatus.unitStatus]"
+                                    :options="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
+                                    :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                     @change="updateReasonField($event)"

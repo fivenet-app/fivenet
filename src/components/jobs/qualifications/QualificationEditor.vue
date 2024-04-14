@@ -442,6 +442,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                         { label: $t('common.close', 2), closed: true },
                                     ]"
                                     value-attribute="closed"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -154,6 +154,7 @@ watch(state, () => {
                 option-attribute="name"
                 by="name"
                 clear-search-on-close
+                :searchable-placeholder="$t('common.search_field')"
             >
                 <template #option="{ option }">
                     <span class="truncate" :style="{ backgroundColor: option.color }">{{ option.name }}</span>

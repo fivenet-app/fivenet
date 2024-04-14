@@ -131,7 +131,7 @@ const filteredCategories = computed(() => {
         </template>
 
         <div v-if="shortcuts" class="space-y-6">
-            <UInput v-model="query" icon="i-mdi-search" :placeholder="`${$t('common.search')}...`" autofocus color="gray" />
+            <UInput v-model="query" icon="i-mdi-search" :placeholder="$t('common.search_field')" autofocus color="gray" />
 
             <div v-for="(category, index) in filteredCategories" :key="index">
                 <p class="mb-3 text-sm font-semibold text-gray-900 dark:text-white">

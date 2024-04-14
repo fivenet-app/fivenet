@@ -4,7 +4,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { User } from '~~/gen/ts/resources/users/users';
 import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 import { useAuthStore } from '~/store/auth';
-import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
 const { $grpc } = useNuxtApp();
 

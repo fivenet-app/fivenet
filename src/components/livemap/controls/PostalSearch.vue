@@ -79,6 +79,7 @@ watchDebounced(postalQuery, () => findPostal(), {
         nullable
         :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
         option-attribute="code"
+        :searchable-placeholder="$t('common.search_field')"
         @click="loadPostals"
         @focusin="focusTablet(true)"
         @focusout="focusTablet(false)"

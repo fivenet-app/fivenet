@@ -420,7 +420,8 @@
         "qualification": "Qualification | Qualifications",
         "toc": "Table of Contents",
         "dialog": "Dialog | Dialogs",
-        "annul": "Annul | Annulled"
+        "annul": "Annul | Annulled",
+        "search_field": "Search..."
     },
     "components": {
         "partials": {

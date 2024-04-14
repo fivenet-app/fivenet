@@ -110,7 +110,12 @@ const columns = [
                                 <UForm :schema="schema" :state="state" @submit="refresh()">
                                     <div class="flex flex-row gap-2">
                                         <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
-                                            <USelectMenu v-model="state.jobGrade" :options="availableJobGrades" by="grade">
+                                            <USelectMenu
+                                                v-model="state.jobGrade"
+                                                :options="availableJobGrades"
+                                                by="grade"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
                                                 <template #label>
                                                     <template v-if="state.jobGrade">
                                                         <span class="truncate"

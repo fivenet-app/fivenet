@@ -420,7 +420,8 @@
         "qualification": "Qualifizierung | Qualifizierungen",
         "toc": "Inhaltsverzeichnis",
         "dialog": "Dialog | Dialogs",
-        "annul": "Aufheben | Aufgehoben"
+        "annul": "Aufheben | Aufgehoben",
+        "search_field": "Suche..."
     },
     "components": {
         "partials": {

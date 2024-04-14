@@ -350,7 +350,7 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
 
             <UDashboardSidebar>
                 <template #header>
-                    <UDashboardSearchButton :label="`${$t('common.search')}...`" />
+                    <UDashboardSearchButton :label="$t('common.search_field')" />
                 </template>
 
                 <UDashboardSidebarLinks :links="links" />
@@ -402,7 +402,7 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
                     label: $t('commandpalette.empty.title'),
                     queryLabel: $t('commandpalette.empty.title'),
                 }"
-                :placeholder="`${$t('common.search')}... (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
+                :placeholder="`${$t('common.search_field')} (${$t('commandpalette.footer', { key1: '@', key2: '#' })})`"
             />
         </ClientOnly>
     </UDashboardLayout>

@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
-import Pagination from '../partials/Pagination.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const props = defineProps<{
     documentId: string;

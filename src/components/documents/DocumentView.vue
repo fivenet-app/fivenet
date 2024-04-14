@@ -19,7 +19,7 @@ import DocumentActivityList from '~/components/documents/DocumentActivityList.vu
 import DocumentRequestsModal from '~/components/documents/requests/DocumentRequestsModal.vue';
 import { useAuthStore } from '~/store/auth';
 import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
-import ConfirmModal from '../partials/ConfirmModal.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = defineProps<{
     documentId: string;

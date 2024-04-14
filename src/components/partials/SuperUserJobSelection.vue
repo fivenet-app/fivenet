@@ -32,10 +32,11 @@ watch(selectedJob, () => {
         :search-attributes="['name', 'label']"
         :options="jobs"
         :popper="{ placement: 'top' }"
-        :placeholder="selectedJob ? selectedJob.label : $t('common.na')"
+        :placeholder="$t('common.job')"
         :search="
             async (q?: string) => (await listJobs()).filter((j) => q === undefined || j.name.includes(q) || j.label.includes(q))
         "
+        :searchable-placeholder="$t('common.search_field')"
     >
         <template #option-empty="{ query: search }">
             <q>{{ search }}</q> {{ $t('common.query_not_found') }}

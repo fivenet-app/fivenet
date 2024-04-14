@@ -14,7 +14,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.rector.roles.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('pages.rector.roles.title')" />
 
             <RolesList />
         </UDashboardPanel>

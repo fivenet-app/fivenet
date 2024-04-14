@@ -14,7 +14,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.vehicles.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('pages.vehicles.title')" />
 
             <VehiclesList />
         </UDashboardPanel>

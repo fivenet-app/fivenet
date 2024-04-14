@@ -82,6 +82,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <USelectMenu
                             v-model="state.category"
                             :options="categories"
+                            :searchable-placeholder="$t('common.search_field')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />

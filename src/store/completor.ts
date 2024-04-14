@@ -63,9 +63,10 @@ export const useCompletorStore = defineStore('completor', {
 
         // Colleagues
         async findColleague(userId: number): Promise<Colleague | undefined> {
-            return await this.listColleagues({ userId, search: '' }).then((colleagues) =>
-                colleagues.length === 0 ? undefined : colleagues[0],
-            );
+            return await this.listColleagues({
+                userId: userId,
+                search: '',
+            }).then((colleagues) => (colleagues.length === 0 ? undefined : colleagues[0]));
         },
         async listColleagues(req: ListColleaguesRequest): Promise<Colleague[]> {
             if (!req.pagination) {
@@ -92,7 +93,9 @@ export const useCompletorStore = defineStore('completor', {
 
             const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCompletorClient().completeDocumentCategories({ search });
+                const call = $grpc.getCompletorClient().completeDocumentCategories({
+                    search: search,
+                });
                 const { response } = await call;
 
                 return response.categories;

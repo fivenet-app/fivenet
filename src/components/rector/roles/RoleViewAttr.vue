@@ -305,11 +305,11 @@ onBeforeMount(async () => {
 
                                 <USelectMenu
                                     @update:model-value="updateJobGradeValue(job, $event)"
-                                    nullable
                                     :options="job.grades"
                                     :search-attributes="['label']"
                                     by="grade"
-                                    :placeholder="jobGrades.has(job.name) ? jobGrades.get(job.name)?.label : $t('common.na')"
+                                    :placeholder="$t('common.rank')"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option="{ option: grade }">
                                         {{ grade?.label }}

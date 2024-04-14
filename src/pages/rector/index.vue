@@ -69,7 +69,7 @@ const items = [
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.control_panel')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('common.control_panel')" />
 
             <CardsList class="mt-2" :items="items" />
         </UDashboardPanel>

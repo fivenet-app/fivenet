@@ -1,15 +1,14 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import { useCompletorStore } from '~/store/completor';
 import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
-import LicensePlate from '../partials/LicensePlate.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import LicensePlate from '~/components/partials/LicensePlate.vue';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
-import Pagination from '../partials/Pagination.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -46,9 +45,9 @@ const query = ref<Schema>({
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data: data, pending: loading, refresh, error } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
-
 const hideVehicleModell = ref(false);
+
+const { data: data, pending: loading, refresh, error } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
@@ -77,8 +76,6 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
         throw e;
     }
 }
-
-const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
 const selectedUser = ref<undefined | UserShort>();
@@ -175,42 +172,39 @@ defineShortcuts({
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
-
-                    <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
-                        <UInputMenu
-                            v-model="selectedUser"
-                            nullable
-                            :search="
-                                async (query: string) => {
-                                    usersLoading = true;
-                                    const users = await completorStore.completeCitizens({
-                                        search: query,
-                                    });
-                                    usersLoading = false;
-                                    return users;
-                                }
-                            "
-                            :search-attributes="['firstname', 'lastname']"
-                            block
-                            :loading="usersLoading"
-                            :placeholder="
-                                selectedUser
-                                    ? `${selectedUser?.firstname} ${selectedUser?.lastname} (${selectedUser?.dateofbirth})`
-                                    : $t('common.owner')
-                            "
-                            trailing
-                            by="userId"
-                        >
-                            <template #option="{ option: user }">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                        </UInputMenu>
-                    </UFormGroup>
                 </UForm>
+
+                <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
+                    <UInputMenu
+                        v-model="selectedUser"
+                        nullable
+                        :search="
+                            async (query: string): Promise<UserShort[]> => {
+                                usersLoading = true;
+                                const { response } = await $grpc.getCompletorClient().completeCitizens({
+                                    search: query,
+                                });
+                                usersLoading = false;
+                                return response.users;
+                            }
+                        "
+                        :loading="usersLoading"
+                        :search-attributes="['firstname', 'lastname']"
+                        block
+                        :placeholder="$t('common.owner')"
+                        trailing
+                        by="userId"
+                        :searchable-placeholder="$t('common.search_field')"
+                    >
+                        <template #option="{ option: user }">
+                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                    </UInputMenu>
+                </UFormGroup>
             </template>
         </UDashboardToolbar>
 

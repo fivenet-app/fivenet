@@ -156,6 +156,7 @@ onMounted(async () => updateUnitInForm());
                             nullable
                             :options="availableAttributes"
                             :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
+                            :searchable-placeholder="$t('common.search_field')"
                         >
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -432,6 +432,7 @@ const tabs = [
                                             :options="jobs ?? []"
                                             value-attribute="name"
                                             by="label"
+                                            :searchable-placeholder="$t('common.search_field')"
                                         >
                                             <template #label>
                                                 <template v-if="state.jobInfo.publicJobs">
@@ -461,6 +462,7 @@ const tabs = [
                                             :options="jobs ?? []"
                                             value-attribute="name"
                                             by="label"
+                                            :searchable-placeholder="$t('common.search_field')"
                                         >
                                             <template #label>
                                                 <template v-if="state.jobInfo.hiddenJobs">
@@ -529,6 +531,7 @@ const tabs = [
                                             :options="jobs ?? []"
                                             value-attribute="name"
                                             by="label"
+                                            :searchable-placeholder="$t('common.search_field')"
                                         >
                                             <template #label>
                                                 <template v-if="state.userTracker.livemapJobs">

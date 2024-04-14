@@ -11,8 +11,8 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
-import DatePicker from '~/components/partials/DatePicker.vue';
-import Pagination from '../partials/Pagination.vue';
+import DatePicker from '~/components/partials/DatePicker.client.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import { useSettingsStore } from '~/store/settings';
 
 const { $grpc } = useNuxtApp();
@@ -56,6 +56,15 @@ const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
+
+async function creatorSearch(query: string): Promise<UserShort[]> {
+    usersLoading.value = true;
+    const users = await completorStore.completeCitizens({
+        search: query,
+    });
+    usersLoading.value = false;
+    return users;
+}
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
@@ -167,13 +176,13 @@ defineShortcuts({
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
-                                <UInputMenu
+                                <USelectMenu
                                     v-model="query.category"
                                     option-attribute="name"
                                     :search-attributes="['name']"
                                     block
-                                    nullable
-                                    :search="completorStore.completeDocumentCategories"
+                                    :searchable="completorStore.completeDocumentCategories"
+                                    :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -181,30 +190,17 @@ defineShortcuts({
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </UInputMenu>
+                                </USelectMenu>
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
-                                <UInputMenu
+                                <USelectMenu
                                     v-model="query.creator"
-                                    :search="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const users = await completorStore.completeCitizens({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return users;
-                                        }
-                                    "
-                                    :search-attributes="['firstname', 'lastname']"
                                     block
-                                    nullable
-                                    :placeholder="
-                                        query.creator
-                                            ? `${query.creator?.firstname} ${query.creator?.lastname} (${query.creator?.dateofbirth})`
-                                            : $t('common.owner')
-                                    "
+                                    :searchable="creatorSearch"
+                                    :search-attributes="['firstname', 'lastname']"
+                                    :placeholder="$t('common.creator')"
+                                    :searchable-placeholder="$t('common.search_field')"
                                     trailing
                                     by="userId"
                                 >
@@ -215,13 +211,18 @@ defineShortcuts({
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
                                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                </UInputMenu>
+                                </USelectMenu>
                             </UFormGroup>
                         </div>
 
                         <div class="flex flex-row flex-wrap gap-2">
                             <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
-                                <USelectMenu v-model="query.closed" :options="openclose" value-attribute="closed" />
+                                <USelectMenu
+                                    v-model="query.closed"
+                                    :options="openclose"
+                                    value-attribute="closed"
+                                    :searchable-placeholder="$t('common.search_field')"
+                                />
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">

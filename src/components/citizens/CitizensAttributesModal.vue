@@ -2,7 +2,7 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import ColorPicker from '../partials/ColorPicker.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { useCompletorStore } from '~/store/completor';
 
 const { $grpc } = useNuxtApp();

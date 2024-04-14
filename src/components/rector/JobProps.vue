@@ -11,7 +11,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
-import ColorPicker from '../partials/ColorPicker.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -379,7 +379,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :placeholder="
                                                 $t('components.rector.job_props.discord_sync_settings.discord_guild_id')
                                             "
-                                            :label="$t('components.rector.job_props.discord_sync_settings.discord_guild_id')"
                                             maxlength="70"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
@@ -427,11 +426,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             name="statusLogSettingsChannelId"
                                             :disabled="!state.discordSyncSettings.statusLog"
                                             :placeholder="
-                                                $t(
-                                                    'components.rector.job_props.discord_sync_settings.status_log_settings.channel_id',
-                                                )
-                                            "
-                                            :label="
                                                 $t(
                                                     'components.rector.job_props.discord_sync_settings.status_log_settings.channel_id',
                                                 )
@@ -582,6 +576,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         value: UserInfoSyncUnemployedMode.KICK,
                                                     },
                                                 ]"
+                                                :searchable-placeholder="$t('common.search_field')"
                                             >
                                                 <template #label>
                                                     {{

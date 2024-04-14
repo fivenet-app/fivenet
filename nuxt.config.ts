@@ -12,13 +12,13 @@ export default defineNuxtConfig({
     modules: [
         'nuxt-typed-router',
         '@nuxtjs/robots',
-        '@nuxt/ui',
-        '@nuxtjs/tailwindcss',
-        'nuxt-zod-i18n',
-        '@nuxtjs/i18n',
+        '@vueuse/nuxt',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
-        '@vueuse/nuxt',
+        'nuxt-zod-i18n',
+        '@nuxtjs/i18n',
+        '@nuxt/ui',
+        '@nuxtjs/tailwindcss',
         'nuxt-update',
     ],
     ui: {

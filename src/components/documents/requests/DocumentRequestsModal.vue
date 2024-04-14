@@ -154,11 +154,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     v-model="state.requestType"
                                     :options="availableRequestTypes"
                                     value-attribute="key"
-                                    :placeholder="
-                                        state.requestType
-                                            ? $t(`enums.docstore.DocActivityType.${DocActivityType[state.requestType ?? 0]}`, 2)
-                                            : $t('common.na')
-                                    "
+                                    :placeholder="$t('common.type')"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option="{ option }">
                                         <span class="truncate">{{

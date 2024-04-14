@@ -104,11 +104,10 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="
-                                            query.colleagues ? charsGetDisplayValue(query.colleagues) : $t('common.owner')
-                                        "
+                                        :placeholder="$t('common.owner')"
                                         trailing
                                         by="userId"
+                                        :searchable-placeholder="$t('common.search_field')"
                                     >
                                         <template #option="{ option: user }">
                                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

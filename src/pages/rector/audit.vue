@@ -14,7 +14,7 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.audit_log')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('common.audit_log')" />
 
             <AuditLog />
         </UDashboardPanel>

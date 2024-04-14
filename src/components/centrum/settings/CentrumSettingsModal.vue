@@ -124,6 +124,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.mode"
                                 :options="modes"
                                 value-attribute="mode"
+                                :searchable-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >
@@ -145,6 +146,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.fallbackMode"
                                 :options="modes"
                                 value-attribute="mode"
+                                :searchable-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >

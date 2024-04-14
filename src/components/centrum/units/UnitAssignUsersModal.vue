@@ -108,9 +108,10 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     "
                                     :search-attributes="['firstname', 'lastname']"
                                     block
-                                    :placeholder="query.users ? charsGetDisplayValue(query.users) : $t('common.owner')"
+                                    :placeholder="$t('common.owner')"
                                     trailing
                                     by="userId"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

@@ -4,9 +4,9 @@ import type { FormSubmitEvent } from '#ui/types';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
-import DatePicker from '../partials/DatePicker.vue';
+import DatePicker from '~/components/partials/DatePicker.client.vue';
 import { format } from 'date-fns';
-import ColorPicker from '../partials/ColorPicker.vue';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -257,6 +257,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         name="markerType"
                                         :options="markerTypes"
                                         value-attribute="type"
+                                        :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
@@ -307,7 +308,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="icon">
-                                    <USelectMenu v-model="state.icon" :options="markerIcons">
+                                    <USelectMenu
+                                        v-model="state.icon"
+                                        :options="markerIcons"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
                                         <template #label>
                                             <UIcon :name="state.icon" class="size-5" :style="{ color: state.color }" />
                                             <span class="truncate">{{

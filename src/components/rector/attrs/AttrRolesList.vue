@@ -107,7 +107,12 @@ const columns = [
                             <UForm :schema="schema" :state="state" @submit="refresh()">
                                 <div class="flex flex-row gap-2">
                                     <UFormGroup class="flex-1" name="grade" :label="$t('common.job')">
-                                        <USelectMenu v-model="state.job" :options="availableJobs" by="label">
+                                        <USelectMenu
+                                            v-model="state.job"
+                                            :options="availableJobs"
+                                            by="label"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                        >
                                             <template #label>
                                                 <template v-if="state.job">
                                                     <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>

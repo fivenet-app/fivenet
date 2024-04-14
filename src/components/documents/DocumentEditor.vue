@@ -23,7 +23,7 @@ import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue'
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
-import DocEditor from '../partials/DocEditor.vue';
+import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
     documentId?: string;
@@ -689,6 +689,7 @@ console.info(
                                     block
                                     nullable
                                     :search="completorStore.completeDocumentCategories"
+                                    :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -719,6 +720,7 @@ console.info(
                                         { label: $t('common.close', 2), closed: true },
                                     ]"
                                     value-attribute="closed"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}

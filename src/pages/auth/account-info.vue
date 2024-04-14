@@ -40,7 +40,7 @@ if (query.oauth2Connect) {
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')"> </UDashboardNavbar>
+            <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')" />
 
             <AccountInfo />
         </UDashboardPanel>

@@ -115,7 +115,12 @@ onBeforeMount(async () => listJobs());
                     </UFormGroup>
 
                     <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
-                        <USelectMenu v-model="state.job" :options="jobs" by="label">
+                        <USelectMenu
+                            v-model="state.job"
+                            :options="jobs"
+                            by="label"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
                             <template #label>
                                 <template v-if="state.job">
                                     <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
@@ -128,7 +133,12 @@ onBeforeMount(async () => listJobs());
                     </UFormGroup>
 
                     <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
-                        <USelectMenu v-model="state.grade" :options="state.job?.grades" by="grade">
+                        <USelectMenu
+                            v-model="state.grade"
+                            :options="state.job?.grades"
+                            by="grade"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
                             <template #label>
                                 <template v-if="state.grade">
                                     <span class="truncate">{{ state.grade?.label }} ({{ state.grade?.grade }})</span>

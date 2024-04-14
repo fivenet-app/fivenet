@@ -5,7 +5,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import { useAuthStore } from '~/store/auth';
 import { Comment } from '~~/gen/ts/resources/documents/comment';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import ConfirmModal from '../partials/ConfirmModal.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useNotificatorStore } from '~/store/notificator';
 
 const props = defineProps<{

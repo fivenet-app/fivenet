@@ -7,7 +7,7 @@ import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import Pagination from '../partials/Pagination.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{

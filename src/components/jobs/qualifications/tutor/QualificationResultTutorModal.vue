@@ -105,11 +105,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-model="state.status"
                             :options="availableStatus"
                             value-attribute="status"
-                            :placeholder="
-                                state.status
-                                    ? $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status ?? 0]}`)
-                                    : $t('common.na')
-                            "
+                            :placeholder="$t('common.status')"
+                            :searchable-placeholder="$t('common.search_field')"
                         >
                             <template #label>
                                 <span v-if="state.status" class="truncate">{{

@@ -7,7 +7,7 @@ import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import { getWeekNumber } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
-import DatePicker from '~/components/partials/DatePicker.vue';
+import DatePicker from '~/components/partials/DatePicker.client.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import Pagination from '~/components/partials/Pagination.vue';
@@ -194,9 +194,10 @@ const input = ref<{ input: HTMLInputElement }>();
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="query.users ? charsGetDisplayValue(query.users) : $t('common.owner')"
+                                        :placeholder="$t('common.owner')"
                                         trailing
                                         by="userId"
+                                        :searchable-placeholder="$t('common.search_field')"
                                     >
                                         <template #option="{ option: user }">
                                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
