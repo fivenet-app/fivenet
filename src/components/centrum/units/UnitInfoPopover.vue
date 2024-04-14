@@ -71,7 +71,7 @@ withDefaults(
                             {{ $t('common.units', 0) }}
                         </p>
                     </template>
-                    <ul v-else class="text-xs font-normal">
+                    <ul v-else class="flex-col text-xs font-normal">
                         <li v-for="user in unit.users" :key="user.userId" class="inline-flex items-center gap-1">
                             <span>{{ user.user?.firstname }} {{ user.user?.lastname }}</span>
                             <PhoneNumberBlock :number="user.user?.phoneNumber" :hide-number="true" />
