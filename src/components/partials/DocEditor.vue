@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
-// @ts-ignore jodit-vue has no (detected) types
+// @ts-ignore jodit-vue has types, but they are not detected
 import { JoditEditor } from 'jodit-vue';
 import type { IJodit } from 'jodit/types/types';
 import { useSettingsStore } from '~/store/settings';
@@ -25,12 +25,12 @@ const editorRef = ref<JoditEditor | null>(null);
 const content = useVModel(props, 'modelValue', emit);
 
 const settingsStore = useSettingsStore();
-const { design: theme } = storeToRefs(settingsStore);
+const { design: theme, locale } = storeToRefs(settingsStore);
 
 const config = {
     readOnly: props.disabled,
 
-    language: 'de',
+    language: locale.value,
     spellcheck: true,
     minHeight: 475,
     editorClassName: 'prose' + (theme.value.documents.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
