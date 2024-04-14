@@ -125,23 +125,23 @@ const nuiAvailable = ref(isNUIAvailable());
                 </div>
 
                 <template #footer>
-                    <UButton color="black" block class="flex-1" @click="isOpen = false">
-                        {{ $t('common.close', 1) }}
-                    </UButton>
-
-                    <UButton
-                        type="submit"
-                        block
-                        color="red"
-                        class="flex-1"
-                        :disabled="nuiAvailable || !canSubmit || !activeChar?.avatar"
-                        :loading="!canSubmit"
-                        @click="state.reset = true"
-                    >
-                        {{ $t('common.reset') }}
-                    </UButton>
-
                     <UButtonGroup class="inline-flex w-full">
+                        <UButton color="black" block class="flex-1" @click="isOpen = false">
+                            {{ $t('common.close', 1) }}
+                        </UButton>
+
+                        <UButton
+                            type="submit"
+                            block
+                            color="red"
+                            class="flex-1"
+                            :disabled="nuiAvailable || !canSubmit || !activeChar?.avatar"
+                            :loading="!canSubmit"
+                            @click="state.reset = true"
+                        >
+                            {{ $t('common.reset') }}
+                        </UButton>
+
                         <UButton
                             type="submit"
                             block
