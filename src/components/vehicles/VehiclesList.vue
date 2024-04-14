@@ -137,19 +137,6 @@ defineShortcuts({
         input.value?.input?.focus();
     },
 });
-
-const loadingTest = ref(false);
-const selected = ref([]);
-
-async function search(q: string) {
-    loading.value = true;
-
-    const users = await $fetch<any[]>('https://jsonplaceholder.typicode.com/users', { params: { q } });
-
-    loading.value = false;
-
-    return users;
-}
 </script>
 
 <template>
@@ -157,19 +144,6 @@ async function search(q: string) {
         <UDashboardToolbar>
             <template #default>
                 <UForm :schema="schema" :state="query" class="flex w-full flex-row gap-2" @submit="refresh()">
-                    <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
-                        <USelectMenu
-                            v-model="selected"
-                            :loading="loadingTest"
-                            :searchable="search"
-                            placeholder="Search for a user..."
-                            option-attribute="name"
-                            multiple
-                            trailing
-                            by="id"
-                        />
-                    </UFormGroup>
-
                     <UFormGroup name="licensePlate" :label="$t('common.license_plate')" class="flex-1">
                         <UInput
                             ref="input"
@@ -202,6 +176,7 @@ async function search(q: string) {
                     <UFormGroup v-if="!userId" name="selectedUser" :label="$t('common.owner')" class="flex-1">
                         <UInputMenu
                             v-model="selectedUser"
+                            name="selectedUser"
                             nullable
                             :search="
                                 async (query: string): Promise<UserShort[]> => {

@@ -1287,12 +1287,12 @@
     rc9 "^2.1.2"
     std-env "^3.7.0"
 
-"@nuxt/ui-pro@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@nuxt/ui-pro/-/ui-pro-1.1.0.tgz#2b305424629599178a343cd47876f54f8d3b3eca"
-  integrity sha512-c8x8VDmnMYPognKq/V203UMK7JiZwmP+Vx5YIY74Y1DB+PS2alFGKXENy8rVZxx3HCA0b0WuwzACZ5405kv7yQ==
+"@nuxt/ui-pro@npm:@nuxt/ui-pro-edge@latest":
+  version "1.1.0-28548740.d20325b"
+  resolved "https://registry.yarnpkg.com/@nuxt/ui-pro-edge/-/ui-pro-edge-1.1.0-28548740.d20325b.tgz#1d46ab4f9def630ddaddfa4f20045f88614d5f6f"
+  integrity sha512-MSQLheM++lsgcWBMikKR8bB4Knq7T5Tl802bW+RyhWbuDsqa0t2lmAAb6CmZ0qP+OiNi9ji9RHwXoLqsrhJBRQ==
   dependencies:
-    "@nuxt/ui" "^2.15.0"
+    "@nuxt/ui" "^2.15.1"
     "@vueuse/core" "^10.9.0"
     defu "^6.1.4"
     git-url-parse "^14.0.0"
@@ -1308,7 +1308,7 @@
   resolved "https://registry.yarnpkg.com/@nuxt/ui-templates/-/ui-templates-1.3.3.tgz#b52728772d247d5027f5cdc0afbc82120b390ff3"
   integrity sha512-3BG5doAREcD50dbKyXgmjD4b1GzY8CUy3T41jMhHZXNDdaNwOd31IBq+D6dV00OSrDVhzrTVj0IxsUsnMyHvIQ==
 
-"@nuxt/ui@^2.15.0", "@nuxt/ui@^2.15.2":
+"@nuxt/ui@^2.15.1":
   version "2.15.2"
   resolved "https://registry.yarnpkg.com/@nuxt/ui/-/ui-2.15.2.tgz#a3f9b49e92e5ffb252ca2bc6c4079d59220d47f7"
   integrity sha512-3NxFcC0KN4bdTePNKKEVp4tj2BgeuGlucnnOFLVYSdhw60xU0LpFq9wDGeP7BBUl622xF9FnPNiXW5/6RS4i6w==
@@ -2245,7 +2245,7 @@
   dependencies:
     "@types/leaflet" "*"
 
-"@types/leaflet@*":
+"@types/leaflet@*", "@types/leaflet@1.9.11":
   version "1.9.11"
   resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.9.11.tgz#91c489f098db821204a401a9f49b9a6aed0e0b17"
   integrity sha512-Cwqw9h+1LVnsuOutOSNHlIE1DBQ9U/0CCLfAkwtkgggrYRwf7SUlyZM0LQzngpwKyvFQbPLCf6hNMzly56pGZw==
@@ -2256,13 +2256,6 @@
   version "1.7.6"
   resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.7.6.tgz#6580f4babb648972c5af3abc3d66866753fa9311"
   integrity sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==
-  dependencies:
-    "@types/geojson" "*"
-
-"@types/leaflet@1.9.10":
-  version "1.9.10"
-  resolved "https://registry.yarnpkg.com/@types/leaflet/-/leaflet-1.9.10.tgz#3575bc4c7578ff49d2fe6821447993888dfcb68d"
-  integrity sha512-mxt7Ponx1WubZdlFYIipwyGCUgFuKHgr3QeLY2ly7uDpHhp5FDKtJ7oswGyC8z0/Qz2g8yBSBV1odmul8Aqxkw==
   dependencies:
     "@types/geojson" "*"
 
@@ -10287,7 +10280,15 @@ vue3-smooth-dnd@^0.0.6:
   dependencies:
     smooth-dnd "^0.12.1"
 
-vue@3.4.21, vue@^3.2.25, vue@^3.4.21:
+vue@^2.0.0:
+  version "2.7.16"
+  resolved "https://registry.yarnpkg.com/vue/-/vue-2.7.16.tgz#98c60de9def99c0e3da8dae59b304ead43b967c9"
+  integrity sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==
+  dependencies:
+    "@vue/compiler-sfc" "2.7.16"
+    csstype "^3.1.0"
+
+vue@^3.2.25, vue@^3.4.21:
   version "3.4.21"
   resolved "https://registry.yarnpkg.com/vue/-/vue-3.4.21.tgz#69ec30e267d358ee3a0ce16612ba89e00aaeb731"
   integrity sha512-5hjyV/jLEIKD/jYl4cavMcnzKwjMKohureP8ejn3hhEjwhWIhWeuzL2kJAjzl/WyVsgPY56Sy4Z40C3lVshxXA==
@@ -10297,14 +10298,6 @@ vue@3.4.21, vue@^3.2.25, vue@^3.4.21:
     "@vue/runtime-dom" "3.4.21"
     "@vue/server-renderer" "3.4.21"
     "@vue/shared" "3.4.21"
-
-vue@^2.0.0:
-  version "2.7.16"
-  resolved "https://registry.yarnpkg.com/vue/-/vue-2.7.16.tgz#98c60de9def99c0e3da8dae59b304ead43b967c9"
-  integrity sha512-4gCtFXaAA3zYZdTp5s4Hl2sozuySsgz4jy1EnpBHNfpMa9dK1ZCG7viqBPCwXtmgc8nHqUsAu3G4gtmXkkY3Sw==
-  dependencies:
-    "@vue/compiler-sfc" "2.7.16"
-    csstype "^3.1.0"
 
 webidl-conversions@^3.0.0:
   version "3.0.1"
