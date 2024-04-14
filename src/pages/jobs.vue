@@ -64,7 +64,9 @@ const links = [
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.jobs.title')" />
 
-            <UHorizontalNavigation :links="links" class="border-b border-gray-200 dark:border-gray-800" />
+            <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
+                <UHorizontalNavigation :links="links" />
+            </UDashboardToolbar>
 
             <NuxtLayout name="blank">
                 <NuxtPage
