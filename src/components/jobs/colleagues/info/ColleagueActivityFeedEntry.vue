@@ -31,11 +31,20 @@ withDefaults(
                     <template v-if="activity.data?.data.oneofKind !== undefined">
                         {{ ' - ' }}
                         <template v-if="activity.data?.data.oneofKind === 'absenceDate'">
-                            <span class="inline-flex gap-1">
-                                <GenericTime :value="activity.data?.data.absenceDate.absenceBegin" type="date" />
-                                <span>{{ $t('common.to') }}</span>
-                                <GenericTime :value="activity.data?.data.absenceDate.absenceEnd" type="date" />
-                            </span>
+                            <template
+                                v-if="
+                                    activity.data?.data.absenceDate.absenceBegin && activity.data?.data.absenceDate.absenceEnd
+                                "
+                            >
+                                <span class="inline-flex gap-1">
+                                    <GenericTime :value="activity.data?.data.absenceDate.absenceBegin" type="date" />
+                                    <span>{{ $t('common.to') }}</span>
+                                    <GenericTime :value="activity.data?.data.absenceDate.absenceEnd" type="date" />
+                                </span>
+                            </template>
+                            <template v-else>
+                                <span>{{ $t('common.annul', 2) }}</span>
+                            </template>
                         </template>
                         <template v-else-if="activity.data?.data.oneofKind === 'gradeChange'">
                             {{ activity.data?.data.gradeChange.gradeLabel }} ({{ activity.data?.data.gradeChange.grade }})

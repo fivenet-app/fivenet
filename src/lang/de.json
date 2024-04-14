@@ -419,7 +419,8 @@
         "entry": "Eintrag | Einträge",
         "qualification": "Qualifizierung | Qualifizierungen",
         "toc": "Inhaltsverzeichnis",
-        "dialog": "Dialog | Dialogs"
+        "dialog": "Dialog | Dialogs",
+        "annul": "Aufheben | Aufgehoben"
     },
     "components": {
         "partials": {

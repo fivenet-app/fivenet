@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { format } from 'date-fns';
+import { addDays, format } from 'date-fns';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -22,19 +22,29 @@ const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-const schema = z.object({
-    reason: z.string().min(3).max(255),
-    absenceBegin: z.date().optional(),
-    absenceEnd: z.date().optional(),
-    reset: z.boolean(),
-});
+const now = new Date();
+
+const schema = z.union([
+    z.object({
+        reason: z.string().min(3).max(255),
+        absenceBegin: z.date().min(now),
+        absenceEnd: z.date().min(addDays(now, 1)),
+        reset: z.literal(false),
+    }),
+    z.object({
+        reason: z.string().min(3).max(255),
+        absenceBegin: z.date().optional(),
+        absenceEnd: z.date().optional(),
+        reset: z.literal(true),
+    }),
+]);
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     reason: '',
-    absenceBegin: undefined,
-    absenceEnd: undefined,
+    absenceBegin: now,
+    absenceEnd: addDays(now, 1),
     reset: false,
 });
 
@@ -46,8 +56,8 @@ async function setAbsenceDate(values: Schema): Promise<void> {
     };
 
     if (values.reset) {
-        userProps.absenceBegin = undefined;
-        userProps.absenceEnd = undefined;
+        userProps.absenceBegin = {};
+        userProps.absenceEnd = {};
     }
 
     try {
@@ -79,18 +89,16 @@ async function setAbsenceDate(values: Schema): Promise<void> {
 function updateAbsenceDateField(): void {
     if (props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()) {
         state.absenceBegin = toDate(props.userProps.absenceBegin);
-    } else {
-        state.absenceBegin = new Date();
     }
 
     if (props.userProps?.absenceEnd && toDate(props.userProps.absenceEnd).getTime() > new Date().getTime()) {
         state.absenceEnd = props.userProps.absenceEnd ? toDate(props.userProps.absenceEnd) : undefined;
-    } else {
-        state.absenceBegin = undefined;
     }
 }
 
 watch(props, () => updateAbsenceDateField());
+
+updateAbsenceDateField();
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -125,7 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <div class="flex flex-col gap-1 sm:flex-row">
-                        <UFormGroup class="flex-1" name="from" :label="$t('common.from')">
+                        <UFormGroup class="flex-1" name="absenceBegin" :label="$t('common.from')">
                             <UPopover :popper="{ placement: 'bottom-start' }">
                                 <UButton
                                     variant="outline"
@@ -141,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </UPopover>
                         </UFormGroup>
 
-                        <UFormGroup class="flex-1" name="to" :label="$t('common.to')">
+                        <UFormGroup class="flex-1" name="absenceEnd" :label="$t('common.to')">
                             <UPopover :popper="{ placement: 'bottom-start' }">
                                 <UButton
                                     variant="outline"
@@ -170,11 +178,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             block
                             color="red"
                             class="flex-1"
-                            :disabled="!canSubmit"
+                            :disabled="!canSubmit || (!userProps?.absenceBegin && !userProps?.absenceEnd)"
                             :loading="!canSubmit"
                             @click="state.reset = true"
                         >
-                            {{ $t('common.reset') }}
+                            {{ $t('common.annul') }}
                         </UButton>
 
                         <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">

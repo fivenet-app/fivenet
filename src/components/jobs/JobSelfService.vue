@@ -48,6 +48,7 @@ const modal = useModal();
                     @click="
                         modal.open(SelfServicePropsAbsenceDateModal, {
                             userId: colleagueSelf.colleague.userId,
+                            userProps: colleagueSelf.colleague.props,
                         })
                     "
                 >

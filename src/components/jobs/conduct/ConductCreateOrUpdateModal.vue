@@ -7,6 +7,8 @@ import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import DatePicker from '~/components/partials/DatePicker.vue';
 import { conductTypesToBGColor } from './helpers';
+import { useAuthStore } from '~/store/auth';
+import { useNotificatorStore } from '~/store/notificator';
 
 const props = defineProps<{
     entry?: ConductEntry;
@@ -22,7 +24,12 @@ const { isOpen } = useModal();
 
 const { $grpc } = useNuxtApp();
 
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
+
 const completorStore = useCompletorStore();
+
+const notifications = useNotificatorStore();
 
 const usersLoading = ref(false);
 
@@ -59,7 +66,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
             entry: {
                 id: id ?? '0',
                 job: '',
-                creatorId: 0,
+                creatorId: activeChar.value?.userId ?? 1,
                 type: values.type,
                 message: values.message,
                 targetUserId: values.targetUserId,
@@ -78,6 +85,12 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
 
             emit('update', response.entry!);
         }
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: 'success',
+        });
 
         isOpen.value = false;
     } catch (e) {

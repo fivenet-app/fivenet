@@ -360,11 +360,10 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	}
 
 	// Compare absence dates if any were set
-	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil &&
-		(props.AbsenceBegin == nil ||
-			props.AbsenceEnd == nil ||
-			req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0 ||
-			req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0) {
+	if props.AbsenceBegin == nil ||
+		props.AbsenceEnd == nil ||
+		((req.Props.AbsenceBegin == nil || req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0) &&
+			(req.Props.AbsenceEnd == nil || req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0)) {
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,

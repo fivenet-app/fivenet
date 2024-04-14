@@ -419,7 +419,8 @@
         "entry": "Entry | Entries",
         "qualification": "Qualification | Qualifications",
         "toc": "Table of Contents",
-        "dialog": "Dialog | Dialogs"
+        "dialog": "Dialog | Dialogs",
+        "annul": "Annul | Annulled"
     },
     "components": {
         "partials": {
