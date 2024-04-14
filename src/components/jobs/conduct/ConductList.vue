@@ -317,7 +317,7 @@ defineShortcuts({
                                             entry: conduct,
                                             userId: userId,
                                             onCreated: ($event) => data?.entries.unshift($event),
-                                            onUpdate: ($event) => updateEntryInPlace($event),
+                                            onUpdated: ($event) => updateEntryInPlace($event),
                                         })
                                     "
                                 />
