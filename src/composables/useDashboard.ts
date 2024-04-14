@@ -16,7 +16,7 @@ const _useDashboard = () => {
         'g-w': () => router.push('/centrum'),
         'g-p': () => router.push('/rector'),
         '?': () => (isHelpSlideoverOpen.value = true),
-        n: () => (isNotificationsSlideoverOpen.value = true),
+        b: () => (isNotificationsSlideoverOpen.value = true),
     });
 
     watch(

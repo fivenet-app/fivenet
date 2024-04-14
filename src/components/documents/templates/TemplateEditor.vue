@@ -518,6 +518,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     <UButtonGroup class="inline-flex">
                         <UButton
                             color="black"
+                            icon="i-mdi-arrow-left"
                             :to="
                                 templateId
                                     ? { name: 'documents-templates-id', params: { id: templateId } }

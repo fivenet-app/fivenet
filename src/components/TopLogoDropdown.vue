@@ -32,7 +32,7 @@ watch(getNotificationsCount, () => {
         </UButton>
     </UDropdown>
 
-    <UTooltip text="Notifications" :shortcuts="['N']">
+    <UTooltip text="Notifications" :shortcuts="['B']">
         <UChip
             :show="getNotificationsCount > 0"
             color="red"

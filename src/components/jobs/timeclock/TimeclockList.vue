@@ -25,6 +25,7 @@ const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All')
 
 const now = new Date();
 const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+const futureToday = addDays(today, 1);
 
 const schema = z.object({
     users: z.custom<Colleague>().array().max(5).optional(),
@@ -254,7 +255,7 @@ const input = ref<{ input: HTMLInputElement }>();
                             <UButton
                                 block
                                 class="flex-1"
-                                :disabled="futureDay > today"
+                                :disabled="futureToday.getTime() <= futureDay.getTime()"
                                 icon="i-mdi-chevron-left"
                                 @click="dayForward()"
                             >

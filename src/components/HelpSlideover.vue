@@ -40,7 +40,7 @@ const categories = computed(() => [
         title: t('commandpalette.categories.general'),
         items: [
             { shortcuts: [metaSymbol.value, 'K'], name: t('common.commandpalette') },
-            { shortcuts: ['N'], name: t('common.notification', 2) },
+            { shortcuts: ['B'], name: t('common.notification', 2) },
             { shortcuts: ['?'], name: t('common.help') },
             { shortcuts: ['/'], name: t('common.search') },
         ],

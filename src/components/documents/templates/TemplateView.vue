@@ -164,7 +164,7 @@ watch(template, () => {
 
 const completorStore = useCompletorStore();
 
-const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -183,6 +183,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     >
                         {{ $t('common.edit') }}
                     </UButton>
+
                     <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
                         block
@@ -196,6 +197,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     >
                         {{ $t('common.preview') }}
                     </UButton>
+
                     <UButton
                         v-if="can('DocStoreService.DeleteTemplate')"
                         block
@@ -258,11 +260,11 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             {{ $t('common.content') }} {{ $t('common.title') }}
                         </h3>
                         <div class="my-2">
-                            <textarea
-                                rows="4"
+                            <UTextarea
                                 name="contentTitle"
-                                class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
+                                class="w-full whitespace-pre-wrap"
                                 disabled
+                                :rows="4"
                                 :value="template.contentTitle"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
@@ -301,10 +303,11 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                             {{ $t('common.content') }}
                         </h3>
                         <div class="my-2">
-                            <textarea
-                                rows="4"
+                            <UTextarea
                                 name="content"
+                                class="w-full whitespace-pre-wrap"
                                 disabled
+                                :rows="4"
                                 :value="template.content"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
