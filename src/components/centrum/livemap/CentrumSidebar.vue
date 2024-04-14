@@ -284,8 +284,8 @@ function openTakeDispatches(): void {
 }
 
 defineShortcuts({
-    t: () => getOwnUnit.value && openTakeDispatches(),
-    h: () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
+    'm-d': () => getOwnUnit.value && openTakeDispatches(),
+    'm-h': () => getOwnUnit.value?.homePostal && setWaypointPLZ(getOwnUnit.value.homePostal),
     's-u': () => getOwnUnit.value && updateUtStatus(getOwnUnit.value.id),
     's-d': () => getOwnUnit.value && updateDspStatus(),
 });
@@ -571,7 +571,7 @@ defineShortcuts({
                                         color="red"
                                         :show="pendingDispatches.length > 0"
                                     >
-                                        <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['T']">
+                                        <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['M', 'D']">
                                             <UButton
                                                 :color="pendingDispatches.length > 0 ? 'red' : 'primary'"
                                                 size="xl"
@@ -588,7 +588,7 @@ defineShortcuts({
                                     <UTooltip
                                         v-if="getOwnUnit.homePostal !== undefined"
                                         :text="`${$t('common.mark')}: ${$t('common.department_postal')}`"
-                                        :shortcuts="['H']"
+                                        :shortcuts="['M', 'H']"
                                     >
                                         <UButton
                                             class="flex size-12 items-center justify-center rounded-r-full"
