@@ -17,7 +17,7 @@ const props = defineProps<{
 
 const emit = defineEmits<{
     (e: 'created', entry: ConductEntry): void;
-    (e: 'update', entry: ConductEntry): void;
+    (e: 'updated', entry: ConductEntry): void;
 }>();
 
 const { isOpen } = useModal();
@@ -83,7 +83,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
             const call = $grpc.getJobsConductClient().updateConductEntry(req);
             const { response } = await call;
 
-            emit('update', response.entry!);
+            emit('updated', response.entry!);
         }
 
         notifications.add({

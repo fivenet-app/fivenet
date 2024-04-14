@@ -80,10 +80,9 @@ async function deleteConductEntry(id: string): Promise<void> {
 watch(offset, async () => refresh());
 watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
 
-function updateEntryInPlace(entry: ConductEntry): void {
+async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
     if (data.value === null) {
-        refresh();
-        return;
+        return refresh();
     }
 
     const idx = data.value.entries.findIndex((e) => e.id === entry.id);
@@ -237,7 +236,14 @@ defineShortcuts({
                                 :label="$t('common.create')"
                                 class="flex-initial"
                             >
-                                <UButton @click="modal.open(ConductCreateOrUpdateModal, {})">
+                                <UButton
+                                    @click="
+                                        modal.open(ConductCreateOrUpdateModal, {
+                                            onCreated: ($event) => data?.entries.unshift($event),
+                                            onUpdated: ($event) => updateEntryInPlace($event),
+                                        })
+                                    "
+                                >
                                     {{ $t('common.create') }}
                                 </UButton>
                             </UFormGroup>
