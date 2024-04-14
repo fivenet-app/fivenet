@@ -14,8 +14,6 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.documents.create.title')"> </UDashboardNavbar>
-
             <DocumentEditor />
         </UDashboardPanel>
     </UDashboardPage>
