@@ -23,7 +23,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = reactive<Schema>({
+const state = reactive<Schema>({
     users: props.unit.users.filter((u) => u !== undefined).map((u) => u.user!),
 });
 
@@ -31,11 +31,11 @@ async function assignUnit(): Promise<void> {
     try {
         const toAdd: number[] = [];
         const toRemove: number[] = [];
-        query.users?.forEach((u) => {
+        state.users?.forEach((u) => {
             toAdd.push(u.userId);
         });
         props.unit.users?.forEach((u) => {
-            const idx = query.users.findIndex((su) => su.userId === u.userId);
+            const idx = state.users.findIndex((su) => su.userId === u.userId);
             if (idx === -1) {
                 toRemove.push(u.userId);
             }
@@ -55,9 +55,7 @@ async function assignUnit(): Promise<void> {
     }
 }
 
-function charsGetDisplayValue(chars: UserShort[]): string {
-    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
-}
+watch(props, () => (state.users = props.unit.users.filter((u) => u !== undefined).map((u) => u.user!)));
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -68,7 +66,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="query" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
@@ -94,7 +92,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                         <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
                             <UFormGroup name="users" :label="$t('common.colleague', 2)" class="flex-1">
                                 <USelectMenu
-                                    v-model="query.users"
+                                    v-model="state.users"
                                     multiple
                                     :searchable="
                                         async (query: string) => {
@@ -129,7 +127,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     class="divide-y divide-gray-100 text-sm font-medium text-gray-100 dark:divide-gray-800"
                                 >
                                     <li
-                                        v-for="user in query.users"
+                                        v-for="user in state.users"
                                         :key="user.userId"
                                         class="inline-flex items-center px-6 py-4"
                                     >

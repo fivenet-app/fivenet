@@ -74,7 +74,7 @@ watchDebounced(postalQuery, () => findPostal(), {
     <UInputMenu
         v-model="selectedPostal"
         v-model:query="postalQuery"
-        class="w-full max-w-44"
+        class="w-full max-w-40"
         :options="filteredPostals"
         nullable
         :placeholder="`${$t('common.postal')} ${$t('common.search')}`"

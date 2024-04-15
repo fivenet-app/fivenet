@@ -72,7 +72,7 @@ const playerMarkersFiltered = computedAsync(async () =>
         <div class="flex flex-col gap-2">
             <UInput
                 v-model="playerQueryRaw"
-                class="max-w-44"
+                class="max-w-40"
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"

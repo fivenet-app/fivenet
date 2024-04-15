@@ -24,7 +24,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = reactive<Schema>({
+const state = reactive<Schema>({
     units: [...props.dispatch.units.map((du) => du.unitId)],
 });
 
@@ -32,11 +32,11 @@ async function assignDispatch(): Promise<void> {
     try {
         const toAdd: string[] = [];
         const toRemove: string[] = [];
-        query.units.forEach((u) => {
+        state.units.forEach((u) => {
             toAdd.push(u);
         });
         props.dispatch.units?.forEach((u) => {
-            const idx = query.units.findIndex((su) => su === u.unitId);
+            const idx = state.units.findIndex((su) => su === u.unitId);
             if (idx === -1) {
                 toRemove.push(u.unitId);
             }
@@ -49,7 +49,7 @@ async function assignDispatch(): Promise<void> {
         });
         await call;
 
-        query.units.length = 0;
+        state.units.length = 0;
 
         isOpen.value = false;
     } catch (e) {
@@ -59,11 +59,11 @@ async function assignDispatch(): Promise<void> {
 }
 
 function selectUnit(item: Unit): void {
-    const idx = query.units.findIndex((u) => u === item.id);
+    const idx = state.units.findIndex((u) => u === item.id);
     if (idx === -1) {
-        query.units.push(item.id);
+        state.units.push(item.id);
     } else {
-        delete query.units[idx];
+        delete state.units[idx];
     }
 }
 
@@ -101,8 +101,9 @@ const grouped = computedAsync(async () => {
     return groups;
 });
 
-const canSubmit = ref(true);
+watch(props, () => (state.units = [...props.dispatch.units.map((du) => du.unitId)]));
 
+const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
     await assignDispatch().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
@@ -110,12 +111,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
 </script>
 
 <template>
-    <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :schema="schema" :state="query" @submit="onSubmitThrottle">
+    <UModal :ui="{ width: 'w-full sm:max-w-5xl', margin: 'sm:my-2' }">
+        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UCard
                 class="flex flex-1 flex-col"
                 :ui="{
                     body: {
+                        base: 'flex-1 h-full max-h-[calc(100vh-(3*var(--header-height)))] overflow-y-auto',
                         padding: 'px-1 py-2 sm:p-2',
                     },
                     ring: '',
@@ -133,51 +135,44 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </div>
                 </template>
 
-                <div>
-                    <div class="flex flex-1 flex-col justify-between px-2">
-                        <template v-for="group in grouped" :key="group.key">
-                            <h3 class="mb-1 text-sm">
-                                {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
-                            </h3>
+                <div class="flex flex-1 flex-col justify-between gap-1 px-2">
+                    <template v-for="group in grouped" :key="group.key">
+                        <h3 class="text-sm">
+                            {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
+                        </h3>
 
-                            <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
-                                <UButton
-                                    v-for="unit in group.units"
-                                    :key="unit.name"
-                                    :disabled="unit.users.length === 0"
-                                    class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
-                                    :class="[
-                                        unitStatusToBGColor(unit.status?.status),
-                                        unit.users.length === 0 ? '!bg-error-600' : '',
-                                    ]"
-                                    @click="selectUnit(unit)"
-                                >
-                                    <UIcon name="i-mdi-check" v-if="query.units.includes(unit.id)" class="size-5" />
-                                    <UIcon
-                                        name="i-mdi-checkbox-blank-outline"
-                                        v-else-if="unit.users.length > 0"
-                                        class="size-5"
-                                    />
-                                    <UIcon name="i-mdi-cancel" v-else class="size-5" />
+                        <div class="grid grid-cols-2 gap-2 lg:grid-cols-3">
+                            <UButton
+                                v-for="unit in group.units"
+                                :key="unit.name"
+                                :disabled="unit.users.length === 0"
+                                class="hover:bg-primary-100/10 inline-flex flex-row items-center gap-x-1 rounded-md p-1.5 text-sm font-medium hover:transition-all"
+                                :class="[
+                                    unitStatusToBGColor(unit.status?.status),
+                                    unit.users.length === 0 ? '!bg-error-600' : '',
+                                ]"
+                                @click="selectUnit(unit)"
+                            >
+                                <UIcon name="i-mdi-check" v-if="state.units.includes(unit.id)" class="size-5" />
+                                <UIcon name="i-mdi-checkbox-blank-outline" v-else-if="unit.users.length > 0" class="size-5" />
+                                <UIcon name="i-mdi-cancel" v-else class="size-5" />
 
-                                    <div class="ml-0.5 flex w-full flex-col place-items-start">
-                                        {{ unit.users.length === 0 }}
-                                        <span class="font-bold">
-                                            {{ unit.initials }}
+                                <div class="ml-0.5 flex w-full flex-col place-items-start">
+                                    <span class="font-bold">
+                                        {{ unit.initials }}
+                                    </span>
+                                    <span class="text-xs">
+                                        {{ unit.name }}
+                                    </span>
+                                    <span class="mt-1 text-xs">
+                                        <span class="block">
+                                            {{ $t('common.member', unit.users.length) }}
                                         </span>
-                                        <span class="text-xs">
-                                            {{ unit.name }}
-                                        </span>
-                                        <span class="mt-1 text-xs">
-                                            <span class="block">
-                                                {{ $t('common.member', unit.users.length) }}
-                                            </span>
-                                        </span>
-                                    </div>
-                                </UButton>
-                            </div>
-                        </template>
-                    </div>
+                                    </span>
+                                </div>
+                            </UButton>
+                        </div>
+                    </template>
                 </div>
 
                 <template #footer>

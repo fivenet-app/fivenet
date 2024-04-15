@@ -63,9 +63,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 watch(props, () => {
-    if (props.status) {
-        state.status = props.status ?? StatusDispatch.NEW;
-    }
+    state.status = props.status ?? StatusDispatch.NEW;
 });
 
 function updateReasonField(value: string): void {

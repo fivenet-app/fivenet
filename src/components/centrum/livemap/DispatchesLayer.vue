@@ -69,7 +69,7 @@ const dispatchesFiltered = computedAsync(async () =>
         <div class="flex flex-col gap-2">
             <UInput
                 v-model="dispatchQueryRaw"
-                class="max-w-44"
+                class="max-w-40"
                 type="text"
                 name="searchPlayer"
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"

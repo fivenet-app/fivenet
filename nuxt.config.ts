@@ -24,6 +24,9 @@ export default defineNuxtConfig({
         icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
     },
+    fonts: {
+        families: [{ name: 'DM Sans', weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], global: true }],
+    },
     app: {
         head: {
             charset: 'utf-8',
