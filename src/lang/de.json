@@ -978,6 +978,9 @@
             "subtitle": "Der Hauptzweck unserer Cookies besteht darin, Ihnen die Anmeldung über unsere Social-Login-Anbieter zu ermöglichen. Weitere Informationen zu Cookies und Ihren Daten finden Sie in unserer Datenschutzerklärung.",
             "description": "Bitte beachten Sie, dass die Funktion \"Lokale Daten entfernen\" je nach der Funktionalität Ihres Browsers möglicherweise nicht alle Daten entfernen kann.",
             "clear_data": "Lokale Daten entfernen"
+        },
+        "UserDropdown": {
+            "signed_in_as": "Angemeldet als"
         }
     },
     "notifications": {
