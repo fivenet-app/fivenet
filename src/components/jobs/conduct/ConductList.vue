@@ -261,7 +261,7 @@ defineShortcuts({
             </dl>
         </template>
         <template #expiresAt-data="{ row: conduct }">
-            <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+            <GenericTime v-if="conduct.expiresAt" class="font-semibold" type="date" :value="conduct.expiresAt" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>
