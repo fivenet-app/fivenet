@@ -183,8 +183,7 @@ defineShortcuts({
                                     option-attribute="name"
                                     :search-attributes="['name']"
                                     block
-                                    :searchable="completorStore.completeDocumentCategories"
-                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search="completorStore.completeDocumentCategories"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
