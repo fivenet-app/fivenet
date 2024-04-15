@@ -4,8 +4,6 @@ import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//Dispa
 
 defineProps<{
     status: DispatchStatus | undefined;
-    textClass?: unknown;
-    buttonClass?: unknown;
 }>();
 
 const modal = useModal();
@@ -22,15 +20,14 @@ const modal = useModal();
     <template v-else>
         <UPopover>
             <UButton
-                variant="link"
+                variant="outline"
                 :padded="false"
                 size="xs"
                 class="inline-flex items-center p-0.5"
-                :class="buttonClass"
                 trailing-icon="i-mdi-chevron-down"
             >
                 <slot name="before" />
-                <span :class="textClass"> DSP-{{ status.dispatchId }} </span>
+                <span> DSP-{{ status.dispatchId }} </span>
                 <slot name="after" />
             </UButton>
 

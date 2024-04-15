@@ -11,17 +11,11 @@ withDefaults(
     defineProps<{
         unit: Unit | undefined;
         initialsOnly?: boolean;
-        textClass?: unknown;
-        buttonClass?: unknown;
-        badge?: boolean;
         assignment?: DispatchAssignment;
     }>(),
     {
         initialsOnly: false,
-        badge: false,
         assignment: undefined,
-        textClass: '' as any,
-        buttonClass: '' as any,
     },
 );
 </script>
@@ -31,24 +25,22 @@ withDefaults(
         <span class="inline-flex items-center">
             <slot name="before" />
             <span>N/A</span>
-            <slot name="after" />
         </span>
     </template>
     <UPopover v-else>
-        <UButton variant="link" :padded="false" class="inline-flex items-center gap-1" :class="buttonClass">
+        <UButton variant="outline" :padded="false" size="xs" class="inline-flex items-center gap-1 p-0.5">
             <slot name="before" />
 
-            <span :class="textClass">
+            <span>
                 <template v-if="!initialsOnly"> {{ unit.name }} ({{ unit.initials }}) </template>
                 <template v-else>
                     {{ unit.initials }}
                 </template>
             </span>
-            <template v-if="assignment?.expiresAt">
-                <UIcon name="i-mdi-timer" class="size-4 text-warn-600" />
-            </template>
 
-            <slot name="after" />
+            <template v-if="assignment?.expiresAt">
+                <UIcon name="i-mdi-timer" class="size-4 text-amber-600" />
+            </template>
         </UButton>
 
         <template #panel>
