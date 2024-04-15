@@ -10,9 +10,11 @@ const props = withDefaults(
     defineProps<{
         modelValue: string;
         disabled?: boolean;
+        splitScreen?: boolean;
     }>(),
     {
         disabled: false,
+        splitScreen: false,
     },
 );
 
@@ -36,19 +38,23 @@ const config = {
     editorClassName: 'prose' + (theme.value.documents.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
     theme: theme.value.documents.editorTheme,
 
-    readonly: false,
+    defaultMode: props.splitScreen ? '3' : '1',
+
+    disablePlugins: ['about', 'poweredByJodit', 'classSpan', 'file', 'video', 'print', 'preview'],
     defaultActionOnPaste: 'insert_clear_html',
-    disablePlugins: ['about', 'poweredByJodit', 'classSpan', 'file', 'video', 'print'],
+
     // Uploader Plugin
     uploader: {
         insertImageAsBase64URI: true,
     },
+
     // Clean HTML Plugin
     cleanHTML: {
         denyTags: 'script,iframe,form,button,svg',
         fillEmptyParagraph: false,
     },
     nl2brInPlainText: true,
+
     // Inline Plugin
     toolbarInline: true,
     toolbarInlineForSelection: true,
@@ -57,44 +63,25 @@ const config = {
     popup: {
         a: Jodit.atom(['link', 'unlink']),
     },
+
     // Link Plugin
     link: {
-        /**
-         * Template for the link dialog form
-         */
-        formTemplate: (_: Jodit) => `<form><input ref="url_input"><button>Apply</button></form>`,
+        formTemplate: (_: Jodit) =>
+            `<form class="inline-flex gap-2">
+                <input ref="url_input" class="relative block w-full disabled:cursor-not-allowed disabled:opacity-75 focus:outline-none border-0 form-input rounded-md placeholder-gray-400 dark:placeholder-gray-500 text-sm px-2.5 py-1.5 shadow-sm bg-white dark:bg-gray-900 text-gray-900 dark:text-white ring-1 ring-inset ring-gray-300 dark:ring-gray-700 focus:ring-2 focus:ring-primary-500 dark:focus:ring-primary-400" placeholder="Link" />
+                <button class="rounded-md focus:outline-none disabled:cursor-not-allowed disabled:opacity-75 flex-shrink-0 font-medium text-sm gap-x-1.5 px-2.5 py-1.5 shadow-sm text-white dark:text-gray-900 bg-primary-500 hover:bg-primary-600 disabled:bg-primary-500 dark:bg-primary-400 dark:hover:bg-primary-500 dark:disabled:bg-primary-400 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-500 dark:focus-visible:outline-primary-400 inline-flex items-center">Apply</button>
+            </form>`,
         formClassName: 'some-class',
-        /**
-         * Follow link address after dblclick
-         */
         followOnDblClick: true,
-        /**
-         * Replace inserted youtube/vimeo link to `iframe`
-         */
         processVideoLink: false,
-        /**
-         * Wrap inserted link
-         */
         processPastedLink: true,
-        /**
-         * Show `no follow` checkbox in link dialog.
-         */
         noFollowCheckbox: false,
-        /**
-         * Show `Open in new tab` checkbox in link dialog.
-         */
         openInNewTabCheckbox: false,
-        /**
-         * Use an input text to ask the classname or a select or not ask
-         */
         modeClassName: 'input', // 'select'
         /**
          * Allow multiple choises (to use with modeClassName="select")
          */
         selectMultipleClassName: true,
-        /**
-         * The size of the select (to use with modeClassName="select")
-         */
         selectSizeClassName: 10,
         /**
          * The list of the option for the select (to use with modeClassName="select")
@@ -191,18 +178,21 @@ watch(props, () => {
 </script>
 
 <template>
-    <div class="documentEditor">
+    <div class="documentEditor mx-auto max-w-screen-xl">
         <JoditEditor ref="editorRef" v-model="content" :config="config" :plugins="plugins" :extra-buttons="extraButtons" />
     </div>
 </template>
 
 <style scoped>
-.documentEditor:deep(.jodit-wysiwyg) {
-    min-width: 100%;
+.documentEditor:deep(.jodit-container) {
+    .jodit-wysiwyg {
+        width: 100% !important;
+        max-width: 100%;
 
-    * {
-        margin-top: 4px;
-        margin-bottom: 4px;
+        * {
+            margin-top: 4px;
+            margin-bottom: 4px;
+        }
     }
 }
 </style>

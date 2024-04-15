@@ -275,7 +275,7 @@ func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCit
 
 	stmt := tJobCitizenAttributes.
 		SELECT(
-			tJobCitizenAttributes.Job,
+			tJobCitizenAttributes.ID,
 			tJobCitizenAttributes.Name,
 			tJobCitizenAttributes.Color,
 		).

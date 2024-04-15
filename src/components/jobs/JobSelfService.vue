@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { isToday, parse } from 'date-fns';
+import { emojiBlasts } from 'emoji-blast';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
@@ -9,6 +11,8 @@ defineProps<{
 }>();
 
 const { $grpc } = useNuxtApp();
+
+const modal = useModal();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
@@ -25,7 +29,21 @@ const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () 
     }
 });
 
-const modal = useModal();
+onMounted(() => {
+    if (!colleagueSelf.value?.colleague?.dateofbirth) {
+        return;
+    }
+
+    const birthday = parse(colleagueSelf.value?.colleague?.dateofbirth, 'dd.MM.yyyy', new Date());
+    birthday.setFullYear(new Date().getFullYear());
+
+    if (isToday(birthday)) {
+        const { cancel } = emojiBlasts({
+            emojis: ['🎂', '🎁', '🍰', '🎈', '🎉', '🥳', '🎊', '✨'],
+        });
+        useTimeoutFn(cancel, 5000);
+    }
+});
 </script>
 
 <template>

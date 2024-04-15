@@ -172,10 +172,10 @@ onMounted(async () => {
             const req = { documentId: props.documentId };
             const call = $grpc.getDocStoreClient().getDocument(req);
             const { response } = await call;
+
             const document = response.document;
             docAccess.value = response.access;
             docCreator.value = document?.creator;
-
             if (document) {
                 state.title = document.title;
                 state.state = document.state;
@@ -225,13 +225,11 @@ onMounted(async () => {
             return;
         }
     } else {
-        if (documentStore.$state) {
-            state.title = document.title;
-            state.state = documentStore.$state.state;
-            state.content = documentStore.$state.content;
-            state.category = documentStore.$state.category;
-            state.closed = documentStore.$state.closed;
-        }
+        state.title = documentStore.$state.title;
+        state.state = documentStore.$state.state;
+        state.content = documentStore.$state.content;
+        state.category = documentStore.$state.category;
+        state.closed = documentStore.$state.closed;
 
         const accessId = 0;
         access.value.set(accessId.toString(), {

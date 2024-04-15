@@ -10,25 +10,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/centrum/general.proto](#resources_centrum_general-proto)
-    - [Attributes](#resources-centrum-Attributes)
-    - [Disponents](#resources-centrum-Disponents)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
-- [resources/centrum/units.proto](#resources_centrum_units-proto)
-    - [Unit](#resources-centrum-Unit)
-    - [UnitAssignment](#resources-centrum-UnitAssignment)
-    - [UnitAssignments](#resources-centrum-UnitAssignments)
-    - [UnitStatus](#resources-centrum-UnitStatus)
-  
-    - [StatusUnit](#resources-centrum-StatusUnit)
-  
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-  
-    - [CentrumMode](#resources-centrum-CentrumMode)
-  
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -41,6 +22,25 @@
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
   
+- [resources/centrum/general.proto](#resources_centrum_general-proto)
+    - [Attributes](#resources-centrum-Attributes)
+    - [Disponents](#resources-centrum-Disponents)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
+  
+- [resources/centrum/units.proto](#resources_centrum_units-proto)
+    - [Unit](#resources-centrum-Unit)
+    - [UnitAssignment](#resources-centrum-UnitAssignment)
+    - [UnitAssignments](#resources-centrum-UnitAssignments)
+    - [UnitStatus](#resources-centrum-UnitStatus)
+  
+    - [StatusUnit](#resources-centrum-StatusUnit)
+  
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [OrderBy](#resources-common-database-OrderBy)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
@@ -50,11 +50,13 @@
     - [TranslateItem](#resources-common-TranslateItem)
     - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
   
-- [resources/documents/category.proto](#resources_documents_category-proto)
-    - [Category](#resources-documents-Category)
+- [resources/documents/access.proto](#resources_documents_access-proto)
+    - [DocumentAccess](#resources-documents-DocumentAccess)
+    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
+    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
   
-- [resources/documents/requests.proto](#resources_documents_requests-proto)
-    - [DocRequest](#resources-documents-DocRequest)
+    - [AccessLevel](#resources-documents-AccessLevel)
+    - [AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode)
   
 - [resources/documents/activity.proto](#resources_documents_activity-proto)
     - [DocAccessRequested](#resources-documents-DocAccessRequested)
@@ -65,13 +67,8 @@
   
     - [DocActivityType](#resources-documents-DocActivityType)
   
-- [resources/documents/access.proto](#resources_documents_access-proto)
-    - [DocumentAccess](#resources-documents-DocumentAccess)
-    - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
-    - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
-  
-    - [AccessLevel](#resources-documents-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode)
+- [resources/documents/category.proto](#resources_documents_category-proto)
+    - [Category](#resources-documents-Category)
   
 - [resources/documents/comment.proto](#resources_documents_comment-proto)
     - [Comment](#resources-documents-Comment)
@@ -85,6 +82,9 @@
     - [DocContentType](#resources-documents-DocContentType)
     - [DocReference](#resources-documents-DocReference)
     - [DocRelation](#resources-documents-DocRelation)
+  
+- [resources/documents/requests.proto](#resources_documents_requests-proto)
+    - [DocRequest](#resources-documents-DocRequest)
   
 - [resources/documents/templates.proto](#resources_documents_templates-proto)
     - [ObjectSpecs](#resources-documents-ObjectSpecs)
@@ -119,9 +119,6 @@
     - [Law](#resources-laws-Law)
     - [LawBook](#resources-laws-LawBook)
   
-- [resources/livemap/tracker.proto](#resources_livemap_tracker-proto)
-    - [UsersUpdateEvent](#resources-livemap-UsersUpdateEvent)
-  
 - [resources/livemap/livemap.proto](#resources_livemap_livemap-proto)
     - [CircleMarker](#resources-livemap-CircleMarker)
     - [Coords](#resources-livemap-Coords)
@@ -132,6 +129,9 @@
     - [UserMarker](#resources-livemap-UserMarker)
   
     - [MarkerType](#resources-livemap-MarkerType)
+  
+- [resources/livemap/tracker.proto](#resources_livemap_tracker-proto)
+    - [UsersUpdateEvent](#resources-livemap-UsersUpdateEvent)
   
 - [resources/notifications/notifications.proto](#resources_notifications_notifications-proto)
     - [Data](#resources-notifications-Data)
@@ -170,17 +170,6 @@
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
   
-- [resources/users/users.proto](#resources_users_users-proto)
-    - [CitizenAttribute](#resources-users-CitizenAttribute)
-    - [CitizenAttributes](#resources-users-CitizenAttributes)
-    - [License](#resources-users-License)
-    - [User](#resources-users-User)
-    - [UserActivity](#resources-users-UserActivity)
-    - [UserProps](#resources-users-UserProps)
-    - [UserShort](#resources-users-UserShort)
-  
-    - [UserActivityType](#resources-users-UserActivityType)
-  
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
     - [GroupSyncSettings](#resources-users-GroupSyncSettings)
@@ -194,6 +183,17 @@
     - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
   
     - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
+  
+- [resources/users/users.proto](#resources_users_users-proto)
+    - [CitizenAttribute](#resources-users-CitizenAttribute)
+    - [CitizenAttributes](#resources-users-CitizenAttributes)
+    - [License](#resources-users-License)
+    - [User](#resources-users-User)
+    - [UserActivity](#resources-users-UserActivity)
+    - [UserProps](#resources-users-UserProps)
+    - [UserShort](#resources-users-UserShort)
+  
+    - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -413,16 +413,6 @@
   
     - [JobsConductService](#services-jobs-JobsConductService)
   
-- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
-    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
-    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
-    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
-    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
-    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
-    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
-  
-    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
-  
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueRequest](#services-jobs-GetColleagueRequest)
     - [GetColleagueResponse](#services-jobs-GetColleagueResponse)
@@ -440,6 +430,16 @@
     - [SetMOTDResponse](#services-jobs-SetMOTDResponse)
   
     - [JobsService](#services-jobs-JobsService)
+  
+- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
+    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
+    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
+    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
+    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
+    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
+    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
+  
+    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
   
 - [services/livemapper/livemap.proto](#services_livemapper_livemap-proto)
     - [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest)
@@ -645,259 +645,6 @@
 
 
 
-<a name="resources_centrum_general-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/general.proto
-
-
-
-<a name="resources-centrum-Attributes"></a>
-
-### Attributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Disponents"></a>
-
-### Disponents
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| user_id | [int32](#int32) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_units-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/units.proto
-
-
-
-<a name="resources-centrum-Unit"></a>
-
-### Unit
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| name | [string](#string) |  | @sanitize |
-| initials | [string](#string) |  | @sanitize |
-| color | [string](#string) |  |  |
-| description | [string](#string) | optional | @sanitize |
-| status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
-| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
-| home_postal | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignment"></a>
-
-### UnitAssignment
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
-| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;user_id&#34; |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignments"></a>
-
-### UnitAssignments
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitStatus"></a>
-
-### UnitStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| unit_id | [uint64](#uint64) |  |  |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| status | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
-| reason | [string](#string) | optional | @sanitize |
-| code | [string](#string) | optional | @sanitize |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| x | [double](#double) | optional |  |
-| y | [double](#double) | optional |  |
-| postal | [string](#string) | optional | @sanitize |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-StatusUnit"></a>
-
-### StatusUnit
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| STATUS_UNIT_UNSPECIFIED | 0 |  |
-| STATUS_UNIT_UNKNOWN | 1 |  |
-| STATUS_UNIT_USER_ADDED | 2 |  |
-| STATUS_UNIT_USER_REMOVED | 3 |  |
-| STATUS_UNIT_UNAVAILABLE | 4 |  |
-| STATUS_UNIT_AVAILABLE | 5 |  |
-| STATUS_UNIT_ON_BREAK | 6 |  |
-| STATUS_UNIT_BUSY | 7 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/settings.proto
-
-
-
-<a name="resources-centrum-PredefinedStatus"></a>
-
-### PredefinedStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_status | [string](#string) | repeated |  |
-| dispatch_status | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| enabled | [bool](#bool) |  |  |
-| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-CentrumMode"></a>
-
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CENTRUM_MODE_UNSPECIFIED | 0 |  |
-| CENTRUM_MODE_MANUAL | 1 |  |
-| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
-| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
-| CENTRUM_MODE_SIMPLIFIED | 4 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_centrum_dispatches-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1090,6 +837,259 @@
 
 
 
+<a name="resources_centrum_general-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/general.proto
+
+
+
+<a name="resources-centrum-Attributes"></a>
+
+### Attributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| user_id | [int32](#int32) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_status | [string](#string) | repeated |  |
+| dispatch_status | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CENTRUM_MODE_UNSPECIFIED | 0 |  |
+| CENTRUM_MODE_MANUAL | 1 |  |
+| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
+| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
+| CENTRUM_MODE_SIMPLIFIED | 4 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_units-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/units.proto
+
+
+
+<a name="resources-centrum-Unit"></a>
+
+### Unit
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| name | [string](#string) |  | @sanitize |
+| initials | [string](#string) |  | @sanitize |
+| color | [string](#string) |  |  |
+| description | [string](#string) | optional | @sanitize |
+| status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
+| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
+| home_postal | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignment"></a>
+
+### UnitAssignment
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
+| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;user_id&#34; |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignments"></a>
+
+### UnitAssignments
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitStatus"></a>
+
+### UnitStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| unit_id | [uint64](#uint64) |  |  |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| status | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
+| reason | [string](#string) | optional | @sanitize |
+| code | [string](#string) | optional | @sanitize |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| x | [double](#double) | optional |  |
+| y | [double](#double) | optional |  |
+| postal | [string](#string) | optional | @sanitize |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-StatusUnit"></a>
+
+### StatusUnit
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STATUS_UNIT_UNSPECIFIED | 0 |  |
+| STATUS_UNIT_UNKNOWN | 1 |  |
+| STATUS_UNIT_USER_ADDED | 2 |  |
+| STATUS_UNIT_USER_REMOVED | 3 |  |
+| STATUS_UNIT_UNAVAILABLE | 4 |  |
+| STATUS_UNIT_AVAILABLE | 5 |  |
+| STATUS_UNIT_ON_BREAK | 6 |  |
+| STATUS_UNIT_BUSY | 7 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
 <a name="resources_common_database_database-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1204,73 +1204,104 @@
 
 
 
-<a name="resources_documents_category-proto"></a>
+<a name="resources_documents_access-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/documents/category.proto
+## resources/documents/access.proto
 
 
 
-<a name="resources-documents-Category"></a>
+<a name="resources-documents-DocumentAccess"></a>
 
-### Category
+### DocumentAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
+| users | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
+
+
+
+
+
+
+<a name="resources-documents-DocumentJobAccess"></a>
+
+### DocumentJobAccess
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
-| name | [string](#string) |  | @sanitize |
-| description | [string](#string) | optional | @sanitize |
-| job | [string](#string) | optional |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_documents_requests-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/documents/requests.proto
-
-
-
-<a name="resources-documents-DocRequest"></a>
-
-### DocRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | document_id | [uint64](#uint64) |  |  |
-| request_type | [DocActivityType](#resources-documents-DocActivityType) |  |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-| creator_job_label | [string](#string) | optional |  |
-| reason | [string](#string) | optional |  |
-| data | [DocActivityData](#resources-documents-DocActivityData) |  |  |
-| accepted | [bool](#bool) | optional |  |
+| job | [string](#string) |  | @gotags: alias:&#34;job&#34; |
+| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
+| minimum_grade | [int32](#int32) |  | @gotags: alias:&#34;minimum_grade&#34; |
+| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  | @gotags: alias:&#34;access&#34; |
+| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
+
+
+
+
+
+
+<a name="resources-documents-DocumentUserAccess"></a>
+
+### DocumentUserAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| document_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| access | [AccessLevel](#resources-documents-AccessLevel) |  | @gotags: alias:&#34;access&#34; |
+| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
 
 
 
 
 
  
+
+
+<a name="resources-documents-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_COMMENT | 3 |  |
+| ACCESS_LEVEL_STATUS | 4 |  |
+| ACCESS_LEVEL_ACCESS | 5 |  |
+| ACCESS_LEVEL_EDIT | 6 |  |
+
+
+
+<a name="resources-documents-AccessLevelUpdateMode"></a>
+
+### AccessLevelUpdateMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
+| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
+| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
+
 
  
 
@@ -1415,104 +1446,31 @@
 
 
 
-<a name="resources_documents_access-proto"></a>
+<a name="resources_documents_category-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/documents/access.proto
+## resources/documents/category.proto
 
 
 
-<a name="resources-documents-DocumentAccess"></a>
+<a name="resources-documents-Category"></a>
 
-### DocumentAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [DocumentJobAccess](#resources-documents-DocumentJobAccess) | repeated | @gotags: alias:&#34;job_access&#34; |
-| users | [DocumentUserAccess](#resources-documents-DocumentUserAccess) | repeated | @gotags: alias:&#34;user_access&#34; |
-
-
-
-
-
-
-<a name="resources-documents-DocumentJobAccess"></a>
-
-### DocumentJobAccess
+### Category
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  | @gotags: alias:&#34;job&#34; |
-| job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
-| minimum_grade | [int32](#int32) |  | @gotags: alias:&#34;minimum_grade&#34; |
-| job_grade_label | [string](#string) | optional | @gotags: alias:&#34;job_grade_label&#34; |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  | @gotags: alias:&#34;access&#34; |
-| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
-
-
-
-
-
-
-<a name="resources-documents-DocumentUserAccess"></a>
-
-### DocumentUserAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| document_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| access | [AccessLevel](#resources-documents-AccessLevel) |  | @gotags: alias:&#34;access&#34; |
-| required | [bool](#bool) | optional | @gotags: alias:&#34;required&#34; |
+| name | [string](#string) |  | @sanitize |
+| description | [string](#string) | optional | @sanitize |
+| job | [string](#string) | optional |  |
 
 
 
 
 
  
-
-
-<a name="resources-documents-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_COMMENT | 3 |  |
-| ACCESS_LEVEL_STATUS | 4 |  |
-| ACCESS_LEVEL_ACCESS | 5 |  |
-| ACCESS_LEVEL_EDIT | 6 |  |
-
-
-
-<a name="resources-documents-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
 
  
 
@@ -1720,6 +1678,48 @@
 | DOC_RELATION_TARGETS | 2 |  |
 | DOC_RELATION_CAUSED | 3 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_documents_requests-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/documents/requests.proto
+
+
+
+<a name="resources-documents-DocRequest"></a>
+
+### DocRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| document_id | [uint64](#uint64) |  |  |
+| request_type | [DocActivityType](#resources-documents-DocActivityType) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+| creator_job_label | [string](#string) | optional |  |
+| reason | [string](#string) | optional |  |
+| data | [DocActivityData](#resources-documents-DocActivityData) |  |  |
+| accepted | [bool](#bool) | optional |  |
+
+
+
+
+
+ 
 
  
 
@@ -2225,38 +2225,6 @@
 
 
 
-<a name="resources_livemap_tracker-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/livemap/tracker.proto
-
-
-
-<a name="resources-livemap-UsersUpdateEvent"></a>
-
-### UsersUpdateEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| added | [UserMarker](#resources-livemap-UserMarker) | repeated |  |
-| removed | [UserMarker](#resources-livemap-UserMarker) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_livemap_livemap-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2406,6 +2374,38 @@
 | MARKER_TYPE_CIRCLE | 2 |  |
 | MARKER_TYPE_ICON | 3 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_livemap_tracker-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/livemap/tracker.proto
+
+
+
+<a name="resources-livemap-UsersUpdateEvent"></a>
+
+### UsersUpdateEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| added | [UserMarker](#resources-livemap-UserMarker) | repeated |  |
+| removed | [UserMarker](#resources-livemap-UserMarker) | repeated |  |
+
+
+
+
+
+ 
 
  
 
@@ -2944,192 +2944,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_users_users-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/users.proto
-
-
-
-<a name="resources-users-CitizenAttribute"></a>
-
-### CitizenAttribute
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) | optional |  |
-| name | [string](#string) |  |  |
-| color | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-CitizenAttributes"></a>
-
-### CitizenAttributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| type | [string](#string) |  |  |
-| label | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-User"></a>
-
-### User
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| sex | [string](#string) | optional |  |
-| height | [string](#string) | optional |  |
-| phone_number | [string](#string) | optional |  |
-| visum | [int32](#int32) | optional |  |
-| playtime | [int32](#int32) | optional |  |
-| props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:&#34;fivenet_user_props&#34; |
-| licenses | [License](#resources-users-License) | repeated | @gotags: alias:&#34;user_licenses&#34; |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserActivity"></a>
-
-### UserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:&#34;fivenet_user_activity.id&#34; |
-| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:&#34;fivenet_user_activity.type&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:&#34;fivenet_user_activity.created_at&#34; |
-| source_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;source_user&#34; |
-| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;target_user&#34; |
-| key | [string](#string) |  | @sanitize
-
-@gotags: alias:&#34;fivenet_user_activity.key&#34; |
-| old_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.old_value&#34; |
-| new_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.new_value&#34; |
-| reason | [string](#string) |  | @sanitize
-
-@gotags: alias:&#34;fivenet_user_activity.reason&#34; |
-
-
-
-
-
-
-<a name="resources-users-UserProps"></a>
-
-### UserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| wanted | [bool](#bool) | optional |  |
-| job_name | [string](#string) | optional | @gotags: alias:&#34;job&#34; |
-| job | [Job](#resources-users-Job) | optional |  |
-| job_grade_number | [int32](#int32) | optional | @gotags: alias:&#34;job_grade&#34; |
-| job_grade | [JobGrade](#resources-users-JobGrade) | optional |  |
-| traffic_infraction_points | [uint32](#uint32) | optional |  |
-| open_fines | [int64](#int64) | optional |  |
-| blood_type | [string](#string) | optional |  |
-| mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserShort"></a>
-
-### UserShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| phone_number | [string](#string) | optional |  |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-users-UserActivityType"></a>
-
-### UserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
-| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
-| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
-| USER_ACTIVITY_TYPE_CREATED | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_users_jobs-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3321,6 +3135,193 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED | 0 |  |
 | USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE | 1 |  |
 | USER_INFO_SYNC_UNEMPLOYED_MODE_KICK | 2 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_users_users-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/users.proto
+
+
+
+<a name="resources-users-CitizenAttribute"></a>
+
+### CitizenAttribute
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-CitizenAttributes"></a>
+
+### CitizenAttributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [string](#string) |  |  |
+| label | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-User"></a>
+
+### User
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
+| identifier | [string](#string) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| sex | [string](#string) | optional |  |
+| height | [string](#string) | optional |  |
+| phone_number | [string](#string) | optional |  |
+| visum | [int32](#int32) | optional |  |
+| playtime | [int32](#int32) | optional |  |
+| props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:&#34;fivenet_user_props&#34; |
+| licenses | [License](#resources-users-License) | repeated | @gotags: alias:&#34;user_licenses&#34; |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserActivity"></a>
+
+### UserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:&#34;fivenet_user_activity.id&#34; |
+| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:&#34;fivenet_user_activity.type&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:&#34;fivenet_user_activity.created_at&#34; |
+| source_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;source_user&#34; |
+| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;target_user&#34; |
+| key | [string](#string) |  | @sanitize
+
+@gotags: alias:&#34;fivenet_user_activity.key&#34; |
+| old_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.old_value&#34; |
+| new_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.new_value&#34; |
+| reason | [string](#string) |  | @sanitize
+
+@gotags: alias:&#34;fivenet_user_activity.reason&#34; |
+
+
+
+
+
+
+<a name="resources-users-UserProps"></a>
+
+### UserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| wanted | [bool](#bool) | optional |  |
+| job_name | [string](#string) | optional | @gotags: alias:&#34;job&#34; |
+| job | [Job](#resources-users-Job) | optional |  |
+| job_grade_number | [int32](#int32) | optional | @gotags: alias:&#34;job_grade&#34; |
+| job_grade | [JobGrade](#resources-users-JobGrade) | optional |  |
+| traffic_infraction_points | [uint32](#uint32) | optional |  |
+| open_fines | [int64](#int64) | optional |  |
+| blood_type | [string](#string) | optional |  |
+| mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserShort"></a>
+
+### UserShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
+| identifier | [string](#string) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| phone_number | [string](#string) | optional |  |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-users-UserActivityType"></a>
+
+### UserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
+| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
+| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
+| USER_ACTIVITY_TYPE_CREATED | 3 |  |
 
 
  
@@ -6446,134 +6447,6 @@ Templates ==================================================================
 
 
 
-<a name="services_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/jobs/timeclock.proto
-
-
-
-<a name="services-jobs-GetTimeclockStatsRequest"></a>
-
-### GetTimeclockStatsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-GetTimeclockStatsResponse"></a>
-
-### GetTimeclockStatsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesRequest"></a>
-
-### ListInactiveEmployeesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| days | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesResponse"></a>
-
-### ListInactiveEmployeesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockRequest"></a>
-
-### ListTimeclockRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| user_ids | [int32](#int32) | repeated | Search |
-| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| per_day | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockResponse"></a>
-
-### ListTimeclockResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-jobs-JobsTimeclockService"></a>
-
-### JobsTimeclockService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
-| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
-| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
-
- 
-
-
-
 <a name="services_jobs_jobs-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -6808,6 +6681,134 @@ Templates ==================================================================
 | SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
 | GetMOTD | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | SetMOTD | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
+
+ 
+
+
+
+<a name="services_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/jobs/timeclock.proto
+
+
+
+<a name="services-jobs-GetTimeclockStatsRequest"></a>
+
+### GetTimeclockStatsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-GetTimeclockStatsResponse"></a>
+
+### GetTimeclockStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesRequest"></a>
+
+### ListInactiveEmployeesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| days | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesResponse"></a>
+
+### ListInactiveEmployeesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockRequest"></a>
+
+### ListTimeclockRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| user_ids | [int32](#int32) | repeated | Search |
+| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| per_day | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockResponse"></a>
+
+### ListTimeclockResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-jobs-JobsTimeclockService"></a>
+
+### JobsTimeclockService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
+| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
+| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
 
  
 

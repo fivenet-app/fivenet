@@ -15,7 +15,6 @@ import (
 	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	errorscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/errors"
 	permscitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
-	permscompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor/perms"
 	"github.com/galexrt/fivenet/pkg/config"
 	"github.com/galexrt/fivenet/pkg/config/appconfig"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -47,7 +46,8 @@ var (
 	tUserProps    = table.FivenetUserProps
 	tUserActivity = table.FivenetUserActivity
 
-	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
+	tJobCitizenAttributes  = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
+	tUserCitizenAttributes = table.FivenetUserCitizenAttributes
 )
 
 var ZeroTrafficInfractionPoints uint32 = 0
@@ -125,12 +125,14 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		switch field {
 		case "PhoneNumber":
 			selectors = append(selectors, tUser.PhoneNumber)
+
 			if req.PhoneNumber != nil && *req.PhoneNumber != "" {
 				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(*req.PhoneNumber, "%", ""), " ", "") + "%"
 				condition = condition.AND(tUser.PhoneNumber.LIKE(jet.String(phoneNumber)))
 			}
 		case "UserProps.Wanted":
 			selectors = append(selectors, tUserProps.Wanted)
+
 			if req.Wanted != nil && *req.Wanted {
 				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
 			}
@@ -138,11 +140,13 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
+
 			if req.TrafficInfractionPoints != nil && *req.TrafficInfractionPoints > 0 {
 				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint32(*req.TrafficInfractionPoints)))
 			}
 		case "UserProps.OpenFines":
 			selectors = append(selectors, tUserProps.OpenFines)
+
 			if req.OpenFines != nil && *req.OpenFines > 0 {
 				condition = condition.AND(tUserProps.OpenFines.GT_EQ(jet.Uint64(*req.OpenFines)))
 			}
@@ -293,8 +297,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 			selectors = append(selectors, tUserProps.BloodType)
 		case "UserProps.MugShot":
 			selectors = append(selectors, tUserProps.MugShot)
-		case "UserProps.Attributes":
-			selectors = append(selectors, tUserProps.Attributes)
 		}
 	}
 
@@ -389,6 +391,14 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 				return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 			}
 		}
+	}
+
+	if slices.Contains(fields, "UserProps.Attributes") {
+		attributes, err := s.getUserAttributes(ctx, userInfo, req.UserId)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
+		resp.User.Props.Attributes = attributes
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
@@ -526,7 +536,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Get current user props to be able to compare
-	props, err := s.getUserProps(ctx, req.Props.UserId)
+	props, err := s.getUserProps(ctx, userInfo, req.Props.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -667,7 +677,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			req.Props.Attributes.List = []*users.CitizenAttribute{}
 		}
 
-		req.Props.Attributes.List = utils.RemoveSliceDuplicates(req.Props.Attributes.List)
 		slices.SortFunc(req.Props.Attributes.List, func(a, b *users.CitizenAttribute) int {
 			return strings.Compare(a.Name, b.Name)
 		})
@@ -684,8 +693,6 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		if !valid {
 			return nil, errorscitizenstore.ErrPropsAttributesDenied
 		}
-
-		updateSets = append(updateSets, tUserProps.Attributes.SET(jet.StringExp(jet.Raw("VALUES(`attributes`)"))))
 	} else {
 		req.Props.Attributes = props.Attributes
 	}
@@ -698,31 +705,31 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	stmt := tUserProps.
-		INSERT(
-			tUserProps.UserID,
-			tUserProps.Wanted,
-			tUserProps.Job,
-			tUserProps.JobGrade,
-			tUserProps.TrafficInfractionPoints,
-			tUserProps.MugShot,
-			tUserProps.Attributes,
-		).
-		VALUES(
-			req.Props.UserId,
-			req.Props.Wanted,
-			req.Props.JobName,
-			req.Props.JobGradeNumber,
-			req.Props.TrafficInfractionPoints,
-			req.Props.MugShot,
-			req.Props.Attributes,
-		).
-		ON_DUPLICATE_KEY_UPDATE(
-			updateSets...,
-		)
+	if len(updateSets) > 0 {
+		stmt := tUserProps.
+			INSERT(
+				tUserProps.UserID,
+				tUserProps.Wanted,
+				tUserProps.Job,
+				tUserProps.JobGrade,
+				tUserProps.TrafficInfractionPoints,
+				tUserProps.MugShot,
+			).
+			VALUES(
+				req.Props.UserId,
+				req.Props.Wanted,
+				req.Props.JobName,
+				req.Props.JobGradeNumber,
+				req.Props.TrafficInfractionPoints,
+				req.Props.MugShot,
+			).
+			ON_DUPLICATE_KEY_UPDATE(
+				updateSets...,
+			)
 
-	if _, err := stmt.ExecContext(ctx, tx); err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
 	}
 
 	// Create user activity entries
@@ -768,6 +775,10 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 			func(in *users.CitizenAttribute) string {
 				return in.Name
 			})
+
+		if err := s.updateCitizenAttributes(ctx, tx, req.Props.UserId, added, removed); err != nil {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
 
 		addedOut, err := protojson.Marshal(&users.CitizenAttributes{
 			List: added,
@@ -818,7 +829,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	return resp, nil
 }
 
-func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserProps, error) {
+func (s *Server) getUserProps(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.UserProps, error) {
 	tUserProps := tUserProps.AS("userprops")
 	stmt := tUserProps.
 		SELECT(
@@ -828,7 +839,6 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 			tUserProps.JobGrade,
 			tUserProps.TrafficInfractionPoints,
 			tUserProps.MugShot,
-			tUserProps.Attributes,
 		).
 		FROM(tUserProps).
 		WHERE(
@@ -837,12 +847,17 @@ func (s *Server) getUserProps(ctx context.Context, userId int32) (*users.UserPro
 		LIMIT(1)
 
 	var dest users.UserProps
-	dest.UserId = userId
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
+
+	attributes, err := s.getUserAttributes(ctx, userInfo, userId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+	}
+	dest.Attributes = attributes
 
 	return &dest, nil
 }
@@ -957,134 +972,4 @@ func (s *Server) getUserAvatar(ctx context.Context, userId int32) (*filestore.Fi
 	}
 
 	return dest.Avatar, nil
-}
-
-func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
-	resp := &ManageCitizenAttributesResponse{
-		Attributes: []*users.CitizenAttribute{},
-	}
-
-	stmt := tJobCitizenAttributes.
-		SELECT(
-			tJobCitizenAttributes.Name,
-			tJobCitizenAttributes.Color,
-		).
-		FROM(tJobCitizenAttributes).
-		WHERE(
-			tJobCitizenAttributes.Job.EQ(jet.String(userInfo.Job)),
-		)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-
-	_, removed := utils.SlicesDifferenceFunc(resp.Attributes, req.Attributes,
-		func(in *users.CitizenAttribute) string {
-			return in.Name
-		})
-
-	for i := 0; i < len(req.Attributes); i++ {
-		req.Attributes[i].Job = &userInfo.Job
-	}
-
-	tJobCitizenAttributes := table.FivenetJobCitizenAttributes
-	insertStmt := tJobCitizenAttributes.
-		INSERT().
-		MODELS(req.Attributes).
-		ON_DUPLICATE_KEY_UPDATE(
-			tJobCitizenAttributes.Job.SET(jet.StringExp(jet.Raw("VALUES(`job`)"))),
-			tJobCitizenAttributes.Name.SET(jet.StringExp(jet.Raw("VALUES(`name`)"))),
-			tJobCitizenAttributes.Color.SET(jet.StringExp(jet.Raw("VALUES(`color`)"))),
-		)
-
-	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-	}
-
-	if len(removed) > 0 {
-		names := make([]jet.Expression, len(removed))
-
-		for i := range removed {
-			names[i] = jet.String(removed[i].Name)
-		}
-
-		deleteStmt := tJobCitizenAttributes.
-			DELETE().
-			WHERE(jet.AND(
-				tJobCitizenAttributes.Job.EQ(jet.String(userInfo.Job)),
-				tJobCitizenAttributes.Name.IN(names...),
-			)).
-			LIMIT(int64(len(removed)))
-
-		if _, err := deleteStmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-
-	resp.Attributes = []*users.CitizenAttribute{}
-	if err := stmt.QueryContext(ctx, s.db, &resp.Attributes); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-		}
-	}
-
-	return resp, nil
-}
-
-func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userinfo.UserInfo, attributes []*users.CitizenAttribute) (bool, error) {
-	if len(attributes) == 0 {
-		return true, nil
-	}
-
-	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
-	if err != nil {
-		return false, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
-	}
-	var jobs perms.StringList
-	if jobsAttr != nil {
-		jobs = jobsAttr.([]string)
-	}
-
-	if len(jobs) == 0 {
-		jobs = append(jobs, userInfo.Job)
-	}
-
-	jobsExp := make([]jet.Expression, len(jobs))
-	for i := 0; i < len(jobs); i++ {
-		jobsExp[i] = jet.String(jobs[i])
-	}
-
-	namesExp := make([]jet.Expression, len(attributes))
-	for i := 0; i < len(attributes); i++ {
-		namesExp[i] = jet.String(attributes[i].Name)
-	}
-
-	stmt := tJobCitizenAttributes.
-		SELECT(
-			jet.COUNT(tJobCitizenAttributes.Job).AS("count"),
-		).
-		FROM(tJobCitizenAttributes).
-		WHERE(jet.AND(
-			tJobCitizenAttributes.Job.IN(jobsExp...),
-			tJobCitizenAttributes.Name.IN(namesExp...),
-		)).
-		ORDER_BY(
-			tJobCitizenAttributes.Name.DESC(),
-		).
-		LIMIT(10)
-
-	dest := struct {
-		Count int
-	}{}
-	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return false, err
-		}
-	}
-
-	return len(attributes) == dest.Count, nil
 }

@@ -257,15 +257,19 @@ export interface CitizenAttributes {
  */
 export interface CitizenAttribute {
     /**
-     * @generated from protobuf field: optional string job = 1;
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional string job = 2;
      */
     job?: string;
     /**
-     * @generated from protobuf field: string name = 2;
+     * @generated from protobuf field: string name = 3;
      */
     name: string;
     /**
-     * @generated from protobuf field: string color = 3;
+     * @generated from protobuf field: string color = 4;
      */
     color: string;
 }
@@ -910,13 +914,15 @@ export const CitizenAttributes = new CitizenAttributes$Type();
 class CitizenAttribute$Type extends MessageType<CitizenAttribute> {
     constructor() {
         super("resources.users.CitizenAttribute", [
-            { no: 1, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 3, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 3, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 4, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } }
         ]);
     }
     create(value?: PartialMessage<CitizenAttribute>): CitizenAttribute {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
         message.name = "";
         message.color = "";
         if (value !== undefined)
@@ -928,13 +934,16 @@ class CitizenAttribute$Type extends MessageType<CitizenAttribute> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* optional string job */ 1:
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* optional string job */ 2:
                     message.job = reader.string();
                     break;
-                case /* string name */ 2:
+                case /* string name */ 3:
                     message.name = reader.string();
                     break;
-                case /* string color */ 3:
+                case /* string color */ 4:
                     message.color = reader.string();
                     break;
                 default:
@@ -949,15 +958,18 @@ class CitizenAttribute$Type extends MessageType<CitizenAttribute> {
         return message;
     }
     internalBinaryWrite(message: CitizenAttribute, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional string job = 1; */
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* optional string job = 2; */
         if (message.job !== undefined)
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
-        /* string name = 2; */
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* string name = 3; */
         if (message.name !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.name);
-        /* string color = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.name);
+        /* string color = 4; */
         if (message.color !== "")
-            writer.tag(3, WireType.LengthDelimited).string(message.color);
+            writer.tag(4, WireType.LengthDelimited).string(message.color);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

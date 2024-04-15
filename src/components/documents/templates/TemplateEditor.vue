@@ -14,6 +14,7 @@ import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/docum
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 import SingleHint from '~/components/SingleHint.vue';
+import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
     templateId?: string;
@@ -649,13 +650,9 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
                     </UFormGroup>
 
                     <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" class="flex-1">
-                        <UTextarea
-                            v-model="state.content"
-                            name="content"
-                            :rows="6"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <ClientOnly>
+                            <DocEditor v-model="state.content" split-screen />
+                        </ClientOnly>
                     </UFormGroup>
                 </div>
 

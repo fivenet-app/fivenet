@@ -13,6 +13,7 @@ const completorStore = useCompletorStore();
 
 const schema = z
     .object({
+        id: z.string(),
         name: z.string().min(1).max(24),
         color: z.string().length(7),
     })
@@ -103,7 +104,7 @@ watch(attributes, () => (state.value = attributes.value ?? []));
                         :disabled="!canSubmit"
                         icon="i-mdi-plus"
                         :class="state.length ? 'mt-2' : ''"
-                        @click="state.push({ name: '', color: '#ffffff' })"
+                        @click="state.push({ id: '0', name: '', color: '#ffffff' })"
                     />
                 </UFormGroup>
 

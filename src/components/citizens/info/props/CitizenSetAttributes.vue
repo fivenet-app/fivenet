@@ -2,8 +2,7 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
-import type { CitizenAttributes } from '~~/gen/ts/resources/users/users';
-import type { UserProps } from '~~/gen/ts/resources/users/users';
+import type { CitizenAttributes, UserProps } from '~~/gen/ts/resources/users/users';
 import { useCompletorStore } from '~/store/completor';
 
 const props = defineProps<{
@@ -34,6 +33,7 @@ const changed = ref(false);
 const schema = z.object({
     attributes: z
         .object({
+            id: z.string(),
             name: z.string().min(1),
             color: z.string().length(7),
         })
@@ -45,7 +45,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    attributes: props.modelValue?.list !== undefined ? props.modelValue?.list.slice() : [],
+    attributes: attributes.value?.list !== undefined ? attributes.value.list.slice() : [],
     reason: '',
 });
 
@@ -85,12 +85,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     changed.value = false;
 }, 1000);
 
-watch(props, () => (state.attributes = props.modelValue?.list !== undefined ? props.modelValue?.list.slice() : []));
+watch(props, () => (state.attributes = attributes.value?.list !== undefined ? attributes.value?.list.slice() : []));
 
 watch(state, () => {
     if (
-        state.attributes.length === props.modelValue?.list.length &&
-        state.attributes.every((el, idx) => el.name === props.modelValue?.list[idx].name)
+        state.attributes.length === attributes.value?.list.length &&
+        state.attributes.every((el, idx) => el.name === attributes.value?.list[idx].name)
     ) {
         changed.value = false;
     } else {

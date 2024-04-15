@@ -17,6 +17,7 @@ type fivenetJobCitizenAttributesTable struct {
 	mysql.Table
 
 	// Columns
+	ID    mysql.ColumnInteger
 	Job   mysql.ColumnString
 	Name  mysql.ColumnString
 	Color mysql.ColumnString
@@ -60,17 +61,19 @@ func newFivenetJobCitizenAttributesTable(schemaName, tableName, alias string) *F
 
 func newFivenetJobCitizenAttributesTableImpl(schemaName, tableName, alias string) fivenetJobCitizenAttributesTable {
 	var (
+		IDColumn       = mysql.IntegerColumn("id")
 		JobColumn      = mysql.StringColumn("job")
 		NameColumn     = mysql.StringColumn("name")
 		ColorColumn    = mysql.StringColumn("color")
-		allColumns     = mysql.ColumnList{JobColumn, NameColumn, ColorColumn}
-		mutableColumns = mysql.ColumnList{ColorColumn}
+		allColumns     = mysql.ColumnList{IDColumn, JobColumn, NameColumn, ColorColumn}
+		mutableColumns = mysql.ColumnList{JobColumn, NameColumn, ColorColumn}
 	)
 
 	return fivenetJobCitizenAttributesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
+		ID:    IDColumn,
 		Job:   JobColumn,
 		Name:  NameColumn,
 		Color: ColorColumn,

@@ -242,7 +242,7 @@ defineShortcuts({
                 </div>
             </div>
 
-            <div class="-my-2 mx-0 overflow-x-auto">
+            <div class="overflow-x-auto">
                 <div class="inline-block min-w-full px-1 py-2 align-middle">
                     <DataErrorBlock
                         v-if="error"
