@@ -101,7 +101,7 @@ const items = computed(() => [
         </template>
 
         <template #account>
-            <div class="text-left">
+            <div class="truncate text-left">
                 <p>{{ $t('components.UserDropdown.signed_in_as') }}</p>
                 <p class="truncate font-medium text-gray-900 dark:text-white">{{ username }}</p>
             </div>

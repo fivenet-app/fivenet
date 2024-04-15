@@ -35,7 +35,7 @@ const openclose: OpenClose[] = [
 const schema = z.object({
     documentIds: z.string().max(16).optional(),
     title: z.string().max(64),
-    creator: z.custom<UserShort>().optional(),
+    creators: z.custom<UserShort>().array().max(5),
     from: z.date().optional(),
     to: z.date().optional(),
     closed: z.boolean().optional(),
@@ -46,6 +46,7 @@ type Schema = z.output<typeof schema>;
 
 const query = ref<Schema>({
     title: '',
+    creators: [],
 });
 
 const queryClosed = ref<OpenClose>(openclose[0]);
@@ -80,8 +81,8 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     if (query.value.category) {
         req.categoryIds.push(query.value.category.id);
     }
-    if (query.value.creator) {
-        req.creatorIds.push(query.value.creator.userId);
+    if (query.value.creators) {
+        query.value.creators.forEach((c) => req.creatorIds.push(c.userId));
     }
     if (query.value.documentIds) {
         const id = query.value.documentIds.trim().replaceAll('-', '').replace(/\D/g, '');
@@ -195,7 +196,8 @@ defineShortcuts({
 
                             <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
                                 <USelectMenu
-                                    v-model="query.creator"
+                                    v-model="query.creators"
+                                    multiple
                                     block
                                     :searchable="creatorSearch"
                                     :search-attributes="['firstname', 'lastname']"
@@ -269,7 +271,7 @@ defineShortcuts({
     <div v-else class="relative overflow-x-auto">
         <ul
             role="list"
-            class="my-1 flex flex-col gap-1"
+            class="m-1 flex flex-col gap-1"
             :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
         >
             <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
