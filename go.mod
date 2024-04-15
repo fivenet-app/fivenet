@@ -5,7 +5,7 @@ go 1.21.8
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/XSAM/otelsql v0.29.0
+	github.com/XSAM/otelsql v0.30.0
 	github.com/alecthomas/kong v0.9.0
 	github.com/blevesearch/bleve/v2 v2.4.0
 	github.com/bwmarrin/discordgo v0.28.1
