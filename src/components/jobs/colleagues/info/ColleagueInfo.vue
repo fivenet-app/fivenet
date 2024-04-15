@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { IslandIcon } from 'mdi-vue3';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -91,7 +90,7 @@ today.setMilliseconds(0);
                             "
                             class="inline-flex items-center gap-1 rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
                         >
-                            <IslandIcon class="size-5" />
+                            <UIcon name="i-mdi-island" class="size-5" />
                             <GenericTime :value="colleague.colleague.props?.absenceBegin" type="date" />
                             <span>{{ $t('common.to') }}</span>
                             <GenericTime :value="colleague.colleague.props?.absenceEnd" type="date" />

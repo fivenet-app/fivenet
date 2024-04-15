@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
@@ -76,7 +75,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 >
                     {{ unit?.initials }}
                 </span>
-                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" />
+                <UIcon name="i-mdi-map-marker" class="size-full" :style="{ color: getMarkerColor() }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">

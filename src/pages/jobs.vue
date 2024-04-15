@@ -69,12 +69,7 @@ const links = [
             </UDashboardToolbar>
 
             <NuxtLayout name="blank">
-                <NuxtPage
-                    :transition="{
-                        name: 'page',
-                        mode: 'out-in',
-                    }"
-                />
+                <NuxtPage />
             </NuxtLayout>
         </UDashboardPanel>
     </UDashboardPage>

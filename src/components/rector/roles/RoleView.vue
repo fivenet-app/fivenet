@@ -216,10 +216,6 @@ async function initializeRoleView(): Promise<void> {
 
     attrList.value.forEach((attr) => {
         attrStates.value.set(attr.attrId, attr.value);
-
-        if (attr.attrId === '5' && attr.value?.validValues.oneofKind === 'jobList') {
-            console.log('ROLE VIEW', attr.value?.validValues.jobList.strings);
-        }
     });
 
     role.value?.attributes.forEach((attr) => {

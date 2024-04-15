@@ -7,18 +7,17 @@ export default defineNuxtConfig({
     srcDir: 'src/',
     telemetry: false,
     ssr: false,
-    extends: ['@nuxt/ui-pro'],
-    // @ts-ignore ts2589 one of the modules probably has a typing issue
+    extends: [process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'],
     modules: [
+        '@nuxt/ui',
         'nuxt-typed-router',
         '@nuxtjs/robots',
+        '@nuxt/fonts',
         '@vueuse/nuxt',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
         'nuxt-zod-i18n',
         '@nuxtjs/i18n',
-        '@nuxt/ui',
-        '@nuxtjs/tailwindcss',
         'nuxt-update',
     ],
     ui: {
@@ -38,22 +37,6 @@ export default defineNuxtConfig({
             },
         },
         pageTransition: { name: 'page', mode: 'out-in' },
-    },
-    css: [
-        // DM Sans font (all weights)
-        '@fontsource/dm-sans/100.css',
-        '@fontsource/dm-sans/200.css',
-        '@fontsource/dm-sans/300.css',
-        '@fontsource/dm-sans/400.css',
-        '@fontsource/dm-sans/500.css',
-        '@fontsource/dm-sans/600.css',
-        '@fontsource/dm-sans/700.css',
-        '@fontsource/dm-sans/800.css',
-        '@fontsource/dm-sans/900.css',
-    ],
-    tailwindcss: {
-        exposeConfig: true,
-        configPath: './tailwind.config.ts',
     },
     colorMode: {
         preference: 'dark',
@@ -85,18 +68,12 @@ export default defineNuxtConfig({
     },
     devtools: {
         enabled: true,
-        vscode: {
-            enabled: true,
-        },
     },
     vite: {
         define: {
             __APP_VERSION__: `"${appVersion}"`,
         },
         build: {
-            commonjsOptions: {
-                transformMixedEsModules: true,
-            },
             terserOptions: {
                 compress: {
                     drop_console: true,

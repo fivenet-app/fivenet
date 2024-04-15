@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -63,7 +62,7 @@ const zIndexOffset = computed(() => {
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <BellIcon class="size-full" :class="dispatchClasses" />
+                <UIcon name="i-mdi-bell" class="size-full" :class="dispatchClasses" />
             </div>
         </LIcon>
 

@@ -7,6 +7,9 @@ import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupM
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
+import UserDropdown from '~/components/UserDropdown.vue';
+import HelpSlideover from '~/components/HelpSlideover.vue';
+import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 
 const authStore = useAuthStore();
 const { activeChar, jobProps } = storeToRefs(authStore);
@@ -375,22 +378,19 @@ const quickAccessButtons = computed<DashboardSidebarLink[]>(() =>
                 <UDivider class="sticky bottom-0" />
 
                 <template #footer>
-                    <!-- ~/components/UserDropdown.vue -->
                     <UserDropdown />
                 </template>
             </UDashboardSidebar>
         </UDashboardPanel>
 
-        <!-- Events -->
-        <LazyPartialsEventsLayer />
+        <ClientOnly>
+            <!-- Events -->
+            <LazyPartialsEventsLayer />
+        </ClientOnly>
 
-        <div class="w-full max-w-full overflow-y-auto">
-            <slot />
-        </div>
+        <slot />
 
-        <!-- ~/components/HelpSlideover.vue -->
         <HelpSlideover />
-        <!-- ~/components/NotificationsSlideover.vue -->
         <NotificationsSlideover />
 
         <ClientOnly>

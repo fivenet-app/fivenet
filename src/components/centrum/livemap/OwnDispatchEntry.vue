@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { CarEmergencyIcon } from 'mdi-vue3';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -46,7 +45,7 @@ const slideover = useSlideover();
         >
             <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
                 <span class="inline-flex items-center font-bold md:gap-1">
-                    <CarEmergencyIcon class="hidden h-3 w-auto md:block" />
+                    <UIcon name="i-mdi-car-emergency" class="hidden h-3 w-auto md:block" />
                     DSP-{{ dispatch.id }}
                 </span>
                 <span>

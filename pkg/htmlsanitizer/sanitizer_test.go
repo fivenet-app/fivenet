@@ -38,7 +38,7 @@ func TestSanitize(t *testing.T) {
 			msg:    "Broken tags",
 		},
 		{
-			input:  "<script src=\"test123.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
+			input:  "<script src=\"example.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
 			result: "HELLO WORLD!</p> This<table> test",
 			msg:    "Make sure bad tag is removed, even with broken tags",
 		},
@@ -69,7 +69,7 @@ func TestStripTags(t *testing.T) {
 			msg:    "Broken tags",
 		},
 		{
-			input:  "<script src=\"test123.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
+			input:  "<script src=\"example.com\"></script>HELLO WORLD!</p> This<table is a> test</table.",
 			result: "HELLO WORLD! This test",
 			msg:    "Make sure bad tag is removed, even with broken tags",
 		},

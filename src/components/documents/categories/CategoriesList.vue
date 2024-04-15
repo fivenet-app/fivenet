@@ -39,59 +39,42 @@ const modal = useModal();
 </script>
 
 <template>
-    <div>
-        <UDashboardNavbar :title="$t('pages.documents.categories.title')">
-            <template #right>
-                <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                    {{ $t('common.back') }}
-                </UButton>
+    <UDashboardNavbar :title="$t('pages.documents.categories.title')">
+        <template #right>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
+                {{ $t('common.back') }}
+            </UButton>
 
-                <UButton
-                    v-if="can('DocStoreService.CreateCategory')"
-                    color="gray"
-                    trailing-icon="i-mdi-plus"
-                    @click="
-                        modal.open(CategoriesModal, {
-                            onUpdate: refresh,
-                        })
-                    "
-                >
-                    {{ $t('components.documents.categories.modal.create_category') }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
+            <UButton
+                v-if="can('DocStoreService.CreateCategory')"
+                color="gray"
+                trailing-icon="i-mdi-plus"
+                @click="
+                    modal.open(CategoriesModal, {
+                        onUpdate: refresh,
+                    })
+                "
+            >
+                {{ $t('components.documents.categories.modal.create_category') }}
+            </UButton>
+        </template>
+    </UDashboardNavbar>
 
-        <div class="px-1 sm:px-2">
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.category', 2)])" />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.category', 2)])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock
-                            v-else-if="categories && categories.length === 0"
-                            icon="i-mdi-tag"
-                            :type="$t('common.category', 2)"
-                        />
-                        <div v-else class="flex justify-center">
-                            <CardsList
-                                :items="items"
-                                :show-icon="true"
-                                @selected="
-                                    categories &&
-                                        modal.open(CategoriesModal, {
-                                            category: categories[$event],
-                                            onUpdate: refresh,
-                                        })
-                                "
-                            />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
+    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.category', 2)])" />
+    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.category', 2)])" :retry="refresh" />
+    <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
+    <div v-else class="flex justify-center">
+        <CardsList
+            :items="items"
+            :show-icon="true"
+            class="mx-2 mt-2 lg:mx-6"
+            @selected="
+                categories &&
+                    modal.open(CategoriesModal, {
+                        category: categories[$event],
+                        onUpdate: refresh,
+                    })
+            "
+        />
     </div>
 </template>

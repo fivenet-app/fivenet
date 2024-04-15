@@ -6,11 +6,15 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type CardElements } from '~/utils/types';
 import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
-const { $grpc } = useNuxtApp();
-
 defineEmits<{
     (e: 'selected', t: TemplateShort): void;
 }>();
+
+defineOptions({
+    inheritAttrs: false,
+});
+
+const { $grpc } = useNuxtApp();
 
 const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 
@@ -39,13 +43,16 @@ function selected(idx: number): TemplateShort {
 </script>
 
 <template>
-    <div>
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
-        <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
+    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
+    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
+    <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
 
-        <div v-else class="flex justify-center">
-            <CardsList :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
-        </div>
+    <div v-else class="flex justify-center">
+        <CardsList
+            v-bind:class="$attrs.class"
+            :items="items"
+            :show-icon="false"
+            @selected="$emit('selected', selected($event))"
+        />
     </div>
 </template>

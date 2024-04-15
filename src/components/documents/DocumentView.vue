@@ -229,322 +229,320 @@ defineShortcuts({
 </script>
 
 <template>
-    <div>
-        <UDashboardNavbar :title="$t('pages.documents.id.title')">
-            <template #right>
-                <UButtonGroup class="inline-flex">
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/">
-                        {{ $t('common.back') }}
-                    </UButton>
+    <UDashboardNavbar :title="$t('pages.documents.id.title')">
+        <template #right>
+            <UButtonGroup class="inline-flex">
+                <UButton color="black" icon="i-mdi-arrow-back" to="/">
+                    {{ $t('common.back') }}
+                </UButton>
 
-                    <IDCopyBadge
-                        :id="doc?.id ?? documentId"
-                        prefix="DOC"
-                        :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                        :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
-                    />
+                <IDCopyBadge
+                    :id="doc?.id ?? documentId"
+                    prefix="DOC"
+                    :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
+                    :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                />
 
-                    <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
-                </UButtonGroup>
-            </template>
-        </UDashboardNavbar>
-
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
-        <template v-else-if="error">
-            <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
-            <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" class="mt-2" />
+                <AddToButton :title="$t('components.clipboard.clipboard_button.add')" :callback="addToClipboard" />
+            </UButtonGroup>
         </template>
-        <DataNoDataBlock
-            v-else-if="doc === null"
-            icon="i-mdi-file-search"
-            :message="$t('common.not_found', [$t('common.document', 2)])"
-        />
+    </UDashboardNavbar>
 
-        <template v-else>
-            <UDashboardToolbar>
-                <template #default>
-                    <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                        <UTooltip
-                            v-if="
-                                can('DocStoreService.ToggleDocument') &&
-                                checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
-                            "
-                            class="flex-1"
-                            :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
-                            :shortcuts="['D', 'T']"
-                        >
-                            <UButton block @click="toggleDocument(documentId, !doc.closed)">
-                                <template v-if="doc.closed">
-                                    <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
-                                    {{ $t('common.open', 1) }}
-                                </template>
-                                <template v-else>
-                                    <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
-                                    {{ $t('common.close', 1) }}
-                                </template>
-                            </UButton>
-                        </UTooltip>
+    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
+    <template v-else-if="error">
+        <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
+        <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" class="mt-2" />
+    </template>
+    <DataNoDataBlock
+        v-else-if="doc === null"
+        icon="i-mdi-file-search"
+        :message="$t('common.not_found', [$t('common.document', 2)])"
+    />
 
-                        <UTooltip
-                            v-if="
-                                can('DocStoreService.UpdateDocument') &&
-                                checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument')
-                            "
-                            class="flex-1"
-                            :text="$t('common.edit')"
-                            :shortcuts="['D', 'E']"
-                        >
-                            <UButton
-                                block
-                                :to="{
-                                    name: 'documents-id-edit',
-                                    params: { id: doc.id },
-                                }"
-                                icon="i-mdi-pencil"
-                            >
-                                {{ $t('common.edit') }}
-                            </UButton>
-                        </UTooltip>
-
-                        <UTooltip
-                            v-if="can('DocStoreService.ListDocumentReqs')"
-                            class="flex-1"
-                            :text="$t('common.request', 2)"
-                            :shortcuts="['D', 'R']"
-                        >
-                            <UButton class="flex-1" block icon="i-mdi-frequently-asked-questions" @click="openRequestsModal">
-                                {{ $t('common.request', 2) }}
-                            </UButton>
-                        </UTooltip>
-
-                        <UButton
-                            v-if="
-                                (doc?.creatorJob === activeChar?.job || isSuperuser) &&
-                                can('DocStoreService.ChangeDocumentOwner') &&
-                                checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
-                            "
-                            class="flex-1"
-                            block
-                            :disabled="doc?.creatorId === activeChar?.userId"
-                            icon="i-mdi-creation"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => changeDocumentOwner(documentId),
-                                })
-                            "
-                        >
-                            {{ $t('components.documents.document_view.take_ownership') }}
-                        </UButton>
-
-                        <UButton
-                            v-if="
-                                can('DocStoreService.DeleteDocument') &&
-                                checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
-                            "
-                            class="flex-1"
-                            block
-                            :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => deleteDocument(documentId),
-                                })
-                            "
-                        >
-                            <template v-if="!doc.deletedAt">
-                                {{ $t('common.delete') }}
+    <template v-else>
+        <UDashboardToolbar>
+            <template #default>
+                <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
+                    <UTooltip
+                        v-if="
+                            can('DocStoreService.ToggleDocument') &&
+                            checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
+                        "
+                        class="flex-1"
+                        :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
+                        :shortcuts="['D', 'T']"
+                    >
+                        <UButton block @click="toggleDocument(documentId, !doc.closed)">
+                            <template v-if="doc.closed">
+                                <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
+                                {{ $t('common.open', 1) }}
                             </template>
                             <template v-else>
-                                {{ $t('common.restore') }}
+                                <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
+                                {{ $t('common.close', 1) }}
                             </template>
                         </UButton>
-                    </div>
-                </template>
-            </UDashboardToolbar>
+                    </UTooltip>
 
-            <UCard>
-                <template #header>
-                    <div class="mb-4">
-                        <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
-                            {{ doc.title }}
-                        </h1>
-                    </div>
+                    <UTooltip
+                        v-if="
+                            can('DocStoreService.UpdateDocument') &&
+                            checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument')
+                        "
+                        class="flex-1"
+                        :text="$t('common.edit')"
+                        :shortcuts="['D', 'E']"
+                    >
+                        <UButton
+                            block
+                            :to="{
+                                name: 'documents-id-edit',
+                                params: { id: doc.id },
+                            }"
+                            icon="i-mdi-pencil"
+                        >
+                            {{ $t('common.edit') }}
+                        </UButton>
+                    </UTooltip>
 
-                    <div class="mb-2 flex gap-2">
-                        <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
-                            <span :title="doc.category.description ?? $t('common.na')">
-                                {{ doc.category.name }}
-                            </span>
-                        </UBadge>
+                    <UTooltip
+                        v-if="can('DocStoreService.ListDocumentReqs')"
+                        class="flex-1"
+                        :text="$t('common.request', 2)"
+                        :shortcuts="['D', 'R']"
+                    >
+                        <UButton class="flex-1" block icon="i-mdi-frequently-asked-questions" @click="openRequestsModal">
+                            {{ $t('common.request', 2) }}
+                        </UButton>
+                    </UTooltip>
 
-                        <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
-                            <span>
-                                {{ $t('common.close', 2) }}
-                            </span>
-                        </UBadge>
-                        <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
-                            <span>
-                                {{ $t('common.open', 2) }}
-                            </span>
-                        </UBadge>
+                    <UButton
+                        v-if="
+                            (doc?.creatorJob === activeChar?.job || isSuperuser) &&
+                            can('DocStoreService.ChangeDocumentOwner') &&
+                            checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
+                        "
+                        class="flex-1"
+                        block
+                        :disabled="doc?.creatorId === activeChar?.userId"
+                        icon="i-mdi-creation"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => changeDocumentOwner(documentId),
+                            })
+                        "
+                    >
+                        {{ $t('components.documents.document_view.take_ownership') }}
+                    </UButton>
 
-                        <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-note-check" class="h-auto w-5" />
-                            <span>
-                                {{ doc.state }}
-                            </span>
-                        </UBadge>
+                    <UButton
+                        v-if="
+                            can('DocStoreService.DeleteDocument') &&
+                            checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
+                        "
+                        class="flex-1"
+                        block
+                        :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteDocument(documentId),
+                            })
+                        "
+                    >
+                        <template v-if="!doc.deletedAt">
+                            {{ $t('common.delete') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('common.restore') }}
+                        </template>
+                    </UButton>
+                </div>
+            </template>
+        </UDashboardToolbar>
 
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-comment-text-multiple" class="h-auto w-5" />
-                            <span>
-                                {{
-                                    commentCount !== undefined
-                                        ? $t('common.comments', commentCount)
-                                        : '? ' + $t('common.comment', 2)
-                                }}
-                            </span>
-                        </UBadge>
-                    </div>
-
-                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-account" class="h-auto w-5" />
-                            <span class="inline-flex items-center gap-1">
-                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="doc.creator" />
-                            </span>
-                        </UBadge>
-
-                        <UBadge color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar" class="h-auto w-5" />
-                            <span>
-                                {{ $t('common.created_at') }}
-                                <GenericTime :value="doc.createdAt" type="long" />
-                            </span>
-                        </UBadge>
-
-                        <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar-edit" class="h-auto w-5" />
-                            <span>
-                                {{ $t('common.updated_at') }}
-                                <GenericTime :value="doc.updatedAt" type="long" />
-                            </span>
-                        </UBadge>
-
-                        <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-calendar-remove" class="h-auto w-5" />
-                            <span>
-                                {{ $t('common.deleted') }}
-                                <GenericTime :value="doc.deletedAt" type="long" />
-                            </span>
-                        </UBadge>
-                    </div>
-                </template>
-
-                <div>
-                    <h2 class="sr-only">
-                        {{ $t('common.content') }}
-                    </h2>
-                    <div class="documentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                        <!-- eslint-disable vue/no-v-html -->
-                        <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
-                    </div>
+        <UCard>
+            <template #header>
+                <div class="mb-4">
+                    <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
+                        {{ doc.title }}
+                    </h1>
                 </div>
 
-                <template #footer>
-                    <UAccordion multiple :items="accordionItems" :unmount="true">
-                        <template #relations>
-                            <UContainer>
-                                <DocumentRelations :document-id="documentId" :show-document="false" />
-                            </UContainer>
-                        </template>
+                <div class="mb-2 flex gap-2">
+                    <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                        <span :title="doc.category.description ?? $t('common.na')">
+                            {{ doc.category.name }}
+                        </span>
+                    </UBadge>
 
-                        <template #references>
-                            <UContainer>
-                                <DocumentReferences :document-id="documentId" :show-source="false" />
-                            </UContainer>
-                        </template>
+                    <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                        <span>
+                            {{ $t('common.close', 2) }}
+                        </span>
+                    </UBadge>
+                    <UBadge v-else color="green" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                        <span>
+                            {{ $t('common.open', 2) }}
+                        </span>
+                    </UBadge>
 
-                        <template #access>
-                            <UContainer>
-                                <DataNoDataBlock
-                                    v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
-                                    icon="i-mdi-file-search"
-                                    :message="$t('common.not_found', [$t('common.access', 2)])"
+                    <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-note-check" class="h-auto w-5" />
+                        <span>
+                            {{ doc.state }}
+                        </span>
+                    </UBadge>
+
+                    <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-comment-text-multiple" class="h-auto w-5" />
+                        <span>
+                            {{
+                                commentCount !== undefined
+                                    ? $t('common.comments', commentCount)
+                                    : '? ' + $t('common.comment', 2)
+                            }}
+                        </span>
+                    </UBadge>
+                </div>
+
+                <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                    <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-account" class="h-auto w-5" />
+                        <span class="inline-flex items-center gap-1">
+                            <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                            <CitizenInfoPopover :user="doc.creator" />
+                        </span>
+                    </UBadge>
+
+                    <UBadge color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-calendar" class="h-auto w-5" />
+                        <span>
+                            {{ $t('common.created_at') }}
+                            <GenericTime :value="doc.createdAt" type="long" />
+                        </span>
+                    </UBadge>
+
+                    <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-calendar-edit" class="h-auto w-5" />
+                        <span>
+                            {{ $t('common.updated_at') }}
+                            <GenericTime :value="doc.updatedAt" type="long" />
+                        </span>
+                    </UBadge>
+
+                    <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-calendar-remove" class="h-auto w-5" />
+                        <span>
+                            {{ $t('common.deleted') }}
+                            <GenericTime :value="doc.deletedAt" type="long" />
+                        </span>
+                    </UBadge>
+                </div>
+            </template>
+
+            <div>
+                <h2 class="sr-only">
+                    {{ $t('common.content') }}
+                </h2>
+                <div class="documentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                    <!-- eslint-disable vue/no-v-html -->
+                    <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
+                </div>
+            </div>
+
+            <template #footer>
+                <UAccordion multiple :items="accordionItems" :unmount="true">
+                    <template #relations>
+                        <UContainer>
+                            <DocumentRelations :document-id="documentId" :show-document="false" />
+                        </UContainer>
+                    </template>
+
+                    <template #references>
+                        <UContainer>
+                            <DocumentReferences :document-id="documentId" :show-source="false" />
+                        </UContainer>
+                    </template>
+
+                    <template #access>
+                        <UContainer>
+                            <DataNoDataBlock
+                                v-if="!access || (access?.jobs.length === 0 && access?.users.length === 0)"
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <div v-else class="flex flex-col gap-2">
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in access?.jobs"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-info-500" />
+                                        <span>
+                                            {{ entry.jobLabel
+                                            }}<span
+                                                v-if="entry.minimumGrade > 0"
+                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                            >
+                                                ({{ entry.jobGradeLabel }})</span
+                                            >
+                                            -
+                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in access?.users"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-amber-500" />
+                                        <span :title="`${$t('common.id')} ${entry.userId}`">
+                                            {{ entry.user?.firstname }}
+                                            {{ entry.user?.lastname }} -
+                                            {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+                            </div>
+                        </UContainer>
+                    </template>
+
+                    <template #comments>
+                        <UContainer>
+                            <div id="comments">
+                                <DocumentComments
+                                    :document-id="documentId"
+                                    :closed="doc.closed"
+                                    :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
+                                    @counted="commentCount = $event"
+                                    @new-comment="commentCount && commentCount++"
+                                    @deleted-comment="commentCount && commentCount > 0 && commentCount--"
                                 />
+                            </div>
+                        </UContainer>
+                    </template>
 
-                                <div v-else class="flex flex-col gap-2">
-                                    <div class="flex flex-row flex-wrap gap-1">
-                                        <UBadge
-                                            v-for="entry in access?.jobs"
-                                            :key="entry.id"
-                                            color="black"
-                                            class="inline-flex gap-1"
-                                            size="md"
-                                        >
-                                            <span class="size-2 rounded-full bg-info-500" />
-                                            <span>
-                                                {{ entry.jobLabel
-                                                }}<span
-                                                    v-if="entry.minimumGrade > 0"
-                                                    :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
-                                                >
-                                                    ({{ entry.jobGradeLabel }})</span
-                                                >
-                                                -
-                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                            </span>
-                                        </UBadge>
-                                    </div>
-
-                                    <div class="flex flex-row flex-wrap gap-1">
-                                        <UBadge
-                                            v-for="entry in access?.users"
-                                            :key="entry.id"
-                                            color="black"
-                                            class="inline-flex gap-1"
-                                            size="md"
-                                        >
-                                            <span class="size-2 rounded-full bg-amber-500" />
-                                            <span :title="`${$t('common.id')} ${entry.userId}`">
-                                                {{ entry.user?.firstname }}
-                                                {{ entry.user?.lastname }} -
-                                                {{ $t(`enums.docstore.AccessLevel.${AccessLevel[entry.access]}`) }}
-                                            </span>
-                                        </UBadge>
-                                    </div>
-                                </div>
-                            </UContainer>
-                        </template>
-
-                        <template #comments>
-                            <UContainer>
-                                <div id="comments">
-                                    <DocumentComments
-                                        :document-id="documentId"
-                                        :closed="doc.closed"
-                                        :can-comment="checkDocAccess(access, doc.creator, AccessLevel.COMMENT)"
-                                        @counted="commentCount = $event"
-                                        @new-comment="commentCount && commentCount++"
-                                        @deleted-comment="commentCount && commentCount > 0 && commentCount--"
-                                    />
-                                </div>
-                            </UContainer>
-                        </template>
-
-                        <template v-if="can('DocStoreService.ListDocumentActivity')" #activity>
-                            <UContainer>
-                                <DocumentActivityList :document-id="documentId" />
-                            </UContainer>
-                        </template>
-                    </UAccordion>
-                </template>
-            </UCard>
-        </template>
-    </div>
+                    <template v-if="can('DocStoreService.ListDocumentActivity')" #activity>
+                        <UContainer>
+                            <DocumentActivityList :document-id="documentId" />
+                        </UContainer>
+                    </template>
+                </UAccordion>
+            </template>
+        </UCard>
+    </template>
 </template>
 
 <style scoped>

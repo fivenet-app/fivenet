@@ -55,6 +55,11 @@ export default defineAppConfig({
             close: 'i-mdi-window-close',
             check: 'i-mdi-check-circle',
         },
+        dashboard: {
+            page: {
+                wrapper: 'flex flex-1 w-full min-w-0 max-w-full overflow-y-auto',
+            },
+        },
     },
     nuxtIcon: {
         iconifyApiOptions: {

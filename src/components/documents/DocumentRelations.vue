@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ArrowCollapseIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -92,7 +91,7 @@ const columns = computed(() =>
                     <li v-for="relation in relations" :key="relation.id" class="block p-4 hover:bg-base-900">
                         <span class="flex items-center space-x-4">
                             <span class="flex flex-1 space-x-2 truncate">
-                                <ArrowCollapseIcon class="size-5 shrink-0 text-gray-400" />
+                                <UIcon name="i-mdi-arrow-collapse" class="size-5 shrink-0" />
                                 <span class="flex flex-col truncate text-sm">
                                     <span v-if="showDocument">
                                         <NuxtLink

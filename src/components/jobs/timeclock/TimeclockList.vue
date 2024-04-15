@@ -161,201 +161,183 @@ const input = ref<{ input: HTMLInputElement }>();
 </script>
 
 <template>
-    <div>
-        <UForm :schema="schema" :state="query" @submit="refresh()">
-            <UDashboardToolbar>
-                <template #default>
-                    <div class="flex w-full flex-col gap-2">
-                        <div class="flex w-full flex-col">
-                            <UButton
-                                v-if="can('JobsTimeclockService.ListInactiveEmployees')"
-                                :to="{ name: 'jobs-timeclock-inactive' }"
-                                class="mb-2 place-self-end"
-                                trailing-icon="i-mdi-arrow-right"
-                            >
-                                {{ $t('common.inactive_colleagues') }}
-                            </UButton>
+    <UForm :schema="schema" :state="query" @submit="refresh()">
+        <UDashboardToolbar>
+            <template #default>
+                <div class="flex w-full flex-col gap-2">
+                    <div class="flex w-full flex-col">
+                        <UButton
+                            v-if="can('JobsTimeclockService.ListInactiveEmployees')"
+                            :to="{ name: 'jobs-timeclock-inactive' }"
+                            class="mb-2 place-self-end"
+                            trailing-icon="i-mdi-arrow-right"
+                        >
+                            {{ $t('common.inactive_colleagues') }}
+                        </UButton>
 
-                            <div class="flex flex-row gap-2">
-                                <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.colleague', 2)" class="flex-1">
-                                    <USelectMenu
-                                        ref="input"
-                                        v-model="query.users"
-                                        multiple
-                                        :searchable="
-                                            async (query: string) => {
-                                                usersLoading = true;
-                                                const colleagues = await completorStore.listColleagues({
-                                                    search: query,
-                                                });
-                                                usersLoading = false;
-                                                return colleagues;
-                                            }
-                                        "
-                                        :search-attributes="['firstname', 'lastname']"
-                                        block
-                                        :placeholder="$t('common.owner')"
-                                        trailing
-                                        by="userId"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #option="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                    </USelectMenu>
-                                </UFormGroup>
-
-                                <UFormGroup
-                                    name="from"
-                                    :label="perDayView ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`"
-                                    class="flex-1"
+                        <div class="flex flex-row gap-2">
+                            <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.colleague', 2)" class="flex-1">
+                                <USelectMenu
+                                    ref="input"
+                                    v-model="query.users"
+                                    multiple
+                                    :searchable="
+                                        async (query: string) => {
+                                            usersLoading = true;
+                                            const colleagues = await completorStore.listColleagues({
+                                                search: query,
+                                            });
+                                            usersLoading = false;
+                                            return colleagues;
+                                        }
+                                    "
+                                    :search-attributes="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="$t('common.owner')"
+                                    trailing
+                                    by="userId"
+                                    :searchable-placeholder="$t('common.search_field')"
                                 >
-                                    <UPopover :popper="{ placement: 'bottom-start' }">
-                                        <UButton
-                                            variant="outline"
-                                            color="gray"
-                                            block
-                                            icon="i-mdi-calendar-month"
-                                            :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                        />
+                                    <template #option="{ option: user }">
+                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                    </template>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                </USelectMenu>
+                            </UFormGroup>
 
-                                        <template #panel="{ close }">
-                                            <DatePicker v-model="query.from" @close="close" />
-                                        </template>
-                                    </UPopover>
-                                </UFormGroup>
-
-                                <UFormGroup
-                                    v-if="!perDayView"
-                                    name="to"
-                                    :label="`${$t('common.time_range')} ${$t('common.to')}`"
-                                    class="flex-1"
-                                >
-                                    <UPopover :popper="{ placement: 'bottom-start' }">
-                                        <UButton
-                                            variant="outline"
-                                            color="gray"
-                                            block
-                                            icon="i-mdi-calendar-month"
-                                            :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                        />
-
-                                        <template #panel="{ close }">
-                                            <DatePicker v-model="query.to" @close="close" />
-                                        </template>
-                                    </UPopover>
-                                </UFormGroup>
-                            </div>
-                        </div>
-
-                        <div v-if="perDayView" class="flex flex-row gap-2">
-                            <UButton
-                                block
+                            <UFormGroup
+                                name="from"
+                                :label="perDayView ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`"
                                 class="flex-1"
-                                :disabled="futureToday.getTime() <= futureDay.getTime()"
-                                icon="i-mdi-chevron-left"
-                                @click="dayForward()"
                             >
-                                {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
-                            </UButton>
+                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                    <UButton
+                                        variant="outline"
+                                        color="gray"
+                                        block
+                                        icon="i-mdi-calendar-month"
+                                        :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                    />
 
-                            <UButton
-                                disabled
-                                icon="i-mdi-calendar"
-                                class="flex flex-initial cursor-pointer flex-col place-content-end items-center"
+                                    <template #panel="{ close }">
+                                        <DatePicker v-model="query.from" @close="close" />
+                                    </template>
+                                </UPopover>
+                            </UFormGroup>
+
+                            <UFormGroup
+                                v-if="!perDayView"
+                                name="to"
+                                :label="`${$t('common.time_range')} ${$t('common.to')}`"
+                                class="flex-1"
                             >
-                                <span>
-                                    {{ $d(query.from, 'date') }}
-                                </span>
-                                <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(query.from) }}</span>
-                            </UButton>
+                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                    <UButton
+                                        variant="outline"
+                                        color="gray"
+                                        block
+                                        icon="i-mdi-calendar-month"
+                                        :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+                                    />
 
-                            <UButton class="flex-1" block trailing-icon="i-mdi-chevron-right" @click="dayBackwards()">
-                                {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
-                            </UButton>
+                                    <template #panel="{ close }">
+                                        <DatePicker v-model="query.to" @close="close" />
+                                    </template>
+                                </UPopover>
+                            </UFormGroup>
                         </div>
                     </div>
-                </template>
-            </UDashboardToolbar>
 
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataErrorBlock
-                            v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.entry', 2)])"
-                            :retry="refresh"
-                        />
-                        <template v-else>
-                            <UTable
-                                :loading="loading"
-                                :columns="columns"
-                                :rows="grouped"
-                                :empty-state="{
-                                    icon: 'i-mdi-timeline-clock',
-                                    label: $t('common.not_found', [$t('common.entry', 2)]),
-                                }"
-                            >
-                                <template #date-data="{ row: entry }">
-                                    <div class="inline-flex items-center">
-                                        {{ $d(entry.date, 'date') }}
-                                    </div>
-                                </template>
+                    <div v-if="perDayView" class="flex flex-row gap-2">
+                        <UButton
+                            block
+                            class="flex-1"
+                            :disabled="futureToday.getTime() <= futureDay.getTime()"
+                            icon="i-mdi-chevron-left"
+                            @click="dayForward()"
+                        >
+                            {{ $t('common.forward') }} - {{ $d(futureDay, 'date') }}
+                        </UButton>
 
-                                <template #name-data="{ row: entry }">
-                                    <div class="inline-flex items-center gap-1">
-                                        <ProfilePictureImg
-                                            :src="entry.entry.user?.avatar?.url"
-                                            :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
-                                            size="sm"
-                                        />
+                        <UButton
+                            disabled
+                            icon="i-mdi-calendar"
+                            class="flex flex-initial cursor-pointer flex-col place-content-end items-center"
+                        >
+                            <span>
+                                {{ $d(query.from, 'date') }}
+                            </span>
+                            <span>{{ $t('common.calendar_week') }}: {{ getWeekNumber(query.from) }}</span>
+                        </UButton>
 
-                                        <ColleagueInfoPopover :user="entry.entry.user" />
-                                    </div>
-                                </template>
-
-                                <template #time-data="{ row: entry }">
-                                    <div class="text-right">
-                                        {{
-                                            entry.entry.spentTime > 0
-                                                ? fromSecondsToFormattedDuration(
-                                                      parseFloat(
-                                                          (
-                                                              (Math.round(entry.entry.spentTime * 100) / 100) *
-                                                              60 *
-                                                              60
-                                                          ).toPrecision(2),
-                                                      ),
-                                                      { seconds: false },
-                                                  )
-                                                : ''
-                                        }}
-
-                                        <UBadge v-if="entry.entry.startTime !== undefined" color="green">
-                                            {{ $t('common.active') }}
-                                        </UBadge>
-                                    </div>
-                                </template>
-                            </UTable>
-
-                            <Pagination v-model="page" :pagination="data?.pagination" />
-                        </template>
+                        <UButton class="flex-1" block trailing-icon="i-mdi-chevron-right" @click="dayBackwards()">
+                            {{ $d(previousDay, 'date') }} - {{ $t('common.previous') }}
+                        </UButton>
                     </div>
                 </div>
-            </div>
+            </template>
+        </UDashboardToolbar>
 
-            <TimeclockStatsBlock
-                v-if="data && data.stats"
-                :stats="data.stats"
-                :weekly="data.weekly"
-                :hide-header="true"
-                :failed="error !== null"
+        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
+        <template v-else>
+            <UTable
                 :loading="loading"
-            />
-        </UForm>
-    </div>
+                :columns="columns"
+                :rows="grouped"
+                :empty-state="{
+                    icon: 'i-mdi-timeline-clock',
+                    label: $t('common.not_found', [$t('common.entry', 2)]),
+                }"
+            >
+                <template #date-data="{ row: entry }">
+                    <div class="inline-flex items-center text-gray-900 dark:text-white">
+                        {{ $d(entry.date, 'date') }}
+                    </div>
+                </template>
+
+                <template #name-data="{ row: entry }">
+                    <div class="inline-flex items-center gap-1">
+                        <ProfilePictureImg
+                            :src="entry.entry.user?.avatar?.url"
+                            :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
+                            size="sm"
+                        />
+
+                        <ColleagueInfoPopover :user="entry.entry.user" />
+                    </div>
+                </template>
+
+                <template #time-data="{ row: entry }">
+                    <div class="text-right">
+                        {{
+                            entry.entry.spentTime > 0
+                                ? fromSecondsToFormattedDuration(
+                                      parseFloat(((Math.round(entry.entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                      { seconds: false },
+                                  )
+                                : ''
+                        }}
+
+                        <UBadge v-if="entry.entry.startTime !== undefined" color="green">
+                            {{ $t('common.active') }}
+                        </UBadge>
+                    </div>
+                </template>
+            </UTable>
+
+            <Pagination v-model="page" :pagination="data?.pagination" />
+        </template>
+
+        <TimeclockStatsBlock
+            v-if="data && data.stats"
+            :stats="data.stats"
+            :weekly="data.weekly"
+            :hide-header="true"
+            :failed="error !== null"
+            :loading="loading"
+        />
+    </UForm>
 </template>

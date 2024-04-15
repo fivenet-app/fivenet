@@ -62,6 +62,7 @@ watchArray(
     { deep: true },
 );
 </script>
+
 <template>
     <div></div>
 </template>

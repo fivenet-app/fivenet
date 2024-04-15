@@ -55,7 +55,7 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
+const { data, pending: loading, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
 
 async function creatorSearch(query: string): Promise<UserShort[]> {
     usersLoading.value = true;
@@ -262,20 +262,19 @@ defineShortcuts({
         </template>
     </UDashboardToolbar>
 
-    <div class="inline-block w-full max-w-full px-1 py-2 align-middle">
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
-        <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
+    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.document', 2)])" />
+    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
+    <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
 
+    <div v-else class="relative overflow-x-auto">
         <ul
-            v-else
             role="list"
-            class="flex flex-col gap-1"
+            class="my-1 flex flex-col gap-1"
             :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
         >
             <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
         </ul>
-
-        <Pagination v-model="page" :pagination="data?.pagination" />
     </div>
+
+    <Pagination v-model="page" :pagination="data?.pagination" />
 </template>

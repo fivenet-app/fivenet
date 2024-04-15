@@ -633,186 +633,184 @@ console.info(
 </script>
 
 <template>
-    <div>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UDashboardNavbar :title="$t('pages.documents.edit.title')">
-                <template #right>
-                    <UButtonGroup class="inline-flex">
-                        <UButton
-                            color="black"
-                            icon="i-mdi-arrow-left"
-                            :to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
-                        >
-                            {{ $t('common.back') }}
-                        </UButton>
+    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UDashboardNavbar :title="$t('pages.documents.edit.title')">
+            <template #right>
+                <UButtonGroup class="inline-flex">
+                    <UButton
+                        color="black"
+                        icon="i-mdi-arrow-left"
+                        :to="documentId ? { name: 'documents-id', params: { id: documentId } } : `/documents`"
+                    >
+                        {{ $t('common.back') }}
+                    </UButton>
 
-                        <UButton
-                            type="submit"
-                            trailing-icon="i-mdi-content-save"
-                            :disabled="!canEdit || !canSubmit"
-                            :loading="!canSubmit"
-                        >
-                            <template v-if="!documentId">
-                                {{ $t('common.create') }}
-                            </template>
-                            <template v-else>
-                                {{ $t('common.save') }}
-                            </template>
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UDashboardNavbar>
+                    <UButton
+                        type="submit"
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canEdit || !canSubmit"
+                        :loading="!canSubmit"
+                    >
+                        <template v-if="!documentId">
+                            {{ $t('common.create') }}
+                        </template>
+                        <template v-else>
+                            {{ $t('common.save') }}
+                        </template>
+                    </UButton>
+                </UButtonGroup>
+            </template>
+        </UDashboardNavbar>
 
-            <UDashboardToolbar>
-                <template #default>
-                    <div class="flex w-full flex-col gap-2">
-                        <UFormGroup name="title" :label="$t('common.title')">
+        <UDashboardToolbar>
+            <template #default>
+                <div class="flex w-full flex-col gap-2">
+                    <UFormGroup name="title" :label="$t('common.title')">
+                        <UInput
+                            v-model="state.title"
+                            type="text"
+                            size="xl"
+                            :placeholder="$t('common.title')"
+                            :disabled="!canEdit || !canDo.edit"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <div class="flex flex-row gap-2">
+                        <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
+                            <UInputMenu
+                                v-model="state.category"
+                                option-attribute="name"
+                                :search-attributes="['name']"
+                                block
+                                nullable
+                                :search="completorStore.completeDocumentCategories"
+                                :searchable-placeholder="$t('common.search_field')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            >
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                            </UInputMenu>
+                        </UFormGroup>
+
+                        <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
                             <UInput
-                                v-model="state.title"
+                                v-model="state.state"
                                 type="text"
-                                size="xl"
-                                :placeholder="$t('common.title')"
+                                :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                                 :disabled="!canEdit || !canDo.edit"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 
-                        <div class="flex flex-row gap-2">
-                            <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
-                                <UInputMenu
-                                    v-model="state.category"
-                                    option-attribute="name"
-                                    :search-attributes="['name']"
-                                    block
-                                    nullable
-                                    :search="completorStore.completeDocumentCategories"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </UInputMenu>
-                            </UFormGroup>
-
-                            <UFormGroup name="state" :label="$t('common.state')" class="flex-1">
-                                <UInput
-                                    v-model="state.state"
-                                    type="text"
-                                    :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
-                                    :disabled="!canEdit || !canDo.edit"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
-                                />
-                            </UFormGroup>
-
-                            <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
-                                <USelectMenu
-                                    v-model="state.closed"
-                                    :disabled="!canEdit || !canDo.edit"
-                                    :options="[
-                                        { label: $t('common.open', 2), closed: false },
-                                        { label: $t('common.close', 2), closed: true },
-                                    ]"
-                                    value-attribute="closed"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.close', 1)]) }}
-                                    </template>
-                                </USelectMenu>
-                            </UFormGroup>
-                        </div>
+                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                            <USelectMenu
+                                v-model="state.closed"
+                                :disabled="!canEdit || !canDo.edit"
+                                :options="[
+                                    { label: $t('common.open', 2), closed: false },
+                                    { label: $t('common.close', 2), closed: true },
+                                ]"
+                                value-attribute="closed"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                                </template>
+                            </USelectMenu>
+                        </UFormGroup>
                     </div>
-                </template>
-            </UDashboardToolbar>
-
-            <DocumentRelationManager
-                v-model="relationManagerData"
-                :open="openRelationManager"
-                :document="documentId"
-                @close="openRelationManager = false"
-            />
-            <DocumentReferenceManager
-                v-model="referenceManagerData"
-                :open="openReferenceManager"
-                :document-id="documentId"
-                @close="openReferenceManager = false"
-            />
-
-            <template v-if="canDo.edit">
-                <UFormGroup name="content">
-                    <ClientOnly>
-                        <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
-                    </ClientOnly>
-                </UFormGroup>
-
-                <template v-if="saving">
-                    <div class="flex animate-pulse justify-center">
-                        <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
-                        <span>{{ $t('common.save', 2) }}...</span>
-                    </div>
-                </template>
-            </template>
-
-            <div class="flex flex-col gap-2 px-2">
-                <UButtonGroup v-if="canDo.edit" class="mt-2 inline-flex w-full">
-                    <UButton
-                        v-if="canDo.relations"
-                        class="flex-1"
-                        block
-                        :disabled="!canEdit || !canDo.edit"
-                        icon="i-mdi-account-multiple"
-                        @click="openRelationManager = true"
-                    >
-                        {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
-                    </UButton>
-                    <UButton
-                        v-if="canDo.references"
-                        class="flex-1"
-                        block
-                        :disabled="!canEdit || !canDo.edit"
-                        icon="i-mdi-file-document"
-                        @click="openReferenceManager = true"
-                    >
-                        {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
-                    </UButton>
-                </UButtonGroup>
-
-                <div>
-                    <h2>
-                        {{ $t('common.access') }}
-                    </h2>
-
-                    <DocumentAccessEntry
-                        v-for="entry in access.values()"
-                        :key="entry.id"
-                        :init="entry"
-                        :access-types="accessTypes"
-                        :read-only="!canDo.access || entry.required === true"
-                        :jobs="jobs"
-                        @type-change="updateAccessEntryType($event)"
-                        @name-change="updateAccessEntryName($event)"
-                        @rank-change="updateAccessEntryRank($event)"
-                        @access-change="updateAccessEntryAccess($event)"
-                        @delete-request="removeAccessEntry($event)"
-                    />
-
-                    <UButton
-                        :disabled="!canEdit || !canDo.access"
-                        :ui="{ rounded: 'rounded-full' }"
-                        icon="i-mdi-plus"
-                        :title="$t('components.documents.document_editor.add_permission')"
-                        @click="addAccessEntry()"
-                    />
                 </div>
+            </template>
+        </UDashboardToolbar>
+
+        <DocumentRelationManager
+            v-model="relationManagerData"
+            :open="openRelationManager"
+            :document="documentId"
+            @close="openRelationManager = false"
+        />
+        <DocumentReferenceManager
+            v-model="referenceManagerData"
+            :open="openReferenceManager"
+            :document-id="documentId"
+            @close="openReferenceManager = false"
+        />
+
+        <template v-if="canDo.edit">
+            <UFormGroup name="content">
+                <ClientOnly>
+                    <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                </ClientOnly>
+            </UFormGroup>
+
+            <template v-if="saving">
+                <div class="flex animate-pulse justify-center">
+                    <UIcon name="i-mdi-content-save" class="mr-2 h-auto w-4 animate-spin" />
+                    <span>{{ $t('common.save', 2) }}...</span>
+                </div>
+            </template>
+        </template>
+
+        <div class="flex flex-col gap-2 px-2">
+            <UButtonGroup v-if="canDo.edit" class="mt-2 inline-flex w-full">
+                <UButton
+                    v-if="canDo.relations"
+                    class="flex-1"
+                    block
+                    :disabled="!canEdit || !canDo.edit"
+                    icon="i-mdi-account-multiple"
+                    @click="openRelationManager = true"
+                >
+                    {{ $t('common.citizen', 1) }} {{ $t('common.relation', 2) }}
+                </UButton>
+                <UButton
+                    v-if="canDo.references"
+                    class="flex-1"
+                    block
+                    :disabled="!canEdit || !canDo.edit"
+                    icon="i-mdi-file-document"
+                    @click="openReferenceManager = true"
+                >
+                    {{ $t('common.document', 1) }} {{ $t('common.reference', 2) }}
+                </UButton>
+            </UButtonGroup>
+
+            <div>
+                <h2>
+                    {{ $t('common.access') }}
+                </h2>
+
+                <DocumentAccessEntry
+                    v-for="entry in access.values()"
+                    :key="entry.id"
+                    :init="entry"
+                    :access-types="accessTypes"
+                    :read-only="!canDo.access || entry.required === true"
+                    :jobs="jobs"
+                    @type-change="updateAccessEntryType($event)"
+                    @name-change="updateAccessEntryName($event)"
+                    @rank-change="updateAccessEntryRank($event)"
+                    @access-change="updateAccessEntryAccess($event)"
+                    @delete-request="removeAccessEntry($event)"
+                />
+
+                <UButton
+                    :disabled="!canEdit || !canDo.access"
+                    :ui="{ rounded: 'rounded-full' }"
+                    icon="i-mdi-plus"
+                    :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addAccessEntry()"
+                />
             </div>
-        </UForm>
-    </div>
+        </div>
+    </UForm>
 </template>

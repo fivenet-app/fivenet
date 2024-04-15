@@ -17,7 +17,7 @@ defineEmits<{
 </script>
 
 <template>
-    <div class="sm:px-2">
+    <div class="">
         <UPageGrid>
             <UPageCard
                 v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission))"

@@ -278,7 +278,7 @@ const columns = [
         </template>
     </UDashboardToolbar>
 
-    <div class="inline-block w-full max-w-full px-1 py-2 align-middle">
+    <div class="relative overflow-x-auto">
         <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])" :retry="refresh" />
 
         <UTable v-else :loading="pending" :columns="columns" :rows="data?.logs">

@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import { CancelIcon, CheckIcon, CheckboxBlankOutlineIcon } from 'mdi-vue3';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
@@ -153,9 +152,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     ]"
                                     @click="selectUnit(unit)"
                                 >
-                                    <CheckIcon v-if="query.units.includes(unit.id)" class="size-5" />
-                                    <CheckboxBlankOutlineIcon v-else-if="unit.users.length > 0" class="size-5" />
-                                    <CancelIcon v-else class="size-5" />
+                                    <UIcon name="i-mdi-check" v-if="query.units.includes(unit.id)" class="size-5" />
+                                    <UIcon
+                                        name="i-mdi-checkbox-blank-outline"
+                                        v-else-if="unit.users.length > 0"
+                                        class="size-5"
+                                    />
+                                    <UIcon name="i-mdi-cancel" v-else class="size-5" />
 
                                     <div class="ml-0.5 flex w-full flex-col place-items-start">
                                         {{ unit.users.length === 0 }}

@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ArrowCollapseIcon, FileDocumentMultipleIcon } from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -78,7 +77,7 @@ const columns = computed(() =>
         <DataNoDataBlock
             v-else-if="references === null || references.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.reference', 2)}`"
-            :mdi="FileDocumentMultipleIcon"
+            icon="i-mdi-file-document-multiple"
         />
 
         <template v-else>
@@ -95,7 +94,7 @@ const columns = computed(() =>
                         >
                             <span class="flex items-center space-x-4">
                                 <span class="flex flex-1 space-x-2 truncate">
-                                    <ArrowCollapseIcon class="size-5 shrink-0" />
+                                    <UIcon name="i-mdi-arrow-collapse" class="size-5 shrink-0" />
                                     <span class="flex flex-col truncate text-sm">
                                         <span>
                                             {{ reference.targetDocument?.title

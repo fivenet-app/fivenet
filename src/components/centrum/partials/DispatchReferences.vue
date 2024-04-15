@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { LinkVariantIcon } from 'mdi-vue3';
 import { type DispatchReferences, DispatchReferenceType } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
 
@@ -36,7 +35,7 @@ const selectedDispatch = ref<string | undefined>();
                     "
                 >
                     <span class="sr-only">{{ $t('common.open') }}</span>
-                    <LinkVariantIcon class="ml-1 size-5" />
+                    <UIcon name="i-mdi-link-variant" class="ml-1 size-5" />
                 </UButton>
             </span>
         </div>

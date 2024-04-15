@@ -56,10 +56,9 @@ const items = computed(() => [
         {
             label: t('components.language_switcher.title'),
             icon: 'i-mdi-translate',
-            color: 'gray',
             click: () => modal.open(LanguageSwitcherModal, {}),
         },
-    ].filter((i) => i !== undefined),
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
     [
         {
             label: t('components.partials.sidebar.change_character'),
@@ -103,7 +102,7 @@ const items = computed(() => [
 
         <template #account>
             <div class="text-left">
-                <p>Signed in as</p>
+                <p>{{ $t('components.UserDropdown.signed_in_as') }}</p>
                 <p class="truncate font-medium text-gray-900 dark:text-white">{{ username }}</p>
             </div>
         </template>

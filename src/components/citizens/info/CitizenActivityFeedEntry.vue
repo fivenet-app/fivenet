@@ -1,21 +1,4 @@
 <script setup lang="ts">
-import {
-    BellAlertIcon,
-    BellSleepIcon,
-    BriefcaseIcon,
-    CameraAccountIcon,
-    DoorOpenIcon,
-    FileAccountIcon,
-    FileAccountOutlineIcon,
-    HandcuffsIcon,
-    HelpCircleIcon,
-    LicenseIcon,
-    ReceiptTextCheckIcon,
-    ReceiptTextPlusIcon,
-    ReceiptTextRemoveIcon,
-    RunFastIcon,
-    TrafficConeIcon,
-} from 'mdi-vue3';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
@@ -31,8 +14,8 @@ const props = defineProps<{
     <template v-if="activity.key === 'DocStore.Relation'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <FileAccountIcon v-if="activity.newValue !== ''" class="size-full text-info-600" />
-                <FileAccountOutlineIcon v-else class="size-full text-base-600" />
+                <UIcon name="i-mdi-file-account" v-if="activity.newValue !== ''" class="size-full text-info-600" />
+                <UIcon name="i-mdi-file-account-outline" v-else class="size-full text-base-600" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -82,8 +65,8 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.Wanted'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <BellAlertIcon v-if="activity.newValue === 'true'" class="size-full text-error-400" />
-                <BellSleepIcon v-else class="size-full text-success-400" />
+                <UIcon v-if="activity.newValue === 'true'" name="i-mdi-bell-alert" class="size-full text-error-400" />
+                <UIcon v-else name="i-mdi-bell-sleep" class="size-full text-success-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -119,7 +102,7 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.Job'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <BriefcaseIcon class="text-secondary-400 size-full" />
+                <UIcon name="i-mdi-briefcase" class="text-secondary-400 size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -151,7 +134,7 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.TrafficInfractionPoints'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <TrafficConeIcon class="text-secondary-400 size-full" />
+                <UIcon name="i-mdi-traffic-cone" class="text-secondary-400 size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -185,7 +168,7 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'UserProps.MugShot'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <CameraAccountIcon class="text-secondary-400 size-full" />
+                <UIcon name="i-mdi-camera-account" class="text-secondary-400 size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -269,7 +252,11 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'Plugin.Licenses'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <LicenseIcon class="size-full" :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'" />
+                <UIcon
+                    name="i-mdi-license"
+                    class="size-full"
+                    :class="activity.newValue !== '' ? 'text-info-600' : 'text-warn-600'"
+                />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -302,9 +289,9 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'Plugin.Jail'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <HandcuffsIcon v-if="activity.oldValue === '' && activity.newValue !== '0'" class="size-full" />
-                <DoorOpenIcon v-else-if="activity.newValue === '0'" class="size-full" />
-                <RunFastIcon v-else class="size-full" />
+                <UIcon name="i-mdi-handcuffs" v-if="activity.oldValue === '' && activity.newValue !== '0'" class="size-full" />
+                <UIcon name="i-mdi-door-open" v-else-if="activity.newValue === '0'" class="size-full" />
+                <UIcon name="i-mdi-run-fast" v-else class="size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -344,12 +331,13 @@ const props = defineProps<{
     <template v-else-if="activity.key === 'Plugin.Billing.Fines'">
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <ReceiptTextCheckIcon v-if="activity.newValue === '0'" class="size-full text-success-400" />
-                <ReceiptTextRemoveIcon
+                <UIcon name="i-mdi-receipt-text-check" v-if="activity.newValue === '0'" class="size-full text-success-400" />
+                <UIcon
+                    name="i-mdi-receipt-text-remove"
                     v-else-if="activity.newValue === activity.oldValue"
                     class="text-secondary-400 size-full"
                 />
-                <ReceiptTextPlusIcon v-else class="size-full text-info-400" />
+                <UIcon name="i-mdi-ReceiptTextPlus" v-else class="size-full text-info-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
@@ -390,7 +378,7 @@ const props = defineProps<{
     <template v-else>
         <div class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                <HelpCircleIcon class="size-full" />
+                <UIcon name="i-mdi-help-circle" class="size-full" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">

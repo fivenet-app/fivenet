@@ -6,7 +6,7 @@ import { useSettingsStore } from '~/store/settings';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
 
-const { t, locale, finalizePendingLocaleChange } = useI18n();
+const { t, setLocale, locale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
@@ -20,9 +20,6 @@ if (!appConfig.nuxtIcon.iconifyApiOptions) {
 }
 
 const toast = useToast();
-
-const settings = useSettingsStore();
-const { isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 const colorMode = useColorMode();
 
@@ -57,6 +54,9 @@ useSeoMeta({
     twitterCard: 'summary_large_image',
 });
 
+const settings = useSettingsStore();
+const { locale: userLocale, isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
+
 if (__APP_VERSION__ !== settings.version) {
     console.info('Resetting app data because new version has been detected', settings.version, __APP_VERSION__);
     useClipboardStore().$reset();
@@ -64,27 +64,19 @@ if (__APP_VERSION__ !== settings.version) {
     settings.setVersion(__APP_VERSION__);
 }
 
-// Set theme colors into app config
+// Set locale and theme colors in app config
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
-
-async function setLocaleGlobally(locale: string): Promise<void> {
-    settings.setLocale(locale);
+if (userLocale.value !== null) {
+    setLocale(userLocale.value);
 }
+userLocale.value = locale.value;
 
-// Set user setting locale on load of app
-if (settings.locale !== null) {
-    locale.value = settings.locale;
-} else {
-    settings.locale = locale.value;
-}
-setLocaleGlobally(locale.value);
+watch(locale, () => settings.setLocale(locale.value));
 
-watch(locale, () => setLocaleGlobally(locale.value));
-
-async function onBeforeEnter(): Promise<void> {
+const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();
-}
+};
 
 // NUI message handling
 onMounted(async () => {
@@ -128,8 +120,6 @@ const route = useRoute();
         <NuxtLayout>
             <NuxtPage
                 :transition="{
-                    name: 'page',
-                    mode: 'out-in',
                     onBeforeEnter,
                 }"
             />
@@ -141,9 +131,8 @@ const route = useRoute();
 
         <ClientOnly>
             <LazyOverlaysSounds />
+            <NotificationProvider />
         </ClientOnly>
-
-        <NotificationProvider />
 
         <CookieControl v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />
     </div>

@@ -553,6 +553,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
 
                     <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`">
                         <UTextarea
+                            v-model="state.title"
                             name="title"
                             :rows="1"
                             :placeholder="$t('common.title')"
@@ -563,6 +564,7 @@ const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.l
 
                     <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`">
                         <UTextarea
+                            v-model="state.description"
                             name="description"
                             :rows="4"
                             :label="$t('common.description')"

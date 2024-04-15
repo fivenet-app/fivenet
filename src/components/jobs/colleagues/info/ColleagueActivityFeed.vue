@@ -78,80 +78,60 @@ function charsGetDisplayValue(chars: Colleague[]): string {
 </script>
 
 <template>
-    <div class="py-2 pb-4">
-        <div class="px-1 sm:px-2">
-            <div
-                v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
-                class="mb-4 sm:flex sm:items-center"
-            >
-                <div class="sm:flex-auto">
-                    <UForm :schema="schema" :state="query" @submit="refresh()">
-                        <div class="flex flex-row gap-2">
-                            <div class="flex-1">
-                                <UFormGroup name="colleagues" :label="$t('common.colleague', 2)" class="flex-1">
-                                    <USelectMenu
-                                        v-model="query.colleagues"
-                                        multiple
-                                        :searchable="
-                                            async (query: string) => {
-                                                usersLoading = true;
-                                                const colleagues = await completorStore.listColleagues({
-                                                    search: query,
-                                                });
-                                                usersLoading = false;
-                                                return colleagues;
-                                            }
-                                        "
-                                        :search-attributes="['firstname', 'lastname']"
-                                        block
-                                        :placeholder="$t('common.owner')"
-                                        trailing
-                                        by="userId"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #option="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                    </USelectMenu>
-                                </UFormGroup>
-                            </div>
-                        </div>
-                    </UForm>
-                </div>
-            </div>
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 align-middle">
-                        <DataPendingBlock
-                            v-if="pending"
-                            :message="$t('common.loading', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
-                        />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock
-                            v-else-if="data?.activity.length === 0"
-                            icon="i-mdi-bulletin-board"
-                            :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
-                        />
-                        <div v-else>
-                            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-                                <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
-                                    <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
-                                </li>
-                            </ul>
+    <UDashboardToolbar v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
+        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+            <UFormGroup name="colleagues" :label="$t('common.colleague', 2)" class="flex-1">
+                <USelectMenu
+                    v-model="query.colleagues"
+                    multiple
+                    :searchable="
+                        async (query: string) => {
+                            usersLoading = true;
+                            const colleagues = await completorStore.listColleagues({
+                                search: query,
+                            });
+                            usersLoading = false;
+                            return colleagues;
+                        }
+                    "
+                    :search-attributes="['firstname', 'lastname']"
+                    block
+                    :placeholder="$t('common.owner')"
+                    trailing
+                    by="userId"
+                    :searchable-placeholder="$t('common.search_field')"
+                >
+                    <template #option="{ option: user }">
+                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                </USelectMenu>
+            </UFormGroup>
+        </UForm>
+    </UDashboardToolbar>
 
-                            <Pagination v-model="page" :pagination="data?.pagination" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
+    <DataPendingBlock
+        v-if="pending"
+        :message="$t('common.loading', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
+    />
+    <DataErrorBlock
+        v-else-if="error"
+        :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
+        :retry="refresh"
+    />
+    <DataNoDataBlock
+        v-else-if="data?.activity.length === 0"
+        icon="i-mdi-bulletin-board"
+        :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
+    />
+    <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+        <li v-for="activity in data?.activity" :key="activity.id" class="px-2 py-4">
+            <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
+        </li>
+    </ul>
+
+    <Pagination v-model="page" :pagination="data?.pagination" />
 </template>

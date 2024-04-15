@@ -717,6 +717,9 @@
                     "too_old": "Cancelled due to Age",
                     "duplicate": "Duplicat"
                 }
+            },
+            "UserDropdown": {
+                "signed_in_as": "Signed in as"
             }
         },
         "jobs": {

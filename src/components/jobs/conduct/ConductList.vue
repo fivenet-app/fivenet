@@ -143,192 +143,180 @@ defineShortcuts({
 </script>
 
 <template>
-    <div class="py-2 pb-14">
-        <div class="px-1 sm:px-2">
-            <div class="sm:flex sm:items-center">
-                <div class="sm:flex-auto">
-                    <UForm :schema="schema" :state="query" @submit="refresh()">
-                        <div class="flex flex-row gap-2">
-                            <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.target')" class="flex-1">
-                                <UInputMenu
-                                    ref="input"
-                                    v-model="query.user"
-                                    nullable
-                                    :search="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const colleagues = await completorStore.listColleagues({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return colleagues;
-                                        }
-                                    "
-                                    :search-attributes="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="$t('common.target')"
-                                    trailing
-                                    by="userId"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                    </template>
+    <UDashboardToolbar>
+        <template #default>
+            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+                <div class="flex flex-row gap-2">
+                    <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.target')" class="flex-1">
+                        <UInputMenu
+                            ref="input"
+                            v-model="query.user"
+                            nullable
+                            :search="
+                                async (query: string) => {
+                                    usersLoading = true;
+                                    const colleagues = await completorStore.listColleagues({
+                                        search: query,
+                                    });
+                                    usersLoading = false;
+                                    return colleagues;
+                                }
+                            "
+                            :search-attributes="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.target')"
+                            trailing
+                            by="userId"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #option="{ option: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                            </template>
 
-                                    <template #trailing>
-                                        <UKbd value="/" />
-                                    </template>
-                                </UInputMenu>
-                            </UFormGroup>
+                            <template #trailing>
+                                <UKbd value="/" />
+                            </template>
+                        </UInputMenu>
+                    </UFormGroup>
 
-                            <UFormGroup name="types" :label="$t('common.type')" class="flex-1">
-                                <USelectMenu
-                                    v-model="query.types"
-                                    multiple
-                                    nullable
-                                    :options="cTypes"
-                                    value-attribute="status"
-                                    :placeholder="$t('common.na')"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option="{ option }">
-                                        <span class="truncate" :class="conductTypesToBGColor(option.status)">
-                                            {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
-                                        </span>
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                                </USelectMenu>
-                            </UFormGroup>
+                    <UFormGroup name="types" :label="$t('common.type')" class="flex-1">
+                        <USelectMenu
+                            v-model="query.types"
+                            multiple
+                            nullable
+                            :options="cTypes"
+                            value-attribute="status"
+                            :placeholder="$t('common.na')"
+                            :searchable-placeholder="$t('common.search_field')"
+                        >
+                            <template #option="{ option }">
+                                <span class="truncate" :class="conductTypesToBGColor(option.status)">
+                                    {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
+                                </span>
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                        </USelectMenu>
+                    </UFormGroup>
 
-                            <UFormGroup
-                                name="showExpired"
-                                :label="$t('components.jobs.conduct.List.show_expired')"
-                                class="flex-initial"
-                            >
-                                <UToggle v-model="query.showExpired">
-                                    <span class="sr-only">
-                                        {{ $t('components.jobs.conduct.List.show_expired') }}
-                                    </span>
-                                </UToggle>
-                            </UFormGroup>
-
-                            <UFormGroup
-                                v-if="can('JobsConductService.CreateConductEntry')"
-                                :label="$t('common.create')"
-                                class="flex-initial"
-                            >
-                                <UButton
-                                    @click="
-                                        modal.open(ConductCreateOrUpdateModal, {
-                                            onCreated: ($event) => data?.entries.unshift($event),
-                                            onUpdated: ($event) => updateEntryInPlace($event),
-                                        })
-                                    "
-                                >
-                                    {{ $t('common.create') }}
-                                </UButton>
-                            </UFormGroup>
-                        </div>
-                    </UForm>
-                </div>
-            </div>
-
-            <div class="overflow-x-auto">
-                <div class="inline-block min-w-full px-1 py-2 align-middle">
-                    <DataErrorBlock
-                        v-if="error"
-                        :title="$t('common.unable_to_load', [$t('common.conduct_register')])"
-                        :retry="refresh"
-                    />
-                    <UTable
-                        v-else
-                        :loading="loading"
-                        :columns="columns"
-                        :rows="data?.entries"
-                        :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
+                    <UFormGroup
+                        name="showExpired"
+                        :label="$t('components.jobs.conduct.List.show_expired')"
+                        class="flex-initial"
                     >
-                        <template #createdAt-data="{ row: conduct }">
-                            <GenericTime :value="conduct.createdAt" />
-                            <dl class="font-normal lg:hidden">
-                                <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
-                                <dd class="mt-1 truncate">
-                                    <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
-                                    <span v-else>
-                                        {{ $t('components.jobs.conduct.List.no_expiration') }}
-                                    </span>
-                                </dd>
-                            </dl>
-                        </template>
-                        <template #expiresAt-data="{ row: conduct }">
-                            <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
-                            <span v-else>
-                                {{ $t('components.jobs.conduct.List.no_expiration') }}
+                        <UToggle v-model="query.showExpired">
+                            <span class="sr-only">
+                                {{ $t('components.jobs.conduct.List.show_expired') }}
                             </span>
-                        </template>
-                        <template #type-data="{ row: conduct }">
-                            <UBadge :color="conductTypesToBadgeColor(conduct.type)">
-                                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? 0]}`) }}
-                            </UBadge>
-                        </template>
-                        <template #message-data="{ row: conduct }">
-                            <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-6">
-                                {{ conduct.message }}
-                            </p>
-                        </template>
-                        <template #target-data="{ row: conduct }">
-                            <ColleagueInfoPopover :user="conduct.targetUser" />
-                            <dl class="font-normal lg:hidden">
-                                <dt class="sr-only">{{ $t('common.creator') }}</dt>
-                                <dd class="mt-1 truncate">
-                                    <ColleagueInfoPopover :user="conduct.creator" />
-                                </dd>
-                            </dl>
-                        </template>
-                        <template #creator-data="{ row: conduct }">
-                            <ColleagueInfoPopover :user="conduct.creator" :hide-props="true" />
-                        </template>
-                        <template #actions-data="{ row: conduct }">
-                            <UButtonGroup class="inline-flex">
-                                <UButton
-                                    v-if="can('JobsConductService.UpdateConductEntry')"
-                                    variant="link"
-                                    icon="i-mdi-pencil"
-                                    @click="
-                                        modal.open(ConductCreateOrUpdateModal, {
-                                            entry: conduct,
-                                            userId: userId,
-                                            onCreated: ($event) => data?.entries.unshift($event),
-                                            onUpdated: ($event) => updateEntryInPlace($event),
-                                        })
-                                    "
-                                />
+                        </UToggle>
+                    </UFormGroup>
 
-                                <UButton
-                                    v-if="can('JobsConductService.DeleteConductEntry')"
-                                    variant="link"
-                                    icon="i-mdi-trash-can"
-                                    @click="
-                                        modal.open(ConfirmModal, {
-                                            confirm: async () => deleteConductEntry(conduct.id),
-                                        })
-                                    "
-                                />
-                            </UButtonGroup>
-                        </template>
-                    </UTable>
-
-                    <Pagination v-model="page" :pagination="data?.pagination" />
+                    <UFormGroup
+                        v-if="can('JobsConductService.CreateConductEntry')"
+                        :label="$t('common.create')"
+                        class="flex-initial"
+                    >
+                        <UButton
+                            @click="
+                                modal.open(ConductCreateOrUpdateModal, {
+                                    onCreated: ($event) => data?.entries.unshift($event),
+                                    onUpdated: ($event) => updateEntryInPlace($event),
+                                })
+                            "
+                        >
+                            {{ $t('common.create') }}
+                        </UButton>
+                    </UFormGroup>
                 </div>
-            </div>
-        </div>
-    </div>
+            </UForm>
+        </template>
+    </UDashboardToolbar>
+
+    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.conduct_register')])" :retry="refresh" />
+    <UTable
+        v-else
+        :loading="loading"
+        :columns="columns"
+        :rows="data?.entries"
+        :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
+    >
+        <template #createdAt-data="{ row: conduct }">
+            <GenericTime :value="conduct.createdAt" />
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
+                <dd class="mt-1 truncate">
+                    <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+                    <span v-else>
+                        {{ $t('components.jobs.conduct.List.no_expiration') }}
+                    </span>
+                </dd>
+            </dl>
+        </template>
+        <template #expiresAt-data="{ row: conduct }">
+            <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+            <span v-else>
+                {{ $t('components.jobs.conduct.List.no_expiration') }}
+            </span>
+        </template>
+        <template #type-data="{ row: conduct }">
+            <UBadge :color="conductTypesToBadgeColor(conduct.type)">
+                {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? 0]}`) }}
+            </UBadge>
+        </template>
+        <template #message-data="{ row: conduct }">
+            <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-6">
+                {{ conduct.message }}
+            </p>
+        </template>
+        <template #target-data="{ row: conduct }">
+            <ColleagueInfoPopover :user="conduct.targetUser" />
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.creator') }}</dt>
+                <dd class="mt-1 truncate">
+                    <ColleagueInfoPopover :user="conduct.creator" />
+                </dd>
+            </dl>
+        </template>
+        <template #creator-data="{ row: conduct }">
+            <ColleagueInfoPopover :user="conduct.creator" :hide-props="true" />
+        </template>
+        <template #actions-data="{ row: conduct }">
+            <UButtonGroup class="inline-flex">
+                <UButton
+                    v-if="can('JobsConductService.UpdateConductEntry')"
+                    variant="link"
+                    icon="i-mdi-pencil"
+                    @click="
+                        modal.open(ConductCreateOrUpdateModal, {
+                            entry: conduct,
+                            userId: userId,
+                            onCreated: ($event) => data?.entries.unshift($event),
+                            onUpdated: ($event) => updateEntryInPlace($event),
+                        })
+                    "
+                />
+
+                <UButton
+                    v-if="can('JobsConductService.DeleteConductEntry')"
+                    variant="link"
+                    icon="i-mdi-trash-can"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteConductEntry(conduct.id),
+                        })
+                    "
+                />
+            </UButtonGroup>
+        </template>
+    </UTable>
+
+    <Pagination v-model="page" :pagination="data?.pagination" />
 </template>
