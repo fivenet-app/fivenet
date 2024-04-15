@@ -177,8 +177,9 @@ defineShortcuts({
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
-                                <USelectMenu
+                                <UInputMenu
                                     v-model="query.category"
+                                    nullable
                                     option-attribute="name"
                                     :search-attributes="['name']"
                                     block
@@ -191,13 +192,14 @@ defineShortcuts({
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </USelectMenu>
+                                </UInputMenu>
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
                                 <USelectMenu
                                     v-model="query.creators"
                                     multiple
+                                    nullable
                                     block
                                     :searchable="creatorSearch"
                                     :search-attributes="['firstname', 'lastname']"
