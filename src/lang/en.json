@@ -717,9 +717,6 @@
                     "too_old": "Cancelled due to Age",
                     "duplicate": "Duplicat"
                 }
-            },
-            "UserDropdown": {
-                "signed_in_as": "Signed in as"
             }
         },
         "jobs": {
@@ -981,6 +978,9 @@
             "subtitle": "The main purpose of our cookies is to enable you to login with our social login providers. For more information on cookies and your data, take a look at our privacy policy.",
             "description": "Please note that the \"Remove local data\" function might not be able to remove all data based on your browser's functionality.",
             "clear_data": "Remove local data"
+        },
+        "UserDropdown": {
+            "signed_in_as": "Signed in as"
         }
     },
     "notifications": {
