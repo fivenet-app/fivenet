@@ -11,6 +11,7 @@ import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
+import ConductViewSlideover from './ConductViewSlideover.vue';
 
 const props = defineProps<{
     userId?: number;
@@ -24,6 +25,8 @@ const { $grpc } = useNuxtApp();
 const completorStore = useCompletorStore();
 
 const modal = useModal();
+
+const slideover = useSlideover();
 
 const schema = z.object({
     types: z.nativeEnum(ConductType).array().max(10),
@@ -296,6 +299,16 @@ defineShortcuts({
         </template>
         <template #actions-data="{ row: conduct }">
             <UButtonGroup class="inline-flex">
+                <UButton
+                    variant="link"
+                    icon="i-mdi-eye"
+                    @click="
+                        slideover.open(ConductViewSlideover, {
+                            entry: conduct,
+                        })
+                    "
+                />
+
                 <UButton
                     v-if="can('JobsConductService.UpdateConductEntry')"
                     variant="link"

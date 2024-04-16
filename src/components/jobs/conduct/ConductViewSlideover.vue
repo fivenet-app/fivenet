@@ -1,0 +1,109 @@
+<script lang="ts" setup>
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
+import { conductTypesToBadgeColor } from './helpers';
+
+defineProps<{
+    entry: ConductEntry;
+}>();
+
+const { isOpen } = useSlideover();
+</script>
+
+<template>
+    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false" class="flex flex-1">
+        <UCard
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+        >
+            <template #header>
+                <div class="flex items-center justify-between">
+                    <h3 class="text-2xl font-semibold leading-6">
+                        {{ $t('common.entry') }}
+                    </h3>
+
+                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                </div>
+            </template>
+
+            <div>
+                <dl class="divide-neutral/10 divide-y">
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.created_at') }}
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <GenericTime :value="entry.createdAt" />
+                        </dd>
+                    </div>
+                    <div v-if="entry.updatedAt" class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.updated_at') }}
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <GenericTime :value="entry.updatedAt" />
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.expires_at') }}
+                        </dt>
+                        <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
+                            <GenericTime :value="entry.expiresAt" />
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.type') }}
+                        </dt>
+                        <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                            <UBadge :color="conductTypesToBadgeColor(entry.type)">
+                                {{ $t(`enums.jobs.ConductType.${ConductType[entry.type ?? 0]}`) }}
+                            </UBadge>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.message') }}
+                        </dt>
+                        <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                            <p class="max-h-14 overflow-y-scroll break-words">
+                                {{ entry.message ?? $t('common.na') }}
+                            </p>
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.target') }}
+                        </dt>
+                        <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                            <CitizenInfoPopover :user="entry.targetUser" />
+                        </dd>
+                    </div>
+                    <div class="px-4 py-3 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+                        <dt class="text-sm font-medium leading-6">
+                            {{ $t('common.creator') }}
+                        </dt>
+                        <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
+                            <CitizenInfoPopover :user="entry.creator" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+
+            <template #footer>
+                <UButton color="black" block class="flex-1" @click="isOpen = false">
+                    {{ $t('common.close', 1) }}
+                </UButton>
+            </template>
+        </UCard>
+    </USlideover>
+</template>
