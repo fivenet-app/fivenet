@@ -1,5 +1,6 @@
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 export type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];
 
@@ -121,4 +122,54 @@ export const dispatchStatuses: {
 
 export function isStatusDispatchCompleted(status: StatusDispatch): boolean {
     return status === StatusDispatch.ARCHIVED || status === StatusDispatch.CANCELLED || status === StatusDispatch.COMPLETED;
+}
+
+export function dispatchTimeToTextColor(
+    date: Timestamp | undefined,
+    status: StatusDispatch = StatusDispatch.UNSPECIFIED,
+    maxTime: number = 600,
+): string {
+    const time = (Date.now() - toDate(date).getTime()) / 1000;
+
+    if (isStatusDispatchCompleted(status)) {
+        return '';
+    }
+
+    const over = time / maxTime;
+    if (over <= 0.2) {
+        return '';
+    } else if (over <= 0.3) {
+        return 'text-orange-300';
+    } else if (over <= 0.5) {
+        return 'text-orange-500';
+    } else if (over <= 0.8) {
+        return 'text-red-400';
+    }
+
+    return 'text-red-700 animate-bounce';
+}
+
+export function dispatchTimeToTextColorSidebar(
+    date: Timestamp | undefined,
+    status: StatusDispatch = StatusDispatch.UNSPECIFIED,
+    maxTime: number = 900,
+): { ping: boolean; class: string } {
+    const time = (Date.now() - toDate(date).getTime()) / 1000;
+
+    if (isStatusDispatchCompleted(status)) {
+        return { ping: false, class: '' };
+    }
+
+    const over = time / maxTime;
+    if (over <= 0.2) {
+        return { ping: false, class: '' };
+    } else if (over <= 0.3) {
+        return { ping: false, class: '!bg-orange-300' };
+    } else if (over <= 0.5) {
+        return { ping: false, class: '!bg-orange-500' };
+    } else if (over <= 0.8) {
+        return { ping: true, class: '!bg-red-400' };
+    }
+
+    return { ping: true, class: '!bg-red-700' };
 }

@@ -34,6 +34,10 @@ export interface Settings {
      * @generated from protobuf field: optional resources.centrum.PredefinedStatus predefined_status = 5;
      */
     predefinedStatus?: PredefinedStatus;
+    /**
+     * @generated from protobuf field: resources.centrum.Timings timings = 6;
+     */
+    timings?: Timings;
 }
 /**
  * @generated from protobuf message resources.centrum.PredefinedStatus
@@ -47,6 +51,15 @@ export interface PredefinedStatus {
      * @generated from protobuf field: repeated string dispatch_status = 2;
      */
     dispatchStatus: string[];
+}
+/**
+ * @generated from protobuf message resources.centrum.Timings
+ */
+export interface Timings {
+    /**
+     * @generated from protobuf field: int64 dispatch_max_wait = 1;
+     */
+    dispatchMaxWait: number;
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumMode
@@ -81,7 +94,8 @@ class Settings$Type extends MessageType<Settings> {
             { no: 2, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 4, name: "fallback_mode", kind: "enum", T: () => ["resources.centrum.CentrumMode", CentrumMode, "CENTRUM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus }
+            { no: 5, name: "predefined_status", kind: "message", T: () => PredefinedStatus },
+            { no: 6, name: "timings", kind: "message", T: () => Timings }
         ]);
     }
     create(value?: PartialMessage<Settings>): Settings {
@@ -114,6 +128,9 @@ class Settings$Type extends MessageType<Settings> {
                 case /* optional resources.centrum.PredefinedStatus predefined_status */ 5:
                     message.predefinedStatus = PredefinedStatus.internalBinaryRead(reader, reader.uint32(), options, message.predefinedStatus);
                     break;
+                case /* resources.centrum.Timings timings */ 6:
+                    message.timings = Timings.internalBinaryRead(reader, reader.uint32(), options, message.timings);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -141,6 +158,9 @@ class Settings$Type extends MessageType<Settings> {
         /* optional resources.centrum.PredefinedStatus predefined_status = 5; */
         if (message.predefinedStatus)
             PredefinedStatus.internalBinaryWrite(message.predefinedStatus, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.centrum.Timings timings = 6; */
+        if (message.timings)
+            Timings.internalBinaryWrite(message.timings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -206,3 +226,50 @@ class PredefinedStatus$Type extends MessageType<PredefinedStatus> {
  * @generated MessageType for protobuf message resources.centrum.PredefinedStatus
  */
 export const PredefinedStatus = new PredefinedStatus$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Timings$Type extends MessageType<Timings> {
+    constructor() {
+        super("resources.centrum.Timings", [
+            { no: 1, name: "dispatch_max_wait", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Timings>): Timings {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.dispatchMaxWait = 0;
+        if (value !== undefined)
+            reflectionMergePartial<Timings>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Timings): Timings {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* int64 dispatch_max_wait */ 1:
+                    message.dispatchMaxWait = reader.int64().toNumber();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Timings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* int64 dispatch_max_wait = 1; */
+        if (message.dispatchMaxWait !== 0)
+            writer.tag(1, WireType.Varint).int64(message.dispatchMaxWait);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.centrum.Timings
+ */
+export const Timings = new Timings$Type();

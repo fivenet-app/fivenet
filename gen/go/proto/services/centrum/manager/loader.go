@@ -51,6 +51,7 @@ func (s *Manager) LoadSettingsFromDB(ctx context.Context, job string) error {
 			tCentrumSettings.Mode,
 			tCentrumSettings.FallbackMode,
 			tCentrumSettings.PredefinedStatus,
+			tCentrumSettings.Timings,
 		).
 		FROM(tCentrumSettings)
 

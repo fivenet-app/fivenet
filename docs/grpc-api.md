@@ -30,6 +30,7 @@
 - [resources/centrum/settings.proto](#resources_centrum_settings-proto)
     - [PredefinedStatus](#resources-centrum-PredefinedStatus)
     - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
   
     - [CentrumMode](#resources-centrum-CentrumMode)
   
@@ -938,6 +939,22 @@
 | mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
 | fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
 | predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| timings | [Timings](#resources-centrum-Timings) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_max_wait | [int64](#int64) |  |  |
 
 
 

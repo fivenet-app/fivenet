@@ -4,6 +4,7 @@ import (
 	"database/sql/driver"
 	"slices"
 
+	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
 	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
@@ -70,4 +71,26 @@ func (x *Attributes) Remove(attribute string) bool {
 	})
 
 	return true
+}
+
+func (x *Disponents) Merge(in *Disponents) *Disponents {
+	if len(in.Disponents) == 0 {
+		x.Disponents = []*users.UserShort{}
+	} else {
+		x.Disponents = in.Disponents
+	}
+
+	return x
+}
+
+func (x *UserUnitMapping) Merge(in *UserUnitMapping) *UserUnitMapping {
+	if x.UnitId != in.UnitId {
+		x.UnitId = in.UnitId
+	}
+
+	if x.UserId != in.UserId {
+		x.UserId = in.UserId
+	}
+
+	return x
 }

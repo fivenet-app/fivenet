@@ -13,4 +13,5 @@ type FivenetCentrumSettings struct {
 	Mode             *int32  `json:"mode"`
 	FallbackMode     *int32  `json:"fallback_mode"`
 	PredefinedStatus *string `json:"predefined_status"`
+	Timings          *string `json:"timings"`
 }

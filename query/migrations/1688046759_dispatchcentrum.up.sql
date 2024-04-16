@@ -9,6 +9,7 @@ CREATE TABLE
         `mode` mediumint(2) DEFAULT 0 NULL,
         `fallback_mode` mediumint(2) DEFAULT 0 NULL,
         `predefined_status` text DEFAULT NULL,
+        `timings` text DEFAULT NULL,
         PRIMARY KEY (`job`)
     ) ENGINE = InnoDB;
 

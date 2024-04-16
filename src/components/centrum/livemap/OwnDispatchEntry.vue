@@ -1,11 +1,12 @@
 <script lang="ts" setup>
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
-import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
+import { dispatchStatusToBGColor, dispatchTimeToTextColorSidebar } from '~/components/centrum/helpers';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
-defineProps<{
+const props = defineProps<{
     dispatch: Dispatch;
     selectedDispatch: string | undefined;
 }>();
@@ -14,9 +15,24 @@ defineEmits<{
     (e: 'update:selectedDispatch', dsp: string | undefined): void;
 }>();
 
+const centrumStore = useCentrumStore();
+const { settings } = storeToRefs(centrumStore);
+
 const { goto } = useLivemapStore();
 
 const slideover = useSlideover();
+
+const dispatchTimeStyle = ref<{ ping: boolean; class: string }>({ ping: false, class: '' });
+
+useIntervalFn(
+    () =>
+        (dispatchTimeStyle.value = dispatchTimeToTextColorSidebar(
+            props.dispatch.createdAt,
+            props.dispatch.status?.status,
+            settings.value?.timings?.dispatchMaxWait,
+        )),
+    1000,
+);
 </script>
 
 <template>
@@ -33,49 +49,56 @@ const slideover = useSlideover();
 
             <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
         </div>
-        <UButton
-            color="red"
-            :padded="false"
-            class="my-0.5 flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
-            @click="
-                slideover.open(DispatchDetailsSlideover, {
-                    dispatch: dispatch,
-                })
-            "
+        <UChip
+            :show="dispatchTimeStyle.ping"
+            position="top-left"
+            size="md"
+            :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', background: dispatchTimeStyle.class }"
         >
-            <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
-                <span class="inline-flex items-center font-bold md:gap-1">
-                    <UIcon name="i-mdi-car-emergency" class="hidden h-3 w-auto md:block" />
-                    DSP-{{ dispatch.id }}
+            <UButton
+                color="red"
+                :padded="false"
+                class="my-0.5 flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
+                @click="
+                    slideover.open(DispatchDetailsSlideover, {
+                        dispatch: dispatch,
+                    })
+                "
+            >
+                <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
+                    <span class="inline-flex items-center font-bold md:gap-1">
+                        <UIcon name="i-mdi-car-emergency" class="hidden h-3 w-auto md:block" />
+                        DSP-{{ dispatch.id }}
+                    </span>
+                    <span>
+                        <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
+                    </span>
                 </span>
-                <span>
-                    <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
+                <span class="mb-0.5 inline-flex flex-col place-content-between items-center sm:flex-row sm:gap-1">
+                    <span class="font-semibold">{{ $t('common.status') }}:</span>
+                    <span class="line-clamp-2 break-words" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
+                        $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
+                    }}</span>
                 </span>
-            </span>
-            <span class="mb-0.5 inline-flex flex-col place-content-between items-center sm:flex-row sm:gap-1">
-                <span class="font-semibold">{{ $t('common.status') }}:</span>
-                <span class="line-clamp-2 break-words" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
-                    $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
-                }}</span>
-            </span>
-            <span class="line-clamp-2 inline-flex flex-col sm:flex-row sm:gap-1">
-                <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                <span>
-                    <template v-if="dispatch.anon">
-                        {{ $t('common.anon') }}
-                    </template>
-                    <template v-else-if="dispatch.creator">
-                        <span class="truncate"> {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }} </span>
-                    </template>
-                    <template v-else>
-                        {{ $t('common.unknown') }}
-                    </template>
+                <span class="line-clamp-2 inline-flex flex-col sm:flex-row sm:gap-1">
+                    <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
+                    <span>
+                        <template v-if="dispatch.anon">
+                            {{ $t('common.anon') }}
+                        </template>
+                        <template v-else-if="dispatch.creator">
+                            <span class="truncate"> {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }} </span>
+                        </template>
+                        <template v-else>
+                            {{ $t('common.unknown') }}
+                        </template>
+                    </span>
                 </span>
-            </span>
-            <span class="inline-flex flex-col sm:flex-row sm:gap-1">
-                <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
-                <GenericTime :value="dispatch.createdAt" type="compact" />
-            </span>
-        </UButton>
+                <span class="inline-flex flex-col sm:flex-row sm:gap-1">
+                    <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
+                    <GenericTime :value="dispatch.createdAt" type="compact" />
+                </span>
+            </UButton>
+        </UChip>
     </li>
 </template>

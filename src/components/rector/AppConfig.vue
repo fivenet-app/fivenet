@@ -331,6 +331,7 @@ const tabs = [
                                             :ui="{ rounded: 'rounded-full' }"
                                             :disabled="!canSubmit"
                                             icon="i-mdi-plus"
+                                            :class="state.perms.default.length ? 'mt-2' : ''"
                                             @click="state.perms.default.push({ category: '', name: '' })"
                                         />
                                     </UFormGroup>

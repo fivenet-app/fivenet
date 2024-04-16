@@ -676,7 +676,6 @@
             },
             "units": {
                 "create_unit": "Create Unit",
-                "update_settings": "Update Settings",
                 "update_unit": "Update Unit",
                 "feed": {
                     "item": {
@@ -717,6 +716,11 @@
                     "too_old": "Cancelled due to Age",
                     "duplicate": "Duplicat"
                 }
+            },
+            "settings": {
+                "update_settings": "Update Settings",
+                "timings": "Timings",
+                "dispatch_max_wait": "Dispatch: Max Wait (in seconds)"
             }
         },
         "jobs": {

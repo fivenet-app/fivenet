@@ -20,9 +20,14 @@ message Settings {
   CentrumMode mode = 3 [(validate.rules).enum.defined_only = true];
   CentrumMode fallback_mode = 4 [(validate.rules).enum.defined_only = true];
   optional PredefinedStatus predefined_status = 5;
+  Timings timings = 6;
 }
 
 message PredefinedStatus {
   repeated string unit_status = 1 [(validate.rules).repeated.max_items = 5];
   repeated string dispatch_status = 2 [(validate.rules).repeated.max_items = 5];
+}
+
+message Timings {
+  int64 dispatch_max_wait = 1;
 }

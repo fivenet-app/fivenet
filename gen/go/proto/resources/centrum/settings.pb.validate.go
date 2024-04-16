@@ -92,6 +92,35 @@ func (m *Settings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if all {
+		switch v := interface{}(m.GetTimings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SettingsValidationError{
+					field:  "Timings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SettingsValidationError{
+					field:  "Timings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTimings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SettingsValidationError{
+				field:  "Timings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.PredefinedStatus != nil {
 
 		if all {
@@ -323,3 +352,103 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = PredefinedStatusValidationError{}
+
+// Validate checks the field values on Timings with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *Timings) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Timings with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in TimingsMultiError, or nil if none found.
+func (m *Timings) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Timings) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DispatchMaxWait
+
+	if len(errors) > 0 {
+		return TimingsMultiError(errors)
+	}
+
+	return nil
+}
+
+// TimingsMultiError is an error wrapping multiple validation errors returned
+// by Timings.ValidateAll() if the designated constraints aren't met.
+type TimingsMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TimingsMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TimingsMultiError) AllErrors() []error { return m }
+
+// TimingsValidationError is the validation error returned by Timings.Validate
+// if the designated constraints aren't met.
+type TimingsValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TimingsValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TimingsValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TimingsValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TimingsValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TimingsValidationError) ErrorName() string { return "TimingsValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TimingsValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTimings.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TimingsValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TimingsValidationError{}

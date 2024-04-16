@@ -676,7 +676,6 @@
             },
             "units": {
                 "create_unit": "Einheit erstellen",
-                "update_settings": "Einstellungen ändern",
                 "update_unit": "Einheit aktualisieren",
                 "feed": {
                     "item": {
@@ -717,6 +716,11 @@
                     "too_old": "Abgebrochen, Einsatz zu alt",
                     "duplicate": "Duplikat"
                 }
+            },
+            "settings": {
+                "update_settings": "Einstellungen ändern",
+                "timings": "Zeitangaben",
+                "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)"
             }
         },
         "jobs": {

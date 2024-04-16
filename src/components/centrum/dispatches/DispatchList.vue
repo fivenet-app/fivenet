@@ -3,7 +3,7 @@ import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
-import { dispatchStatusAnimate, dispatchStatusToBGColor } from '../helpers';
+import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor } from '../helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
@@ -36,7 +36,7 @@ const slideover = useSlideover();
 const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { getSortedDispatches } = storeToRefs(centrumStore);
+const { getSortedDispatches, settings } = storeToRefs(centrumStore);
 
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 
@@ -180,7 +180,18 @@ const columns = [
                         </UButtonGroup>
                     </template>
                     <template #createdAt-data="{ row: dispatch }">
-                        <GenericTime :value="dispatch.createdAt" type="compact" />
+                        <GenericTime
+                            :value="dispatch.createdAt"
+                            type="compact"
+                            :update-callback="
+                                () =>
+                                    dispatchTimeToTextColor(
+                                        dispatch.createdAt,
+                                        dispatch.status.status,
+                                        settings?.timings?.dispatchMaxWait,
+                                    )
+                            "
+                        />
                     </template>
                     <template #status-data="{ row: dispatch }">
                         <span

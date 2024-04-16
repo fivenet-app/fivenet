@@ -34,6 +34,9 @@ const schema = z.object({
     fallbackMode: z.nativeEnum(CentrumMode),
     unitStatus: z.string().array().max(10),
     dispatchStatus: z.string().array().max(10),
+    timings: z.object({
+        dispatchMaxWait: z.coerce.number().min(60).max(6000),
+    }),
 });
 
 type Schema = z.output<typeof schema>;
@@ -44,6 +47,9 @@ const state = reactive<Schema>({
     fallbackMode: CentrumMode.AUTO_ROUND_ROBIN,
     unitStatus: [],
     dispatchStatus: [],
+    timings: {
+        dispatchMaxWait: 900,
+    },
 });
 
 async function updateSettings(values: Schema): Promise<void> {
@@ -58,6 +64,7 @@ async function updateSettings(values: Schema): Promise<void> {
                     dispatchStatus: values.dispatchStatus,
                     unitStatus: values.unitStatus,
                 },
+                timings: values.timings,
             },
         });
         await call;
@@ -101,7 +108,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #header>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
-                            {{ $t('components.centrum.units.update_settings') }}
+                            {{ $t('components.centrum.settings.update_settings') }}
                         </h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
@@ -109,127 +116,144 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <div class="text-sm text-gray-100">
-                        <UFormGroup name="enabled" :label="$t('common.enabled')" class="flex-1">
-                            <UCheckbox
-                                v-model="state.enabled"
-                                name="enabled"
-                                :disabled="!can('SuperUser')"
-                                :placeholder="$t('common.enabled')"
-                            />
-                        </UFormGroup>
+                    <UFormGroup name="enabled" :label="$t('common.enabled')" class="flex-1">
+                        <UCheckbox
+                            v-model="state.enabled"
+                            name="enabled"
+                            :disabled="!can('SuperUser')"
+                            :placeholder="$t('common.enabled')"
+                        />
+                    </UFormGroup>
 
-                        <UFormGroup name="mode" :label="$t('common.mode')" class="flex-1">
-                            <USelectMenu
-                                v-model="state.mode"
-                                :options="modes"
-                                value-attribute="mode"
-                                :searchable-placeholder="$t('common.search_field')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            >
-                                <template #label>
-                                    <span class="truncate">{{
-                                        $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                    }}</span>
-                                </template>
-                                <template #option="{ option }">
-                                    <span class="truncate">{{
-                                        $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
-                                    }}</span>
-                                </template>
-                            </USelectMenu>
-                        </UFormGroup>
-
-                        <UFormGroup name="fallbackMode" :label="$t('common.fallback_mode')" class="flex-1">
-                            <USelectMenu
-                                v-model="state.fallbackMode"
-                                :options="modes"
-                                value-attribute="mode"
-                                :searchable-placeholder="$t('common.search_field')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            >
-                                <template #label>
-                                    <span class="truncate">{{
-                                        $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                    }}</span>
-                                </template>
-                                <template #option="{ option }">
-                                    <span class="truncate">{{
-                                        $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
-                                    }}</span>
-                                </template>
-                            </USelectMenu>
-                        </UFormGroup>
-
-                        <!-- Predefined Unit Status Reason -->
-                        <UFormGroup name="unitStatus" :label="`${$t('common.unit')} ${$t('common.status')}`" class="flex-1">
-                            <div class="flex flex-col gap-1">
-                                <div v-for="(_, idx) in state.unitStatus" :key="idx" class="flex items-center gap-1">
-                                    <UFormGroup :name="`unitStatus.${idx}`" class="flex-1">
-                                        <UInput
-                                            v-model="state.unitStatus[idx]"
-                                            type="text"
-                                            class="w-full flex-1"
-                                            :placeholder="$t('common.reason')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </UFormGroup>
-
-                                    <UButton
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        icon="i-mdi-close"
-                                        @click="state.unitStatus.splice(idx, 1)"
-                                    />
-                                </div>
-                            </div>
-
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                icon="i-mdi-plus"
-                                :disabled="!canSubmit || state.unitStatus.length >= 8"
-                                @click="state.unitStatus.push('')"
-                            />
-                        </UFormGroup>
-
-                        <!-- Predefined Dispatch Status Reason -->
-                        <UFormGroup
-                            name="dispatchStatus"
-                            :label="`${$t('common.dispatches')} ${$t('common.status')}`"
-                            class="flex-1"
+                    <UFormGroup name="mode" :label="$t('common.mode')" class="flex-1">
+                        <USelectMenu
+                            v-model="state.mode"
+                            :options="modes"
+                            value-attribute="mode"
+                            :searchable-placeholder="$t('common.search_field')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
                         >
-                            <div class="flex flex-col gap-1">
-                                <div v-for="(_, idx) in state.dispatchStatus" :key="idx" class="flex items-center gap-1">
-                                    <UFormGroup :name="`dispatchStatus.${idx}`" class="flex-1">
-                                        <UInput
-                                            v-model="state.dispatchStatus[idx]"
-                                            type="text"
-                                            class="w-full flex-1"
-                                            :placeholder="$t('common.reason')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
-                                        />
-                                    </UFormGroup>
+                            <template #label>
+                                <span class="truncate">{{
+                                    $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                }}</span>
+                            </template>
+                            <template #option="{ option }">
+                                <span class="truncate">{{
+                                    $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                }}</span>
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
 
-                                    <UButton
-                                        :ui="{ rounded: 'rounded-full' }"
-                                        icon="i-mdi-close"
-                                        :disabled="!canSubmit"
-                                        @click="state.dispatchStatus.splice(idx, 1)"
+                    <UFormGroup name="fallbackMode" :label="$t('common.fallback_mode')" class="flex-1">
+                        <USelectMenu
+                            v-model="state.fallbackMode"
+                            :options="modes"
+                            value-attribute="mode"
+                            :searchable-placeholder="$t('common.search_field')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <template #label>
+                                <span class="truncate">{{
+                                    $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                }}</span>
+                            </template>
+                            <template #option="{ option }">
+                                <span class="truncate">{{
+                                    $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                }}</span>
+                            </template>
+                        </USelectMenu>
+                    </UFormGroup>
+
+                    <!-- Predefined Unit Status Reason -->
+                    <UFormGroup name="unitStatus" :label="`${$t('common.unit')} ${$t('common.status')}`" class="flex-1">
+                        <div class="flex flex-col gap-1">
+                            <div v-for="(_, idx) in state.unitStatus" :key="idx" class="flex items-center gap-1">
+                                <UFormGroup :name="`unitStatus.${idx}`" class="flex-1">
+                                    <UInput
+                                        v-model="state.unitStatus[idx]"
+                                        type="text"
+                                        class="w-full flex-1"
+                                        :placeholder="$t('common.reason')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
-                                </div>
-                            </div>
+                                </UFormGroup>
 
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                icon="i-mdi-plus"
-                                :disabled="!canSubmit || state.dispatchStatus.length >= 8"
-                                @click="state.dispatchStatus.push('')"
-                            />
-                        </UFormGroup>
-                    </div>
+                                <UButton
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    icon="i-mdi-close"
+                                    @click="state.unitStatus.splice(idx, 1)"
+                                />
+                            </div>
+                        </div>
+
+                        <UButton
+                            :ui="{ rounded: 'rounded-full' }"
+                            icon="i-mdi-plus"
+                            :disabled="!canSubmit || state.unitStatus.length >= 8"
+                            :class="state.unitStatus.length ? 'mt-2' : ''"
+                            @click="state.unitStatus.push('')"
+                        />
+                    </UFormGroup>
+
+                    <!-- Predefined Dispatch Status Reason -->
+                    <UFormGroup
+                        name="dispatchStatus"
+                        :label="`${$t('common.dispatches')} ${$t('common.status')}`"
+                        class="flex-1"
+                    >
+                        <div class="flex flex-col gap-1">
+                            <div v-for="(_, idx) in state.dispatchStatus" :key="idx" class="flex items-center gap-1">
+                                <UFormGroup :name="`dispatchStatus.${idx}`" class="flex-1">
+                                    <UInput
+                                        v-model="state.dispatchStatus[idx]"
+                                        type="text"
+                                        class="w-full flex-1"
+                                        :placeholder="$t('common.reason')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+
+                                <UButton
+                                    :ui="{ rounded: 'rounded-full' }"
+                                    icon="i-mdi-close"
+                                    :disabled="!canSubmit"
+                                    @click="state.dispatchStatus.splice(idx, 1)"
+                                />
+                            </div>
+                        </div>
+
+                        <UButton
+                            :ui="{ rounded: 'rounded-full' }"
+                            icon="i-mdi-plus"
+                            :disabled="!canSubmit || state.dispatchStatus.length >= 8"
+                            :class="state.dispatchStatus.length ? 'mt-2' : ''"
+                            @click="state.dispatchStatus.push('')"
+                        />
+                    </UFormGroup>
+
+                    <!-- Timings -->
+                    <UFormGroup
+                        name="timings.dispatchMaxWait"
+                        :label="$t('components.centrum.settings.dispatch_max_wait')"
+                        class="flex-1"
+                    >
+                        <UInput
+                            v-model="state.timings.dispatchMaxWait"
+                            type="number"
+                            class="w-full flex-1"
+                            :placeholder="$t('common.time_ago.second', 2)"
+                            trailing-icon="i-mdi-access-time"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                 </div>
 
                 <template #footer>
