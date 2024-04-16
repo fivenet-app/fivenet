@@ -37,6 +37,8 @@ watch(selectedJob, () => {
             async (q?: string) => (await listJobs()).filter((j) => q === undefined || j.name.includes(q) || j.label.includes(q))
         "
         :searchable-placeholder="$t('common.search_field')"
+        @focusin="focusTablet(true)"
+        @focusout="focusTablet(false)"
     >
         <template #option-empty="{ query: search }">
             <q>{{ search }}</q> {{ $t('common.query_not_found') }}

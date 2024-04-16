@@ -293,6 +293,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         min="5"
                                         max="250"
                                         :placeholder="$t('common.radius')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
                             </dd>
@@ -312,6 +314,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.icon"
                                         :options="markerIcons"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <UIcon :name="state.icon" class="size-5" :style="{ color: state.color }" />

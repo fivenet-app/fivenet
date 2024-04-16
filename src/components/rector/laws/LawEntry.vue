@@ -149,7 +149,14 @@ const editing = ref(props.startInEdit);
                 />
             </td>
             <td class="whitespace-nowrap p-1 text-left">
-                <UInput name="fine" type="text" :placeholder="$t('common.fine')" :label="$t('common.fine')" />
+                <UInput
+                    name="fine"
+                    type="text"
+                    :placeholder="$t('common.fine')"
+                    :label="$t('common.fine')"
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                />
             </td>
             <td class="whitespace-nowrap p-1 text-left">
                 <UInput

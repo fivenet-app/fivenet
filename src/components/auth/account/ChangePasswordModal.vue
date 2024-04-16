@@ -77,6 +77,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         type="password"
                         autocomplete="current-password"
                         :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <VeeErrorMessage name="currentPassword" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
@@ -88,6 +90,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         type="password"
                         autocomplete="new-password"
                         :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                     <PasswordStrengthMeter :input="state.newPassword" class="mt-2" />
                 </UFormGroup>

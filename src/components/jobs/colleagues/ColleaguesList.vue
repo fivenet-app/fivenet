@@ -137,6 +137,7 @@ defineShortcuts({
                     block
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
+                    @keydown.esc="$event.target.blur()"
                 >
                     <template #trailing>
                         <UKbd value="/" />

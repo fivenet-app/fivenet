@@ -306,6 +306,8 @@ onBeforeMount(async () => {
                                     by="grade"
                                     :placeholder="$t('common.rank')"
                                     :searchable-placeholder="$t('common.search_field')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 >
                                     <template #option="{ option: grade }">
                                         {{ grade?.label }}

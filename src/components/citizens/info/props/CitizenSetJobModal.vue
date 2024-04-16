@@ -120,6 +120,8 @@ onBeforeMount(async () => listJobs());
                             :options="jobs"
                             by="label"
                             :searchable-placeholder="$t('common.search_field')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
                         >
                             <template #label>
                                 <template v-if="state.job">
@@ -138,6 +140,8 @@ onBeforeMount(async () => listJobs());
                             :options="state.job?.grades"
                             by="grade"
                             :searchable-placeholder="$t('common.search_field')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
                         >
                             <template #label>
                                 <template v-if="state.grade">

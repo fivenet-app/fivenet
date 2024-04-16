@@ -156,6 +156,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     value-attribute="key"
                                     :placeholder="$t('common.type')"
                                     :searchable-placeholder="$t('common.search_field')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 >
                                     <template #option="{ option }">
                                         <span class="truncate">{{

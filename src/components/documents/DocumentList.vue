@@ -206,6 +206,8 @@ defineShortcuts({
                                     :searchable-placeholder="$t('common.search_field')"
                                     trailing
                                     by="userId"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 >
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
@@ -225,6 +227,8 @@ defineShortcuts({
                                     :options="openclose"
                                     value-attribute="closed"
                                     :searchable-placeholder="$t('common.search_field')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 
@@ -243,6 +247,7 @@ defineShortcuts({
                                     </template>
                                 </UPopover>
                             </UFormGroup>
+
                             <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
                                 <UPopover :popper="{ placement: 'bottom-start' }">
                                     <UButton

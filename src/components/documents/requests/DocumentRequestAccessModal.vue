@@ -103,6 +103,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :options="accessLevels"
                             :placeholder="$t('common.access')"
                             :searchable-placeholder="$t('common.search_field')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
                         >
                             <template #label>
                                 <span v-if="state.accessLevel" class="truncate">{{

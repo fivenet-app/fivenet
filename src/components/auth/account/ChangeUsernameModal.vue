@@ -84,6 +84,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         type="text"
                         autocomplete="current-username"
                         :placeholder="$t('components.auth.ChangeUsernameModal.current_username')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </UFormGroup>
 
@@ -93,6 +95,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         type="text"
                         autocomplete="new-username"
                         :placeholder="$t('components.auth.ChangeUsernameModal.new_username')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
                 </UFormGroup>
             </UForm>

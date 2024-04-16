@@ -197,6 +197,8 @@ const input = ref<{ input: HTMLInputElement }>();
                                     trailing
                                     by="userId"
                                     :searchable-placeholder="$t('common.search_field')"
+                                    @focusin="focusTablet(true)"
+                                    @focusout="focusTablet(false)"
                                 >
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

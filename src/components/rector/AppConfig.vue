@@ -433,6 +433,8 @@ const tabs = [
                                             value-attribute="name"
                                             by="label"
                                             :searchable-placeholder="$t('common.search_field')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 <template v-if="state.jobInfo.publicJobs">
@@ -463,6 +465,8 @@ const tabs = [
                                             value-attribute="name"
                                             by="label"
                                             :searchable-placeholder="$t('common.search_field')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 <template v-if="state.jobInfo.hiddenJobs">
@@ -532,6 +536,8 @@ const tabs = [
                                             value-attribute="name"
                                             by="label"
                                             :searchable-placeholder="$t('common.search_field')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 <template v-if="state.userTracker.livemapJobs">
