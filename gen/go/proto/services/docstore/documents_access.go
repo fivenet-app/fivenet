@@ -10,6 +10,7 @@ import (
 	errorsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -84,6 +85,9 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	defer tx.Rollback()
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, req.Mode, req.DocumentId, req.Access); err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
+		}
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 

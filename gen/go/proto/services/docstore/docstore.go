@@ -22,6 +22,7 @@ import (
 	"github.com/galexrt/fivenet/pkg/perms"
 	"github.com/galexrt/fivenet/pkg/server/audit"
 	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -337,6 +338,9 @@ func (s *Server) CreateDocument(ctx context.Context, req *CreateDocumentRequest)
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, uint64(lastId), req.Access); err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
+		}
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
@@ -481,6 +485,9 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 	}
 
 	if err := s.handleDocumentAccessChanges(ctx, tx, documents.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.DocumentId, req.Access); err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrDocAccessDuplicate)
+		}
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 

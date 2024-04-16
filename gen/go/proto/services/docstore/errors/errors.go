@@ -20,9 +20,11 @@ var (
 	ErrDocSameOwner        = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocSameOwner")
 	ErrDocOwnerWrongJob    = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocOwnerWrongJob")
 	ErrDocOwnerFailed      = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocOwnerFailed")
+	ErrDocAccessDuplicate  = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocAccessDuplicate")
 
 	ErrTemplateFailed            = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrTemplateFailed")
 	ErrDocRequiredAccessTemplate = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrDocRequiredAccessTemplate.title;errors.DocStoreService.ErrDocRequiredAccessTemplate.content")
+	ErrTemplateAccessDuplicate   = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrTemplateAccessDuplicate")
 
 	ErrFeedRefsViewDenied  = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRefsViewDenied")
 	ErrFeedRelsViewDenied  = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrFeedRelsViewDenied")

@@ -1917,7 +1917,9 @@
                 "title": "Required document access missing!",
                 "content": "Make sure you have not edited or removed any required document access."
             },
-            "ErrDocOwnerFailed": "You need to have edit access to the document!"
+            "ErrDocOwnerFailed": "You need to have edit access to the document!",
+            "ErrDocAccessDuplicate": "Document access: A job rank/citizen can only have one access and not multiple!",
+            "ErrTemplateAccessDuplicate": "Template access: A job rank can only have one access and not multiple!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Failed to stream Map data!",

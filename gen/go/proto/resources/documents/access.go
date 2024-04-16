@@ -2,6 +2,7 @@ package documents
 
 import (
 	"database/sql/driver"
+	"fmt"
 
 	"github.com/galexrt/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -50,4 +51,38 @@ func (x *DocumentAccess) Value() (driver.Value, error) {
 
 func (x *DocumentAccess) IsEmpty() bool {
 	return len(x.Jobs) == 0 && len(x.Users) == 0
+}
+
+func DocumentAccessHasDuplicates(access *DocumentAccess) bool {
+	jobKeys := map[string]interface{}{}
+	for _, ja := range access.Jobs {
+		key := fmt.Sprintf("%s-%d", ja.GetJob(), ja.GetMinimumGrade())
+		if _, ok := jobKeys[key]; ok {
+			return true
+		}
+		jobKeys[key] = nil
+	}
+
+	userKeys := map[int32]interface{}{}
+	for _, ja := range access.Users {
+		if _, ok := userKeys[ja.GetUserId()]; ok {
+			return true
+		}
+		userKeys[ja.GetUserId()] = nil
+	}
+
+	return false
+}
+
+func TemplateAccessHasDuplicates(jobs []*TemplateJobAccess) bool {
+	jobKeys := map[string]interface{}{}
+	for _, ja := range jobs {
+		key := fmt.Sprintf("%s-%d", ja.GetJob(), ja.GetMinimumGrade())
+		if _, ok := jobKeys[key]; ok {
+			return true
+		}
+		jobKeys[key] = nil
+	}
+
+	return false
 }

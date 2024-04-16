@@ -13,6 +13,7 @@ import (
 	permsdocstore "github.com/galexrt/fivenet/gen/go/proto/services/docstore/perms"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
 	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/galexrt/fivenet/pkg/utils/dbutils"
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -221,6 +222,10 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	if documents.TemplateAccessHasDuplicates(req.Template.JobAccess) || documents.DocumentAccessHasDuplicates(req.Template.ContentAccess) {
+		return nil, errorsdocstore.ErrTemplateAccessDuplicate
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -278,6 +283,9 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, uint64(lastId), userInfo.Job, req.Template.JobAccess); err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrTemplateAccessDuplicate)
+		}
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
@@ -313,6 +321,10 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	}
 	if !check && !userInfo.SuperUser {
 		return nil, errorsdocstore.ErrTemplateNoPerms
+	}
+
+	if documents.TemplateAccessHasDuplicates(req.Template.JobAccess) || documents.DocumentAccessHasDuplicates(req.Template.ContentAccess) {
+		return nil, errorsdocstore.ErrTemplateAccessDuplicate
 	}
 
 	categoryId := jet.NULL
@@ -367,6 +379,9 @@ func (s *Server) UpdateTemplate(ctx context.Context, req *UpdateTemplateRequest)
 	}
 
 	if err := s.handleTemplateAccessChanges(ctx, tx, req.Template.Id, userInfo.Job, req.Template.JobAccess); err != nil {
+		if dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrTemplateAccessDuplicate)
+		}
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
