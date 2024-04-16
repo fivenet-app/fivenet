@@ -36,65 +36,68 @@ useIntervalFn(
 </script>
 
 <template>
-    <li class="flex flex-row items-center">
+    <li class="flex flex-row items-center gap-1">
         <div class="flex flex-col items-center gap-2">
-            <input
+            <URadio
                 :value="dispatch.id"
                 name="active"
-                type="radio"
-                class="form-radio focus-visible:ring-primary-500 dark:focus-visible:ring-primary-400 text-primary-500 dark:text-primary-400 h-4 w-4 border border-gray-300 bg-white focus:ring-0 focus:ring-transparent focus:ring-offset-transparent focus-visible:ring-1 focus-visible:ring-offset-2 focus-visible:ring-offset-white disabled:cursor-not-allowed disabled:opacity-50 dark:border-gray-700 dark:bg-gray-900 dark:checked:border-transparent dark:checked:bg-current dark:focus-visible:ring-offset-gray-900"
                 :checked="selectedDispatch === dispatch.id"
                 @change="$emit('update:selectedDispatch', dispatch.id)"
             />
 
-            <UButton variant="link" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
+            <UButton variant="link" :padded="false" icon="i-mdi-map-marker" @click="goto({ x: dispatch.x, y: dispatch.y })" />
         </div>
+
         <UChip
             :show="dispatchTimeStyle.ping"
             position="top-left"
             size="md"
+            class="flex w-full max-w-full shrink flex-col items-center"
             :ui="{ base: dispatchTimeStyle.ping ? 'animate-pulse' : '', background: dispatchTimeStyle.class }"
         >
             <UButton
                 color="red"
                 :padded="false"
-                class="my-0.5 flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
+                class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 @click="
                     slideover.open(DispatchDetailsSlideover, {
                         dispatch: dispatch,
                     })
                 "
             >
-                <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center sm:flex-row sm:gap-1">
+                <span class="mb-0.5 inline-flex w-full flex-col place-content-between items-center md:flex-row md:gap-1">
                     <span class="inline-flex items-center font-bold md:gap-1">
                         <UIcon name="i-mdi-car-emergency" class="hidden h-3 w-auto md:block" />
                         DSP-{{ dispatch.id }}
                     </span>
                     <span>
-                        <span class="font-semibold">{{ $t('common.postal') }}:</span> <span>{{ dispatch.postal }}</span>
+                        <span class="font-semibold">{{ $t('common.postal') }}:</span> {{ dispatch.postal }}
                     </span>
                 </span>
-                <span class="mb-0.5 inline-flex flex-col place-content-between items-center sm:flex-row sm:gap-1">
+
+                <span class="mb-0.5 inline-flex flex-col place-content-between items-center md:flex-row md:gap-1">
                     <span class="font-semibold">{{ $t('common.status') }}:</span>
                     <span class="line-clamp-2 break-words" :class="dispatchStatusToBGColor(dispatch.status?.status)">{{
                         $t(`enums.centrum.StatusDispatch.${StatusDispatch[dispatch.status?.status ?? 0]}`)
                     }}</span>
                 </span>
-                <span class="line-clamp-2 inline-flex flex-col sm:flex-row sm:gap-1">
+
+                <span class="line-clamp-2 inline-flex flex-col md:flex-row md:gap-1">
                     <span class="font-semibold">{{ $t('common.sent_by') }}:</span>
-                    <span>
+                    <span class="truncate">
                         <template v-if="dispatch.anon">
                             {{ $t('common.anon') }}
                         </template>
                         <template v-else-if="dispatch.creator">
-                            <span class="truncate"> {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }} </span>
+                            {{ dispatch.creator.firstname }} {{ dispatch.creator.lastname }}
                         </template>
                         <template v-else>
                             {{ $t('common.unknown') }}
                         </template>
                     </span>
                 </span>
-                <span class="inline-flex flex-col sm:flex-row sm:gap-1">
+
+                <span class="inline-flex flex-col items-center md:flex-row md:gap-1">
                     <span class="font-semibold">{{ $t('common.sent_at') }}:</span>
                     <GenericTime :value="dispatch.createdAt" type="compact" />
                 </span>
