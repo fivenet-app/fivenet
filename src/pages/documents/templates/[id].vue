@@ -22,14 +22,6 @@ const route = useRoute('documents-templates-id');
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
-                <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-left" to="/documents/templates">
-                        {{ $t('common.back') }}
-                    </UButton>
-                </template>
-            </UDashboardNavbar>
-
             <TemplateView :template-id="route.params.id" />
         </UDashboardPanel>
     </UDashboardPage>

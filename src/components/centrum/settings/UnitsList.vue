@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
-import CentrumSettingsModal from '~/components/centrum/settings/CentrumSettingsModal.vue';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import UnitAttributes from '../partials/UnitAttributes.vue';
@@ -45,10 +44,12 @@ const columns = [
     {
         key: 'name',
         label: t('common.name'),
+        sortable: true,
     },
     {
         key: 'initials',
         label: t('common.initials'),
+        sortable: true,
     },
     {
         key: 'description',
@@ -69,97 +70,84 @@ const columns = [
     {
         key: 'actions',
         label: t('common.action', 2),
+        sortable: false,
     },
 ];
 </script>
 
 <template>
-    <div>
-        <UDashboardNavbar :title="$t('common.unit')">
-            <template #right>
-                <UButton
-                    v-if="can('CentrumService.Stream')"
-                    icon="i-mdi-settings"
-                    @click="modal.open(CentrumSettingsModal, {})"
-                >
-                    {{ $t('common.setting', 2) }}
-                </UButton>
+    <UDashboardNavbar :title="$t('common.unit')">
+        <template #right>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/centrum">
+                {{ $t('common.back') }}
+            </UButton>
 
+            <UButton v-if="can('CentrumService.Stream')" icon="i-mdi-settings" to="/centrum/settings">
+                {{ $t('common.setting', 2) }}
+            </UButton>
+
+            <UButton
+                v-if="can('CentrumService.CreateOrUpdateUnit')"
+                trailing-icon="i-mdi-plus"
+                color="gray"
+                @click="
+                    modal.open(UnitCreateOrUpdateModal, {
+                        onCreated: async () => refresh(),
+                        onUpdated: async () => refresh(),
+                    })
+                "
+            >
+                {{ $t('components.centrum.units.create_unit') }}
+            </UButton>
+        </template>
+    </UDashboardNavbar>
+
+    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit')])" :retry="refresh" />
+    <UTable
+        v-else
+        :loading="loading"
+        :columns="columns"
+        :rows="units?.units"
+        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.units', 2)]) }"
+    >
+        <template #name-data="{ row: unit }">
+            <div class="text-gray-900 dark:text-white">
+                {{ unit.name }}
+            </div>
+        </template>
+        <template #attributes-data="{ row: unit }">
+            <UnitAttributes :attributes="unit.attributes" />
+        </template>
+        <template #color-data="{ row: unit }">
+            <ColorPicker v-model="unit.color" disabled hide-icon />
+        </template>
+        <template #homePostal-data="{ row: unit }">
+            {{ unit.homePostal ?? $t('common.na') }}
+        </template>
+        <template #actions-data="{ row: unit }">
+            <div class="flex items-center">
                 <UButton
                     v-if="can('CentrumService.CreateOrUpdateUnit')"
-                    trailing-icon="i-mdi-plus"
-                    color="gray"
+                    variant="link"
+                    icon="i-mdi-pencil"
                     @click="
                         modal.open(UnitCreateOrUpdateModal, {
-                            onCreated: async () => refresh(),
+                            unit: unit,
                             onUpdated: async () => refresh(),
                         })
                     "
-                >
-                    {{ $t('components.centrum.units.create_unit') }}
-                </UButton>
-            </template>
-        </UDashboardNavbar>
-
-        <div class="px-1 sm:px-2">
-            <div class="mt-2 flow-root">
-                <div class="-my-2 mx-0 overflow-x-auto">
-                    <div class="inline-block min-w-full px-1 py-2 align-middle">
-                        <DataErrorBlock
-                            v-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.unit')])"
-                            :retry="refresh"
-                        />
-                        <UTable
-                            v-else
-                            :loading="loading"
-                            :columns="columns"
-                            :rows="units?.units"
-                            :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.units', 2)]) }"
-                        >
-                            <template #name-data="{ row: unit }">
-                                <div class="text-gray-900 dark:text-white">
-                                    {{ unit.name }}
-                                </div>
-                            </template>
-                            <template #attributes-data="{ row: unit }">
-                                <UnitAttributes :attributes="unit.attributes" />
-                            </template>
-                            <template #color-data="{ row: unit }">
-                                <ColorPicker v-model="unit.color" disabled hide-icon />
-                            </template>
-                            <template #homePostal-data="{ row: unit }">
-                                {{ unit.homePostal ?? $t('common.na') }}
-                            </template>
-                            <template #actions-data="{ row: unit }">
-                                <div class="flex items-center">
-                                    <UButton
-                                        v-if="can('CentrumService.CreateOrUpdateUnit')"
-                                        variant="link"
-                                        icon="i-mdi-pencil"
-                                        @click="
-                                            modal.open(UnitCreateOrUpdateModal, {
-                                                unit: unit,
-                                                onUpdated: async () => refresh(),
-                                            })
-                                        "
-                                    />
-                                    <UButton
-                                        v-if="can('CentrumService.DeleteUnit')"
-                                        variant="link"
-                                        icon="i-mdi-trash-can"
-                                        @click="
-                                            modal.open(ConfirmModal, {
-                                                confirm: async () => deleteUnit(unit.id),
-                                            })
-                                        "
-                                    />
-                                </div>
-                            </template>
-                        </UTable>
-                    </div>
-                </div>
+                />
+                <UButton
+                    v-if="can('CentrumService.DeleteUnit')"
+                    variant="link"
+                    icon="i-mdi-trash-can"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteUnit(unit.id),
+                        })
+                    "
+                />
             </div>
-        </div>
-    </div>
+        </template>
+    </UTable>
 </template>

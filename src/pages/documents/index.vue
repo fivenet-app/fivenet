@@ -19,28 +19,30 @@ const modal = useModal();
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.documents.title')">
                 <template #right>
-                    <UButton
-                        v-if="can('CompletorService.CompleteDocumentCategories')"
-                        :to="{ name: 'documents-categories' }"
-                        icon="i-mdi-shape"
-                    >
-                        {{ $t('common.category', 2) }}
-                    </UButton>
+                    <UButtonGroup class="inline-flex">
+                        <UButton
+                            v-if="can('CompletorService.CompleteDocumentCategories')"
+                            :to="{ name: 'documents-categories' }"
+                            icon="i-mdi-shape"
+                        >
+                            {{ $t('common.category', 2) }}
+                        </UButton>
 
-                    <UButton
-                        v-if="can('DocStoreService.ListTemplates')"
-                        :to="{ name: 'documents-templates' }"
-                        icon="i-mdi-file-code"
-                    >
-                        {{ $t('common.template', 2) }}
-                    </UButton>
+                        <UButton
+                            v-if="can('DocStoreService.ListTemplates')"
+                            :to="{ name: 'documents-templates' }"
+                            icon="i-mdi-file-code"
+                        >
+                            {{ $t('common.template', 2) }}
+                        </UButton>
 
-                    <UButton
-                        :label="$t('common.create')"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
-                        @click="modal.open(TemplatesModal, {})"
-                    />
+                        <UButton
+                            :label="$t('common.create')"
+                            trailing-icon="i-mdi-plus"
+                            color="gray"
+                            @click="modal.open(TemplatesModal, {})"
+                        />
+                    </UButtonGroup>
                 </template>
             </UDashboardNavbar>
 

@@ -41,22 +41,24 @@ const modal = useModal();
 <template>
     <UDashboardNavbar :title="$t('pages.documents.categories.title')">
         <template #right>
-            <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                {{ $t('common.back') }}
-            </UButton>
+            <UButtonGroup class="inline-flex">
+                <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
+                    {{ $t('common.back') }}
+                </UButton>
 
-            <UButton
-                v-if="can('DocStoreService.CreateCategory')"
-                color="gray"
-                trailing-icon="i-mdi-plus"
-                @click="
-                    modal.open(CategoriesModal, {
-                        onUpdate: refresh,
-                    })
-                "
-            >
-                {{ $t('components.documents.categories.modal.create_category') }}
-            </UButton>
+                <UButton
+                    v-if="can('DocStoreService.CreateCategory')"
+                    color="gray"
+                    trailing-icon="i-mdi-plus"
+                    @click="
+                        modal.open(CategoriesModal, {
+                            onUpdate: refresh,
+                        })
+                    "
+                >
+                    {{ $t('components.documents.categories.modal.create_category') }}
+                </UButton>
+            </UButtonGroup>
         </template>
     </UDashboardNavbar>
 

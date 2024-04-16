@@ -39,7 +39,7 @@ const query = reactive<Schema>({
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
+const { data, pending: loading, refresh, error } = useLazyAsyncData(`centrum-dispatches-${page.value}`, () => listDispatches());
 
 async function listDispatches(): Promise<ListDispatchesResponse> {
     try {
@@ -100,7 +100,13 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.dispatches')" />
+            <UDashboardNavbar :title="$t('common.dispatches')">
+                <template #right>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/">
+                        {{ $t('common.back') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
 
             <div class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] overflow-hidden">
                 <Splitpanes v-if="mount" class="relative">
@@ -148,7 +154,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                 </UForm>
                             </div>
 
-                            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.dispatches')])" />
+                            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.dispatches')])" />
                             <DataErrorBlock
                                 v-else-if="error"
                                 :title="$t('common.unable_to_load', [$t('common.dispatches')])"
@@ -156,17 +162,16 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                             />
                             <DataNoDataBlock v-else-if="data?.dispatches.length === 0" :type="$t('common.dispatches')" />
 
-                            <template v-else>
-                                <Pagination v-model="page" :pagination="data?.pagination" />
-
+                            <div v-else class="relative overflow-x-auto">
                                 <DispatchList
-                                    class="overflow-y-auto"
                                     :show-button="false"
                                     :hide-actions="true"
                                     :always-show-day="true"
                                     :dispatches="data?.dispatches"
                                 />
-                            </template>
+                            </div>
+
+                            <Pagination v-model="page" :pagination="data?.pagination" />
                         </div>
                     </Pane>
                 </Splitpanes>

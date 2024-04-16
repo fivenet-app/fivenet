@@ -168,27 +168,20 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 </script>
 
 <template>
-    <div class="m-2">
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
-        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
+    <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
+        <template #right>
+            <UButtonGroup class="inline-flex">
+                <UButton color="black" icon="i-mdi-arrow-back" to="/documents/templates">
+                    {{ $t('common.back') }}
+                </UButton>
 
-        <div v-else-if="template" class="px-1 sm:px-2">
-            <div class="sm:flex sm:items-center">
-                <UButtonGroup class="inline-flex w-full">
+                <template v-if="template">
                     <UButton
                         v-if="can('DocStoreService.CreateTemplate')"
                         block
                         class="flex-1"
-                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
-                    >
-                        {{ $t('common.edit') }}
-                    </UButton>
-
-                    <UButton
-                        v-if="can('DocStoreService.CreateTemplate')"
-                        block
-                        class="flex-1"
-                        color="black"
+                        color="white"
+                        trailing-icon="i-mdi-print-preview"
                         @click="
                             modal.open(TemplatePreviewModal, {
                                 templateId: templateId,
@@ -199,10 +192,21 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </UButton>
 
                     <UButton
+                        v-if="can('DocStoreService.CreateTemplate')"
+                        block
+                        class="flex-1"
+                        trailing-icon="i-mdi-pencil"
+                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
+                    >
+                        {{ $t('common.edit') }}
+                    </UButton>
+
+                    <UButton
                         v-if="can('DocStoreService.DeleteTemplate')"
                         block
                         class="flex-1"
                         color="red"
+                        trailing-icon="i-mdi-trash-can"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteTemplate(templateId),
@@ -211,9 +215,18 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     >
                         {{ $t('common.delete') }}
                     </UButton>
-                </UButtonGroup>
-            </div>
-            <div class="sm:flex sm:items-center">
+                </template>
+            </UButtonGroup>
+        </template>
+    </UDashboardNavbar>
+
+    <UContainer class="w-full">
+        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
+        <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
+
+        <template v-else>
+            <div class="mt-2 sm:flex sm:items-center">
                 <div>
                     <h2 class="text-2xl">
                         {{ template.title }}
@@ -352,7 +365,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </div>
                 </div>
             </div>
-        </div>
-        <DataNoDataBlock v-else :type="$t('common.template', 2)" />
-    </div>
+        </template>
+    </UContainer>
 </template>

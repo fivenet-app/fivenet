@@ -110,6 +110,7 @@ const columns = [
     {
         key: 'actions',
         label: t('common.action', 2),
+        sortable: false,
     },
 ];
 </script>

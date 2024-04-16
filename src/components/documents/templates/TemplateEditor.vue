@@ -508,184 +508,176 @@ onMounted(async () => {
     findCategories();
 });
 
-const { data: jobs } = useLazyAsyncData('completor-jobs', () => completorStore.listJobs());
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
-    <div>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
-                <template #right>
-                    <UButtonGroup class="inline-flex">
-                        <UButton
-                            color="black"
-                            icon="i-mdi-arrow-left"
-                            :to="
-                                templateId
-                                    ? { name: 'documents-templates-id', params: { id: templateId } }
-                                    : `/documents/templates`
-                            "
-                        >
-                            {{ $t('common.back') }}
-                        </UButton>
-
-                        <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ templateId ? $t('common.save') : $t('common.create') }}
-                        </UButton>
-                    </UButtonGroup>
-                </template>
-            </UDashboardNavbar>
-
-            <UCard class="bg-base-800">
-                <div>
-                    <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`" class="flex-1">
-                        <UInput
-                            v-model="state.weight"
-                            type="number"
-                            name="weight"
-                            min="0"
-                            max="999999"
-                            :placeholder="$t('common.weight')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-
-                    <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`">
-                        <UTextarea
-                            v-model="state.title"
-                            name="title"
-                            :rows="1"
-                            :placeholder="$t('common.title')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-
-                    <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`">
-                        <UTextarea
-                            v-model="state.description"
-                            name="description"
-                            :rows="4"
-                            :label="$t('common.description')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-                </div>
-
-                <div class="my-3">
-                    <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
-
-                    <DocumentAccessEntry
-                        v-for="entry in access.values()"
-                        :key="entry.id"
-                        :init="entry"
-                        :access-types="accessTypes"
-                        :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
-                        :jobs="jobs"
-                        @type-change="updateDocumentAccessEntryType($event)"
-                        @name-change="updateDocumentAccessEntryName($event)"
-                        @rank-change="updateDocumentAccessEntryRank($event)"
-                        @access-change="updateDocumentAccessEntryAccess($event)"
-                        @delete-request="removeDocumentAccessEntry($event)"
-                    />
-
+    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
+            <template #right>
+                <UButtonGroup class="inline-flex">
                     <UButton
-                        icon="i-mdi-plus"
-                        :ui="{ rounded: 'rounded-full' }"
-                        :title="$t('components.documents.document_editor.add_permission')"
-                        @click="addDocumentAccessEntry()"
-                    />
-                </div>
-            </UCard>
+                        color="black"
+                        icon="i-mdi-arrow-left"
+                        :to="
+                            templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
+                        "
+                    >
+                        {{ $t('common.back') }}
+                    </UButton>
 
-            <div class="my-2 flex">
-                <SingleHint
-                    class="min-w-full"
-                    hint-id="template_editor_templating"
-                    to="https://fivenet.app/user-guides/documents/templates"
-                    :external="true"
-                    link-target="_blank"
+                    <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+                        {{ templateId ? $t('common.save') : $t('common.create') }}
+                    </UButton>
+                </UButtonGroup>
+            </template>
+        </UDashboardNavbar>
+
+        <UContainer class="w-full">
+            <div>
+                <UFormGroup name="weight" :label="`${$t('common.template', 1)} ${$t('common.weight')}`">
+                    <UInput
+                        v-model="state.weight"
+                        type="number"
+                        name="weight"
+                        min="0"
+                        max="999999"
+                        :placeholder="$t('common.weight')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                </UFormGroup>
+
+                <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
+                    <UTextarea
+                        v-model="state.title"
+                        name="title"
+                        :rows="1"
+                        :placeholder="$t('common.title')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                </UFormGroup>
+
+                <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`" required>
+                    <UTextarea
+                        v-model="state.description"
+                        name="description"
+                        :rows="4"
+                        :label="$t('common.description')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                </UFormGroup>
+            </div>
+
+            <div class="my-3">
+                <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
+
+                <DocumentAccessEntry
+                    v-for="entry in access.values()"
+                    :key="entry.id"
+                    :init="entry"
+                    :access-types="accessTypes"
+                    :access-roles="[AccessLevel.VIEW, AccessLevel.EDIT]"
+                    :jobs="jobs"
+                    @type-change="updateDocumentAccessEntryType($event)"
+                    @name-change="updateDocumentAccessEntryName($event)"
+                    @rank-change="updateDocumentAccessEntryRank($event)"
+                    @access-change="updateDocumentAccessEntryAccess($event)"
+                    @delete-request="removeDocumentAccessEntry($event)"
+                />
+
+                <UButton
+                    icon="i-mdi-plus"
+                    :ui="{ rounded: 'rounded-full' }"
+                    :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addDocumentAccessEntry()"
                 />
             </div>
 
-            <UCard class="bg-base-800">
-                <div>
-                    <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" class="flex-1">
-                        <UTextarea
-                            v-model="state.contentTitle"
-                            name="contentTitle"
-                            :rows="2"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
+            <SingleHint
+                class="my-2 flex"
+                hint-id="template_editor_templating"
+                to="https://fivenet.app/user-guides/documents/templates"
+                :external="true"
+                link-target="_blank"
+            />
 
-                    <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
-                        <UInputMenu
-                            v-model="state.category"
-                            option-attribute="name"
-                            :search-attributes="['name']"
-                            block
-                            nullable
-                            :search="completorStore.completeDocumentCategories"
-                            :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        >
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                        </UInputMenu>
-                    </UFormGroup>
-
-                    <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`" class="flex-1">
-                        <UTextarea
-                            v-model="state.contentState"
-                            name="contentState"
-                            :rows="2"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-
-                    <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" class="flex-1">
-                        <ClientOnly>
-                            <DocEditor v-model="state.content" split-screen />
-                        </ClientOnly>
-                    </UFormGroup>
-                </div>
-
-                <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
-
-                <div class="my-3">
-                    <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
-
-                    <DocumentAccessEntry
-                        v-for="entry in contentAccess.values()"
-                        :key="entry.id"
-                        :init="entry"
-                        :access-types="contentAccessTypes"
-                        :show-required="true"
-                        :jobs="jobs"
-                        @type-change="updateContentDocumentAccessEntryType($event)"
-                        @name-change="updateContentDocumentAccessEntryName($event)"
-                        @rank-change="updateContentDocumentAccessEntryRank($event)"
-                        @access-change="updateContentDocumentAccessEntryAccess($event)"
-                        @delete-request="removeContentDocumentAccessEntry($event)"
-                        @required-change="updateContentDocumentAccessEntryRequired($event)"
+            <div>
+                <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
+                    <UTextarea
+                        v-model="state.contentTitle"
+                        name="contentTitle"
+                        :rows="2"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
+                </UFormGroup>
 
-                    <UButton
-                        icon="i-mdi-plus"
-                        :ui="{ rounded: 'rounded-full' }"
-                        :title="$t('components.documents.document_editor.add_permission')"
-                        @click="addContentDocumentAccessEntry()"
+                <UFormGroup name="category" :label="$t('common.category', 1)">
+                    <UInputMenu
+                        v-model="state.category"
+                        option-attribute="name"
+                        :search-attributes="['name']"
+                        block
+                        nullable
+                        :search="completorStore.completeDocumentCategories"
+                        :searchable-placeholder="$t('common.search_field')"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    >
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                    </UInputMenu>
+                </UFormGroup>
+
+                <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
+                    <UTextarea
+                        v-model="state.contentState"
+                        name="contentState"
+                        :rows="2"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
                     />
-                </div>
-            </UCard>
-        </UForm>
-    </div>
+                </UFormGroup>
+
+                <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
+                    <ClientOnly>
+                        <DocEditor v-model="state.content" split-screen />
+                    </ClientOnly>
+                </UFormGroup>
+            </div>
+
+            <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+
+            <div class="my-3">
+                <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
+
+                <DocumentAccessEntry
+                    v-for="entry in contentAccess.values()"
+                    :key="entry.id"
+                    :init="entry"
+                    :access-types="contentAccessTypes"
+                    :show-required="true"
+                    :jobs="jobs"
+                    @type-change="updateContentDocumentAccessEntryType($event)"
+                    @name-change="updateContentDocumentAccessEntryName($event)"
+                    @rank-change="updateContentDocumentAccessEntryRank($event)"
+                    @access-change="updateContentDocumentAccessEntryAccess($event)"
+                    @delete-request="removeContentDocumentAccessEntry($event)"
+                    @required-change="updateContentDocumentAccessEntryRequired($event)"
+                />
+
+                <UButton
+                    icon="i-mdi-plus"
+                    :ui="{ rounded: 'rounded-full' }"
+                    :title="$t('components.documents.document_editor.add_permission')"
+                    @click="addContentDocumentAccessEntry()"
+                />
+            </div>
+        </UContainer>
+    </UForm>
 </template>

@@ -1,9 +1,20 @@
 <script lang="ts" setup>
-// TODO
+import CentrumSettings from '~/components/centrum/settings/CentrumSettings.vue';
+
+useHead({
+    title: 'components.centrum.settings.title',
+});
+definePageMeta({
+    title: 'components.centrum.settings.title',
+    requiresAuth: true,
+    permission: 'CentrumService.TakeControl',
+});
 </script>
 
 <template>
-    <div>
-        <!-- TODO -->
-    </div>
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <CentrumSettings />
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

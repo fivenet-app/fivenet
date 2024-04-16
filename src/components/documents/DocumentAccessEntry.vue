@@ -121,8 +121,7 @@ async function setFromProps(): Promise<void> {
     }
 }
 
-onMounted(() => setFromProps());
-
+setFromProps();
 watch(props, () => setFromProps());
 
 watch(required, () => emit('requiredChange', { id: props.init.id, required: required.value }));
@@ -231,11 +230,12 @@ watch(selectedAccessRole, () => {
 
         <template v-if="selectedAccessType?.id === 1">
             <UFormGroup name="selectedJob" class="flex-1">
-                <UInputMenu
+                <USelectMenu
                     v-model="selectedJob"
                     :disabled="readOnly"
                     class="flex-1"
                     option-attribute="label"
+                    searchable
                     :search-attributes="['name', 'label']"
                     :options="jobs ?? []"
                     :placeholder="$t('common.job')"
@@ -247,17 +247,18 @@ watch(selectedAccessRole, () => {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                </UInputMenu>
+                </USelectMenu>
             </UFormGroup>
 
             <UFormGroup name="selectedMinimumRank" class="flex-1">
-                <UInputMenu
+                <USelectMenu
                     v-model="selectedMinimumRank"
                     :disabled="readOnly || !selectedJob"
                     class="flex-1"
                     option-attribute="label"
+                    searchable
                     :search-attributes="['name', 'label']"
-                    :options="selectedJob?.grades ?? []"
+                    :options="selectedJob?.grades"
                     :placeholder="$t('common.rank')"
                     :searchable-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"
@@ -267,15 +268,15 @@ watch(selectedAccessRole, () => {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                </UInputMenu>
+                </USelectMenu>
             </UFormGroup>
         </template>
 
         <template v-else>
             <UFormGroup name="selectedUser" class="flex-1">
-                <UInputMenu
+                <USelectMenu
                     v-model="selectedUser"
-                    :search="
+                    :searchable="
                         async (query: string) => {
                             usersLoading = true;
                             const users = await completorStore.completeCitizens({
@@ -301,7 +302,7 @@ watch(selectedAccessRole, () => {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                </UInputMenu>
+                </USelectMenu>
             </UFormGroup>
         </template>
 
@@ -311,6 +312,7 @@ watch(selectedAccessRole, () => {
                 :disabled="readOnly"
                 class="flex-1"
                 option-attribute="label"
+                searchable
                 :search-attributes="['label']"
                 :options="entriesAccessRoles"
                 :placeholder="$t('common.na')"

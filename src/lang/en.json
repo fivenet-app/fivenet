@@ -421,7 +421,9 @@
         "toc": "Table of Contents",
         "dialog": "Dialog | Dialogs",
         "annul": "Annul | Annulled",
-        "search_field": "Search..."
+        "search_field": "Search...",
+        "settings": "Settings",
+        "timings": "Timings"
     },
     "components": {
         "partials": {
@@ -718,9 +720,17 @@
                 }
             },
             "settings": {
-                "update_settings": "Update Settings",
-                "timings": "Timings",
-                "dispatch_max_wait": "Dispatch: Max Wait (in seconds)"
+                "title": "Dispatch Center Settings",
+                "description": "Settings to change dispatch center usage and predefined settings affecting dispatches and units.",
+                "predefined": {
+                    "title": "Predefined Status",
+                    "description": "Configure predefined dispatch and unit status reasons."
+                },
+                "timings": {
+                    "title": "Timings",
+                    "description": "Timings for dispatch and unit status updates/pings.",
+                    "dispatch_max_wait": "Dispatch: Max Wait (in seconds)"
+                }
             }
         },
         "jobs": {
