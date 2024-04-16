@@ -1917,7 +1917,9 @@
                 "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
                 "content": "Stellen Sie sicher, dass Sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
             },
-            "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!"
+            "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!",
+            "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
+            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!"
         },
         "LivemapperService": {
             "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
