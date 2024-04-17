@@ -13,6 +13,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_accounts` (
   `override_job` varchar(50) DEFAULT NULL,
   `override_job_grade` int(11) DEFAULT NULL,
   `superuser` tinyint(1) DEFAULT 0,
+  `last_job` varchar(20) DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `idx_fivenet_accounts_username` (`username`),
   UNIQUE KEY `idx_fivenet_accounts_license` (`license`),
