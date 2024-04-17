@@ -75,6 +75,7 @@ const playerMarkersFiltered = computedAsync(async () =>
                 class="max-w-40"
                 type="text"
                 name="searchPlayer"
+                size="xs"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"

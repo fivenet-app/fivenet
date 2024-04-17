@@ -72,6 +72,7 @@ const dispatchesFiltered = computedAsync(async () =>
                 class="max-w-40"
                 type="text"
                 name="searchPlayer"
+                size="xs"
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
