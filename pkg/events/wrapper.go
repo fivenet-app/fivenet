@@ -108,14 +108,19 @@ func (j *JSWrapper) ConsumeErrHandlerWithRestart(c context.Context, logger *zap.
 	})
 }
 
+const (
+	traceIdHeader = "X-Trace-Id"
+	spanIdHeader  = "X-Span-Id"
+)
+
 func (j *JSWrapper) addSpanInfoToMsg(ctx context.Context, msg *nats.Msg) {
 	if span := trace.SpanFromContext(ctx); span.SpanContext().IsSampled() {
 		if msg.Header == nil {
 			msg.Header = nats.Header{}
 		}
 
-		msg.Header.Set("X-Trace-Id", span.SpanContext().TraceID().String())
-		msg.Header.Set("X-Span-Id", span.SpanContext().SpanID().String())
+		msg.Header.Set(traceIdHeader, span.SpanContext().TraceID().String())
+		msg.Header.Set(spanIdHeader, span.SpanContext().SpanID().String())
 	}
 }
 
@@ -141,12 +146,12 @@ func GetJetstreamMsgContext(msg jetstream.Msg) (spanContext trace.SpanContext, e
 	headers := msg.Headers()
 
 	var traceID trace.TraceID
-	traceID, err = trace.TraceIDFromHex(headers.Get("X-Trace-Id"))
+	traceID, err = trace.TraceIDFromHex(headers.Get(traceIdHeader))
 	if err != nil {
 		return spanContext, err
 	}
 	var spanID trace.SpanID
-	spanID, err = trace.SpanIDFromHex(headers.Get("X-Span-Id"))
+	spanID, err = trace.SpanIDFromHex(headers.Get(spanIdHeader))
 	if err != nil {
 		return spanContext, err
 	}
@@ -163,12 +168,12 @@ func GetJetstreamMsgContext(msg jetstream.Msg) (spanContext trace.SpanContext, e
 
 func GetNatsMsgContext(msg *nats.Msg) (spanContext trace.SpanContext, err error) {
 	var traceID trace.TraceID
-	traceID, err = trace.TraceIDFromHex(msg.Header.Get("X-Trace-Id"))
+	traceID, err = trace.TraceIDFromHex(msg.Header.Get(traceIdHeader))
 	if err != nil {
 		return spanContext, err
 	}
 	var spanID trace.SpanID
-	spanID, err = trace.SpanIDFromHex(msg.Header.Get("X-Span-Id"))
+	spanID, err = trace.SpanIDFromHex(msg.Header.Get(spanIdHeader))
 	if err != nil {
 		return spanContext, err
 	}
