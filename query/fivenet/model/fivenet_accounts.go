@@ -23,4 +23,5 @@ type FivenetAccounts struct {
 	OverrideJob      *string    `json:"override_job"`
 	OverrideJobGrade *int32     `json:"override_job_grade"`
 	Superuser        *bool      `json:"superuser"`
+	LastChar         *int32     `json:"last_char"`
 }

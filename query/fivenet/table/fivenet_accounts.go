@@ -28,6 +28,7 @@ type fivenetAccountsTable struct {
 	OverrideJob      mysql.ColumnString
 	OverrideJobGrade mysql.ColumnInteger
 	Superuser        mysql.ColumnBool
+	LastChar         mysql.ColumnInteger
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -79,8 +80,9 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		OverrideJobColumn      = mysql.StringColumn("override_job")
 		OverrideJobGradeColumn = mysql.IntegerColumn("override_job_grade")
 		SuperuserColumn        = mysql.BoolColumn("superuser")
-		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn}
-		mutableColumns         = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn}
+		LastCharColumn         = mysql.IntegerColumn("last_char")
+		allColumns             = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn, LastCharColumn}
+		mutableColumns         = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, EnabledColumn, UsernameColumn, PasswordColumn, LicenseColumn, RegTokenColumn, OverrideJobColumn, OverrideJobGradeColumn, SuperuserColumn, LastCharColumn}
 	)
 
 	return fivenetAccountsTable{
@@ -98,6 +100,7 @@ func newFivenetAccountsTableImpl(schemaName, tableName, alias string) fivenetAcc
 		OverrideJob:      OverrideJobColumn,
 		OverrideJobGrade: OverrideJobGradeColumn,
 		Superuser:        SuperuserColumn,
+		LastChar:         LastCharColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
