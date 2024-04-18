@@ -67,12 +67,11 @@ if (__APP_VERSION__ !== settings.version) {
 // Set locale and theme colors in app config
 appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
-if (userLocale.value !== null) {
-    setLocale(userLocale.value);
-}
-userLocale.value = locale.value;
 
-watch(locale, () => settings.setLocale(locale.value));
+if (userLocale.value !== null) {
+    locale.value = userLocale.value;
+    await setLocale(userLocale.value);
+}
 
 const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();

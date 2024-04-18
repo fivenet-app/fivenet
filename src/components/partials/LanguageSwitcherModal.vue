@@ -1,12 +1,16 @@
 <script lang="ts" setup>
 import { type LocaleObject } from 'vue-i18n-routing';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 
-const { locale, locales } = useI18n();
+const { locale, setLocale, locales } = useI18n();
+
+const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
 
-const { isOpen } = useModal();
+const settings = useSettingsStore();
+const { locale: userLocale } = storeToRefs(settings);
 
 const languages = ref<LocaleObject[]>([]);
 
@@ -36,7 +40,9 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
     console.debug('Switching language to:', lang.name);
     preventClose.value = true;
 
+    userLocale.value = lang.iso!;
     locale.value = lang.iso!;
+    await setLocale(lang.iso!);
 
     notifications.add({
         title: { key: 'notifications.language_switched.title', parameters: {} },

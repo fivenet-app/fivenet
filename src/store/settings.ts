@@ -94,9 +94,6 @@ export const useSettingsStore = defineStore('settings', {
             this.nuiEnabled = enabled;
             this.nuiResourceName = resourceName;
         },
-        setLocale(locale: string): void {
-            this.locale = locale;
-        },
     },
     getters: {
         isNUIAvailable(state): boolean {
