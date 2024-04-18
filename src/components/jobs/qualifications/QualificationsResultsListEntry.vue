@@ -12,10 +12,10 @@ defineProps<{
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-sm font-semibold leading-6 text-gray-100">
-                    <NuxtLink :to="{ name: 'jobs-qualifications-id', params: { id: result.qualificationId } }">
+                    <ULink :to="{ name: 'jobs-qualifications-id', params: { id: result.qualificationId } }">
                         <span class="absolute inset-x-0 -top-px bottom-0" />
                         {{ result.qualification?.abbreviation }}: {{ result.qualification?.title }}
-                    </NuxtLink>
+                    </ULink>
                 </p>
                 <p class="mt-1 flex text-xs leading-5">
                     <span class="inline-flex gap-1">

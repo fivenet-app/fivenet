@@ -265,6 +265,7 @@ defineShortcuts({
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 2)])" :retry="refresh" />
     <UTable
+        v-else
         :loading="loading"
         :columns="columns"
         :rows="data?.users"

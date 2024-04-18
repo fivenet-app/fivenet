@@ -97,72 +97,70 @@ const columns = [
 </script>
 
 <template>
-    <div>
-        <template v-if="streamerMode">
-            <UDashboardPanelContent class="pb-24">
-                <UDashboardSection
-                    :title="$t('system.streamer_mode.title')"
-                    :description="$t('system.streamer_mode.description')"
-                />
-            </UDashboardPanelContent>
-        </template>
+    <template v-if="streamerMode">
+        <UDashboardPanelContent class="pb-24">
+            <UDashboardSection
+                :title="$t('system.streamer_mode.title')"
+                :description="$t('system.streamer_mode.description')"
+            />
+        </UDashboardPanelContent>
+    </template>
+    <template v-else>
+        <div class="sm:flex sm:items-center">
+            <div class="w-full sm:flex-auto">
+                <UButton
+                    block
+                    @click="
+                        modal.open(FileUploadModal, {
+                            onUploaded: addUploadedFile,
+                        })
+                    "
+                >
+                    {{ $t('common.upload') }}
+                </UButton>
+            </div>
+        </div>
+
+        <DataErrorBlock
+            v-if="error"
+            :title="$t('common.unable_to_load', [`${$t('common.data', 1)} ${$t('common.prop')}`])"
+            :retry="refresh"
+        />
+
         <template v-else>
-            <div class="sm:flex sm:items-center">
-                <div class="w-full sm:flex-auto">
+            <UTable
+                :loading="loading"
+                :columns="columns"
+                :rows="data?.files"
+                :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
+            >
+                <template #actions-data="{ row: file }">
                     <UButton
-                        block
+                        variant="link"
+                        icon="i-mdi-eye"
+                        :external="true"
+                        target="_blank"
+                        :to="`/api/filestore/${file.name}`"
+                    />
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
                         @click="
-                            modal.open(FileUploadModal, {
-                                onUploaded: addUploadedFile,
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteFile(file.name),
                             })
                         "
-                    >
-                        {{ $t('common.upload') }}
-                    </UButton>
-                </div>
-            </div>
+                    />
+                </template>
+                <template #fileSize-data="{ row: file }">
+                    {{ formatBytes(file.size) }}
+                </template>
+                <template #updatedAt-data="{ row: file }">
+                    <GenericTime :value="toDate(file.lastModified)" />
+                </template>
+            </UTable>
 
-            <DataErrorBlock
-                v-if="error"
-                :title="$t('common.unable_to_load', [`${$t('common.data', 1)} ${$t('common.prop')}`])"
-                :retry="refresh"
-            />
-
-            <template v-else>
-                <UTable
-                    :loading="loading"
-                    :columns="columns"
-                    :rows="data?.files"
-                    :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
-                >
-                    <template #actions-data="{ row: file }">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-eye"
-                            :external="true"
-                            target="_blank"
-                            :to="`/api/filestore/${file.name}`"
-                        />
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-trash-can"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => deleteFile(file.name),
-                                })
-                            "
-                        />
-                    </template>
-                    <template #fileSize-data="{ row: file }">
-                        {{ formatBytes(file.size) }}
-                    </template>
-                    <template #updatedAt-data="{ row: file }">
-                        <GenericTime :value="toDate(file.lastModified)" />
-                    </template>
-                </UTable>
-
-                <Pagination v-model="page" :pagination="data?.pagination" infinite />
-            </template>
+            <Pagination v-model="page" :pagination="data?.pagination" infinite />
         </template>
-    </div>
+    </template>
 </template>

@@ -94,7 +94,7 @@ const columns = computed(() =>
                                 <UIcon name="i-mdi-arrow-collapse" class="size-5 shrink-0" />
                                 <span class="flex flex-col truncate text-sm">
                                     <span v-if="showDocument">
-                                        <NuxtLink
+                                        <ULink
                                             :to="{
                                                 name: 'documents-id',
                                                 params: {
@@ -112,7 +112,7 @@ const columns = computed(() =>
                                             <span>
                                                 {{ relation.document?.title }}
                                             </span>
-                                        </NuxtLink>
+                                        </ULink>
                                     </span>
                                     <span>
                                         <span class="inline-flex items-center gap-1">
@@ -149,7 +149,7 @@ const columns = computed(() =>
                                 }"
                             >
                                 <template v-if="showDocument" #document-data="{ row: relation }">
-                                    <NuxtLink
+                                    <ULink
                                         :to="{
                                             name: 'documents-id',
                                             params: {
@@ -168,7 +168,7 @@ const columns = computed(() =>
                                         <span>
                                             {{ relation.document?.title }}
                                         </span>
-                                    </NuxtLink>
+                                    </ULink>
                                 </template>
                                 <template #targetUser-data="{ row: relation }">
                                     <span class="inline-flex items-center gap-1">

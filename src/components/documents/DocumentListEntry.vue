@@ -16,10 +16,10 @@ defineProps<{
         :class="[
             doc.deletedAt
                 ? 'bg-warn-100 hover:bg-warn-200 dark:bg-warn-800 dark:hover:bg-warn-700'
-                : 'bg-base-100 hover:bg-base-200 dark:bg-base-900 dark:hover:bg-base-900',
+                : 'bg-base-100 hover:bg-base-200 dark:bg-base-900 dark:hover:bg-base-800',
         ]"
     >
-        <NuxtLink
+        <ULink
             :to="{
                 name: 'documents-id',
                 params: { id: doc.id },
@@ -107,6 +107,6 @@ defineProps<{
                     </div>
                 </div>
             </div>
-        </NuxtLink>
+        </ULink>
     </li>
 </template>

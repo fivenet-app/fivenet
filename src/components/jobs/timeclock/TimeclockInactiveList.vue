@@ -160,7 +160,7 @@ const columns = [
             <PhoneNumberBlock :number="colleague.phoneNumber" />
         </template>
         <template #actions-data="{ row: colleague }">
-            <NuxtLink
+            <ULink
                 v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
                 icon="i-mdi-eye"
                 :to="{

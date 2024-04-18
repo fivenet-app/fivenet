@@ -66,70 +66,69 @@ const columns = [
 </script>
 
 <template>
-    <div>
-        <DataErrorBlock
-            v-if="error"
-            :title="$t('common.unable_to_load', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
-            :retry="refresh"
-        />
-        <template v-else>
-            <UTable
-                :loading="pending"
-                :columns="columns"
-                :rows="data?.relations"
-                :empty-state="{
-                    icon: 'i-mdi-file-multiple',
-                    label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
-                }"
-            >
-                <template #document-data="{ row }">
+    <DataErrorBlock
+        v-if="error"
+        :title="$t('common.unable_to_load', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
+        :retry="refresh"
+    />
+    <template v-else>
+        <UTable
+            :loading="pending"
+            :columns="columns"
+            :rows="data?.relations"
+            :empty-state="{
+                icon: 'i-mdi-file-multiple',
+                label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
+            }"
+        >
+            <template #document-data="{ row }">
+                <UButton
+                    variant="link"
+                    :to="{
+                        name: 'documents-id',
+                        params: {
+                            id: row.documentId,
+                        },
+                    }"
+                >
                     <UBadge v-if="row.document?.category">
                         {{ row.document.category.name }}
                     </UBadge>
-                    <UButton
-                        variant="link"
-                        truncate
-                        class="w-full truncate sm:max-w-sm md:max-w-md lg:max-w-full"
-                        :to="{
-                            name: 'documents-id',
-                            params: {
-                                id: row.documentId,
-                            },
-                        }"
-                    >
-                        {{ row.document?.title ?? $t('common.na') }}
-                    </UButton>
-                </template>
-                <template #closed-data="{ row }">
-                    <div class="inline-flex gap-1">
-                        <template v-if="row.document?.closed">
-                            <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
-                            <span class="text-sm font-medium text-error-400">
-                                {{ $t('common.close', 2) }}
-                            </span>
-                        </template>
-                        <template v-else>
-                            <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-400" />
-                            <span class="text-sm font-medium text-success-400">
-                                {{ $t('common.open', 2) }}
-                            </span>
-                        </template>
-                    </div>
-                </template>
-                <template #relation-data="{ row }">
-                    <span class="font-medium">
-                        {{ $t(`enums.docstore.DocRelation.${DocRelation[row.relation]}`) }}
-                    </span>
-                </template>
-                <template #date-data="{ row }">
-                    <GenericTime :value="row.createdAt" />
-                </template>
-                <template #creator-data="{ row }">
-                    <CitizenInfoPopover :user="row.sourceUser" />
-                </template>
-            </UTable>
 
-            <Pagination v-model="page" :pagination="data?.pagination" />
-        </template>
-    </div>
+                    <div class="line-clamp-2 w-full whitespace-normal break-words hover:line-clamp-4">
+                        {{ row.document?.title ?? $t('common.na') }}
+                    </div>
+                </UButton>
+            </template>
+            <template #closed-data="{ row }">
+                <div class="inline-flex gap-1">
+                    <template v-if="row.document?.closed">
+                        <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
+                        <span class="text-sm font-medium text-error-400">
+                            {{ $t('common.close', 2) }}
+                        </span>
+                    </template>
+                    <template v-else>
+                        <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-400" />
+                        <span class="text-sm font-medium text-success-400">
+                            {{ $t('common.open', 2) }}
+                        </span>
+                    </template>
+                </div>
+            </template>
+            <template #relation-data="{ row }">
+                <span class="font-medium">
+                    {{ $t(`enums.docstore.DocRelation.${DocRelation[row.relation]}`) }}
+                </span>
+            </template>
+            <template #date-data="{ row }">
+                <GenericTime :value="row.createdAt" />
+            </template>
+            <template #creator-data="{ row }">
+                <CitizenInfoPopover :user="row.sourceUser" />
+            </template>
+        </UTable>
+
+        <Pagination v-model="page" :pagination="data?.pagination" />
+    </template>
 </template>

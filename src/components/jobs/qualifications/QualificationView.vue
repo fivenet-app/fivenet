@@ -259,7 +259,7 @@ const accordionItems = computed(() => {
                         </template>
 
                         <template v-else>
-                            <NuxtLink
+                            <ULink
                                 v-for="entry in qualification.requirements"
                                 :key="entry.id"
                                 :to="{
@@ -277,7 +277,7 @@ const accordionItems = computed(() => {
                                         {{ entry.targetQualification?.title }}
                                     </span>
                                 </UBadge>
-                            </NuxtLink>
+                            </ULink>
                         </template>
                     </div>
                 </div>

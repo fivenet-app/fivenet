@@ -85,7 +85,7 @@ const columns = computed(() =>
             <div class="sm:hidden">
                 <ul role="list" class="divide-y divide-gray-600 rounded-lg sm:hidden">
                     <li v-for="reference in references" :key="reference.id">
-                        <NuxtLink
+                        <ULink
                             :to="{
                                 name: 'documents-id',
                                 params: { id: reference.targetDocumentId },
@@ -120,7 +120,7 @@ const columns = computed(() =>
                                     </span>
                                 </span>
                             </span>
-                        </NuxtLink>
+                        </ULink>
                     </li>
                 </ul>
             </div>
@@ -140,7 +140,7 @@ const columns = computed(() =>
                                 }"
                             >
                                 <template #targetDocument-data="{ row: reference }">
-                                    <NuxtLink
+                                    <ULink
                                         :to="{
                                             name: 'documents-id',
                                             params: {
@@ -159,7 +159,7 @@ const columns = computed(() =>
                                         <span>
                                             {{ reference.targetDocument?.title }}
                                         </span>
-                                    </NuxtLink>
+                                    </ULink>
                                 </template>
                                 <template #reference-data="{ row: reference }">
                                     <UBadge :color="refToBadge(reference.reference)">
@@ -167,7 +167,7 @@ const columns = computed(() =>
                                     </UBadge>
                                 </template>
                                 <template v-if="showSource" #sourceDocument-data="{ row: reference }">
-                                    <NuxtLink
+                                    <ULink
                                         :to="{
                                             name: 'documents-id',
                                             params: {
@@ -186,7 +186,7 @@ const columns = computed(() =>
                                         <span>
                                             {{ reference.sourceDocument?.title }}
                                         </span>
-                                    </NuxtLink>
+                                    </ULink>
                                 </template>
                                 <template #creator-data="{ row: reference }">
                                     <CitizenInfoPopover :user="reference.creator" />
