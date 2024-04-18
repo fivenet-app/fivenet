@@ -13,7 +13,7 @@ type Postal = {
     code: string;
 };
 
-let postalsLoaded = false;
+const postalsLoaded = ref(false);
 const postals: Postal[] = [];
 const filteredPostals = ref<Postal[]>([]);
 
@@ -21,21 +21,21 @@ const selectedPostal = ref<Postal | undefined>();
 const postalQuery = ref('');
 
 async function loadPostals(): Promise<void> {
-    if (postalsLoaded) {
+    if (postalsLoaded.value) {
         return;
     }
 
     try {
         const response = await fetch('/data/postals.json');
         postals.push(...((await response.json()) as Postal[]));
-        postalsLoaded = true;
+        postalsLoaded.value = true;
     } catch (_) {
         notifications.add({
             title: { key: 'notifications.livemap.failed_loading_postals.title', parameters: {} },
             description: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },
             type: 'error',
         });
-        postalsLoaded = false;
+        postalsLoaded.value = false;
     }
 }
 
@@ -50,8 +50,12 @@ async function findPostal(): Promise<void> {
         if (results >= 10) {
             return false;
         }
+
         const result = p.code.startsWith(postalQuery.value!);
-        if (result) results++;
+        if (result) {
+            results++;
+        }
+
         return result;
     });
 }

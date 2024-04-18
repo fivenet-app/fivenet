@@ -77,9 +77,22 @@ const playerMarkersFiltered = computedAsync(async () =>
                 name="searchPlayer"
                 size="xs"
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
+                autocomplete="off"
+                :ui="{ icon: { trailing: { pointer: '' } } }"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
-            />
+            >
+                <template #trailing>
+                    <UButton
+                        v-show="playerQueryRaw !== ''"
+                        color="gray"
+                        variant="link"
+                        icon="i-mdi-close"
+                        :padded="false"
+                        @click="playerQueryRaw = ''"
+                    />
+                </template>
+            </UInput>
         </div>
     </LControl>
 </template>

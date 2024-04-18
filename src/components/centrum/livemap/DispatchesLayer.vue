@@ -74,9 +74,22 @@ const dispatchesFiltered = computedAsync(async () =>
                 name="searchPlayer"
                 size="xs"
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
+                autocomplete="off"
+                :ui="{ icon: { trailing: { pointer: '' } } }"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
-            />
+            >
+                <template #trailing>
+                    <UButton
+                        v-show="dispatchQueryRaw !== ''"
+                        color="gray"
+                        variant="link"
+                        icon="i-mdi-close"
+                        :padded="false"
+                        @click="dispatchQueryRaw = ''"
+                    />
+                </template>
+            </UInput>
         </div>
     </LControl>
 </template>

@@ -136,8 +136,10 @@ export function dispatchTimeToTextColor(
     }
 
     const over = time / maxTime;
-    if (over <= 0.2) {
+    if (over <= 0.15) {
         return '';
+    } else if (over <= 0.2) {
+        return 'text-yellow-300';
     } else if (over <= 0.3) {
         return 'text-orange-300';
     } else if (over <= 0.5) {
@@ -161,8 +163,10 @@ export function dispatchTimeToTextColorSidebar(
     }
 
     const over = time / maxTime;
-    if (over <= 0.2) {
+    if (over <= 0.15) {
         return { ping: false, class: '' };
+    } else if (over <= 0.2) {
+        return { ping: false, class: '!bg-yellow-300' };
     } else if (over <= 0.3) {
         return { ping: false, class: '!bg-orange-300' };
     } else if (over <= 0.5) {
