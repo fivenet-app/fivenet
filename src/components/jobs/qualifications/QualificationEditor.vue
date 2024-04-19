@@ -395,7 +395,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             <template #default>
                 <div class="flex w-full flex-col gap-2">
                     <div class="flex w-full flex-row gap-2">
-                        <UFormGroup name="abbreviation" :label="$t('common.abbreviation')" class="max-w-48 shrink">
+                        <UFormGroup name="abbreviation" :label="$t('common.abbreviation')" class="max-w-48 shrink" required>
                             <UInput
                                 name="abbreviation"
                                 type="text"
@@ -407,7 +407,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             />
                         </UFormGroup>
 
-                        <UFormGroup name="title" :label="$t('common.title')" class="flex-1">
+                        <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
                             <UInput
                                 name="title"
                                 type="text"
@@ -421,7 +421,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </div>
 
                     <div class="flex w-full flex-row gap-2">
-                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1" required>
                             <UTextarea
                                 name="description"
                                 block

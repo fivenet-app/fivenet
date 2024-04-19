@@ -665,7 +665,7 @@ console.info(
         <UDashboardToolbar>
             <template #default>
                 <div class="flex w-full flex-col gap-2">
-                    <UFormGroup name="title" :label="$t('common.title')">
+                    <UFormGroup name="title" :label="$t('common.title')" required>
                         <UInput
                             v-model="state.title"
                             type="text"
@@ -678,7 +678,7 @@ console.info(
                     </UFormGroup>
 
                     <div class="flex flex-row gap-2">
-                        <UFormGroup name="category" :label="$t('common.category', 1)" required class="flex-1">
+                        <UFormGroup name="category" :label="$t('common.category', 1)" class="flex-1">
                             <UInputMenu
                                 v-model="state.category"
                                 option-attribute="name"

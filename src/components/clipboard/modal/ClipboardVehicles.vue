@@ -41,13 +41,15 @@ async function select(item: ClipboardVehicle): Promise<void> {
 
     const selectedLength = selected.value.length;
     if (props.specs) {
-        if (props.specs.min && selectedLength >= props.specs.min) {
+        if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
             emit('statisfied', true);
-        } else if (props.specs.max && selectedLength === props.specs.max) {
+        } else if (props.specs.max !== undefined && selectedLength === props.specs.max) {
             emit('statisfied', true);
         } else {
             emit('statisfied', false);
         }
+    } else {
+        emit('statisfied', true);
     }
 }
 
@@ -75,7 +77,12 @@ async function removeAll(): Promise<void> {
         });
     }
 
-    emit('statisfied', false);
+    if (props.specs !== undefined) {
+        emit('statisfied', false);
+    } else {
+        emit('statisfied', true);
+    }
+
     notifications.add({
         title: { key: 'notifications.clipboard.vehicles_removed.title', parameters: {} },
         description: { key: 'notifications.clipboard.vehicles_removed.content', parameters: {} },
