@@ -45,10 +45,7 @@ func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) 
 
 func (s *Manager) watchTopicGeneralFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
-		remoteCtx, err := events.GetJetstreamMsgContext(msg)
-		if err != nil {
-			s.logger.Error("failed to get js msg context", zap.Error(err))
-		}
+		remoteCtx, _ := events.GetJetstreamMsgContext(msg)
 		_, span := otel.GetTracerProvider().Tracer("centrum-manager").Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
 		defer span.End()
 
