@@ -53,7 +53,7 @@
         "v-calendar": "^3.1.2",
         "vue-json-pretty": "2.4.0",
         "vue3-colorpicker": "^2.3.0",
-        "zod": "^3.22.4"
+        "zod": "^3.22.5"
     },
     "devDependencies": {
         "@nuxt/devtools": "1.1.5",
@@ -84,7 +84,7 @@
         "i18next-scanner": "4.4.0",
         "nuxi": "3.11.1",
         "nuxt": "^3.11.2",
-        "nuxt-typed-router": "3.6.2",
+        "nuxt-typed-router": "3.6.3",
         "postcss": "8.4.38",
         "postcss-custom-properties": "13.3.7",
         "postcss-import": "16.1.0",

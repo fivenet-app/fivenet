@@ -40,7 +40,7 @@ const config = {
 
     defaultMode: props.splitScreen ? '3' : '1',
 
-    disablePlugins: ['about', 'poweredByJodit', 'classSpan', 'file', 'video', 'print', 'preview'],
+    disablePlugins: ['about', 'poweredByJodit', 'classSpan', 'file', 'video', 'print', 'preview', 'aiAssistant'],
     defaultActionOnPaste: 'insert_clear_html',
 
     // Uploader Plugin
