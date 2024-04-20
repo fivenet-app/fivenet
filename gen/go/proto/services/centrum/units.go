@@ -145,6 +145,7 @@ func (s *Server) UpdateUnitStatus(ctx context.Context, req *UpdateUnitStatusRequ
 	if _, err := s.state.UpdateUnitStatus(ctx, userInfo.Job, unit.Id, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    unit.Id,
+		Unit:      unit,
 		Status:    req.Status,
 		Reason:    req.Reason,
 		Code:      req.Code,

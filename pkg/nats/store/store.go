@@ -253,18 +253,18 @@ func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
 	mu.Lock()
 	defer mu.Unlock()
 
-	i, ok := s.get(key)
-	if !ok || i == nil {
+	item, ok := s.get(key)
+	if !ok || item == nil {
 		var err error
-		i, err = s.load(ctx, key)
+		item, err = s.load(ctx, key)
 		if err != nil {
 			return nil, err
 		}
 
-		return s.updateFromType(key, i), nil
+		return s.updateFromType(key, item), nil
 	}
 
-	return i, nil
+	return item, nil
 }
 
 func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {

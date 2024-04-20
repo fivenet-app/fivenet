@@ -65,10 +65,15 @@ func (s *Manager) UpdateUnitStatus(ctx context.Context, job string, unitId uint6
 		}
 	}
 	if in.CreatorId != nil {
-		var err error
-		in.Creator, err = s.resolveUserShortById(ctx, *in.CreatorId)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		// If the creator of the status is the same as the user, no need to query the db
+		if in.UserId != nil && *in.CreatorId == *in.UserId {
+			in.Creator = in.User
+		} else {
+			var err error
+			in.Creator, err = s.resolveUserShortById(ctx, *in.CreatorId)
+			if err != nil {
+				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+			}
 		}
 	}
 
