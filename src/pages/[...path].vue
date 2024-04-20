@@ -25,7 +25,7 @@ const { accessToken } = storeToRefs(authStore);
                 :links="[
                     {
                         label: $t('common.back'),
-                        trailingIcon: 'i-mdi-arrow-back',
+                        icon: 'i-mdi-arrow-back',
                         size: 'lg',
                         color: 'gray',
                         click: () => useRouter().back(),

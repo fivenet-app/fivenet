@@ -108,7 +108,8 @@ watch(updateAvailable, async () => {
     });
 });
 
-const route = useRoute();
+const router = useRouter();
+const route = router.currentRoute;
 </script>
 
 <template>

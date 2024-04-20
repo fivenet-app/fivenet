@@ -42,6 +42,7 @@ const mapOptions = {
     contextmenu: true,
     contextmenuWidth: 150,
     contextmenuItems: [],
+    scrollWheelZoom: 'center',
 } as MapOptions;
 
 if (can('CentrumService.CreateDispatch')) {

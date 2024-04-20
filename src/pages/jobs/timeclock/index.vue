@@ -12,7 +12,5 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <TimeclockList />
-    </div>
+    <TimeclockList />
 </template>

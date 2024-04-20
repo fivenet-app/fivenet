@@ -153,6 +153,15 @@ const columns = computed(() =>
 );
 
 const input = ref<{ input: HTMLInputElement }>();
+
+async function search(query: string) {
+    usersLoading.value = true;
+    const colleagues = await completorStore.listColleagues({
+        search: query,
+    });
+    usersLoading.value = false;
+    return colleagues;
+}
 </script>
 
 <template>
@@ -176,16 +185,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                     ref="input"
                                     v-model="query.users"
                                     multiple
-                                    :searchable="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const colleagues = await completorStore.listColleagues({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return colleagues;
-                                        }
-                                    "
+                                    :searchable="search"
                                     :search-attributes="['firstname', 'lastname']"
                                     block
                                     :placeholder="$t('common.colleague', 2)"
