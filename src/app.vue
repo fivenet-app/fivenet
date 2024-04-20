@@ -32,11 +32,10 @@ useHead({
         { key: 'theme-color', name: 'theme-color', content: color },
     ],
     htmlAttrs: {
-        class: 'h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'h-full',
+        class: 'h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {

@@ -58,15 +58,6 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 
 const { data, pending: loading, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
 
-async function creatorSearch(query: string): Promise<UserShort[]> {
-    usersLoading.value = true;
-    const users = await completorStore.completeCitizens({
-        search: query,
-    });
-    usersLoading.value = false;
-    return users;
-}
-
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
         pagination: {
@@ -183,7 +174,27 @@ defineShortcuts({
                                     option-attribute="name"
                                     :search-attributes="['name']"
                                     block
-                                    :search="completorStore.completeDocumentCategories"
+                                    by="name"
+                                    :search="
+                                        async (search: string) => {
+                                            if (!can('CompletorService.CompleteDocumentCategories')) {
+                                                return [];
+                                            }
+
+                                            const { $grpc } = useNuxtApp();
+                                            try {
+                                                const call = $grpc.getCompletorClient().completeDocumentCategories({
+                                                    search: search,
+                                                });
+                                                const { response } = await call;
+
+                                                return response.categories;
+                                            } catch (e) {
+                                                $grpc.handleError(e as RpcError);
+                                                throw e;
+                                            }
+                                        }
+                                    "
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -200,7 +211,16 @@ defineShortcuts({
                                     multiple
                                     nullable
                                     block
-                                    :searchable="creatorSearch"
+                                    :searchable="
+                                        async (query: string): Promise<UserShort[]> => {
+                                            usersLoading = true;
+                                            const users = await completorStore.completeCitizens({
+                                                search: query,
+                                            });
+                                            usersLoading = false;
+                                            return users;
+                                        }
+                                    "
                                     :search-attributes="['firstname', 'lastname']"
                                     :placeholder="$t('common.creator')"
                                     :searchable-placeholder="$t('common.search_field')"
