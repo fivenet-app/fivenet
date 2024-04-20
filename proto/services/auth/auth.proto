@@ -47,6 +47,7 @@ message LoginResponse {
   string token = 1;
   resources.timestamp.Timestamp expires = 2;
   uint64 account_id = 3 [jstype = JS_STRING];
+  optional ChooseCharacterResponse char = 4;
 }
 
 message ChangePasswordRequest {

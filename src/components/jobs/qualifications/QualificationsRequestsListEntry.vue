@@ -13,7 +13,7 @@ const { activeChar } = storeToRefs(authStore);
 </script>
 
 <template>
-    <li class="relative flex justify-between px-4 py-5">
+    <li class="relative flex justify-between px-3 py-4">
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-sm font-semibold leading-6 text-gray-100">
@@ -22,6 +22,7 @@ const { activeChar } = storeToRefs(authStore);
                         {{ request.qualification?.abbreviation }}: {{ request.qualification?.title }}
                     </ULink>
                 </p>
+
                 <p class="mt-1 flex text-xs leading-5">
                     <span class="inline-flex gap-1">
                         <span v-if="request.userComment">{{ $t('common.summary') }}: {{ request.userComment }}</span>
@@ -31,21 +32,17 @@ const { activeChar } = storeToRefs(authStore);
         </div>
         <div class="flex shrink-0 items-center gap-x-2">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <div class="flex flex-row gap-1">
-                    <div class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1">
-                        <UIcon name="i-mdi-list-status" class="size-5 text-sky-400" />
-                        <template v-if="request.status !== undefined">
-                            <span class="text-sm font-medium text-info-700">
-                                <span class="font-semibold">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`)
-                                }}</span>
-                            </span>
-                        </template>
-                    </div>
-                </div>
+                <UBadge v-if="request.status !== undefined" class="inline-flex gap-1">
+                    <UIcon name="i-mdi-list-status" class="size-5" />
+                    <span>
+                        {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`) }}
+                    </span>
+                </UBadge>
+
                 <p v-if="request.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="request.createdAt" />
                 </p>
+
                 <p v-if="request.userId !== activeChar?.userId" class="mt-1 inline-flex gap-1 text-xs leading-5">
                     {{ $t('common.created_by') }} <CitizenInfoPopover :user="request.user" />
                 </p>

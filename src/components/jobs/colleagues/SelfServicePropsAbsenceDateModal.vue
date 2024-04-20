@@ -5,7 +5,7 @@ import { addDays, format } from 'date-fns';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import DatePicker from '~/components/partials/DatePicker.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 
 const props = defineProps<{
     userId: number;
@@ -144,7 +144,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 />
 
                                 <template #panel="{ close }">
-                                    <DatePicker v-model="state.absenceBegin" @close="close" />
+                                    <DatePickerClient v-model="state.absenceBegin" @close="close" />
                                 </template>
                             </UPopover>
                         </UFormGroup>
@@ -160,7 +160,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 />
 
                                 <template #panel="{ close }">
-                                    <DatePicker v-model="state.absenceEnd" @close="close" />
+                                    <DatePickerClient v-model="state.absenceEnd" @close="close" />
                                 </template>
                             </UPopover>
                         </UFormGroup>

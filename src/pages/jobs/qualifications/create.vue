@@ -14,8 +14,6 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.qualifications.single.title')" />
-
             <QualificationEditor />
         </UDashboardPanel>
     </UDashboardPage>

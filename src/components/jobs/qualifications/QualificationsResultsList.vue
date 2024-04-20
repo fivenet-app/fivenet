@@ -57,7 +57,11 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <UCard>
+    <UCard
+        :ui="{
+            body: { padding: '' },
+        }"
+    >
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl font-semibold leading-6">

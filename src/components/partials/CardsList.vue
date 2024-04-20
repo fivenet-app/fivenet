@@ -17,21 +17,19 @@ defineEmits<{
 </script>
 
 <template>
-    <div class="">
-        <UPageGrid>
-            <UPageCard
-                v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission))"
-                :key="index"
-                :to="module.to"
-                :title="module.title"
-                :description="module.description"
-                :icon="!showIcon ? undefined : module.icon"
-                @click="$emit('selected', index)"
-            >
-                <template #description>
-                    <span class="line-clamp-2">{{ module.description }}</span>
-                </template>
-            </UPageCard>
-        </UPageGrid>
-    </div>
+    <UPageGrid>
+        <UPageCard
+            v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission))"
+            :key="index"
+            :to="module.to"
+            :title="module.title"
+            :description="module.description"
+            :icon="!showIcon ? undefined : module.icon"
+            @click="$emit('selected', index)"
+        >
+            <template #description>
+                <span class="line-clamp-2">{{ module.description }}</span>
+            </template>
+        </UPageCard>
+    </UPageGrid>
 </template>

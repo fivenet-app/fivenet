@@ -61,7 +61,7 @@ async function listColleagueActivity(userIds: number[]): Promise<ListColleagueAc
     }
 }
 
-watch(offset, () => refresh());
+watch(offset, async () => refresh());
 
 const accessAttrs = attrList('JobsService.GetColleague', 'Access');
 const colleagueSearchAttrs = ['own', 'lower_rank', 'same_rank', 'any'];
@@ -98,7 +98,7 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                     block
                     :placeholder="$t('common.owner')"
                     trailing
-                    by="userId"
+                    by="firstname"
                     :searchable-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"

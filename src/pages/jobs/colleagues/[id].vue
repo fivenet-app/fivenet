@@ -59,9 +59,7 @@ const links = [
                 <UHorizontalNavigation :links="links" />
             </UDashboardToolbar>
 
-            <NuxtLayout name="blank">
-                <NuxtPage />
-            </NuxtLayout>
+            <NuxtPage />
         </UDashboardPanelContent>
     </UDashboardPage>
 </template>

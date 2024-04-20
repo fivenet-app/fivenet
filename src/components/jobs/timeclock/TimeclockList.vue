@@ -7,13 +7,12 @@ import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import { getWeekNumber } from '~/utils/time';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
-import DatePicker from '~/components/partials/DatePicker.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import Pagination from '~/components/partials/Pagination.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 const { $grpc } = useNuxtApp();
 
@@ -134,10 +133,6 @@ function dayBackwards(): void {
     query.to = subDays(query.to ?? new Date(), 1);
 }
 
-function charsGetDisplayValue(chars: UserShort[]): string {
-    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
-}
-
 const columns = computed(() =>
     [
         !perDayView.value
@@ -193,9 +188,9 @@ const input = ref<{ input: HTMLInputElement }>();
                                     "
                                     :search-attributes="['firstname', 'lastname']"
                                     block
-                                    :placeholder="$t('common.owner')"
+                                    :placeholder="$t('common.colleague', 2)"
                                     trailing
-                                    by="userId"
+                                    by="firstname"
                                     :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
@@ -225,7 +220,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePicker v-model="query.from" @close="close" />
+                                        <DatePickerClient v-model="query.from" @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>
@@ -246,7 +241,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePicker v-model="query.to" @close="close" />
+                                        <DatePickerClient v-model="query.to" @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>

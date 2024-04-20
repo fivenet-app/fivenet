@@ -4,7 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import { markerIcons } from '~/components/livemap/helpers';
-import DatePicker from '~/components/partials/DatePicker.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { format } from 'date-fns';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 
@@ -225,7 +225,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
 
                                         <template #panel="{ close }">
-                                            <DatePicker v-model="state.expiresAt" mode="dateTime" is24hr @close="close" />
+                                            <DatePickerClient v-model="state.expiresAt" mode="dateTime" is24hr @close="close" />
                                         </template>
                                     </UPopover>
                                 </UFormGroup>

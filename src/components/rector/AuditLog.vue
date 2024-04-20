@@ -11,7 +11,7 @@ import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import { useNotificatorStore } from '~/store/notificator';
-import DatePicker from '~/components/partials/DatePicker.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 
@@ -186,7 +186,7 @@ const columns = [
                             />
 
                             <template #panel="{ close }">
-                                <DatePicker v-model="query.from" @close="close" />
+                                <DatePickerClient v-model="query.from" @close="close" />
                             </template>
                         </UPopover>
                     </UFormGroup>
@@ -202,7 +202,7 @@ const columns = [
                             />
 
                             <template #panel="{ close }">
-                                <DatePicker v-model="query.to" @close="close" />
+                                <DatePickerClient v-model="query.to" @close="close" />
                             </template>
                         </UPopover>
                     </UFormGroup>
@@ -225,7 +225,7 @@ const columns = [
                             block
                             :placeholder="$t('common.user', 2)"
                             trailing
-                            by="userId"
+                            by="firstname"
                             :searchable-placeholder="$t('common.search_field')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"

@@ -14,17 +14,28 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <UContainer>
-            <div class="px-1 sm:px-2">
-                <div class="flex flex-col gap-2">
-                    <QualificationsResultsList />
+    <UDashboardPage>
+        <UDashboardPanel grow>
+            <UDashboardNavbar :title="$t('pages.qualifications.title')">
+                <template #right>
+                    <UButton
+                        v-if="can('QualificationsService.CreateQualification')"
+                        :to="{ name: 'jobs-qualifications-create' }"
+                        trailing-icon="i-mdi-plus"
+                        color="gray"
+                    >
+                        {{ $t('components.qualifications.create_new_qualification') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
 
-                    <QualificationsRequestsList />
+            <div class="flex flex-col gap-2">
+                <QualificationsResultsList />
 
-                    <QualificationsList />
-                </div>
+                <QualificationsRequestsList />
+
+                <QualificationsList />
             </div>
-        </UContainer>
-    </div>
+        </UDashboardPanel>
+    </UDashboardPage>
 </template>

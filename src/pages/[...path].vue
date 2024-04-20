@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { emojiBlast } from 'emoji-blast';
 import { useAuthStore } from '~/store/auth';
 
 useHead({
@@ -40,7 +41,17 @@ const { accessToken } = storeToRefs(authStore);
                 ]"
             >
                 <template #headline>
-                    <UBadge color="gray" variant="solid" size="lg">{{ $t('pages.notfound.error') }}</UBadge>
+                    <UBadge
+                        color="gray"
+                        variant="solid"
+                        size="lg"
+                        @click="
+                            emojiBlast({
+                                emojis: ['😵‍💫', '🔍', '🔎', '👀'],
+                            })
+                        "
+                        >{{ $t('pages.notfound.error') }}</UBadge
+                    >
                 </template>
             </ULandingHero>
         </div>

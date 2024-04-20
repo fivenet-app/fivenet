@@ -47,14 +47,38 @@ watch(designDocumentsListStyle, async () => {
     }
 });
 
-const primaryColors = ['green', 'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet'].map((color) => ({
+const availableColors = [
+    // Gray Colors
+    'slate',
+    'cool',
+    'zinc',
+    'neutral',
+    'stone',
+    // Primary - Default
+    'green',
+    'teal',
+    'cyan',
+    'sky',
+    'blue',
+    'indigo',
+    'violet',
+    // Primary - Custom
+    'yellow',
+    'amber',
+    'lime',
+    'emerald',
+    'fuchsia',
+    'rose',
+    'pink',
+    'orange',
+    'red',
+    'purple',
+];
+
+const availableColorOptions = availableColors.map((color) => ({
     label: color,
     chip: color,
 }));
-
-const grayColors = computed(() =>
-    ['slate', 'cool', 'zinc', 'neutral', 'stone'].map((color) => ({ label: color, chip: color })),
-);
 
 const appConfig = useAppConfig();
 
@@ -74,7 +98,7 @@ watch(design.value, () => {
             <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
                 <USelectMenu
                     v-model="design.ui.primary"
-                    :options="primaryColors"
+                    :options="availableColorOptions"
                     option-attribute="label"
                     value-attribute="chip"
                     :searchable-placeholder="$t('common.search_field')"
@@ -103,7 +127,7 @@ watch(design.value, () => {
             >
                 <USelectMenu
                     v-model="design.ui.gray"
-                    :options="grayColors"
+                    :options="availableColorOptions"
                     option-attribute="label"
                     value-attribute="chip"
                     :searchable-placeholder="$t('common.search_field')"

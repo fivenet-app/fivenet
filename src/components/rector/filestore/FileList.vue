@@ -54,7 +54,7 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
     }
 }
 
-watch(offset, () => refresh());
+watch(offset, async () => refresh());
 
 function addUploadedFile(file: FileInfo): void {
     const idx = data.value?.files.findIndex((f) => f.name === file.name);

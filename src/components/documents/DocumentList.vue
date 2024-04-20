@@ -11,7 +11,7 @@ import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
-import DatePicker from '~/components/partials/DatePicker.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useSettingsStore } from '~/store/settings';
 
@@ -225,7 +225,7 @@ defineShortcuts({
                                     :placeholder="$t('common.creator')"
                                     :searchable-placeholder="$t('common.search_field')"
                                     trailing
-                                    by="userId"
+                                    by="firstname"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -263,7 +263,7 @@ defineShortcuts({
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePicker v-model="query.from" mode="dateTime" is24hr @close="close" />
+                                        <DatePickerClient v-model="query.from" mode="dateTime" is24hr @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>
@@ -279,7 +279,7 @@ defineShortcuts({
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePicker v-model="query.to" mode="dateTime" is24hr @close="close" />
+                                        <DatePickerClient v-model="query.to" mode="dateTime" is24hr @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>

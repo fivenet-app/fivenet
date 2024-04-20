@@ -33,16 +33,16 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <UCard>
+    <UCard
+        :ui="{
+            body: { padding: '' },
+        }"
+    >
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl font-semibold leading-6">
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
-
-                <UButton v-if="can('QualificationsService.CreateQualification')" :to="{ name: 'jobs-qualifications-create' }">
-                    {{ $t('components.qualifications.create_new_qualification') }}
-                </UButton>
             </div>
         </template>
 

@@ -365,6 +365,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 <UButtonGroup class="inline-flex">
                     <UButton
                         color="black"
+                        icon="i-mdi-arrow-back"
                         :to="
                             qualificationId
                                 ? { name: 'jobs-qualifications-id', params: { id: qualificationId } }

@@ -8,7 +8,7 @@ defineProps<{
 </script>
 
 <template>
-    <li class="relative flex justify-between px-4 py-5">
+    <li class="relative flex justify-between px-3 py-4">
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-sm font-semibold leading-6 text-gray-100">
@@ -26,30 +26,28 @@ defineProps<{
         <div class="flex shrink-0 items-center gap-x-2">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <div class="flex flex-row gap-1">
-                    <div
-                        v-if="qualification.result?.status"
-                        class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
-                    >
-                        <UIcon name="i-mdi-list-status" class="size-5 text-sky-400" />
-                        <span class="text-sm font-medium text-info-700">
-                            <span class="font-semibold">{{ $t('common.result') }}:</span>
+                    <UBadge v-if="qualification.result?.status" class="inline-flex gap-1">
+                        <UIcon name="i-mdi-list-status" class="size-5" />
+                        <span>
+                            {{ $t('common.result') }}:
                             {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
                         </span>
-                    </div>
+                    </UBadge>
 
                     <UBadge v-if="qualification.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock" class="h-auto w-5" />
                         <span>
                             {{ $t('common.close', 2) }}
                         </span>
                     </UBadge>
                     <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock-open-variant" class="h-auto w-5" />
                         <span>
                             {{ $t('common.open', 2) }}
                         </span>
                     </UBadge>
                 </div>
+
                 <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5">
                     {{ $t('common.created_at') }} <GenericTime :value="qualification.createdAt" />
                 </p>

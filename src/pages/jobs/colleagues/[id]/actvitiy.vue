@@ -20,5 +20,7 @@ const route = useRoute('jobs-colleagues-id-actvitiy');
 </script>
 
 <template>
-    <ColleagueActivityFeed :user-id="parseInt(route.params.id)" />
+    <div>
+        <ColleagueActivityFeed :user-id="parseInt(route.params.id)" />
+    </div>
 </template>

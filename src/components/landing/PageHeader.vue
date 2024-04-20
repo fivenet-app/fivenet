@@ -26,7 +26,9 @@ const modal = useModal();
 
 <template>
     <UHeader :links="links">
-        <template #logo> <FiveNetLogo class="h-10 w-auto" /> </template>
+        <template #logo>
+            <FiveNetLogo class="h-10 w-auto" />
+        </template>
 
         <template #right>
             <UButton

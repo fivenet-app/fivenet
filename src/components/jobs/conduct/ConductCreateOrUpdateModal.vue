@@ -5,7 +5,7 @@ import { format } from 'date-fns';
 import { useCompletorStore } from '~/store/completor';
 import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { UserShort } from '~~/gen/ts/resources/users/users';
-import DatePicker from '~/components/partials/DatePicker.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { conductTypesToBGColor } from './helpers';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -204,7 +204,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         block
                                         :placeholder="$t('common.target')"
                                         trailing
-                                        by="userId"
+                                        by="firstname"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -259,7 +259,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
 
                                         <template #panel="{ close }">
-                                            <DatePicker v-model="state.expiresAt" @close="close" />
+                                            <DatePickerClient v-model="state.expiresAt" @close="close" />
                                         </template>
                                     </UPopover>
                                 </UFormGroup>

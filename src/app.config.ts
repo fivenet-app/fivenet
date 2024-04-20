@@ -57,7 +57,7 @@ export default defineAppConfig({
         },
         dashboard: {
             page: {
-                wrapper: 'flex flex-1 w-full min-w-0 max-w-full overflow-y-auto',
+                wrapper: 'flex w-full min-h-screen min-w-screen max-w-full overflow-y-auto',
             },
         },
     },

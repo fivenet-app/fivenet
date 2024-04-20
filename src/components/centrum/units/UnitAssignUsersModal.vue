@@ -108,7 +108,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     block
                                     :placeholder="$t('common.owner')"
                                     trailing
-                                    by="userId"
+                                    by="firstname"
                                     :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
