@@ -14,28 +14,32 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.qualifications.title')">
-                <template #right>
-                    <UButton
-                        v-if="can('QualificationsService.CreateQualification')"
-                        :to="{ name: 'jobs-qualifications-create' }"
-                        trailing-icon="i-mdi-plus"
-                        color="gray"
-                    >
-                        {{ $t('components.qualifications.create_new_qualification') }}
-                    </UButton>
-                </template>
-            </UDashboardNavbar>
+    <PagesJobsLayout>
+        <template #default>
+            <UDashboardPage>
+                <UDashboardPanel grow>
+                    <UDashboardNavbar :title="$t('pages.qualifications.title')">
+                        <template #right>
+                            <UButton
+                                v-if="can('QualificationsService.CreateQualification')"
+                                :to="{ name: 'jobs-qualifications-create' }"
+                                trailing-icon="i-mdi-plus"
+                                color="gray"
+                            >
+                                {{ $t('components.qualifications.create_new_qualification') }}
+                            </UButton>
+                        </template>
+                    </UDashboardNavbar>
 
-            <div class="flex flex-col gap-2">
-                <QualificationsResultsList />
+                    <div class="flex flex-col gap-2">
+                        <QualificationsResultsList />
 
-                <QualificationsRequestsList />
+                        <QualificationsRequestsList />
 
-                <QualificationsList />
-            </div>
-        </UDashboardPanel>
-    </UDashboardPage>
+                        <QualificationsList />
+                    </div>
+                </UDashboardPanel>
+            </UDashboardPage>
+        </template>
+    </PagesJobsLayout>
 </template>

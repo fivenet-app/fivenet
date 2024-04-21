@@ -9,7 +9,8 @@ RUN rm -rf ./.nuxt/ && \
     apk add --no-cache git && \
     corepack enable && \
     corepack prepare pnpm@latest --activate && \
-    pnpm && NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
+    pnpm install && \
+    NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
 
 # Backend Build
 FROM docker.io/library/golang:1.21.8 AS gobuilder

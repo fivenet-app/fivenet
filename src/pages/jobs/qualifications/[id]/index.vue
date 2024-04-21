@@ -20,9 +20,13 @@ const route = useRoute('jobs-qualifications-id');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <QualificationView :qualification-id="route.params.id" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <PagesJobsLayout>
+        <template #default>
+            <UDashboardPage>
+                <UDashboardPanel grow>
+                    <QualificationView :qualification-id="route.params.id" />
+                </UDashboardPanel>
+            </UDashboardPage>
+        </template>
+    </PagesJobsLayout>
 </template>

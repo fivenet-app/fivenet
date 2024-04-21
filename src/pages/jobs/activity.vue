@@ -12,7 +12,9 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <ColleagueActivityFeed :show-target-user="true" />
-    </div>
+    <PagesJobsLayout>
+        <template #default>
+            <ColleagueActivityFeed :show-target-user="true" />
+        </template>
+    </PagesJobsLayout>
 </template>

@@ -71,10 +71,6 @@ watchDebounced(query, async () => refresh(), {
     debounce: 500,
     maxWait: 1250,
 });
-
-function charsGetDisplayValue(chars: Colleague[]): string {
-    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
-}
 </script>
 
 <template>
@@ -98,11 +94,16 @@ function charsGetDisplayValue(chars: Colleague[]): string {
                     block
                     :placeholder="$t('common.owner')"
                     trailing
-                    by="firstname"
+                    by="userId"
                     :searchable-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 >
+                    <template #label>
+                        <template v-if="query.colleagues.length">
+                            {{ usersToLabel(query.colleagues) }}
+                        </template>
+                    </template>
                     <template #option="{ option: user }">
                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                     </template>

@@ -12,12 +12,8 @@ defineProps<{
 <template>
     <li
         :key="doc.id"
-        class="flex-initial rounded-lg"
-        :class="[
-            doc.deletedAt
-                ? 'bg-warn-100 hover:bg-warn-200 dark:bg-warn-800 dark:hover:bg-warn-700'
-                : 'bg-base-100 hover:bg-base-200 dark:bg-base-900 dark:hover:bg-base-800',
-        ]"
+        class="flex-initial"
+        :class="[doc.deletedAt ? 'bg-warn-100 hover:bg-warn-200 dark:bg-warn-800 dark:hover:bg-warn-700' : '']"
     >
         <ULink
             :to="{
@@ -61,7 +57,7 @@ defineProps<{
                 </div>
 
                 <div class="flex flex-row gap-2 truncate">
-                    <div class="inline-flex items-center gap-1">
+                    <div class="inline-flex items-center gap-1 truncate">
                         <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-shape" class="h-auto w-5" />
                             <span :title="doc.category.description ?? $t('common.na')">

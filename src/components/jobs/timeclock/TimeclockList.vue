@@ -165,9 +165,9 @@ async function search(query: string) {
 </script>
 
 <template>
-    <UForm :schema="schema" :state="query" @submit="refresh()">
-        <UDashboardToolbar>
-            <template #default>
+    <UDashboardToolbar>
+        <template #default>
+            <UForm :schema="schema" :state="query" class="flex-1" @submit="refresh()">
                 <div class="flex w-full flex-col gap-2">
                     <div class="flex w-full flex-col">
                         <UButton
@@ -190,11 +190,16 @@ async function search(query: string) {
                                     block
                                     :placeholder="$t('common.colleague', 2)"
                                     trailing
-                                    by="firstname"
+                                    by="userId"
                                     :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
+                                    <template #label>
+                                        <template v-if="query.users?.length">
+                                            {{ usersToLabel(query.users) }}
+                                        </template>
+                                    </template>
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </template>
@@ -275,66 +280,66 @@ async function search(query: string) {
                         </UButton>
                     </div>
                 </div>
-            </template>
-        </UDashboardToolbar>
-
-        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
-        <template v-else>
-            <UTable
-                :loading="loading"
-                :columns="columns"
-                :rows="grouped"
-                :empty-state="{
-                    icon: 'i-mdi-timeline-clock',
-                    label: $t('common.not_found', [$t('common.entry', 2)]),
-                }"
-            >
-                <template #date-data="{ row: entry }">
-                    <div class="inline-flex items-center text-gray-900 dark:text-white">
-                        {{ $d(entry.date, 'date') }}
-                    </div>
-                </template>
-
-                <template #name-data="{ row: entry }">
-                    <div class="inline-flex items-center gap-1">
-                        <ProfilePictureImg
-                            :src="entry.entry.user?.avatar?.url"
-                            :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
-                            size="sm"
-                        />
-
-                        <ColleagueInfoPopover :user="entry.entry.user" />
-                    </div>
-                </template>
-
-                <template #time-data="{ row: entry }">
-                    <div class="text-right">
-                        {{
-                            entry.entry.spentTime > 0
-                                ? fromSecondsToFormattedDuration(
-                                      parseFloat(((Math.round(entry.entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                      { seconds: false },
-                                  )
-                                : ''
-                        }}
-
-                        <UBadge v-if="entry.entry.startTime !== undefined" color="green">
-                            {{ $t('common.active') }}
-                        </UBadge>
-                    </div>
-                </template>
-            </UTable>
-
-            <Pagination v-model="page" :pagination="data?.pagination" />
+            </UForm>
         </template>
+    </UDashboardToolbar>
 
-        <TimeclockStatsBlock
-            v-if="data && data.stats"
-            :stats="data.stats"
-            :weekly="data.weekly"
-            :hide-header="true"
-            :failed="error !== null"
+    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
+    <template v-else>
+        <UTable
             :loading="loading"
-        />
-    </UForm>
+            :columns="columns"
+            :rows="grouped"
+            :empty-state="{
+                icon: 'i-mdi-timeline-clock',
+                label: $t('common.not_found', [$t('common.entry', 2)]),
+            }"
+        >
+            <template #date-data="{ row: entry }">
+                <div class="inline-flex items-center text-gray-900 dark:text-white">
+                    {{ $d(entry.date, 'date') }}
+                </div>
+            </template>
+
+            <template #name-data="{ row: entry }">
+                <div class="inline-flex items-center gap-1">
+                    <ProfilePictureImg
+                        :src="entry.entry.user?.avatar?.url"
+                        :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
+                        size="sm"
+                    />
+
+                    <ColleagueInfoPopover :user="entry.entry.user" />
+                </div>
+            </template>
+
+            <template #time-data="{ row: entry }">
+                <div class="text-right">
+                    {{
+                        entry.entry.spentTime > 0
+                            ? fromSecondsToFormattedDuration(
+                                  parseFloat(((Math.round(entry.entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                  { seconds: false },
+                              )
+                            : ''
+                    }}
+
+                    <UBadge v-if="entry.entry.startTime !== undefined" color="green">
+                        {{ $t('common.active') }}
+                    </UBadge>
+                </div>
+            </template>
+        </UTable>
+
+        <Pagination v-model="page" :pagination="data?.pagination" />
+    </template>
+
+    <TimeclockStatsBlock
+        v-if="data && data.stats"
+        :stats="data.stats"
+        :weekly="data.weekly"
+        :hide-header="true"
+        :failed="error !== null"
+        :loading="loading"
+    />
 </template>

@@ -20,9 +20,13 @@ const route = useRoute('jobs-qualifications-id-edit');
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <QualificationEditor :qualification-id="route.params.id" />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <PagesJobsLayout>
+        <template #default>
+            <UDashboardPage>
+                <UDashboardPanel grow>
+                    <QualificationEditor :qualification-id="route.params.id" />
+                </UDashboardPanel>
+            </UDashboardPage>
+        </template>
+    </PagesJobsLayout>
 </template>

@@ -51,15 +51,17 @@ const links = [
 </script>
 
 <template>
-    <UDashboardPage class="h-full">
-        <UDashboardPanelContent>
-            <ColleagueInfo :user-id="parseInt(route.params.id)" />
+    <PagesJobsLayout>
+        <template #default>
+            <UDashboardPanelContent>
+                <ColleagueInfo :user-id="parseInt(route.params.id)" />
 
-            <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
-                <UHorizontalNavigation :links="links" />
-            </UDashboardToolbar>
+                <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
+                    <UHorizontalNavigation :links="links" />
+                </UDashboardToolbar>
 
-            <NuxtPage />
-        </UDashboardPanelContent>
-    </UDashboardPage>
+                <NuxtPage />
+            </UDashboardPanelContent>
+        </template>
+    </PagesJobsLayout>
 </template>

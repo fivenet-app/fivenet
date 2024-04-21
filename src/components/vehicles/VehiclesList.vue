@@ -192,7 +192,7 @@ defineShortcuts({
                         block
                         :placeholder="$t('common.owner')"
                         trailing
-                        by="firstname"
+                        by="userId"
                         :searchable-placeholder="$t('common.search_field')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"

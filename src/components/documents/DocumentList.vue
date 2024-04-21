@@ -225,10 +225,15 @@ defineShortcuts({
                                     :placeholder="$t('common.creator')"
                                     :searchable-placeholder="$t('common.search_field')"
                                     trailing
-                                    by="firstname"
+                                    by="userId"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
+                                    <template #label>
+                                        <template v-if="query.creators.length">
+                                            {{ usersToLabel(query.creators) }}
+                                        </template>
+                                    </template>
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </template>
@@ -297,7 +302,7 @@ defineShortcuts({
     <div v-else class="relative overflow-x-auto">
         <ul
             role="list"
-            class="m-1 flex flex-col gap-1"
+            class="m-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
             :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
         >
             <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />

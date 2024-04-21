@@ -12,9 +12,13 @@ definePageMeta({
 </script>
 
 <template>
-    <UDashboardPage>
-        <UDashboardPanel grow>
-            <QualificationEditor />
-        </UDashboardPanel>
-    </UDashboardPage>
+    <PagesJobsLayout>
+        <template #default>
+            <UDashboardPage>
+                <UDashboardPanel grow>
+                    <QualificationEditor />
+                </UDashboardPanel>
+            </UDashboardPage>
+        </template>
+    </PagesJobsLayout>
 </template>

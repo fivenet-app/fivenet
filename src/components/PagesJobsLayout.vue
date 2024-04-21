@@ -68,7 +68,7 @@ const links = [
                 <UHorizontalNavigation :links="links" />
             </UDashboardToolbar>
 
-            <NuxtPage />
+            <slot />
         </UDashboardPanel>
     </UDashboardPage>
 </template>

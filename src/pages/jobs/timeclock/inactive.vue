@@ -12,7 +12,9 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <TimeclockInactiveList />
-    </div>
+    <PagesJobsLayout>
+        <template #default>
+            <TimeclockInactiveList />
+        </template>
+    </PagesJobsLayout>
 </template>

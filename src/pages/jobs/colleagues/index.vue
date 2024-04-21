@@ -12,7 +12,9 @@ definePageMeta({
 </script>
 
 <template>
-    <div>
-        <ColleaguesList />
-    </div>
+    <PagesJobsLayout>
+        <template #default>
+            <ColleaguesList />
+        </template>
+    </PagesJobsLayout>
 </template>

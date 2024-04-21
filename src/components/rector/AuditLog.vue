@@ -89,10 +89,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
 
 const selectedCitizens = ref<UserShort[]>([]);
 
-function charsGetDisplayValue(chars: UserShort[]): string {
-    return chars.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
-}
-
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), {
     debounce: 200,
@@ -225,11 +221,16 @@ const columns = [
                             block
                             :placeholder="$t('common.user', 2)"
                             trailing
-                            by="firstname"
+                            by="userId"
                             :searchable-placeholder="$t('common.search_field')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >
+                            <template #label>
+                                <template v-if="selectedCitizens.length">
+                                    {{ usersToLabel(selectedCitizens) }}
+                                </template>
+                            </template>
                             <template #option="{ option: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                             </template>

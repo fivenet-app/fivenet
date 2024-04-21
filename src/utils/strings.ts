@@ -31,3 +31,13 @@ export function formatBytes(bytes: number, decimals = 2) {
 
     return `${parseFloat((bytes / Math.pow(k, i)).toFixed(dm))} ${sizes[i]}`;
 }
+
+export interface UserLike {
+    firstname: string;
+    lastname: string;
+    dateofbirth?: string;
+}
+
+export function usersToLabel(users: UserLike[]): string {
+    return users.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
+}
