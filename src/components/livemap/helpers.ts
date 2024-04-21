@@ -41,7 +41,6 @@ export const markerIcons = [
     'i-mdi-sail-boat',
     'i-mdi-home',
     'i-mdi-domain',
-    'i-mdi-lighthouse',
     'i-mdi-bus',
     'i-mdi-handshake',
     'i-mdi-atv',

@@ -337,7 +337,7 @@ const props = defineProps<{
                     v-else-if="activity.newValue === activity.oldValue"
                     class="text-secondary-400 size-full"
                 />
-                <UIcon name="i-mdi-ReceiptTextPlus" v-else class="size-full text-info-400" />
+                <UIcon name="i-mdi-receipt-text-plus" v-else class="size-full text-info-400" />
             </div>
             <div class="flex-1 space-y-1">
                 <div class="flex items-center justify-between">
