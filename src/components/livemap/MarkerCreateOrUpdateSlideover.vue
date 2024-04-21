@@ -112,8 +112,8 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             addOrpdateMarkerMarker(response.marker);
         }
 
-        isOpen.value = false;
         emits('close');
+        isOpen.value = false;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
@@ -157,8 +157,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             icon="i-mdi-window-close"
                             class="-my-1"
                             @click="
+                                $emit('close');
                                 isOpen = false;
-                                emits('close');
                             "
                         />
                     </div>
@@ -347,8 +347,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             block
                             class="flex-1"
                             @click="
-                                isOpen = false;
                                 $emit('close');
+                                isOpen = false;
                             "
                         >
                             {{ $t('common.close', 1) }}
