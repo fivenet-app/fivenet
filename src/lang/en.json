@@ -423,7 +423,8 @@
         "annul": "Annul | Annulled",
         "search_field": "Search...",
         "settings": "Settings",
-        "timings": "Timings"
+        "timings": "Timings",
+        "stats": "Stats"
     },
     "components": {
         "partials": {

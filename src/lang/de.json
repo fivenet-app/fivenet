@@ -423,7 +423,8 @@
         "annul": "Aufheben | Aufgehoben",
         "search_field": "Suche...",
         "settings": "Einstellungen",
-        "timings": "Zeitangaben"
+        "timings": "Zeitangaben",
+        "stats": "Statistik"
     },
     "components": {
         "partials": {

@@ -334,12 +334,15 @@ async function search(query: string) {
         <Pagination v-model="page" :pagination="data?.pagination" />
     </template>
 
-    <TimeclockStatsBlock
-        v-if="data && data.stats"
-        :stats="data.stats"
-        :weekly="data.weekly"
-        :hide-header="true"
-        :failed="error !== null"
-        :loading="loading"
-    />
+    <UAccordion v-if="data && data.stats" :items="[{ slot: 'stats', label: $t('common.stats') }]" class="px-3 py-0.5">
+        <template #stats>
+            <TimeclockStatsBlock
+                :stats="data.stats"
+                :weekly="data.weekly"
+                :hide-header="true"
+                :failed="error !== null"
+                :loading="loading"
+            />
+        </template>
+    </UAccordion>
 </template>
