@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 	"errors"
+	"slices"
 
 	accounts "github.com/galexrt/fivenet/gen/go/proto/resources/accounts"
 	"github.com/galexrt/fivenet/pkg/grpc/auth"
@@ -75,11 +76,11 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 
 	// Set provider in the connections
 	for i := 0; i < len(oauth2Conns); i++ {
-		for _, p := range oauth2Providers {
-			if p.Name == oauth2Conns[i].GetProviderName() {
-				oauth2Conns[i].Provider = p
-				break
-			}
+		idx := slices.IndexFunc(oauth2Providers, func(p *accounts.OAuth2Provider) bool {
+			return p.Name == oauth2Conns[i].GetProviderName()
+		})
+		if idx > -1 {
+			oauth2Conns[i].Provider = oauth2Providers[idx]
 		}
 	}
 

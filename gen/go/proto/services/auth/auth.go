@@ -135,6 +135,7 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 			tAccounts.Password,
 			tAccounts.License,
 			tAccounts.RegToken,
+			tAccounts.LastChar,
 			tAccounts.OverrideJob,
 			tAccounts.OverrideJobGrade,
 			tAccounts.Superuser,
