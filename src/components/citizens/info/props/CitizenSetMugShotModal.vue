@@ -115,14 +115,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup name="mugShot" :label="$t('common.image')">
-                        <template v-if="isNUIAvailable()">
-                            <p class="text-sm">
-                                {{ $t('system.not_supported_on_tablet.title') }}
-                            </p>
-                        </template>
+                        <p v-if="isNUIAvailable()" class="text-sm">
+                            {{ $t('system.not_supported_on_tablet.title') }}
+                        </p>
                         <template v-else>
                             <UInput
                                 type="file"
+                                name="mugShot"
                                 accept="image/jpeg,image/jpg,image/png"
                                 :placeholder="$t('common.image')"
                                 @change="state.mugShot = $event"

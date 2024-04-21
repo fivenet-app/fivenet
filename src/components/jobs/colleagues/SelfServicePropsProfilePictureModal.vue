@@ -18,7 +18,6 @@ const { isOpen } = useModal();
 const appConfig = useAppConfig();
 
 const schema = z.object({
-    reason: z.string().min(3).max(255),
     avatar: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images),
     reset: z.boolean(),
 });
@@ -26,12 +25,12 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive({
-    reason: '',
     avatar: undefined,
     reset: false,
 });
 
 async function setProfilePicture(values: Schema): Promise<void> {
+    console.log(values);
     const req = {} as SetProfilePictureRequest;
     if (!values.reset) {
         if (!values.avatar) {
@@ -107,6 +106,7 @@ const nuiAvailable = ref(isNUIAvailable());
                                 name="avatar"
                                 :placeholder="$t('common.image')"
                                 accept="image/jpeg,image/jpg,image/png"
+                                @change="state.avatar = $event"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
