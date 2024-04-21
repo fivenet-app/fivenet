@@ -64,7 +64,7 @@
             "name": "Launch UI",
             "type": "node",
             "request": "launch",
-            "runtimeExecutable": "yarn",
+            "runtimeExecutable": "pnpm",
             "cwd": "${workspaceFolder}",
             "runtimeArgs": ["dev"],
             "outputCapture": "std"

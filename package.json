@@ -9,15 +9,15 @@
         "url": "git+https://github.com/galexrt/fivenet.git"
     },
     "scripts": {
-        "build": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi build",
-        "dev": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi dev --host",
-        "generate": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi generate",
-        "preview": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi preview",
-        "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') yarn nuxi prepare",
-        "pretty": "yarn prettier --write ./src/",
-        "analyze": "yarn nuxi analyze",
-        "typecheck": "yarn nuxi typecheck",
-        "lint": "yarn eslint .",
+        "build": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi build",
+        "dev": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi dev --host",
+        "generate": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi generate",
+        "preview": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi preview",
+        "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi prepare",
+        "pretty": "pnpm prettier --write ./src/",
+        "analyze": "pnpm nuxi analyze",
+        "typecheck": "pnpm nuxi typecheck",
+        "lint": "pnpm eslint .",
         "i18next-scanner": "npx i18next-scanner --config ./internal/scripts/i18next-scanner.config.cjs"
     },
     "dependencies": {

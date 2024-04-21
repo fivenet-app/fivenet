@@ -11,8 +11,7 @@ Has been built using
 Make sure to install the dependencies:
 
 ```bash
-# yarn
-yarn install
+pnpm install
 ```
 
 ### Development Server
@@ -20,6 +19,5 @@ yarn install
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# yarn
-yarn dev
+pnpm run dev
 ```

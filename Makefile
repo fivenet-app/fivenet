@@ -72,7 +72,7 @@ clean:
 
 .PHONY: watch
 watch:
-	yarn dev
+	pnpm dev
 
 .PHONY: build-container
 build-container:
@@ -100,10 +100,10 @@ build-go:
 		-ldflags "-X github.com/galexrt/fivenet/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
 		-o fivenet .
 
-.PHONY: build-yarn
-build-yarn:
+.PHONY: build-js
+build-js:
 	rm -rf ./.nuxt/dist/
-	yarn build
+	pnpm build
 
 .PHONY: run-server
 run-server:
@@ -171,7 +171,7 @@ fmt-proto: buf
 
 .PHONY: fmt-js
 fmt-js:
-	yarn prettier --write ./src
+	pnpm prettier --write ./src
 
 .PHONY: gen-licenses
 gen-licenses: go-licenses
