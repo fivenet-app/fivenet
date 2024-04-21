@@ -10,7 +10,7 @@ importers:
     dependencies:
       '@fontsource/dm-sans':
         specifier: ^5.0.20
-        version: 5.0.20
+        version: 5.0.21
       '@iconify-json/flagpack':
         specifier: ^1.1.14
         version: 1.1.14
@@ -485,8 +485,8 @@ packages:
   '@floating-ui/utils@0.2.1':
     resolution: {integrity: sha512-9TANp6GPoMtYzQdt54kfAyMmz1+osLlXdg2ENroU7zzrtflTLrrC/lgrIfaSe+Wu0b89GKccT7vxXA0MoAIO+Q==}
 
-  '@fontsource/dm-sans@5.0.20':
-    resolution: {integrity: sha512-0dEHhu/rW9n5AIufDodNwBOrySzZVC+67l5TrYDgpeOmvhiZXvApBQHRC/pUSYLKpdg7rYy2G0q8GFQXO7Kpgg==}
+  '@fontsource/dm-sans@5.0.21':
+    resolution: {integrity: sha512-ydUs1ZAf6fqZfvmEb4EdT7RehZvFBLEOVz6Mn9kmoaVsYR1Ql3kkQvaAGEyMrcCuoBklwPaCqnq6PkHyYzIx6Q==}
 
   '@headlessui/tailwindcss@0.2.0':
     resolution: {integrity: sha512-fpL830Fln1SykOCboExsWr3JIVeQKieLJ3XytLe/tt1A0XzqUthOftDmjcCYLW62w7mQI7wXcoPXr3tZ9QfGxw==}
@@ -6093,7 +6093,7 @@ snapshots:
 
   '@floating-ui/utils@0.2.1': {}
 
-  '@fontsource/dm-sans@5.0.20': {}
+  '@fontsource/dm-sans@5.0.21': {}
 
   '@headlessui/tailwindcss@0.2.0(tailwindcss@3.4.3)':
     dependencies:
