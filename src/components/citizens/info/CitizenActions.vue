@@ -179,11 +179,7 @@ if (props.registerShortcuts) {
 
         <UTooltip
             v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')"
-            :text="
-                user?.props?.wanted
-                    ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
-                    : $t('components.citizens.CitizenInfoProfile.set_wanted')
-            "
+            :text="$t('components.citizens.CitizenInfoProfile.set_mug_shot')"
             :shortcuts="['C', 'M']"
         >
             <UButton
@@ -202,11 +198,7 @@ if (props.registerShortcuts) {
 
         <UTooltip
             v-if="can('DocStoreService.CreateDocument')"
-            :text="
-                user?.props?.wanted
-                    ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
-                    : $t('components.citizens.CitizenInfoProfile.set_wanted')
-            "
+            :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :shortcuts="['C', 'D']"
         >
             <UButton block icon="i-mdi-file-document-plus" @click="openTemplates()">
