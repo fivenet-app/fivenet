@@ -153,7 +153,7 @@ const groups = computed(() => [
     {
         key: 'links',
         label: t('common.goto'),
-        commands: links.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
+        commands: links.value.map((link) => ({ ...link, shortcuts: link.tooltip?.shortcuts })),
     },
     {
         key: 'ids',

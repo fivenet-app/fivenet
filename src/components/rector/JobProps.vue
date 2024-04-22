@@ -111,6 +111,11 @@ async function setJobProps(values: Schema): Promise<void> {
         return;
     }
 
+    jobProps.value.livemapMarkerColor = values.livemapMarkerColor;
+    jobProps.value.quickButtons = values.quickButtons;
+    jobProps.value.radioFrequency = values.radioFrequency;
+    jobProps.value.discordGuildId = values.discordGuildId;
+    jobProps.value.discordSyncSettings = values.discordSyncSettings;
     if (values.logoUrl) {
         jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
     }

@@ -226,16 +226,24 @@ onBeforeMount(async () => {
                             <span class="my-auto flex-1">{{ job.label }}</span>
 
                             <USelectMenu
-                                @update:model-value="updateJobGradeValue(job, $event)"
                                 nullable
                                 :options="job.grades"
                                 :search-attributes="['label']"
                                 by="grade"
                                 :placeholder="$t('common.rank')"
                                 :searchable-placeholder="$t('common.search_field')"
+                                @update:model-value="updateJobGradeValue(job, $event)"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >
+                                <template #label>
+                                    <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
+                                        <span class="truncate">{{
+                                            job.grades[currentValue.validValues.jobGradeList.jobs[job.name] - 1]?.label ??
+                                            $t('common.na')
+                                        }}</span>
+                                    </template>
+                                </template>
                                 <template #option="{ option: grade }">
                                     {{ grade?.label }}
                                 </template>
