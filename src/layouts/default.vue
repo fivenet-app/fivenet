@@ -20,119 +20,121 @@ const { $grpc } = useNuxtApp();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
-const links = [
-    {
-        label: t('common.overview'),
-        icon: 'i-mdi-home-outline',
-        to: '/overview',
-        tooltip: {
-            text: t('common.overview'),
-            shortcuts: ['G', 'H'],
-        },
-    },
-    {
-        label: t('common.citizen'),
-        icon: 'i-mdi-account-multiple-outline',
-        to: '/citizens',
-        tooltip: {
-            text: t('common.citizen'),
-            shortcuts: ['G', 'C'],
-        },
-        permission: 'CitizenStoreService.ListCitizens' as Perms,
-    },
-    {
-        label: t('common.vehicle'),
-        icon: 'i-mdi-car-outline',
-        to: '/vehicles',
-        tooltip: {
-            text: t('common.vehicle'),
-            shortcuts: ['G', 'V'],
-        },
-        permission: 'DMVService.ListVehicles' as Perms,
-    },
-    {
-        label: t('common.document'),
-        icon: 'i-mdi-file-document-box-multiple-outline',
-        to: '/documents',
-        tooltip: {
-            text: t('common.document'),
-            shortcuts: ['G', 'D'],
-        },
-        permission: 'DocStoreService.ListDocuments' as Perms,
-    },
-    {
-        label: t('common.job'),
-        icon: 'i-mdi-briefcase-outline',
-        to: '/jobs/overview',
-        tooltip: {
-            text: t('common.job'),
-            shortcuts: ['G', 'J'],
-        },
-        permission: 'JobsService.ListColleagues' as Perms,
-        defaultOpen: false,
-        children: [
-            {
-                label: t('common.overview'),
-                to: '/jobs/overview',
+const links = computed(() =>
+    [
+        {
+            label: t('common.overview'),
+            icon: 'i-mdi-home-outline',
+            to: '/overview',
+            tooltip: {
+                text: t('common.overview'),
+                shortcuts: ['G', 'H'],
             },
-            {
-                label: t('common.colleague', 2),
-                to: '/jobs/colleagues',
-                permission: 'JobsService.ListColleagues' as Perms,
-            },
-            {
-                label: t('common.activity'),
-                to: '/jobs/activity',
-                permission: 'JobsService.ListColleagueActivity' as Perms,
-            },
-            {
-                label: t('common.timeclock'),
-                to: '/jobs/timeclock',
-                permission: 'JobsTimeclockService.ListTimeclock' as Perms,
-            },
-            {
-                label: t('common.qualification', 2),
-                to: '/jobs/qualifications',
-                permission: 'QualificationsService.ListQualifications' as Perms,
-            },
-            {
-                label: t('common.conduct_register', 2),
-                to: '/jobs/conduct',
-                permission: 'JobsConductService.ListConductEntries' as Perms,
-            },
-        ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
-    },
-    {
-        label: t('common.livemap'),
-        icon: 'i-mdi-map-outline',
-        to: '/livemap',
-        tooltip: {
-            text: t('common.livemap'),
-            shortcuts: ['G', 'M'],
         },
-        permission: 'LivemapperService.Stream' as Perms,
-    },
-    {
-        label: t('common.dispatch_center'),
-        icon: 'i-mdi-car-emergency',
-        to: '/centrum',
-        tooltip: {
-            text: t('common.dispatch_center'),
-            shortcuts: ['G', 'W'],
+        {
+            label: t('common.citizen'),
+            icon: 'i-mdi-account-multiple-outline',
+            to: '/citizens',
+            tooltip: {
+                text: t('common.citizen'),
+                shortcuts: ['G', 'C'],
+            },
+            permission: 'CitizenStoreService.ListCitizens' as Perms,
         },
-        permission: 'CentrumService.TakeControl' as Perms,
-    },
-    {
-        label: t('common.control_panel'),
-        icon: 'i-mdi-cog',
-        to: '/rector',
-        tooltip: {
-            text: t('common.control_panel'),
-            shortcuts: ['G', 'P'],
+        {
+            label: t('common.vehicle'),
+            icon: 'i-mdi-car-outline',
+            to: '/vehicles',
+            tooltip: {
+                text: t('common.vehicle'),
+                shortcuts: ['G', 'V'],
+            },
+            permission: 'DMVService.ListVehicles' as Perms,
         },
-        permission: 'RectorService.GetJobProps' as Perms,
-    },
-].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : []));
+        {
+            label: t('common.document'),
+            icon: 'i-mdi-file-document-box-multiple-outline',
+            to: '/documents',
+            tooltip: {
+                text: t('common.document'),
+                shortcuts: ['G', 'D'],
+            },
+            permission: 'DocStoreService.ListDocuments' as Perms,
+        },
+        {
+            label: t('common.job'),
+            icon: 'i-mdi-briefcase-outline',
+            to: '/jobs/overview',
+            tooltip: {
+                text: t('common.job'),
+                shortcuts: ['G', 'J'],
+            },
+            permission: 'JobsService.ListColleagues' as Perms,
+            defaultOpen: false,
+            children: [
+                {
+                    label: t('common.overview'),
+                    to: '/jobs/overview',
+                },
+                {
+                    label: t('common.colleague', 2),
+                    to: '/jobs/colleagues',
+                    permission: 'JobsService.ListColleagues' as Perms,
+                },
+                {
+                    label: t('common.activity'),
+                    to: '/jobs/activity',
+                    permission: 'JobsService.ListColleagueActivity' as Perms,
+                },
+                {
+                    label: t('common.timeclock'),
+                    to: '/jobs/timeclock',
+                    permission: 'JobsTimeclockService.ListTimeclock' as Perms,
+                },
+                {
+                    label: t('common.qualification', 2),
+                    to: '/jobs/qualifications',
+                    permission: 'QualificationsService.ListQualifications' as Perms,
+                },
+                {
+                    label: t('common.conduct_register', 2),
+                    to: '/jobs/conduct',
+                    permission: 'JobsConductService.ListConductEntries' as Perms,
+                },
+            ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+        },
+        {
+            label: t('common.livemap'),
+            icon: 'i-mdi-map-outline',
+            to: '/livemap',
+            tooltip: {
+                text: t('common.livemap'),
+                shortcuts: ['G', 'M'],
+            },
+            permission: 'LivemapperService.Stream' as Perms,
+        },
+        {
+            label: t('common.dispatch_center'),
+            icon: 'i-mdi-car-emergency',
+            to: '/centrum',
+            tooltip: {
+                text: t('common.dispatch_center'),
+                shortcuts: ['G', 'W'],
+            },
+            permission: 'CentrumService.TakeControl' as Perms,
+        },
+        {
+            label: t('common.control_panel'),
+            icon: 'i-mdi-cog',
+            to: '/rector',
+            tooltip: {
+                text: t('common.control_panel'),
+                shortcuts: ['G', 'P'],
+            },
+            permission: 'RectorService.GetJobProps' as Perms,
+        },
+    ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+);
 
 const footerLinks = [
     {
@@ -147,7 +149,7 @@ const footerLinks = [
     },
 ];
 
-const groups = [
+const groups = computed(() => [
     {
         key: 'links',
         label: t('common.goto'),
@@ -304,36 +306,40 @@ const groups = [
             }
         },
     },
-];
+]);
 
 const modal = useModal();
 
-const clipboardLink = [
-    activeChar.value
-        ? {
-              label: t('common.clipboard'),
-              icon: 'i-mdi-clipboard-list-outline',
-              click: () => modal.open(ClipboardModal, {}),
-          }
-        : undefined,
-].flatMap((item) => (item !== undefined ? [item] : []));
+const clipboardLink = computed(() =>
+    [
+        activeChar.value
+            ? {
+                  label: t('common.clipboard'),
+                  icon: 'i-mdi-clipboard-list-outline',
+                  click: () => modal.open(ClipboardModal, {}),
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 
-const quickAccessButtons = [
-    jobProps.value?.quickButtons?.penaltyCalculator
-        ? {
-              label: t('components.penaltycalculator.title'),
-              icon: 'i-mdi-calculator',
-              click: () => modal.open(PenaltyCalculatorModal),
-          }
-        : undefined,
-    jobProps.value?.quickButtons?.bodyCheckup
-        ? {
-              label: t('components.bodycheckup.title'),
-              icon: 'i-mdi-human',
-              click: () => modal.open(BodyCheckupModal, {}),
-          }
-        : undefined,
-].flatMap((item) => (item !== undefined ? [item] : []));
+const quickAccessButtons = computed(() =>
+    [
+        jobProps.value?.quickButtons?.penaltyCalculator
+            ? {
+                  label: t('components.penaltycalculator.title'),
+                  icon: 'i-mdi-calculator',
+                  click: () => modal.open(PenaltyCalculatorModal),
+              }
+            : undefined,
+        jobProps.value?.quickButtons?.bodyCheckup
+            ? {
+                  label: t('components.bodycheckup.title'),
+                  icon: 'i-mdi-human',
+                  click: () => modal.open(BodyCheckupModal, {}),
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 </script>
 
 <template>

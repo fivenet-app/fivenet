@@ -309,7 +309,7 @@ const accordionCategories = computed(() =>
                                             <UButton
                                                 color="red"
                                                 :variant="
-                                                    permStates.get(perm.id) !== undefined && !permStates.get(perm.id)
+                                                    permStates.get(perm.id) === undefined || !permStates.get(perm.id)
                                                         ? 'solid'
                                                         : 'soft'
                                                 "
