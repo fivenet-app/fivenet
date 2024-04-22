@@ -98,7 +98,7 @@
         "typescript": "5.4.5",
         "vue": "^3.4.23",
         "vue-i18n-routing": "^1.2.0",
-        "vue-tsc": "2.0.13"
+        "vue-tsc": "2.0.14"
     },
     "resolutions": {
         "string-width": "4.2.3"
