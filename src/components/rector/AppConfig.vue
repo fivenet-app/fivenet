@@ -41,6 +41,7 @@ const { data: jobs } = useLazyAsyncData(`rector-appconfig-jobs`, () => listJobs(
 const schema = z.object({
     auth: z.object({
         signupEnabled: z.boolean(),
+        lastCharLock: z.boolean(),
     }),
     perms: z.object({
         default: z
@@ -86,6 +87,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     auth: {
         signupEnabled: false,
+        lastCharLock: false,
     },
     perms: {
         default: [],
@@ -273,6 +275,19 @@ const tabs = [
                                     <UToggle v-model="state.auth.signupEnabled">
                                         <span class="sr-only">
                                             {{ $t('components.rector.app_config.auth.sign_up') }}
+                                        </span>
+                                    </UToggle>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="auth.lastCharLock"
+                                    :label="$t('components.rector.app_config.auth.last_char_lock')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="state.auth.lastCharLock">
+                                        <span class="sr-only">
+                                            {{ $t('components.rector.app_config.auth.last_char_lock') }}
                                         </span>
                                     </UToggle>
                                 </UFormGroup>

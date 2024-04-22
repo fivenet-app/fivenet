@@ -48,6 +48,10 @@ export interface Auth {
      * @generated from protobuf field: bool signup_enabled = 1;
      */
     signupEnabled: boolean;
+    /**
+     * @generated from protobuf field: bool last_char_lock = 2;
+     */
+    lastCharLock: boolean;
 }
 /**
  * @generated from protobuf message resources.rector.Perms
@@ -242,12 +246,14 @@ export const AppConfig = new AppConfig$Type();
 class Auth$Type extends MessageType<Auth> {
     constructor() {
         super("resources.rector.Auth", [
-            { no: 1, name: "signup_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "signup_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "last_char_lock", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Auth>): Auth {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.signupEnabled = false;
+        message.lastCharLock = false;
         if (value !== undefined)
             reflectionMergePartial<Auth>(this, message, value);
         return message;
@@ -259,6 +265,9 @@ class Auth$Type extends MessageType<Auth> {
             switch (fieldNo) {
                 case /* bool signup_enabled */ 1:
                     message.signupEnabled = reader.bool();
+                    break;
+                case /* bool last_char_lock */ 2:
+                    message.lastCharLock = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -275,6 +284,9 @@ class Auth$Type extends MessageType<Auth> {
         /* bool signup_enabled = 1; */
         if (message.signupEnabled !== false)
             writer.tag(1, WireType.Varint).bool(message.signupEnabled);
+        /* bool last_char_lock = 2; */
+        if (message.lastCharLock !== false)
+            writer.tag(2, WireType.Varint).bool(message.lastCharLock);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

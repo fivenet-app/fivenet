@@ -591,7 +591,8 @@
                 "auth": {
                     "title": "Authentifizierung",
                     "description": "Authentifizierung Einstellungen",
-                    "sign_up": "Registrierung"
+                    "sign_up": "Registrierung",
+                    "last_char_lock": "Spieler auf ihren letzten aktiven Charakter sperren"
                 },
                 "perms": {
                     "title": "Berechtigungen",

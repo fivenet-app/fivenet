@@ -591,7 +591,8 @@
                 "auth": {
                     "title": "Auth",
                     "description": "Authentication settings",
-                    "sign_up": "Sign-up"
+                    "sign_up": "Sign-up",
+                    "last_char_lock": "Lock players into their last active character"
                 },
                 "perms": {
                     "title": "Permissions",

@@ -72,6 +72,10 @@ export interface LoginResponse {
      * @generated from protobuf field: uint64 account_id = 3 [jstype = JS_STRING];
      */
     accountId: string;
+    /**
+     * @generated from protobuf field: optional services.auth.ChooseCharacterResponse char = 4;
+     */
+    char?: ChooseCharacterResponse;
 }
 /**
  * @generated from protobuf message services.auth.ChangePasswordRequest
@@ -442,7 +446,8 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         super("services.auth.LoginResponse", [
             { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 3, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "char", kind: "message", T: () => ChooseCharacterResponse }
         ]);
     }
     create(value?: PartialMessage<LoginResponse>): LoginResponse {
@@ -467,6 +472,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
                 case /* uint64 account_id = 3 [jstype = JS_STRING];*/ 3:
                     message.accountId = reader.uint64().toString();
                     break;
+                case /* optional services.auth.ChooseCharacterResponse char */ 4:
+                    message.char = ChooseCharacterResponse.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -488,6 +496,9 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         /* uint64 account_id = 3 [jstype = JS_STRING]; */
         if (message.accountId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.accountId);
+        /* optional services.auth.ChooseCharacterResponse char = 4; */
+        if (message.char)
+            ChooseCharacterResponse.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -4,6 +4,7 @@ VALIDATE_VERSION ?= v1.0.2
 BUILD_DIR := .build/
 
 GO ?= go
+PROTOC ?= pnpm protoc
 
 .DEFAULT: run-server
 
@@ -66,8 +67,8 @@ build_dir:
 
 .PHONY: clean
 clean:
-	@npx nuxi cleanup
-	rm -rf ./.nuxt/dist/ ./src/public/images/livemap/tiles/*/
+	@pnpx nuxi cleanup
+	rm -rf ./.nuxt/dist/
 	rm -rf gdal2tiles-leaflet
 
 .PHONY: watch
@@ -124,7 +125,7 @@ gen-sql:
 gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 	mkdir -p ./gen/go/proto
 	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
-	npx protoc \
+	$(PROTOC) \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--go_out=./gen/go/proto \
@@ -136,7 +137,7 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 		--customizer_opt=paths=source_relative \
 		--customizer_out=./gen/go/proto \
 		--doc_opt=markdown,grpc-api.md \
-		--doc_out=./docs \
+		--doc_out=./gen \
 		$(shell find proto/ -iname "*.proto")
 
 	# Inject Go field tags into generated fields
@@ -145,8 +146,8 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 			-input={} \;
 
 	mkdir -p ./gen/ts
-	PATH="$$PATH:./internal/cmd/protoc-gen-fronthelper/" \
-	npx protoc \
+	PATH="$$PATH:node_modules/@protobuf-ts/plugin/bin/:./internal/cmd/protoc-gen-fronthelper/" \
+	$(PROTOC) \
 		--proto_path=./$(BUILD_DIR)validate-$(VALIDATE_VERSION) \
 		--proto_path=./proto \
 		--ts_out=./gen/ts \
@@ -154,11 +155,6 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 		--fronthelper_opt=paths=source_relative \
 		--fronthelper_out=./gen/ts \
 		$(shell find proto/ -iname "*.proto")
-
-	node ./internal/scripts/proto-patch.js
-
-	# Remove validate_pb imports from JS files
-	find ./gen -type f \( -iname '*.js' -o -iname '*.ts' \) -exec sed -i '/validate_pb/d' {} +
 
 .PHONY: fmt
 fmt:

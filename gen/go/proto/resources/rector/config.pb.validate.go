@@ -331,6 +331,8 @@ func (m *Auth) validate(all bool) error {
 
 	// no validation rules for SignupEnabled
 
+	// no validation rules for LastCharLock
+
 	if len(errors) > 0 {
 		return AuthMultiError(errors)
 	}

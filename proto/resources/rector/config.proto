@@ -18,6 +18,7 @@ message AppConfig {
 
 message Auth {
   bool signup_enabled = 1;
+  bool last_char_lock = 2;
 }
 
 message Perms {
