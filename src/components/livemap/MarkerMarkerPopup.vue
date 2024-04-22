@@ -14,6 +14,7 @@ defineProps<{
 const { $grpc } = useNuxtApp();
 
 const modal = useModal();
+const slideover = useSlideover();
 
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
@@ -54,7 +55,7 @@ async function deleteMarker(id: string): Promise<void> {
                     variant="link"
                     icon="i-mdi-pencil"
                     @click="
-                        modal.open(MarkerCreateOrUpdateSlideover, {
+                        slideover.open(MarkerCreateOrUpdateSlideover, {
                             marker: marker,
                         })
                     "
