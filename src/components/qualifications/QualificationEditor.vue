@@ -276,8 +276,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     }
 }, 1000);
 
-const accessTypes = [{ id: 0, name: t('common.job', 2) }];
-
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {
         notifications.add({
@@ -396,6 +394,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     <div class="flex w-full flex-row gap-2">
                         <UFormGroup name="abbreviation" :label="$t('common.abbreviation')" class="max-w-48 shrink" required>
                             <UInput
+                                v-model="state.abbreviation"
                                 name="abbreviation"
                                 type="text"
                                 size="xl"
@@ -408,6 +407,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
                         <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
                             <UInput
+                                v-model="state.title"
                                 name="title"
                                 type="text"
                                 size="xl"
@@ -420,8 +420,9 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </div>
 
                     <div class="flex w-full flex-row gap-2">
-                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1" required>
+                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
                             <UTextarea
+                                v-model="state.description"
                                 name="description"
                                 block
                                 :placeholder="$t('common.description')"
@@ -470,11 +471,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 <h2>
                     {{ $t('common.access') }}
                 </h2>
+
                 <QualificationAccessEntry
                     v-for="entry in access.values()"
                     :key="entry.id"
                     :init="entry"
-                    :access-types="accessTypes"
                     :read-only="!canDo.access"
                     :jobs="jobs"
                     @type-change="updateAccessEntryType($event)"

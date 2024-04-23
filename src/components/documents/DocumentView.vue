@@ -370,34 +370,34 @@ defineShortcuts({
 
                 <div class="mb-2 flex gap-2">
                     <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                        <UIcon name="i-mdi-shape" class="size-5" />
                         <span :title="doc.category.description ?? $t('common.na')">
                             {{ doc.category.name }}
                         </span>
                     </UBadge>
 
                     <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock" color="red" class="size-5" />
                         <span>
                             {{ $t('common.close', 2) }}
                         </span>
                     </UBadge>
                     <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock-open-variant" color="green" class="size-5" />
                         <span>
                             {{ $t('common.open', 2) }}
                         </span>
                     </UBadge>
 
                     <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-note-check" class="h-auto w-5" />
+                        <UIcon name="i-mdi-note-check" class="size-5" />
                         <span>
                             {{ doc.state }}
                         </span>
                     </UBadge>
 
                     <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-comment-text-multiple" class="h-auto w-5" />
+                        <UIcon name="i-mdi-comment-text-multiple" class="size-5" />
                         <span>
                             {{
                                 commentCount !== undefined
@@ -410,7 +410,7 @@ defineShortcuts({
 
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
                     <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-account" class="h-auto w-5" />
+                        <UIcon name="i-mdi-account" class="size-5" />
                         <span class="inline-flex items-center gap-1">
                             <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
                             <CitizenInfoPopover :user="doc.creator" />
@@ -418,7 +418,7 @@ defineShortcuts({
                     </UBadge>
 
                     <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar" class="h-auto w-5" />
+                        <UIcon name="i-mdi-calendar" class="size-5" />
                         <span>
                             {{ $t('common.created_at') }}
                             <GenericTime :value="doc.createdAt" type="long" />
@@ -426,7 +426,7 @@ defineShortcuts({
                     </UBadge>
 
                     <UBadge v-if="doc.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-edit" class="h-auto w-5" />
+                        <UIcon name="i-mdi-calendar-edit" class="size-5" />
                         <span>
                             {{ $t('common.updated_at') }}
                             <GenericTime :value="doc.updatedAt" type="long" />
@@ -434,7 +434,7 @@ defineShortcuts({
                     </UBadge>
 
                     <UBadge v-if="doc.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-remove" class="h-auto w-5" />
+                        <UIcon name="i-mdi-calendar-remove" class="size-5" />
                         <span>
                             {{ $t('common.deleted') }}
                             <GenericTime :value="doc.deletedAt" type="long" />

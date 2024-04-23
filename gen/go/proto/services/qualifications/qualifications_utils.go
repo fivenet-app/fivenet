@@ -111,6 +111,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			).
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.DeletedAt.IS_NULL()).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	} else {
@@ -120,6 +121,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			).
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.DeletedAt.IS_NULL()).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	}
@@ -226,10 +228,12 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			).
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.DeletedAt.IS_NULL()).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			).
 			LEFT_JOIN(tQualiRequests,
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
+					AND(tQualiRequests.DeletedAt.IS_NULL()).
 					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	} else {
@@ -239,10 +243,12 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			).
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQuali.ID).
+					AND(tQualiResults.DeletedAt.IS_NULL()).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId))),
 			).
 			LEFT_JOIN(tQualiRequests,
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
+					AND(tQualiRequests.DeletedAt.IS_NULL()).
 					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))),
 			)
 	}
@@ -394,6 +400,7 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 		FROM(tQReqs.
 			LEFT_JOIN(tQualiResults,
 				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID).
+					AND(tQualiResults.DeletedAt.IS_NULL()).
 					AND(tQualiResults.UserID.EQ(jet.Int32(userId))).
 					AND(tQualiResults.Status.EQ(jet.Int16(int16(qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)))),
 			),

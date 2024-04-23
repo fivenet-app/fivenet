@@ -3,6 +3,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import {
     AccessLevel,
     QualificationAccess,
+    QualificationRequirement,
     RequestStatus,
     ResultStatus,
 } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -113,4 +114,15 @@ export function resultStatusToTextColor(status: ResultStatus): string {
         default:
             return 'text-info-400';
     }
+}
+
+export function requirementsFullfilled(reqs: QualificationRequirement[]): boolean {
+    for (let i = 0; i < reqs.length; i++) {
+        const req = reqs[i];
+        if (req.targetQualification?.result?.status !== ResultStatus.SUCCESSFUL) {
+            return false;
+        }
+    }
+
+    return true;
 }

@@ -45,12 +45,12 @@ func (p *PermifyModule) Execute(targets map[string]pgs.File, pkgs map[string]pgs
 	visited := map[string][]pgs.File{}
 	for _, t := range targets {
 		key := t.File().InputPath().Dir().String()
-		if _, ok := visited[key]; ok {
-			visited[key] = append(visited[key], t)
+		if _, ok := visited[key]; !ok {
+			visited[key] = []pgs.File{t}
 			continue
 		}
 
-		visited[key] = []pgs.File{t}
+		visited[key] = append(visited[key], t)
 	}
 
 	data := struct {

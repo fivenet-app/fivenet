@@ -129,6 +129,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
                         <UInput
+                            v-model="state.score"
                             name="score"
                             type="number"
                             min="0"
@@ -142,6 +143,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
                         <UTextarea
+                            v-model="state.summary"
                             name="summary"
                             :rows="3"
                             :placeholder="$t('common.summary')"

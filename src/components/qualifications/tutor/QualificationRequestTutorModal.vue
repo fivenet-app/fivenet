@@ -39,7 +39,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive({
+const state = reactive<Schema>({
     status: props.status ?? RequestStatus.PENDING,
     approverComment: '',
 });
@@ -133,6 +133,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="approverComment" :label="$t('common.message')" class="flex-1">
                         <UTextarea
+                            v-model="state.approverComment"
                             name="approverComment"
                             :rows="3"
                             :placeholder="$t('common.message')"

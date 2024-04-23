@@ -43,6 +43,13 @@ const items = [
         icon: 'i-mdi-briefcase-outline',
     },
     {
+        title: t('common.qualification', 2),
+        description: t('pages.overview.features.qualifications'),
+        to: { name: 'qualifications' },
+        permission: 'QualificationsService.ListQualifications',
+        icon: 'i-mdi-school-outline',
+    },
+    {
         title: t('common.livemap'),
         description: t('pages.overview.features.livemap'),
         to: { name: 'livemap' },

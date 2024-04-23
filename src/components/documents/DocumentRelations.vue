@@ -104,7 +104,7 @@ const columns = computed(() =>
                                             class="inline-flex items-center gap-1 truncate"
                                         >
                                             <UBadge v-if="relation.document?.category" class="inline-flex gap-1" size="md">
-                                                <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                                                <UIcon name="i-mdi-shape" class="size-5" />
                                                 <span :title="relation.document?.category.description ?? $t('common.na')">
                                                     {{ relation.document?.category.name }}
                                                 </span>
@@ -159,7 +159,7 @@ const columns = computed(() =>
                                         class="inline-flex items-center gap-1 truncate"
                                     >
                                         <UBadge v-if="relation.document?.category" class="inline-flex gap-1" size="md">
-                                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                                            <UIcon name="i-mdi-shape" class="size-5" />
                                             <span :title="relation.document?.category.description ?? $t('common.na')">
                                                 {{ relation.document?.category.name }}
                                             </span>

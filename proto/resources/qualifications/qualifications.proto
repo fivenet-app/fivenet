@@ -159,31 +159,3 @@ message QualificationRequest {
   optional resources.users.UserShort approver = 12; // @gotags: alias:"approver"
   optional string approver_job = 13;
 }
-
-message QualificationTest {}
-
-message QualificationTestQuestion {
-  uint64 id = 1 [jstype = JS_STRING];
-  uint64 qualification_id = 2 [jstype = JS_STRING];
-  string question = 3 [(validate.rules).string = {max_len: 512}];
-  TestQuestionData data = 4 [(validate.rules).message.required = true];
-}
-
-message TestQuestionData {
-  oneof data {
-    bool separator = 1;
-    bool yesno = 2;
-    TestQuestionDataText short_text = 3;
-    TestQuestionDataText long_text = 4;
-    TestQuestionDataMultipleChoice multiple_choice = 5;
-  }
-}
-
-message TestQuestionDataText {
-  int32 min_length = 1;
-  int32 max_length = 2;
-}
-
-message TestQuestionDataMultipleChoice {
-  // TODO
-}

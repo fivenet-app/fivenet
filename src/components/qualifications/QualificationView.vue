@@ -6,7 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { checkQualificationAccess } from '~/components/qualifications/helpers';
+import { checkQualificationAccess, requirementsFullfilled } from '~/components/qualifications/helpers';
 import QualificationRequestUserModal from '~/components/qualifications/QualificationRequestUserModal.vue';
 import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
@@ -113,6 +113,7 @@ const accordionItems = computed(() => {
                         <UButton
                             v-if="canDo.take"
                             icon="i-mdi-test-tube"
+                            :disabled="!requirementsFullfilled(qualification.requirements)"
                             @click="
                                 modal.open(QualificationRequestUserModal, {
                                     qualificationId: qualification!.id,
@@ -125,7 +126,10 @@ const accordionItems = computed(() => {
 
                         <UButton
                             v-else-if="canDo.request"
-                            :disabled="qualification.request?.status === RequestStatus.PENDING"
+                            :disabled="
+                                !requirementsFullfilled(qualification.requirements) ||
+                                qualification.request?.status === RequestStatus.PENDING
+                            "
                             icon="i-mdi-account-school"
                             @click="
                                 modal.open(QualificationRequestUserModal, {
@@ -178,25 +182,22 @@ const accordionItems = computed(() => {
 
                 <div class="mb-2 flex gap-2">
                     <UBadge v-if="qualification.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock" color="red" class="size-5" />
                         <span>
                             {{ $t('common.close', 2) }}
                         </span>
                     </UBadge>
                     <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock-open-variant" color="green" class="size-5" />
                         <span>
                             {{ $t('common.open', 2) }}
                         </span>
                     </UBadge>
 
-                    <UBadge
-                        v-if="qualification.request?.status"
-                        class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
-                    >
+                    <UBadge v-if="qualification.request?.status" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-mail" class="size-5" />
                         <span>
-                            <span class="font-medium">{{ $t('common.request') }}:</span>
+                            {{ $t('common.request') }}:
                             {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`) }}
                         </span>
                     </UBadge>
@@ -204,6 +205,7 @@ const accordionItems = computed(() => {
                     <UBadge
                         v-if="qualification.result?.status"
                         class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
+                        size="md"
                     >
                         <UIcon name="i-mdi-list-status" class="size-5" />
                         <span>
@@ -215,7 +217,7 @@ const accordionItems = computed(() => {
 
                 <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
                     <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-account" class="h-auto w-5" />
+                        <UIcon name="i-mdi-account" class="size-5" />
                         <span class="inline-flex items-center gap-1">
                             <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
                             <CitizenInfoPopover :user="qualification?.creator" />
@@ -223,7 +225,7 @@ const accordionItems = computed(() => {
                     </UBadge>
 
                     <UBadge color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar" class="h-auto w-5" />
+                        <UIcon name="i-mdi-calendar" class="size-5" />
 
                         <span>
                             {{ $t('common.created_at') }}
@@ -232,7 +234,7 @@ const accordionItems = computed(() => {
                     </UBadge>
 
                     <UBadge v-if="qualification?.updatedAt" color="black" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-edit" class="h-auto w-5" />
+                        <UIcon name="i-mdi-calendar-edit" class="size-5" />
                         <span>
                             {{ $t('common.updated_at') }}
                             <GenericTime :value="qualification?.updatedAt" type="long" />
@@ -240,7 +242,7 @@ const accordionItems = computed(() => {
                     </UBadge>
 
                     <UBadge v-if="qualification?.deletedAt" color="amber" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-calendar-remove" class="h-auto w-5" />
+                        <UIcon name="i-mdi-calendar-remove" class="size-5" />
                         <span>
                             {{ $t('common.deleted') }}
                             <GenericTime :value="qualification?.deletedAt" type="long" />
@@ -260,21 +262,23 @@ const accordionItems = computed(() => {
 
                         <template v-else>
                             <ULink
-                                v-for="entry in qualification.requirements"
-                                :key="entry.id"
+                                v-for="requirement in qualification.requirements"
+                                :key="requirement.id"
                                 :to="{
                                     name: 'qualifications-id',
-                                    params: { id: entry.targetQualificationId },
+                                    params: { id: requirement.targetQualificationId },
                                 }"
                             >
                                 <UBadge
                                     :color="
-                                        entry.targetQualification?.result?.status === ResultStatus.SUCCESSFUL ? 'green' : 'red'
+                                        requirement.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
+                                            ? 'green'
+                                            : 'red'
                                     "
                                 >
                                     <span>
-                                        {{ entry.targetQualification?.abbreviation }}:
-                                        {{ entry.targetQualification?.title }}
+                                        {{ requirement.targetQualification?.abbreviation }}:
+                                        {{ requirement.targetQualification?.title }}
                                     </span>
                                 </UBadge>
                             </ULink>

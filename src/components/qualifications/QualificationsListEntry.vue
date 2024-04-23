@@ -35,13 +35,13 @@ defineProps<{
                     </UBadge>
 
                     <UBadge v-if="qualification.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock" class="size-5" />
                         <span>
                             {{ $t('common.close', 2) }}
                         </span>
                     </UBadge>
                     <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" class="h-auto w-5" />
+                        <UIcon name="i-mdi-lock-open-variant" class="size-5" />
                         <span>
                             {{ $t('common.open', 2) }}
                         </span>

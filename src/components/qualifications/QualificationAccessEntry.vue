@@ -18,13 +18,10 @@ const props = withDefaults(
                 minimumGrade?: number;
             };
         };
-        accessTypes: AccessType[];
-        accessRoles?: undefined | AccessLevel[];
         jobs: Job[] | null;
     }>(),
     {
         readOnly: false,
-        accessRoles: undefined,
     },
 );
 
@@ -44,6 +41,7 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
+const accessTypes = [{ id: 0, name: t('common.job', 2) }];
 const selectedAccessType = ref<AccessType>({
     id: -1,
     name: '',
@@ -57,28 +55,17 @@ const entriesAccessRoles: {
     id: AccessLevel;
     label: string;
     value: string;
-}[] = [];
-if (props.accessRoles === undefined || props.accessRoles.length === 0) {
-    entriesAccessRoles.push(
-        ...listEnumValues(AccessLevel)
-            .map((e, k) => {
-                return {
-                    id: k,
-                    label: t(`enums.qualifications.AccessLevel.${e.name}`),
-                    value: e.name,
-                };
-            })
-            .filter((e) => e.id !== 0),
-    );
-} else {
-    props.accessRoles.forEach((e) => {
-        entriesAccessRoles.push({
-            id: e,
-            label: t(`enums.qualifications.AccessLevel.${AccessLevel[e]}`),
-            value: AccessLevel[e],
-        });
-    });
-}
+}[] = [
+    ...listEnumValues(AccessLevel)
+        .map((e, k) => {
+            return {
+                id: k,
+                label: t(`enums.qualifications.AccessLevel.${e.name}`),
+                value: e.name,
+            };
+        })
+        .filter((e) => e.id !== 0),
+];
 
 async function setFromProps(): Promise<void> {
     if (props.init.type === 0 && props.init.values.job !== undefined && props.init.values.minimumGrade !== undefined) {
@@ -90,7 +77,7 @@ async function setFromProps(): Promise<void> {
 
     selectedAccessRole.value = entriesAccessRoles.find((type) => type.id === props.init.values.accessRole);
 
-    const passedType = props.accessTypes.find((e) => e.id === props.init.type);
+    const passedType = accessTypes.find((e) => e.id === props.init.type);
     if (passedType) {
         selectedAccessType.value = passedType;
     }

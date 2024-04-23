@@ -34,7 +34,7 @@ defineProps<{
                     </div>
 
                     <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-note-check" class="h-auto w-5" />
+                        <UIcon name="i-mdi-note-check" class="size-5" />
                         <span>
                             {{ doc.state }}
                         </span>
@@ -42,13 +42,13 @@ defineProps<{
 
                     <div class="flex flex-1 flex-row items-center justify-end gap-1">
                         <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-lock" color="red" class="h-auto w-5" />
+                            <UIcon name="i-mdi-lock" color="red" class="size-5" />
                             <span>
                                 {{ $t('common.close', 2) }}
                             </span>
                         </UBadge>
                         <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-lock-open-variant" color="green" class="h-auto w-5" />
+                            <UIcon name="i-mdi-lock-open-variant" color="green" class="size-5" />
                             <span>
                                 {{ $t('common.open', 2) }}
                             </span>
@@ -59,7 +59,7 @@ defineProps<{
                 <div class="flex flex-row gap-2 truncate">
                     <div class="inline-flex items-center gap-1 truncate">
                         <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                            <UIcon name="i-mdi-shape" class="size-5" />
                             <span :title="doc.category.description ?? $t('common.na')">
                                 {{ doc.category.name }}
                             </span>

@@ -1,0 +1,89 @@
+syntax = "proto3";
+
+package resources.qualifications;
+
+import "google/protobuf/duration.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/qualifications;qualifications";
+
+// Exam / Questions
+
+message QualificationExam {
+  uint64 id = 1 [jstype = JS_STRING];
+  uint64 qualification_id = 2 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp updated_at = 4;
+
+  ExamQuestions questions = 6 [(validate.rules).message.required = true];
+}
+
+message ExamSettings {
+  google.protobuf.Duration time = 1 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 300} // 5 minutes
+    gte: {seconds: 1036800}, // 24 hours
+  }];
+}
+
+message ExamQuestions {
+  repeated ExamQuestion data = 1;
+}
+
+message ExamQuestion {
+  oneof data {
+    bool separator = 1;
+    ExamQuestionYesNo yesno  = 2;
+    ExamQuestionText free_text = 3;
+    ExamQuestionChoices multiple_choice = 4;
+  }
+}
+
+message ExamQuestionYesNo {}
+
+message ExamQuestionText {
+  int32 min_length = 1;
+  int32 max_length = 2;
+}
+
+message ExamQuestionChoices {
+  bool multi = 1;
+  optional int32 limit = 2;
+  repeated string choices = 3 [(validate.rules).repeated.max_items = 10];
+}
+
+// Response / Answers
+
+message QualificationExamResponse {
+  uint64 id = 1 [jstype = JS_STRING];
+  uint64 qualification_id = 2 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp started_at = 3;
+  optional resources.timestamp.Timestamp ended_at = 4;
+  ExamResponses responses = 6;
+}
+
+message ExamResponses {
+  repeated ExamResponse data = 1;
+}
+
+message ExamResponse {
+  oneof data {
+    bool separator = 1;
+    ExamResponseYesNo yesno  = 2;
+    ExamResponseText free_text = 3;
+    ExamResponseChoices multiple_choice = 4;
+  }
+}
+
+message ExamResponseYesNo {
+  bool value = 1;
+}
+
+message ExamResponseText {
+  string text = 1;
+}
+
+message ExamResponseChoices {
+  repeated string choices = 1;
+}

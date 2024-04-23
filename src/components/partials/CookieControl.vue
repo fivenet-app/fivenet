@@ -72,7 +72,7 @@ const open = ref(cookiesState.value === null);
                         block
                         color="red"
                         class="flex-1"
-                        :disabled="cookiesState === false"
+                        :variant="cookiesState === false ? 'soft' : 'solid'"
                         @click="
                             cookiesState = false;
                             open = false;
@@ -85,7 +85,7 @@ const open = ref(cookiesState.value === null);
                         block
                         color="green"
                         class="flex-1"
-                        :disabled="cookiesState === true"
+                        :variant="cookiesState === true ? 'soft' : 'solid'"
                         @click="
                             cookiesState = true;
                             open = false;

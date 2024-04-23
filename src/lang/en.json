@@ -11,6 +11,7 @@
                 "vehicles": "Search and find information about Vehicles.",
                 "documents": "Search and create Documents, using templates or from scratch.",
                 "jobs": "Infos about your job and employee management.",
+                "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
                 "livemap": "Live position of dispatches and your colleagues.",
                 "centrum": "Dispatch Center, for dispatching Dispatches."
             }
@@ -1967,6 +1968,13 @@
         },
         "JobsService": {
             "ErrFailedQuery": "Failed to get job data!"
+        },
+        "QualificationsService": {
+            "ErrFailedQuery": "Failed to get qualifcation data!",
+            "ErrRequirementsMissing": {
+                "title": "Missing required Qualifications",
+                "content": "You are missing required qualifications."
+            }
         }
     },
     "system": {

@@ -25,7 +25,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive({
+const state = reactive<Schema>({
     userComment: '',
 });
 
@@ -89,6 +89,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div>
                     <UFormGroup name="userComment" :label="$t('common.message')" class="flex-1">
                         <UTextarea
+                            v-model="state.userComment"
                             name="userComment"
                             :placeholder="$t('common.message')"
                             @focusin="focusTablet(true)"

@@ -150,7 +150,7 @@ const columns = computed(() =>
                                         class="inline-flex items-center gap-1 truncate"
                                     >
                                         <UBadge v-if="reference.targetDocument?.category" class="inline-flex gap-1" size="md">
-                                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                                            <UIcon name="i-mdi-shape" class="size-5" />
                                             <span :title="reference.targetDocument?.category.description ?? $t('common.na')">
                                                 {{ reference.targetDocument?.category.name }}
                                             </span>
@@ -177,7 +177,7 @@ const columns = computed(() =>
                                         class="inline-flex items-center gap-1 truncate"
                                     >
                                         <UBadge v-if="reference.sourceDocument?.category" class="inline-flex gap-1" size="md">
-                                            <UIcon name="i-mdi-shape" class="h-auto w-5" />
+                                            <UIcon name="i-mdi-shape" class="size-5" />
                                             <span :title="reference.sourceDocument?.category.description ?? $t('common.na')">
                                                 {{ reference.sourceDocument?.category.name }}
                                             </span>

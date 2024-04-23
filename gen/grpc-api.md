@@ -164,16 +164,26 @@
     - [QualificationRequirement](#resources-qualifications-QualificationRequirement)
     - [QualificationResult](#resources-qualifications-QualificationResult)
     - [QualificationShort](#resources-qualifications-QualificationShort)
-    - [QualificationTest](#resources-qualifications-QualificationTest)
-    - [QualificationTestQuestion](#resources-qualifications-QualificationTestQuestion)
-    - [TestQuestionData](#resources-qualifications-TestQuestionData)
-    - [TestQuestionDataMultipleChoice](#resources-qualifications-TestQuestionDataMultipleChoice)
-    - [TestQuestionDataText](#resources-qualifications-TestQuestionDataText)
   
     - [AccessLevel](#resources-qualifications-AccessLevel)
     - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
+  
+- [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
+    - [ExamQuestion](#resources-qualifications-ExamQuestion)
+    - [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices)
+    - [ExamQuestionText](#resources-qualifications-ExamQuestionText)
+    - [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo)
+    - [ExamQuestions](#resources-qualifications-ExamQuestions)
+    - [ExamResponse](#resources-qualifications-ExamResponse)
+    - [ExamResponseChoices](#resources-qualifications-ExamResponseChoices)
+    - [ExamResponseText](#resources-qualifications-ExamResponseText)
+    - [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo)
+    - [ExamResponses](#resources-qualifications-ExamResponses)
+    - [ExamSettings](#resources-qualifications-ExamSettings)
+    - [QualificationExam](#resources-qualifications-QualificationExam)
+    - [QualificationExamResponse](#resources-qualifications-QualificationExamResponse)
   
 - [resources/rector/audit.proto](#resources_rector_audit-proto)
     - [AuditEntry](#resources-rector-AuditEntry)
@@ -2935,79 +2945,6 @@
 
 
 
-
-<a name="resources-qualifications-QualificationTest"></a>
-
-### QualificationTest
-
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationTestQuestion"></a>
-
-### QualificationTestQuestion
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| question | [string](#string) |  |  |
-| data | [TestQuestionData](#resources-qualifications-TestQuestionData) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-TestQuestionData"></a>
-
-### TestQuestionData
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| separator | [bool](#bool) |  |  |
-| yesno | [bool](#bool) |  |  |
-| short_text | [TestQuestionDataText](#resources-qualifications-TestQuestionDataText) |  |  |
-| long_text | [TestQuestionDataText](#resources-qualifications-TestQuestionDataText) |  |  |
-| multiple_choice | [TestQuestionDataMultipleChoice](#resources-qualifications-TestQuestionDataMultipleChoice) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-TestQuestionDataMultipleChoice"></a>
-
-### TestQuestionDataMultipleChoice
-TODO
-
-
-
-
-
-
-<a name="resources-qualifications-TestQuestionDataText"></a>
-
-### TestQuestionDataText
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| min_length | [int32](#int32) |  |  |
-| max_length | [int32](#int32) |  |  |
-
-
-
-
-
  
 
 
@@ -3070,6 +3007,229 @@ TODO
 | RESULT_STATUS_FAILED | 2 |  |
 | RESULT_STATUS_SUCCESSFUL | 3 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_qualifications_exam-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/exam.proto
+
+
+
+<a name="resources-qualifications-ExamQuestion"></a>
+
+### ExamQuestion
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| separator | [bool](#bool) |  |  |
+| yesno | [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo) |  |  |
+| free_text | [ExamQuestionText](#resources-qualifications-ExamQuestionText) |  |  |
+| multiple_choice | [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionChoices"></a>
+
+### ExamQuestionChoices
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| multi | [bool](#bool) |  |  |
+| limit | [int32](#int32) | optional |  |
+| choices | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionText"></a>
+
+### ExamQuestionText
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| min_length | [int32](#int32) |  |  |
+| max_length | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionYesNo"></a>
+
+### ExamQuestionYesNo
+
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestions"></a>
+
+### ExamQuestions
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data | [ExamQuestion](#resources-qualifications-ExamQuestion) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponse"></a>
+
+### ExamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| separator | [bool](#bool) |  |  |
+| yesno | [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo) |  |  |
+| free_text | [ExamResponseText](#resources-qualifications-ExamResponseText) |  |  |
+| multiple_choice | [ExamResponseChoices](#resources-qualifications-ExamResponseChoices) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseChoices"></a>
+
+### ExamResponseChoices
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| choices | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseText"></a>
+
+### ExamResponseText
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| text | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseYesNo"></a>
+
+### ExamResponseYesNo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponses"></a>
+
+### ExamResponses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data | [ExamResponse](#resources-qualifications-ExamResponse) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamSettings"></a>
+
+### ExamSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationExam"></a>
+
+### QualificationExam
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| questions | [ExamQuestions](#resources-qualifications-ExamQuestions) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationExamResponse"></a>
+
+### QualificationExamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| ended_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| responses | [ExamResponses](#resources-qualifications-ExamResponses) |  |  |
+
+
+
+
+
+ 
 
  
 
