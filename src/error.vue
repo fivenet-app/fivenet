@@ -11,11 +11,12 @@ const props = defineProps<{
     error: Error | Object;
 }>();
 
-const route = useRoute();
+const router = useRouter();
+const route = router.currentRoute;
 
 const buttonDisabled = ref(true);
 
-const { start } = useTimeoutFn(() => (buttonDisabled.value = false), 2000, { immediate: true });
+const { start } = useTimeoutFn(() => (buttonDisabled.value = false), 2000);
 
 function handleError(url?: string): void {
     start();

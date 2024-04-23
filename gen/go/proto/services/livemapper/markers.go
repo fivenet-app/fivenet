@@ -361,7 +361,9 @@ func (s *Server) refreshMarkers(ctx context.Context) error {
 
 	var dest []*livemap.MarkerMarker
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	markers := map[string][]*livemap.MarkerMarker{}

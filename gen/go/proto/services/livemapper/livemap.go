@@ -107,9 +107,19 @@ func NewServer(p Params) *Server {
 			return err
 		}
 
-		if err := s.refreshData(ctx); err != nil {
-			return err
-		}
+		go func() {
+			for {
+				select {
+				case <-ctx.Done():
+					return
+
+				case <-time.After(30 * time.Second):
+					if err := s.refreshData(ctx); err != nil {
+						s.logger.Error("failed periodic livemap marker refresh", zap.Error(err))
+					}
+				}
+			}
+		}()
 
 		return nil
 	}))
