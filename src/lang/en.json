@@ -11,9 +11,9 @@
                 "vehicles": "Search and find information about Vehicles.",
                 "documents": "Search and create Documents, using templates or from scratch.",
                 "jobs": "Infos about your job and employee management.",
-                "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
                 "livemap": "Live position of dispatches and your colleagues.",
-                "centrum": "Dispatch Center, for dispatching Dispatches."
+                "centrum": "Dispatch Center, for dispatching Dispatches.",
+                "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions."
             }
         },
         "documents": {
