@@ -46,7 +46,7 @@ const tabs = ref<{ key: string; slot: string; label: string; icon: string }[]>([
                 </template>
             </UDashboardNavbar>
 
-            <UTabs :items="tabs" :unmount="true">
+            <UTabs :items="tabs" :unmount="true" :ui="{ list: { rounded: '' } }">
                 <template #default="{ item, selected }">
                     <div class="relative flex items-center gap-2 truncate">
                         <UIcon :name="item.icon" class="size-4 shrink-0" />

@@ -2,16 +2,6 @@
 import { type RoutesNamedLocations } from '@typed-router';
 import type { Perms } from '~~/gen/ts/perms';
 
-useHead({
-    title: 'pages.jobs.title',
-});
-definePageMeta({
-    title: 'pages.jobs.title',
-    requiresAuth: true,
-    permission: 'JobsService.ListColleagues',
-    redirect: { name: 'jobs-overview' },
-});
-
 const { t } = useI18n();
 
 const links = [

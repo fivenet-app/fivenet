@@ -34,8 +34,6 @@ const { activeChar } = storeToRefs(authStore);
 
 const completorStore = useCompletorStore();
 
-const { t } = useI18n();
-
 const maxAccessEntries = 10;
 
 const canEdit = ref(true);
