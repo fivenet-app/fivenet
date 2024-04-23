@@ -22,7 +22,9 @@ const emits = defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const qualificationsLoading = ref(false);
 async function listQualifications(search?: string): Promise<Qualification[]> {
+    qualificationsLoading.value = true;
     try {
         const call = $grpc.getQualificationsClient().listQualifications({
             pagination: {
@@ -32,10 +34,13 @@ async function listQualifications(search?: string): Promise<Qualification[]> {
         });
         const { response } = await call;
 
+        qualificationsLoading.value = false;
         return response.qualifications;
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;
+    } finally {
+        qualificationsLoading.value = false;
     }
 }
 const selectedQualification = ref<QualificationShort | undefined>(props.requirement.targetQualification);
@@ -52,6 +57,7 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                 :search-attributes="['title']"
                 block
                 :search="(query: string) => listQualifications(query)"
+                :loading="qualificationsLoading"
                 :searchable-placeholder="$t('common.search_field')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"

@@ -605,7 +605,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
     }
 }
 
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
+const categoriesLoading = ref(false);
 
 const canDo = computed(() => ({
     edit:
@@ -630,6 +630,8 @@ console.info(
     'Relations',
     canDo.value.relations,
 );
+
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
 <template>
@@ -685,7 +687,31 @@ console.info(
                                 :search-attributes="['name']"
                                 block
                                 nullable
-                                :search="completorStore.completeDocumentCategories"
+                                :search="
+                                    async (search: string) => {
+                                        if (!can('CompletorService.CompleteDocumentCategories')) {
+                                            return [];
+                                        }
+
+                                        categoriesLoading = true;
+                                        const { $grpc } = useNuxtApp();
+                                        try {
+                                            const call = $grpc.getCompletorClient().completeDocumentCategories({
+                                                search: search,
+                                            });
+                                            const { response } = await call;
+
+                                            categoriesLoading = false;
+                                            return response.categories;
+                                        } catch (e) {
+                                            $grpc.handleError(e as RpcError);
+                                            throw e;
+                                        } finally {
+                                            categoriesLoading = false;
+                                        }
+                                    }
+                                "
+                                :loading="categoriesLoading"
                                 :searchable-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"

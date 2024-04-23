@@ -49,8 +49,6 @@ const query = ref<Schema>({
     creators: [],
 });
 
-const queryClosed = ref<OpenClose>(openclose[0]);
-
 const usersLoading = ref(false);
 
 const page = ref(1);
@@ -109,7 +107,7 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
 watch(offset, async () => refresh());
 watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
-watch(queryClosed, () => (query.value.closed = queryClosed.value.closed));
+const categoriesLoading = ref(false);
 
 const input = ref<{ input: HTMLInputElement }>();
 
@@ -181,6 +179,7 @@ defineShortcuts({
                                                 return [];
                                             }
 
+                                            categoriesLoading = true;
                                             const { $grpc } = useNuxtApp();
                                             try {
                                                 const call = $grpc.getCompletorClient().completeDocumentCategories({
@@ -188,13 +187,17 @@ defineShortcuts({
                                                 });
                                                 const { response } = await call;
 
+                                                categoriesLoading = false;
                                                 return response.categories;
                                             } catch (e) {
                                                 $grpc.handleError(e as RpcError);
                                                 throw e;
+                                            } finally {
+                                                categoriesLoading = false;
                                             }
                                         }
                                     "
+                                    :loading="categoriesLoading"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -221,6 +224,7 @@ defineShortcuts({
                                             return users;
                                         }
                                     "
+                                    :loading="usersLoading"
                                     :search-attributes="['firstname', 'lastname']"
                                     :placeholder="$t('common.creator')"
                                     :searchable-placeholder="$t('common.search_field')"

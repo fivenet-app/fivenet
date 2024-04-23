@@ -508,6 +508,8 @@ onMounted(async () => {
     findCategories();
 });
 
+const categoriesLoading = ref(false);
+
 const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 </script>
 
@@ -622,7 +624,30 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         :search-attributes="['name']"
                         block
                         nullable
-                        :search="completorStore.completeDocumentCategories"
+                        :search="
+                            async (search: string) => {
+                                if (!can('CompletorService.CompleteDocumentCategories')) {
+                                    return [];
+                                }
+
+                                categoriesLoading = true;
+                                const { $grpc } = useNuxtApp();
+                                try {
+                                    const call = $grpc.getCompletorClient().completeDocumentCategories({
+                                        search: search,
+                                    });
+                                    const { response } = await call;
+
+                                    categoriesLoading = false;
+                                    return response.categories;
+                                } catch (e) {
+                                    $grpc.handleError(e as RpcError);
+                                    throw e;
+                                } finally {
+                                    categoriesLoading = false;
+                                }
+                            }
+                        "
                         :searchable-placeholder="$t('common.search_field')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"

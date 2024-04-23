@@ -200,6 +200,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 return colleagues;
                                             }
                                         "
+                                        :loading="usersLoading"
                                         :search-attributes="['firstname', 'lastname']"
                                         block
                                         :placeholder="$t('common.target')"
