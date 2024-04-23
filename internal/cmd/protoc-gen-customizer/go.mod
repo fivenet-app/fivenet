@@ -1,8 +1,6 @@
 module github.com/galexrt/fivenet/internal/cmd/protoc-gen-customizer
 
-go 1.21
-
-toolchain go1.21.1
+go 1.22.2
 
 require (
 	github.com/lyft/protoc-gen-star/v2 v2.0.3
