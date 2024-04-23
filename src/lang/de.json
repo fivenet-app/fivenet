@@ -12,7 +12,8 @@
                 "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
                 "jobs": "Infos über deinen Job und Mitarbeitermanagement.",
                 "livemap": "Live-Positionen von Einsätzen und Kollegen.",
-                "centrum": "Leitstelle, für das Zuweisen von Einsätze."
+                "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
+                "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen."
             }
         },
         "documents": {
@@ -424,7 +425,9 @@
         "search_field": "Suche...",
         "settings": "Einstellungen",
         "timings": "Zeitangaben",
-        "stats": "Statistik"
+        "stats": "Statistik",
+        "tutor": "Tutor",
+        "approved_by": "Genehmigt von"
     },
     "components": {
         "partials": {
@@ -1967,6 +1970,13 @@
         },
         "JobsService": {
             "ErrFailedQuery": "Fehler beim laden der Berufsdaten!"
+        },
+        "QualificationsService": {
+            "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
+            "ErrRequirementsMissing": {
+                "title": "Qualifizierungsanforderungen nicht erfüllt",
+                "content": "Ihnen fehlen Qualifikationen die für diese Qualifizierung benötigt sind."
+            }
         }
     },
     "system": {
@@ -2117,7 +2127,8 @@
                 "UNSPECIFIED": "Unbestimmt",
                 "PENDING": "Ausstehend",
                 "DENIED": "Abgelehnt",
-                "ACCEPTED": "Akzeptiert"
+                "ACCEPTED": "Akzeptiert",
+                "COMPLETED": "Abgeschlossen"
             }
         },
         "rector": {
