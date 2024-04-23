@@ -52,7 +52,7 @@
         "v-calendar": "^3.1.2",
         "vue-json-pretty": "2.4.0",
         "vue3-colorpicker": "^2.3.0",
-        "zod": "^3.23.3"
+        "zod": "^3.23.4"
     },
     "devDependencies": {
         "@nuxt/devtools": "1.2.0",
