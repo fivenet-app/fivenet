@@ -195,23 +195,18 @@ const accordionItems = computed(() =>
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="qualification.request?.status" class="inline-flex gap-1" size="md">
+                    <UBadge v-if="qualification.result?.status" class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-list-status" class="size-5" />
+                        <span>
+                            {{ $t('common.result') }}:
+                            {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
+                        </span>
+                    </UBadge>
+                    <UBadge v-else-if="qualification.request?.status" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-mail" class="size-5" />
                         <span>
                             {{ $t('common.request') }}:
                             {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`) }}
-                        </span>
-                    </UBadge>
-
-                    <UBadge
-                        v-if="qualification.result?.status"
-                        class="flex flex-initial flex-row gap-1 rounded-full bg-info-100 px-2 py-1"
-                        size="md"
-                    >
-                        <UIcon name="i-mdi-list-status" class="size-5" />
-                        <span>
-                            <span class="font-medium">{{ $t('common.result') }}:</span>
-                            {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
                         </span>
                     </UBadge>
                 </div>
@@ -331,19 +326,30 @@ const accordionItems = computed(() =>
                         <UContainer>
                             <div class="flex flex-col gap-1">
                                 <div>
-                                    <span class="font-semibold">{{ $t('common.request') }}:</span>
+                                    <span class="font-semibold">{{ $t('common.status') }}:</span>
                                     {{
                                         $t(
                                             `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
                                         )
                                     }}
                                 </div>
+
                                 <div>
-                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                    <span class="font-semibold">{{ $t('common.request') }} {{ $t('common.message') }}:</span>
+                                    {{ qualification.request?.userComment }}
+                                </div>
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.comment') }}:</span>
                                     {{ qualification.request?.approverComment }}
                                 </div>
-                                <div class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                <div v-if="qualification.request.approvedAt" class="inline-flex gap-1">
+                                    <span class="font-semibold">{{ $t('common.approved_at') }}:</span>
+                                    <span class="inline-flex gap-1">
+                                        <GenericTime :value="qualification.request?.approvedAt" />
+                                    </span>
+                                </div>
+                                <div v-if="qualification.request.approver" class="inline-flex gap-1">
+                                    <span class="font-semibold">{{ $t('common.approved_by') }}:</span>
                                     <CitizenInfoPopover :user="qualification.request?.approver" />
                                 </div>
                             </div>
@@ -354,12 +360,16 @@ const accordionItems = computed(() =>
                         <UContainer>
                             <div class="flex flex-col gap-1">
                                 <div>
-                                    <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                    <span class="font-semibold">{{ $t('common.status') }}:</span>
                                     {{
                                         $t(
                                             `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
                                         )
                                     }}
+                                </div>
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.score') }}:</span>
+                                    {{ qualification.result?.score }}
                                 </div>
                                 <div>
                                     <span class="font-semibold">{{ $t('common.summary') }}:</span>

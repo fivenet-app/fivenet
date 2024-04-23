@@ -426,7 +426,8 @@
         "settings": "Settings",
         "timings": "Timings",
         "stats": "Stats",
-        "tutor": "Tutor"
+        "tutor": "Tutor",
+        "approved_by": "Approved by"
     },
     "components": {
         "partials": {
