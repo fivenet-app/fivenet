@@ -14,6 +14,7 @@ import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/docum
 import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 import SingleHint from '~/components/SingleHint.vue';
+import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
     templateId?: string;
@@ -645,7 +646,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
                 <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>
                     <ClientOnly>
-                        <LazyPartialsDocEditor v-model="state.content" split-screen />
+                        <DocEditor v-model="state.content" split-screen />
                     </ClientOnly>
                 </UFormGroup>
             </div>
