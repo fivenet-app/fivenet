@@ -69,7 +69,7 @@ const modal = useModal();
         <CardsList
             :items="items"
             :show-icon="true"
-            class="mx-2 mt-2 lg:mx-8"
+            class="m-2"
             @selected="
                 categories &&
                     modal.open(CategoriesModal, {

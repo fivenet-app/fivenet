@@ -71,7 +71,7 @@ const items = [
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.control_panel')" />
 
-            <CardsList class="mx-2 mt-2 lg:mx-8" :items="items" />
+            <CardsList class="m-2" :items="items" />
         </UDashboardPanel>
     </UDashboardPage>
 </template>
