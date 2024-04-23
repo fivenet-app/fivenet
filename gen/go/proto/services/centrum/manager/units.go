@@ -590,8 +590,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		newUnit := proto.Clone(unit)
-		dest.Unit = newUnit.(*centrum.Unit)
+		dest.Unit = unit
 	}
 
 	return &dest, nil

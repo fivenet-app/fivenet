@@ -19,7 +19,6 @@ import QualificationAccessEntry from '~/components/jobs/qualifications/Qualifica
 import QualificationRequirementEntry from '~/components/jobs/qualifications/QualificationRequirementEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
     qualificationId?: string;
@@ -462,7 +461,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
         <template v-if="canDo.edit">
             <UFormGroup name="content">
                 <ClientOnly>
-                    <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                    <LazyPartialsDocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
                 </ClientOnly>
             </UFormGroup>
         </template>

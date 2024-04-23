@@ -20,7 +20,6 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
-	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -343,8 +342,7 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 				return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 			}
 
-			newUnit := proto.Clone(unit)
-			resp.Activity[i].Unit = newUnit.(*centrum.Unit)
+			resp.Activity[i].Unit = unit
 		}
 
 		if resp.Activity[i].User != nil {

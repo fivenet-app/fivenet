@@ -72,6 +72,10 @@ const items = computed(() => [
         },
     ],
 ]);
+
+const name = computed(() =>
+    activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : username.value ?? t('common.na'),
+);
 </script>
 
 <template>
@@ -83,15 +87,9 @@ const items = computed(() => [
         class="w-full"
     >
         <template #default="{ open }">
-            <UButton
-                color="gray"
-                variant="ghost"
-                class="w-full"
-                :label="activeChar ? `${activeChar?.firstname} ${activeChar?.lastname}` : username ?? $t('common.na')"
-                :class="[open && 'bg-gray-50 dark:bg-gray-800']"
-            >
+            <UButton color="gray" variant="ghost" class="w-full" :label="name" :class="[open && 'bg-gray-50 dark:bg-gray-800']">
                 <template #leading>
-                    <UAvatar :src="activeChar?.avatar?.url" size="2xs" />
+                    <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
                 </template>
 
                 <template #trailing>

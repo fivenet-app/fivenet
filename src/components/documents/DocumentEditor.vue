@@ -23,7 +23,6 @@ import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue'
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
-import DocEditor from '~/components/partials/DocEditor.vue';
 
 const props = defineProps<{
     documentId?: string;
@@ -750,7 +749,7 @@ console.info(
         <template v-if="canDo.edit">
             <UFormGroup name="content">
                 <ClientOnly>
-                    <DocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
+                    <LazyPartialsDocEditor v-model="state.content" :disabled="!canEdit || !canDo.edit" />
                 </ClientOnly>
             </UFormGroup>
 

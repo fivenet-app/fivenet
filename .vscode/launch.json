@@ -16,7 +16,8 @@
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.yaml"
-            }
+            },
+            "dlvFlags": ["--check-go-version=false"]
         },
         {
             "name": "Launch Server",
@@ -30,7 +31,8 @@
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.yaml"
-            }
+            },
+            "dlvFlags": ["--check-go-version=false"]
         },
         {
             "name": "Launch Worker",
@@ -44,7 +46,8 @@
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml"
-            }
+            },
+            "dlvFlags": ["--check-go-version=false"]
         },
         {
             "name": "Launch Discord Bot (Worker)",
@@ -58,7 +61,8 @@
             "env": {
                 "CGO_ENABLED": "1",
                 "FIVENET_CONFIG_FILE": "./config.worker.yaml"
-            }
+            },
+            "dlvFlags": ["--check-go-version=false"]
         },
         {
             "name": "Launch UI",

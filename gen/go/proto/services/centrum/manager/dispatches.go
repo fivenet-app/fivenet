@@ -243,10 +243,8 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		return err
 	}
 
-	store := s.State.DispatchesStore()
-
 	key := state.JobIdKey(job, dspId)
-	if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
+	if err := s.State.DispatchesStore().ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if dsp == nil {
 			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
 			return dsp, false, nil
@@ -688,8 +686,7 @@ func (s *Manager) GetDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 		}
 
-		newUnit := proto.Clone(unit)
-		dest.Unit = newUnit.(*centrum.Unit)
+		dest.Unit = unit
 	}
 
 	return &dest, nil
@@ -861,21 +858,19 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 }
 
 func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispatch, attribute string) error {
-	newDsp := proto.Clone(dsp).(*centrum.Dispatch)
-
 	update := false
-	if newDsp.Attributes == nil {
-		newDsp.Attributes = &centrum.Attributes{
+	if dsp.Attributes == nil {
+		dsp.Attributes = &centrum.Attributes{
 			List: []string{attribute},
 		}
 
 		update = true
 	} else {
-		update = newDsp.Attributes.Add(attribute)
+		update = dsp.Attributes.Add(attribute)
 	}
 
 	if update {
-		if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, newDsp, true); err != nil {
+		if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
 			return err
 		}
 	}
@@ -883,18 +878,16 @@ func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispa
 	return nil
 }
 func (s *Manager) AddReferencesOnDispatch(ctx context.Context, dsp *centrum.Dispatch, refs ...*centrum.DispatchReference) error {
-	newDsp := proto.Clone(dsp).(*centrum.Dispatch)
-
 	update := false
-	if newDsp.References == nil {
-		newDsp.References = &centrum.DispatchReferences{
+	if dsp.References == nil {
+		dsp.References = &centrum.DispatchReferences{
 			References: refs,
 		}
 
 		update = true
 	} else {
 		for _, ref := range refs {
-			upd := newDsp.References.Add(ref)
+			upd := dsp.References.Add(ref)
 			if upd {
 				update = true
 			}
@@ -902,7 +895,7 @@ func (s *Manager) AddReferencesOnDispatch(ctx context.Context, dsp *centrum.Disp
 	}
 
 	if update {
-		if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, newDsp, true); err != nil {
+		if _, err := s.UpdateDispatch(ctx, dsp.Job, nil, dsp, true); err != nil {
 			return err
 		}
 	}
