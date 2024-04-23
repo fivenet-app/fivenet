@@ -2777,7 +2777,7 @@
 | title | [string](#string) |  | @sanitize |
 | description | [string](#string) | optional | @sanitize: method=StripTags |
 | content | [string](#string) |  | @sanitize |
-| creator_id | [int32](#int32) |  |  |
+| creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | access | [QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
@@ -2898,7 +2898,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | qualification_id | [uint64](#uint64) |  |  |
@@ -2935,7 +2935,7 @@
 | abbreviation | [string](#string) |  | @sanitize: method=StripTags |
 | title | [string](#string) |  | @sanitize |
 | description | [string](#string) | optional | @sanitize: method=StripTags |
-| creator_id | [int32](#int32) |  |  |
+| creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |

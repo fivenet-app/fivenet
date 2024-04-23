@@ -8,11 +8,9 @@ import { AccessLevel, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qu
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import { checkQualificationAccess, requirementsFullfilled } from '~/components/qualifications/helpers';
 import QualificationRequestUserModal from '~/components/qualifications/QualificationRequestUserModal.vue';
-import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
-import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import type { AccordionItem } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import QualificationTutorView from './tutor/QualificationTutorView.vue';
 
 const props = defineProps<{
     qualificationId: string;
@@ -64,16 +62,17 @@ const canDo = computed(() => ({
     edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
 }));
 
-const accordionItems = computed(() => {
-    return [
+const accordionItems = computed(() =>
+    [
         qualification.value?.result && parseInt(qualification.value?.result.id) > 0
             ? { slot: 'result', label: t('common.result', 1), icon: 'i-mdi-list-status', defaultOpen: true }
-            : undefined,
+            : qualification.value?.request && qualification.value?.request.userId > 0
+              ? { slot: 'request', label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
+              : undefined,
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
-        { slot: 'requests', label: t('common.request', 2), icon: 'i-mdi-account-school' },
-        { slot: 'results', label: t('common.result', 2), icon: 'i-mdi-sigma' },
-    ].filter((item) => item !== undefined) as AccordionItem[];
-});
+        canDo.value.grade ? { slot: 'tutor', label: t('common.tutor'), icon: 'i-mdi-sigma' } : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 </script>
 
 <template>
@@ -109,7 +108,8 @@ const accordionItems = computed(() => {
         <UDashboardToolbar>
             <template #default>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                    <template v-if="!canDo.edit">
+                    <template v-if="false || !canDo.edit">
+                        <!-- TODO Enable when the exam logic is ready -->
                         <UButton
                             v-if="canDo.take"
                             icon="i-mdi-test-tube"
@@ -128,7 +128,8 @@ const accordionItems = computed(() => {
                             v-else-if="canDo.request"
                             :disabled="
                                 !requirementsFullfilled(qualification.requirements) ||
-                                qualification.request?.status === RequestStatus.PENDING
+                                qualification.request?.status === RequestStatus.PENDING ||
+                                qualification.request?.status === RequestStatus.ACCEPTED
                             "
                             icon="i-mdi-account-school"
                             @click="
@@ -299,6 +300,56 @@ const accordionItems = computed(() => {
 
             <template #footer>
                 <UAccordion :items="accordionItems" multiple :unmount="true">
+                    <template v-if="qualification.result" #result>
+                        <UContainer>
+                            <div class="flex flex-col gap-1">
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.result') }}:</span>
+                                    {{
+                                        $t(
+                                            `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
+                                        )
+                                    }}
+                                </div>
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.summary') }}:</span>
+                                    {{ qualification.result?.summary }}
+                                </div>
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.score') }}:</span>
+                                    {{ qualification.result?.score }}
+                                </div>
+                                <div class="inline-flex gap-1">
+                                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                    <CitizenInfoPopover :user="qualification.result?.creator" />
+                                </div>
+                            </div>
+                        </UContainer>
+                    </template>
+
+                    <template v-if="qualification.request" #request>
+                        <UContainer>
+                            <div class="flex flex-col gap-1">
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.request') }}:</span>
+                                    {{
+                                        $t(
+                                            `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
+                                        )
+                                    }}
+                                </div>
+                                <div>
+                                    <span class="font-semibold">{{ $t('common.message') }}:</span>
+                                    {{ qualification.request?.approverComment }}
+                                </div>
+                                <div class="inline-flex gap-1">
+                                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
+                                    <CitizenInfoPopover :user="qualification.request?.approver" />
+                                </div>
+                            </div>
+                        </UContainer>
+                    </template>
+
                     <template v-if="qualification.result && qualification.result.id !== '0'" #result>
                         <UContainer>
                             <div class="flex flex-col gap-1">
@@ -356,16 +407,8 @@ const accordionItems = computed(() => {
                         </UContainer>
                     </template>
 
-                    <template v-if="canDo.grade" #requests>
-                        <UContainer>
-                            <QualificationsRequestsList :qualification-id="qualification.id" />
-                        </UContainer>
-                    </template>
-
-                    <template v-if="canDo.grade" #results>
-                        <UContainer>
-                            <QualificationsResultsList :qualification-id="qualification.id" />
-                        </UContainer>
+                    <template v-if="canDo.grade" #tutor>
+                        <QualificationTutorView :qualification="qualification" />
                     </template>
                 </UAccordion>
             </template>

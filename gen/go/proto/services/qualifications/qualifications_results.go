@@ -303,6 +303,14 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
 	tUser := tUser.AS("user")
 
+	condition := tQualiResults.DeletedAt.IS_NULL()
+
+	if resultId > 0 {
+		condition = condition.AND(tQualiResults.ID.EQ(jet.Uint64(resultId)))
+	} else {
+		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
+	}
+
 	stmt := tQualiResults.
 		SELECT(
 			tQualiResults.ID,
@@ -339,10 +347,8 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 			),
 		).
 		GROUP_BY(tQualiResults.ID).
-		WHERE(jet.AND(
-			tQualiResults.ID.EQ(jet.Uint64(resultId)),
-			tQualiResults.DeletedAt.IS_NULL(),
-		)).
+		ORDER_BY(tQualiResults.ID.DESC()).
+		WHERE(condition).
 		LIMIT(1)
 
 	var result qualifications.QualificationResult
@@ -350,6 +356,10 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
+	}
+
+	if result.Id == 0 {
+		return nil, nil
 	}
 
 	if result.User != nil {

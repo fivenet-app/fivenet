@@ -127,8 +127,6 @@ func (m *Qualification) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for CreatorId
-
 	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
 		err := QualificationValidationError{
 			field:  "CreatorJob",
@@ -315,6 +313,10 @@ func (m *Qualification) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {
@@ -597,8 +599,6 @@ func (m *QualificationShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for CreatorId
-
 	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
 		err := QualificationShortValidationError{
 			field:  "CreatorJob",
@@ -756,6 +756,10 @@ func (m *QualificationShort) validate(all bool) error {
 			errors = append(errors, err)
 		}
 
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
 	}
 
 	if m.Creator != nil {

@@ -17,7 +17,7 @@ import (
 )
 
 var (
-	tUser       = table.Users
+	tUser       = table.Users.AS("user")
 	tCreator    = table.Users.AS("creator")
 	tQJobAccess = table.FivenetQualificationsJobAccess
 	tQReqs      = table.FivenetQualificationsRequirements.AS("qualificationrequirement")
@@ -234,7 +234,8 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			LEFT_JOIN(tQualiRequests,
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
 					AND(tQualiRequests.DeletedAt.IS_NULL()).
-					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))).
+					AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
 			)
 	} else {
 		tables = tQuali.
@@ -249,7 +250,8 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			LEFT_JOIN(tQualiRequests,
 				tQualiRequests.QualificationID.EQ(tQuali.ID).
 					AND(tQualiRequests.DeletedAt.IS_NULL()).
-					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))),
+					AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId))).
+					AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)))),
 			)
 	}
 
@@ -387,6 +389,18 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	if quali.Creator != nil {
 		s.enricher.EnrichJobInfo(quali.Creator)
 	}
+
+	request, err := s.getQualificationRequest(ctx, qualificationId, userInfo.UserId, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	quali.Request = request
+
+	result, err := s.getQualificationResult(ctx, 0, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+	quali.Result = result
 
 	return &quali, nil
 }

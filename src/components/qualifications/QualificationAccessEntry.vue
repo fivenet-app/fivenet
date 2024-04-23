@@ -14,8 +14,8 @@ const props = withDefaults(
             type: number;
             values: {
                 job?: string;
-                accessRole?: AccessLevel;
                 minimumGrade?: number;
+                accessRole?: AccessLevel;
             };
         };
         jobs: Job[] | null;
@@ -64,7 +64,8 @@ const entriesAccessRoles: {
                 value: e.name,
             };
         })
-        .filter((e) => e.id !== 0),
+        .filter((e) => e.id !== 0)
+        .filter((e) => e.value !== 'TAKE'), // TODO Enable when the exam logic is ready
 ];
 
 async function setFromProps(): Promise<void> {

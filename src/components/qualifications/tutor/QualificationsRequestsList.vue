@@ -24,6 +24,10 @@ const props = withDefaults(
     },
 );
 
+const emits = defineEmits<{
+    (e: 'refresh'): void;
+}>();
+
 const { t } = useI18n();
 
 const { $grpc } = useNuxtApp();
@@ -74,6 +78,7 @@ async function deleteQualificationRequest(qualificationId: string, userId: numbe
         const { response } = await call;
 
         refresh();
+        emits('refresh');
 
         return response;
     } catch (e) {
@@ -113,6 +118,10 @@ const columns = [
         sortable: false,
     },
 ];
+
+defineExpose({
+    refresh,
+});
 </script>
 
 <template>

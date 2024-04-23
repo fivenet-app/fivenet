@@ -69,9 +69,9 @@ export interface Qualification {
      */
     content: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 12;
+     * @generated from protobuf field: optional int32 creator_id = 12;
      */
-    creatorId: number;
+    creatorId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 13;
      */
@@ -152,9 +152,9 @@ export interface QualificationShort {
      */
     description?: string;
     /**
-     * @generated from protobuf field: int32 creator_id = 12;
+     * @generated from protobuf field: optional int32 creator_id = 12;
      */
-    creatorId: number;
+    creatorId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 13;
      */
@@ -263,7 +263,7 @@ export interface QualificationResult {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
-    id: string;
+    id: string; // @gotags: sql:"primary_key" alias:"id"
     /**
      * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
@@ -495,7 +495,7 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
             { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "750000" } } } },
-            { no: 12, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 13, name: "creator", kind: "message", T: () => UserShort },
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 15, name: "access", kind: "message", T: () => QualificationAccess },
@@ -514,7 +514,6 @@ class Qualification$Type extends MessageType<Qualification> {
         message.abbreviation = "";
         message.title = "";
         message.content = "";
-        message.creatorId = 0;
         message.creatorJob = "";
         message.requirements = [];
         if (value !== undefined)
@@ -559,7 +558,7 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* string content */ 11:
                     message.content = reader.string();
                     break;
-                case /* int32 creator_id */ 12:
+                case /* optional int32 creator_id */ 12:
                     message.creatorId = reader.int32();
                     break;
                 case /* optional resources.users.UserShort creator */ 13:
@@ -628,8 +627,8 @@ class Qualification$Type extends MessageType<Qualification> {
         /* string content = 11; */
         if (message.content !== "")
             writer.tag(11, WireType.LengthDelimited).string(message.content);
-        /* int32 creator_id = 12; */
-        if (message.creatorId !== 0)
+        /* optional int32 creator_id = 12; */
+        if (message.creatorId !== undefined)
             writer.tag(12, WireType.Varint).int32(message.creatorId);
         /* optional resources.users.UserShort creator = 13; */
         if (message.creator)
@@ -676,7 +675,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
             { no: 8, name: "abbreviation", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
             { no: 10, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 12, name: "creator_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 13, name: "creator", kind: "message", T: () => UserShort },
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 16, name: "requirements", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationRequirement },
@@ -691,7 +690,6 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         message.closed = false;
         message.abbreviation = "";
         message.title = "";
-        message.creatorId = 0;
         message.creatorJob = "";
         message.requirements = [];
         if (value !== undefined)
@@ -733,7 +731,7 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
                 case /* optional string description */ 10:
                     message.description = reader.string();
                     break;
-                case /* int32 creator_id */ 12:
+                case /* optional int32 creator_id */ 12:
                     message.creatorId = reader.int32();
                     break;
                 case /* optional resources.users.UserShort creator */ 13:
@@ -790,8 +788,8 @@ class QualificationShort$Type extends MessageType<QualificationShort> {
         /* optional string description = 10; */
         if (message.description !== undefined)
             writer.tag(10, WireType.LengthDelimited).string(message.description);
-        /* int32 creator_id = 12; */
-        if (message.creatorId !== 0)
+        /* optional int32 creator_id = 12; */
+        if (message.creatorId !== undefined)
             writer.tag(12, WireType.Varint).int32(message.creatorId);
         /* optional resources.users.UserShort creator = 13; */
         if (message.creator)

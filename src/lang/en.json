@@ -425,7 +425,8 @@
         "search_field": "Search...",
         "settings": "Settings",
         "timings": "Timings",
-        "stats": "Stats"
+        "stats": "Stats",
+        "tutor": "Tutor"
     },
     "components": {
         "partials": {
@@ -2125,7 +2126,8 @@
                 "UNSPECIFIED": "Unspecified",
                 "PENDING": "Pending",
                 "DENIED": "Denied",
-                "ACCEPTED": "Accepted"
+                "ACCEPTED": "Accepted",
+                "COMPLETED": "Completed"
             }
         },
         "rector": {

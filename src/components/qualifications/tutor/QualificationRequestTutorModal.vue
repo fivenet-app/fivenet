@@ -16,7 +16,6 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'close'): void;
     (e: 'refresh'): void;
 }>();
 
@@ -67,7 +66,7 @@ async function createOrUpdateQualificationRequest(
         });
 
         emits('refresh');
-        emits('close');
+        isOpen.value = false;
 
         return response;
     } catch (e) {
@@ -97,7 +96,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             {{ $t('components.qualifications.request_modal.title') }}
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
                 </template>
 
@@ -119,7 +118,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </template>
                             <template #option="{ option }">
                                 <span class="truncate">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[option]}`)
+                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[option.status]}`)
                                 }}</span>
                             </template>
                             <template #option-empty="{ query: search }">

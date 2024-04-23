@@ -34,7 +34,8 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 
 	tQuali := tQuali.AS("qualificationshort")
 
-	condition := tQualiRequests.DeletedAt.IS_NULL()
+	condition := tQualiRequests.DeletedAt.IS_NULL().
+		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
 
 	if req.QualificationId != nil {
 		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
@@ -109,8 +110,6 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 	if count.TotalCount <= 0 {
 		return resp, nil
 	}
-
-	tUser := tUser.AS("user")
 
 	stmt := tQualiRequests.
 		SELECT(
@@ -200,12 +199,12 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	// If user can grade a qualification, they are treated as an "approver" of requests
-	if check && req.Request.UserId > 0 {
+	if canGrade && req.Request.UserId > 0 {
 		stmt := tQualiRequests.
 			UPDATE(
 				tQualiRequests.Status,
@@ -232,21 +231,31 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		check, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
+		canRequest, err := s.checkIfUserHasAccessToQuali(ctx, req.Request.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_REQUEST)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if !check {
+		if !canRequest {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
 		// Make sure the requirements of the qualification are fullfiled by the user, ErrRequirementsMissing
-		check, err = s.checkRequirementsMetForQualification(ctx, req.Request.QualificationId, userInfo.UserId)
+		reqsFullfilled, err := s.checkRequirementsMetForQualification(ctx, req.Request.QualificationId, userInfo.UserId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-		if !check {
+		if !reqsFullfilled {
 			return nil, errorsqualifications.ErrRequirementsMissing
+		}
+
+		request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, userInfo.UserId, userInfo)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		if request.Status == nil || (*request.Status != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
+			*request.Status != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED) {
+			return nil, errorsqualifications.ErrFailedQuery
 		}
 
 		tQualiRequests := table.FivenetQualificationsRequests
@@ -266,6 +275,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 			ON_DUPLICATE_KEY_UPDATE(
 				tQualiRequests.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 				tQualiRequests.UserComment.SET(jet.StringExp(jet.Raw("VALUES(`user_comment`)"))),
+				tQualiRequests.Status.SET(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_PENDING))),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -347,6 +357,10 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
+	}
+
+	if request.QualificationId == 0 {
+		return nil, nil
 	}
 
 	if request.User != nil {

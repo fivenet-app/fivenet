@@ -1,0 +1,35 @@
+<script lang="ts" setup>
+import { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
+import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
+import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
+
+defineProps<{
+    qualification: Qualification;
+}>();
+
+const { t } = useI18n();
+
+const accordionItems = computed(() => [
+    { slot: 'requests', label: t('common.request', 2), icon: 'i-mdi-account-school' },
+    { slot: 'results', label: t('common.result', 2), icon: 'i-mdi-sigma' },
+]);
+
+const requests = ref<InstanceType<typeof QualificationsRequestsList> | null>(null);
+const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null);
+</script>
+
+<template>
+    <div>
+        <QualificationsRequestsList
+            ref="requests"
+            :qualification-id="qualification.id"
+            @refresh="async () => results?.refresh()"
+        />
+
+        <QualificationsResultsList
+            ref="results"
+            :qualification-id="qualification.id"
+            @refresh="async () => requests?.refresh()"
+        />
+    </div>
+</template>
