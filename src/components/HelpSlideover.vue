@@ -93,8 +93,8 @@ const categories = computed(() => [
         items: [
             { shortcuts: ['M', 'D'], name: `${t('common.dialog')}: ${t('components.centrum.take_dispatch.title')}` },
             { shortcuts: ['M', 'H'], name: `${t('common.mark')}: ${t('common.department_postal')}` },
-            { shortcuts: ['S', 'U'], name: t('components.centrum.update_unit_status.title') },
-            { shortcuts: ['S', 'D'], name: t('components.centrum.update_dispatch_status.title') },
+            { shortcuts: ['C', 'U'], name: t('components.centrum.update_unit_status.title') },
+            { shortcuts: ['C', 'D'], name: t('components.centrum.update_dispatch_status.title') },
         ],
     },
     {

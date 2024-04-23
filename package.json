@@ -100,8 +100,5 @@
         "vue": "^3.4.24",
         "vue-i18n-routing": "^1.2.0",
         "vue-tsc": "2.0.14"
-    },
-    "resolutions": {
-        "string-width": "4.2.3"
     }
 }
