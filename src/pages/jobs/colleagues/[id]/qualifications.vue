@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import QualificationsResultsList from '~/components/jobs/qualifications/QualificationsResultsList.vue';
+import QualificationsResultsList from '~/components/qualifications/QualificationsResultsList.vue';
 
 useHead({
     title: 'pages.citizens.id.title',

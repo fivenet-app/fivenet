@@ -92,16 +92,21 @@ const links = computed(() =>
                     permission: 'JobsTimeclockService.ListTimeclock' as Perms,
                 },
                 {
-                    label: t('common.qualification', 2),
-                    to: '/jobs/qualifications',
-                    permission: 'QualificationsService.ListQualifications' as Perms,
-                },
-                {
                     label: t('common.conduct_register', 2),
                     to: '/jobs/conduct',
                     permission: 'JobsConductService.ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+        },
+        {
+            label: t('common.qualification', 2),
+            icon: 'i-mdi-school-outline',
+            to: '/qualifications',
+            tooltip: {
+                text: t('common.qualification', 2),
+                shortcuts: ['G', 'Q'],
+            },
+            permission: 'QualificationsService.ListQualifications' as Perms,
         },
         {
             label: t('common.livemap'),

@@ -6,10 +6,10 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { checkQualificationAccess } from '~/components/jobs/qualifications/helpers';
-import QualificationRequestUserModal from '~/components/jobs/qualifications/QualificationRequestUserModal.vue';
-import QualificationsRequestsList from '~/components/jobs/qualifications/tutor/QualificationsRequestsList.vue';
-import QualificationsResultsList from '~/components/jobs/qualifications/tutor/QualificationsResultsList.vue';
+import { checkQualificationAccess } from '~/components/qualifications/helpers';
+import QualificationRequestUserModal from '~/components/qualifications/QualificationRequestUserModal.vue';
+import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
+import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import type { AccordionItem } from '#ui/types';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -80,7 +80,7 @@ const accordionItems = computed(() => {
     <UDashboardNavbar :title="$t('pages.qualifications.single.title')">
         <template #right>
             <UButtonGroup class="inline-flex">
-                <UButton color="black" icon="i-mdi-arrow-back" to="/jobs/qualifications">
+                <UButton color="black" icon="i-mdi-arrow-back" to="/qualifications">
                     {{ $t('common.back') }}
                 </UButton>
 
@@ -141,7 +141,7 @@ const accordionItems = computed(() => {
                     <UButton
                         v-if="can('QualificationsService.UpdateQualification') && canDo.edit"
                         :to="{
-                            name: 'jobs-qualifications-id-edit',
+                            name: 'qualifications-id-edit',
                             params: { id: qualification.id },
                         }"
                         icon="i-mdi-pencil"
@@ -263,7 +263,7 @@ const accordionItems = computed(() => {
                                 v-for="entry in qualification.requirements"
                                 :key="entry.id"
                                 :to="{
-                                    name: 'jobs-qualifications-id',
+                                    name: 'qualifications-id',
                                     params: { id: entry.targetQualificationId },
                                 }"
                             >

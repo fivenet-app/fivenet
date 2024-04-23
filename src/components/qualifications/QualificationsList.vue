@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import QualificationsListEntry from '~/components/jobs/qualifications/QualificationsListEntry.vue';
+import QualificationsListEntry from '~/components/qualifications/QualificationsListEntry.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';

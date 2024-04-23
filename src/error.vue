@@ -91,14 +91,14 @@ function copyError(): void {
                         </div>
 
                         <UButtonGroup class="inline-flex w-full">
-                            <UButton block class="flex-1" size="xl" :disabled="buttonDisabled" @click="handleError()">
+                            <UButton block class="flex-1" size="lg" :disabled="buttonDisabled" @click="handleError()">
                                 {{ $t('common.home') }}
                             </UButton>
 
                             <UButton
                                 block
                                 class="flex-1"
-                                size="xl"
+                                size="lg"
                                 color="green"
                                 :disabled="buttonDisabled"
                                 @click="handleError(route.fullPath)"
@@ -111,7 +111,7 @@ function copyError(): void {
                                 v-if="error && (error.statusMessage || error.message)"
                                 block
                                 class="flex-1"
-                                size="xl"
+                                size="lg"
                                 color="amber"
                                 @click="copyError"
                             >

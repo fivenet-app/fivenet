@@ -5,8 +5,8 @@ import type {
     ListQualificationRequestsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
 import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import QualificationRequestTutorModal from '~/components/jobs/qualifications/tutor/QualificationRequestTutorModal.vue';
-import QualificationResultTutorModal from '~/components/jobs/qualifications/tutor/QualificationResultTutorModal.vue';
+import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
+import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { requestStatusToTextColor } from '../helpers';

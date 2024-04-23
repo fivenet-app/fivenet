@@ -15,8 +15,8 @@ import type {
     CreateQualificationResponse,
     UpdateQualificationResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationAccessEntry from '~/components/jobs/qualifications/QualificationAccessEntry.vue';
-import QualificationRequirementEntry from '~/components/jobs/qualifications/QualificationRequirementEntry.vue';
+import QualificationAccessEntry from '~/components/qualifications/QualificationAccessEntry.vue';
+import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import DocEditor from '~/components/partials/DocEditor.vue';
@@ -133,7 +133,7 @@ onMounted(async () => {
         } catch (e) {
             $grpc.handleError(e as RpcError);
 
-            await navigateTo({ name: 'jobs-qualifications' });
+            await navigateTo({ name: 'qualifications' });
 
             return;
         }
@@ -198,7 +198,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
         const { response } = await call;
 
         await navigateTo({
-            name: 'jobs-qualifications-id',
+            name: 'qualifications-id',
             params: { id: response.qualificationId },
         });
 
@@ -255,7 +255,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
         const { response } = await call;
 
         await navigateTo({
-            name: 'jobs-qualifications-id',
+            name: 'qualifications-id',
             params: { id: response.qualificationId },
         });
 
@@ -367,9 +367,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         color="black"
                         icon="i-mdi-arrow-back"
                         :to="
-                            qualificationId
-                                ? { name: 'jobs-qualifications-id', params: { id: qualificationId } }
-                                : '/jobs/qualifications'
+                            qualificationId ? { name: 'qualifications-id', params: { id: qualificationId } } : '/qualifications'
                         "
                     >
                         {{ $t('common.back') }}

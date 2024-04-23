@@ -2,19 +2,21 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationsRequestsListEntry from '~/components/jobs/qualifications/QualificationsRequestsListEntry.vue';
-import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import QualificationsResultsListEntry from '~/components/qualifications/QualificationsResultsListEntry.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{
         qualificationId?: string;
-        status?: RequestStatus[];
+        userId?: number;
+        status?: ResultStatus[];
     }>(),
     {
         qualificationId: undefined,
-        status: () => [],
+        userId: undefined,
+        status: () => [ResultStatus.SUCCESSFUL],
     },
 );
 
@@ -24,20 +26,22 @@ const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${page.value}-${props.qualificationId}`,
-    () => listQualificationsRequests(props.qualificationId),
+    `qualifications-results-${page.value}-${props.qualificationId}-${props.userId}`,
+    () => listQualificationsResults(props.qualificationId, props.userId, props.status),
 );
 
-async function listQualificationsRequests(
+async function listQualificationsResults(
     qualificationId?: string,
-    status?: RequestStatus[],
-): Promise<ListQualificationRequestsResponse> {
+    userId?: number,
+    status?: ResultStatus[],
+): Promise<ListQualificationsResultsResponse> {
     try {
-        const call = $grpc.getQualificationsClient().listQualificationRequests({
+        const call = $grpc.getQualificationsClient().listQualificationsResults({
             pagination: {
                 offset: offset.value,
             },
             qualificationId,
+            userId,
             status: status ?? [],
         });
         const { response } = await call;
@@ -61,31 +65,23 @@ watch(offset, async () => refresh());
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl font-semibold leading-6">
-                    {{ $t('components.qualifications.user_requests') }}
+                    {{ $t('components.qualifications.user_qualifications') }}
                 </h3>
             </div>
         </template>
 
         <div>
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
-            <DataErrorBlock
-                v-else-if="error"
-                :title="$t('common.unable_to_load', [$t('common.request', 2)])"
-                :retry="refresh"
-            />
+            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.result', 2)])" />
+            <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.result', 2)])" :retry="refresh" />
             <DataNoDataBlock
-                v-else-if="data?.requests.length === 0"
-                :message="$t('common.not_found', [$t('common.request', 2)])"
-                icon="i-mdi-account-school"
+                v-else-if="data?.results.length === 0"
+                :message="$t('common.not_found', [$t('common.result', 2)])"
+                icon="i-mdi-sigma"
             />
 
             <template v-else>
                 <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-                    <QualificationsRequestsListEntry
-                        v-for="request in data?.requests"
-                        :key="`${request.qualificationId}-${request.userId}`"
-                        :request="request"
-                    />
+                    <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
                 </ul>
             </template>
         </div>

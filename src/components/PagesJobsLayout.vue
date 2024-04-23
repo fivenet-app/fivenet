@@ -40,12 +40,6 @@ const links = [
         permission: 'JobsTimeclockService.ListTimeclock' as Perms,
     },
     {
-        label: t('pages.qualifications.title'),
-        to: { name: 'jobs-qualifications' },
-        icon: 'i-mdi-school',
-        permission: 'QualificationsService.ListQualifications' as Perms,
-    },
-    {
         label: t('pages.jobs.conduct.title'),
         to: { name: 'jobs-conduct' },
         icon: 'i-mdi-list-status',

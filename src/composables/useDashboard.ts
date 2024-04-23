@@ -12,6 +12,7 @@ const _useDashboard = () => {
         'g-v': () => router.push('/vehicles'),
         'g-d': () => router.push('/documents'),
         'g-j': () => router.push('/jobs'),
+        'g-q': () => router.push('/qualifications'),
         'g-m': () => router.push('/livemap'),
         'g-w': () => router.push('/centrum'),
         'g-p': () => router.push('/rector'),
