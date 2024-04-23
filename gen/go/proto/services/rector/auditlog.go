@@ -36,7 +36,10 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 
 	condition := jet.Bool(true)
 	if !userInfo.SuperUser {
-		condition = tAuditLog.UserJob.EQ(jet.String(userInfo.Job))
+		condition = jet.AND(
+			tAuditLog.UserJob.EQ(jet.String(userInfo.Job)).
+				OR(tAuditLog.TargetUserJob.EQ(jet.String(userInfo.Job))),
+		)
 	}
 
 	if len(req.UserIds) > 0 {
@@ -65,10 +68,10 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		condition = condition.AND(tAuditLog.Method.LIKE(jet.String(method + "%")))
 	}
 	if req.Search != nil && *req.Search != "" {
-		condition = jet.BoolExp(
+		condition = condition.AND(jet.BoolExp(
 			jet.Raw("MATCH(`data`) AGAINST ($search IN BOOLEAN MODE)",
 				jet.RawArgs{"$search": *req.Search}),
-		)
+		))
 	}
 
 	countStmt := tAuditLog.
