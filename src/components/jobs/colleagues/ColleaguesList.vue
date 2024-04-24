@@ -10,6 +10,7 @@ import { useAuthStore } from '~/store/auth';
 import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { $grpc } = useNuxtApp();
 
@@ -40,7 +41,11 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-colleagues-${page.value}-${query.name}`, async () => {
+} = useLazyAsyncData(`jobs-colleagues-${page.value}-${query.name}-${query.absent}`, () => listColleagues(), {
+    transform: (input) => ({ ...input, entries: wrapRows(input?.colleagues, columns) }),
+});
+
+async function listColleagues(): Promise<ListColleaguesResponse> {
     try {
         const call = $grpc.getJobsClient().listColleagues({
             pagination: {
@@ -56,7 +61,7 @@ const {
         $grpc.handleError(e as RpcError);
         throw e;
     }
-});
+}
 
 watch(offset, async () => refresh());
 watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
@@ -93,6 +98,8 @@ const columns = [
     {
         key: 'rank',
         label: t('common.rank'),
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     {
         key: 'absence',
@@ -105,6 +112,8 @@ const columns = [
     {
         key: 'dateofbirth',
         label: t('common.date_of_birth'),
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])
         ? {
@@ -202,6 +211,15 @@ defineShortcuts({
         </template>
         <template #phoneNumber-data="{ row: colleague }">
             <PhoneNumberBlock :number="colleague.phoneNumber" />
+            <dl class="font-normal lg:hidden">
+                <dt class="sr-only">{{ $t('common.date_of_birth') }}</dt>
+                <dd class="mt-1 truncate">
+                    {{ colleague.dateofbirth.value }}
+                </dd>
+            </dl>
+        </template>
+        <template #dateofbirth-data="{ row: colleague }">
+            {{ colleague.dateofbirth.value }}
         </template>
         <template #actions-data="{ row: colleague }">
             <UButton
