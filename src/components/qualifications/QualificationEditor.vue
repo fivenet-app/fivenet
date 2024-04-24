@@ -464,9 +464,9 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </UFormGroup>
         </template>
 
-        <div class="flex flex-col gap-2 px-2">
+        <div class="mt-2 flex flex-col gap-2 px-2">
             <div>
-                <h2>
+                <h2 class="text- text-gray-900 dark:text-white">
                     {{ $t('common.access') }}
                 </h2>
 
@@ -493,7 +493,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <div>
-                <h2>
+                <h2 class="text- text-gray-900 dark:text-white">
                     {{ $t('common.requirements') }}
                 </h2>
 
@@ -514,11 +514,11 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <div>
-                <h2>
+                <h2 class="text- text-gray-900 dark:text-white">
                     {{ $t('common.discord') }}
                 </h2>
 
-                <UAccordion :items="[{ slot: 'discord', label: $t('common.discord') }]">
+                <UAccordion :items="[{ slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' }]">
                     <template #discord>
                         <UContainer>
                             <UFormGroup name="discordSettings.enabled" :label="$t('common.enabled')">

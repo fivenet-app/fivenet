@@ -20,16 +20,24 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
 
 <template>
     <div>
-        <QualificationsRequestsList
-            ref="requests"
-            :qualification-id="qualification.id"
-            @refresh="async () => results?.refresh()"
-        />
+        <div>
+            <h2 class="text-lg text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
 
-        <QualificationsResultsList
-            ref="results"
-            :qualification-id="qualification.id"
-            @refresh="async () => requests?.refresh()"
-        />
+            <QualificationsRequestsList
+                ref="requests"
+                :qualification-id="qualification.id"
+                @refresh="async () => results?.refresh()"
+            />
+        </div>
+
+        <div>
+            <h2 class="text-lg text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
+
+            <QualificationsResultsList
+                ref="results"
+                :qualification-id="qualification.id"
+                @refresh="async () => requests?.refresh()"
+            />
+        </div>
     </div>
 </template>

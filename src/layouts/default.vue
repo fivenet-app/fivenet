@@ -130,7 +130,7 @@ const links = computed(() =>
         },
         {
             label: t('common.control_panel'),
-            icon: 'i-mdi-cog',
+            icon: 'i-mdi-cog-outline',
             to: '/rector',
             tooltip: {
                 text: t('common.control_panel'),
