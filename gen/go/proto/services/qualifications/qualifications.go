@@ -148,7 +148,25 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	canContent := true // TODO check if user is approved of has GRADE or higher perm
+	request, err := s.getQualificationRequest(ctx, req.QualificationId, userInfo.UserId, userInfo)
+	if err != nil {
+		return nil, errorsqualifications.ErrFailedQuery
+	}
+
+	canContent := false
+
+	// If user's request is accepted or user has GRADE or higher perm to qualification, show content
+	if request != nil {
+		canContent = request.Status != nil && *request.Status == qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
+	}
+
+	if !canContent {
+		canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+		canContent = canGrade
+	}
 
 	resp := &GetQualificationResponse{}
 	resp.Qualification, err = s.getQualification(ctx, req.QualificationId,
