@@ -43,7 +43,7 @@ const cTypes = ref<{ status: ConductType }[]>([
 ]);
 
 const schema = z.object({
-    targetUserId: z.number(),
+    targetUser: z.custom<UserShort>(),
     type: z.nativeEnum(ConductType),
     message: z.string().min(3).max(2000),
     expiresAt: z.date().optional(),
@@ -51,8 +51,8 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({
-    targetUserId: 0,
+const state = reactive<Partial<Schema>>({
+    targetUser: undefined,
     type: ConductType.NOTE,
     message: '',
     expiresAt: undefined,
@@ -60,8 +60,6 @@ const state = reactive<Schema>({
 
 async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<void> {
     try {
-        const expiresAt = values.expiresAt ? toTimestamp(values.expiresAt) : undefined;
-
         const req = {
             entry: {
                 id: id ?? '0',
@@ -69,8 +67,8 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
                 creatorId: activeChar.value?.userId ?? 1,
                 type: values.type,
                 message: values.message,
-                targetUserId: values.targetUserId,
-                expiresAt: expiresAt,
+                targetUserId: values.targetUser.userId,
+                expiresAt: values.expiresAt ? toTimestamp(values.expiresAt) : undefined,
             },
         };
 
@@ -99,19 +97,8 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
     }
 }
 
-const selectedUser = ref<UserShort | undefined>();
-watch(selectedUser, () => {
-    if (selectedUser.value) {
-        state.targetUserId = selectedUser.value.userId;
-    }
-});
-
 async function setFormFromProps(): Promise<void> {
-    if (props.entry) {
-        selectedUser.value = props.entry.targetUser;
-    }
-
-    state.targetUserId = props.entry?.targetUserId ?? 0;
+    state.targetUser = props.entry?.targetUser;
     state.type = props.entry?.type ?? ConductType.NOTE;
     state.message = props.entry?.message ?? '';
     state.expiresAt = props.entry?.expiresAt ? toDate(props.entry?.expiresAt) : undefined;
@@ -188,9 +175,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="targetUserId">
-                                    <UInputMenu
-                                        v-model="selectedUser"
-                                        :search="
+                                    <USelectMenu
+                                        v-model="state.targetUser"
+                                        :searchable="
                                             async (query: string) => {
                                                 usersLoading = true;
                                                 const colleagues = await completorStore.listColleagues({
@@ -200,7 +187,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 return colleagues;
                                             }
                                         "
-                                        :loading="usersLoading"
                                         :search-attributes="['firstname', 'lastname']"
                                         block
                                         :placeholder="$t('common.target')"
@@ -210,6 +196,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
+                                        <template #label>
+                                            <template v-if="state.targetUser">
+                                                {{ userToLabel(state.targetUser) }}
+                                            </template>
+                                        </template>
                                         <template #option="{ option: user }">
                                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                         </template>
@@ -219,7 +210,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <template #empty>
                                             {{ $t('common.not_found', [$t('common.creator', 2)]) }}
                                         </template>
-                                    </UInputMenu>
+                                    </USelectMenu>
                                 </UFormGroup>
                             </dd>
                         </div>

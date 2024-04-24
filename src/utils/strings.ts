@@ -41,3 +41,7 @@ export interface UserLike {
 export function usersToLabel(users: UserLike[]): string {
     return users.map((c) => `${c?.firstname} ${c?.lastname} (${c?.dateofbirth})`).join(', ');
 }
+
+export function userToLabel(user: UserLike): string {
+    return `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})`;
+}

@@ -217,7 +217,6 @@ const columns = [
                                     return users;
                                 }
                             "
-                            :loading="usersLoading"
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.user', 2)"

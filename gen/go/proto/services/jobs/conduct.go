@@ -18,7 +18,6 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
-	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -251,7 +250,18 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	proto.Merge(entry, req.Entry)
+	if req.Entry.Type == 0 {
+		req.Entry.Type = entry.Type
+	}
+	if req.Entry.ExpiresAt == nil {
+		req.Entry.ExpiresAt = entry.ExpiresAt
+	}
+	if req.Entry.TargetUser == nil {
+		req.Entry.TargetUser = entry.TargetUser
+	}
+	if req.Entry.TargetUserId == 0 {
+		req.Entry.TargetUserId = entry.TargetUserId
+	}
 
 	req.Entry.Job = userInfo.Job
 
@@ -265,13 +275,13 @@ func (s *Server) UpdateConductEntry(ctx context.Context, req *UpdateConductEntry
 		).
 		SET(
 			int16(entry.Type),
-			entry.Message,
-			entry.ExpiresAt,
-			entry.TargetUserId,
+			req.Entry.Message,
+			req.Entry.ExpiresAt,
+			req.Entry.TargetUserId,
 		).
 		WHERE(jet.AND(
 			tConduct.Job.EQ(jet.String(userInfo.Job)),
-			tConduct.ID.EQ(jet.Uint64(entry.Id)),
+			tConduct.ID.EQ(jet.Uint64(req.Entry.Id)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

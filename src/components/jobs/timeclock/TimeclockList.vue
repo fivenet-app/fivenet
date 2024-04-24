@@ -186,7 +186,6 @@ const input = ref<{ input: HTMLInputElement }>();
                                             return colleagues;
                                         }
                                     "
-                                    :loading="usersLoading"
                                     :search-attributes="['firstname', 'lastname']"
                                     block
                                     :placeholder="$t('common.colleague', 2)"

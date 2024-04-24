@@ -197,7 +197,6 @@ defineShortcuts({
                                             }
                                         }
                                     "
-                                    :loading="categoriesLoading"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -224,7 +223,6 @@ defineShortcuts({
                                             return users;
                                         }
                                     "
-                                    :loading="usersLoading"
                                     :search-attributes="['firstname', 'lastname']"
                                     :placeholder="$t('common.creator')"
                                     :searchable-placeholder="$t('common.search_field')"

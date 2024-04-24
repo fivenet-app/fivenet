@@ -30,7 +30,6 @@ const state = reactive({
 });
 
 async function setProfilePicture(values: Schema): Promise<void> {
-    console.log(values);
     const req = {} as SetProfilePictureRequest;
     if (!values.reset) {
         if (!values.avatar) {

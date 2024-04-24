@@ -187,7 +187,6 @@ defineShortcuts({
                                 return response.users;
                             }
                         "
-                        :loading="usersLoading"
                         :search-attributes="['firstname', 'lastname']"
                         block
                         :placeholder="$t('common.owner')"

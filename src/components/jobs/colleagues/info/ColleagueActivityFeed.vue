@@ -90,7 +90,6 @@ watchDebounced(query, async () => refresh(), {
                             return colleagues;
                         }
                     "
-                    :loading="usersLoading"
                     :search-attributes="['firstname', 'lastname']"
                     block
                     :placeholder="$t('common.owner')"

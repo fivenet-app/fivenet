@@ -90,8 +90,10 @@ async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
 
     const idx = data.value.entries.findIndex((e) => e.id === entry.id);
     if (idx !== undefined && idx > -1) {
-        data.value.entries[idx] = entry;
+        data.value.entries.splice(idx, 1, entry);
     }
+
+    refresh();
 }
 
 type CType = { status: ConductType };
@@ -166,7 +168,6 @@ defineShortcuts({
                                     return colleagues;
                                 }
                             "
-                            :loading="usersLoading"
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.target')"

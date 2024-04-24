@@ -286,7 +286,6 @@ watch(selectedAccessRole, () => {
                             return users;
                         }
                     "
-                    :loading="usersLoading"
                     :search-attributes="['firstname', 'lastname']"
                     class="flex-1"
                     :placeholder="$t('common.owner')"

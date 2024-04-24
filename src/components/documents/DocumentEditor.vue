@@ -711,7 +711,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                         }
                                     }
                                 "
-                                :loading="categoriesLoading"
                                 :searchable-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
