@@ -132,7 +132,7 @@
                             :level="level + 1"
                             :links="link.children"
                             :ui="ui"
-                            @update:links="emit('update:links', $event)"
+                            @update:links="$emit('update:links', $event)"
                         >
                             <template v-for="(_, name) in $slots" #[name]="slotData: any">
                                 <slot :name="name" v-bind="slotData" />

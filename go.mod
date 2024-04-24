@@ -1,6 +1,6 @@
 module github.com/galexrt/fivenet
 
-go 1.21.8
+go 1.22.2
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
@@ -46,7 +46,7 @@ require (
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.26.0
 	go.opentelemetry.io/otel/sdk v1.26.0
 	go.opentelemetry.io/otel/trace v1.26.0
-	go.uber.org/fx v1.21.0
+	go.uber.org/fx v1.21.1
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.22.0
