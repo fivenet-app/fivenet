@@ -99,6 +99,8 @@ const columns = [
     {
         key: 'jobLabel',
         label: t('common.job'),
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     {
         key: 'sex',
@@ -293,11 +295,11 @@ defineShortcuts({
 
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
-                <dd class="mt-1 truncate">{{ citizen.sex.value.toUpperCase() }} - {{ citizen.jobLabel }}</dd>
+                <dd class="mt-1 truncate">{{ citizen.sex.value.toUpperCase() }} - {{ citizen.jobLabel.value }}</dd>
             </dl>
         </template>
         <template #jobLabel-data="{ row: citizen }">
-            {{ citizen.jobLabel }}
+            {{ citizen.jobLabel.value }}
         </template>
         <template #sex-data="{ row: citizen }">
             {{ citizen.sex.value.toUpperCase() }}
