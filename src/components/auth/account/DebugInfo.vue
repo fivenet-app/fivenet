@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
@@ -48,7 +49,10 @@ const version = __APP_VERSION__;
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
-                {{ version }}/ {{ settings.version }}
+                <div class="inline-flex w-full justify-between">
+                    <span> {{ version }}/ {{ settings.version }} </span>
+                    <CopyToClipboardButton :value="`${version}/ ${settings.version}`" />
+                </div>
             </UFormGroup>
 
             <UFormGroup
@@ -58,7 +62,12 @@ const version = __APP_VERSION__;
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
-                {{ activeChar.userId }}
+                <div class="inline-flex w-full justify-between">
+                    <span>
+                        {{ activeChar.userId }}
+                    </span>
+                    <CopyToClipboardButton :value="activeChar.userId" />
+                </div>
             </UFormGroup>
 
             <UFormGroup
@@ -68,7 +77,10 @@ const version = __APP_VERSION__;
                 class="grid grid-cols-2 items-center gap-2"
                 :ui="{ container: '' }"
             >
-                {{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})
+                <div class="inline-flex w-full justify-between">
+                    <span>{{ activeChar.job }} ({{ $t('common.rank') }}: {{ activeChar.jobGrade }})</span>
+                    <CopyToClipboardButton :value="`${activeChar.job} (${$t('common.rank')}: ${activeChar.jobGrade})`" />
+                </div>
             </UFormGroup>
 
             <UFormGroup

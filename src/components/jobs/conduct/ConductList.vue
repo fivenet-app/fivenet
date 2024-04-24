@@ -46,7 +46,14 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries());
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries(), {
+    transform: (input) => ({ ...input, entries: wrapRows(input?.entries, columns) }),
+});
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
@@ -115,6 +122,8 @@ const columns = [
     {
         key: 'expiresAt',
         label: t('common.expires_at'),
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     {
         key: 'type',
@@ -131,6 +140,8 @@ const columns = [
     {
         key: 'creator',
         label: t('common.creator'),
+        class: 'hidden lg:table-cell',
+        rowClass: 'hidden lg:table-cell',
     },
     {
         key: 'actions',
@@ -264,7 +275,7 @@ defineShortcuts({
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
                 <dd class="mt-1 truncate">
-                    <GenericTime v-if="conduct.expiresAt" class="font-semibold" :value="conduct.expiresAt" />
+                    <GenericTime v-if="conduct.expiresAt.value" class="font-semibold" :value="conduct.expiresAt.value" />
                     <span v-else>
                         {{ $t('components.jobs.conduct.List.no_expiration') }}
                     </span>
@@ -272,7 +283,7 @@ defineShortcuts({
             </dl>
         </template>
         <template #expiresAt-data="{ row: conduct }">
-            <GenericTime v-if="conduct.expiresAt" class="font-semibold" type="date" :value="conduct.expiresAt" />
+            <GenericTime v-if="conduct.expiresAt.value" class="font-semibold" type="date" :value="conduct.expiresAt.value" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>
@@ -292,12 +303,12 @@ defineShortcuts({
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.creator') }}</dt>
                 <dd class="mt-1 truncate">
-                    <ColleagueInfoPopover :user="conduct.creator" />
+                    <ColleagueInfoPopover :user="conduct.creator.value" />
                 </dd>
             </dl>
         </template>
         <template #creator-data="{ row: conduct }">
-            <ColleagueInfoPopover :user="conduct.creator" :hide-props="true" />
+            <ColleagueInfoPopover :user="conduct.creator.value" :hide-props="true" />
         </template>
         <template #actions-data="{ row: conduct }">
             <UButtonGroup class="inline-flex">

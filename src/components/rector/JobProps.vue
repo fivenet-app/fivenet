@@ -231,6 +231,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
                     ]"
                     class="w-full"
+                    :ui="{ list: { rounded: '' } }"
                 >
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">

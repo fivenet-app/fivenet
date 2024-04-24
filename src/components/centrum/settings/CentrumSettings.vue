@@ -150,6 +150,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     { slot: 'timings', label: $t('common.timings'), icon: 'i-mdi-access-time' },
                 ]"
                 class="w-full"
+                :ui="{ list: { rounded: '' } }"
             >
                 <template #default="{ item, selected }">
                     <div class="relative flex items-center gap-2 truncate">

@@ -36,7 +36,9 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`citizens-${page.value}-${JSON.stringify(query.value)}`, () => listCitizens());
+} = useLazyAsyncData(`citizens-${page.value}-${JSON.stringify(query.value)}`, () => listCitizens(), {
+    transform: (input) => ({ ...input, users: wrapRows(input?.users, columns) }),
+});
 
 async function listCitizens(): Promise<ListCitizensResponse> {
     try {
@@ -282,7 +284,7 @@ defineShortcuts({
                 />
 
                 <span>{{ citizen.firstname }} {{ citizen.lastname }}</span>
-                <span class="lg:hidden"> ({{ citizen.dateofbirth }}) </span>
+                <span class="lg:hidden"> ({{ citizen.dateofbirth.value }}) </span>
 
                 <UBadge v-if="citizen.props?.wanted" color="red">
                     {{ $t('common.wanted').toUpperCase() }}
@@ -291,14 +293,14 @@ defineShortcuts({
 
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
-                <dd class="mt-1 truncate">{{ citizen.sex!.toUpperCase() }} - {{ citizen.jobLabel }}</dd>
+                <dd class="mt-1 truncate">{{ citizen.sex.value.toUpperCase() }} - {{ citizen.jobLabel }}</dd>
             </dl>
         </template>
         <template #jobLabel-data="{ row: citizen }">
             {{ citizen.jobLabel }}
         </template>
         <template #sex-data="{ row: citizen }">
-            {{ citizen.sex!.toUpperCase() }}
+            {{ citizen.sex.value.toUpperCase() }}
         </template>
         <template #phoneNumber-data="{ row: citizen }">
             <PhoneNumberBlock :number="citizen.phoneNumber" />
@@ -308,7 +310,10 @@ defineShortcuts({
                 {{ $n(parseInt((citizen?.props?.openFines ?? 0).toString()), 'currency') }}
             </template>
         </template>
-        <template #height-data="{ row: citizen }"> {{ citizen.height }}cm </template>
+        <template #dateofbirth-data="{ row: citizen }">
+            {{ citizen.dateofbirth.value }}
+        </template>
+        <template #height-data="{ row: citizen }"> {{ citizen.height.value }}cm </template>
         <template #actions-data="{ row: citizen }">
             <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-col justify-end gap-1 md:flex-row">
                 <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />

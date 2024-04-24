@@ -246,7 +246,7 @@ const tabs = [
             <DataNoDataBlock v-else-if="config === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
-                <UTabs :items="tabs" class="w-full">
+                <UTabs :items="tabs" class="w-full" :ui="{ list: { rounded: '' } }">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
                             <UIcon :name="item.icon" class="size-4 shrink-0" />

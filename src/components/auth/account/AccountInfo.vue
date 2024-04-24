@@ -8,6 +8,7 @@ import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.v
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
 import { useSettingsStore } from '~/store/settings';
+import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -81,6 +82,7 @@ const modal = useModal();
                         { slot: 'debugInfo', label: $t('components.debug_info.title'), icon: 'i-mdi-connection' },
                     ]"
                     class="w-full"
+                    :ui="{ list: { rounded: '' } }"
                 >
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
@@ -102,25 +104,41 @@ const modal = useModal();
                                 :description="$t('components.auth.AccountInfo.subtitle')"
                             >
                                 <UFormGroup
-                                    name="version"
+                                    name="username"
                                     :label="$t('common.username')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    {{ account.account?.username }}
+                                    <div class="inline-flex w-full justify-between">
+                                        <span>
+                                            {{ account.account?.username }}
+                                        </span>
+                                        <CopyToClipboardButton
+                                            v-if="account.account?.username"
+                                            :value="account.account?.username"
+                                        />
+                                    </div>
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    name="version"
+                                    name="license"
                                     :label="$t('components.auth.AccountInfo.license')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    {{ account.account?.license }}
+                                    <div class="inline-flex w-full justify-between">
+                                        <span>
+                                            {{ account.account?.license }}
+                                        </span>
+                                        <CopyToClipboardButton
+                                            v-if="account.account?.license"
+                                            :value="account.account?.license"
+                                        />
+                                    </div>
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    name="version"
+                                    name="change_username"
                                     :label="$t('components.auth.AccountInfo.change_username')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
@@ -131,7 +149,7 @@ const modal = useModal();
                                 </UFormGroup>
 
                                 <UFormGroup
-                                    name="version"
+                                    name="change_password"
                                     :label="$t('components.auth.AccountInfo.change_password')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
