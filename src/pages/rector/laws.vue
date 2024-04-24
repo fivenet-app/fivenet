@@ -14,8 +14,6 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.rector.laws.title')" />
-
             <LawList />
         </UDashboardPanel>
     </UDashboardPage>

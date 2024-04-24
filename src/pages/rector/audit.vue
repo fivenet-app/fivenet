@@ -14,7 +14,13 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('common.audit_log')" />
+            <UDashboardNavbar :title="$t('common.audit_log')">
+                <template #right>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                        {{ $t('common.back') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
 
             <AuditLog />
         </UDashboardPanel>

@@ -14,7 +14,13 @@ definePageMeta({
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('pages.rector.limiter.title')" />
+            <UDashboardNavbar :title="$t('pages.rector.limiter.title')">
+                <template #right>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                        {{ $t('common.back') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
 
             <AttrRolesList :all="true" />
         </UDashboardPanel>

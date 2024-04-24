@@ -98,6 +98,14 @@ const columns = [
 
 <template>
     <template v-if="streamerMode">
+        <UDashboardNavbar :title="$t('pages.rector.settings.title')">
+            <template #right>
+                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                    {{ $t('common.back') }}
+                </UButton>
+            </template>
+        </UDashboardNavbar>
+
         <UDashboardPanelContent class="pb-24">
             <UDashboardSection
                 :title="$t('system.streamer_mode.title')"
@@ -106,10 +114,14 @@ const columns = [
         </UDashboardPanelContent>
     </template>
     <template v-else>
-        <div class="sm:flex sm:items-center">
-            <div class="w-full sm:flex-auto">
+        <UDashboardNavbar :title="$t('pages.rector.filestore.title')">
+            <template #right>
+                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                    {{ $t('common.back') }}
+                </UButton>
+
                 <UButton
-                    block
+                    trailing-icon="i-mdi-upload"
                     @click="
                         modal.open(FileUploadModal, {
                             onUploaded: addUploadedFile,
@@ -118,8 +130,8 @@ const columns = [
                 >
                     {{ $t('common.upload') }}
                 </UButton>
-            </div>
-        </div>
+            </template>
+        </UDashboardNavbar>
 
         <DataErrorBlock
             v-if="error"

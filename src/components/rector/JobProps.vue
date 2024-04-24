@@ -188,6 +188,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
 <template>
     <template v-if="streamerMode">
+        <UDashboardNavbar :title="$t('pages.rector.settings.title')">
+            <template #right>
+                <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                    {{ $t('common.back') }}
+                </UButton>
+            </template>
+        </UDashboardNavbar>
+
         <UDashboardPanelContent class="pb-24">
             <UDashboardSection
                 :title="$t('system.streamer_mode.title')"
@@ -198,8 +206,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     <template v-else>
         <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
             <UDashboardNavbar :title="$t('components.rector.job_props.job_properties')">
-                <template v-if="!!jobProps" #right>
-                    <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
+                <template #right>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/rector">
+                        {{ $t('common.back') }}
+                    </UButton>
+
+                    <UButton
+                        v-if="!!jobProps"
+                        type="submit"
+                        trailing-icon="i-mdi-content-save"
+                        :disabled="!canSubmit"
+                        :loading="!canSubmit"
+                    >
                         {{ $t('common.save', 1) }}
                     </UButton>
                 </template>

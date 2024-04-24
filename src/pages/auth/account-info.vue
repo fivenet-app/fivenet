@@ -40,7 +40,13 @@ if (query.oauth2Connect) {
 <template>
     <UDashboardPage>
         <UDashboardPanel grow>
-            <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')" />
+            <UDashboardNavbar :title="$t('components.auth.AccountInfo.title')">
+                <template #right>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/overview">
+                        {{ $t('common.back') }}
+                    </UButton>
+                </template>
+            </UDashboardNavbar>
 
             <AccountInfo />
         </UDashboardPanel>
