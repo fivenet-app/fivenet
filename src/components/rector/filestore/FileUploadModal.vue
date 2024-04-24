@@ -18,7 +18,6 @@ const schema = z.object({
     category: z.string().min(3).max(255),
     name: z.string().min(3).max(255),
     file: zodFileSingleSchema(appConfig.filestore.fileSizes.rector, appConfig.filestore.types.images),
-    reset: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -40,7 +39,7 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse> {
         const { response } = await $grpc.getRectorFilestoreClient().uploadFile({
             prefix: values.category,
             name: values.name,
-            file,
+            file: file,
         });
 
         if (response.file) {
@@ -78,7 +77,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <UFormGroup name="prefix" :label="$t('common.category')" class="flex-1">
+                    <UFormGroup name="category" :label="$t('common.category')" class="flex-1" required>
                         <USelectMenu
                             v-model="state.category"
                             :options="categories"
@@ -87,7 +86,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
-                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1" required>
                         <UInput
                             v-model="state.name"
                             type="text"
