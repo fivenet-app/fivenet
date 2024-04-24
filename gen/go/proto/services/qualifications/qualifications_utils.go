@@ -72,6 +72,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 			tQuali.CreatorJob,
 			tQualiResults.ID,
 			tQualiResults.QualificationID,
@@ -140,7 +141,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 		)
 }
 
-func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
 	var wheres []jet.BoolExpression
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
@@ -178,7 +179,6 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tQuali.Abbreviation,
 			tQuali.Title,
 			tQuali.Description,
-			tQuali.Content,
 			tQuali.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -187,6 +187,7 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 			tQuali.CreatorJob,
 			tQualiResults.ID,
 			tQualiResults.QualificationID,
@@ -195,6 +196,10 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tQualiResults.Summary,
 			tQualiRequests.ApprovedAt,
 			tQualiRequests.Status,
+		}
+
+		if selectContent {
+			columns = append(columns, tQuali.Content)
 		}
 
 		if userInfo.SuperUser {
@@ -363,10 +368,10 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 	return dest.IDs, nil
 }
 
-func (s *Server) getQualification(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*qualifications.Qualification, error) {
+func (s *Server) getQualification(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo, selectContent bool) (*qualifications.Qualification, error) {
 	var quali qualifications.Qualification
 
-	stmt := s.getQualificationQuery(condition, nil, userInfo)
+	stmt := s.getQualificationQuery(condition, nil, userInfo, selectContent)
 
 	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

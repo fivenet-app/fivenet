@@ -74,7 +74,7 @@ async function deleteQualificationResult(resultId: string): Promise<DeleteQualif
         });
         const { response } = await call;
 
-        refresh();
+        await refresh();
         emits('refresh');
 
         return response;

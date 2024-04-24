@@ -131,6 +131,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tQualiRequests.UserComment,
 			tQualiRequests.Status,
 			tQualiRequests.ApprovedAt,
@@ -143,6 +144,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 			tApprover.Firstname,
 			tApprover.Lastname,
 			tApprover.Dateofbirth,
+			tApprover.PhoneNumber,
 			tQualiRequests.ApproverJob,
 		).
 		FROM(
@@ -253,8 +255,9 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		if request.Status == nil || (*request.Status != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
-			*request.Status != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED) {
+		if request != nil &&
+			(request.Status == nil || (*request.Status != qualifications.RequestStatus_REQUEST_STATUS_PENDING &&
+				*request.Status != qualifications.RequestStatus_REQUEST_STATUS_COMPLETED)) {
 			return nil, errorsqualifications.ErrFailedQuery
 		}
 
@@ -276,6 +279,10 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 				tQualiRequests.DeletedAt.SET(jet.TimestampExp(jet.NULL)),
 				tQualiRequests.UserComment.SET(jet.StringExp(jet.Raw("VALUES(`user_comment`)"))),
 				tQualiRequests.Status.SET(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_PENDING))),
+				tQualiRequests.ApprovedAt.SET(jet.DateTimeExp(jet.NULL)),
+				tQualiRequests.ApproverComment.SET(jet.StringExp(jet.NULL)),
+				tQualiRequests.ApproverID.SET(jet.IntExp(jet.NULL)),
+				tQualiRequests.ApproverJob.SET(jet.StringExp(jet.NULL)),
 			)
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -320,6 +327,7 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tQualiRequests.UserComment,
 			tQualiRequests.Status,
 			tQualiRequests.ApprovedAt,
@@ -333,6 +341,7 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 			tApprover.Firstname,
 			tApprover.Lastname,
 			tApprover.Dateofbirth,
+			tApprover.PhoneNumber,
 		).
 		FROM(tQualiRequests.
 			INNER_JOIN(tQuali,

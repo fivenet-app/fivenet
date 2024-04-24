@@ -148,9 +148,11 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	canContent := true // TODO check if user is approved of has GRADE or higher perm
+
 	resp := &GetQualificationResponse{}
 	resp.Qualification, err = s.getQualification(ctx, req.QualificationId,
-		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
+		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo, canContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -286,7 +288,7 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 
 	quali, err := s.getQualification(ctx, req.Qualification.Id,
 		tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
-		userInfo)
+		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -389,7 +391,7 @@ func (s *Server) DeleteQualification(ctx context.Context, req *DeleteQualificati
 	}
 
 	quali, err := s.getQualification(ctx, req.QualificationId,
-		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
+		tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

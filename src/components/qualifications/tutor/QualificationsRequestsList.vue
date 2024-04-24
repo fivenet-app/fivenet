@@ -77,7 +77,7 @@ async function deleteQualificationRequest(qualificationId: string, userId: numbe
         });
         const { response } = await call;
 
-        refresh();
+        await refresh();
         emits('refresh');
 
         return response;

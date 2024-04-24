@@ -56,8 +56,8 @@ async function deleteQualification(qualificationId: string): Promise<DeleteQuali
 
 const qualification = computed(() => data.value?.qualification);
 const canDo = computed(() => ({
-    take: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.TAKE),
     request: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.REQUEST),
+    take: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.TAKE),
     grade: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.GRADE),
     edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
 }));
@@ -108,10 +108,10 @@ const accordionItems = computed(() =>
         <UDashboardToolbar>
             <template #default>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                    <template v-if="false || !canDo.edit">
+                    <template v-if="!canDo.edit">
                         <!-- TODO Enable when the exam logic is ready -->
                         <UButton
-                            v-if="canDo.take"
+                            v-if="false || canDo.take"
                             icon="i-mdi-test-tube"
                             :disabled="!requirementsFullfilled(qualification.requirements)"
                             @click="

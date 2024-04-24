@@ -124,6 +124,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tQualiResults.Status,
 			tQualiResults.Score,
 			tQualiResults.Summary,
@@ -135,6 +136,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 			tQuali.ID,
 			tQuali.CreatedAt,
 			tQuali.UpdatedAt,
@@ -325,6 +327,7 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tQualiResults.Status,
 			tQualiResults.Score,
 			tQualiResults.Summary,
@@ -337,6 +340,7 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 		).
 		FROM(tQualiResults.
 			LEFT_JOIN(tUser,
