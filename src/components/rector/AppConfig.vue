@@ -86,7 +86,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     auth: {
-        signupEnabled: false,
+        signupEnabled: true,
         lastCharLock: false,
     },
     perms: {

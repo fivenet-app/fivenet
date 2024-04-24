@@ -30,6 +30,7 @@ export type ProviderConfig = {
 
 export type LoginConfig = {
     signupEnabled: boolean;
+    lastCharLock: boolean;
     providers: ProviderConfig[];
 };
 

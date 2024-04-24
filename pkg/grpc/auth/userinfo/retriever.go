@@ -81,24 +81,25 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 
 	stmt := tUsers.
 		SELECT(
-			tUsers.ID.AS("userinfo.userid"),
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Group,
 			tFivenetAccounts.ID.AS("userinfo.acc_id"),
 			tFivenetAccounts.Enabled.AS("userinfo.enabled"),
 			tFivenetAccounts.License.AS("userinfo.license"),
 			tFivenetAccounts.OverrideJob.AS("userinfo.override_job"),
 			tFivenetAccounts.OverrideJobGrade.AS("userinfo.override_job_grade"),
 			tFivenetAccounts.Superuser.AS("userinfo.superuser"),
+			tFivenetAccounts.LastChar.AS("userinfo.last_char"),
+			tUsers.ID.AS("userinfo.userid"),
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Group,
 		).
 		FROM(
-			tUsers,
 			tFivenetAccounts,
+			tUsers,
 		).
 		WHERE(jet.AND(
-			tUsers.ID.EQ(jet.Int32(userId)),
 			tFivenetAccounts.ID.EQ(jet.Uint64(accountId)),
+			tUsers.ID.EQ(jet.Int32(userId)),
 		)).
 		LIMIT(1)
 

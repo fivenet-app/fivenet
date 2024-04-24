@@ -4,6 +4,7 @@ export default defineAppConfig({
     version: '',
     login: {
         signupEnabled: true,
+        lastCharLock: false,
         providers: [],
     } as LoginConfig,
     discord: {

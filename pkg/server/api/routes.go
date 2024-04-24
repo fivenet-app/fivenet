@@ -86,6 +86,7 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 		Version: version.Version,
 		Login: LoginConfig{
 			SignupEnabled: appCfg.Auth.SignupEnabled,
+			LastCharLock:  appCfg.Auth.LastCharLock,
 			Providers:     providers,
 		},
 		Discord: Discord{},

@@ -19,6 +19,7 @@ func (x *AppConfig) Default() {
 	if x.Auth == nil {
 		x.Auth = &Auth{
 			SignupEnabled: false,
+			LastCharLock:  false,
 		}
 	}
 	if x.Perms == nil {

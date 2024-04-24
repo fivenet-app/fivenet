@@ -14,6 +14,7 @@ type ClientConfig struct {
 
 type LoginConfig struct {
 	SignupEnabled bool              `json:"signupEnabled"`
+	LastCharLock  bool              `json:"lastCharLock"`
 	Providers     []*ProviderConfig `json:"providers"`
 }
 

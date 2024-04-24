@@ -1,13 +1,12 @@
 export function wrapRows(rows: { [key: string]: any }[], columns: { key: string; rowClass?: string }[]): any[] {
     return rows.map((row) => {
-        for (const key in row) {
-            const column = columns.find((c) => c.key === key);
+        columns.forEach((column) => {
             if (!column || !column.rowClass) {
-                continue;
+                return;
             }
 
-            row[key] = { class: column.rowClass, value: row[key] };
-        }
+            row[column.key] = { class: column.rowClass, value: row[column.key] };
+        });
 
         return row;
     });
