@@ -275,7 +275,7 @@ defineShortcuts({
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.expires_at') }}</dt>
                 <dd class="mt-1 truncate">
-                    <GenericTime v-if="conduct.expiresAt.value" class="font-semibold" :value="conduct.expiresAt.value" />
+                    <GenericTime v-if="conduct.expiresAt?.value" class="font-semibold" :value="conduct.expiresAt.value" />
                     <span v-else>
                         {{ $t('components.jobs.conduct.List.no_expiration') }}
                     </span>
@@ -283,7 +283,7 @@ defineShortcuts({
             </dl>
         </template>
         <template #expiresAt-data="{ row: conduct }">
-            <GenericTime v-if="conduct.expiresAt.value" class="font-semibold" type="date" :value="conduct.expiresAt.value" />
+            <GenericTime v-if="conduct.expiresAt?.value" class="font-semibold" type="date" :value="conduct.expiresAt.value" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>

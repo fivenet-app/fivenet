@@ -7,13 +7,6 @@ defineProps<{
     qualification: Qualification;
 }>();
 
-const { t } = useI18n();
-
-const accordionItems = computed(() => [
-    { slot: 'requests', label: t('common.request', 2), icon: 'i-mdi-account-school' },
-    { slot: 'results', label: t('common.result', 2), icon: 'i-mdi-sigma' },
-]);
-
 const requests = ref<InstanceType<typeof QualificationsRequestsList> | null>(null);
 const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null);
 </script>

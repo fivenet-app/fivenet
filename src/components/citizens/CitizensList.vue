@@ -295,21 +295,23 @@ defineShortcuts({
 
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
-                <dd class="mt-1 truncate">{{ citizen.sex.value.toUpperCase() }} - {{ citizen.jobLabel.value }}</dd>
+                <dd class="mt-1 truncate">
+                    {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }} - {{ citizen.jobLabel.value ?? $t('common.na') }}
+                </dd>
             </dl>
         </template>
         <template #jobLabel-data="{ row: citizen }">
             {{ citizen.jobLabel.value }}
         </template>
         <template #sex-data="{ row: citizen }">
-            {{ citizen.sex.value.toUpperCase() }}
+            {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }}
         </template>
         <template #phoneNumber-data="{ row: citizen }">
             <PhoneNumberBlock :number="citizen.phoneNumber" />
         </template>
         <template #openFines-data="{ row: citizen }">
             <template v-if="(citizen.props?.openFines ?? 0) > 0">
-                {{ $n(parseInt((citizen?.props?.openFines ?? 0).toString()), 'currency') }}
+                {{ $n(parseInt((citizen.props?.openFines ?? 0).toString()), 'currency') }}
             </template>
         </template>
         <template #dateofbirth-data="{ row: citizen }">
