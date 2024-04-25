@@ -81,7 +81,17 @@ const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
 
 function addToClipboard(user: User): void {
-    clipboardStore.addUser(user);
+    clipboardStore.addUser({
+        ...user,
+        // @ts-expect-error wrapped table rows
+        jobLabel: user.jobLabel.value,
+        // @ts-expect-error wrapped table rows
+        sex: user.sex.value,
+        // @ts-expect-error wrapped table rows
+        dateofbirth: user.dateofbirth.value,
+        // @ts-expect-error wrapped table rows
+        height: user.height.value,
+    });
 
     notifications.add({
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
