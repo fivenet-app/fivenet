@@ -27,14 +27,14 @@ onMounted(async () => {
 </script>
 
 <template>
-    <div class="max-w-full">
+    <div class="max-w-full overflow-hidden">
         <UContainer :ui="{ constrained: 'max-w-screen' }">
             <UCard class="bg-white/75 backdrop-blur dark:bg-white/5">
                 <CharacterSelector />
             </UCard>
         </UContainer>
 
-        <div class="absolute bottom-4 z-10 flex w-full items-center justify-center">
+        <div class="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
             <UButton icon="i-mdi-logout" :label="$t('common.sign_out')" to="/auth/logout" color="white" />
         </div>
     </div>
