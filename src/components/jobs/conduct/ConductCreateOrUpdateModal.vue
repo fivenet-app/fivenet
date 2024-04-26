@@ -189,7 +189,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         "
                                         :search-attributes="['firstname', 'lastname']"
                                         block
-                                        :placeholder="$t('common.target')"
+                                        :placeholder="$t('common.colleague')"
                                         trailing
                                         by="userId"
                                         :searchable-placeholder="$t('common.search_field')"

@@ -171,7 +171,7 @@ const input = ref<{ input: HTMLInputElement }>();
                         </UButton>
 
                         <div class="flex flex-row gap-2">
-                            <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.colleague', 2)" class="flex-1">
+                            <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.search')" class="flex-1">
                                 <USelectMenu
                                     ref="input"
                                     v-model="query.users"

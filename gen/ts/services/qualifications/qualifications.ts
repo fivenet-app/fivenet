@@ -178,6 +178,10 @@ export interface ListQualificationRequestsRequest {
      * @generated from protobuf field: repeated resources.qualifications.RequestStatus status = 3;
      */
     status: RequestStatus[];
+    /**
+     * @generated from protobuf field: optional int32 user_id = 4;
+     */
+    userId?: number;
 }
 /**
  * @generated from protobuf message services.qualifications.ListQualificationRequestsResponse
@@ -942,7 +946,8 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
         super("services.qualifications.ListQualificationRequestsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] }
+            { no: 3, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] },
+            { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListQualificationRequestsRequest>): ListQualificationRequestsRequest {
@@ -970,6 +975,9 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
                     else
                         message.status.push(reader.int32());
                     break;
+                case /* optional int32 user_id */ 4:
+                    message.userId = reader.int32();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -995,6 +1003,9 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
                 writer.int32(message.status[i]);
             writer.join();
         }
+        /* optional int32 user_id = 4; */
+        if (message.userId !== undefined)
+            writer.tag(4, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

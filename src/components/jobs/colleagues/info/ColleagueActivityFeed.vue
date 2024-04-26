@@ -76,7 +76,7 @@ watchDebounced(query, async () => refresh(), {
 <template>
     <UDashboardToolbar v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
         <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
-            <UFormGroup name="colleagues" :label="$t('common.colleague', 2)" class="flex-1">
+            <UFormGroup name="colleagues" :label="$t('common.search')" class="flex-1">
                 <USelectMenu
                     v-model="query.colleagues"
                     multiple
@@ -92,7 +92,7 @@ watchDebounced(query, async () => refresh(), {
                     "
                     :search-attributes="['firstname', 'lastname']"
                     block
-                    :placeholder="$t('common.owner')"
+                    :placeholder="$t('common.colleague', 2)"
                     trailing
                     by="userId"
                     :searchable-placeholder="$t('common.search_field')"

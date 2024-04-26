@@ -3,9 +3,10 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBadgeColor } from './helpers';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
 defineProps<{
-    entry: ConductEntry;
+    entry: ConductEntry & { creator?: { value: Colleague } };
 }>();
 
 const { isOpen } = useSlideover();
@@ -93,7 +94,7 @@ const { isOpen } = useSlideover();
                             {{ $t('common.creator') }}
                         </dt>
                         <dd class="mt-2 max-h-24 text-sm sm:col-span-2 sm:mt-0">
-                            <CitizenInfoPopover :user="entry.creator" />
+                            <CitizenInfoPopover :user="entry.creator?.value" />
                         </dd>
                     </div>
                 </dl>

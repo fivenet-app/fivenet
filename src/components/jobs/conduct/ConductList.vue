@@ -29,6 +29,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const schema = z.object({
+    id: z.union([z.string().optional(), z.coerce.number().min(1).max(999_999_999)]),
     types: z.nativeEnum(ConductType).array().max(10),
     showExpired: z.boolean(),
     user: z.custom<User>().optional(),
@@ -37,6 +38,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
+    id: undefined,
     types: [],
     showExpired: false,
 });
@@ -51,9 +53,13 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-conduct-${page.value}`, () => listConductEntries(), {
-    transform: (input) => ({ ...input, entries: wrapRows(input?.entries, columns) }),
-});
+} = useLazyAsyncData(
+    `jobs-conduct-${page.value}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
+    () => listConductEntries(),
+    {
+        transform: (input) => ({ ...input, entries: wrapRows(input?.entries, columns) }),
+    },
+);
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
@@ -65,6 +71,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
             types: query.types,
             userIds: userIds,
             showExpired: query.showExpired,
+            ids: query.id ? [query.id.toString()] : [],
         });
         const { response } = await call;
 
@@ -116,6 +123,10 @@ const cTypes = ref<CType[]>([
 
 const columns = [
     {
+        key: 'id',
+        label: t('common.id'),
+    },
+    {
         key: 'createdAt',
         label: t('common.created_at'),
     },
@@ -164,7 +175,7 @@ defineShortcuts({
         <template #default>
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row gap-2">
-                    <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.target')" class="flex-1">
+                    <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.search')" class="flex-1">
                         <UInputMenu
                             ref="input"
                             v-model="query.user"
@@ -181,7 +192,7 @@ defineShortcuts({
                             "
                             :search-attributes="['firstname', 'lastname']"
                             block
-                            :placeholder="$t('common.target')"
+                            :placeholder="$t('common.colleague')"
                             trailing
                             by="userId"
                             :searchable-placeholder="$t('common.search_field')"
@@ -227,6 +238,10 @@ defineShortcuts({
                             </template>
                             <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                         </USelectMenu>
+                    </UFormGroup>
+
+                    <UFormGroup name="id" :label="$t('common.id')" class="flex-initial">
+                        <UInput v-model="query.id" type="text" name="id" :placeholder="$t('common.id')" />
                     </UFormGroup>
 
                     <UFormGroup

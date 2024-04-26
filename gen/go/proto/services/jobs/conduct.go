@@ -47,17 +47,23 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
+	if len(req.Ids) > 0 {
+		ids := make([]jet.Expression, len(req.Ids))
+		for i := 0; i < len(req.Ids); i++ {
+			ids[i] = jet.Uint64(req.Ids[i])
+		}
+
+		condition = condition.AND(tConduct.ID.IN(ids...))
+	}
 	if len(req.Types) > 0 {
 		ts := make([]jet.Expression, len(req.Types))
 		for i := 0; i < len(req.Types); i++ {
 			ts[i] = jet.Int16(int16(req.Types[i].Number()))
 		}
 
-		condition = condition.AND(
-			tConduct.Type.IN(ts...),
-		)
+		condition = condition.AND(tConduct.Type.IN(ts...))
 	}
-	if req.ShowExpired == nil || !*req.ShowExpired {
+	if len(req.Ids) == 0 && (req.ShowExpired == nil || !*req.ShowExpired) {
 		condition = condition.AND(jet.OR(
 			tConduct.ExpiresAt.IS_NULL(),
 			tConduct.ExpiresAt.GT_EQ(

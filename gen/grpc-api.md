@@ -10,38 +10,6 @@
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
   
-- [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
-    - [Dispatch](#resources-centrum-Dispatch)
-    - [DispatchAssignment](#resources-centrum-DispatchAssignment)
-    - [DispatchAssignments](#resources-centrum-DispatchAssignments)
-    - [DispatchReference](#resources-centrum-DispatchReference)
-    - [DispatchReferences](#resources-centrum-DispatchReferences)
-    - [DispatchStatus](#resources-centrum-DispatchStatus)
-  
-    - [DispatchReferenceType](#resources-centrum-DispatchReferenceType)
-    - [StatusDispatch](#resources-centrum-StatusDispatch)
-    - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
-  
-- [resources/centrum/general.proto](#resources_centrum_general-proto)
-    - [Attributes](#resources-centrum-Attributes)
-    - [Disponents](#resources-centrum-Disponents)
-    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-    - [Timings](#resources-centrum-Timings)
-  
-    - [CentrumMode](#resources-centrum-CentrumMode)
-  
-- [resources/centrum/units.proto](#resources_centrum_units-proto)
-    - [Unit](#resources-centrum-Unit)
-    - [UnitAssignment](#resources-centrum-UnitAssignment)
-    - [UnitAssignments](#resources-centrum-UnitAssignments)
-    - [UnitStatus](#resources-centrum-UnitStatus)
-  
-    - [StatusUnit](#resources-centrum-StatusUnit)
-  
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [OrderBy](#resources-common-database-OrderBy)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
@@ -95,10 +63,6 @@
     - [TemplateRequirements](#resources-documents-TemplateRequirements)
     - [TemplateSchema](#resources-documents-TemplateSchema)
     - [TemplateShort](#resources-documents-TemplateShort)
-  
-- [resources/filestore/file.proto](#resources_filestore_file-proto)
-    - [File](#resources-filestore-File)
-    - [FileInfo](#resources-filestore-FileInfo)
   
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
@@ -155,36 +119,6 @@
     - [RoleAttribute](#resources-permissions-RoleAttribute)
     - [StringList](#resources-permissions-StringList)
   
-- [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
-    - [Qualification](#resources-qualifications-Qualification)
-    - [QualificationAccess](#resources-qualifications-QualificationAccess)
-    - [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings)
-    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
-    - [QualificationRequest](#resources-qualifications-QualificationRequest)
-    - [QualificationRequirement](#resources-qualifications-QualificationRequirement)
-    - [QualificationResult](#resources-qualifications-QualificationResult)
-    - [QualificationShort](#resources-qualifications-QualificationShort)
-  
-    - [AccessLevel](#resources-qualifications-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
-    - [RequestStatus](#resources-qualifications-RequestStatus)
-    - [ResultStatus](#resources-qualifications-ResultStatus)
-  
-- [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
-    - [ExamQuestion](#resources-qualifications-ExamQuestion)
-    - [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices)
-    - [ExamQuestionText](#resources-qualifications-ExamQuestionText)
-    - [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo)
-    - [ExamQuestions](#resources-qualifications-ExamQuestions)
-    - [ExamResponse](#resources-qualifications-ExamResponse)
-    - [ExamResponseChoices](#resources-qualifications-ExamResponseChoices)
-    - [ExamResponseText](#resources-qualifications-ExamResponseText)
-    - [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo)
-    - [ExamResponses](#resources-qualifications-ExamResponses)
-    - [ExamSettings](#resources-qualifications-ExamSettings)
-    - [QualificationExam](#resources-qualifications-QualificationExam)
-    - [QualificationExamResponse](#resources-qualifications-QualificationExamResponse)
-  
 - [resources/rector/audit.proto](#resources_rector_audit-proto)
     - [AuditEntry](#resources-rector-AuditEntry)
   
@@ -232,6 +166,72 @@
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
+  
+- [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
+    - [Dispatch](#resources-centrum-Dispatch)
+    - [DispatchAssignment](#resources-centrum-DispatchAssignment)
+    - [DispatchAssignments](#resources-centrum-DispatchAssignments)
+    - [DispatchReference](#resources-centrum-DispatchReference)
+    - [DispatchReferences](#resources-centrum-DispatchReferences)
+    - [DispatchStatus](#resources-centrum-DispatchStatus)
+  
+    - [DispatchReferenceType](#resources-centrum-DispatchReferenceType)
+    - [StatusDispatch](#resources-centrum-StatusDispatch)
+    - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
+  
+- [resources/centrum/general.proto](#resources_centrum_general-proto)
+    - [Attributes](#resources-centrum-Attributes)
+    - [Disponents](#resources-centrum-Disponents)
+    - [UserUnitMapping](#resources-centrum-UserUnitMapping)
+  
+- [resources/centrum/units.proto](#resources_centrum_units-proto)
+    - [Unit](#resources-centrum-Unit)
+    - [UnitAssignment](#resources-centrum-UnitAssignment)
+    - [UnitAssignments](#resources-centrum-UnitAssignments)
+    - [UnitStatus](#resources-centrum-UnitStatus)
+  
+    - [StatusUnit](#resources-centrum-StatusUnit)
+  
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
+  
+- [resources/filestore/file.proto](#resources_filestore_file-proto)
+    - [File](#resources-filestore-File)
+    - [FileInfo](#resources-filestore-FileInfo)
+  
+- [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
+    - [ExamQuestion](#resources-qualifications-ExamQuestion)
+    - [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices)
+    - [ExamQuestionText](#resources-qualifications-ExamQuestionText)
+    - [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo)
+    - [ExamQuestions](#resources-qualifications-ExamQuestions)
+    - [ExamResponse](#resources-qualifications-ExamResponse)
+    - [ExamResponseChoices](#resources-qualifications-ExamResponseChoices)
+    - [ExamResponseText](#resources-qualifications-ExamResponseText)
+    - [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo)
+    - [ExamResponses](#resources-qualifications-ExamResponses)
+    - [ExamSettings](#resources-qualifications-ExamSettings)
+    - [QualificationExam](#resources-qualifications-QualificationExam)
+    - [QualificationExamResponse](#resources-qualifications-QualificationExamResponse)
+  
+- [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
+    - [Qualification](#resources-qualifications-Qualification)
+    - [QualificationAccess](#resources-qualifications-QualificationAccess)
+    - [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings)
+    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
+    - [QualificationRequest](#resources-qualifications-QualificationRequest)
+    - [QualificationRequirement](#resources-qualifications-QualificationRequirement)
+    - [QualificationResult](#resources-qualifications-QualificationResult)
+    - [QualificationShort](#resources-qualifications-QualificationShort)
+  
+    - [AccessLevel](#resources-qualifications-AccessLevel)
+    - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
+    - [RequestStatus](#resources-qualifications-RequestStatus)
+    - [ResultStatus](#resources-qualifications-ResultStatus)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -476,36 +476,6 @@
   
     - [NotificatorService](#services-notificator-NotificatorService)
   
-- [services/qualifications/qualifications.proto](#services_qualifications_qualifications-proto)
-    - [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest)
-    - [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse)
-    - [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest)
-    - [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse)
-    - [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest)
-    - [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse)
-    - [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest)
-    - [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse)
-    - [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest)
-    - [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse)
-    - [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest)
-    - [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse)
-    - [GetQualificationAccessRequest](#services-qualifications-GetQualificationAccessRequest)
-    - [GetQualificationAccessResponse](#services-qualifications-GetQualificationAccessResponse)
-    - [GetQualificationRequest](#services-qualifications-GetQualificationRequest)
-    - [GetQualificationResponse](#services-qualifications-GetQualificationResponse)
-    - [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest)
-    - [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse)
-    - [ListQualificationsRequest](#services-qualifications-ListQualificationsRequest)
-    - [ListQualificationsResponse](#services-qualifications-ListQualificationsResponse)
-    - [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest)
-    - [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse)
-    - [SetQualificationAccessRequest](#services-qualifications-SetQualificationAccessRequest)
-    - [SetQualificationAccessResponse](#services-qualifications-SetQualificationAccessResponse)
-    - [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest)
-    - [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse)
-  
-    - [QualificationsService](#services-qualifications-QualificationsService)
-  
 - [services/rector/config.proto](#services_rector_config-proto)
     - [GetAppConfigRequest](#services-rector-GetAppConfigRequest)
     - [GetAppConfigResponse](#services-rector-GetAppConfigResponse)
@@ -562,6 +532,36 @@
     - [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse)
   
     - [RectorService](#services-rector-RectorService)
+  
+- [services/qualifications/qualifications.proto](#services_qualifications_qualifications-proto)
+    - [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest)
+    - [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse)
+    - [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest)
+    - [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse)
+    - [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest)
+    - [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse)
+    - [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest)
+    - [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse)
+    - [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest)
+    - [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse)
+    - [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest)
+    - [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse)
+    - [GetQualificationAccessRequest](#services-qualifications-GetQualificationAccessRequest)
+    - [GetQualificationAccessResponse](#services-qualifications-GetQualificationAccessResponse)
+    - [GetQualificationRequest](#services-qualifications-GetQualificationRequest)
+    - [GetQualificationResponse](#services-qualifications-GetQualificationResponse)
+    - [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest)
+    - [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse)
+    - [ListQualificationsRequest](#services-qualifications-ListQualificationsRequest)
+    - [ListQualificationsResponse](#services-qualifications-ListQualificationsResponse)
+    - [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest)
+    - [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse)
+    - [SetQualificationAccessRequest](#services-qualifications-SetQualificationAccessRequest)
+    - [SetQualificationAccessResponse](#services-qualifications-SetQualificationAccessResponse)
+    - [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest)
+    - [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse)
+  
+    - [QualificationsService](#services-qualifications-QualificationsService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -647,467 +647,6 @@
 
 
  
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_dispatches-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/dispatches.proto
-
-
-
-<a name="resources-centrum-Dispatch"></a>
-
-### Dispatch
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| status | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
-| message | [string](#string) |  | @sanitize |
-| description | [string](#string) | optional | @sanitize |
-| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
-| x | [double](#double) |  |  |
-| y | [double](#double) |  |  |
-| postal | [string](#string) | optional | @sanitize |
-| anon | [bool](#bool) |  |  |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.User](#resources-users-User) | optional |  |
-| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
-| references | [DispatchReferences](#resources-centrum-DispatchReferences) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchAssignment"></a>
-
-### DispatchAssignment
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;dispatch_id&#34; |
-| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchAssignments"></a>
-
-### DispatchAssignments
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchReference"></a>
-
-### DispatchReference
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| target_dispatch_id | [uint64](#uint64) |  |  |
-| reference_type | [DispatchReferenceType](#resources-centrum-DispatchReferenceType) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchReferences"></a>
-
-### DispatchReferences
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| references | [DispatchReference](#resources-centrum-DispatchReference) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-DispatchStatus"></a>
-
-### DispatchStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| dispatch_id | [uint64](#uint64) |  |  |
-| unit_id | [uint64](#uint64) | optional |  |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| status | [StatusDispatch](#resources-centrum-StatusDispatch) |  |  |
-| reason | [string](#string) | optional | @sanitize |
-| code | [string](#string) | optional | @sanitize |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| x | [double](#double) | optional |  |
-| y | [double](#double) | optional |  |
-| postal | [string](#string) | optional | @sanitize |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-DispatchReferenceType"></a>
-
-### DispatchReferenceType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| DISPATCH_REFERENCE_TYPE_UNSPECIFIED | 0 |  |
-| DISPATCH_REFERENCE_TYPE_REFERENCED | 1 |  |
-| DISPATCH_REFERENCE_TYPE_DUPLICATED_BY | 2 |  |
-| DISPATCH_REFERENCE_TYPE_DUPLICATE_OF | 3 |  |
-
-
-
-<a name="resources-centrum-StatusDispatch"></a>
-
-### StatusDispatch
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| STATUS_DISPATCH_UNSPECIFIED | 0 |  |
-| STATUS_DISPATCH_NEW | 1 |  |
-| STATUS_DISPATCH_UNASSIGNED | 2 |  |
-| STATUS_DISPATCH_UPDATED | 3 |  |
-| STATUS_DISPATCH_UNIT_ASSIGNED | 4 |  |
-| STATUS_DISPATCH_UNIT_UNASSIGNED | 5 |  |
-| STATUS_DISPATCH_UNIT_ACCEPTED | 6 |  |
-| STATUS_DISPATCH_UNIT_DECLINED | 7 |  |
-| STATUS_DISPATCH_EN_ROUTE | 8 |  |
-| STATUS_DISPATCH_ON_SCENE | 9 |  |
-| STATUS_DISPATCH_NEED_ASSISTANCE | 10 |  |
-| STATUS_DISPATCH_COMPLETED | 11 |  |
-| STATUS_DISPATCH_CANCELLED | 12 |  |
-| STATUS_DISPATCH_ARCHIVED | 13 |  |
-
-
-
-<a name="resources-centrum-TakeDispatchResp"></a>
-
-### TakeDispatchResp
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| TAKE_DISPATCH_RESP_UNSPECIFIED | 0 |  |
-| TAKE_DISPATCH_RESP_TIMEOUT | 1 |  |
-| TAKE_DISPATCH_RESP_ACCEPTED | 2 |  |
-| TAKE_DISPATCH_RESP_DECLINED | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_general-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/general.proto
-
-
-
-<a name="resources-centrum-Attributes"></a>
-
-### Attributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Disponents"></a>
-
-### Disponents
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UserUnitMapping"></a>
-
-### UserUnitMapping
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| user_id | [int32](#int32) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/settings.proto
-
-
-
-<a name="resources-centrum-PredefinedStatus"></a>
-
-### PredefinedStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_status | [string](#string) | repeated |  |
-| dispatch_status | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| enabled | [bool](#bool) |  |  |
-| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-| timings | [Timings](#resources-centrum-Timings) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-Timings"></a>
-
-### Timings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_max_wait | [int64](#int64) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-CentrumMode"></a>
-
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CENTRUM_MODE_UNSPECIFIED | 0 |  |
-| CENTRUM_MODE_MANUAL | 1 |  |
-| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
-| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
-| CENTRUM_MODE_SIMPLIFIED | 4 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_centrum_units-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/units.proto
-
-
-
-<a name="resources-centrum-Unit"></a>
-
-### Unit
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| name | [string](#string) |  | @sanitize |
-| initials | [string](#string) |  | @sanitize |
-| color | [string](#string) |  |  |
-| description | [string](#string) | optional | @sanitize |
-| status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
-| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
-| home_postal | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignment"></a>
-
-### UnitAssignment
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
-| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;user_id&#34; |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitAssignments"></a>
-
-### UnitAssignments
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-UnitStatus"></a>
-
-### UnitStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| unit_id | [uint64](#uint64) |  |  |
-| unit | [Unit](#resources-centrum-Unit) | optional |  |
-| status | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
-| reason | [string](#string) | optional | @sanitize |
-| code | [string](#string) | optional | @sanitize |
-| user_id | [int32](#int32) | optional |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| x | [double](#double) | optional |  |
-| y | [double](#double) | optional |  |
-| postal | [string](#string) | optional | @sanitize |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-StatusUnit"></a>
-
-### StatusUnit
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| STATUS_UNIT_UNSPECIFIED | 0 |  |
-| STATUS_UNIT_UNKNOWN | 1 |  |
-| STATUS_UNIT_USER_ADDED | 2 |  |
-| STATUS_UNIT_USER_REMOVED | 3 |  |
-| STATUS_UNIT_UNAVAILABLE | 4 |  |
-| STATUS_UNIT_AVAILABLE | 5 |  |
-| STATUS_UNIT_ON_BREAK | 6 |  |
-| STATUS_UNIT_BUSY | 7 |  |
-
 
  
 
@@ -1914,59 +1453,6 @@
 
 
 
-<a name="resources_filestore_file-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/filestore/file.proto
-
-
-
-<a name="resources-filestore-File"></a>
-
-### File
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| url | [string](#string) | optional |  |
-| data | [bytes](#bytes) |  |  |
-| delete | [bool](#bool) | optional |  |
-| content_type | [string](#string) | optional |  |
-| extension | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-filestore-FileInfo"></a>
-
-### FileInfo
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| name | [string](#string) |  |  |
-| last_modified | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| size | [int64](#int64) |  |  |
-| content_type | [string](#string) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_jobs_colleagues-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2751,494 +2237,6 @@
 
 
 
-<a name="resources_qualifications_qualifications-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/qualifications/qualifications.proto
-
-
-
-<a name="resources-qualifications-Qualification"></a>
-
-### Qualification
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| weight | [uint32](#uint32) |  |  |
-| closed | [bool](#bool) |  |  |
-| abbreviation | [string](#string) |  | @sanitize: method=StripTags |
-| title | [string](#string) |  | @sanitize |
-| description | [string](#string) | optional | @sanitize: method=StripTags |
-| content | [string](#string) |  | @sanitize |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-| access | [QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
-| requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
-| discord_settings | [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings) | optional |  |
-| result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
-| request | [QualificationRequest](#resources-qualifications-QualificationRequest) | optional |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationAccess"></a>
-
-### QualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationDiscordSettings"></a>
-
-### QualificationDiscordSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| sync_enabled | [bool](#bool) |  |  |
-| role_name | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationJobAccess"></a>
-
-### QualificationJobAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| access | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationRequest"></a>
-
-### QualificationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;user&#34; |
-| user_comment | [string](#string) | optional | @sanitize: method=StripTags |
-| status | [RequestStatus](#resources-qualifications-RequestStatus) | optional |  |
-| approved_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| approver_comment | [string](#string) | optional | @sanitize: method=StripTags |
-| approver_id | [int32](#int32) | optional |  |
-| approver | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;approver&#34; |
-| approver_job | [string](#string) | optional |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationRequirement"></a>
-
-### QualificationRequirement
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| target_qualification_id | [uint64](#uint64) |  |  |
-| target_qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional | @gotags: alias:&#34;targetqualification.*&#34; |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationResult"></a>
-
-### QualificationResult
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;user&#34; |
-| status | [ResultStatus](#resources-qualifications-ResultStatus) |  |  |
-| score | [uint32](#uint32) | optional |  |
-| summary | [string](#string) |  | @sanitize: method=StripTags |
-| creator_id | [int32](#int32) |  |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationShort"></a>
-
-### QualificationShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| weight | [uint32](#uint32) |  |  |
-| closed | [bool](#bool) |  |  |
-| abbreviation | [string](#string) |  | @sanitize: method=StripTags |
-| title | [string](#string) |  | @sanitize |
-| description | [string](#string) | optional | @sanitize: method=StripTags |
-| creator_id | [int32](#int32) | optional |  |
-| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
-| creator_job | [string](#string) |  |  |
-| requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
-| result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-qualifications-AccessLevel"></a>
-
-### AccessLevel
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_BLOCKED | 1 |  |
-| ACCESS_LEVEL_VIEW | 2 |  |
-| ACCESS_LEVEL_REQUEST | 3 |  |
-| ACCESS_LEVEL_TAKE | 4 |  |
-| ACCESS_LEVEL_GRADE | 5 |  |
-| ACCESS_LEVEL_MANAGE | 6 |  |
-| ACCESS_LEVEL_EDIT | 7 |  |
-
-
-
-<a name="resources-qualifications-AccessLevelUpdateMode"></a>
-
-### AccessLevelUpdateMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
-| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
-| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
-| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
-
-<a name="resources-qualifications-RequestStatus"></a>
-
-### RequestStatus
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| REQUEST_STATUS_UNSPECIFIED | 0 |  |
-| REQUEST_STATUS_PENDING | 1 |  |
-| REQUEST_STATUS_DENIED | 2 |  |
-| REQUEST_STATUS_ACCEPTED | 3 |  |
-| REQUEST_STATUS_COMPLETED | 4 |  |
-
-
-
-<a name="resources-qualifications-ResultStatus"></a>
-
-### ResultStatus
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| RESULT_STATUS_UNSPECIFIED | 0 |  |
-| RESULT_STATUS_PENDING | 1 |  |
-| RESULT_STATUS_FAILED | 2 |  |
-| RESULT_STATUS_SUCCESSFUL | 3 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_qualifications_exam-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/qualifications/exam.proto
-
-
-
-<a name="resources-qualifications-ExamQuestion"></a>
-
-### ExamQuestion
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| separator | [bool](#bool) |  |  |
-| yesno | [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo) |  |  |
-| free_text | [ExamQuestionText](#resources-qualifications-ExamQuestionText) |  |  |
-| multiple_choice | [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamQuestionChoices"></a>
-
-### ExamQuestionChoices
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| multi | [bool](#bool) |  |  |
-| limit | [int32](#int32) | optional |  |
-| choices | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamQuestionText"></a>
-
-### ExamQuestionText
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| min_length | [int32](#int32) |  |  |
-| max_length | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamQuestionYesNo"></a>
-
-### ExamQuestionYesNo
-
-
-
-
-
-
-
-<a name="resources-qualifications-ExamQuestions"></a>
-
-### ExamQuestions
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| data | [ExamQuestion](#resources-qualifications-ExamQuestion) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamResponse"></a>
-
-### ExamResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| separator | [bool](#bool) |  |  |
-| yesno | [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo) |  |  |
-| free_text | [ExamResponseText](#resources-qualifications-ExamResponseText) |  |  |
-| multiple_choice | [ExamResponseChoices](#resources-qualifications-ExamResponseChoices) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamResponseChoices"></a>
-
-### ExamResponseChoices
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| choices | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamResponseText"></a>
-
-### ExamResponseText
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| text | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamResponseYesNo"></a>
-
-### ExamResponseYesNo
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| value | [bool](#bool) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamResponses"></a>
-
-### ExamResponses
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| data | [ExamResponse](#resources-qualifications-ExamResponse) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamSettings"></a>
-
-### ExamSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationExam"></a>
-
-### QualificationExam
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| questions | [ExamQuestions](#resources-qualifications-ExamQuestions) |  |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationExamResponse"></a>
-
-### QualificationExamResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| ended_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| responses | [ExamResponses](#resources-qualifications-ExamResponses) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_rector_audit-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -3926,6 +2924,1008 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_dispatches-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/dispatches.proto
+
+
+
+<a name="resources-centrum-Dispatch"></a>
+
+### Dispatch
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| status | [DispatchStatus](#resources-centrum-DispatchStatus) | optional |  |
+| message | [string](#string) |  | @sanitize |
+| description | [string](#string) | optional | @sanitize |
+| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
+| x | [double](#double) |  |  |
+| y | [double](#double) |  |  |
+| postal | [string](#string) | optional | @sanitize |
+| anon | [bool](#bool) |  |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.User](#resources-users-User) | optional |  |
+| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
+| references | [DispatchReferences](#resources-centrum-DispatchReferences) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchAssignment"></a>
+
+### DispatchAssignment
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;dispatch_id&#34; |
+| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchAssignments"></a>
+
+### DispatchAssignments
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| units | [DispatchAssignment](#resources-centrum-DispatchAssignment) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchReference"></a>
+
+### DispatchReference
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| target_dispatch_id | [uint64](#uint64) |  |  |
+| reference_type | [DispatchReferenceType](#resources-centrum-DispatchReferenceType) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchReferences"></a>
+
+### DispatchReferences
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| references | [DispatchReference](#resources-centrum-DispatchReference) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-DispatchStatus"></a>
+
+### DispatchStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| dispatch_id | [uint64](#uint64) |  |  |
+| unit_id | [uint64](#uint64) | optional |  |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| status | [StatusDispatch](#resources-centrum-StatusDispatch) |  |  |
+| reason | [string](#string) | optional | @sanitize |
+| code | [string](#string) | optional | @sanitize |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| x | [double](#double) | optional |  |
+| y | [double](#double) | optional |  |
+| postal | [string](#string) | optional | @sanitize |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-DispatchReferenceType"></a>
+
+### DispatchReferenceType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| DISPATCH_REFERENCE_TYPE_UNSPECIFIED | 0 |  |
+| DISPATCH_REFERENCE_TYPE_REFERENCED | 1 |  |
+| DISPATCH_REFERENCE_TYPE_DUPLICATED_BY | 2 |  |
+| DISPATCH_REFERENCE_TYPE_DUPLICATE_OF | 3 |  |
+
+
+
+<a name="resources-centrum-StatusDispatch"></a>
+
+### StatusDispatch
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STATUS_DISPATCH_UNSPECIFIED | 0 |  |
+| STATUS_DISPATCH_NEW | 1 |  |
+| STATUS_DISPATCH_UNASSIGNED | 2 |  |
+| STATUS_DISPATCH_UPDATED | 3 |  |
+| STATUS_DISPATCH_UNIT_ASSIGNED | 4 |  |
+| STATUS_DISPATCH_UNIT_UNASSIGNED | 5 |  |
+| STATUS_DISPATCH_UNIT_ACCEPTED | 6 |  |
+| STATUS_DISPATCH_UNIT_DECLINED | 7 |  |
+| STATUS_DISPATCH_EN_ROUTE | 8 |  |
+| STATUS_DISPATCH_ON_SCENE | 9 |  |
+| STATUS_DISPATCH_NEED_ASSISTANCE | 10 |  |
+| STATUS_DISPATCH_COMPLETED | 11 |  |
+| STATUS_DISPATCH_CANCELLED | 12 |  |
+| STATUS_DISPATCH_ARCHIVED | 13 |  |
+
+
+
+<a name="resources-centrum-TakeDispatchResp"></a>
+
+### TakeDispatchResp
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TAKE_DISPATCH_RESP_UNSPECIFIED | 0 |  |
+| TAKE_DISPATCH_RESP_TIMEOUT | 1 |  |
+| TAKE_DISPATCH_RESP_ACCEPTED | 2 |  |
+| TAKE_DISPATCH_RESP_DECLINED | 3 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_general-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/general.proto
+
+
+
+<a name="resources-centrum-Attributes"></a>
+
+### Attributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Disponents"></a>
+
+### Disponents
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| disponents | [resources.users.UserShort](#resources-users-UserShort) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UserUnitMapping"></a>
+
+### UserUnitMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| user_id | [int32](#int32) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_units-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/units.proto
+
+
+
+<a name="resources-centrum-Unit"></a>
+
+### Unit
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| name | [string](#string) |  | @sanitize |
+| initials | [string](#string) |  | @sanitize |
+| color | [string](#string) |  |  |
+| description | [string](#string) | optional | @sanitize |
+| status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
+| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+| attributes | [Attributes](#resources-centrum-Attributes) | optional |  |
+| home_postal | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignment"></a>
+
+### UnitAssignment
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;unit_id&#34; |
+| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;user_id&#34; |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitAssignments"></a>
+
+### UnitAssignments
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-UnitStatus"></a>
+
+### UnitStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| unit_id | [uint64](#uint64) |  |  |
+| unit | [Unit](#resources-centrum-Unit) | optional |  |
+| status | [StatusUnit](#resources-centrum-StatusUnit) |  |  |
+| reason | [string](#string) | optional | @sanitize |
+| code | [string](#string) | optional | @sanitize |
+| user_id | [int32](#int32) | optional |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| x | [double](#double) | optional |  |
+| y | [double](#double) | optional |  |
+| postal | [string](#string) | optional | @sanitize |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-StatusUnit"></a>
+
+### StatusUnit
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| STATUS_UNIT_UNSPECIFIED | 0 |  |
+| STATUS_UNIT_UNKNOWN | 1 |  |
+| STATUS_UNIT_USER_ADDED | 2 |  |
+| STATUS_UNIT_USER_REMOVED | 3 |  |
+| STATUS_UNIT_UNAVAILABLE | 4 |  |
+| STATUS_UNIT_AVAILABLE | 5 |  |
+| STATUS_UNIT_ON_BREAK | 6 |  |
+| STATUS_UNIT_BUSY | 7 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_status | [string](#string) | repeated |  |
+| dispatch_status | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| timings | [Timings](#resources-centrum-Timings) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_max_wait | [int64](#int64) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CENTRUM_MODE_UNSPECIFIED | 0 |  |
+| CENTRUM_MODE_MANUAL | 1 |  |
+| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
+| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
+| CENTRUM_MODE_SIMPLIFIED | 4 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_filestore_file-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/filestore/file.proto
+
+
+
+<a name="resources-filestore-File"></a>
+
+### File
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| url | [string](#string) | optional |  |
+| data | [bytes](#bytes) |  |  |
+| delete | [bool](#bool) | optional |  |
+| content_type | [string](#string) | optional |  |
+| extension | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-filestore-FileInfo"></a>
+
+### FileInfo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| last_modified | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| size | [int64](#int64) |  |  |
+| content_type | [string](#string) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_qualifications_exam-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/exam.proto
+
+
+
+<a name="resources-qualifications-ExamQuestion"></a>
+
+### ExamQuestion
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| separator | [bool](#bool) |  |  |
+| yesno | [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo) |  |  |
+| free_text | [ExamQuestionText](#resources-qualifications-ExamQuestionText) |  |  |
+| multiple_choice | [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionChoices"></a>
+
+### ExamQuestionChoices
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| multi | [bool](#bool) |  |  |
+| limit | [int32](#int32) | optional |  |
+| choices | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionText"></a>
+
+### ExamQuestionText
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| min_length | [int32](#int32) |  |  |
+| max_length | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionYesNo"></a>
+
+### ExamQuestionYesNo
+
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestions"></a>
+
+### ExamQuestions
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data | [ExamQuestion](#resources-qualifications-ExamQuestion) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponse"></a>
+
+### ExamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| separator | [bool](#bool) |  |  |
+| yesno | [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo) |  |  |
+| free_text | [ExamResponseText](#resources-qualifications-ExamResponseText) |  |  |
+| multiple_choice | [ExamResponseChoices](#resources-qualifications-ExamResponseChoices) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseChoices"></a>
+
+### ExamResponseChoices
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| choices | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseText"></a>
+
+### ExamResponseText
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| text | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseYesNo"></a>
+
+### ExamResponseYesNo
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponses"></a>
+
+### ExamResponses
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| data | [ExamResponse](#resources-qualifications-ExamResponse) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamSettings"></a>
+
+### ExamSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationExam"></a>
+
+### QualificationExam
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| questions | [ExamQuestions](#resources-qualifications-ExamQuestions) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationExamResponse"></a>
+
+### QualificationExamResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| ended_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| responses | [ExamResponses](#resources-qualifications-ExamResponses) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_qualifications_qualifications-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/qualifications.proto
+
+
+
+<a name="resources-qualifications-Qualification"></a>
+
+### Qualification
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| weight | [uint32](#uint32) |  |  |
+| closed | [bool](#bool) |  |  |
+| abbreviation | [string](#string) |  | @sanitize: method=StripTags |
+| title | [string](#string) |  | @sanitize |
+| description | [string](#string) | optional | @sanitize: method=StripTags |
+| content | [string](#string) |  | @sanitize |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+| access | [QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
+| requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
+| discord_settings | [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings) | optional |  |
+| result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
+| request | [QualificationRequest](#resources-qualifications-QualificationRequest) | optional |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationAccess"></a>
+
+### QualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationDiscordSettings"></a>
+
+### QualificationDiscordSettings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| sync_enabled | [bool](#bool) |  |  |
+| role_name | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationJobAccess"></a>
+
+### QualificationJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationRequest"></a>
+
+### QualificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;user&#34; |
+| user_comment | [string](#string) | optional | @sanitize: method=StripTags |
+| status | [RequestStatus](#resources-qualifications-RequestStatus) | optional |  |
+| approved_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| approver_comment | [string](#string) | optional | @sanitize: method=StripTags |
+| approver_id | [int32](#int32) | optional |  |
+| approver | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;approver&#34; |
+| approver_job | [string](#string) | optional |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationRequirement"></a>
+
+### QualificationRequirement
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| target_qualification_id | [uint64](#uint64) |  |  |
+| target_qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional | @gotags: alias:&#34;targetqualification.*&#34; |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationResult"></a>
+
+### QualificationResult
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;user&#34; |
+| status | [ResultStatus](#resources-qualifications-ResultStatus) |  |  |
+| score | [uint32](#uint32) | optional |  |
+| summary | [string](#string) |  | @sanitize: method=StripTags |
+| creator_id | [int32](#int32) |  |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationShort"></a>
+
+### QualificationShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| weight | [uint32](#uint32) |  |  |
+| closed | [bool](#bool) |  |  |
+| abbreviation | [string](#string) |  | @sanitize: method=StripTags |
+| title | [string](#string) |  | @sanitize |
+| description | [string](#string) | optional | @sanitize: method=StripTags |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+| creator_job | [string](#string) |  |  |
+| requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
+| result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-qualifications-AccessLevel"></a>
+
+### AccessLevel
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_BLOCKED | 1 |  |
+| ACCESS_LEVEL_VIEW | 2 |  |
+| ACCESS_LEVEL_REQUEST | 3 |  |
+| ACCESS_LEVEL_TAKE | 4 |  |
+| ACCESS_LEVEL_GRADE | 5 |  |
+| ACCESS_LEVEL_MANAGE | 6 |  |
+| ACCESS_LEVEL_EDIT | 7 |  |
+
+
+
+<a name="resources-qualifications-AccessLevelUpdateMode"></a>
+
+### AccessLevelUpdateMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED | 0 |  |
+| ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
+| ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
+| ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
+
+
+
+<a name="resources-qualifications-RequestStatus"></a>
+
+### RequestStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| REQUEST_STATUS_UNSPECIFIED | 0 |  |
+| REQUEST_STATUS_PENDING | 1 |  |
+| REQUEST_STATUS_DENIED | 2 |  |
+| REQUEST_STATUS_ACCEPTED | 3 |  |
+| REQUEST_STATUS_COMPLETED | 4 |  |
+
+
+
+<a name="resources-qualifications-ResultStatus"></a>
+
+### ResultStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| RESULT_STATUS_UNSPECIFIED | 0 |  |
+| RESULT_STATUS_PENDING | 1 |  |
+| RESULT_STATUS_FAILED | 2 |  |
+| RESULT_STATUS_SUCCESSFUL | 3 |  |
+
 
  
 
@@ -6552,6 +6552,7 @@ Templates ==================================================================
 | types | [resources.jobs.ConductType](#resources-jobs-ConductType) | repeated | Search params |
 | show_expired | [bool](#bool) | optional |  |
 | user_ids | [int32](#int32) | repeated |  |
+| ids | [uint64](#uint64) | repeated |  |
 
 
 
@@ -7288,424 +7289,6 @@ Templates ==================================================================
 
 
 
-<a name="services_qualifications_qualifications-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/qualifications/qualifications.proto
-
-
-
-<a name="services-qualifications-CreateOrUpdateQualificationRequestRequest"></a>
-
-### CreateOrUpdateQualificationRequestRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| request | [resources.qualifications.QualificationRequest](#resources-qualifications-QualificationRequest) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-CreateOrUpdateQualificationRequestResponse"></a>
-
-### CreateOrUpdateQualificationRequestResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| request | [resources.qualifications.QualificationRequest](#resources-qualifications-QualificationRequest) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-CreateOrUpdateQualificationResultRequest"></a>
-
-### CreateOrUpdateQualificationResultRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| result | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-CreateOrUpdateQualificationResultResponse"></a>
-
-### CreateOrUpdateQualificationResultResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| result | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-CreateQualificationRequest"></a>
-
-### CreateQualificationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification | [resources.qualifications.Qualification](#resources-qualifications-Qualification) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-CreateQualificationResponse"></a>
-
-### CreateQualificationResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-DeleteQualificationReqRequest"></a>
-
-### DeleteQualificationReqRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-DeleteQualificationReqResponse"></a>
-
-### DeleteQualificationReqResponse
-
-
-
-
-
-
-
-<a name="services-qualifications-DeleteQualificationRequest"></a>
-
-### DeleteQualificationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-DeleteQualificationResponse"></a>
-
-### DeleteQualificationResponse
-
-
-
-
-
-
-
-<a name="services-qualifications-DeleteQualificationResultRequest"></a>
-
-### DeleteQualificationResultRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| result_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-DeleteQualificationResultResponse"></a>
-
-### DeleteQualificationResultResponse
-
-
-
-
-
-
-
-<a name="services-qualifications-GetQualificationAccessRequest"></a>
-
-### GetQualificationAccessRequest
-Access =====================================================================
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-GetQualificationAccessResponse"></a>
-
-### GetQualificationAccessResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| access | [resources.qualifications.QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-GetQualificationRequest"></a>
-
-### GetQualificationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-GetQualificationResponse"></a>
-
-### GetQualificationResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification | [resources.qualifications.Qualification](#resources-qualifications-Qualification) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-ListQualificationRequestsRequest"></a>
-
-### ListQualificationRequestsRequest
-Requests ===================================================================
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| qualification_id | [uint64](#uint64) | optional | Search params |
-| status | [resources.qualifications.RequestStatus](#resources-qualifications-RequestStatus) | repeated |  |
-
-
-
-
-
-
-<a name="services-qualifications-ListQualificationRequestsResponse"></a>
-
-### ListQualificationRequestsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| requests | [resources.qualifications.QualificationRequest](#resources-qualifications-QualificationRequest) | repeated |  |
-
-
-
-
-
-
-<a name="services-qualifications-ListQualificationsRequest"></a>
-
-### ListQualificationsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| search | [string](#string) | optional | Search params |
-
-
-
-
-
-
-<a name="services-qualifications-ListQualificationsResponse"></a>
-
-### ListQualificationsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| qualifications | [resources.qualifications.Qualification](#resources-qualifications-Qualification) | repeated |  |
-
-
-
-
-
-
-<a name="services-qualifications-ListQualificationsResultsRequest"></a>
-
-### ListQualificationsResultsRequest
-Results ====================================================================
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| qualification_id | [uint64](#uint64) | optional | Search params |
-| status | [resources.qualifications.ResultStatus](#resources-qualifications-ResultStatus) | repeated |  |
-| user_id | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-qualifications-ListQualificationsResultsResponse"></a>
-
-### ListQualificationsResultsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| results | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) | repeated |  |
-
-
-
-
-
-
-<a name="services-qualifications-SetQualificationAccessRequest"></a>
-
-### SetQualificationAccessRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-| mode | [resources.qualifications.AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode) |  |  |
-| access | [resources.qualifications.QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-SetQualificationAccessResponse"></a>
-
-### SetQualificationAccessResponse
-
-
-
-
-
-
-
-<a name="services-qualifications-UpdateQualificationRequest"></a>
-
-### UpdateQualificationRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification | [resources.qualifications.Qualification](#resources-qualifications-Qualification) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-UpdateQualificationResponse"></a>
-
-### UpdateQualificationResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-qualifications-QualificationsService"></a>
-
-### QualificationsService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListQualifications | [ListQualificationsRequest](#services-qualifications-ListQualificationsRequest) | [ListQualificationsResponse](#services-qualifications-ListQualificationsResponse) | @perm |
-| GetQualification | [GetQualificationRequest](#services-qualifications-GetQualificationRequest) | [GetQualificationResponse](#services-qualifications-GetQualificationResponse) | @perm |
-| CreateQualification | [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest) | [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse) | @perm |
-| UpdateQualification | [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest) | [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
-| DeleteQualification | [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest) | [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
-| ListQualificationRequests | [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse) | @perm: Name=GetQualification |
-| CreateOrUpdateQualificationRequest | [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse) | @perm: Name=GetQualification |
-| DeleteQualificationReq | [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse) | @perm |
-| ListQualificationsResults | [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse) | @perm: Name=GetQualification |
-| CreateOrUpdateQualificationResult | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm |
-| DeleteQualificationResult | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm |
-
- 
-
-
-
 <a name="services_rector_config-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -8417,6 +8000,425 @@ Results ====================================================================
 | GetPermissions | [GetPermissionsRequest](#services-rector-GetPermissionsRequest) | [GetPermissionsResponse](#services-rector-GetPermissionsResponse) | @perm: Name=GetRoles |
 | ViewAuditLog | [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse) | @perm |
 | UpdateRoleLimits | [UpdateRoleLimitsRequest](#services-rector-UpdateRoleLimitsRequest) | [UpdateRoleLimitsResponse](#services-rector-UpdateRoleLimitsResponse) | @perm: Name=SuperUser |
+
+ 
+
+
+
+<a name="services_qualifications_qualifications-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/qualifications/qualifications.proto
+
+
+
+<a name="services-qualifications-CreateOrUpdateQualificationRequestRequest"></a>
+
+### CreateOrUpdateQualificationRequestRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| request | [resources.qualifications.QualificationRequest](#resources-qualifications-QualificationRequest) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-CreateOrUpdateQualificationRequestResponse"></a>
+
+### CreateOrUpdateQualificationRequestResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| request | [resources.qualifications.QualificationRequest](#resources-qualifications-QualificationRequest) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-CreateOrUpdateQualificationResultRequest"></a>
+
+### CreateOrUpdateQualificationResultRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| result | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-CreateOrUpdateQualificationResultResponse"></a>
+
+### CreateOrUpdateQualificationResultResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| result | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-CreateQualificationRequest"></a>
+
+### CreateQualificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification | [resources.qualifications.Qualification](#resources-qualifications-Qualification) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-CreateQualificationResponse"></a>
+
+### CreateQualificationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-DeleteQualificationReqRequest"></a>
+
+### DeleteQualificationReqRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-DeleteQualificationReqResponse"></a>
+
+### DeleteQualificationReqResponse
+
+
+
+
+
+
+
+<a name="services-qualifications-DeleteQualificationRequest"></a>
+
+### DeleteQualificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-DeleteQualificationResponse"></a>
+
+### DeleteQualificationResponse
+
+
+
+
+
+
+
+<a name="services-qualifications-DeleteQualificationResultRequest"></a>
+
+### DeleteQualificationResultRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| result_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-DeleteQualificationResultResponse"></a>
+
+### DeleteQualificationResultResponse
+
+
+
+
+
+
+
+<a name="services-qualifications-GetQualificationAccessRequest"></a>
+
+### GetQualificationAccessRequest
+Access =====================================================================
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-GetQualificationAccessResponse"></a>
+
+### GetQualificationAccessResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| access | [resources.qualifications.QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-GetQualificationRequest"></a>
+
+### GetQualificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-GetQualificationResponse"></a>
+
+### GetQualificationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification | [resources.qualifications.Qualification](#resources-qualifications-Qualification) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-ListQualificationRequestsRequest"></a>
+
+### ListQualificationRequestsRequest
+Requests ===================================================================
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| qualification_id | [uint64](#uint64) | optional | Search params |
+| status | [resources.qualifications.RequestStatus](#resources-qualifications-RequestStatus) | repeated |  |
+| user_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-qualifications-ListQualificationRequestsResponse"></a>
+
+### ListQualificationRequestsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| requests | [resources.qualifications.QualificationRequest](#resources-qualifications-QualificationRequest) | repeated |  |
+
+
+
+
+
+
+<a name="services-qualifications-ListQualificationsRequest"></a>
+
+### ListQualificationsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| search | [string](#string) | optional | Search params |
+
+
+
+
+
+
+<a name="services-qualifications-ListQualificationsResponse"></a>
+
+### ListQualificationsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| qualifications | [resources.qualifications.Qualification](#resources-qualifications-Qualification) | repeated |  |
+
+
+
+
+
+
+<a name="services-qualifications-ListQualificationsResultsRequest"></a>
+
+### ListQualificationsResultsRequest
+Results ====================================================================
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| qualification_id | [uint64](#uint64) | optional | Search params |
+| status | [resources.qualifications.ResultStatus](#resources-qualifications-ResultStatus) | repeated |  |
+| user_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-qualifications-ListQualificationsResultsResponse"></a>
+
+### ListQualificationsResultsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| results | [resources.qualifications.QualificationResult](#resources-qualifications-QualificationResult) | repeated |  |
+
+
+
+
+
+
+<a name="services-qualifications-SetQualificationAccessRequest"></a>
+
+### SetQualificationAccessRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+| mode | [resources.qualifications.AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode) |  |  |
+| access | [resources.qualifications.QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-SetQualificationAccessResponse"></a>
+
+### SetQualificationAccessResponse
+
+
+
+
+
+
+
+<a name="services-qualifications-UpdateQualificationRequest"></a>
+
+### UpdateQualificationRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification | [resources.qualifications.Qualification](#resources-qualifications-Qualification) |  |  |
+
+
+
+
+
+
+<a name="services-qualifications-UpdateQualificationResponse"></a>
+
+### UpdateQualificationResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-qualifications-QualificationsService"></a>
+
+### QualificationsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListQualifications | [ListQualificationsRequest](#services-qualifications-ListQualificationsRequest) | [ListQualificationsResponse](#services-qualifications-ListQualificationsResponse) | @perm |
+| GetQualification | [GetQualificationRequest](#services-qualifications-GetQualificationRequest) | [GetQualificationResponse](#services-qualifications-GetQualificationResponse) | @perm |
+| CreateQualification | [CreateQualificationRequest](#services-qualifications-CreateQualificationRequest) | [CreateQualificationResponse](#services-qualifications-CreateQualificationResponse) | @perm |
+| UpdateQualification | [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest) | [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
+| DeleteQualification | [DeleteQualificationRequest](#services-qualifications-DeleteQualificationRequest) | [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
+| ListQualificationRequests | [ListQualificationRequestsRequest](#services-qualifications-ListQualificationRequestsRequest) | [ListQualificationRequestsResponse](#services-qualifications-ListQualificationRequestsResponse) | @perm: Name=GetQualification |
+| CreateOrUpdateQualificationRequest | [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest) | [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse) | @perm: Name=GetQualification |
+| DeleteQualificationReq | [DeleteQualificationReqRequest](#services-qualifications-DeleteQualificationReqRequest) | [DeleteQualificationReqResponse](#services-qualifications-DeleteQualificationReqResponse) | @perm |
+| ListQualificationsResults | [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse) | @perm: Name=GetQualification |
+| CreateOrUpdateQualificationResult | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm |
+| DeleteQualificationResult | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm |
 
  
 

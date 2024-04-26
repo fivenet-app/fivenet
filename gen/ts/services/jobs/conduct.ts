@@ -39,6 +39,10 @@ export interface ListConductEntriesRequest {
      * @generated from protobuf field: repeated int32 user_ids = 4;
      */
     userIds: number[];
+    /**
+     * @generated from protobuf field: repeated uint64 ids = 5 [jstype = JS_STRING];
+     */
+    ids: string[];
 }
 /**
  * @generated from protobuf message services.jobs.ListConductEntriesResponse
@@ -110,13 +114,15 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
             { no: 3, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesRequest>): ListConductEntriesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.types = [];
         message.userIds = [];
+        message.ids = [];
         if (value !== undefined)
             reflectionMergePartial<ListConductEntriesRequest>(this, message, value);
         return message;
@@ -145,6 +151,13 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
+                    break;
+                case /* repeated uint64 ids = 5 [jstype = JS_STRING];*/ 5:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.ids.push(reader.uint64().toString());
+                    else
+                        message.ids.push(reader.uint64().toString());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -176,6 +189,13 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
             writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        /* repeated uint64 ids = 5 [jstype = JS_STRING]; */
+        if (message.ids.length) {
+            writer.tag(5, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.ids.length; i++)
+                writer.uint64(message.ids[i]);
             writer.join();
         }
         let u = options.writeUnknownFields;
