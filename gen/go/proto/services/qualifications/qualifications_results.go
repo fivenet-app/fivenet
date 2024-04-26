@@ -31,6 +31,8 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.user_id", int64(*req.UserId)))
 	}
 
+	// TODO add condition for req.UserId
+
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tQuali := tQuali.AS("qualificationshort")

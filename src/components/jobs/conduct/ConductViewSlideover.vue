@@ -4,6 +4,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBadgeColor } from './helpers';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 
 defineProps<{
     entry: ConductEntry & { creator?: { value: Colleague } };
@@ -27,9 +28,12 @@ const { isOpen } = useSlideover();
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ $t('common.entry') }}
-                    </h3>
+                    <div class="inline-flex items-center">
+                        <IDCopyBadge :id="entry.id" class="mx-2" prefix="CON" />
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ $t('common.entry') }}
+                        </h3>
+                    </div>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                 </div>

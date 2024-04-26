@@ -29,6 +29,11 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 	if req.QualificationId != nil {
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.id", int64(*req.QualificationId)))
 	}
+	if req.UserId != nil {
+		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.user_id", int64(*req.UserId)))
+	}
+
+	// TODO add condition for req.UserId
 
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 

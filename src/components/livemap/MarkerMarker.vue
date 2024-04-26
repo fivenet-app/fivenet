@@ -48,7 +48,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
                     markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i === marker.data?.data.icon.icon) ??
                     'i-mdi-map-marker-question'
                 "
-                class="h-auto w-full"
+                class="h-full w-full"
                 :style="{ color: marker.info?.color ?? 'currentColor' }"
             />
         </LIcon>
@@ -58,7 +58,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <UIcon name="i-mdi-map-marker-question" :fill="marker.info?.color ?? 'currentColor'" class="h-auto w-full" />
+            <UIcon name="i-mdi-map-marker-question" :fill="marker.info?.color ?? 'currentColor'" />
         </LIcon>
 
         <MarkerMarkerPopup :marker="marker" />

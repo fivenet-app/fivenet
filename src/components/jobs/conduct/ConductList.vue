@@ -29,7 +29,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const schema = z.object({
-    id: z.union([z.string().optional(), z.coerce.number().min(1).max(999_999_999)]),
+    id: z.string().max(16).optional(),
     types: z.nativeEnum(ConductType).array().max(10),
     showExpired: z.boolean(),
     user: z.custom<User>().optional(),
@@ -62,6 +62,14 @@ const {
 );
 
 async function listConductEntries(): Promise<ListConductEntriesResponse> {
+    const entryIds = [];
+    if (query.id) {
+        const id = query.id.trim().replaceAll('-', '').replace(/\D/g, '');
+        if (id.length > 0) {
+            entryIds.push(id);
+        }
+    }
+
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
     try {
         const call = $grpc.getJobsConductClient().listConductEntries({
@@ -71,7 +79,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
             types: query.types,
             userIds: userIds,
             showExpired: query.showExpired,
-            ids: query.id ? [query.id.toString()] : [],
+            ids: entryIds,
         });
         const { response } = await call;
 

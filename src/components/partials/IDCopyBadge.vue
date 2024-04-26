@@ -8,7 +8,7 @@ const notifications = useNotificatorStore();
 const props = withDefaults(
     defineProps<{
         id: string | number | string;
-        prefix: string;
+        prefix?: string;
         title?: TranslateItem;
         content?: TranslateItem;
         action?: (id: string | number | string) => void;
@@ -29,7 +29,7 @@ const props = withDefaults(
 );
 
 function copyDocumentIDToClipboard(): void {
-    copyToClipboardWrapper(props.prefix + '-' + props.id);
+    copyToClipboardWrapper(props.prefix ? props.prefix + '-' + props.id : props.id.toString());
 
     if (props.title && props.content) {
         notifications.add({
@@ -60,6 +60,6 @@ function click(): void {
         class="break-keep"
         @click="click"
     >
-        {{ prefix }}-{{ id }}
+        <template v-if="prefix">{{ prefix }}-</template>{{ id }}
     </UButton>
 </template>

@@ -8,14 +8,12 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 import UnitAttributes from '../partials/UnitAttributes.vue';
 import { useLivemapStore } from '~/store/livemap';
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 
 const props = defineProps<{
     unit: Unit;
     statusSelected?: StatusUnit;
 }>();
 
-const slideover = useSlideover();
 const { isOpen } = useSlideover();
 
 const { goto } = useLivemapStore();
