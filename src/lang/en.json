@@ -1976,7 +1976,8 @@
             "ErrRequirementsMissing": {
                 "title": "Missing required Qualifications",
                 "content": "You are missing required qualifications."
-            }
+            },
+            "ErrQualificationClosed": "Can't request or take a closed qualification!"
         }
     },
     "system": {

@@ -205,6 +205,17 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+
+	quali, err := s.getQualification(ctx, req.Request.QualificationId, nil, userInfo, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	// If the qualification is closed and user is not a grade tutor
+	if !canGrade && quali.Closed {
+		return nil, errorsqualifications.ErrQualificationClosed
+	}
+
 	// If user can grade a qualification, they are treated as an "approver" of requests
 	if canGrade && req.Request.UserId > 0 {
 		stmt := tQualiRequests.
