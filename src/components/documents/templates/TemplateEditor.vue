@@ -349,7 +349,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             },
             contentAccess: reqAccess,
             jobAccess: jobAccesses,
-            category: selectedCategory.value,
+            category: state.category,
             creatorJob: '',
         },
     };
@@ -390,7 +390,6 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
 
 const entriesCategories = ref<Category[]>([]);
 const queryCategories = ref('');
-const selectedCategory = ref<Category | undefined>(undefined);
 
 watchDebounced(queryCategories, () => findCategories(), {
     debounce: 200,
