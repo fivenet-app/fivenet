@@ -122,8 +122,7 @@ async function updateUtStatus(id: string, status?: StatusUnit): Promise<void> {
 
 const open = ref(false);
 
-// Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
-watch(getOwnUnit, async () => {
+async function toggleSidebarBasedOnUnit(): Promise<void> {
     if (getOwnUnit.value !== undefined) {
         // User has joined an unit
         open.value = true;
@@ -141,7 +140,10 @@ watch(getOwnUnit, async () => {
         open.value = false;
         slideover.close();
     }
-});
+}
+
+// Show unit sidebar when ownUnit is set/updated, otherwise it will be hidden (automagically)
+watch(getOwnUnit, toggleSidebarBasedOnUnit);
 
 watch(open, async () => {
     if (open.value === true && getOwnUnit.value === undefined) {
@@ -223,10 +225,11 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
     maxWait: 200,
 });
 
-onBeforeMount(() => {
+onBeforeMount(async () => {
     if (canStream) {
         useIntervalFn(() => checkup(), 1 * 60 * 1000);
         useTimeoutFn(async () => startStream(), 550);
+        toggleSidebarBasedOnUnit()
     }
 });
 
