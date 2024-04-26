@@ -1,3 +1,4 @@
+import { type BadgeColor } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import {
@@ -93,6 +94,18 @@ function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShor
     return false;
 }
 
+export function requestStatusToBadgeColor(status: RequestStatus): BadgeColor {
+    switch (status) {
+        case RequestStatus.ACCEPTED:
+        case RequestStatus.COMPLETED:
+            return 'green';
+        case RequestStatus.DENIED:
+            return 'red';
+        default:
+            return 'primary';
+    }
+}
+
 export function requestStatusToTextColor(status: RequestStatus): string {
     switch (status) {
         case RequestStatus.ACCEPTED:
@@ -102,6 +115,17 @@ export function requestStatusToTextColor(status: RequestStatus): string {
             return 'text-error-400';
         default:
             return 'text-info-400';
+    }
+}
+
+export function resultStatusToBadgeColor(status: ResultStatus): BadgeColor {
+    switch (status) {
+        case ResultStatus.FAILED:
+            return 'red';
+        case ResultStatus.SUCCESSFUL:
+            return 'green';
+        default:
+            return 'primary';
     }
 }
 

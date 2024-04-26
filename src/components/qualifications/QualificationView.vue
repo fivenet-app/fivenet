@@ -6,7 +6,14 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { checkQualificationAccess, requirementsFullfilled } from '~/components/qualifications/helpers';
+import {
+    checkQualificationAccess,
+    requestStatusToBadgeColor,
+    requestStatusToTextColor,
+    requirementsFullfilled,
+    resultStatusToBadgeColor,
+    resultStatusToTextColor,
+} from '~/components/qualifications/helpers';
 import QualificationRequestUserModal from '~/components/qualifications/QualificationRequestUserModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
@@ -113,7 +120,7 @@ const accordionItems = computed(() =>
                         <UButton
                             v-if="false || canDo.take"
                             icon="i-mdi-test-tube"
-                            :disabled="!requirementsFullfilled(qualification.requirements)"
+                            :disabled="qualification.closed || !requirementsFullfilled(qualification.requirements)"
                             @click="
                                 modal.open(QualificationRequestUserModal, {
                                     qualificationId: qualification!.id,
@@ -127,6 +134,7 @@ const accordionItems = computed(() =>
                         <UButton
                             v-else-if="canDo.request"
                             :disabled="
+                                qualification.closed ||
                                 !requirementsFullfilled(qualification.requirements) ||
                                 qualification.request?.status === RequestStatus.PENDING ||
                                 qualification.request?.status === RequestStatus.ACCEPTED
@@ -195,14 +203,24 @@ const accordionItems = computed(() =>
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="qualification.result?.status" class="inline-flex gap-1" size="md">
+                    <UBadge
+                        v-if="qualification.result?.status"
+                        :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
+                        class="inline-flex gap-1"
+                        size="md"
+                    >
                         <UIcon name="i-mdi-list-status" class="size-5" />
                         <span>
                             {{ $t('common.result') }}:
                             {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`) }}
                         </span>
                     </UBadge>
-                    <UBadge v-else-if="qualification.request?.status" class="inline-flex gap-1" size="md">
+                    <UBadge
+                        v-else-if="qualification.request?.status"
+                        :color="requestStatusToBadgeColor(qualification.request?.status ?? 0)"
+                        class="inline-flex gap-1"
+                        size="md"
+                    >
                         <UIcon name="i-mdi-mail" class="size-5" />
                         <span>
                             {{ $t('common.request') }}:
@@ -327,11 +345,13 @@ const accordionItems = computed(() =>
                             <div class="flex flex-col gap-1">
                                 <div>
                                     <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                    {{
-                                        $t(
-                                            `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
-                                        )
-                                    }}
+                                    <span :class="requestStatusToTextColor(qualification.request?.status ?? 0)">
+                                        {{
+                                            $t(
+                                                `enums.qualifications.RequestStatus.${RequestStatus[qualification.request?.status ?? 0]}`,
+                                            )
+                                        }}
+                                    </span>
                                 </div>
 
                                 <div>
@@ -361,11 +381,13 @@ const accordionItems = computed(() =>
                             <div class="flex flex-col gap-1">
                                 <div>
                                     <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                    {{
-                                        $t(
-                                            `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
-                                        )
-                                    }}
+                                    <span :class="resultStatusToTextColor(qualification.result?.status ?? 0)">
+                                        {{
+                                            $t(
+                                                `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
+                                            )
+                                        }}
+                                    </span>
                                 </div>
                                 <div>
                                     <span class="font-semibold">{{ $t('common.score') }}:</span>
