@@ -251,7 +251,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         />
 
                                         <template #panel="{ close }">
-                                            <DatePickerClient v-model="state.expiresAt" @close="close" />
+                                            <DatePickerClient v-model="state.expiresAt" clearable @close="close" />
                                         </template>
                                     </UPopover>
                                 </UFormGroup>

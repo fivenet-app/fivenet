@@ -182,7 +182,7 @@ const columns = [
                             />
 
                             <template #panel="{ close }">
-                                <DatePickerClient v-model="query.from" @close="close" />
+                                <DatePickerClient v-model="query.from" clearable @close="close" />
                             </template>
                         </UPopover>
                     </UFormGroup>
@@ -198,7 +198,7 @@ const columns = [
                             />
 
                             <template #panel="{ close }">
-                                <DatePickerClient v-model="query.to" @close="close" />
+                                <DatePickerClient v-model="query.to" clearable @close="close" />
                             </template>
                         </UPopover>
                     </UFormGroup>

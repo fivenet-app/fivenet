@@ -41,6 +41,7 @@ func New(p Params) *Routes {
 		providers[i] = &ProviderConfig{
 			Name:  p.Name,
 			Label: p.Label,
+			Icon:  p.Icon,
 		}
 	}
 

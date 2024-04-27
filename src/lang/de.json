@@ -116,12 +116,12 @@
             "copy_error": "Fehlerbericht kopieren"
         },
         "qualifications": {
-            "title": "Qualifikationen",
+            "title": "Qualifizierungen",
             "single": {
                 "title": "Qualifizierung"
             },
             "edit": {
-                "title": "Qualifikation bearbeiten"
+                "title": "Qualifizierung bearbeiten"
             }
         },
         "auth": {
@@ -427,7 +427,8 @@
         "timings": "Zeitangaben",
         "stats": "Statistik",
         "tutor": "Tutor",
-        "approved_by": "Genehmigt von"
+        "approved_by": "Genehmigt von",
+        "clear": "Löschen"
     },
     "components": {
         "partials": {
@@ -855,13 +856,13 @@
             }
         },
         "qualifications": {
-            "create_new_qualification": "Erstelle neue Qualifikation",
-            "user_qualifications": "Ihre Qualifikationen",
-            "all_qualifications": "Alle Qualifikationen",
-            "user_requests": "Angefragte Qualifikationen",
+            "create_new_qualification": "Erstelle neue Qualifizierungen",
+            "user_qualifications": "Ihre Qualifizierungen",
+            "all_qualifications": "Alle Qualifizierungen",
+            "user_requests": "Angefragte Qualifizierungen",
             "take_test": "Prüfung ablegen",
             "request_modal": {
-                "title": "Qualifikation anfragen"
+                "title": "Qualifizierung anfragen"
             },
             "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde."
         },
@@ -883,7 +884,8 @@
                 "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
                 "title": "Anmeldung",
                 "forgot_password": "Passwort vergessen",
-                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden."
+                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden.",
+                "login_with": "Anmelden mit {0}"
             },
             "ChangePasswordModal": {
                 "change_password": "Passwort ändern",
@@ -1782,25 +1784,25 @@
             }
         },
         "QualificationsService": {
-            "category": "Qualifikationen",
+            "category": "Qualifizierungen",
             "CreateOrUpdateQualificationRequest": {
-                "description": "Erstellen und aktualisieren von Qualifikationsanfragen"
+                "description": "Erstellen und aktualisieren von Qualifizierungsanfragen"
             },
             "ListQualifications": {
-                "key": "Auflisten von Qualifikationen",
-                "description": "Auflisten verfügbarer Qualifikationen"
+                "key": "Auflisten von Qualifizierungen",
+                "description": "Auflisten verfügbarer Qualifizierungen"
             },
             "GetQualification": {
-                "key": "Qualifikation aufrufen",
-                "description": "Rufe Qualifikationsinformationen"
+                "key": "Qualifizierung aufrufen",
+                "description": "Rufe Qualifizierungsinformationen ab"
             },
             "CreateQualification": {
-                "key": "Qualifikationen erstellen",
-                "description": "Erstelle Qualifikationen"
+                "key": "Qualifizierungen erstellen",
+                "description": "Erstelle Qualifizierungen"
             },
             "UpdateQualification": {
-                "key": "Qualifikation aktualisieren",
-                "description": "Aktualisiere Qualifikationen",
+                "key": "Qualifizierung aktualisieren",
+                "description": "Aktualisiere Qualifizierungen",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1808,12 +1810,12 @@
                     "Any": "Egal"
                 },
                 "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Qualifikationen"
+                    "Access": "Zugriff auf fraktionseigene Qualifizierungen"
                 }
             },
             "DeleteQualification": {
-                "key": "Qualifikationen löschen",
-                "description": "Lösche Qualifikationen",
+                "key": "Qualifizierungen löschen",
+                "description": "Lösche Qualifizierungen",
                 "attrs": {
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
@@ -1821,28 +1823,28 @@
                     "Any": "Egal"
                 },
                 "attrs_types": {
-                    "Access": "Zugriff auf fraktionseigene Qualifikationen"
+                    "Access": "Zugriff auf fraktionseigene Qualifizierungen"
                 }
             },
             "ListQualificationsResults": {
-                "key": "Auflisten von Qualifikationsergebnissen",
-                "description": "Auflisten von Qualifikationsergebnissen"
+                "key": "Auflisten von Qualifizierungsergebnissen",
+                "description": "Auflisten von Qualifizierungsergebnissen"
             },
             "CreateOrUpdateQualificationResult": {
-                "key": "Erstellen und aktualisieren von Qualifikationsergebnissen",
-                "description": "Erstellen und aktualisieren von Qualifikationsergebnissen"
+                "key": "Erstellen und aktualisieren von Qualifizierungsergebnissen",
+                "description": "Erstellen und aktualisieren von Qualifizierungsergebnissen"
             },
             "DeleteQualificationResult": {
-                "key": "Löschen von Qualifikationsergebnissen",
-                "description": "Löschen von Qualifikationsergebnissen"
+                "key": "Löschen von Qualifizierungsergebnissen",
+                "description": "Löschen von Qualifizierungsergebnissen"
             },
             "ListQualificationRequests": {
-                "key": "Auflisten von Qualifikationsanfragen",
-                "description": "Auflisten von Qualifikationsanfragen"
+                "key": "Auflisten von Qualifizierungsanfragen",
+                "description": "Auflisten von Qualifizierungsanfragen"
             },
             "DeleteQualificationReq": {
-                "key": "Löschen von Qualifikationsanfragen",
-                "description": "Löschen von Qualifikationsanfragen"
+                "key": "Löschen von Qualifizierungsanfragen",
+                "description": "Löschen von Qualifizierungsanfragen"
             }
         }
     },
@@ -1982,7 +1984,7 @@
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
             "ErrRequirementsMissing": {
                 "title": "Qualifizierungsanforderungen nicht erfüllt",
-                "content": "Ihnen fehlen Qualifikationen die für diese Qualifizierung benötigt sind."
+                "content": "Ihnen fehlen Qualifizierungen die für diese Qualifizierung benötigt sind."
             },
             "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!"
         }

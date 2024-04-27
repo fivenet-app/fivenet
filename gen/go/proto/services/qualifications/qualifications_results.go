@@ -168,6 +168,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 				),
 		).
 		GROUP_BY(tQualiResults.ID).
+		ORDER_BY(tQualiResults.CreatedAt.DESC()).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)

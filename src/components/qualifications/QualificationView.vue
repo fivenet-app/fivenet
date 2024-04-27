@@ -71,9 +71,9 @@ const canDo = computed(() => ({
 
 const accordionItems = computed(() =>
     [
-        qualification.value?.result && parseInt(qualification.value?.result.id) > 0
+        qualification.value?.result
             ? { slot: 'result', label: t('common.result', 1), icon: 'i-mdi-list-status', defaultOpen: true }
-            : qualification.value?.request && qualification.value?.request.userId > 0
+            : qualification.value?.request
               ? { slot: 'request', label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
               : undefined,
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
@@ -324,13 +324,15 @@ const accordionItems = computed(() =>
                     <template v-if="qualification.result" #result>
                         <UContainer>
                             <div class="flex flex-col gap-1">
-                                <div>
+                                <div class="inline-flex gap-1">
                                     <span class="font-semibold">{{ $t('common.result') }}:</span>
-                                    {{
-                                        $t(
-                                            `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
-                                        )
-                                    }}
+                                    <span :class="resultStatusToTextColor(qualification.result?.status ?? 0)">
+                                        {{
+                                            $t(
+                                                `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
+                                            )
+                                        }}
+                                    </span>
                                 </div>
                                 <div>
                                     <span class="font-semibold">{{ $t('common.summary') }}:</span>
@@ -338,7 +340,7 @@ const accordionItems = computed(() =>
                                 </div>
                                 <div>
                                     <span class="font-semibold">{{ $t('common.score') }}:</span>
-                                    {{ qualification.result?.score }}
+                                    {{ $t('common.point', qualification.result?.score ?? 0) }}
                                 </div>
                                 <div class="inline-flex gap-1">
                                     <span class="font-semibold">{{ $t('common.created_by') }}:</span>
@@ -351,7 +353,7 @@ const accordionItems = computed(() =>
                     <template v-if="qualification.request" #request>
                         <UContainer>
                             <div class="flex flex-col gap-1">
-                                <div>
+                                <div class="inline-flex gap-1">
                                     <span class="font-semibold">{{ $t('common.status') }}:</span>
                                     <span :class="requestStatusToTextColor(qualification.request?.status ?? 0)">
                                         {{
@@ -361,14 +363,13 @@ const accordionItems = computed(() =>
                                         }}
                                     </span>
                                 </div>
-
                                 <div>
                                     <span class="font-semibold">{{ $t('common.request') }} {{ $t('common.message') }}:</span>
                                     {{ qualification.request?.userComment }}
                                 </div>
                                 <div>
                                     <span class="font-semibold">{{ $t('common.comment') }}:</span>
-                                    {{ qualification.request?.approverComment }}
+                                    {{ qualification.request?.approverComment ?? $t('common.na') }}
                                 </div>
                                 <div v-if="qualification.request.approvedAt" class="inline-flex gap-1">
                                     <span class="font-semibold">{{ $t('common.approved_at') }}:</span>
@@ -379,35 +380,6 @@ const accordionItems = computed(() =>
                                 <div v-if="qualification.request.approver" class="inline-flex gap-1">
                                     <span class="font-semibold">{{ $t('common.approved_by') }}:</span>
                                     <CitizenInfoPopover :user="qualification.request?.approver" />
-                                </div>
-                            </div>
-                        </UContainer>
-                    </template>
-
-                    <template v-if="qualification.result && qualification.result.id !== '0'" #result>
-                        <UContainer>
-                            <div class="flex flex-col gap-1">
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.status') }}:</span>
-                                    <span :class="resultStatusToTextColor(qualification.result?.status ?? 0)">
-                                        {{
-                                            $t(
-                                                `enums.qualifications.ResultStatus.${ResultStatus[qualification.result?.status ?? 0]}`,
-                                            )
-                                        }}
-                                    </span>
-                                </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.score') }}:</span>
-                                    {{ qualification.result?.score }}
-                                </div>
-                                <div>
-                                    <span class="font-semibold">{{ $t('common.summary') }}:</span>
-                                    {{ qualification.result?.summary }}
-                                </div>
-                                <div class="inline-flex gap-1">
-                                    <span class="font-semibold">{{ $t('common.created_by') }}:</span>
-                                    <CitizenInfoPopover :user="qualification.result?.creator" />
                                 </div>
                             </div>
                         </UContainer>

@@ -154,6 +154,7 @@ type OAuth2Provider struct {
 	Label         string             `yaml:"label"`
 	Homepage      string             `yaml:"homepage"`
 	Type          OAuth2ProviderType `yaml:"type"`
+	Icon          *string            `yaml:"icon"`
 	DefaultAvatar string             `yaml:"defaultAvatar"`
 	RedirectURL   string             `yaml:"redirectURL"`
 	ClientID      string             `yaml:"clientID"`

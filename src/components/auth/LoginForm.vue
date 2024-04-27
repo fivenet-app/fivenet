@@ -54,7 +54,7 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
             {{ $t('components.auth.LoginForm.title') }}
         </h2>
 
-        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
             <UFormGroup name="username" :label="$t('common.username')">
                 <UInput
                     v-model="state.username"
@@ -82,25 +82,31 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
             </UButton>
         </UForm>
 
-        <div class="my-4 space-y-2">
+        <div class="space-y-2">
             <template v-if="!isNUIAvailable">
-                <p v-if="!socialLoginEnabled" class="mt-2 text-sm text-error-400">
+                <p v-if="!socialLoginEnabled" class="text-sm text-error-400">
                     {{ $t('components.auth.LoginForm.social_login_disabled') }}
                 </p>
 
                 <template v-else>
+                    <UDivider label="OR" orientation="horizontal" class="mt-2" />
+
                     <div v-for="provider in appConfig.login.providers" :key="provider.name">
-                        <UButton v-if="!socialLoginEnabled" block :disabled="!socialLoginEnabled || !canSubmit">
-                            {{ provider.label }} {{ $t('common.login') }}
-                        </UButton>
                         <UButton
-                            v-else
                             block
+                            color="white"
                             :external="true"
                             :to="`/api/oauth2/login/${provider.name}`"
-                            :disabled="!socialLoginEnabled || !canSubmit"
+                            :disabled="!canSubmit"
+                            :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
                         >
-                            {{ provider.label }} {{ $t('common.login') }}
+                            <img
+                                v-if="!provider.icon?.startsWith('i-')"
+                                :src="provider.icon"
+                                :alt="provider.name"
+                                class="size-5"
+                            />
+                            {{ $t('components.auth.LoginForm.login_with', [provider.label]) }}
                         </UButton>
                     </div>
                 </template>
@@ -123,13 +129,20 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
             @close="loginError = ''"
         />
 
-        <div class="mt-6">
-            <UButton block :disabled="!canSubmit" @click="$emit('toggle')">
+        <div class="space-y-2">
+            <UDivider orientation="horizontal" class="mb-4 mt-4" />
+
+            <UButton block color="gray" :disabled="!canSubmit" @click="$emit('toggle')">
                 {{ $t('components.auth.LoginForm.forgot_password') }}
             </UButton>
-        </div>
-        <div v-if="appConfig.login.signupEnabled" class="mt-6">
-            <UButton block :disabled="!canSubmit" :to="{ name: 'auth-registration' }">
+
+            <UButton
+                v-if="appConfig.login.signupEnabled"
+                block
+                color="gray"
+                :disabled="!canSubmit"
+                :to="{ name: 'auth-registration' }"
+            >
                 {{ $t('components.auth.LoginForm.register_account') }}
             </UButton>
         </div>

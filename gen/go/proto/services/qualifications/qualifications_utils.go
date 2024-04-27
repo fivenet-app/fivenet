@@ -43,6 +43,17 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 		}
 	}
 
+	// Select id of last result
+	wheres = append(wheres, tQualiResults.ID.IS_NULL().OR(
+		tQualiResults.ID.EQ(
+			jet.RawInt("SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = qualification.id AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
+				jet.RawArgs{
+					"#userid": userInfo.UserId,
+				},
+			),
+		),
+	))
+
 	if where != nil {
 		wheres = append(wheres, where)
 	}
@@ -135,9 +146,9 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 			),
 		).
 		ORDER_BY(
-			tQualiResults.Status.ASC(),
 			tQuali.Weight.ASC(),
 			tQuali.Abbreviation.ASC(),
+			tQualiResults.ID.DESC(),
 		)
 }
 

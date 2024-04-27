@@ -14,6 +14,10 @@ const props = defineProps({
         type: [Date, Object] as PropType<DatePickerDate | DatePickerRangeObject | null>,
         default: null,
     },
+    clearable: {
+        type: Boolean,
+        default: false,
+    },
 });
 
 const emit = defineEmits(['update:model-value', 'close']);
@@ -36,6 +40,7 @@ const attrs = {
     color: 'primary',
     'is-dark': { selector: 'html', darkClass: 'dark' },
     'first-day-of-week': 2,
+    'show-weeknumbers': true,
 };
 </script>
 
@@ -46,8 +51,24 @@ const attrs = {
         :columns="smallerThanSm ? 1 : 2"
         :rows="smallerThanSm ? 2 : 1"
         v-bind="{ ...attrs, ...$attrs }"
-    />
-    <VCalendarDatePicker v-else v-model="date" v-bind="{ ...attrs, ...$attrs }" />
+    >
+        <template v-if="clearable" #footer>
+            <div class="w-full px-4 pb-3">
+                <UButton block @click="console.log('clear')">
+                    {{ $t('common.clear') }}
+                </UButton>
+            </div>
+        </template>
+    </VCalendarDatePicker>
+    <VCalendarDatePicker v-else v-model="date" v-bind="{ ...attrs, ...$attrs }">
+        <template v-if="clearable" #footer>
+            <div class="w-full px-4 pb-3">
+                <UButton block @click="date = null">
+                    {{ $t('common.clear') }}
+                </UButton>
+            </div>
+        </template>
+    </VCalendarDatePicker>
 </template>
 
 <style>

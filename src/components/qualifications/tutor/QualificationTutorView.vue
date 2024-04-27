@@ -1,11 +1,28 @@
 <script lang="ts" setup>
+import { z } from 'zod';
 import { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import { useCompletorStore } from '~/store/completor';
 
 defineProps<{
     qualification: Qualification;
 }>();
+
+const completorStore = useCompletorStore();
+
+const schema = z.object({
+    user: z.custom<UserShort>().optional(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const query = ref<Schema>({
+    user: undefined,
+});
+
+const usersLoading = ref(false);
 
 const requests = ref<InstanceType<typeof QualificationsRequestsList> | null>(null);
 const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null);
@@ -13,6 +30,48 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
 
 <template>
     <div>
+        <UForm :schema="schema" :state="query">
+            <UFormGroup class="flex-1" name="user" :label="$t('common.search')">
+                <UInputMenu
+                    v-model="query.user"
+                    nullable
+                    :search-attributes="['firstname', 'lastname']"
+                    :placeholder="$t('common.citizen')"
+                    :searchable-placeholder="$t('common.search_field')"
+                    block
+                    trailing
+                    by="userId"
+                    :search="
+                        async (query: string): Promise<UserShort[]> => {
+                            usersLoading = true;
+                            const users = await completorStore.completeCitizens({
+                                search: query,
+                            });
+                            usersLoading = false;
+                            return users;
+                        }
+                    "
+                    @focusin="focusTablet(true)"
+                    @focusout="focusTablet(false)"
+                >
+                    <template #label>
+                        <template v-if="query.user">
+                            {{ usersToLabel([query.user]) }}
+                        </template>
+                    </template>
+                    <template #option="{ option: user }">
+                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                </UInputMenu>
+            </UFormGroup>
+        </UForm>
+
+        <UDivider />
+
         <div>
             <h2 class="text-lg text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
 

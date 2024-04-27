@@ -26,6 +26,7 @@ declare module 'vue-router' {
 export type ProviderConfig = {
     name: string;
     label: string;
+    icon?: string;
 };
 
 export type LoginConfig = {

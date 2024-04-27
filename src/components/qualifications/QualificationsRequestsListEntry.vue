@@ -3,6 +3,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { QualificationRequest, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import { requestStatusToBadgeColor } from './helpers';
 
 defineProps<{
     request: QualificationRequest;
@@ -32,7 +33,11 @@ const { activeChar } = storeToRefs(authStore);
         </div>
         <div class="flex shrink-0 items-center gap-x-2">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
-                <UBadge v-if="request.status !== undefined" class="inline-flex gap-1">
+                <UBadge
+                    v-if="request.status !== undefined"
+                    :color="requestStatusToBadgeColor(request?.status ?? 0)"
+                    class="inline-flex gap-1"
+                >
                     <UIcon name="i-mdi-list-status" class="size-5" />
                     <span>
                         {{ $t(`enums.qualifications.RequestStatus.${RequestStatus[request.status]}`) }}

@@ -45,7 +45,9 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 				tDispatchStatus.ID.EQ(
 					jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 				),
-			)))
+			),
+		),
+	)
 
 	if len(req.Status) > 0 {
 		statuses := make([]jet.Expression, len(req.Status))

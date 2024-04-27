@@ -65,7 +65,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.ForgotPassword.subtitle') }}
         </p>
 
-        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+        <UForm :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
             <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
                 <UInput
                     v-model="state.registrationToken"
@@ -95,27 +95,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
                 {{ $t('components.auth.ForgotPassword.submit_button') }}
             </UButton>
+
+            <UAlert
+                v-if="accountError"
+                class="mt-2"
+                :title="$t('components.auth.ForgotPassword.create_error')"
+                :message="getErrorMessage(accountError)"
+                color="red"
+                :close-button="{
+                    icon: 'i-mdi-window-close',
+                    color: 'gray',
+                    variant: 'link',
+                    padded: false,
+                }"
+                @close="accountError = ''"
+            />
         </UForm>
 
-        <div class="mt-6">
+        <div class="space-y-2">
+            <UDivider orientation="horizontal" class="mb-4 mt-4" />
+
             <UButton block @click="$emit('toggle')">
                 {{ $t('components.auth.ForgotPassword.back_to_login_button') }}
             </UButton>
         </div>
-
-        <UAlert
-            v-if="accountError"
-            class="mt-2"
-            :title="$t('components.auth.ForgotPassword.create_error')"
-            :message="getErrorMessage(accountError)"
-            color="red"
-            :close-button="{
-                icon: 'i-mdi-window-close',
-                color: 'gray',
-                variant: 'link',
-                padded: false,
-            }"
-            @close="accountError = ''"
-        />
     </div>
 </template>

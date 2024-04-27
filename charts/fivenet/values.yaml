@@ -141,6 +141,7 @@ fivenet:
         #- name: "discord"
         #  label: "Discord"
         #  homepage: "https://discord.com"
+        #  icon: "i-simple-icons-discord" # or a URL to an image
         #  #defaultAvatar: ""
         #  type: "discord"
         #  redirectURL: "https://localhost:3000/api/oauth2/callback/discord"

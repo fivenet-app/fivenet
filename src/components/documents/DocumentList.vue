@@ -270,7 +270,13 @@ defineShortcuts({
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePickerClient v-model="query.from" mode="dateTime" is24hr @close="close" />
+                                        <DatePickerClient
+                                            v-model="query.from"
+                                            clearable
+                                            mode="dateTime"
+                                            is24hr
+                                            @close="close"
+                                        />
                                     </template>
                                 </UPopover>
                             </UFormGroup>
@@ -286,7 +292,7 @@ defineShortcuts({
                                     />
 
                                     <template #panel="{ close }">
-                                        <DatePickerClient v-model="query.to" mode="dateTime" is24hr @close="close" />
+                                        <DatePickerClient v-model="query.to" clearable mode="dateTime" is24hr @close="close" />
                                     </template>
                                 </UPopover>
                             </UFormGroup>

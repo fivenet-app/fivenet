@@ -19,8 +19,9 @@ type LoginConfig struct {
 }
 
 type ProviderConfig struct {
-	Name  string `json:"name"`
-	Label string `json:"label"`
+	Name  string  `json:"name"`
+	Label string  `json:"label"`
+	Icon  *string `json:"icon"`
 }
 
 type Discord struct {

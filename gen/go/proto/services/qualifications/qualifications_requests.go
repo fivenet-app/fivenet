@@ -170,6 +170,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 				),
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
+		ORDER_BY(tQualiResults.CreatedAt.DESC()).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
@@ -371,6 +372,7 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 			),
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
+		ORDER_BY(tQualiRequests.CreatedAt.DESC()).
 		WHERE(jet.AND(
 			tQualiRequests.QualificationID.EQ(jet.Uint64(qualificationId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),

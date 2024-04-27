@@ -427,7 +427,9 @@
         "timings": "Timings",
         "stats": "Stats",
         "tutor": "Tutor",
-        "approved_by": "Approved by"
+        "approved_by": "Approved by",
+        "clear": "Clear",
+        "calendar": "Calendar"
     },
     "components": {
         "partials": {
@@ -883,7 +885,8 @@
                 "login_error": "There was an error signing you in, please try again!",
                 "title": "Login",
                 "forgot_password": "Forgot Password",
-                "social_login_disabled": "Social login requires you to accept the social login cookies."
+                "social_login_disabled": "Social login requires you to accept the social login cookies.",
+                "login_with": "Login with {0}"
             },
             "ChangePasswordModal": {
                 "change_password": "Change Password",

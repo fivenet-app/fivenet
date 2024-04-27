@@ -65,7 +65,7 @@ watch(offset, async () => refresh());
         <template #header>
             <div class="flex items-center justify-between">
                 <h3 class="text-2xl font-semibold leading-6">
-                    {{ $t('components.qualifications.user_qualifications') }}
+                    {{ $t('common.qualification', 2) }}
                 </h3>
             </div>
         </template>

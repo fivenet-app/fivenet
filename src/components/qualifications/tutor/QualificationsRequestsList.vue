@@ -93,7 +93,7 @@ const columns = [
         label: t('common.citizen'),
     },
     {
-        key: 'comment',
+        key: 'userComment',
         label: t('common.comment'),
     },
     {

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Qualification, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { resultStatusToBadgeColor } from './helpers';
 
 defineProps<{
     qualification: Qualification;
@@ -26,7 +27,11 @@ defineProps<{
         <div class="flex shrink-0 items-center gap-x-2">
             <div class="hidden sm:flex sm:flex-col sm:items-end">
                 <div class="flex flex-row gap-1">
-                    <UBadge v-if="qualification.result?.status" class="inline-flex gap-1">
+                    <UBadge
+                        v-if="qualification.result?.status"
+                        :color="resultStatusToBadgeColor(qualification.result?.status ?? 0)"
+                        class="inline-flex gap-1"
+                    >
                         <UIcon name="i-mdi-list-status" class="size-5" />
                         <span>
                             {{ $t('common.result') }}:

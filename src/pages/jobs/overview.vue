@@ -4,6 +4,7 @@ import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useAuthStore } from '~/store/auth';
+import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -81,9 +82,21 @@ const showRadioFrequency = ref(false);
                         </UCard>
                     </div>
 
-                    <div v-if="activeChar" class="flex flex-row gap-2">
-                        <JobSelfService :user-id="activeChar.userId" />
-                    </div>
+                    <JobSelfService v-if="activeChar" :user-id="activeChar.userId" />
+
+                    <!--
+                    <UCard :ui="{ body: { padding: '' } }">
+                        <template #header>
+                            <h3 class="text-lg font-semibold">
+                                {{ $t('common.calendar') }}
+                            </h3>
+                        </template>
+
+                        <div class="overflow-x-auto">
+                            <MonthCalendarClient transparent borderless expanded disable-page-swipe color="primary" />
+                        </div>
+                    </UCard>
+                    -->
 
                     <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
                 </div>
