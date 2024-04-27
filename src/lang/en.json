@@ -862,7 +862,8 @@
             "take_test": "Take Test",
             "request_modal": {
                 "title": "Request Qualification"
-            }
+            },
+            "content_unavailable": "Qualification content will be available once your request has been accepted."
         },
         "language_switcher": {
             "title": "Switch language"
@@ -1183,7 +1184,7 @@
         },
         "document_view": {
             "copy_document_id": {
-                "title": "Document ID",
+                "title": "Document ID copied",
                 "content": "Document ID copied to clipboard."
             }
         },
@@ -1217,7 +1218,7 @@
         },
         "citizen_info": {
             "copy_citizen_id": {
-                "title": "Citizen ID",
+                "title": "Citizen ID copied",
                 "content": "Citizen ID copied to clipboard."
             }
         },
@@ -1327,6 +1328,12 @@
             "test_notification": {
                 "title": "Test Notification {index}",
                 "content": "This is a test notification of type {type}."
+            }
+        },
+        "qualifications": {
+            "copy_qualification": {
+                "title": "Qualification ID copied",
+                "content": "Qualification ID copied to clipboard."
             }
         }
     },

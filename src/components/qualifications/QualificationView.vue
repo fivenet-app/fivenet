@@ -93,9 +93,9 @@ const accordionItems = computed(() =>
                 <IDCopyBadge
                     :id="qualification?.id ?? 0"
                     prefix="QUAL"
-                    :title="{ key: 'notifications.quali?.ment_view.copy_quali?.ment_id.title', parameters: {} }"
+                    :title="{ key: 'notifications.qualifications.copy_qualification.title', parameters: {} }"
                     :content="{
-                        key: 'notifications.quali?.ment_view.copy_quali?.ment_id.content',
+                        key: 'notifications.qualifications.copy_qualification.content',
                         parameters: {},
                     }"
                 />
@@ -305,9 +305,17 @@ const accordionItems = computed(() =>
                 <h2 class="sr-only">
                     {{ $t('common.content') }}
                 </h2>
+
                 <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                     <!-- eslint-disable vue/no-v-html -->
-                    <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="qualification.content"></div>
+                    <div
+                        v-if="qualification.content"
+                        v-html="qualification.content"
+                        class="prose prose-invert min-w-full px-4 py-2"
+                    ></div>
+                    <p v-else>
+                        {{ $t('components.qualifications.content_unavailable') }}
+                    </p>
                 </div>
             </div>
 
