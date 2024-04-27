@@ -2,8 +2,23 @@ export function toTitleCase(s: string): string {
     return s.replace(/\w\S*/g, (w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase());
 }
 
+export function camelCaseToTitleCase(s: string): string {
+    return (
+        s
+            .replace(/([A-Z0-9])/g, ' $1')
+            // uppercase the first character
+            .replace(/^./, function (str) {
+                return str.toUpperCase();
+            })
+    );
+}
+
 export function lowercaseFirstLetter(s: string): string {
     return s.charAt(0).toLowerCase() + s.slice(1);
+}
+
+export function uppercaseFirstLetter(s: string): string {
+    return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
 const initialsCleanerRegex = /(Prof\.|Dr\.)[ ]*/gm;

@@ -8,6 +8,7 @@ import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import { useLivemapStore } from '~/store/livemap';
+import { BellIcon } from 'mdi-vue3';
 
 const props = withDefaults(
     defineProps<{
@@ -62,12 +63,7 @@ const zIndexOffset = computed(() => {
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <UIcon
-                    name="i-mdi-bell"
-                    class="size-full"
-                    :class="dispatchClasses"
-                    :style="{ height: `${size}px`, width: `${size}px` }"
-                />
+                <BellIcon class="size-full" :class="dispatchClasses" />
             </div>
         </LIcon>
 

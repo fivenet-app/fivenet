@@ -18,8 +18,10 @@ const emit = defineEmits<{
     (e: 'overlayremove', event: L.LayersControlEvent): void;
 }>();
 
+const slideover = useSlideover();
+
 const livemapStore = useLivemapStore();
-const { location, offsetLocationZoom, zoom } = storeToRefs(livemapStore);
+const { location, selectedMarker, zoom } = storeToRefs(livemapStore);
 
 let map: L.Map | undefined;
 
@@ -60,54 +62,59 @@ const customCRS = extend({}, CRS.Simple, {
     infinite: true,
 });
 
-// eslint-disable-next-line prefer-const
-let center: PointExpression = [0, 0];
+const center: PointExpression = [0, 0];
 const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
-const selectedMarker = ref<string>();
 
 const mouseLat = ref<string>((0).toFixed(3));
 const mouseLong = ref<string>((0).toFixed(3));
 
 const currentHash = useRouteHash('');
 
-watch(location, () => {
-    if (location.value === undefined || map === undefined) {
+function getZoomOffset(zoom: number): number {
+    console.log('ZoomOffset', slideover.isOpen.value);
+    if (!slideover.isOpen.value) {
+        return 0;
+    }
+
+    switch (zoom) {
+        case 1:
+            return 2150;
+        case 2:
+            return 1650;
+        case 3:
+            return 1350;
+        case 4:
+            return 750;
+        case 5:
+            return 425;
+        case 6:
+            return 225;
+        case 7:
+            return 100;
+        default:
+            return 400;
+    }
+}
+
+watch(selectedMarker, async () => {
+    if (map === undefined || selectedMarker.value === undefined) {
         return;
     }
 
-    let xOffset = 0;
-    if (offsetLocationZoom.value) {
-        switch (zoom.value) {
-            case 1:
-                xOffset = 2150;
-                break;
-            case 2:
-                xOffset = 1650;
-                break;
-            case 3:
-                xOffset = 1350;
-                break;
-            case 4:
-                xOffset = 750;
-                break;
-            case 5:
-                xOffset = 425;
-                break;
-            case 6:
-                xOffset = 225;
-                break;
-            case 7:
-                xOffset = 100;
-                break;
-            default:
-                xOffset = 400;
-                break;
-        }
+    map?.panTo([selectedMarker.value?.info?.y!, selectedMarker.value?.info?.x! + getZoomOffset(zoom.value)], {
+        animate: true,
+        duration: 0.75,
+    });
+});
+
+watch(location, async () => {
+    if (map === undefined || location.value === undefined) {
+        return;
     }
 
-    map?.panTo([location.value.y!, location.value.x! + xOffset], {
+    map?.panTo([location.value.y!, location.value.x! + getZoomOffset(zoom.value)], {
         animate: true,
-        duration: 0.85,
+        duration: 0.75,
     });
 });
 
@@ -287,6 +294,12 @@ onBeforeUnmount(() => {
     }
 
     .leaflet-div-icon svg path {
+        stroke: #000000;
+        stroke-width: 0.75px;
+        stroke-linejoin: round;
+    }
+
+    .leaflet-marker-icon svg path {
         stroke: #000000;
         stroke-width: 0.75px;
         stroke-linejoin: round;

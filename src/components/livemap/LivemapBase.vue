@@ -16,7 +16,6 @@ import { isNUIAvailable, setWaypoint } from '~/composables/nui';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { MarkerInfo } from '~~/gen/ts/resources/livemap/livemap';
 
 defineProps<{
     showUnitNames?: boolean;
@@ -31,8 +30,8 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 const livemapStore = useLivemapStore();
-const { error, abort, reconnecting, initiated, location, showLocationMarker } = storeToRefs(livemapStore);
 const { startStream } = livemapStore;
+const { error, abort, reconnecting, initiated, location, showLocationMarker, selectedMarker } = storeToRefs(livemapStore);
 
 const centrumStore = useCentrumStore();
 const { reconnecting: reconnectingCentrum } = storeToRefs(centrumStore);
@@ -81,18 +80,6 @@ if (isNUIAvailable()) {
     });
 }
 
-const selectedUserMarker = ref<MarkerInfo | undefined>();
-
-watch(selectedUserMarker, () => applySelectedMarkerCentering());
-
-async function applySelectedMarkerCentering(): Promise<void> {
-    if (selectedUserMarker.value === undefined || !livemap.value.centerSelectedMarker) {
-        return;
-    }
-
-    location.value = { x: selectedUserMarker.value.x, y: selectedUserMarker.value.y };
-}
-
 function addActiveLayer(name: string): void {
     if (!livemap.value.activeLayers.includes(name)) {
         livemap.value.activeLayers.push(name);
@@ -137,7 +124,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
                     <PlayersLayer
                         :show-unit-names="showUnitNames"
                         :show-unit-status="showUnitStatus"
-                        @user-selected="selectedUserMarker = $event.info"
+                        @user-selected="selectedMarker = $event"
                     />
                     <MarkersLayer />
                 </template>
@@ -146,7 +133,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
 
                 <slot />
 
-                <LControl position="topleft">
+                <LControl position="bottomleft">
                     <PostalSearch />
                 </LControl>
             </template>

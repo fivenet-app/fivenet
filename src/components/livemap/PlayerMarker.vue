@@ -8,6 +8,7 @@ import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { useAuthStore } from '~/store/auth';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
+import { MapMarkerIcon } from 'mdi-vue3';
 
 const props = withDefaults(
     defineProps<{
@@ -75,11 +76,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 >
                     {{ unit?.initials }}
                 </span>
-                <UIcon
-                    name="i-mdi-map-marker"
-                    class="size-full"
-                    :style="{ color: getMarkerColor(), height: `${size}px`, width: `${size}px` }"
-                />
+                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">

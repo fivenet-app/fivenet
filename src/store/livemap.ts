@@ -4,6 +4,7 @@ import { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livema
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { type UserShort } from '~~/gen/ts/resources/users/users';
 import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
+import { useSettingsStore } from './settings';
 
 // In seconds
 const initialReconnectBackoffTime = 1.75;
@@ -16,7 +17,6 @@ export interface LivemapState {
 
     location: Coordinate | undefined;
     showLocationMarker: boolean;
-    offsetLocationZoom: boolean;
     zoom: number;
 
     initiated: boolean;
@@ -26,6 +26,8 @@ export interface LivemapState {
 
     markersMarkers: Map<string, MarkerMarker>;
     markersUsers: Map<string, UserMarker>;
+
+    selectedMarker: UserMarker | undefined;
 }
 
 export const useLivemapStore = defineStore('livemap', {
@@ -38,7 +40,6 @@ export const useLivemapStore = defineStore('livemap', {
 
             location: { x: 0, y: 0 },
             showLocationMarker: false,
-            offsetLocationZoom: false,
             zoom: 2,
 
             initiated: false,
@@ -48,6 +49,8 @@ export const useLivemapStore = defineStore('livemap', {
 
             markersMarkers: new Map<string, MarkerMarker>(),
             markersUsers: new Map<string, UserMarker>(),
+
+            selectedMarker: undefined,
         }) as LivemapState,
     persist: false,
     actions: {
@@ -57,6 +60,9 @@ export const useLivemapStore = defineStore('livemap', {
             }
 
             console.debug('Livemap: Starting Data Stream');
+
+            const settingsStore = useSettingsStore();
+            const { livemap } = storeToRefs(settingsStore);
 
             this.abort = new AbortController();
             this.error = undefined;
@@ -105,6 +111,10 @@ export const useLivemapStore = defineStore('livemap', {
                         resp.data.users.users.forEach((v) => {
                             foundUsers.push(v.info!.id);
                             this.addOrpdateUserMarker(v);
+
+                            if (livemap.value.centerSelectedMarker && v.info!.id === this.selectedMarker?.info?.id) {
+                                this.selectedMarker = v;
+                            }
                         });
 
                         if (resp.data.users.part <= 0) {
@@ -113,6 +123,10 @@ export const useLivemapStore = defineStore('livemap', {
                             this.markersUsers.forEach((_, id) => {
                                 if (!foundUsers.includes(id)) {
                                     this.markersUsers.delete(id);
+
+                                    if (id === this.selectedMarker?.info?.id) {
+                                        this.selectedMarker = undefined;
+                                    }
                                     removedMarkers++;
                                 }
                             });

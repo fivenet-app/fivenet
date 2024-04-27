@@ -1,9 +1,10 @@
 <script lang="ts" setup>
 import { LCircle, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { markerIcons } from '~/components/livemap/helpers';
+import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { convertDynamicIconNameToComponent } from '~/components/livemap/helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -43,10 +44,13 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         @click="$emit('selected')"
     >
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <UIcon
-                :name="
-                    markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i === marker.data?.data.icon.icon) ??
-                    'i-mdi-map-marker-question'
+            <component
+                :is="
+                    markerIcons.find(
+                        (icon) =>
+                            marker.data?.data.oneofKind === 'icon' &&
+                            icon.name === convertDynamicIconNameToComponent(marker.data?.data.icon.icon),
+                    ) ?? markerFallbackIcon.name
                 "
                 class="size-full"
                 :style="{ color: marker.info?.color ?? 'currentColor' }"
@@ -58,7 +62,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
 
     <LMarker v-else :lat-lng="[marker.info!.y, marker.info!.x]" :name="marker.info!.name" @click="$emit('selected')">
         <LIcon :icon-size="[size, size]" :icon-anchor="iconAnchor" :popup-anchor="popupAnchor">
-            <UIcon name="i-mdi-map-marker-question" :fill="marker.info?.color ?? 'currentColor'" />
+            <component :is="markerFallbackIcon" :fill="marker.info?.color ?? 'currentColor'" />
         </LIcon>
 
         <MarkerMarkerPopup :marker="marker" />

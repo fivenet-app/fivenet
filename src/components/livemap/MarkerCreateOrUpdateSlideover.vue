@@ -1,9 +1,10 @@
 <script lang="ts" setup>
+import { HelpIcon } from 'mdi-vue3';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
-import { markerIcons } from '~/components/livemap/helpers';
+import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { format } from 'date-fns';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
@@ -60,7 +61,7 @@ const state = reactive({
     icon:
         props.marker?.data?.data.oneofKind === 'icon' && props.marker?.data?.data.icon.icon
             ? props.marker?.data?.data.icon.icon
-            : 'i-mdi-help',
+            : HelpIcon.name,
 });
 
 async function createOrUpdateMarker(values: Schema): Promise<void> {
@@ -320,20 +321,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.icon"
                                         :options="markerIcons"
                                         :searchable-placeholder="$t('common.search_field')"
+                                        value-attribute="name"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
                                         <template #label>
-                                            <UIcon :name="state.icon" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{
-                                                toTitleCase(state.icon.replace(/^i-\w+-/, '').replaceAll('-', ' '))
-                                            }}</span>
+                                            <component
+                                                :is="markerIcons.find((icon) => icon.name === state.icon) ?? markerFallbackIcon"
+                                                class="size-5"
+                                                :style="{ fill: state.color }"
+                                            />
+                                            <span class="truncate">{{ camelCaseToTitleCase(state.icon) }}</span>
                                         </template>
                                         <template #option="{ option }">
-                                            <UIcon :name="option" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{
-                                                toTitleCase(option.replace(/^i-\w+-/, '').replaceAll('-', ' '))
-                                            }}</span>
+                                            <component :is="option" class="size-5" :style="{ color: state.color }" />
+                                            <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
                                         </template>
                                     </USelectMenu>
                                 </UFormGroup>
