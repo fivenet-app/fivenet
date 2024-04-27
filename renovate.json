@@ -9,7 +9,7 @@
     "postUpdateOptions": ["gomodTidy"],
     "packageRules": [
         {
-            "matchManagers": ["docker", "helm", "kubernetes"],
+            "matchCategories": ["docker", "helm", "kubernetes"],
             "groupName": "external"
         },
         {
