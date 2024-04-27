@@ -6,5 +6,23 @@
         "group:allNonMajor"
     ],
     "baseBranches": ["develop"],
-    "postUpdateOptions": ["gomodTidy"]
+    "postUpdateOptions": ["gomodTidy"],
+    "packageRules": [
+        {
+            "matchManagers": ["docker", "helm", "kubernetes"],
+            "groupName": "external"
+        },
+        {
+            "matchCategories": ["js", "node"],
+            "groupName": "js"
+        },
+        {
+            "matchCategories": ["golang"],
+            "groupName": "go"
+        },
+        {
+            "matchCategories": ["ci"],
+            "groupName": "ci"
+        }
+    ]
 }
