@@ -75,7 +75,11 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 >
                     {{ unit?.initials }}
                 </span>
-                <UIcon name="i-mdi-map-marker" class="size-full" :style="{ color: getMarkerColor() }" />
+                <UIcon
+                    name="i-mdi-map-marker"
+                    class="size-full"
+                    :style="{ color: getMarkerColor(), height: `${size}px`, width: `${size}px` }"
+                />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">

@@ -48,7 +48,7 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
                     markerIcons.find((i) => marker.data?.data.oneofKind === 'icon' && i === marker.data?.data.icon.icon) ??
                     'i-mdi-map-marker-question'
                 "
-                class="h-full w-full"
+                class="size-full"
                 :style="{ color: marker.info?.color ?? 'currentColor' }"
             />
         </LIcon>

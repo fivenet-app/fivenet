@@ -62,7 +62,12 @@ const zIndexOffset = computed(() => {
                 >
                     DSP-{{ dispatch.id }}
                 </span>
-                <UIcon name="i-mdi-bell" class="size-full" :class="dispatchClasses" />
+                <UIcon
+                    name="i-mdi-bell"
+                    class="size-full"
+                    :class="dispatchClasses"
+                    :style="{ height: `${size}px`, width: `${size}px` }"
+                />
             </div>
         </LIcon>
 
