@@ -428,7 +428,8 @@
         "stats": "Statistik",
         "tutor": "Tutor",
         "approved_by": "Genehmigt von",
-        "clear": "Löschen"
+        "clear": "Löschen",
+        "calendar": "Kalendar"
     },
     "components": {
         "partials": {
