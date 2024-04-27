@@ -150,7 +150,7 @@
         "document": "Dokument | Dokumente",
         "job": "Beruf",
         "livemap": "Karte",
-        "control_panel": "Kontrollzentrum",
+        "control_panel": "Einstellungen",
         "about": "Über",
         "search": "Suche",
         "phone": "Telefon",
@@ -862,7 +862,8 @@
             "take_test": "Prüfung ablegen",
             "request_modal": {
                 "title": "Qualifikation anfragen"
-            }
+            },
+            "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde."
         },
         "language_switcher": {
             "title": "Sprache wechseln"
@@ -1327,6 +1328,12 @@
             "test_notification": {
                 "title": "Test-Benachrichtigung {index}",
                 "content": "Dies ist eine Test-Benachrichtigung der {type} Art."
+            }
+        },
+        "qualifications": {
+            "copy_qualification": {
+                "title": "Qualifizierungs-ID kopiert",
+                "content": "Qualifizierungs-ID wurde in die Zwischenablage kopiert."
             }
         }
     },
@@ -1976,7 +1983,8 @@
             "ErrRequirementsMissing": {
                 "title": "Qualifizierungsanforderungen nicht erfüllt",
                 "content": "Ihnen fehlen Qualifikationen die für diese Qualifizierung benötigt sind."
-            }
+            },
+            "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!"
         }
     },
     "system": {
