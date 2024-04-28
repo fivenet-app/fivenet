@@ -56,7 +56,7 @@ onBeforeMount(() => {
                     :action="
                         () =>
                             slideover.open(DispatchDetailsSlideover, {
-                                dispatch: dispatch,
+                                dispatchId: dispatch.id,
                             })
                     "
                 />

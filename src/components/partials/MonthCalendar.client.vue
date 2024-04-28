@@ -1,38 +1,32 @@
 <script setup lang="ts">
-import { useBreakpoints, breakpointsTailwind } from '@vueuse/core';
-import { DatePicker as VCalendarDatePicker } from 'v-calendar';
+import { Calendar as VCalendar } from 'v-calendar';
 // @ts-ignore
 import type { DatePickerDate, DatePickerRangeObject } from 'v-calendar/dist/types/src/use/datePicker';
 import 'v-calendar/dist/style.css';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 
 defineOptions({
     inheritAttrs: false,
 });
 
-const props = defineProps({
-    modelValue: {
-        type: [Date, Object] as PropType<DatePickerDate | DatePickerRangeObject | null>,
-        default: null,
+const props = withDefaults(
+    defineProps<{
+        modelValue: DatePickerDate | DatePickerRangeObject | null;
+    }>(),
+    {
+        modelValue: null,
     },
-    clearable: {
-        type: Boolean,
-        default: false,
-    },
-});
+);
 
-const emit = defineEmits(['update:model-value', 'close']);
+const emits = defineEmits<{
+    (e: 'update:model-value', value: Date | null): void;
+    (e: 'selected', entry: CalendarEntry): void;
+}>();
 
 const date = computed({
     get: () => props.modelValue,
-    set: (value) => {
-        emit('update:model-value', value);
-        emit('close');
-    },
+    set: (value) => emits('update:model-value', value),
 });
-
-const breakpoints = useBreakpoints(breakpointsTailwind);
-
-const smallerThanSm = breakpoints.smaller('sm');
 
 const attrs = {
     transparent: true,
@@ -47,77 +41,16 @@ const attrs = {
 const masks = {
     weekdays: 'WWW',
 };
-
-const month = new Date().getMonth();
-const year = new Date().getFullYear();
-
-const attributes = [
-    {
-        key: 1,
-        customData: {
-            title: 'Lunch with mom.',
-            time: '17:30',
-            class: 'bg-red-600 text-white',
-        },
-        dates: new Date(year, month, 1),
-    },
-    {
-        key: 2,
-        customData: {
-            title: 'Take Noah to basketball practice',
-            time: '17:30',
-            class: 'bg-blue-500 text-white',
-        },
-        dates: new Date(year, month, 2),
-    },
-    {
-        key: 3,
-        customData: {
-            title: "Noah's basketball game.",
-            time: '17:30',
-            class: 'bg-blue-500 text-white',
-        },
-        dates: new Date(year, month, 5),
-    },
-    {
-        key: 4,
-        customData: {
-            title: 'Take car to the shop',
-            time: '17:30',
-            class: 'bg-indigo-500 text-white',
-        },
-        dates: new Date(year, month, 5),
-    },
-    {
-        key: 4,
-        customData: {
-            title: 'Meeting with new client.',
-            time: '17:30',
-            class: 'bg-teal-500 text-white',
-        },
-        dates: new Date(year, month, 7),
-    },
-    {
-        key: 5,
-        customData: {
-            title: "Mia's gymnastics practice.",
-            time: '17:30',
-            class: 'bg-pink-500 text-white',
-        },
-        dates: new Date(year, month, 11),
-    },
-];
 </script>
 
 <template>
     <div class="custom-calendar">
-        <VCalendarDatePicker
-            v-if="date && (date as DatePickerRangeObject)?.start && (date as DatePickerRangeObject)?.end"
-            v-model.range="date"
+        <VCalendar
+            v-model="date"
             class="custom-calendar"
-            :columns="smallerThanSm ? 1 : 2"
-            :rows="smallerThanSm ? 2 : 1"
-            :attributes="attributes"
+            view="monthly"
+            :columns="1"
+            :rows="1"
             :masks="masks"
             v-bind="{ ...attrs, ...$attrs }"
         >
@@ -125,43 +58,23 @@ const attributes = [
                 <div class="z-10 flex h-full flex-col overflow-hidden">
                     <span class="day-label text-sm text-gray-900 dark:text-white">{{ day.day }}</span>
                     <div class="flex-grow overflow-x-auto overflow-y-auto">
-                        <p
+                        <button
                             v-for="attr in attributes"
                             :key="attr.key"
-                            class="mb-1 mt-0 rounded-sm p-1 text-xs leading-tight"
+                            class="vc-day-entry mb-1 mt-0 rounded-sm p-1 text-left text-xs leading-tight"
                             :class="attr.customData.class"
+                            @click="$emit('selected', attr.customData)"
                         >
                             {{ attr.customData.title }}
-                        </p>
+                            <template v-if="attr.customData.time">
+                                <br />
+                                {{ attr.customData.time }}
+                            </template>
+                        </button>
                     </div>
                 </div>
             </template>
-        </VCalendarDatePicker>
-        <VCalendarDatePicker
-            v-else
-            v-model="date"
-            v-bind="{ ...attrs, ...$attrs }"
-            class="custom-calendar"
-            :attributes="attributes"
-            :masks="masks"
-        >
-            <template #day-content="{ day, attributes }">
-                <div class="z-10 flex h-full flex-col overflow-hidden">
-                    <span class="day-label text-sm text-gray-900 dark:text-white">{{ day.day }}</span>
-                    <div class="flex-grow overflow-x-auto overflow-y-auto">
-                        <p
-                            v-for="attr in attributes"
-                            :key="attr.key"
-                            class="mb-1 mt-0 rounded-sm p-1 text-xs leading-tight"
-                            :class="attr.customData.class"
-                        >
-                            {{ attr.customData.title }} -
-                            {{ attr.customData.time }}
-                        </p>
-                    </div>
-                </div>
-            </template>
-        </VCalendarDatePicker>
+        </VCalendar>
     </div>
 </template>
 
@@ -205,8 +118,8 @@ const attributes = [
 .custom-calendar:deep(.vc-container) {
     --day-border: 1px solid rgb(var(--color-gray-700));
     --day-border-highlight: 1px solid rgb(var(--color-gray-600));
-    --day-width: 90px;
-    --day-height: 90px;
+    --day-width: 120px;
+    --day-height: 120px;
     --weekday-border: 1px solid rgb(var(--color-primary-900));
 
     border-radius: 0;
@@ -224,9 +137,16 @@ const attributes = [
         height: var(--day-height);
         min-width: var(--day-width);
         background-color: rgb(var(--color-gray-900));
+        & :hover {
+            background-color: rgb(var(--color-gray-800));
+        }
+
         &.weekday-1,
         &.weekday-7 {
             background-color: rgb(var(--color-gray-800));
+            & :hover {
+                background-color: rgb(var(--color-gray-700));
+            }
         }
 
         &:not(.on-bottom) {

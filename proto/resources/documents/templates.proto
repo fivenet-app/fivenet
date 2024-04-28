@@ -35,7 +35,7 @@ message Template {
   string creator_job = 12 [(validate.rules).string.max_len = 20];
   optional string creator_job_label = 13 [(validate.rules).string.max_len = 50];
   repeated TemplateJobAccess job_access = 14 [(validate.rules).repeated.max_items = 20];
-  resources.documents.DocumentAccess content_access = 15; // @gotags: alias:"access"
+  resources.documents.DocumentAccess content_access = 15;
 }
 
 message TemplateShort {
@@ -79,10 +79,10 @@ message TemplateData {
 message TemplateJobAccess {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: alias:"id"
   optional resources.timestamp.Timestamp created_at = 2;
-  uint64 template_id = 3 [jstype = JS_STRING]; // @gotags: alias:"template_id"
-  string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
-  optional string job_label = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
+  uint64 template_id = 3 [jstype = JS_STRING];
+  string job = 4 [(validate.rules).string.max_len = 20];
+  optional string job_label = 5 [(validate.rules).string.max_len = 50];
+  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0];
   optional string job_grade_label = 7 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  resources.documents.AccessLevel access = 8 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  resources.documents.AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
 }

@@ -85,7 +85,7 @@ export interface Template {
     /**
      * @generated from protobuf field: resources.documents.DocumentAccess content_access = 15;
      */
-    contentAccess?: DocumentAccess; // @gotags: alias:"access"
+    contentAccess?: DocumentAccess;
 }
 /**
  * @generated from protobuf message resources.documents.TemplateShort
@@ -215,19 +215,19 @@ export interface TemplateJobAccess {
     /**
      * @generated from protobuf field: uint64 template_id = 3 [jstype = JS_STRING];
      */
-    templateId: string; // @gotags: alias:"template_id"
+    templateId: string;
     /**
      * @generated from protobuf field: string job = 4;
      */
-    job: string; // @gotags: alias:"job"
+    job: string;
     /**
      * @generated from protobuf field: optional string job_label = 5;
      */
-    jobLabel?: string; // @gotags: alias:"job_label"
+    jobLabel?: string;
     /**
      * @generated from protobuf field: int32 minimum_grade = 6;
      */
-    minimumGrade: number; // @gotags: alias:"minimum_grade"
+    minimumGrade: number;
     /**
      * @generated from protobuf field: optional string job_grade_label = 7;
      */
@@ -235,7 +235,7 @@ export interface TemplateJobAccess {
     /**
      * @generated from protobuf field: resources.documents.AccessLevel access = 8;
      */
-    access: AccessLevel; // @gotags: alias:"access"
+    access: AccessLevel;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Template$Type extends MessageType<Template> {

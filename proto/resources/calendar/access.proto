@@ -1,0 +1,52 @@
+syntax = "proto3";
+
+package resources.calendar;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/calendar;calendar";
+
+enum AccessLevelUpdateMode {
+  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
+  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
+  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
+  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
+}
+
+enum AccessLevel {
+  ACCESS_LEVEL_UNSPECIFIED = 0;
+  ACCESS_LEVEL_BLOCKED = 1;
+  ACCESS_LEVEL_VIEW = 2;
+  ACCESS_LEVEL_SHARE = 3;
+  ACCESS_LEVEL_EDIT = 4;
+  ACCESS_LEVEL_MANAGE = 5;
+}
+
+message CalendarAccess {
+  repeated CalendarJobAccess jobs = 1 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"job_access"
+  repeated CalendarUserAccess users = 2 [(validate.rules).repeated.max_items = 20]; // @gotags: alias:"user_access"
+}
+
+message CalendarJobAccess {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 calendar_id = 3 [jstype = JS_STRING];
+  optional uint64 entry_id = 4 [jstype = JS_STRING];
+  string job = 5 [(validate.rules).string.max_len = 20];
+  optional string job_label = 6 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
+  int32 minimum_grade = 7 [(validate.rules).int32.gt = 0];
+  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
+  AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
+}
+
+message CalendarUserAccess {
+  uint64 id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 calendar_id = 3 [jstype = JS_STRING];
+  optional uint64 entry_id = 4 [jstype = JS_STRING];
+  int32 user_id = 5 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 6;
+  AccessLevel access = 7 [(validate.rules).enum.defined_only = true];
+}

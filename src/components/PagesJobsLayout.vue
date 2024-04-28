@@ -9,7 +9,6 @@ const links = [
         label: t('common.overview'),
         to: { name: 'jobs-overview' },
         icon: 'i-mdi-briefcase',
-        permission: 'JobsService.ListColleagues' as Perms,
     },
     {
         label: t('pages.jobs.colleagues.title'),
@@ -22,6 +21,11 @@ const links = [
         to: { name: 'jobs-activity' },
         icon: 'i-mdi-bulletin-board',
         permission: 'JobsService.ListColleagueActivity' as Perms,
+    },
+    {
+        label: t('common.calendar'),
+        to: { name: 'jobs-calendar' },
+        icon: 'i-mdi-calendar-month',
     },
     {
         label: t('pages.jobs.timeclock.title'),

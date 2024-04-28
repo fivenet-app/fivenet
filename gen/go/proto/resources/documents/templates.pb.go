@@ -45,7 +45,7 @@ type Template struct {
 	CreatorJob      string               `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string              `protobuf:"bytes,13,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	JobAccess       []*TemplateJobAccess `protobuf:"bytes,14,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
-	ContentAccess   *DocumentAccess      `protobuf:"bytes,15,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"` // @gotags: alias:"access"
+	ContentAccess   *DocumentAccess      `protobuf:"bytes,15,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty"`
 }
 
 func (x *Template) Reset() {
@@ -557,12 +557,12 @@ type TemplateJobAccess struct {
 
 	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty" alias:"id"` // @gotags: alias:"id"
 	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	TemplateId    uint64               `protobuf:"varint,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty" alias:"template_id"`                 // @gotags: alias:"template_id"
-	Job           string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
-	JobLabel      *string              `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
-	MinimumGrade  int32                `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty" alias:"minimum_grade"`           // @gotags: alias:"minimum_grade"
+	TemplateId    uint64               `protobuf:"varint,3,opt,name=template_id,json=templateId,proto3" json:"template_id,omitempty"`
+	Job           string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string              `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty"`
+	MinimumGrade  int32                `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
 	JobGradeLabel *string              `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"job_grade_label"` // @gotags: alias:"job_grade_label"
-	Access        AccessLevel          `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty" alias:"access"`      // @gotags: alias:"access"
+	Access        AccessLevel          `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty"`
 }
 
 func (x *TemplateJobAccess) Reset() {

@@ -44,8 +44,8 @@ var (
 	tUserProps   = table.FivenetUserProps
 	tCreator     = tUsers.AS("creator")
 	tDocument    = table.FivenetDocuments.AS("document")
-	tDUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
 	tDJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
+	tDUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
 )
 
 type Server struct {

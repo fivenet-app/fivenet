@@ -196,9 +196,9 @@ type Document struct {
 	// @sanitize
 	Content string `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
 	// @sanitize
-	Data       *string          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"`                             // @gotags: alias:"data"
-	CreatorId  *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
-	Creator    *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                       // @gotags: alias:"creator"
+	Data       *string          `protobuf:"bytes,10,opt,name=data,proto3,oneof" json:"data,omitempty" alias:"data"` // @gotags: alias:"data"
+	CreatorId  *int32           `protobuf:"varint,11,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator    *users.UserShort `protobuf:"bytes,12,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"` // @gotags: alias:"creator"
 	CreatorJob string           `protobuf:"bytes,13,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	// @sanitize
 	State      string  `protobuf:"bytes,14,opt,name=state,proto3" json:"state,omitempty"`
@@ -374,9 +374,9 @@ type DocumentShort struct {
 	ContentType DocContentType `protobuf:"varint,8,opt,name=content_type,json=contentType,proto3,enum=resources.documents.DocContentType" json:"content_type,omitempty" alias:"content_type"` // @gotags: alias:"content_type"
 	// @sanitize
 	Content    string           `protobuf:"bytes,9,opt,name=content,proto3" json:"content,omitempty"`
-	CreatorId  *int32           `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"` // @gotags: alias:"creator_id"
-	Creator    *users.UserShort `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                       // @gotags: alias:"creator"
-	CreatorJob string           `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty" alias:"creator_job"`     // @gotags: alias:"creator_job"
+	CreatorId  *int32           `protobuf:"varint,10,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator    *users.UserShort `protobuf:"bytes,11,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"creator"`                   // @gotags: alias:"creator"
+	CreatorJob string           `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty" alias:"creator_job"` // @gotags: alias:"creator_job"
 	// @sanitize
 	State  string `protobuf:"bytes,13,opt,name=state,proto3" json:"state,omitempty" alias:"state"` // @gotags: alias:"state"
 	Closed bool   `protobuf:"varint,14,opt,name=closed,proto3" json:"closed,omitempty"`
@@ -532,8 +532,8 @@ type DocumentReference struct {
 	Reference        DocReference         `protobuf:"varint,5,opt,name=reference,proto3,enum=resources.documents.DocReference" json:"reference,omitempty" alias:"reference"`   // @gotags: alias:"reference"
 	TargetDocumentId uint64               `protobuf:"varint,6,opt,name=target_document_id,json=targetDocumentId,proto3" json:"target_document_id,omitempty" alias:"target_document_id"` // @gotags: alias:"target_document_id"
 	TargetDocument   *DocumentShort       `protobuf:"bytes,7,opt,name=target_document,json=targetDocument,proto3,oneof" json:"target_document,omitempty" alias:"target_document"`    // @gotags: alias:"target_document"
-	CreatorId        *int32               `protobuf:"varint,8,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty" alias:"creator_id"`                  // @gotags: alias:"creator_id"
-	Creator          *users.UserShort     `protobuf:"bytes,9,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"ref_creator"`                                        // @gotags: alias:"ref_creator"
+	CreatorId        *int32               `protobuf:"varint,8,opt,name=creator_id,json=creatorId,proto3,oneof" json:"creator_id,omitempty"`
+	Creator          *users.UserShort     `protobuf:"bytes,9,opt,name=creator,proto3,oneof" json:"creator,omitempty" alias:"ref_creator"` // @gotags: alias:"ref_creator"
 }
 
 func (x *DocumentReference) Reset() {

@@ -1,0 +1,85 @@
+syntax = "proto3";
+
+package services.calendar;
+
+import "resources/common/database/database.proto";
+import "resources/calendar/calendar.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/calendar;calendar";
+
+message ListCalendarEntriesRequest {
+  int32 year = 1 [(validate.rules).int32 = { gte: 2023 }];
+  int32 month = 2 [(validate.rules).int32 = {
+    gte: 1,
+    lte: 12,
+  }];
+  repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
+}
+
+message ListCalendarEntriesResponse {
+  repeated resources.calendar.CalendarEntry entries = 1;
+}
+
+message ListCalendarsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+}
+
+message ListCalendarsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.calendar.Calendar calendars = 2;
+}
+
+message CreateOrUpdateCalendarRequest {
+  resources.calendar.Calendar calendar = 1;
+}
+
+message CreateOrUpdateCalendarResponse {
+  resources.calendar.Calendar calendar = 1;
+}
+
+message DeleteCalendarRequest {
+  uint64 calendar_id = 1;
+}
+
+message DeleteCalendarResponse {}
+
+message CreateOrUpdateCalendarEntriesRequest {
+  resources.calendar.CalendarEntry entry = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateCalendarEntriesResponse {
+  resources.calendar.CalendarEntry entry = 1;
+}
+
+message DeleteCalendarEntriesRequest {
+  uint64 calendar_id = 1;
+  uint64 entry_id = 2;
+}
+
+message DeleteCalendarEntriesResponse {}
+
+message ShareCalendarEntryRequest {
+  // TODO
+}
+
+message ShareCalendarEntryResponse {}
+
+service CalendarService {
+  // @perm: Name=Any
+  rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse);
+
+  // @perm: Name=Any
+  rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
+  // @perm
+  rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
+  // @perm
+  rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
+
+  // @perm
+  rpc CreateOrUpdateCalendarEntries(CreateOrUpdateCalendarEntriesRequest) returns (CreateOrUpdateCalendarEntriesResponse);
+  // @perm
+  rpc DeleteCalendarEntries(DeleteCalendarEntriesRequest) returns (DeleteCalendarEntriesResponse);
+  // @perm: Name=CreateOrUpdateCalendarEntries
+  rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse);
+}

@@ -16,7 +16,8 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useLivemapStore } from '~/store/livemap';
 
 const props = defineProps<{
-    dispatch: Dispatch;
+    dispatchId: string;
+    dispatch?: Dispatch;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -28,10 +29,12 @@ const { isOpen } = useSlideover();
 const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { ownUnitId, timeCorrection } = storeToRefs(centrumStore);
+const { dispatches, ownUnitId, timeCorrection } = storeToRefs(centrumStore);
 const { canDo } = centrumStore;
 
 const notifications = useNotificatorStore();
+
+const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)!));
 
 async function selfAssign(id: string): Promise<void> {
     if (ownUnitId.value === undefined) {
@@ -66,7 +69,7 @@ async function deleteDispatch(id: string): Promise<void> {
     }
 }
 
-const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispatch.status?.status));
+const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.value.status?.status));
 </script>
 
 <template>
@@ -227,7 +230,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(props.dispat
                                         v-if="canDo('TakeControl')"
                                         icon="i-mdi-account-multiple-plus"
                                         truncate
-                                        @click="modal.open(DispatchAssignModal, { dispatch: dispatch })"
+                                        @click="modal.open(DispatchAssignModal, { dispatchId: dispatchId })"
                                     >
                                         {{ $t('common.assign') }}
                                     </UButton>

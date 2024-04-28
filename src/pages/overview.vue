@@ -39,7 +39,6 @@ const items = [
         title: t('common.job', 2),
         description: t('pages.overview.features.jobs'),
         to: { name: 'jobs-overview' },
-        permission: 'JobsService.ListColleagues',
         icon: 'i-mdi-briefcase-outline',
     },
     {

@@ -4,7 +4,6 @@ import JobSelfService from '~/components/jobs/JobSelfService.vue';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useAuthStore } from '~/store/auth';
-import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 
 useHead({
     title: 'pages.jobs.overview.title',
@@ -12,7 +11,6 @@ useHead({
 definePageMeta({
     title: 'common.overview',
     requiresAuth: true,
-    permission: 'JobsService.ListColleagues',
 });
 
 const authStore = useAuthStore();
@@ -43,7 +41,10 @@ const showRadioFrequency = ref(false);
                                         <h1 class="text-3xl font-semibold leading-6">
                                             {{ activeChar?.jobLabel }}
                                         </h1>
-                                        <h2 class="mt-2 text-xl font-semibold leading-6">
+                                        <h2
+                                            v-if="activeChar?.jobLabel !== activeChar?.jobGradeLabel"
+                                            class="mt-2 text-xl font-semibold leading-6"
+                                        >
                                             {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}
                                         </h2>
                                     </div>
@@ -82,21 +83,7 @@ const showRadioFrequency = ref(false);
                         </UCard>
                     </div>
 
-                    <JobSelfService v-if="activeChar" :user-id="activeChar.userId" />
-
-                    <!--
-                    <UCard :ui="{ body: { padding: '' } }">
-                        <template #header>
-                            <h3 class="text-lg font-semibold">
-                                {{ $t('common.calendar') }}
-                            </h3>
-                        </template>
-
-                        <div class="overflow-x-auto">
-                            <MonthCalendarClient transparent borderless expanded disable-page-swipe color="primary" />
-                        </div>
-                    </UCard>
-                    -->
+                    <JobSelfService v-if="can('JobsService.ListColleagues') && activeChar" :user-id="activeChar.userId" />
 
                     <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
                 </div>

@@ -199,12 +199,12 @@ type DocumentJobAccess struct {
 	Id            uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
 	CreatedAt     *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DocumentId    uint64               `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	Job           string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty" alias:"job"`                                                  // @gotags: alias:"job"
-	JobLabel      *string              `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"`                  // @gotags: alias:"job_label"
-	MinimumGrade  int32                `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty" alias:"minimum_grade"`           // @gotags: alias:"minimum_grade"
+	Job           string               `protobuf:"bytes,4,opt,name=job,proto3" json:"job,omitempty"`
+	JobLabel      *string              `protobuf:"bytes,5,opt,name=job_label,json=jobLabel,proto3,oneof" json:"job_label,omitempty" alias:"job_label"` // @gotags: alias:"job_label"
+	MinimumGrade  int32                `protobuf:"varint,6,opt,name=minimum_grade,json=minimumGrade,proto3" json:"minimum_grade,omitempty"`
 	JobGradeLabel *string              `protobuf:"bytes,7,opt,name=job_grade_label,json=jobGradeLabel,proto3,oneof" json:"job_grade_label,omitempty" alias:"job_grade_label"` // @gotags: alias:"job_grade_label"
-	Access        AccessLevel          `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty" alias:"access"`      // @gotags: alias:"access"
-	Required      *bool                `protobuf:"varint,9,opt,name=required,proto3,oneof" json:"required,omitempty" alias:"required"`                                 // @gotags: alias:"required"
+	Access        AccessLevel          `protobuf:"varint,8,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty"`
+	Required      *bool                `protobuf:"varint,9,opt,name=required,proto3,oneof" json:"required,omitempty" alias:"required"` // @gotags: alias:"required"
 }
 
 func (x *DocumentJobAccess) Reset() {
@@ -312,8 +312,8 @@ type DocumentUserAccess struct {
 	DocumentId uint64               `protobuf:"varint,3,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
 	UserId     int32                `protobuf:"varint,4,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
 	User       *users.UserShort     `protobuf:"bytes,5,opt,name=user,proto3,oneof" json:"user,omitempty"`
-	Access     AccessLevel          `protobuf:"varint,6,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty" alias:"access"` // @gotags: alias:"access"
-	Required   *bool                `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty" alias:"required"`                            // @gotags: alias:"required"
+	Access     AccessLevel          `protobuf:"varint,6,opt,name=access,proto3,enum=resources.documents.AccessLevel" json:"access,omitempty"`
+	Required   *bool                `protobuf:"varint,7,opt,name=required,proto3,oneof" json:"required,omitempty" alias:"required"` // @gotags: alias:"required"
 }
 
 func (x *DocumentUserAccess) Reset() {

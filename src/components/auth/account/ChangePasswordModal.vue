@@ -80,7 +80,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     />
-                    <VeeErrorMessage name="currentPassword" as="p" class="mt-2 text-sm text-error-400" />
                 </UFormGroup>
 
                 <UFormGroup name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">

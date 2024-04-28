@@ -17,7 +17,7 @@ const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] =
     { name: t('pages.citizens.title'), path: '/citizens', permission: 'CitizenStoreService.ListCitizens' },
     { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'DMVService.ListVehicles' },
     { name: t('pages.documents.title'), path: '/documents', permission: 'DocStoreService.ListDocuments' },
-    { name: t('pages.jobs.overview.title'), path: '/jobs/overview', permission: 'JobsService.ListColleagues' },
+    { name: t('pages.jobs.overview.title'), path: '/jobs/overview' },
     { name: t('common.livemap'), path: '/livemap', permission: 'LivemapperService.Stream' },
     { name: t('common.dispatch_center'), path: '/centrum', permission: 'CentrumService.TakeControl' },
 ];

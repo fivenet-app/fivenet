@@ -34,11 +34,11 @@ message DocumentJobAccess {
   uint64 id = 1 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp created_at = 2;
   uint64 document_id = 3 [jstype = JS_STRING];
-  string job = 4 [(validate.rules).string.max_len = 20]; // @gotags: alias:"job"
+  string job = 4 [(validate.rules).string.max_len = 20];
   optional string job_label = 5 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_label"
-  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0]; // @gotags: alias:"minimum_grade"
+  int32 minimum_grade = 6 [(validate.rules).int32.gt = 0];
   optional string job_grade_label = 7 [(validate.rules).string.max_len = 50]; // @gotags: alias:"job_grade_label"
-  resources.documents.AccessLevel access = 8 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  AccessLevel access = 8 [(validate.rules).enum.defined_only = true];
   optional bool required = 9; // @gotags: alias:"required"
 }
 
@@ -48,6 +48,6 @@ message DocumentUserAccess {
   uint64 document_id = 3 [jstype = JS_STRING];
   int32 user_id = 4 [(validate.rules).int32.gt = 0];
   optional resources.users.UserShort user = 5;
-  resources.documents.AccessLevel access = 6 [(validate.rules).enum.defined_only = true]; // @gotags: alias:"access"
+  AccessLevel access = 6 [(validate.rules).enum.defined_only = true];
   optional bool required = 7; // @gotags: alias:"required"
 }

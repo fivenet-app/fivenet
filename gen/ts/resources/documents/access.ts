@@ -44,7 +44,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: string job = 4;
      */
-    job: string; // @gotags: alias:"job"
+    job: string;
     /**
      * @generated from protobuf field: optional string job_label = 5;
      */
@@ -52,7 +52,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: int32 minimum_grade = 6;
      */
-    minimumGrade: number; // @gotags: alias:"minimum_grade"
+    minimumGrade: number;
     /**
      * @generated from protobuf field: optional string job_grade_label = 7;
      */
@@ -60,7 +60,7 @@ export interface DocumentJobAccess {
     /**
      * @generated from protobuf field: resources.documents.AccessLevel access = 8;
      */
-    access: AccessLevel; // @gotags: alias:"access"
+    access: AccessLevel;
     /**
      * @generated from protobuf field: optional bool required = 9;
      */
@@ -93,7 +93,7 @@ export interface DocumentUserAccess {
     /**
      * @generated from protobuf field: resources.documents.AccessLevel access = 6;
      */
-    access: AccessLevel; // @gotags: alias:"access"
+    access: AccessLevel;
     /**
      * @generated from protobuf field: optional bool required = 7;
      */

@@ -64,10 +64,10 @@ const customCRS = extend({}, CRS.Simple, {
 
 // eslint-disable-next-line prefer-const
 let center: PointExpression = [0, 0];
-const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>';
+const attribution = '<a href="http://www.rockstargames.com/V/">Grand Theft Auto V</a>' as const;
 
-const mouseLat = ref<string>((0).toFixed(3));
-const mouseLong = ref<string>((0).toFixed(3));
+const mouseLat = ref<number>(0);
+const mouseLong = ref<number>(0);
 
 const currentHash = useRouteHash('');
 
@@ -207,8 +207,8 @@ async function onMapReady($event: any): Promise<void> {
             return;
         }
 
-        mouseLat.value = (Math.round(event.latlng.lat * 100000) / 100000).toFixed(3);
-        mouseLong.value = (Math.round(event.latlng.lng * 100000) / 100000).toFixed(3);
+        mouseLat.value = Math.round(event.latlng.lat * 100000) / 100000;
+        mouseLong.value = Math.round(event.latlng.lng * 100000) / 100000;
     });
 
     map.on('movestart', async () => {
@@ -263,8 +263,8 @@ onBeforeUnmount(() => {
 
             <!-- eslint-disable-next-line tailwindcss/no-custom-classname -->
             <LControl position="bottomleft" class="leaflet-control-attribution">
-                <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat }} |
-                <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong }}
+                <span class="font-semibold">{{ $t('common.longitude') }}:</span> {{ mouseLat.toFixed(3) }} |
+                <span class="font-semibold">{{ $t('common.latitude') }}:</span> {{ mouseLong.toFixed(3) }}
             </LControl>
 
             <slot />

@@ -1,0 +1,56 @@
+syntax = "proto3";
+
+package resources.calendar;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/calendar;calendar";
+
+message Calendar {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  optional string job = 5 [(validate.rules).string.max_len = 20];
+  // @sanitize
+  string name = 6 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 255
+  }];
+  // @sanitize: method=StripTags
+  optional string description = 7 [(validate.rules).string.max_len = 512];
+  bool public = 8;
+  bool closed = 9;
+  optional int32 creator_id = 10;
+  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  string creator_job = 12 [(validate.rules).string.max_len = 20];
+}
+
+message CalendarEntry {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  uint64 calendar_id = 5;
+  optional string job = 6 [(validate.rules).string.max_len = 20];
+  resources.timestamp.Timestamp start_time = 7;
+  optional resources.timestamp.Timestamp end_time = 8;
+  // @sanitize
+  string title = 9 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 1024
+  }];
+  // @sanitize: method=StripTags
+  optional string color = 10 [(validate.rules).string.max_len = 12];
+  // @sanitize
+  string content = 11 [(validate.rules).string = {
+    min_len: 20,
+    max_bytes: 1000000 // 1 Megabyte
+  }];
+  bool public = 12;
+  optional int32 creator_id = 13;
+  optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
+  string creator_job = 15 [(validate.rules).string.max_len = 20];
+}

@@ -40,7 +40,7 @@ const dispatchesFiltered = computedAsync(async () =>
             :size="livemap.markerSize"
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
-                    dispatch: $event,
+                    dispatchId: $event.id,
                 })
             "
         />
@@ -59,7 +59,7 @@ const dispatchesFiltered = computedAsync(async () =>
             :size="livemap.markerSize"
             @selected="
                 slideover.open(DispatchDetailsSlideover, {
-                    dispatch: $event,
+                    dispatchId: $event.id,
                 })
             "
         />

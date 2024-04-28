@@ -41,5 +41,5 @@ watch(props, () => refresh());
 </script>
 
 <template>
-    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch="data.dispatch" />
+    <DispatchDetailsSlideover v-if="data?.dispatch" :dispatch-id="dispatchId" :dispatch="data.dispatch" />
 </template>

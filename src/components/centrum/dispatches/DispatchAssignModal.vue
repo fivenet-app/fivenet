@@ -3,16 +3,17 @@ import { z } from 'zod';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
 import type { GroupedUnits } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
-const { getSortedUnits } = storeToRefs(centrumStore);
+const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
 
 const props = defineProps<{
-    dispatch: Dispatch;
+    dispatchId: string;
 }>();
+
+const dispatch = computed(() => dispatches.value.get(props.dispatchId)!);
 
 const { $grpc } = useNuxtApp();
 
@@ -25,7 +26,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    units: [...props.dispatch.units.map((du) => du.unitId)],
+    units: [...dispatch.value.units.map((du) => du.unitId)],
 });
 
 async function assignDispatch(): Promise<void> {
@@ -35,7 +36,7 @@ async function assignDispatch(): Promise<void> {
         state.units.forEach((u) => {
             toAdd.push(u);
         });
-        props.dispatch.units?.forEach((u) => {
+        dispatch.value.units?.forEach((u) => {
             const idx = state.units.findIndex((su) => su === u.unitId);
             if (idx === -1) {
                 toRemove.push(u.unitId);
@@ -43,7 +44,7 @@ async function assignDispatch(): Promise<void> {
         });
 
         const call = $grpc.getCentrumClient().assignDispatch({
-            dispatchId: props.dispatch.id,
+            dispatchId: props.dispatchId,
             toAdd,
             toRemove,
         });
@@ -101,7 +102,7 @@ const grouped = computedAsync(async () => {
     return groups;
 });
 
-watch(props, () => (state.units = [...props.dispatch.units.map((du) => du.unitId)]));
+watch(dispatch.value, () => (state.units = [...dispatch.value.units.map((du) => du.unitId)]));
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {

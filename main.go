@@ -37,6 +37,7 @@ import (
 	grpcserver "google.golang.org/grpc"
 	// GRPC Services
 	pbauth "github.com/galexrt/fivenet/gen/go/proto/services/auth"
+	pbcalendar "github.com/galexrt/fivenet/gen/go/proto/services/calendar"
 	pbcentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum"
 	pbcitizenstore "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore"
 	pbcompletor "github.com/galexrt/fivenet/gen/go/proto/services/completor"
@@ -182,6 +183,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		// GRPC Services
 		fx.Provide(
 			grpc.AsService(pbauth.NewServer),
+			grpc.AsService(pbcalendar.NewServer),
 			grpc.AsService(pbcentrum.NewServer),
 			grpc.AsService(pbcitizenstore.NewServer),
 			grpc.AsService(pbcompletor.NewServer),

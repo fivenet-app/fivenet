@@ -22,6 +22,7 @@ const { d, t } = useI18n();
 const completorStore = useCompletorStore();
 
 const schema = z.object({
+    users: z.custom<UserShort>().array().max(5),
     from: z.date().optional(),
     to: z.date().optional(),
     method: z.string().max(64),
@@ -31,7 +32,8 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const query = ref<Schema>({
+const query = reactive<Schema>({
+    users: [],
     method: '',
     service: '',
     search: '',
@@ -42,7 +44,10 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`rector-audit-${page.value}`, () => viewAuditLog());
+const { data, pending, refresh, error } = useLazyAsyncData(
+    `rector-audit-${page.value}-${query.from}-${query.to}-${query.method}-${query.service}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
+    () => viewAuditLog(),
+);
 
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     const req: ViewAuditLogRequest = {
@@ -52,28 +57,24 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         userIds: [],
     };
 
-    if (selectedCitizens.value.length > 0) {
-        const users: number[] = [];
-        selectedCitizens.value?.forEach((v) => users.push(v.userId));
-        req.userIds = users;
+    req.userIds = query.users.map((v) => v.userId);
+
+    if (query.from) {
+        req.from = toTimestamp(query.from!);
+    }
+    if (query.to) {
+        req.to = toTimestamp(query.to!);
     }
 
-    if (query.value.from) {
-        req.from = toTimestamp(query.value.from!);
+    if (query.method !== '') {
+        req.method = query.method;
     }
-    if (query.value.to) {
-        req.to = toTimestamp(query.value.to!);
-    }
-
-    if (query.value.method !== '') {
-        req.method = query.value.method;
-    }
-    if (query.value.service !== '') {
-        req.service = query.value.service;
+    if (query.service !== '') {
+        req.service = query.service;
     }
 
-    if (query.value.search !== '') {
-        req.search = query.value.search;
+    if (query.search !== '') {
+        req.search = query.search;
     }
 
     try {
@@ -87,14 +88,8 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
 }
 
-const selectedCitizens = ref<UserShort[]>([]);
-
 watch(offset, async () => refresh());
-watchDebounced(query.value, async () => refresh(), {
-    debounce: 200,
-    maxWait: 1250,
-});
-watchDebounced(selectedCitizens.value, async () => refresh(), {
+watchDebounced(query, async () => refresh(), {
     debounce: 200,
     maxWait: 1250,
 });
@@ -205,7 +200,7 @@ const columns = [
 
                     <UFormGroup name="user" :label="$t('common.user')" class="flex-1">
                         <USelectMenu
-                            v-model="selectedCitizens"
+                            v-model="query.users"
                             multiple
                             :searchable="
                                 async (query: string) => {
@@ -227,8 +222,8 @@ const columns = [
                             @focusout="focusTablet(false)"
                         >
                             <template #label>
-                                <template v-if="selectedCitizens.length">
-                                    {{ usersToLabel(selectedCitizens) }}
+                                <template v-if="query.users.length">
+                                    {{ usersToLabel(query.users) }}
                                 </template>
                             </template>
                             <template #option="{ option: user }">

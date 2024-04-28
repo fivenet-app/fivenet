@@ -140,7 +140,7 @@ const columns = [
                                 :title="$t('common.assign')"
                                 @click="
                                     modal.open(DispatchAssignModal, {
-                                        dispatch: dispatch,
+                                        dispatchId: dispatch.id,
                                     })
                                 "
                             />
@@ -173,7 +173,7 @@ const columns = [
                                 :title="$t('common.detail', 2)"
                                 @click="
                                     slideover.open(DispatchDetailsSlideover, {
-                                        dispatch: dispatch,
+                                        dispatchId: dispatch.id,
                                     })
                                 "
                             />

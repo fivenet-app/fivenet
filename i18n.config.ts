@@ -70,6 +70,11 @@ export default defineI18nConfig(() => ({
                 minute: 'numeric',
                 second: 'numeric',
             },
+            time: {
+                hour12: false,
+                hour: 'numeric',
+                minute: 'numeric',
+            },
         },
         de: {
             date: {
@@ -97,6 +102,11 @@ export default defineI18nConfig(() => ({
                 hour: 'numeric',
                 minute: 'numeric',
                 second: 'numeric',
+            },
+            time: {
+                hour12: false,
+                hour: 'numeric',
+                minute: 'numeric',
             },
         },
     },

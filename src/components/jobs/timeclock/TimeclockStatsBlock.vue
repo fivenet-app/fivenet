@@ -55,7 +55,7 @@ onBeforeMount(async () => updateStats());
 <template>
     <UCard>
         <template v-if="!hideHeader" #header>
-            <h2 class="inline-flex w-full items-center justify-between text-2xl font-semibold">
+            <h2 class="inline-flex w-full items-center justify-between text-lg font-semibold">
                 {{ $t('common.timeclock') }}
 
                 <UButton
@@ -105,7 +105,6 @@ onBeforeMount(async () => updateStats());
                 </h3>
 
                 <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
-
                 <DataNoDataBlock v-else-if="weekly === undefined" />
                 <TimeclockStatsChart v-else :stats="weekly" />
             </div>

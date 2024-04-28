@@ -1847,6 +1847,25 @@
                 "key": "Delete Qualification Requests",
                 "description": "Delete qualification requests"
             }
+        },
+        "CalendarService": {
+            "category": "Calendar",
+            "CreateOrUpdateCalendar": {
+                "key": "Create and update calendars",
+                "description": "Manage calendars."
+            },
+            "DeleteCalendar": {
+                "key": "Delete calendars",
+                "description": "Delete calendars"
+            },
+            "CreateOrUpdateCalendarEntries": {
+                "key": "Create or update calendar entries",
+                "description": "Create or update calendar entries (sharing requires share access and creating requires edit access.)"
+            },
+            "DeleteCalendarEntries": {
+                "key": "Delete Calendar Entries",
+                "description": "Delete entries from calendars (requires manage access.)"
+            }
         }
     },
     "errors": {

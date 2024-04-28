@@ -13,6 +13,7 @@ import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
+import { CalendarServiceClient } from '~~/gen/ts/services/calendar/calendar.client';
 import { CentrumServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
 import { CitizenStoreServiceClient } from '~~/gen/ts/services/citizenstore/citizenstore.client';
 import { CompletorServiceClient } from '~~/gen/ts/services/completor/completor.client';
@@ -268,5 +269,10 @@ export class GRPCClients {
     // Qualifications
     getQualificationsClient(): QualificationsServiceClient {
         return new QualificationsServiceClient(this.transport);
+    }
+
+    // Calendar
+    getCalendarClient(): CalendarServiceClient {
+        return new CalendarServiceClient(this.transport);
     }
 }

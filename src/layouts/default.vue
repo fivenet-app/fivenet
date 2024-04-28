@@ -69,7 +69,6 @@ const links = computed(() =>
                 text: t('common.job'),
                 shortcuts: ['G', 'J'],
             },
-            permission: 'JobsService.ListColleagues' as Perms,
             defaultOpen: false,
             children: [
                 {
@@ -85,6 +84,10 @@ const links = computed(() =>
                     label: t('common.activity'),
                     to: '/jobs/activity',
                     permission: 'JobsService.ListColleagueActivity' as Perms,
+                },
+                {
+                    label: t('common.calendar'),
+                    to: '/jobs/calendar',
                 },
                 {
                     label: t('common.timeclock'),

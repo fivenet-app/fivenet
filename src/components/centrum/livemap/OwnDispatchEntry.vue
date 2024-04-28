@@ -61,7 +61,7 @@ useIntervalFn(
                 class="my-0.5 inline-flex w-full max-w-full shrink flex-col items-center p-2 text-xs"
                 @click="
                     slideover.open(DispatchDetailsSlideover, {
-                        dispatch: dispatch,
+                        dispatchId: dispatch.id,
                     })
                 "
             >

@@ -66,7 +66,7 @@ export interface Document {
     /**
      * @generated from protobuf field: optional int32 creator_id = 11;
      */
-    creatorId?: number; // @gotags: alias:"creator_id"
+    creatorId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 12;
      */
@@ -141,7 +141,7 @@ export interface DocumentShort {
     /**
      * @generated from protobuf field: optional int32 creator_id = 10;
      */
-    creatorId?: number; // @gotags: alias:"creator_id"
+    creatorId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
@@ -200,7 +200,7 @@ export interface DocumentReference {
     /**
      * @generated from protobuf field: optional int32 creator_id = 8;
      */
-    creatorId?: number; // @gotags: alias:"creator_id"
+    creatorId?: number;
     /**
      * @generated from protobuf field: optional resources.users.UserShort creator = 9;
      */
