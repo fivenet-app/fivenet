@@ -3,7 +3,7 @@ import { format } from 'date-fns';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useCompletorStore } from '~/store/completor';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -81,6 +81,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         const call = $grpc.getRectorClient().viewAuditLog(req);
         const { response } = await call;
 
+        console.log(response.pagination);
         return response;
     } catch (e) {
         $grpc.handleError(e as RpcError);
