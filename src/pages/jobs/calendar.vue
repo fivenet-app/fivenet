@@ -141,7 +141,7 @@ const groupedCalendarEntries = computed(() => {
                                             })
                                         "
                                     >
-                                        <span>
+                                        <span class="inline-flex items-center gap-1">
                                             <UBadge :class="attr.customData.class" label="&nbsp;" />
 
                                             <template v-if="attr.customData.time">
