@@ -45,7 +45,7 @@ type Template struct {
 	CreatorJob      string               `protobuf:"bytes,12,opt,name=creator_job,json=creatorJob,proto3" json:"creator_job,omitempty"`
 	CreatorJobLabel *string              `protobuf:"bytes,13,opt,name=creator_job_label,json=creatorJobLabel,proto3,oneof" json:"creator_job_label,omitempty"`
 	JobAccess       []*TemplateJobAccess `protobuf:"bytes,14,rep,name=job_access,json=jobAccess,proto3" json:"job_access,omitempty"`
-	ContentAccess   *DocumentAccess      `protobuf:"bytes,15,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty"`
+	ContentAccess   *DocumentAccess      `protobuf:"bytes,15,opt,name=content_access,json=contentAccess,proto3" json:"content_access,omitempty" alias:"access"` // @gotags: alias:"access"
 }
 
 func (x *Template) Reset() {

@@ -1832,7 +1832,7 @@
 | creator_job | [string](#string) |  |  |
 | creator_job_label | [string](#string) | optional |  |
 | job_access | [TemplateJobAccess](#resources-documents-TemplateJobAccess) | repeated |  |
-| content_access | [DocumentAccess](#resources-documents-DocumentAccess) |  |  |
+| content_access | [DocumentAccess](#resources-documents-DocumentAccess) |  | @gotags: alias:&#34;access&#34; |
 
 
 

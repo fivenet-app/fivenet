@@ -44,16 +44,8 @@ const masks = {
 </script>
 
 <template>
-    <div class="custom-calendar">
-        <VCalendar
-            v-model="date"
-            class="custom-calendar"
-            view="monthly"
-            :columns="1"
-            :rows="1"
-            :masks="masks"
-            v-bind="{ ...attrs, ...$attrs }"
-        >
+    <div class="custom-calendar" :class="$attrs.class">
+        <VCalendar v-model="date" view="monthly" :columns="1" :rows="1" :masks="masks" v-bind="{ ...attrs, ...$attrs }">
             <template #day-content="{ day, attributes }">
                 <div class="z-10 flex h-full flex-col overflow-hidden">
                     <span class="day-label text-sm text-gray-900 dark:text-white">{{ day.day }}</span>

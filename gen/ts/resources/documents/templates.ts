@@ -85,7 +85,7 @@ export interface Template {
     /**
      * @generated from protobuf field: resources.documents.DocumentAccess content_access = 15;
      */
-    contentAccess?: DocumentAccess;
+    contentAccess?: DocumentAccess; // @gotags: alias:"access"
 }
 /**
  * @generated from protobuf message resources.documents.TemplateShort

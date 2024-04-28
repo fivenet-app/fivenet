@@ -13,7 +13,10 @@ func (s *Server) checkAccessAgainstTemplate(ctx context.Context, id uint64, docA
 		return false, err
 	}
 
-	_ = tmpl
+	if tmpl.ContentAccess == nil {
+		return true, nil
+	}
+
 	for _, access := range tmpl.ContentAccess.Jobs {
 		if access.Required == nil || !*access.Required {
 			continue

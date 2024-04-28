@@ -1,33 +1,11 @@
 <script lang="ts" setup>
-import { z } from 'zod';
-import type { FormSubmitEvent } from '#ui/types';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 
 defineProps<{
     entry: CalendarEntry;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
-
-const schema = z.object({
-    currentPassword: z.string().min(6).max(70),
-    newPassword: z.string().min(6).max(70),
-});
-
-type Schema = z.output<typeof schema>;
-
-const state = reactive({
-    currentPassword: '',
-    newPassword: '',
-});
-
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    //await changePassword(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
 </script>
 
 <template>
