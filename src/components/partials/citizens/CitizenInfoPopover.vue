@@ -31,14 +31,13 @@ withDefaults(
         <UButton
             variant="link"
             :padded="false"
-            class="inline-flex items-center gap-1 p-0.5"
+            class="inline-flex items-center gap-1 p-px"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
             <ProfilePictureImg
                 v-if="showAvatarInName"
                 :src="user.avatar?.url"
                 :name="`${user.firstname} ${user.lastname}`"
-                class="mr-1"
                 size="xs"
             />
 
