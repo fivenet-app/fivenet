@@ -77,8 +77,7 @@ async function deleteQualificationRequest(qualificationId: string, userId: numbe
         });
         const { response } = await call;
 
-        await refresh();
-        emits('refresh');
+        onRefresh();
 
         return response;
     } catch (e) {
@@ -118,6 +117,11 @@ const columns = [
         sortable: false,
     },
 ];
+
+async function onRefresh(): Promise<void> {
+    emits('refresh');
+    return refresh();
+}
 
 defineExpose({
     refresh,
@@ -165,7 +169,7 @@ defineExpose({
                                 modal.open(QualificationRequestTutorModal, {
                                     request: request,
                                     status: RequestStatus.DENIED,
-                                    onRefresh: refresh,
+                                    onRefresh: onRefresh,
                                 })
                             "
                         />
@@ -179,7 +183,7 @@ defineExpose({
                                 modal.open(QualificationRequestTutorModal, {
                                     request: request,
                                     status: RequestStatus.ACCEPTED,
-                                    onRefresh: refresh,
+                                    onRefresh: onRefresh,
                                 })
                             "
                         />
@@ -193,7 +197,7 @@ defineExpose({
                                 modal.open(QualificationResultTutorModal, {
                                     qualificationId: request.qualificationId,
                                     userId: request.userId,
-                                    onRefresh: refresh,
+                                    onRefresh: onRefresh,
                                 })
                             "
                         />

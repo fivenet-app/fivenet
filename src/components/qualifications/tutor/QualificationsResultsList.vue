@@ -74,8 +74,7 @@ async function deleteQualificationResult(resultId: string): Promise<DeleteQualif
         });
         const { response } = await call;
 
-        await refresh();
-        emits('refresh');
+        onRefresh();
 
         return response;
     } catch (e) {
@@ -115,6 +114,11 @@ const columns = [
         sortable: false,
     },
 ];
+
+async function onRefresh(): Promise<void> {
+    emits('refresh');
+    return refresh();
+}
 
 defineExpose({
     refresh,
