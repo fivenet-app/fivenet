@@ -429,7 +429,7 @@
         "tutor": "Tutor",
         "approved_by": "Approved by",
         "clear": "Clear",
-        "calendar": "Calendar"
+        "calendar": "Calendar | Calendars"
     },
     "components": {
         "partials": {

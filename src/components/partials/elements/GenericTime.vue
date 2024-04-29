@@ -24,6 +24,8 @@ const date = computed<Date>(() => (props.value instanceof Date ? props.value : t
 
 const timeClass = ref('');
 if (props.updateCallback) {
+    timeClass.value = props.updateCallback();
+
     useIntervalFn(() => (timeClass.value = props.updateCallback!()), props.updateInterval);
 }
 </script>

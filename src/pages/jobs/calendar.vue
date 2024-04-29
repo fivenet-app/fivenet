@@ -5,8 +5,9 @@ import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue'
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import CalendarEntryModal from '~/components/calendar/CalendarEntryModal.vue';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
-import type { ListCalendarEntriesResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { ListCalendarEntriesResponse, ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
@@ -17,6 +18,7 @@ const modal = useModal();
 const schema = z.object({
     year: z.number(),
     month: z.number(),
+    calendarIds: z.string().array().max(25),
 });
 
 type Schema = z.output<typeof schema>;
@@ -24,21 +26,53 @@ type Schema = z.output<typeof schema>;
 const query = reactive<Schema>({
     year: 2024,
     month: 4,
+    calendarIds: [],
 });
 
+const page = ref(1);
+const offset = computed(() =>
+    calendars.value?.pagination?.pageSize ? calendars.value?.pagination?.pageSize * (page.value - 1) : 0,
+);
+
 const {
-    data,
+    data: calendars,
+    pending: calendarsLoading,
+    error: calendarsError,
+} = useLazyAsyncData(`calendars-${query.year}-${query.month}`, () => listCalendars());
+
+async function listCalendars(): Promise<ListCalendarsResponse> {
+    try {
+        const call = $grpc.getCalendarClient().listCalendars({
+            pagination: {
+                offset: offset.value,
+            },
+        });
+        const { response } = await call;
+
+        if (query.calendarIds.length === 0) {
+            query.calendarIds = response.calendars.map((c) => c.id);
+        }
+
+        return response;
+    } catch (e) {
+        $grpc.handleError(e as RpcError);
+        throw e;
+    }
+}
+
+const {
+    data: calendarEntries,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`calendar-${query.year}-${query.month}`, () => listCalendarEntries());
+} = useLazyAsyncData(`calendar-entries-${query.year}-${query.month}`, () => listCalendarEntries(), { immediate: false });
 
 async function listCalendarEntries(): Promise<ListCalendarEntriesResponse> {
     try {
         const call = $grpc.getCalendarClient().listCalendarEntries({
             year: 2024,
             month: 4,
-            calendarIds: [],
+            calendarIds: query.calendarIds,
         });
         const { response } = await call;
 
@@ -66,8 +100,8 @@ function formatStartEndTime(entry: CalendarEntry): string {
 
 type CalEntry = { key: string; customData: CalendarEntry & { class: string; time: string }; dates: DateRangeSource[] };
 
-const calendarEntries = computed(() =>
-    data.value?.entries.map((entry) => {
+const transformedCalendarEntries = computed(() =>
+    calendarEntries.value?.entries.map((entry) => {
         return {
             key: entry.id,
             customData: { ...entry, class: 'bg-blue-500 hover:!bg-blue-400 text-white', time: formatStartEndTime(entry) },
@@ -85,7 +119,7 @@ type GroupedCalendarEntries = { key: string; date: Date; entries: CalEntry[] }[]
 
 const groupedCalendarEntries = computed(() => {
     const groups: GroupedCalendarEntries = [];
-    calendarEntries.value?.forEach((entry) => {
+    transformedCalendarEntries.value?.forEach((entry) => {
         const date = toDate(entry.customData.startTime);
         const idx = groups.findIndex((g) => g.key === toDate(entry.customData.startTime).toDateString());
         if (idx === -1) {
@@ -106,13 +140,43 @@ const groupedCalendarEntries = computed(() => {
 <template>
     <PagesJobsLayout>
         <template #default>
-            <DataErrorBlock v-if="error" :retry="refresh" />
+            <UContainer :ui="{ constrained: 'max-w-5xl' }" class="w-full p-2">
+                <UAccordion class="" :items="[{ slot: 'calendar', label: $t('common.calendar', 2), icon: 'i-mdi-calendar' }]">
+                    <template #calendar>
+                        <div>
+                            <DataPendingBlock
+                                v-if="calendarsLoading"
+                                :message="$t('common.loading', [$t('common.calendar', 2)])"
+                            />
+                            <DataErrorBlock
+                                v-else-if="calendarsError"
+                                :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
+                                :retry="refresh"
+                            />
+                            <template v-else>
+                                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                    <UTooltip
+                                        v-for="calendar in calendars?.calendars"
+                                        :key="calendar.id"
+                                        :text="calendar.description"
+                                    >
+                                        <UCheckbox :label="calendar.name" class="truncate" />
+                                    </UTooltip>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+                </UAccordion>
+            </UContainer>
+
+            <DataPendingBlock v-if="loading || calendarsLoading" :message="$t('common.loading', [$t('common.calendar', 2)])" />
+            <DataErrorBlock v-else-if="error" :retry="refresh" />
 
             <div v-else class="overflow-x-auto">
                 <MonthCalendarClient
                     v-model="date"
                     class="hidden md:flex md:flex-1"
-                    :attributes="calendarEntries"
+                    :attributes="transformedCalendarEntries"
                     @selected="
                         modal.open(CalendarEntryModal, {
                             entry: $event,
