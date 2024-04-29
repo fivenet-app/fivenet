@@ -1469,6 +1469,17 @@ func (m *Discord) validate(all bool) error {
 		}
 	}
 
+	if len(m.GetIgnoredJobs()) > 100 {
+		err := DiscordValidationError{
+			field:  "IgnoredJobs",
+			reason: "value must contain no more than 100 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.InviteUrl != nil {
 
 		if utf8.RuneCountInString(m.GetInviteUrl()) > 255 {

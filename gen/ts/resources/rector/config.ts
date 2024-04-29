@@ -160,6 +160,10 @@ export interface Discord {
      * @generated from protobuf field: optional string invite_url = 3;
      */
     inviteUrl?: string;
+    /**
+     * @generated from protobuf field: repeated string ignored_jobs = 4;
+     */
+    ignoredJobs: string[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class AppConfig$Type extends MessageType<AppConfig> {
@@ -682,12 +686,14 @@ class Discord$Type extends MessageType<Discord> {
         super("resources.rector.Discord", [
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "sync_interval", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "180000000" }, gte: { seconds: "60" } } } } },
-            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } }
+            { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
+            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
         ]);
     }
     create(value?: PartialMessage<Discord>): Discord {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.enabled = false;
+        message.ignoredJobs = [];
         if (value !== undefined)
             reflectionMergePartial<Discord>(this, message, value);
         return message;
@@ -705,6 +711,9 @@ class Discord$Type extends MessageType<Discord> {
                     break;
                 case /* optional string invite_url */ 3:
                     message.inviteUrl = reader.string();
+                    break;
+                case /* repeated string ignored_jobs */ 4:
+                    message.ignoredJobs.push(reader.string());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -727,6 +736,9 @@ class Discord$Type extends MessageType<Discord> {
         /* optional string invite_url = 3; */
         if (message.inviteUrl !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.inviteUrl);
+        /* repeated string ignored_jobs = 4; */
+        for (let i = 0; i < message.ignoredJobs.length; i++)
+            writer.tag(4, WireType.LengthDelimited).string(message.ignoredJobs[i]);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

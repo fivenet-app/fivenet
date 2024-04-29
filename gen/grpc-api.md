@@ -3385,6 +3385,7 @@
 | enabled | [bool](#bool) |  |  |
 | sync_interval | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 | invite_url | [string](#string) | optional |  |
+| ignored_jobs | [string](#string) | repeated |  |
 
 
 

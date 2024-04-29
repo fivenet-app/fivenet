@@ -176,8 +176,6 @@ fivenet:
         gradeRoleFormat: "[%grade%] %grade_label%"
         employeeRoleFormat: "%s Personal"
         nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
-        ignoreJobs: []
-        #  - army
         jobsAbsceneRoleName: "Absent"
       groupSync:
         enabled: false

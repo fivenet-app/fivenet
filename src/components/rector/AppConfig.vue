@@ -79,6 +79,7 @@ const schema = z.object({
             z.string().min(1).max(255).url().startsWith('https://discord.com/'),
             z.string().length(0).optional(),
         ]),
+        ignoredJobs: z.string().array().max(99),
     }),
 });
 
@@ -113,6 +114,7 @@ const state = reactive<Schema>({
         enabled: false,
         syncInterval: '9s',
         inviteUrl: '',
+        ignoredJobs: [],
     },
 });
 
@@ -135,6 +137,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
         enabled: values.discord.enabled,
         inviteUrl: values.discord.inviteUrl,
         syncInterval: toDuration(values.discord.syncInterval),
+        ignoredJobs: values.discord.ignoredJobs,
     };
 
     try {
@@ -197,6 +200,7 @@ function setSettingsValues(): void {
             state.discord.syncInterval = fromDuration(config.value.config.discord.syncInterval);
         }
         state.discord.inviteUrl = config.value.config.discord.inviteUrl;
+        state.discord.ignoredJobs = config.value.config.discord.ignoredJobs;
     }
 }
 
@@ -460,13 +464,13 @@ const tabs = [
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="label"
+                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
                                         <template #label>
-                                            <template v-if="state.jobInfo.publicJobs">
+                                            <template v-if="state.jobInfo.publicJobs.length">
                                                 <span class="truncate">{{ state.jobInfo.publicJobs.join(',') }}</span>
                                             </template>
                                             <template v-else>
@@ -492,13 +496,13 @@ const tabs = [
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="label"
+                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
                                         <template #label>
-                                            <template v-if="state.jobInfo.hiddenJobs">
+                                            <template v-if="state.jobInfo.hiddenJobs.length">
                                                 <span class="truncate">{{ state.jobInfo.hiddenJobs.join(',') }}</span>
                                             </template>
                                             <template v-else>
@@ -563,13 +567,13 @@ const tabs = [
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="label"
+                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
                                         <template #label>
-                                            <template v-if="state.userTracker.livemapJobs">
+                                            <template v-if="state.userTracker.livemapJobs.length">
                                                 <span class="truncate">{{ state.userTracker.livemapJobs.join(',') }}</span>
                                             </template>
                                             <template v-else>
@@ -635,6 +639,38 @@ const tabs = [
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="discord.ignoredJobs"
+                                    :label="$t('components.rector.app_config.discord.ignored_jobs')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <USelectMenu
+                                        v-model="state.discord.ignoredJobs"
+                                        multiple
+                                        :options="jobs ?? []"
+                                        value-attribute="name"
+                                        by="name"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    >
+                                        <template #label>
+                                            <template v-if="state.discord.ignoredJobs.length > 0">
+                                                <span class="truncate">{{ state.discord.ignoredJobs.join(',') }}</span>
+                                            </template>
+                                            <template v-else>
+                                                <span class="truncate">{{
+                                                    $t('common.none_selected', [$t('common.job')])
+                                                }}</span>
+                                            </template>
+                                        </template>
+                                        <template #option="{ option: job }">
+                                            <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                        </template>
+                                    </USelectMenu>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>

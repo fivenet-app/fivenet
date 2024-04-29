@@ -36,6 +36,7 @@ type UserInfo struct {
 	employeeRole    *discordgo.Role
 	unemployedRole  *discordgo.Role
 	jobsAbsenceRole *discordgo.Role
+	ignoredJobs     []string
 }
 
 type UserRoleMapping struct {
@@ -66,6 +67,7 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 		employeeRoleFormat:  base.cfg.UserInfoSync.EmployeeRoleFormat,
 		gradeRoleFormat:     base.cfg.UserInfoSync.GradeRoleFormat,
 		unemployedRoleName:  base.cfg.UserInfoSync.UnemployedRoleName,
+		ignoredJobs:         []string{},
 
 		jobRoles: map[int32]*discordgo.Role{},
 	}, nil
@@ -367,8 +369,8 @@ func (g *UserInfo) createUnemployedRole(roles []*discordgo.Role) error {
 
 func (g *UserInfo) setUserJobRole(member *discordgo.Member, job string, grade int32) error {
 	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
-	// "ambulance" job Discord, and an user is currently in the ignored "army" job.
-	if g.job != job && slices.Contains(g.cfg.UserInfoSync.IgnoreJobs, job) {
+	// "ambulance" job Discord, and an user is currently in the ignored, e.g., "army", jobs.
+	if g.job != job && slices.Contains(g.ignoredJobs, job) {
 		return nil
 	}
 
@@ -498,7 +500,7 @@ outerLoop:
 
 			for _, userMapping := range userMappings {
 				// Ignore certain jobs when syncing (e.g., "temporary" jobs)
-				if g.job != userMapping.Job && slices.Contains(g.cfg.UserInfoSync.IgnoreJobs, userMapping.Job) {
+				if g.job != userMapping.Job && slices.Contains(g.ignoredJobs, userMapping.Job) {
 					continue outerLoop
 				}
 			}

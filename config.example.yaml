@@ -109,8 +109,6 @@ discord:
     employeeRoleFormat: "%s Employees"
     unemployedRoleName: "Citizen"
     nicknameRegex: "^(?P<prefix>\\[\\S+][ ]*)?(?P<name>[^\\[]+)(?P<suffix>[ ]*\\[\\S+])?"
-    ignoreJobs: []
-    #  - army
     jobsAbsceneRoleName: "Absent"
   groupSync:
     enabled: false

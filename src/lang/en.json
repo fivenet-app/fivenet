@@ -628,7 +628,8 @@
                 "discord": {
                     "description": "FiveNet Discord Bot settings.",
                     "bot_invite_url": "Bot Invite URL",
-                    "sync_interval": "Sync Interval"
+                    "sync_interval": "Sync Interval",
+                    "ignored_jobs": "Ignored Jobs (e.g., Prisoner job)"
                 },
                 "save": {
                     "description": "Make sure to double check any config options before saving the config."
