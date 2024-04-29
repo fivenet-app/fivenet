@@ -7,7 +7,6 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 withDefaults(
     defineProps<{
         user: ClipboardUser | User | UserShort | undefined;
-        noPopover?: boolean;
         textClass?: unknown;
         showAvatar?: boolean;
         showAvatarInName?: boolean;
@@ -25,40 +24,16 @@ withDefaults(
 <template>
     <template v-if="!user">
         <span class="inline-flex items-center">
-            <slot name="before" />
             <span>N/A</span>
-            <slot name="after" />
-        </span>
-    </template>
-    <template v-else-if="noPopover">
-        <span class="inline-flex items-center">
-            <slot name="before" />
-            <UButton variant="link" :padded="false" :to="{ name: 'citizens-id', params: { id: user.userId ?? 0 } }">
-                <ProfilePictureImg
-                    v-if="showAvatarInName"
-                    :src="user.avatar?.url"
-                    :name="`${user.firstname} ${user.lastname}`"
-                    class="mr-1"
-                    size="xs"
-                />
-
-                {{ user.firstname }} {{ user.lastname }}
-            </UButton>
-            <span v-if="user.phoneNumber">
-                <PhoneNumberBlock v-if="user.phoneNumber" :number="user.phoneNumber" :hide-number="true" :show-label="false" />
-            </span>
-            <slot name="after" />
         </span>
     </template>
     <UPopover v-else>
         <UButton
             variant="link"
             :padded="false"
-            class="inline-flex items-center"
+            class="inline-flex items-center gap-1 p-0.5"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
-            <slot name="before" />
-
             <ProfilePictureImg
                 v-if="showAvatarInName"
                 :src="user.avatar?.url"
@@ -68,7 +43,6 @@ withDefaults(
             />
 
             <span class="truncate" :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>
-            <slot name="after" />
         </UButton>
 
         <template #panel>

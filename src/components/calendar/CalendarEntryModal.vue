@@ -21,17 +21,17 @@ const { isOpen } = useModal();
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
+
+                    <p class="flex-1">
+                        {{ $d(toDate(entry.startTime), 'long') }} -
+                        {{ $d(toDate(entry.endTime), 'long') }}
+                    </p>
+
+                    <div class="flex flex-row items-center gap-2">
+                        <span>{{ $t('common.creator') }}:</span>
+                        <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
+                    </div>
                 </div>
-
-                <p>
-                    {{ $d(toDate(entry.startTime), 'long') }} -
-                    {{ $d(toDate(entry.endTime), 'long') }}
-                </p>
-
-                <p>
-                    {{ $t('common.creator') }}:
-                    <CitizenInfoPopover :user="entry.creator" />
-                </p>
             </template>
 
             <div>

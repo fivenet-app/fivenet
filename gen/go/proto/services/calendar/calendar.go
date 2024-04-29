@@ -20,8 +20,10 @@ var (
 	tCJobAccess  = table.FivenetCalendarJobAccess.AS("job_access")
 	tCUserAccess = table.FivenetCalendarUserAccess.AS("user_access")
 
-	tUsers   = table.Users
+	tUsers   = table.Users.AS("user_short")
 	tCreator = tUsers.AS("creator")
+
+	tUserProps = table.FivenetUserProps
 )
 
 type Server struct {

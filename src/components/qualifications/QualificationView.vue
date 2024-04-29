@@ -112,7 +112,7 @@ const accordionItems = computed(() =>
     />
 
     <template v-else>
-        <UDashboardToolbar>
+        <UDashboardToolbar v-if="canDo.edit || qualification.result?.status !== ResultStatus.SUCCESSFUL">
             <template #default>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <template v-if="!canDo.edit">

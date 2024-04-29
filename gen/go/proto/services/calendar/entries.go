@@ -56,7 +56,15 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCalendarEntry.Content,
 			tCalendarEntry.Public,
 			tCalendarEntry.CreatorID,
-			tCalendarEntry.CreatorJob,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
+			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(tCalendarEntry.
 			LEFT_JOIN(tCUserAccess,
@@ -79,6 +87,9 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tCreator.ID),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).
