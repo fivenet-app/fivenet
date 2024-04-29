@@ -30,6 +30,14 @@ message ListCalendarsResponse {
   repeated resources.calendar.Calendar calendars = 2;
 }
 
+message GetCalendarRequest {
+  uint64 calendar_id = 1;
+}
+
+message GetCalendarResponse {
+  resources.calendar.Calendar calendar = 1;
+}
+
 message CreateOrUpdateCalendarRequest {
   resources.calendar.Calendar calendar = 1;
 }
@@ -43,6 +51,17 @@ message DeleteCalendarRequest {
 }
 
 message DeleteCalendarResponse {}
+
+// Calendar Entries
+
+message GetCalendarEntryRequest {
+  uint64 calendar_id = 1;
+  uint64 entry_id = 2;
+}
+
+message GetCalendarEntryResponse {
+  resources.calendar.CalendarEntry entry = 1;
+}
 
 message CreateOrUpdateCalendarEntriesRequest {
   resources.calendar.CalendarEntry entry = 1 [(validate.rules).message.required = true];
@@ -71,11 +90,15 @@ service CalendarService {
 
   // @perm: Name=Any
   rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
+  // @perm: Name=Any
+  rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse);
   // @perm
   rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
   // @perm
   rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
 
+  // @perm: Name=Any
+  rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);
   // @perm
   rpc CreateOrUpdateCalendarEntries(CreateOrUpdateCalendarEntriesRequest) returns (CreateOrUpdateCalendarEntriesResponse);
   // @perm

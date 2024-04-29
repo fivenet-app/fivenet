@@ -306,6 +306,8 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 			tUsers.JobGrade,
 			tUsers.Firstname,
 			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
 		).
 		FROM(
 			tDUserAccess.

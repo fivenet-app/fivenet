@@ -170,7 +170,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 				),
 		).
 		GROUP_BY(tQualiRequests.QualificationID, tQualiRequests.UserID).
-		ORDER_BY(tQualiResults.CreatedAt.DESC()).
+		ORDER_BY(tQualiRequests.CreatedAt.DESC()).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
@@ -247,6 +247,8 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+
+		// TODO send a notification to the user
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {

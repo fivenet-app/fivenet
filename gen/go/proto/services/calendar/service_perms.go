@@ -11,6 +11,8 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: CalendarService
+	"CalendarService/GetCalendar":         "Any",
+	"CalendarService/GetCalendarEntry":    "Any",
 	"CalendarService/ListCalendarEntries": "Any",
 	"CalendarService/ListCalendars":       "Any",
 	"CalendarService/ShareCalendarEntry":  "CalendarService/CreateOrUpdateCalendarEntries",

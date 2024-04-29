@@ -584,6 +584,10 @@
     - [DeleteCalendarEntriesResponse](#services-calendar-DeleteCalendarEntriesResponse)
     - [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest)
     - [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse)
+    - [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest)
+    - [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse)
+    - [GetCalendarRequest](#services-calendar-GetCalendarRequest)
+    - [GetCalendarResponse](#services-calendar-GetCalendarResponse)
     - [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest)
     - [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse)
     - [ListCalendarsRequest](#services-calendar-ListCalendarsRequest)
@@ -3992,6 +3996,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
+| access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
 
 
 
@@ -4021,6 +4026,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
+| access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
 
 
 
@@ -8749,6 +8755,67 @@ Results ====================================================================
 
 
 
+<a name="services-calendar-GetCalendarEntryRequest"></a>
+
+### GetCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar_id | [uint64](#uint64) |  |  |
+| entry_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarEntryResponse"></a>
+
+### GetCalendarEntryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarRequest"></a>
+
+### GetCalendarRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetCalendarResponse"></a>
+
+### GetCalendarResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar | [resources.calendar.Calendar](#resources-calendar-Calendar) |  |  |
+
+
+
+
+
+
 <a name="services-calendar-ListCalendarEntriesRequest"></a>
 
 ### ListCalendarEntriesRequest
@@ -8847,8 +8914,10 @@ TODO
 | ----------- | ------------ | ------------- | ------------|
 | ListCalendarEntries | [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse) | @perm: Name=Any |
 | ListCalendars | [ListCalendarsRequest](#services-calendar-ListCalendarsRequest) | [ListCalendarsResponse](#services-calendar-ListCalendarsResponse) | @perm: Name=Any |
+| GetCalendar | [GetCalendarRequest](#services-calendar-GetCalendarRequest) | [GetCalendarResponse](#services-calendar-GetCalendarResponse) | @perm: Name=Any |
 | CreateOrUpdateCalendar | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm |
 | DeleteCalendar | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm |
+| GetCalendarEntry | [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest) | [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse) | @perm: Name=Any |
 | CreateOrUpdateCalendarEntries | [CreateOrUpdateCalendarEntriesRequest](#services-calendar-CreateOrUpdateCalendarEntriesRequest) | [CreateOrUpdateCalendarEntriesResponse](#services-calendar-CreateOrUpdateCalendarEntriesResponse) | @perm |
 | DeleteCalendarEntries | [DeleteCalendarEntriesRequest](#services-calendar-DeleteCalendarEntriesRequest) | [DeleteCalendarEntriesResponse](#services-calendar-DeleteCalendarEntriesResponse) | @perm |
 | ShareCalendarEntry | [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse) | @perm: Name=CreateOrUpdateCalendarEntries |

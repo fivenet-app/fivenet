@@ -7,4 +7,5 @@ import (
 
 var (
 	ErrFailedQuery = status.Error(codes.Internal, "errors.CalendarService.ErrFailedQuery")
+	ErrNoPerms     = status.Error(codes.InvalidArgument, "errors.CalendarService.ErrNoPerms")
 )

@@ -614,6 +614,241 @@ var _ interface {
 	ErrorName() string
 } = ListCalendarsResponseValidationError{}
 
+// Validate checks the field values on GetCalendarRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCalendarRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCalendarRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCalendarRequestMultiError, or nil if none found.
+func (m *GetCalendarRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCalendarRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CalendarId
+
+	if len(errors) > 0 {
+		return GetCalendarRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCalendarRequestMultiError is an error wrapping multiple validation errors
+// returned by GetCalendarRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetCalendarRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCalendarRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCalendarRequestMultiError) AllErrors() []error { return m }
+
+// GetCalendarRequestValidationError is the validation error returned by
+// GetCalendarRequest.Validate if the designated constraints aren't met.
+type GetCalendarRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCalendarRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCalendarRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCalendarRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCalendarRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCalendarRequestValidationError) ErrorName() string {
+	return "GetCalendarRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCalendarRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCalendarRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCalendarRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCalendarRequestValidationError{}
+
+// Validate checks the field values on GetCalendarResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCalendarResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCalendarResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCalendarResponseMultiError, or nil if none found.
+func (m *GetCalendarResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCalendarResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCalendar()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCalendarResponseValidationError{
+					field:  "Calendar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCalendarResponseValidationError{
+					field:  "Calendar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCalendar()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCalendarResponseValidationError{
+				field:  "Calendar",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCalendarResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCalendarResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCalendarResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCalendarResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCalendarResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCalendarResponseMultiError) AllErrors() []error { return m }
+
+// GetCalendarResponseValidationError is the validation error returned by
+// GetCalendarResponse.Validate if the designated constraints aren't met.
+type GetCalendarResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCalendarResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCalendarResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCalendarResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCalendarResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCalendarResponseValidationError) ErrorName() string {
+	return "GetCalendarResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCalendarResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCalendarResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCalendarResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCalendarResponseValidationError{}
+
 // Validate checks the field values on CreateOrUpdateCalendarRequest with the
 // rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1083,6 +1318,243 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteCalendarResponseValidationError{}
+
+// Validate checks the field values on GetCalendarEntryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCalendarEntryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCalendarEntryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCalendarEntryRequestMultiError, or nil if none found.
+func (m *GetCalendarEntryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCalendarEntryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CalendarId
+
+	// no validation rules for EntryId
+
+	if len(errors) > 0 {
+		return GetCalendarEntryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCalendarEntryRequestMultiError is an error wrapping multiple validation
+// errors returned by GetCalendarEntryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type GetCalendarEntryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCalendarEntryRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCalendarEntryRequestMultiError) AllErrors() []error { return m }
+
+// GetCalendarEntryRequestValidationError is the validation error returned by
+// GetCalendarEntryRequest.Validate if the designated constraints aren't met.
+type GetCalendarEntryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCalendarEntryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCalendarEntryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCalendarEntryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCalendarEntryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCalendarEntryRequestValidationError) ErrorName() string {
+	return "GetCalendarEntryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCalendarEntryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCalendarEntryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCalendarEntryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCalendarEntryRequestValidationError{}
+
+// Validate checks the field values on GetCalendarEntryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetCalendarEntryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetCalendarEntryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetCalendarEntryResponseMultiError, or nil if none found.
+func (m *GetCalendarEntryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetCalendarEntryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetEntry()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetCalendarEntryResponseValidationError{
+					field:  "Entry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetCalendarEntryResponseValidationError{
+					field:  "Entry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetCalendarEntryResponseValidationError{
+				field:  "Entry",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetCalendarEntryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetCalendarEntryResponseMultiError is an error wrapping multiple validation
+// errors returned by GetCalendarEntryResponse.ValidateAll() if the designated
+// constraints aren't met.
+type GetCalendarEntryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetCalendarEntryResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetCalendarEntryResponseMultiError) AllErrors() []error { return m }
+
+// GetCalendarEntryResponseValidationError is the validation error returned by
+// GetCalendarEntryResponse.Validate if the designated constraints aren't met.
+type GetCalendarEntryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetCalendarEntryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetCalendarEntryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetCalendarEntryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetCalendarEntryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetCalendarEntryResponseValidationError) ErrorName() string {
+	return "GetCalendarEntryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetCalendarEntryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetCalendarEntryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetCalendarEntryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetCalendarEntryResponseValidationError{}
 
 // Validate checks the field values on CreateOrUpdateCalendarEntriesRequest
 // with the rules defined in the proto definition for this message. If any

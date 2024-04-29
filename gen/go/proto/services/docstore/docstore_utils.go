@@ -293,24 +293,6 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 		ids[i] = jet.Uint64(documentIds[i])
 	}
 
-	condition := jet.AND(
-		tDocument.ID.IN(ids...),
-		tDocument.DeletedAt.IS_NULL(),
-		jet.OR(
-			tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-			tDocument.CreatorJob.EQ(jet.String(userInfo.Job)),
-			jet.AND(
-				tDUserAccess.Access.IS_NOT_NULL(),
-				tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
-			),
-			jet.AND(
-				tDUserAccess.Access.IS_NULL(),
-				tDJobAccess.Access.IS_NOT_NULL(),
-				tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-			),
-		),
-	)
-
 	stmt := tDocument.
 		SELECT(
 			tDocument.ID,
@@ -327,7 +309,23 @@ func (s *Server) checkIfUserHasAccessToDocIDs(ctx context.Context, userInfo *use
 						AND(tDJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		WHERE(condition).
+		WHERE(jet.AND(
+			tDocument.ID.IN(ids...),
+			tDocument.DeletedAt.IS_NULL(),
+			jet.OR(
+				tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+				tDocument.CreatorJob.EQ(jet.String(userInfo.Job)),
+				jet.AND(
+					tDUserAccess.Access.IS_NOT_NULL(),
+					tDUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				),
+				jet.AND(
+					tDUserAccess.Access.IS_NULL(),
+					tDJobAccess.Access.IS_NOT_NULL(),
+					tDJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
+				),
+			),
+		)).
 		GROUP_BY(tDocument.ID).
 		ORDER_BY(tDocument.ID.DESC(), tDJobAccess.MinimumGrade)
 

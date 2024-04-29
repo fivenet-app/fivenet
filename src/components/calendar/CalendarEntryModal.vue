@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 defineProps<{
     entry: CalendarEntry;
@@ -12,16 +13,30 @@ const { isOpen } = useModal();
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
             <template #header>
-                <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
-                        {{ entry.title }}
-                    </h3>
+                <div class="flex flex-col gap-1">
+                    <div class="flex items-center justify-between">
+                        <h3 class="text-2xl font-semibold leading-6">
+                            {{ entry.title }}
+                        </h3>
 
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                    </div>
                 </div>
+
+                <p>
+                    {{ $d(toDate(entry.startTime), 'long') }} -
+                    {{ $d(toDate(entry.endTime), 'long') }}
+                </p>
+
+                <p>
+                    {{ $t('common.creator') }}:
+                    <CitizenInfoPopover :user="entry.creator" />
+                </p>
             </template>
 
-            <p v-html="entry.content"></p>
+            <div>
+                <p v-html="entry.content"></p>
+            </div>
 
             <template #footer>
                 <UButtonGroup class="inline-flex w-full">

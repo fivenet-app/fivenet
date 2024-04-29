@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.calendar;
 
+import "resources/calendar/access.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -26,6 +27,7 @@ message Calendar {
   optional int32 creator_id = 10;
   optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
   string creator_job = 12 [(validate.rules).string.max_len = 20];
+  resources.calendar.CalendarAccess access = 13;
 }
 
 message CalendarEntry {
@@ -53,4 +55,5 @@ message CalendarEntry {
   optional int32 creator_id = 13;
   optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
   string creator_job = 15 [(validate.rules).string.max_len = 20];
+  resources.calendar.CalendarAccess access = 16;
 }

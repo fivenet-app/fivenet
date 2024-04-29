@@ -247,6 +247,8 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		req.Result.Id = uint64(lastId)
 
+		// TODO send a notification to the user
+
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)

@@ -21,7 +21,7 @@ export function uppercaseFirstLetter(s: string): string {
     return s.charAt(0).toUpperCase() + s.slice(1);
 }
 
-const initialsCleanerRegex = /(Prof\.|Dr\.)[ ]*/gm;
+const initialsCleanerRegex = /(Prof\.|Dr\.|Sr(\.| ))[ ]*/gm;
 export function getInitials(input: string): string {
     input = input.replaceAll(initialsCleanerRegex, '');
     const names = input.split(' ');
