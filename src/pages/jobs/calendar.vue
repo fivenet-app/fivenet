@@ -9,6 +9,14 @@ import type { ListCalendarEntriesResponse, ListCalendarsResponse } from '~~/gen/
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 
+useHead({
+    title: 'common.calendar',
+});
+definePageMeta({
+    title: 'common.calendar',
+    requiresAuth: true,
+});
+
 const { $grpc } = useNuxtApp();
 
 const { d } = useI18n();
@@ -150,7 +158,7 @@ const groupedCalendarEntries = computed(() => {
                             />
                             <DataErrorBlock
                                 v-else-if="calendarsError"
-                                :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
+                                :message="$t('common.loading', [$t('common.calendar', 2)])"
                                 :retry="refresh"
                             />
                             <template v-else>
@@ -160,7 +168,7 @@ const groupedCalendarEntries = computed(() => {
                                         :key="calendar.id"
                                         :text="calendar.description"
                                     >
-                                        <UCheckbox :label="calendar.name" class="truncate" />
+                                        <UCheckbox :label="calendar.name" disabled :model-value="true" class="truncate" />
                                     </UTooltip>
                                 </div>
                             </template>
@@ -185,8 +193,9 @@ const groupedCalendarEntries = computed(() => {
                 />
 
                 <UContainer class="flex flex-1 flex-col md:hidden">
+                    <DataErrorBlock v-if="error" :message="$t('common.loading', [$t('common.entry', 2)])" :retry="refresh" />
                     <DataNoDataBlock
-                        v-if="!groupedCalendarEntries || groupedCalendarEntries.length === 0"
+                        v-else-if="!groupedCalendarEntries || groupedCalendarEntries.length === 0"
                         :type="`${$t('common.calendar')} ${$t('common.entry', 2)}`"
                         icon="i-mdi-calendar"
                     />

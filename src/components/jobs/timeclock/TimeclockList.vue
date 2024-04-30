@@ -133,6 +133,16 @@ function dayBackwards(): void {
     query.to = subDays(query.to ?? new Date(), 1);
 }
 
+// Update date to something reasonable when per day view is actived
+watch(perDayView, () => {
+    if (canAccessAll && !perDayView.value) {
+        const from = query.from;
+        const to = subDays(query.to ?? new Date(), 7);
+        query.from = to;
+        query.to = from;
+    }
+});
+
 const columns = computed(() =>
     [
         !perDayView.value
