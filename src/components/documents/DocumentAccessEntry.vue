@@ -288,20 +288,25 @@ watch(selectedAccessRole, () => {
                     "
                     :search-attributes="['firstname', 'lastname']"
                     class="flex-1"
-                    :placeholder="$t('common.owner')"
+                    :placeholder="$t('common.citizen')"
                     trailing
                     by="userId"
                     :searchable-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 >
+                    <template #label>
+                        <template v-if="selectedUser">
+                            {{ usersToLabel([selectedUser]) }}
+                        </template>
+                    </template>
                     <template #option="{ option: user }">
                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                     </template>
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
                 </USelectMenu>
             </UFormGroup>
         </template>
