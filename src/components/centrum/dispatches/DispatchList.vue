@@ -84,18 +84,22 @@ const columns = [
     {
         key: 'units',
         label: t('common.unit'),
+        sortable: false,
     },
     {
         key: 'creator',
         label: t('common.creator'),
+        sortable: false,
     },
     {
         key: 'attributes',
         label: t('common.attributes', 2),
+        sortable: false,
     },
     {
         key: 'message',
         label: t('common.message'),
+        sortable: false,
     },
 ];
 </script>
@@ -131,52 +135,54 @@ const columns = [
                     :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
                 >
                     <template #actions-data="{ row: dispatch }">
-                        <UButtonGroup class="inline-flex w-full">
-                            <UButton
-                                v-if="!hideActions"
-                                variant="link"
-                                icon="i-mdi-account-multiple-plus"
-                                :title="$t('common.assign')"
-                                @click="
-                                    () =>
-                                        modal.open(DispatchAssignModal, {
-                                            dispatchId: dispatch.id,
-                                        })
-                                "
-                            />
+                        <div :key="dispatch.id">
+                            <UButtonGroup class="inline-flex w-full">
+                                <UButton
+                                    v-if="!hideActions"
+                                    variant="link"
+                                    icon="i-mdi-account-multiple-plus"
+                                    :title="$t('common.assign')"
+                                    @click="
+                                        () =>
+                                            modal.open(DispatchAssignModal, {
+                                                dispatchId: dispatch.id,
+                                            })
+                                    "
+                                />
 
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-map-marker"
-                                :title="$t('common.go_to_location')"
-                                @click="() => goto({ x: dispatch.x, y: dispatch.y })"
-                            />
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-map-marker"
+                                    :title="$t('common.go_to_location')"
+                                    @click="() => goto({ x: dispatch.x, y: dispatch.y })"
+                                />
 
-                            <UButton
-                                v-if="!hideActions"
-                                variant="link"
-                                icon="i-mdi-close-octagon"
-                                :title="$t('common.status')"
-                                @click="
-                                    () =>
-                                        modal.open(DispatchStatusUpdateModal, {
-                                            dispatchId: dispatch.id,
-                                        })
-                                "
-                            />
+                                <UButton
+                                    v-if="!hideActions"
+                                    variant="link"
+                                    icon="i-mdi-close-octagon"
+                                    :title="$t('common.status')"
+                                    @click="
+                                        () =>
+                                            modal.open(DispatchStatusUpdateModal, {
+                                                dispatchId: dispatch.id,
+                                            })
+                                    "
+                                />
 
-                            <UButton
-                                variant="link"
-                                icon="i-mdi-dots-vertical"
-                                :title="$t('common.detail', 2)"
-                                @click="
-                                    () =>
-                                        slideover.open(DispatchDetailsSlideover, {
-                                            dispatchId: dispatch.id,
-                                        })
-                                "
-                            />
-                        </UButtonGroup>
+                                <UButton
+                                    variant="link"
+                                    icon="i-mdi-dots-vertical"
+                                    :title="$t('common.detail', 2)"
+                                    @click="
+                                        () =>
+                                            slideover.open(DispatchDetailsSlideover, {
+                                                dispatchId: dispatch.id,
+                                            })
+                                    "
+                                />
+                            </UButtonGroup>
+                        </div>
                     </template>
                     <template #createdAt-data="{ row: dispatch }">
                         <GenericTime

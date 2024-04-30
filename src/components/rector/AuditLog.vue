@@ -81,7 +81,6 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         const call = $grpc.getRectorClient().viewAuditLog(req);
         const { response } = await call;
 
-        console.log(response.pagination);
         return response;
     } catch (e) {
         $grpc.handleError(e as RpcError);

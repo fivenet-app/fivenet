@@ -54,7 +54,7 @@ const attrs = {
     >
         <template v-if="clearable" #footer>
             <div class="w-full px-4 pb-3">
-                <UButton block @click="console.log('clear')">
+                <UButton block @click="date = null">
                     {{ $t('common.clear') }}
                 </UButton>
             </div>

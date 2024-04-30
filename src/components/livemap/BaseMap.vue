@@ -72,7 +72,6 @@ const mouseLong = ref<number>(0);
 const currentHash = useRouteHash('');
 
 function getZoomOffset(zoom: number): number {
-    console.log('ZoomOffset', slideover.isOpen.value);
     if (!slideover.isOpen.value) {
         return 0;
     }

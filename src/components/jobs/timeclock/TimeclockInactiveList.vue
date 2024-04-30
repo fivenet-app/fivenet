@@ -108,7 +108,7 @@ const columns = [
                     {{ $t('common.timeclock') }}
                 </UButton>
 
-                <UForm :schema="schema" :state="state" class="flex w-full flex-row gap-2" @submit="refresh()">
+                <UForm ref="form" :schema="schema" :state="state" class="flex w-full flex-row gap-2" @submit="refresh()">
                     <UFormGroup name="days" :label="$t('common.time_ago.day', 2)" class="flex-1">
                         <UInput
                             v-model="state.days"
