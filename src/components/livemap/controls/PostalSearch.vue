@@ -68,6 +68,7 @@ watch(selectedPostal, () => {
     location.value = selectedPostal.value;
 });
 
+watchOnce(postalQuery, async () => loadPostals());
 watchDebounced(postalQuery, () => findPostal(), {
     debounce: 250,
     maxWait: 750,
@@ -84,8 +85,8 @@ watchDebounced(postalQuery, () => findPostal(), {
         :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
         option-attribute="code"
         :searchable-placeholder="$t('common.search_field')"
+        :popper="{ placement: 'top-start' }"
         size="xs"
-        @click="loadPostals"
         @focusin="focusTablet(true)"
         @focusout="focusTablet(false)"
     >
