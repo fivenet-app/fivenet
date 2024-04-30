@@ -188,7 +188,9 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
@@ -444,7 +446,9 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)

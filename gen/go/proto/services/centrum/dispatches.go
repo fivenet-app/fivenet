@@ -93,7 +93,9 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)
@@ -505,7 +507,9 @@ func (s *Server) ListDispatchActivity(ctx context.Context, req *ListDispatchActi
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 10)

@@ -63,7 +63,9 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)

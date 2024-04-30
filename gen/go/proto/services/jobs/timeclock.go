@@ -80,7 +80,9 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 30)

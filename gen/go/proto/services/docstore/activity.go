@@ -97,7 +97,9 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+			}
 		}
 	}
 

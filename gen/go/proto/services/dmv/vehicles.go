@@ -3,6 +3,7 @@ package dmv
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"slices"
 	"strings"
 
@@ -20,6 +21,7 @@ import (
 	"github.com/galexrt/fivenet/query/fivenet/model"
 	"github.com/galexrt/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/fx"
 	grpc "google.golang.org/grpc"
 )
@@ -114,7 +116,9 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdmv.ErrFailedQuery)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, 16)

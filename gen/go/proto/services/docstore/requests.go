@@ -108,7 +108,9 @@ func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequ
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Requests); err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
 	}
 
 	resp.Pagination.Update(len(resp.Requests))

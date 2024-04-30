@@ -108,7 +108,9 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
-		return nil, errswrap.NewError(err, ErrFailedRequest)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, ErrFailedRequest)
+		}
 	}
 
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
