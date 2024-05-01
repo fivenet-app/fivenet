@@ -516,6 +516,19 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 
 	condition := tJobsUserActivity.Job.EQ(jet.String(userInfo.Job))
 
+	resp := &ListColleagueActivityResponse{
+		Pagination: &database.PaginationResponse{
+			TotalCount: 0,
+			Offset:     0,
+			End:        0,
+			PageSize:   15,
+		},
+	}
+
+	if len(req.ActivityTypes) == 0 {
+		return resp, nil
+	}
+
 	// If no user IDs given or more than 2, show all the user has access to
 	if len(req.UserIds) == 0 || len(req.UserIds) >= 2 {
 		condition = condition.AND(s.getConditionForColleagueAccess(tJobsUserActivity, tTargetUser, access, userInfo))
@@ -558,15 +571,6 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		types = typesAttr.([]string)
 	}
 
-	resp := &ListColleagueActivityResponse{
-		Pagination: &database.PaginationResponse{
-			TotalCount: 0,
-			Offset:     0,
-			End:        0,
-			PageSize:   15,
-		},
-	}
-
 	if len(types) == 0 {
 		if !userInfo.SuperUser {
 			return resp, nil
@@ -575,20 +579,17 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE")
 	}
 
+	if len(req.ActivityTypes) > 0 {
+		req.ActivityTypes = slices.DeleteFunc(req.ActivityTypes, func(t jobs.JobsUserActivityType) bool {
+			return !slices.ContainsFunc(types, func(s string) bool {
+				return strings.Contains(t.String(), "JOBS_USER_ACTIVITY_TYPE_"+s)
+			})
+		})
+	}
+
 	condTypes := []jet.Expression{}
-	for _, aType := range types {
-		switch strings.ToUpper(aType) {
-		case "HIRED":
-			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_HIRED)))
-		case "FIRED":
-			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_FIRED)))
-		case "PROMOTED":
-			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_PROMOTED)))
-		case "DEMOTED":
-			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_DEMOTED)))
-		case "ABSENCE_DATE":
-			condTypes = append(condTypes, jet.Int32(int32(jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE)))
-		}
+	for _, aType := range req.ActivityTypes {
+		condTypes = append(condTypes, jet.Int16(int16(aType)))
 	}
 
 	if len(condTypes) == 0 {

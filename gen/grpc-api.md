@@ -6789,6 +6789,7 @@ Templates ==================================================================
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | user_ids | [int32](#int32) | repeated |  |
+| activity_types | [resources.jobs.JobsUserActivityType](#resources-jobs-JobsUserActivityType) | repeated |  |
 
 
 

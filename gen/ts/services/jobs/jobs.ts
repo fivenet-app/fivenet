@@ -13,6 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { JobsUserProps } from "../../resources/jobs/colleagues";
 import { JobsUserActivity } from "../../resources/jobs/colleagues";
+import { JobsUserActivityType } from "../../resources/jobs/colleagues";
 import { Colleague } from "../../resources/jobs/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -98,6 +99,10 @@ export interface ListColleagueActivityRequest {
      * @generated from protobuf field: repeated int32 user_ids = 2;
      */
     userIds: number[];
+    /**
+     * @generated from protobuf field: repeated resources.jobs.JobsUserActivityType activity_types = 3;
+     */
+    activityTypes: JobsUserActivityType[];
 }
 /**
  * @generated from protobuf message services.jobs.ListColleagueActivityResponse
@@ -463,12 +468,14 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
     constructor() {
         super("services.jobs.ListColleagueActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userIds = [];
+        message.activityTypes = [];
         if (value !== undefined)
             reflectionMergePartial<ListColleagueActivityRequest>(this, message, value);
         return message;
@@ -487,6 +494,13 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
+                    break;
+                case /* repeated resources.jobs.JobsUserActivityType activity_types */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.activityTypes.push(reader.int32());
+                    else
+                        message.activityTypes.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -508,6 +522,13 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
             writer.tag(2, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
+            writer.join();
+        }
+        /* repeated resources.jobs.JobsUserActivityType activity_types = 3; */
+        if (message.activityTypes.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.activityTypes.length; i++)
+                writer.int32(message.activityTypes[i]);
             writer.join();
         }
         let u = options.writeUnknownFields;

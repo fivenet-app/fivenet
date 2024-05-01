@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = jobs.JobsUserActivityType(0)
 )
 
 // Validate checks the field values on ListColleaguesRequest with the rules
@@ -885,6 +889,17 @@ func (m *ListColleagueActivityRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if len(m.GetActivityTypes()) > 10 {
+		err := ListColleagueActivityRequestValidationError{
+			field:  "ActivityTypes",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
 	}
 
 	if len(errors) > 0 {

@@ -5,7 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import { JobsUserActivityType, type Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { useCompletorStore } from '~/store/completor';
 import Pagination from '~/components/partials/Pagination.vue';
 
@@ -26,14 +26,23 @@ const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
 
+const typesAttrs = attrList('JobsService.ListColleagueActivity', 'Types').map((t) => t.toUpperCase());
+const activityTypes = Object.keys(JobsUserActivityType)
+    .filter((aType) => typesAttrs.includes(aType))
+    .map((aType) => JobsUserActivityType[aType as keyof typeof JobsUserActivityType]);
+
 const schema = z.object({
     colleagues: z.custom<Colleague>().array().max(10),
+    types: z.nativeEnum(JobsUserActivityType).array().max(typesAttrs.length),
 });
 
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
     colleagues: [],
+    types: Object.keys(JobsUserActivityType)
+        .filter((aType) => typesAttrs.includes(aType))
+        .map((aType) => JobsUserActivityType[aType as keyof typeof JobsUserActivityType]),
 });
 
 const page = ref(1);
@@ -42,15 +51,19 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 const selectedUsersIds = computed(() => (props.userId !== undefined ? [props.userId] : query.colleagues.map((u) => u.userId)));
 
 const { data, pending, refresh, error } = useLazyAsyncData(
-    `jobs-colleague-${selectedUsersIds.value.join(',')}-${page.value}`,
-    () => listColleagueActivity(selectedUsersIds.value),
+    `jobs-colleague-${page.value}-${selectedUsersIds.value.join(',')}-${query.types.join(':')}`,
+    () => listColleagueActivity(selectedUsersIds.value, query.types),
 );
 
-async function listColleagueActivity(userIds: number[]): Promise<ListColleagueActivityResponse> {
+async function listColleagueActivity(
+    userIds: number[],
+    activityTypes: JobsUserActivityType[],
+): Promise<ListColleagueActivityResponse> {
     try {
         const call = $grpc.getJobsClient().listColleagueActivity({
-            userIds,
             pagination: { offset: offset.value },
+            userIds: userIds,
+            activityTypes: activityTypes,
         });
         const { response } = await call;
 
@@ -75,7 +88,7 @@ watchDebounced(query, async () => refresh(), {
 
 <template>
     <UDashboardToolbar v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
-        <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+        <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
             <UFormGroup name="colleagues" :label="$t('common.search')" class="flex-1">
                 <USelectMenu
                     v-model="query.colleagues"
@@ -111,6 +124,28 @@ watchDebounced(query, async () => refresh(), {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                </USelectMenu>
+            </UFormGroup>
+
+            <UFormGroup name="types" :label="$t('common.type', 2)">
+                <USelectMenu
+                    v-model="query.types"
+                    class="min-w-40 flex-initial"
+                    multiple
+                    block
+                    trailing
+                    option-attribute="aType"
+                    :options="activityTypes.map((aType) => ({ aType: aType }))"
+                    value-attribute="aType"
+                    :searchable-placeholder="$t('common.type', 2)"
+                >
+                    <template #option="{ option }">
+                        {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[option.aType]}`) }}
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                 </USelectMenu>
             </UFormGroup>
         </UForm>
