@@ -98,6 +98,7 @@ CREATE TABLE
         `anon` tinyint(1) NOT NULL DEFAULT 0,
         `creator_id` int(11) NOT NULL,
         PRIMARY KEY (`id`),
+        KEY `idx_fivenet_centrum_dispatches_created_at` (`created_at`),
         KEY `idx_fivenet_centrum_dispatches_job` (`job`)
     ) ENGINE = InnoDB;
 

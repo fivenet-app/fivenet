@@ -250,9 +250,6 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 		).
 		// Dispatches that are older than time X and are not in a completed/cancelled/archived state, or have no status at all
 		WHERE(jet.AND(
-			tDispatch.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
-			),
 			tDispatchStatus.ID.EQ(
 				jet.RawInt("SELECT MAX(`dispatchstatus`.`id`) FROM `fivenet_centrum_dispatches_status` AS `dispatchstatus` WHERE `dispatchstatus`.`dispatch_id` = `dispatch`.`id`"),
 			),
@@ -261,11 +258,17 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_CANCELLED)),
 				jet.Int16(int16(centrum.StatusDispatch_STATUS_DISPATCH_ARCHIVED)),
 			),
+			tDispatch.CreatedAt.LT_EQ(
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(60, jet.MINUTE)),
+			),
 		)).
-		ORDER_BY(
-			tDispatchStatus.DispatchID.DESC(),
+		GROUP_BY(
+			tDispatchStatus.DispatchID,
 		).
-		LIMIT(1000)
+		ORDER_BY(
+			tDispatchStatus.DispatchID.ASC(),
+		).
+		LIMIT(200)
 
 	var dest []*struct {
 		DispatchID uint64
