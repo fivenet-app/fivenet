@@ -4,7 +4,7 @@ package resources.common.database;
 
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/common/database;database";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database;database";
 
 message PaginationRequest {
   int64 offset = 1 [jstype = JS_NUMBER, (validate.rules).int64.gte = 0];

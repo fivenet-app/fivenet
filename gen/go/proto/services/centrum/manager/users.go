@@ -5,8 +5,8 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

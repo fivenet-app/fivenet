@@ -5,7 +5,7 @@ package resources.laws;
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/laws;laws";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/laws;laws";
 
 message LawBook {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"

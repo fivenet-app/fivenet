@@ -3,7 +3,7 @@ package images
 import (
 	"net/http"
 
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/gin-gonic/gin"
 	"go.uber.org/zap"
 	"willnorris.com/go/imageproxy"

@@ -13,7 +13,7 @@ import "resources/documents/templates.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/docstore;docstore";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore;docstore";
 
 // Templates ==================================================================
 message ListTemplatesRequest {}

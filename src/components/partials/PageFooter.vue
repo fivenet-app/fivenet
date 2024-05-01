@@ -36,7 +36,7 @@ const year = new Date().getFullYear();
                 icon="i-simple-icons-github"
                 color="gray"
                 variant="ghost"
-                to="https://github.com/galexrt/fivenet"
+                to="https://github.com/fivenet-app/fivenet"
                 target="_blank"
             />
             <UButton

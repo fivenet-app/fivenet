@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"fmt"
 
-	"github.com/galexrt/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 

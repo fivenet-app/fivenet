@@ -2,7 +2,7 @@ package commands
 
 import (
 	"github.com/bwmarrin/discordgo"
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config"
 )
 
 func init() {

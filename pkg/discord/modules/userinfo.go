@@ -10,9 +10,9 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	pbusers "github.com/galexrt/fivenet/gen/go/proto/resources/users"
-	"github.com/galexrt/fivenet/pkg/discord/embeds"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	pbusers "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/zap"

@@ -6,10 +6,10 @@ import (
 	"sort"
 	"time"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/gen/go/proto/services/centrum/manager"
-	centrumutils "github.com/galexrt/fivenet/gen/go/proto/services/centrum/utils"
-	"github.com/galexrt/fivenet/pkg/tracker"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
+	centrumutils "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/utils"
+	"github.com/fivenet-app/fivenet/pkg/tracker"
 	"go.uber.org/zap"
 )
 

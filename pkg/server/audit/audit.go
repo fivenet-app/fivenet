@@ -6,9 +6,9 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jsoniter "github.com/json-iterator/go"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"

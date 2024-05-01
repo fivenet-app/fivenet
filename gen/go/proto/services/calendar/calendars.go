@@ -4,12 +4,12 @@ import (
 	"context"
 	"errors"
 
-	calendar "github.com/galexrt/fivenet/gen/go/proto/resources/calendar"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	errorscalendar "github.com/galexrt/fivenet/gen/go/proto/services/calendar/errors"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	errorscalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar/errors"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

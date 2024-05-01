@@ -1,7 +1,7 @@
 package manager
 
 import (
-	"github.com/galexrt/fivenet/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )

@@ -3,11 +3,11 @@ package tracker
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/galexrt/fivenet/pkg/nats/store"
-	"github.com/galexrt/fivenet/pkg/utils/broker"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.opentelemetry.io/otel"

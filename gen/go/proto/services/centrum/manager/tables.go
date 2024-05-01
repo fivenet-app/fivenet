@@ -1,6 +1,6 @@
 package manager
 
-import "github.com/galexrt/fivenet/query/fivenet/table"
+import "github.com/fivenet-app/fivenet/query/fivenet/table"
 
 var (
 	tUnits           = table.FivenetCentrumUnits.AS("unit")

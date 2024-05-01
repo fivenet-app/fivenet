@@ -7,7 +7,7 @@ import (
 	"strings"
 	"sync"
 
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 )

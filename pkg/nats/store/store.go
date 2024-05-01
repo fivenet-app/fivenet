@@ -8,9 +8,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/galexrt/fivenet/pkg/nats/locks"
-	"github.com/galexrt/fivenet/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/nats/locks"
+	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"

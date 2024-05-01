@@ -4,8 +4,8 @@ import (
 	"context"
 	"sync/atomic"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"go.uber.org/fx"
 )
 

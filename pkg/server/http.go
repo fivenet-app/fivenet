@@ -9,8 +9,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"

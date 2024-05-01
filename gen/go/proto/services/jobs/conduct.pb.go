@@ -8,8 +8,8 @@ package jobs
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

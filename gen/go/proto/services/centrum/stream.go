@@ -4,14 +4,14 @@ import (
 	"context"
 	"time"
 
-	centrum "github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
-	"github.com/galexrt/fivenet/pkg/utils/broker"
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"go.uber.org/zap"
 )
 

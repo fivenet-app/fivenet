@@ -6,11 +6,11 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/galexrt/fivenet/pkg/utils"
-	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )

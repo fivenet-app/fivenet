@@ -49,17 +49,6 @@ ifeq (, $(shell which go-licenses))
 	@GO111MODULE=on $(GO) install github.com/google/go-licenses@latest
 endif
 
-# ====================================================================================
-# Makefile helper functions for helm-docs: https://github.com/norwoodj/helm-docs
-#
-
-HELM_DOCS_VERSION := v1.11.0
-HELM_DOCS := helm-docs
-HELM_DOCS_REPO := github.com/norwoodj/helm-docs/cmd/helm-docs
-
-bin-$(HELM_DOCS): ## Installs helm-docs
-	@GO111MODULE=on $(GO) install $(HELM_DOCS_REPO)@$(HELM_DOCS_VERSION)
-
 # Actual targets
 
 build_dir:
@@ -77,13 +66,13 @@ watch:
 
 .PHONY: build-container
 build-container:
-	docker build -t docker.io/galexrt/fivenet:latest \
+	docker build -t docker.io/fivenet-app/fivenet:latest \
 		--build-arg NUXT_UI_PRO_LICENSE=$(NUXT_UI_PRO_LICENSE) \
 		.
 
 .PHONY: release
 release:
-	docker tag docker.io/galexrt/fivenet:latest docker.io/galexrt/fivenet:$(VERSION)
+	docker tag docker.io/fivenet-app/fivenet:latest docker.io/fivenet-app/fivenet:$(VERSION)
 
 .PHONY: tests
 tests: tests-go
@@ -98,7 +87,7 @@ build-go:
 		build \
 		-a \
 		-installsuffix cgo \
-		-ldflags "-X github.com/galexrt/fivenet/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
+		-ldflags "-X github.com/fivenet-app/fivenet/pkg/version.Version=$(shell git describe --tags --exclude='fivenet-*')" \
 		-o fivenet .
 
 .PHONY: build-js
@@ -192,10 +181,3 @@ optimize-tiles:
 tiles:
 	$(MAKE) gen-tiles
 	$(MAKE) optimize-tiles
-
-.PHONY: helm-docs
-helm-docs: bin-$(HELM_DOCS) ## Use helm-docs to generate documentation from helm charts
-	$(HELM_DOCS) -c charts/fivenet \
-		-o README.md \
-		-t README.gotmpl.md \
-		-t _templates.gotmpl

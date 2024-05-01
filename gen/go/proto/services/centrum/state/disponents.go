@@ -3,8 +3,8 @@ package state
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 )
 
 func (s *State) GetDisponents(ctx context.Context, job string) ([]*users.UserShort, error) {

@@ -6,7 +6,7 @@ import "google/protobuf/duration.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/qualifications;qualifications";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications;qualifications";
 
 // Exam / Questions
 

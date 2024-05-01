@@ -4,9 +4,9 @@
 package citizenstore
 
 import (
-	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
-	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/citizenstore/perms"
-	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
+	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/perms"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 )
 
 var PermsRemap = map[string]string{

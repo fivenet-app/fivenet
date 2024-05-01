@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"slices"
 
-	"github.com/galexrt/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/paulmach/orb"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"

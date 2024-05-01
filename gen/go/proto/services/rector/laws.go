@@ -3,13 +3,13 @@ package rector
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/laws"
-	rector "github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	errorsrector "github.com/galexrt/fivenet/gen/go/proto/services/rector/errors"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
-	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
+	rector "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+	errorsrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector/errors"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

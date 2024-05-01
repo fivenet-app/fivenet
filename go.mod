@@ -1,4 +1,4 @@
-module github.com/galexrt/fivenet
+module github.com/fivenet-app/fivenet
 
 go 1.22.2
 

@@ -4,7 +4,7 @@
 package notificator
 
 import (
-	"github.com/galexrt/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 )
 
 var PermsRemap = map[string]string{

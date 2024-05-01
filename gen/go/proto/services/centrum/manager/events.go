@@ -4,9 +4,9 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"

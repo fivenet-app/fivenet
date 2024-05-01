@@ -64,7 +64,7 @@ const links = computed(
                 <template #headline>
                     <UButton
                         color="gray"
-                        :to="`https://github.com/galexrt/fivenet/releases/tag/${appVersion}`"
+                        :to="`https://github.com/fivenet-app/fivenet/releases/tag/${appVersion}`"
                         :external="true"
                         :label="$t('pages.index.whats_new_in', { version: appVersion })"
                         trailing-icon="i-mdi-arrow-right"

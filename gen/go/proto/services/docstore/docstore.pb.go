@@ -8,9 +8,9 @@ package docstore
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	documents "github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	documents "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
+	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

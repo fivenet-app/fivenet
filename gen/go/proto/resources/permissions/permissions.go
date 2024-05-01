@@ -4,9 +4,9 @@ import (
 	"database/sql/driver"
 	"slices"
 
-	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	"github.com/galexrt/fivenet/pkg/utils/protoutils"
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"google.golang.org/protobuf/encoding/protojson"
 )
 

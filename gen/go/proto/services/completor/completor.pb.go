@@ -8,9 +8,9 @@ package completor
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	documents "github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	laws "github.com/galexrt/fivenet/gen/go/proto/resources/laws"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	documents "github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
+	laws "github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

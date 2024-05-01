@@ -1,7 +1,7 @@
 package dbutils
 
 import (
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

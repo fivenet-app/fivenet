@@ -14,7 +14,7 @@ RUN rm -rf ./.nuxt/ && \
 
 # Backend Build
 FROM docker.io/library/golang:1.22.2 AS gobuilder
-WORKDIR /go/src/github.com/galexrt/fivenet/
+WORKDIR /go/src/github.com/fivenet-app/fivenet/
 COPY . ./
 RUN apt-get update && \
     apt-get install -y git && \
@@ -26,7 +26,7 @@ WORKDIR /app
 RUN apk --no-cache add ca-certificates tini tzdata && \
     mkdir -p ./.output/public
 COPY --from=nodebuilder /app/.output/public ./.output/public
-COPY --from=gobuilder /go/src/github.com/galexrt/fivenet/fivenet /usr/local/bin
+COPY --from=gobuilder /go/src/github.com/fivenet-app/fivenet/fivenet /usr/local/bin
 
 EXPOSE 7070/tcp 8080/tcp 9090/tcp
 

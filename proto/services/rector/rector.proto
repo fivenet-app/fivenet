@@ -9,7 +9,7 @@ import "resources/timestamp/timestamp.proto";
 import "resources/users/jobs.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/services/rector;rector";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/rector;rector";
 
 message GetJobPropsRequest {}
 

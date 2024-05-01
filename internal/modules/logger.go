@@ -3,7 +3,7 @@ package modules
 import (
 	"fmt"
 
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"

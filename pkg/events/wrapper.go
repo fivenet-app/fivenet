@@ -6,7 +6,7 @@ import (
 	"strings"
 	"time"
 
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/nats-io/nats.go"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.opentelemetry.io/otel/trace"

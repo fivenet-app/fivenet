@@ -4,8 +4,8 @@ import (
 	"context"
 	"strings"
 
-	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
-	"github.com/galexrt/fivenet/pkg/perms"
+	grpc_permission "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/permission"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 	"google.golang.org/grpc"
 )
 

@@ -86,6 +86,10 @@ For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1
 
 </details>
 
+## Helm Chart
+
+Helm chart is available in the separate [GitHub fivenet-app/charts repository](https://github.com/fivenet-app/charts).
+
 ## Development
 
 Please see [development documentation](docs/development.md).

@@ -5,7 +5,7 @@ package resources.accounts;
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/accounts;accounts";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts;accounts";
 
 message Account {
   uint64 id = 1 [jstype = JS_STRING];

@@ -5,7 +5,7 @@ import (
 	"math/rand"
 	"time"
 
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/zap"
 )

@@ -8,8 +8,8 @@ package calendar
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	calendar "github.com/galexrt/fivenet/gen/go/proto/resources/calendar"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
+	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

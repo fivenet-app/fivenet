@@ -3,11 +3,11 @@ package centrum
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/rector"
-	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
+	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 )
 
 func (s *Server) GetSettings(ctx context.Context, req *GetSettingsRequest) (*GetSettingsResponse, error) {

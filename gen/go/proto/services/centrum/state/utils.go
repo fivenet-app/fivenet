@@ -3,8 +3,8 @@ package state
 import (
 	"strconv"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/pkg/coords"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/pkg/coords"
 )
 
 func JobIdKey(job string, id uint64) string {

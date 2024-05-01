@@ -3,8 +3,8 @@ package tracker
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	"github.com/galexrt/fivenet/pkg/utils/broker"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/fx"
 )

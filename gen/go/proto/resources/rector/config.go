@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"time"
 
-	"github.com/galexrt/fivenet/pkg/utils/protoutils"
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/types/known/durationpb"
 )
 

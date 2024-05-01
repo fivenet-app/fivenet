@@ -9,7 +9,7 @@ import (
 
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
-	"github.com/galexrt/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 )

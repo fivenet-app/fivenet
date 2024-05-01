@@ -9,8 +9,8 @@ import (
 	"strings"
 	"syscall"
 
-	"github.com/galexrt/fivenet/pkg/config"
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/h2non/filetype"
 	"go.uber.org/fx"
 )

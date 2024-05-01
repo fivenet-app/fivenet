@@ -7,7 +7,7 @@
 package vehicles
 
 import (
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

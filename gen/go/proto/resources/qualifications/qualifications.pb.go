@@ -8,8 +8,8 @@ package qualifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

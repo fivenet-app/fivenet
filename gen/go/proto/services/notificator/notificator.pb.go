@@ -8,10 +8,10 @@ package notificator
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	notifications "github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
-	timestamp "github.com/galexrt/fivenet/gen/go/proto/resources/timestamp"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	notifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
+	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

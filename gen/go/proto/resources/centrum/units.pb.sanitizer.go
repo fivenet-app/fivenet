@@ -4,7 +4,7 @@
 package centrum
 
 import (
-	"github.com/galexrt/fivenet/pkg/htmlsanitizer"
+	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
 )
 
 func (m *Unit) Sanitize() error {

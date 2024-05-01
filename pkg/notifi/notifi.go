@@ -5,9 +5,9 @@ import (
 	"database/sql"
 	"fmt"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/notifications"
-	"github.com/galexrt/fivenet/pkg/events"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
+	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"

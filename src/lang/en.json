@@ -839,7 +839,7 @@
                 },
                 "three": {
                     "question": "Where can I find the FiveNet development roadmap?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub galexrt/fivenet README)</a>."
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Click here (GitHub fivenet-app/fivenet README)</a>."
                 },
                 "four": {
                     "question": "I found a bug or other issue with FiveNet. Where do I report it?",

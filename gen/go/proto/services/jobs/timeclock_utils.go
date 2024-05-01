@@ -5,7 +5,7 @@ import (
 	"errors"
 	"slices"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

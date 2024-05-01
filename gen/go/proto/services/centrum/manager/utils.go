@@ -3,8 +3,8 @@ package manager
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 )
 
 func (s *Manager) CheckIfUserIsDisponent(ctx context.Context, job string, userId int32) bool {

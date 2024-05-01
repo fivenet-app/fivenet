@@ -4,8 +4,8 @@
 package auth
 
 import (
-	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/auth/perms"
-	"github.com/galexrt/fivenet/pkg/perms"
+	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/auth/perms"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 )
 
 func init() {

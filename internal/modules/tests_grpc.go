@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"net"
 
-	grpcsvc "github.com/galexrt/fivenet/pkg/grpc"
+	grpcsvc "github.com/fivenet-app/fivenet/pkg/grpc"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/recovery"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -13,9 +13,9 @@ import (
 	"google.golang.org/grpc/credentials/insecure"
 	"google.golang.org/grpc/test/bufconn"
 
-	"github.com/galexrt/fivenet/pkg/grpc/auth"
-	grpc_auth "github.com/galexrt/fivenet/pkg/grpc/interceptors/auth"
-	grpc_permission "github.com/galexrt/fivenet/pkg/grpc/interceptors/permission"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	grpc_auth "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/auth"
+	grpc_permission "github.com/fivenet-app/fivenet/pkg/grpc/interceptors/permission"
 )
 
 type GRPCServerParams struct {

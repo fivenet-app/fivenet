@@ -8,9 +8,9 @@ package citizenstore
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	filestore "github.com/galexrt/fivenet/gen/go/proto/resources/filestore"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	filestore "github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

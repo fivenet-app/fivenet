@@ -8,8 +8,8 @@ package qualifications
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	database "github.com/galexrt/fivenet/gen/go/proto/resources/common/database"
-	qualifications "github.com/galexrt/fivenet/gen/go/proto/resources/qualifications"
+	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	qualifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

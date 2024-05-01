@@ -4,9 +4,9 @@ import (
 	"fmt"
 
 	cache "github.com/Code-Hex/go-generics-cache"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/galexrt/fivenet/pkg/perms/collections"
-	"github.com/galexrt/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/pkg/perms/collections"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 )
 
 func (p *Perms) GetPermissionsOfUser(userInfo *userinfo.UserInfo) (collections.Permissions, error) {

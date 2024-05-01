@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/galexrt/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
 )
 

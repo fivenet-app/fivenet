@@ -1,7 +1,7 @@
 package userinfo
 
 import (
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 )
 
 var (

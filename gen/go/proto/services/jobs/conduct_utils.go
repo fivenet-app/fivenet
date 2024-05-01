@@ -3,7 +3,7 @@ package jobs
 import (
 	"context"
 
-	jobs "github.com/galexrt/fivenet/gen/go/proto/resources/jobs"
+	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

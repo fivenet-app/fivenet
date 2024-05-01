@@ -10,8 +10,8 @@ import (
 	"path"
 	"strings"
 
-	"github.com/galexrt/fivenet/pkg/images"
-	"github.com/galexrt/fivenet/pkg/storage"
+	"github.com/fivenet-app/fivenet/pkg/images"
+	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/h2non/filetype"
 	"github.com/h2non/filetype/matchers"
 )

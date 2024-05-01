@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
-	"github.com/galexrt/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )

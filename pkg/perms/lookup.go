@@ -1,7 +1,7 @@
 package perms
 
 import (
-	"github.com/galexrt/fivenet/pkg/utils"
+	"github.com/fivenet-app/fivenet/pkg/utils"
 )
 
 // Attrs

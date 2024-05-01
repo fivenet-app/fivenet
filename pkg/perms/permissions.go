@@ -4,11 +4,11 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/permissions"
-	"github.com/galexrt/fivenet/pkg/perms/helpers"
-	"github.com/galexrt/fivenet/pkg/utils/dbutils"
-	"github.com/galexrt/fivenet/query/fivenet/model"
-	"github.com/galexrt/fivenet/query/fivenet/table"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
+	"github.com/fivenet-app/fivenet/pkg/perms/helpers"
+	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 

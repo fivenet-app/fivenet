@@ -8,7 +8,7 @@ package rector
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	laws "github.com/galexrt/fivenet/gen/go/proto/resources/laws"
+	laws "github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

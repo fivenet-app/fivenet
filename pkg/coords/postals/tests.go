@@ -1,7 +1,7 @@
 package postals
 
 import (
-	"github.com/galexrt/fivenet/pkg/coords"
+	"github.com/fivenet-app/fivenet/pkg/coords"
 )
 
 func NewForTests() (Postals, error) {

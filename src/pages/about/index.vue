@@ -14,7 +14,7 @@ definePageMeta({
 });
 
 const discordLink = 'https://discord.gg/sWvkHuVQA5';
-const repoLink = 'https://github.com/galexrt/fivenet';
+const repoLink = 'https://github.com/fivenet-app/fivenet';
 
 const faqs = [
     {

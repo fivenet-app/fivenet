@@ -2,7 +2,7 @@ syntax = "proto3";
 
 package resources.common;
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/common;common";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common;common";
 
 message TranslateItem {
   string key = 1;

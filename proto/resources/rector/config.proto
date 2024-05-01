@@ -5,7 +5,7 @@ package resources.rector;
 import "google/protobuf/duration.proto";
 import "validate/validate.proto";
 
-option go_package = "github.com/galexrt/fivenet/gen/go/proto/resources/rector;rector";
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rector";
 
 message AppConfig {
   Auth auth = 1;

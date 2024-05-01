@@ -8,8 +8,8 @@ package livemapper
 
 import (
 	_ "github.com/envoyproxy/protoc-gen-validate/validate"
-	livemap "github.com/galexrt/fivenet/gen/go/proto/resources/livemap"
-	users "github.com/galexrt/fivenet/gen/go/proto/resources/users"
+	livemap "github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
+	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"

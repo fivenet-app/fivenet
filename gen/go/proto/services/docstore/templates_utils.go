@@ -4,7 +4,7 @@ import (
 	"context"
 	"slices"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/documents"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 )
 
 func (s *Server) checkAccessAgainstTemplate(ctx context.Context, id uint64, docAccess *documents.DocumentAccess) (bool, error) {

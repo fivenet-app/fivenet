@@ -7,8 +7,8 @@
 package rector
 
 import (
-	permkeys "github.com/galexrt/fivenet/gen/go/proto/services/rector/perms"
-	"github.com/galexrt/fivenet/pkg/perms"
+	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/rector/perms"
+	"github.com/fivenet-app/fivenet/pkg/perms"
 )
 
 var PermsRemap = map[string]string{

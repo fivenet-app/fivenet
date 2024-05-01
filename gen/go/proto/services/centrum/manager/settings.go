@@ -3,10 +3,10 @@ package manager
 import (
 	"context"
 
-	"github.com/galexrt/fivenet/gen/go/proto/resources/centrum"
-	errorscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/errors"
-	eventscentrum "github.com/galexrt/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/galexrt/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
+	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"google.golang.org/protobuf/proto"
 )
