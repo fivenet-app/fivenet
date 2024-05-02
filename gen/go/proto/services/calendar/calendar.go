@@ -16,6 +16,8 @@ import (
 var (
 	tCalendar      = table.FivenetCalendar.AS("calendar")
 	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
+	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_rsvp")
+	tCalendarSubs  = table.FivenetCalendarSubs.AS("calendar_subs")
 
 	tCJobAccess  = table.FivenetCalendarJobAccess.AS("job_access")
 	tCUserAccess = table.FivenetCalendarUserAccess.AS("user_access")

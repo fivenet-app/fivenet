@@ -3,6 +3,7 @@ syntax = "proto3";
 package services.calendar;
 
 import "resources/common/database/database.proto";
+import "resources/calendar/access.proto";
 import "resources/calendar/calendar.proto";
 import "validate/validate.proto";
 
@@ -31,7 +32,7 @@ message ListCalendarsResponse {
 }
 
 message GetCalendarRequest {
-  uint64 calendar_id = 1;
+  uint64 calendar_id = 1 [jstype = JS_STRING];
 }
 
 message GetCalendarResponse {
@@ -47,7 +48,7 @@ message CreateOrUpdateCalendarResponse {
 }
 
 message DeleteCalendarRequest {
-  uint64 calendar_id = 1;
+  uint64 calendar_id = 1 [jstype = JS_STRING];
 }
 
 message DeleteCalendarResponse {}
@@ -55,8 +56,8 @@ message DeleteCalendarResponse {}
 // Calendar Entries
 
 message GetCalendarEntryRequest {
-  uint64 calendar_id = 1;
-  uint64 entry_id = 2;
+  uint64 calendar_id = 1 [jstype = JS_STRING];
+  uint64 entry_id = 2 [jstype = JS_STRING];
 }
 
 message GetCalendarEntryResponse {
@@ -72,17 +73,41 @@ message CreateOrUpdateCalendarEntriesResponse {
 }
 
 message DeleteCalendarEntriesRequest {
-  uint64 calendar_id = 1;
-  uint64 entry_id = 2;
+  uint64 calendar_id = 1 [jstype = JS_STRING];
+  uint64 entry_id = 2 [jstype = JS_STRING];
 }
 
 message DeleteCalendarEntriesResponse {}
 
 message ShareCalendarEntryRequest {
-  // TODO
+  uint64 entry_id = 1 [jstype = JS_STRING];
+  resources.calendar.CalendarAccess access = 2;
 }
 
-message ShareCalendarEntryResponse {}
+message ShareCalendarEntryResponse {
+  resources.calendar.CalendarAccess access = 1;
+}
+
+// RSVP
+
+message ListCalendarEntryRSVPRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 entry_id = 2 [jstype = JS_STRING];
+}
+
+message ListCalendarEntryRSVPResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.calendar.CalendarEntryRSVP entries = 2;
+}
+
+message RSVPCalendarEntryRequest {
+  resources.calendar.CalendarEntryRSVP entry = 1;
+  bool subscribe = 2;
+}
+
+message RSVPCalendarEntryResponse {
+  resources.calendar.CalendarEntryRSVP entry = 1;
+}
 
 service CalendarService {
   // @perm: Name=Any
@@ -105,4 +130,9 @@ service CalendarService {
   rpc DeleteCalendarEntries(DeleteCalendarEntriesRequest) returns (DeleteCalendarEntriesResponse);
   // @perm: Name=CreateOrUpdateCalendarEntries
   rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse);
+
+  // @perm: Name=Any
+  rpc ListCalendarEntryRSVP(ListCalendarEntryRSVPRequest) returns (ListCalendarEntryRSVPResponse);
+  // @perm: Name=Any
+  rpc RSVPCalendarEntry(RSVPCalendarEntryRequest) returns (RSVPCalendarEntryResponse);
 }

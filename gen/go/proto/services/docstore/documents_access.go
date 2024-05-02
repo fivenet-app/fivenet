@@ -102,8 +102,6 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 }
 
 func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mode documents.AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
 	// Get existing job and user accesses from database
 	current, err := s.getDocumentAccess(ctx, documentId)
 	if err != nil {
@@ -129,6 +127,8 @@ func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mod
 		}
 
 		if !toCreate.IsEmpty() || !toUpdate.IsEmpty() || !toDelete.IsEmpty() {
+			userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 			if _, err := s.addDocumentActivity(ctx, tx, &documents.DocActivity{
 				DocumentId:   documentId,
 				ActivityType: documents.DocActivityType_DOC_ACTIVITY_TYPE_ACCESS_UPDATED,

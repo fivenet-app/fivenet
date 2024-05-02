@@ -23,6 +23,58 @@ const (
 	_ = protoimpl.EnforceVersion(protoimpl.MaxVersion - 20)
 )
 
+type RSVPResponses int32
+
+const (
+	RSVPResponses_RSVP_RESPONSES_UNSPECIFIED RSVPResponses = 0
+	RSVPResponses_RSVP_RESPONSES_NO          RSVPResponses = 1
+	RSVPResponses_RSVP_RESPONSES_MAYBE       RSVPResponses = 2
+	RSVPResponses_RSVP_RESPONSES_YES         RSVPResponses = 3
+)
+
+// Enum value maps for RSVPResponses.
+var (
+	RSVPResponses_name = map[int32]string{
+		0: "RSVP_RESPONSES_UNSPECIFIED",
+		1: "RSVP_RESPONSES_NO",
+		2: "RSVP_RESPONSES_MAYBE",
+		3: "RSVP_RESPONSES_YES",
+	}
+	RSVPResponses_value = map[string]int32{
+		"RSVP_RESPONSES_UNSPECIFIED": 0,
+		"RSVP_RESPONSES_NO":          1,
+		"RSVP_RESPONSES_MAYBE":       2,
+		"RSVP_RESPONSES_YES":         3,
+	}
+)
+
+func (x RSVPResponses) Enum() *RSVPResponses {
+	p := new(RSVPResponses)
+	*p = x
+	return p
+}
+
+func (x RSVPResponses) String() string {
+	return protoimpl.X.EnumStringOf(x.Descriptor(), protoreflect.EnumNumber(x))
+}
+
+func (RSVPResponses) Descriptor() protoreflect.EnumDescriptor {
+	return file_resources_calendar_calendar_proto_enumTypes[0].Descriptor()
+}
+
+func (RSVPResponses) Type() protoreflect.EnumType {
+	return &file_resources_calendar_calendar_proto_enumTypes[0]
+}
+
+func (x RSVPResponses) Number() protoreflect.EnumNumber {
+	return protoreflect.EnumNumber(x)
+}
+
+// Deprecated: Use RSVPResponses.Descriptor instead.
+func (RSVPResponses) EnumDescriptor() ([]byte, []int) {
+	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{0}
+}
+
 type Calendar struct {
 	state         protoimpl.MessageState
 	sizeCache     protoimpl.SizeCache
@@ -338,6 +390,85 @@ func (x *CalendarEntry) GetAccess() *CalendarAccess {
 	return nil
 }
 
+type CalendarEntryRSVP struct {
+	state         protoimpl.MessageState
+	sizeCache     protoimpl.SizeCache
+	unknownFields protoimpl.UnknownFields
+
+	EntryId   uint64               `protobuf:"varint,1,opt,name=entry_id,json=entryId,proto3" json:"entry_id,omitempty"`
+	CreatedAt *timestamp.Timestamp `protobuf:"bytes,2,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UserId    int32                `protobuf:"varint,3,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
+	User      *users.UserShort     `protobuf:"bytes,4,opt,name=user,proto3,oneof" json:"user,omitempty"`
+	Response  RSVPResponses        `protobuf:"varint,5,opt,name=response,proto3,enum=resources.calendar.RSVPResponses" json:"response,omitempty"`
+}
+
+func (x *CalendarEntryRSVP) Reset() {
+	*x = CalendarEntryRSVP{}
+	if protoimpl.UnsafeEnabled {
+		mi := &file_resources_calendar_calendar_proto_msgTypes[2]
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		ms.StoreMessageInfo(mi)
+	}
+}
+
+func (x *CalendarEntryRSVP) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CalendarEntryRSVP) ProtoMessage() {}
+
+func (x *CalendarEntryRSVP) ProtoReflect() protoreflect.Message {
+	mi := &file_resources_calendar_calendar_proto_msgTypes[2]
+	if protoimpl.UnsafeEnabled && x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CalendarEntryRSVP.ProtoReflect.Descriptor instead.
+func (*CalendarEntryRSVP) Descriptor() ([]byte, []int) {
+	return file_resources_calendar_calendar_proto_rawDescGZIP(), []int{2}
+}
+
+func (x *CalendarEntryRSVP) GetEntryId() uint64 {
+	if x != nil {
+		return x.EntryId
+	}
+	return 0
+}
+
+func (x *CalendarEntryRSVP) GetCreatedAt() *timestamp.Timestamp {
+	if x != nil {
+		return x.CreatedAt
+	}
+	return nil
+}
+
+func (x *CalendarEntryRSVP) GetUserId() int32 {
+	if x != nil {
+		return x.UserId
+	}
+	return 0
+}
+
+func (x *CalendarEntryRSVP) GetUser() *users.UserShort {
+	if x != nil {
+		return x.User
+	}
+	return nil
+}
+
+func (x *CalendarEntryRSVP) GetResponse() RSVPResponses {
+	if x != nil {
+		return x.Response
+	}
+	return RSVPResponses_RSVP_RESPONSES_UNSPECIFIED
+}
+
 var File_resources_calendar_calendar_proto protoreflect.FileDescriptor
 
 var file_resources_calendar_calendar_proto_rawDesc = []byte{
@@ -449,12 +580,39 @@ var file_resources_calendar_calendar_proto_rawDesc = []byte{
 	0x06, 0x0a, 0x04, 0x5f, 0x6a, 0x6f, 0x62, 0x42, 0x0b, 0x0a, 0x09, 0x5f, 0x65, 0x6e, 0x64, 0x5f,
 	0x74, 0x69, 0x6d, 0x65, 0x42, 0x08, 0x0a, 0x06, 0x5f, 0x63, 0x6f, 0x6c, 0x6f, 0x72, 0x42, 0x0d,
 	0x0a, 0x0b, 0x5f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x5f, 0x69, 0x64, 0x42, 0x0a, 0x0a,
-	0x08, 0x5f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x42, 0x49, 0x5a, 0x47, 0x67, 0x69, 0x74,
-	0x68, 0x75, 0x62, 0x2e, 0x63, 0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d,
-	0x61, 0x70, 0x70, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f,
-	0x67, 0x6f, 0x2f, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63,
-	0x65, 0x73, 0x2f, 0x63, 0x61, 0x6c, 0x65, 0x6e, 0x64, 0x61, 0x72, 0x3b, 0x63, 0x61, 0x6c, 0x65,
-	0x6e, 0x64, 0x61, 0x72, 0x62, 0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
+	0x08, 0x5f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x6f, 0x72, 0x22, 0xae, 0x02, 0x0a, 0x11, 0x43, 0x61,
+	0x6c, 0x65, 0x6e, 0x64, 0x61, 0x72, 0x45, 0x6e, 0x74, 0x72, 0x79, 0x52, 0x53, 0x56, 0x50, 0x12,
+	0x1d, 0x0a, 0x08, 0x65, 0x6e, 0x74, 0x72, 0x79, 0x5f, 0x69, 0x64, 0x18, 0x01, 0x20, 0x01, 0x28,
+	0x04, 0x42, 0x02, 0x30, 0x01, 0x52, 0x07, 0x65, 0x6e, 0x74, 0x72, 0x79, 0x49, 0x64, 0x12, 0x42,
+	0x0a, 0x0a, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61, 0x74, 0x18, 0x02, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1e, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x74,
+	0x69, 0x6d, 0x65, 0x73, 0x74, 0x61, 0x6d, 0x70, 0x2e, 0x54, 0x69, 0x6d, 0x65, 0x73, 0x74, 0x61,
+	0x6d, 0x70, 0x48, 0x00, 0x52, 0x09, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x41, 0x74, 0x88,
+	0x01, 0x01, 0x12, 0x20, 0x0a, 0x07, 0x75, 0x73, 0x65, 0x72, 0x5f, 0x69, 0x64, 0x18, 0x03, 0x20,
+	0x01, 0x28, 0x05, 0x42, 0x07, 0xfa, 0x42, 0x04, 0x1a, 0x02, 0x20, 0x00, 0x52, 0x06, 0x75, 0x73,
+	0x65, 0x72, 0x49, 0x64, 0x12, 0x33, 0x0a, 0x04, 0x75, 0x73, 0x65, 0x72, 0x18, 0x04, 0x20, 0x01,
+	0x28, 0x0b, 0x32, 0x1a, 0x2e, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x75,
+	0x73, 0x65, 0x72, 0x73, 0x2e, 0x55, 0x73, 0x65, 0x72, 0x53, 0x68, 0x6f, 0x72, 0x74, 0x48, 0x01,
+	0x52, 0x04, 0x75, 0x73, 0x65, 0x72, 0x88, 0x01, 0x01, 0x12, 0x47, 0x0a, 0x08, 0x72, 0x65, 0x73,
+	0x70, 0x6f, 0x6e, 0x73, 0x65, 0x18, 0x05, 0x20, 0x01, 0x28, 0x0e, 0x32, 0x21, 0x2e, 0x72, 0x65,
+	0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x63, 0x61, 0x6c, 0x65, 0x6e, 0x64, 0x61, 0x72,
+	0x2e, 0x52, 0x53, 0x56, 0x50, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x73, 0x42, 0x08,
+	0xfa, 0x42, 0x05, 0x82, 0x01, 0x02, 0x10, 0x01, 0x52, 0x08, 0x72, 0x65, 0x73, 0x70, 0x6f, 0x6e,
+	0x73, 0x65, 0x42, 0x0d, 0x0a, 0x0b, 0x5f, 0x63, 0x72, 0x65, 0x61, 0x74, 0x65, 0x64, 0x5f, 0x61,
+	0x74, 0x42, 0x07, 0x0a, 0x05, 0x5f, 0x75, 0x73, 0x65, 0x72, 0x2a, 0x78, 0x0a, 0x0d, 0x52, 0x53,
+	0x56, 0x50, 0x52, 0x65, 0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x73, 0x12, 0x1e, 0x0a, 0x1a, 0x52,
+	0x53, 0x56, 0x50, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x4f, 0x4e, 0x53, 0x45, 0x53, 0x5f, 0x55, 0x4e,
+	0x53, 0x50, 0x45, 0x43, 0x49, 0x46, 0x49, 0x45, 0x44, 0x10, 0x00, 0x12, 0x15, 0x0a, 0x11, 0x52,
+	0x53, 0x56, 0x50, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x4f, 0x4e, 0x53, 0x45, 0x53, 0x5f, 0x4e, 0x4f,
+	0x10, 0x01, 0x12, 0x18, 0x0a, 0x14, 0x52, 0x53, 0x56, 0x50, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x4f,
+	0x4e, 0x53, 0x45, 0x53, 0x5f, 0x4d, 0x41, 0x59, 0x42, 0x45, 0x10, 0x02, 0x12, 0x16, 0x0a, 0x12,
+	0x52, 0x53, 0x56, 0x50, 0x5f, 0x52, 0x45, 0x53, 0x50, 0x4f, 0x4e, 0x53, 0x45, 0x53, 0x5f, 0x59,
+	0x45, 0x53, 0x10, 0x03, 0x42, 0x49, 0x5a, 0x47, 0x67, 0x69, 0x74, 0x68, 0x75, 0x62, 0x2e, 0x63,
+	0x6f, 0x6d, 0x2f, 0x66, 0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2d, 0x61, 0x70, 0x70, 0x2f, 0x66,
+	0x69, 0x76, 0x65, 0x6e, 0x65, 0x74, 0x2f, 0x67, 0x65, 0x6e, 0x2f, 0x67, 0x6f, 0x2f, 0x70, 0x72,
+	0x6f, 0x74, 0x6f, 0x2f, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2f, 0x63, 0x61,
+	0x6c, 0x65, 0x6e, 0x64, 0x61, 0x72, 0x3b, 0x63, 0x61, 0x6c, 0x65, 0x6e, 0x64, 0x61, 0x72, 0x62,
+	0x06, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x33,
 }
 
 var (
@@ -469,32 +627,38 @@ func file_resources_calendar_calendar_proto_rawDescGZIP() []byte {
 	return file_resources_calendar_calendar_proto_rawDescData
 }
 
-var file_resources_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 2)
+var file_resources_calendar_calendar_proto_enumTypes = make([]protoimpl.EnumInfo, 1)
+var file_resources_calendar_calendar_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
 var file_resources_calendar_calendar_proto_goTypes = []interface{}{
-	(*Calendar)(nil),            // 0: resources.calendar.Calendar
-	(*CalendarEntry)(nil),       // 1: resources.calendar.CalendarEntry
-	(*timestamp.Timestamp)(nil), // 2: resources.timestamp.Timestamp
-	(*users.UserShort)(nil),     // 3: resources.users.UserShort
-	(*CalendarAccess)(nil),      // 4: resources.calendar.CalendarAccess
+	(RSVPResponses)(0),          // 0: resources.calendar.RSVPResponses
+	(*Calendar)(nil),            // 1: resources.calendar.Calendar
+	(*CalendarEntry)(nil),       // 2: resources.calendar.CalendarEntry
+	(*CalendarEntryRSVP)(nil),   // 3: resources.calendar.CalendarEntryRSVP
+	(*timestamp.Timestamp)(nil), // 4: resources.timestamp.Timestamp
+	(*users.UserShort)(nil),     // 5: resources.users.UserShort
+	(*CalendarAccess)(nil),      // 6: resources.calendar.CalendarAccess
 }
 var file_resources_calendar_calendar_proto_depIdxs = []int32{
-	2,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
-	2,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
-	2,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
-	3,  // 3: resources.calendar.Calendar.creator:type_name -> resources.users.UserShort
-	4,  // 4: resources.calendar.Calendar.access:type_name -> resources.calendar.CalendarAccess
-	2,  // 5: resources.calendar.CalendarEntry.created_at:type_name -> resources.timestamp.Timestamp
-	2,  // 6: resources.calendar.CalendarEntry.updated_at:type_name -> resources.timestamp.Timestamp
-	2,  // 7: resources.calendar.CalendarEntry.deleted_at:type_name -> resources.timestamp.Timestamp
-	2,  // 8: resources.calendar.CalendarEntry.start_time:type_name -> resources.timestamp.Timestamp
-	2,  // 9: resources.calendar.CalendarEntry.end_time:type_name -> resources.timestamp.Timestamp
-	3,  // 10: resources.calendar.CalendarEntry.creator:type_name -> resources.users.UserShort
-	4,  // 11: resources.calendar.CalendarEntry.access:type_name -> resources.calendar.CalendarAccess
-	12, // [12:12] is the sub-list for method output_type
-	12, // [12:12] is the sub-list for method input_type
-	12, // [12:12] is the sub-list for extension type_name
-	12, // [12:12] is the sub-list for extension extendee
-	0,  // [0:12] is the sub-list for field type_name
+	4,  // 0: resources.calendar.Calendar.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 1: resources.calendar.Calendar.updated_at:type_name -> resources.timestamp.Timestamp
+	4,  // 2: resources.calendar.Calendar.deleted_at:type_name -> resources.timestamp.Timestamp
+	5,  // 3: resources.calendar.Calendar.creator:type_name -> resources.users.UserShort
+	6,  // 4: resources.calendar.Calendar.access:type_name -> resources.calendar.CalendarAccess
+	4,  // 5: resources.calendar.CalendarEntry.created_at:type_name -> resources.timestamp.Timestamp
+	4,  // 6: resources.calendar.CalendarEntry.updated_at:type_name -> resources.timestamp.Timestamp
+	4,  // 7: resources.calendar.CalendarEntry.deleted_at:type_name -> resources.timestamp.Timestamp
+	4,  // 8: resources.calendar.CalendarEntry.start_time:type_name -> resources.timestamp.Timestamp
+	4,  // 9: resources.calendar.CalendarEntry.end_time:type_name -> resources.timestamp.Timestamp
+	5,  // 10: resources.calendar.CalendarEntry.creator:type_name -> resources.users.UserShort
+	6,  // 11: resources.calendar.CalendarEntry.access:type_name -> resources.calendar.CalendarAccess
+	4,  // 12: resources.calendar.CalendarEntryRSVP.created_at:type_name -> resources.timestamp.Timestamp
+	5,  // 13: resources.calendar.CalendarEntryRSVP.user:type_name -> resources.users.UserShort
+	0,  // 14: resources.calendar.CalendarEntryRSVP.response:type_name -> resources.calendar.RSVPResponses
+	15, // [15:15] is the sub-list for method output_type
+	15, // [15:15] is the sub-list for method input_type
+	15, // [15:15] is the sub-list for extension type_name
+	15, // [15:15] is the sub-list for extension extendee
+	0,  // [0:15] is the sub-list for field type_name
 }
 
 func init() { file_resources_calendar_calendar_proto_init() }
@@ -528,21 +692,35 @@ func file_resources_calendar_calendar_proto_init() {
 				return nil
 			}
 		}
+		file_resources_calendar_calendar_proto_msgTypes[2].Exporter = func(v interface{}, i int) interface{} {
+			switch v := v.(*CalendarEntryRSVP); i {
+			case 0:
+				return &v.state
+			case 1:
+				return &v.sizeCache
+			case 2:
+				return &v.unknownFields
+			default:
+				return nil
+			}
+		}
 	}
 	file_resources_calendar_calendar_proto_msgTypes[0].OneofWrappers = []interface{}{}
 	file_resources_calendar_calendar_proto_msgTypes[1].OneofWrappers = []interface{}{}
+	file_resources_calendar_calendar_proto_msgTypes[2].OneofWrappers = []interface{}{}
 	type x struct{}
 	out := protoimpl.TypeBuilder{
 		File: protoimpl.DescBuilder{
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: file_resources_calendar_calendar_proto_rawDesc,
-			NumEnums:      0,
-			NumMessages:   2,
+			NumEnums:      1,
+			NumMessages:   3,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
 		GoTypes:           file_resources_calendar_calendar_proto_goTypes,
 		DependencyIndexes: file_resources_calendar_calendar_proto_depIdxs,
+		EnumInfos:         file_resources_calendar_calendar_proto_enumTypes,
 		MessageInfos:      file_resources_calendar_calendar_proto_msgTypes,
 	}.Build()
 	File_resources_calendar_calendar_proto = out.File

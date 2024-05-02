@@ -57,3 +57,18 @@ message CalendarEntry {
   string creator_job = 15 [(validate.rules).string.max_len = 20];
   resources.calendar.CalendarAccess access = 16;
 }
+
+enum RSVPResponses {
+  RSVP_RESPONSES_UNSPECIFIED = 0;
+  RSVP_RESPONSES_NO = 1;
+  RSVP_RESPONSES_MAYBE = 2;
+  RSVP_RESPONSES_YES = 3;
+}
+
+message CalendarEntryRSVP {
+  uint64 entry_id = 1 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 2;
+  int32 user_id = 3 [(validate.rules).int32.gt = 0];
+  optional resources.users.UserShort user = 4;
+  RSVPResponses response = 5 [(validate.rules).enum.defined_only = true];
+}

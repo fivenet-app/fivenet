@@ -4,6 +4,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CalendarService } from "./calendar";
+import type { RSVPCalendarEntryResponse } from "./calendar";
+import type { RSVPCalendarEntryRequest } from "./calendar";
+import type { ListCalendarEntryRSVPResponse } from "./calendar";
+import type { ListCalendarEntryRSVPRequest } from "./calendar";
 import type { ShareCalendarEntryResponse } from "./calendar";
 import type { ShareCalendarEntryRequest } from "./calendar";
 import type { DeleteCalendarEntriesResponse } from "./calendar";
@@ -83,6 +87,18 @@ export interface ICalendarServiceClient {
      * @generated from protobuf rpc: ShareCalendarEntry(services.calendar.ShareCalendarEntryRequest) returns (services.calendar.ShareCalendarEntryResponse);
      */
     shareCalendarEntry(input: ShareCalendarEntryRequest, options?: RpcOptions): UnaryCall<ShareCalendarEntryRequest, ShareCalendarEntryResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListCalendarEntryRSVP(services.calendar.ListCalendarEntryRSVPRequest) returns (services.calendar.ListCalendarEntryRSVPResponse);
+     */
+    listCalendarEntryRSVP(input: ListCalendarEntryRSVPRequest, options?: RpcOptions): UnaryCall<ListCalendarEntryRSVPRequest, ListCalendarEntryRSVPResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: RSVPCalendarEntry(services.calendar.RSVPCalendarEntryRequest) returns (services.calendar.RSVPCalendarEntryResponse);
+     */
+    rSVPCalendarEntry(input: RSVPCalendarEntryRequest, options?: RpcOptions): UnaryCall<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse>;
 }
 /**
  * @generated from protobuf service services.calendar.CalendarService
@@ -173,5 +189,23 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
     shareCalendarEntry(input: ShareCalendarEntryRequest, options?: RpcOptions): UnaryCall<ShareCalendarEntryRequest, ShareCalendarEntryResponse> {
         const method = this.methods[8], opt = this._transport.mergeOptions(options);
         return stackIntercept<ShareCalendarEntryRequest, ShareCalendarEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListCalendarEntryRSVP(services.calendar.ListCalendarEntryRSVPRequest) returns (services.calendar.ListCalendarEntryRSVPResponse);
+     */
+    listCalendarEntryRSVP(input: ListCalendarEntryRSVPRequest, options?: RpcOptions): UnaryCall<ListCalendarEntryRSVPRequest, ListCalendarEntryRSVPResponse> {
+        const method = this.methods[9], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListCalendarEntryRSVPRequest, ListCalendarEntryRSVPResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: RSVPCalendarEntry(services.calendar.RSVPCalendarEntryRequest) returns (services.calendar.RSVPCalendarEntryResponse);
+     */
+    rSVPCalendarEntry(input: RSVPCalendarEntryRequest, options?: RpcOptions): UnaryCall<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
 }

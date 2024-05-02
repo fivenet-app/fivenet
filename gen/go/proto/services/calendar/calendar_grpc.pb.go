@@ -28,6 +28,8 @@ const (
 	CalendarService_CreateOrUpdateCalendarEntries_FullMethodName = "/services.calendar.CalendarService/CreateOrUpdateCalendarEntries"
 	CalendarService_DeleteCalendarEntries_FullMethodName         = "/services.calendar.CalendarService/DeleteCalendarEntries"
 	CalendarService_ShareCalendarEntry_FullMethodName            = "/services.calendar.CalendarService/ShareCalendarEntry"
+	CalendarService_ListCalendarEntryRSVP_FullMethodName         = "/services.calendar.CalendarService/ListCalendarEntryRSVP"
+	CalendarService_RSVPCalendarEntry_FullMethodName             = "/services.calendar.CalendarService/RSVPCalendarEntry"
 )
 
 // CalendarServiceClient is the client API for CalendarService service.
@@ -52,6 +54,10 @@ type CalendarServiceClient interface {
 	DeleteCalendarEntries(ctx context.Context, in *DeleteCalendarEntriesRequest, opts ...grpc.CallOption) (*DeleteCalendarEntriesResponse, error)
 	// @perm: Name=CreateOrUpdateCalendarEntries
 	ShareCalendarEntry(ctx context.Context, in *ShareCalendarEntryRequest, opts ...grpc.CallOption) (*ShareCalendarEntryResponse, error)
+	// @perm: Name=Any
+	ListCalendarEntryRSVP(ctx context.Context, in *ListCalendarEntryRSVPRequest, opts ...grpc.CallOption) (*ListCalendarEntryRSVPResponse, error)
+	// @perm: Name=Any
+	RSVPCalendarEntry(ctx context.Context, in *RSVPCalendarEntryRequest, opts ...grpc.CallOption) (*RSVPCalendarEntryResponse, error)
 }
 
 type calendarServiceClient struct {
@@ -143,6 +149,24 @@ func (c *calendarServiceClient) ShareCalendarEntry(ctx context.Context, in *Shar
 	return out, nil
 }
 
+func (c *calendarServiceClient) ListCalendarEntryRSVP(ctx context.Context, in *ListCalendarEntryRSVPRequest, opts ...grpc.CallOption) (*ListCalendarEntryRSVPResponse, error) {
+	out := new(ListCalendarEntryRSVPResponse)
+	err := c.cc.Invoke(ctx, CalendarService_ListCalendarEntryRSVP_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *calendarServiceClient) RSVPCalendarEntry(ctx context.Context, in *RSVPCalendarEntryRequest, opts ...grpc.CallOption) (*RSVPCalendarEntryResponse, error) {
+	out := new(RSVPCalendarEntryResponse)
+	err := c.cc.Invoke(ctx, CalendarService_RSVPCalendarEntry_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CalendarServiceServer is the server API for CalendarService service.
 // All implementations must embed UnimplementedCalendarServiceServer
 // for forward compatibility
@@ -165,6 +189,10 @@ type CalendarServiceServer interface {
 	DeleteCalendarEntries(context.Context, *DeleteCalendarEntriesRequest) (*DeleteCalendarEntriesResponse, error)
 	// @perm: Name=CreateOrUpdateCalendarEntries
 	ShareCalendarEntry(context.Context, *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error)
+	// @perm: Name=Any
+	ListCalendarEntryRSVP(context.Context, *ListCalendarEntryRSVPRequest) (*ListCalendarEntryRSVPResponse, error)
+	// @perm: Name=Any
+	RSVPCalendarEntry(context.Context, *RSVPCalendarEntryRequest) (*RSVPCalendarEntryResponse, error)
 	mustEmbedUnimplementedCalendarServiceServer()
 }
 
@@ -198,6 +226,12 @@ func (UnimplementedCalendarServiceServer) DeleteCalendarEntries(context.Context,
 }
 func (UnimplementedCalendarServiceServer) ShareCalendarEntry(context.Context, *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ShareCalendarEntry not implemented")
+}
+func (UnimplementedCalendarServiceServer) ListCalendarEntryRSVP(context.Context, *ListCalendarEntryRSVPRequest) (*ListCalendarEntryRSVPResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCalendarEntryRSVP not implemented")
+}
+func (UnimplementedCalendarServiceServer) RSVPCalendarEntry(context.Context, *RSVPCalendarEntryRequest) (*RSVPCalendarEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method RSVPCalendarEntry not implemented")
 }
 func (UnimplementedCalendarServiceServer) mustEmbedUnimplementedCalendarServiceServer() {}
 
@@ -374,6 +408,42 @@ func _CalendarService_ShareCalendarEntry_Handler(srv interface{}, ctx context.Co
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CalendarService_ListCalendarEntryRSVP_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCalendarEntryRSVPRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalendarServiceServer).ListCalendarEntryRSVP(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CalendarService_ListCalendarEntryRSVP_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalendarServiceServer).ListCalendarEntryRSVP(ctx, req.(*ListCalendarEntryRSVPRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CalendarService_RSVPCalendarEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(RSVPCalendarEntryRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalendarServiceServer).RSVPCalendarEntry(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CalendarService_RSVPCalendarEntry_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalendarServiceServer).RSVPCalendarEntry(ctx, req.(*RSVPCalendarEntryRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CalendarService_ServiceDesc is the grpc.ServiceDesc for CalendarService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -416,6 +486,14 @@ var CalendarService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ShareCalendarEntry",
 			Handler:    _CalendarService_ShareCalendarEntry_Handler,
+		},
+		{
+			MethodName: "ListCalendarEntryRSVP",
+			Handler:    _CalendarService_ListCalendarEntryRSVP_Handler,
+		},
+		{
+			MethodName: "RSVPCalendarEntry",
+			Handler:    _CalendarService_RSVPCalendarEntry_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

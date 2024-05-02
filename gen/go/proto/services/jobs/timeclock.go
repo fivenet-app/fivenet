@@ -283,6 +283,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("colleague.avatar"),
+			tJobsUserProps.UserID,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
 		).

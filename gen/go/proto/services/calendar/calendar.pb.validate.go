@@ -2067,6 +2067,37 @@ func (m *ShareCalendarEntryRequest) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for EntryId
+
+	if all {
+		switch v := interface{}(m.GetAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ShareCalendarEntryRequestValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ShareCalendarEntryRequestValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ShareCalendarEntryRequestValidationError{
+				field:  "Access",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ShareCalendarEntryRequestMultiError(errors)
 	}
@@ -2169,6 +2200,35 @@ func (m *ShareCalendarEntryResponse) validate(all bool) error {
 
 	var errors []error
 
+	if all {
+		switch v := interface{}(m.GetAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ShareCalendarEntryResponseValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ShareCalendarEntryResponseValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ShareCalendarEntryResponseValidationError{
+				field:  "Access",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return ShareCalendarEntryResponseMultiError(errors)
 	}
@@ -2248,3 +2308,589 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ShareCalendarEntryResponseValidationError{}
+
+// Validate checks the field values on ListCalendarEntryRSVPRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListCalendarEntryRSVPRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCalendarEntryRSVPRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListCalendarEntryRSVPRequestMultiError, or nil if none found.
+func (m *ListCalendarEntryRSVPRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCalendarEntryRSVPRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListCalendarEntryRSVPRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListCalendarEntryRSVPRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListCalendarEntryRSVPRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListCalendarEntryRSVPRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for EntryId
+
+	if len(errors) > 0 {
+		return ListCalendarEntryRSVPRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCalendarEntryRSVPRequestMultiError is an error wrapping multiple
+// validation errors returned by ListCalendarEntryRSVPRequest.ValidateAll() if
+// the designated constraints aren't met.
+type ListCalendarEntryRSVPRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCalendarEntryRSVPRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCalendarEntryRSVPRequestMultiError) AllErrors() []error { return m }
+
+// ListCalendarEntryRSVPRequestValidationError is the validation error returned
+// by ListCalendarEntryRSVPRequest.Validate if the designated constraints
+// aren't met.
+type ListCalendarEntryRSVPRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCalendarEntryRSVPRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCalendarEntryRSVPRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCalendarEntryRSVPRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCalendarEntryRSVPRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCalendarEntryRSVPRequestValidationError) ErrorName() string {
+	return "ListCalendarEntryRSVPRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListCalendarEntryRSVPRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCalendarEntryRSVPRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCalendarEntryRSVPRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCalendarEntryRSVPRequestValidationError{}
+
+// Validate checks the field values on ListCalendarEntryRSVPResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListCalendarEntryRSVPResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListCalendarEntryRSVPResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the result is a list of violation errors wrapped in
+// ListCalendarEntryRSVPResponseMultiError, or nil if none found.
+func (m *ListCalendarEntryRSVPResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListCalendarEntryRSVPResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListCalendarEntryRSVPResponseValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListCalendarEntryRSVPResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListCalendarEntryRSVPResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListCalendarEntryRSVPResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCalendarEntryRSVPResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCalendarEntryRSVPResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCalendarEntryRSVPResponseValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListCalendarEntryRSVPResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListCalendarEntryRSVPResponseMultiError is an error wrapping multiple
+// validation errors returned by ListCalendarEntryRSVPResponse.ValidateAll()
+// if the designated constraints aren't met.
+type ListCalendarEntryRSVPResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListCalendarEntryRSVPResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListCalendarEntryRSVPResponseMultiError) AllErrors() []error { return m }
+
+// ListCalendarEntryRSVPResponseValidationError is the validation error
+// returned by ListCalendarEntryRSVPResponse.Validate if the designated
+// constraints aren't met.
+type ListCalendarEntryRSVPResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListCalendarEntryRSVPResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListCalendarEntryRSVPResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListCalendarEntryRSVPResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListCalendarEntryRSVPResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListCalendarEntryRSVPResponseValidationError) ErrorName() string {
+	return "ListCalendarEntryRSVPResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListCalendarEntryRSVPResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListCalendarEntryRSVPResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListCalendarEntryRSVPResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListCalendarEntryRSVPResponseValidationError{}
+
+// Validate checks the field values on RSVPCalendarEntryRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RSVPCalendarEntryRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RSVPCalendarEntryRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RSVPCalendarEntryRequestMultiError, or nil if none found.
+func (m *RSVPCalendarEntryRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RSVPCalendarEntryRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetEntry()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RSVPCalendarEntryRequestValidationError{
+					field:  "Entry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RSVPCalendarEntryRequestValidationError{
+					field:  "Entry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RSVPCalendarEntryRequestValidationError{
+				field:  "Entry",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Subscribe
+
+	if len(errors) > 0 {
+		return RSVPCalendarEntryRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// RSVPCalendarEntryRequestMultiError is an error wrapping multiple validation
+// errors returned by RSVPCalendarEntryRequest.ValidateAll() if the designated
+// constraints aren't met.
+type RSVPCalendarEntryRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RSVPCalendarEntryRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RSVPCalendarEntryRequestMultiError) AllErrors() []error { return m }
+
+// RSVPCalendarEntryRequestValidationError is the validation error returned by
+// RSVPCalendarEntryRequest.Validate if the designated constraints aren't met.
+type RSVPCalendarEntryRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RSVPCalendarEntryRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RSVPCalendarEntryRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RSVPCalendarEntryRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RSVPCalendarEntryRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RSVPCalendarEntryRequestValidationError) ErrorName() string {
+	return "RSVPCalendarEntryRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RSVPCalendarEntryRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRSVPCalendarEntryRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RSVPCalendarEntryRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RSVPCalendarEntryRequestValidationError{}
+
+// Validate checks the field values on RSVPCalendarEntryResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *RSVPCalendarEntryResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on RSVPCalendarEntryResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// RSVPCalendarEntryResponseMultiError, or nil if none found.
+func (m *RSVPCalendarEntryResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *RSVPCalendarEntryResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetEntry()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, RSVPCalendarEntryResponseValidationError{
+					field:  "Entry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, RSVPCalendarEntryResponseValidationError{
+					field:  "Entry",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return RSVPCalendarEntryResponseValidationError{
+				field:  "Entry",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return RSVPCalendarEntryResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// RSVPCalendarEntryResponseMultiError is an error wrapping multiple validation
+// errors returned by RSVPCalendarEntryResponse.ValidateAll() if the
+// designated constraints aren't met.
+type RSVPCalendarEntryResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m RSVPCalendarEntryResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m RSVPCalendarEntryResponseMultiError) AllErrors() []error { return m }
+
+// RSVPCalendarEntryResponseValidationError is the validation error returned by
+// RSVPCalendarEntryResponse.Validate if the designated constraints aren't met.
+type RSVPCalendarEntryResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e RSVPCalendarEntryResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e RSVPCalendarEntryResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e RSVPCalendarEntryResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e RSVPCalendarEntryResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e RSVPCalendarEntryResponseValidationError) ErrorName() string {
+	return "RSVPCalendarEntryResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e RSVPCalendarEntryResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sRSVPCalendarEntryResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = RSVPCalendarEntryResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = RSVPCalendarEntryResponseValidationError{}

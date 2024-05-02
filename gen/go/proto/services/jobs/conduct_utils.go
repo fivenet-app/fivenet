@@ -25,12 +25,14 @@ func (s *Server) getConductEntry(ctx context.Context, id uint64) (*jobs.ConductE
 			tUser.Firstname,
 			tUser.Lastname,
 			tUser.Dateofbirth,
+			tUser.PhoneNumber,
 			tConduct.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
 		).
 		FROM(
 			tConduct.

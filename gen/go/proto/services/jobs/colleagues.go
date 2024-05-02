@@ -645,6 +645,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tTargetUser.Firstname,
 			tTargetUser.Lastname,
 			tTargetUser.Dateofbirth,
+			tTargetUser.PhoneNumber,
 			tTargetUserProps.Avatar.AS("target_user.avatar"),
 			tTargetJobsUserProps.UserID,
 			tTargetJobsUserProps.AbsenceBegin,
@@ -656,6 +657,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tSourceUser.Firstname,
 			tSourceUser.Lastname,
 			tSourceUser.Dateofbirth,
+			tSourceUser.PhoneNumber,
 			tSourceUserProps.Avatar.AS("source_user.avatar"),
 		).
 		FROM(

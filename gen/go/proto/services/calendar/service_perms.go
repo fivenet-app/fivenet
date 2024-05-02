@@ -11,11 +11,13 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: CalendarService
-	"CalendarService/GetCalendar":         "Any",
-	"CalendarService/GetCalendarEntry":    "Any",
-	"CalendarService/ListCalendarEntries": "Any",
-	"CalendarService/ListCalendars":       "Any",
-	"CalendarService/ShareCalendarEntry":  "CalendarService/CreateOrUpdateCalendarEntries",
+	"CalendarService/GetCalendar":           "Any",
+	"CalendarService/GetCalendarEntry":      "Any",
+	"CalendarService/ListCalendarEntries":   "Any",
+	"CalendarService/ListCalendarEntryRSVP": "Any",
+	"CalendarService/ListCalendars":         "Any",
+	"CalendarService/RSVPCalendarEntry":     "Any",
+	"CalendarService/ShareCalendarEntry":    "CalendarService/CreateOrUpdateCalendarEntries",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

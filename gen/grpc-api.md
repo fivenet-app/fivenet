@@ -236,6 +236,9 @@
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
     - [CalendarEntry](#resources-calendar-CalendarEntry)
+    - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
+  
+    - [RSVPResponses](#resources-calendar-RSVPResponses)
   
 - [resources/calendar/access.proto](#resources_calendar_access-proto)
     - [CalendarAccess](#resources-calendar-CalendarAccess)
@@ -590,8 +593,12 @@
     - [GetCalendarResponse](#services-calendar-GetCalendarResponse)
     - [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest)
     - [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse)
+    - [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest)
+    - [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse)
     - [ListCalendarsRequest](#services-calendar-ListCalendarsRequest)
     - [ListCalendarsResponse](#services-calendar-ListCalendarsResponse)
+    - [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest)
+    - [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse)
     - [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest)
     - [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse)
   
@@ -4033,7 +4040,40 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
+
+<a name="resources-calendar-CalendarEntryRSVP"></a>
+
+### CalendarEntryRSVP
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| response | [RSVPResponses](#resources-calendar-RSVPResponses) |  |  |
+
+
+
+
+
  
+
+
+<a name="resources-calendar-RSVPResponses"></a>
+
+### RSVPResponses
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| RSVP_RESPONSES_UNSPECIFIED | 0 |  |
+| RSVP_RESPONSES_NO | 1 |  |
+| RSVP_RESPONSES_MAYBE | 2 |  |
+| RSVP_RESPONSES_YES | 3 |  |
+
 
  
 
@@ -8850,6 +8890,38 @@ Results ====================================================================
 
 
 
+<a name="services-calendar-ListCalendarEntryRSVPRequest"></a>
+
+### ListCalendarEntryRSVPRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| entry_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-ListCalendarEntryRSVPResponse"></a>
+
+### ListCalendarEntryRSVPResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| entries | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | repeated |  |
+
+
+
+
+
+
 <a name="services-calendar-ListCalendarsRequest"></a>
 
 ### ListCalendarsRequest
@@ -8881,10 +8953,47 @@ Results ====================================================================
 
 
 
+<a name="services-calendar-RSVPCalendarEntryRequest"></a>
+
+### RSVPCalendarEntryRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) |  |  |
+| subscribe | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-RSVPCalendarEntryResponse"></a>
+
+### RSVPCalendarEntryResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) |  |  |
+
+
+
+
+
+
 <a name="services-calendar-ShareCalendarEntryRequest"></a>
 
 ### ShareCalendarEntryRequest
-TODO
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entry_id | [uint64](#uint64) |  |  |
+| access | [resources.calendar.CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
 
 
 
@@ -8895,6 +9004,11 @@ TODO
 
 ### ShareCalendarEntryResponse
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| access | [resources.calendar.CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
 
 
 
@@ -8923,6 +9037,8 @@ TODO
 | CreateOrUpdateCalendarEntries | [CreateOrUpdateCalendarEntriesRequest](#services-calendar-CreateOrUpdateCalendarEntriesRequest) | [CreateOrUpdateCalendarEntriesResponse](#services-calendar-CreateOrUpdateCalendarEntriesResponse) | @perm |
 | DeleteCalendarEntries | [DeleteCalendarEntriesRequest](#services-calendar-DeleteCalendarEntriesRequest) | [DeleteCalendarEntriesResponse](#services-calendar-DeleteCalendarEntriesResponse) | @perm |
 | ShareCalendarEntry | [ShareCalendarEntryRequest](#services-calendar-ShareCalendarEntryRequest) | [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse) | @perm: Name=CreateOrUpdateCalendarEntries |
+| ListCalendarEntryRSVP | [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest) | [ListCalendarEntryRSVPResponse](#services-calendar-ListCalendarEntryRSVPResponse) | @perm: Name=Any |
+| RSVPCalendarEntry | [RSVPCalendarEntryRequest](#services-calendar-RSVPCalendarEntryRequest) | [RSVPCalendarEntryResponse](#services-calendar-RSVPCalendarEntryResponse) | @perm: Name=Any |
 
  
 

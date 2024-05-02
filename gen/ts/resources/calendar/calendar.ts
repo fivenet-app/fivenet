@@ -149,6 +149,52 @@ export interface CalendarEntry {
      */
     access?: CalendarAccess;
 }
+/**
+ * @generated from protobuf message resources.calendar.CalendarEntryRSVP
+ */
+export interface CalendarEntryRSVP {
+    /**
+     * @generated from protobuf field: uint64 entry_id = 1 [jstype = JS_STRING];
+     */
+    entryId: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort user = 4;
+     */
+    user?: UserShort;
+    /**
+     * @generated from protobuf field: resources.calendar.RSVPResponses response = 5;
+     */
+    response: RSVPResponses;
+}
+/**
+ * @generated from protobuf enum resources.calendar.RSVPResponses
+ */
+export enum RSVPResponses {
+    /**
+     * @generated from protobuf enum value: RSVP_RESPONSES_UNSPECIFIED = 0;
+     */
+    RSVP_RESPONSES_UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: RSVP_RESPONSES_NO = 1;
+     */
+    RSVP_RESPONSES_NO = 1,
+    /**
+     * @generated from protobuf enum value: RSVP_RESPONSES_MAYBE = 2;
+     */
+    RSVP_RESPONSES_MAYBE = 2,
+    /**
+     * @generated from protobuf enum value: RSVP_RESPONSES_YES = 3;
+     */
+    RSVP_RESPONSES_YES = 3
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class Calendar$Type extends MessageType<Calendar> {
     constructor() {
@@ -441,3 +487,80 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
  * @generated MessageType for protobuf message resources.calendar.CalendarEntry
  */
 export const CalendarEntry = new CalendarEntry$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
+    constructor() {
+        super("resources.calendar.CalendarEntryRSVP", [
+            { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 4, name: "user", kind: "message", T: () => UserShort },
+            { no: 5, name: "response", kind: "enum", T: () => ["resources.calendar.RSVPResponses", RSVPResponses], options: { "validate.rules": { enum: { definedOnly: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<CalendarEntryRSVP>): CalendarEntryRSVP {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.entryId = "0";
+        message.userId = 0;
+        message.response = 0;
+        if (value !== undefined)
+            reflectionMergePartial<CalendarEntryRSVP>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarEntryRSVP): CalendarEntryRSVP {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 entry_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.entryId = reader.uint64().toString();
+                    break;
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* int32 user_id */ 3:
+                    message.userId = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort user */ 4:
+                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                    break;
+                case /* resources.calendar.RSVPResponses response */ 5:
+                    message.response = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CalendarEntryRSVP, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 entry_id = 1 [jstype = JS_STRING]; */
+        if (message.entryId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.entryId);
+        /* optional resources.timestamp.Timestamp created_at = 2; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 3; */
+        if (message.userId !== 0)
+            writer.tag(3, WireType.Varint).int32(message.userId);
+        /* optional resources.users.UserShort user = 4; */
+        if (message.user)
+            UserShort.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.calendar.RSVPResponses response = 5; */
+        if (message.response !== 0)
+            writer.tag(5, WireType.Varint).int32(message.response);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.calendar.CalendarEntryRSVP
+ */
+export const CalendarEntryRSVP = new CalendarEntryRSVP$Type();

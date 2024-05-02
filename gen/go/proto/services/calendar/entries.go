@@ -6,10 +6,12 @@ import (
 	"time"
 
 	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorscalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -140,6 +142,15 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequ
 func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateOrUpdateCalendarEntriesRequest) (*CreateOrUpdateCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	auditEntry := &model.FivenetAuditLog{
+		Service: CalendarService_ServiceDesc.ServiceName,
+		Method:  "CreateOrUpdateCalendarEntries",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
 	if req.Entry.Id > 0 {
 		check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.Entry.CalendarId, req.Entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
 		if err != nil {
@@ -181,6 +192,8 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
 		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
 		if err != nil {
@@ -225,6 +238,8 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 		}
 
 		req.Entry.Id = uint64(lastId)
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
 	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.Id)))
@@ -239,6 +254,15 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 
 func (s *Server) DeleteCalendarEntries(ctx context.Context, req *DeleteCalendarEntriesRequest) (*DeleteCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CalendarService_ServiceDesc.ServiceName,
+		Method:  "DeleteCalendarEntries",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
@@ -264,16 +288,50 @@ func (s *Server) DeleteCalendarEntries(ctx context.Context, req *DeleteCalendarE
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+
 	return &DeleteCalendarEntriesResponse{}, nil
 }
 
 func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
-	_ = userInfo
 
-	// TODO
+	auditEntry := &model.FivenetAuditLog{
+		Service: CalendarService_ServiceDesc.ServiceName,
+		Method:  "ShareCalendarEntry",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
 
-	return nil, nil
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+	}
+
+	if err := s.handleCalendarAccessChanges(ctx, s.db, calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED, entry.CalendarId, nil, req.Access); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+
+	access, err := s.getAccess(ctx, entry.CalendarId, &entry.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	return &ShareCalendarEntryResponse{
+		Access: access,
+	}, nil
 }
 
 func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.CalendarEntry, error) {

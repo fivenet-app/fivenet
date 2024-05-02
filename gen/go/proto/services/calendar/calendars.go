@@ -6,10 +6,12 @@ import (
 
 	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorscalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -158,6 +160,23 @@ func (s *Server) GetCalendar(ctx context.Context, req *GetCalendarRequest) (*Get
 func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdateCalendarRequest) (*CreateOrUpdateCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	auditEntry := &model.FivenetAuditLog{
+		Service: CalendarService_ServiceDesc.ServiceName,
+		Method:  "CreateOrUpdateCalendar",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	// Check if user has access to existing calendar
 	if req.Calendar.Id > 0 {
 		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE)
@@ -190,6 +209,8 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
 		stmt := tCalendar.
 			INSERT(
@@ -229,9 +250,18 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 
 			req.Calendar.Id = uint64(lastId)
 		}
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
-	// TODO handle access updates
+	if err := s.handleCalendarAccessChanges(ctx, tx, calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED, req.Calendar.Id, nil, req.Calendar.Access); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
 
 	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)))
 	if err != nil {
@@ -245,6 +275,15 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 
 func (s *Server) DeleteCalendar(ctx context.Context, req *DeleteCalendarRequest) (*DeleteCalendarResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CalendarService_ServiceDesc.ServiceName,
+		Method:  "DeleteCalendar",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
 
 	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
@@ -266,6 +305,8 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *DeleteCalendarRequest)
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteCalendarResponse{}, nil
 }

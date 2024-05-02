@@ -11,6 +11,8 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { CalendarEntryRSVP } from "../../resources/calendar/calendar";
+import { CalendarAccess } from "../../resources/calendar/access";
 import { Calendar } from "../../resources/calendar/calendar";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -68,9 +70,9 @@ export interface ListCalendarsResponse {
  */
 export interface GetCalendarRequest {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1;
+     * @generated from protobuf field: uint64 calendar_id = 1 [jstype = JS_STRING];
      */
-    calendarId: number;
+    calendarId: string;
 }
 /**
  * @generated from protobuf message services.calendar.GetCalendarResponse
@@ -104,9 +106,9 @@ export interface CreateOrUpdateCalendarResponse {
  */
 export interface DeleteCalendarRequest {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1;
+     * @generated from protobuf field: uint64 calendar_id = 1 [jstype = JS_STRING];
      */
-    calendarId: number;
+    calendarId: string;
 }
 /**
  * @generated from protobuf message services.calendar.DeleteCalendarResponse
@@ -120,13 +122,13 @@ export interface DeleteCalendarResponse {
  */
 export interface GetCalendarEntryRequest {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1;
+     * @generated from protobuf field: uint64 calendar_id = 1 [jstype = JS_STRING];
      */
-    calendarId: number;
+    calendarId: string;
     /**
-     * @generated from protobuf field: uint64 entry_id = 2;
+     * @generated from protobuf field: uint64 entry_id = 2 [jstype = JS_STRING];
      */
-    entryId: number;
+    entryId: string;
 }
 /**
  * @generated from protobuf message services.calendar.GetCalendarEntryResponse
@@ -160,13 +162,13 @@ export interface CreateOrUpdateCalendarEntriesResponse {
  */
 export interface DeleteCalendarEntriesRequest {
     /**
-     * @generated from protobuf field: uint64 calendar_id = 1;
+     * @generated from protobuf field: uint64 calendar_id = 1 [jstype = JS_STRING];
      */
-    calendarId: number;
+    calendarId: string;
     /**
-     * @generated from protobuf field: uint64 entry_id = 2;
+     * @generated from protobuf field: uint64 entry_id = 2 [jstype = JS_STRING];
      */
-    entryId: number;
+    entryId: string;
 }
 /**
  * @generated from protobuf message services.calendar.DeleteCalendarEntriesResponse
@@ -174,16 +176,76 @@ export interface DeleteCalendarEntriesRequest {
 export interface DeleteCalendarEntriesResponse {
 }
 /**
- * TODO
- *
  * @generated from protobuf message services.calendar.ShareCalendarEntryRequest
  */
 export interface ShareCalendarEntryRequest {
+    /**
+     * @generated from protobuf field: uint64 entry_id = 1 [jstype = JS_STRING];
+     */
+    entryId: string;
+    /**
+     * @generated from protobuf field: resources.calendar.CalendarAccess access = 2;
+     */
+    access?: CalendarAccess;
 }
 /**
  * @generated from protobuf message services.calendar.ShareCalendarEntryResponse
  */
 export interface ShareCalendarEntryResponse {
+    /**
+     * @generated from protobuf field: resources.calendar.CalendarAccess access = 1;
+     */
+    access?: CalendarAccess;
+}
+// RSVP
+
+/**
+ * @generated from protobuf message services.calendar.ListCalendarEntryRSVPRequest
+ */
+export interface ListCalendarEntryRSVPRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+    /**
+     * @generated from protobuf field: uint64 entry_id = 2 [jstype = JS_STRING];
+     */
+    entryId: string;
+}
+/**
+ * @generated from protobuf message services.calendar.ListCalendarEntryRSVPResponse
+ */
+export interface ListCalendarEntryRSVPResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.calendar.CalendarEntryRSVP entries = 2;
+     */
+    entries: CalendarEntryRSVP[];
+}
+/**
+ * @generated from protobuf message services.calendar.RSVPCalendarEntryRequest
+ */
+export interface RSVPCalendarEntryRequest {
+    /**
+     * @generated from protobuf field: resources.calendar.CalendarEntryRSVP entry = 1;
+     */
+    entry?: CalendarEntryRSVP;
+    /**
+     * @generated from protobuf field: bool subscribe = 2;
+     */
+    subscribe: boolean;
+}
+/**
+ * @generated from protobuf message services.calendar.RSVPCalendarEntryResponse
+ */
+export interface RSVPCalendarEntryResponse {
+    /**
+     * @generated from protobuf field: resources.calendar.CalendarEntryRSVP entry = 1;
+     */
+    entry?: CalendarEntryRSVP;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesRequest> {
@@ -407,12 +469,12 @@ export const ListCalendarsResponse = new ListCalendarsResponse$Type();
 class GetCalendarRequest$Type extends MessageType<GetCalendarRequest> {
     constructor() {
         super("services.calendar.GetCalendarRequest", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<GetCalendarRequest>): GetCalendarRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.calendarId = 0;
+        message.calendarId = "0";
         if (value !== undefined)
             reflectionMergePartial<GetCalendarRequest>(this, message, value);
         return message;
@@ -422,8 +484,8 @@ class GetCalendarRequest$Type extends MessageType<GetCalendarRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.calendarId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -437,8 +499,8 @@ class GetCalendarRequest$Type extends MessageType<GetCalendarRequest> {
         return message;
     }
     internalBinaryWrite(message: GetCalendarRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
-        if (message.calendarId !== 0)
+        /* uint64 calendar_id = 1 [jstype = JS_STRING]; */
+        if (message.calendarId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.calendarId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -592,12 +654,12 @@ export const CreateOrUpdateCalendarResponse = new CreateOrUpdateCalendarResponse
 class DeleteCalendarRequest$Type extends MessageType<DeleteCalendarRequest> {
     constructor() {
         super("services.calendar.DeleteCalendarRequest", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteCalendarRequest>): DeleteCalendarRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.calendarId = 0;
+        message.calendarId = "0";
         if (value !== undefined)
             reflectionMergePartial<DeleteCalendarRequest>(this, message, value);
         return message;
@@ -607,8 +669,8 @@ class DeleteCalendarRequest$Type extends MessageType<DeleteCalendarRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.calendarId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -622,8 +684,8 @@ class DeleteCalendarRequest$Type extends MessageType<DeleteCalendarRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteCalendarRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
-        if (message.calendarId !== 0)
+        /* uint64 calendar_id = 1 [jstype = JS_STRING]; */
+        if (message.calendarId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.calendarId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -664,14 +726,14 @@ export const DeleteCalendarResponse = new DeleteCalendarResponse$Type();
 class GetCalendarEntryRequest$Type extends MessageType<GetCalendarEntryRequest> {
     constructor() {
         super("services.calendar.GetCalendarEntryRequest", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<GetCalendarEntryRequest>): GetCalendarEntryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.calendarId = 0;
-        message.entryId = 0;
+        message.calendarId = "0";
+        message.entryId = "0";
         if (value !== undefined)
             reflectionMergePartial<GetCalendarEntryRequest>(this, message, value);
         return message;
@@ -681,11 +743,11 @@ class GetCalendarEntryRequest$Type extends MessageType<GetCalendarEntryRequest> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.calendarId = reader.uint64().toString();
                     break;
-                case /* uint64 entry_id */ 2:
-                    message.entryId = reader.uint64().toNumber();
+                case /* uint64 entry_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.entryId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -699,11 +761,11 @@ class GetCalendarEntryRequest$Type extends MessageType<GetCalendarEntryRequest> 
         return message;
     }
     internalBinaryWrite(message: GetCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
-        if (message.calendarId !== 0)
+        /* uint64 calendar_id = 1 [jstype = JS_STRING]; */
+        if (message.calendarId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.calendarId);
-        /* uint64 entry_id = 2; */
-        if (message.entryId !== 0)
+        /* uint64 entry_id = 2 [jstype = JS_STRING]; */
+        if (message.entryId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.entryId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -857,14 +919,14 @@ export const CreateOrUpdateCalendarEntriesResponse = new CreateOrUpdateCalendarE
 class DeleteCalendarEntriesRequest$Type extends MessageType<DeleteCalendarEntriesRequest> {
     constructor() {
         super("services.calendar.DeleteCalendarEntriesRequest", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ },
-            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteCalendarEntriesRequest>): DeleteCalendarEntriesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.calendarId = 0;
-        message.entryId = 0;
+        message.calendarId = "0";
+        message.entryId = "0";
         if (value !== undefined)
             reflectionMergePartial<DeleteCalendarEntriesRequest>(this, message, value);
         return message;
@@ -874,11 +936,11 @@ class DeleteCalendarEntriesRequest$Type extends MessageType<DeleteCalendarEntrie
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 calendar_id */ 1:
-                    message.calendarId = reader.uint64().toNumber();
+                case /* uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.calendarId = reader.uint64().toString();
                     break;
-                case /* uint64 entry_id */ 2:
-                    message.entryId = reader.uint64().toNumber();
+                case /* uint64 entry_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.entryId = reader.uint64().toString();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -892,11 +954,11 @@ class DeleteCalendarEntriesRequest$Type extends MessageType<DeleteCalendarEntrie
         return message;
     }
     internalBinaryWrite(message: DeleteCalendarEntriesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1; */
-        if (message.calendarId !== 0)
+        /* uint64 calendar_id = 1 [jstype = JS_STRING]; */
+        if (message.calendarId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.calendarId);
-        /* uint64 entry_id = 2; */
-        if (message.entryId !== 0)
+        /* uint64 entry_id = 2 [jstype = JS_STRING]; */
+        if (message.entryId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.entryId);
         let u = options.writeUnknownFields;
         if (u !== false)
@@ -936,18 +998,47 @@ export const DeleteCalendarEntriesResponse = new DeleteCalendarEntriesResponse$T
 // @generated message type with reflection information, may provide speed optimized methods
 class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryRequest> {
     constructor() {
-        super("services.calendar.ShareCalendarEntryRequest", []);
+        super("services.calendar.ShareCalendarEntryRequest", [
+            { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "access", kind: "message", T: () => CalendarAccess }
+        ]);
     }
     create(value?: PartialMessage<ShareCalendarEntryRequest>): ShareCalendarEntryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.entryId = "0";
         if (value !== undefined)
             reflectionMergePartial<ShareCalendarEntryRequest>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ShareCalendarEntryRequest): ShareCalendarEntryRequest {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 entry_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.entryId = reader.uint64().toString();
+                    break;
+                case /* resources.calendar.CalendarAccess access */ 2:
+                    message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: ShareCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 entry_id = 1 [jstype = JS_STRING]; */
+        if (message.entryId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.entryId);
+        /* resources.calendar.CalendarAccess access = 2; */
+        if (message.access)
+            CalendarAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -961,7 +1052,9 @@ export const ShareCalendarEntryRequest = new ShareCalendarEntryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ShareCalendarEntryResponse$Type extends MessageType<ShareCalendarEntryResponse> {
     constructor() {
-        super("services.calendar.ShareCalendarEntryResponse", []);
+        super("services.calendar.ShareCalendarEntryResponse", [
+            { no: 1, name: "access", kind: "message", T: () => CalendarAccess }
+        ]);
     }
     create(value?: PartialMessage<ShareCalendarEntryResponse>): ShareCalendarEntryResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -970,9 +1063,28 @@ class ShareCalendarEntryResponse$Type extends MessageType<ShareCalendarEntryResp
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ShareCalendarEntryResponse): ShareCalendarEntryResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.calendar.CalendarAccess access */ 1:
+                    message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: ShareCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.calendar.CalendarAccess access = 1; */
+        if (message.access)
+            CalendarAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -983,6 +1095,214 @@ class ShareCalendarEntryResponse$Type extends MessageType<ShareCalendarEntryResp
  * @generated MessageType for protobuf message services.calendar.ShareCalendarEntryResponse
  */
 export const ShareCalendarEntryResponse = new ShareCalendarEntryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListCalendarEntryRSVPRequest$Type extends MessageType<ListCalendarEntryRSVPRequest> {
+    constructor() {
+        super("services.calendar.ListCalendarEntryRSVPRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ListCalendarEntryRSVPRequest>): ListCalendarEntryRSVPRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.entryId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<ListCalendarEntryRSVPRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListCalendarEntryRSVPRequest): ListCalendarEntryRSVPRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* uint64 entry_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.entryId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListCalendarEntryRSVPRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 entry_id = 2 [jstype = JS_STRING]; */
+        if (message.entryId !== "0")
+            writer.tag(2, WireType.Varint).uint64(message.entryId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.calendar.ListCalendarEntryRSVPRequest
+ */
+export const ListCalendarEntryRSVPRequest = new ListCalendarEntryRSVPRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRSVPResponse> {
+    constructor() {
+        super("services.calendar.ListCalendarEntryRSVPResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CalendarEntryRSVP }
+        ]);
+    }
+    create(value?: PartialMessage<ListCalendarEntryRSVPResponse>): ListCalendarEntryRSVPResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.entries = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListCalendarEntryRSVPResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListCalendarEntryRSVPResponse): ListCalendarEntryRSVPResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.calendar.CalendarEntryRSVP entries */ 2:
+                    message.entries.push(CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListCalendarEntryRSVPResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.calendar.CalendarEntryRSVP entries = 2; */
+        for (let i = 0; i < message.entries.length; i++)
+            CalendarEntryRSVP.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.calendar.ListCalendarEntryRSVPResponse
+ */
+export const ListCalendarEntryRSVPResponse = new ListCalendarEntryRSVPResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RSVPCalendarEntryRequest$Type extends MessageType<RSVPCalendarEntryRequest> {
+    constructor() {
+        super("services.calendar.RSVPCalendarEntryRequest", [
+            { no: 1, name: "entry", kind: "message", T: () => CalendarEntryRSVP },
+            { no: 2, name: "subscribe", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<RSVPCalendarEntryRequest>): RSVPCalendarEntryRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.subscribe = false;
+        if (value !== undefined)
+            reflectionMergePartial<RSVPCalendarEntryRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RSVPCalendarEntryRequest): RSVPCalendarEntryRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.calendar.CalendarEntryRSVP entry */ 1:
+                    message.entry = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.entry);
+                    break;
+                case /* bool subscribe */ 2:
+                    message.subscribe = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RSVPCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.calendar.CalendarEntryRSVP entry = 1; */
+        if (message.entry)
+            CalendarEntryRSVP.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool subscribe = 2; */
+        if (message.subscribe !== false)
+            writer.tag(2, WireType.Varint).bool(message.subscribe);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.calendar.RSVPCalendarEntryRequest
+ */
+export const RSVPCalendarEntryRequest = new RSVPCalendarEntryRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class RSVPCalendarEntryResponse$Type extends MessageType<RSVPCalendarEntryResponse> {
+    constructor() {
+        super("services.calendar.RSVPCalendarEntryResponse", [
+            { no: 1, name: "entry", kind: "message", T: () => CalendarEntryRSVP }
+        ]);
+    }
+    create(value?: PartialMessage<RSVPCalendarEntryResponse>): RSVPCalendarEntryResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<RSVPCalendarEntryResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: RSVPCalendarEntryResponse): RSVPCalendarEntryResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.calendar.CalendarEntryRSVP entry */ 1:
+                    message.entry = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.entry);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: RSVPCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.calendar.CalendarEntryRSVP entry = 1; */
+        if (message.entry)
+            CalendarEntryRSVP.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.calendar.RSVPCalendarEntryResponse
+ */
+export const RSVPCalendarEntryResponse = new RSVPCalendarEntryResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.calendar.CalendarService
  */
@@ -995,5 +1315,7 @@ export const CalendarService = new ServiceType("services.calendar.CalendarServic
     { name: "GetCalendarEntry", options: {}, I: GetCalendarEntryRequest, O: GetCalendarEntryResponse },
     { name: "CreateOrUpdateCalendarEntries", options: {}, I: CreateOrUpdateCalendarEntriesRequest, O: CreateOrUpdateCalendarEntriesResponse },
     { name: "DeleteCalendarEntries", options: {}, I: DeleteCalendarEntriesRequest, O: DeleteCalendarEntriesResponse },
-    { name: "ShareCalendarEntry", options: {}, I: ShareCalendarEntryRequest, O: ShareCalendarEntryResponse }
+    { name: "ShareCalendarEntry", options: {}, I: ShareCalendarEntryRequest, O: ShareCalendarEntryResponse },
+    { name: "ListCalendarEntryRSVP", options: {}, I: ListCalendarEntryRSVPRequest, O: ListCalendarEntryRSVPResponse },
+    { name: "RSVPCalendarEntry", options: {}, I: RSVPCalendarEntryRequest, O: RSVPCalendarEntryResponse }
 ]);
