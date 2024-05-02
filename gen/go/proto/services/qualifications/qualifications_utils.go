@@ -153,7 +153,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 }
 
 func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
-	var wheres []jet.BoolExpression
+	wheres := []jet.BoolExpression{jet.Bool(true)}
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
 			jet.AND(
