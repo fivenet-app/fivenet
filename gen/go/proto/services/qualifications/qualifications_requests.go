@@ -3,7 +3,6 @@ package qualifications
 import (
 	"context"
 	"errors"
-	"time"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
@@ -236,7 +235,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 			).
 			SET(
 				req.Request.Status,
-				time.Now(),
+				jet.CURRENT_TIMESTAMP(),
 				req.Request.ApproverComment,
 				userInfo.UserId,
 				userInfo.Job,

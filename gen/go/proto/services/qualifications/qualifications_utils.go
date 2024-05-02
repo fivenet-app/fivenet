@@ -26,7 +26,7 @@ var (
 func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
 	wheres := []jet.BoolExpression{}
 	if !userInfo.SuperUser {
-		wheres = []jet.BoolExpression{
+		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
@@ -40,7 +40,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 					),
 				),
 			),
-		}
+		)
 	}
 
 	// Select id of last result
@@ -155,7 +155,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
 	wheres := []jet.BoolExpression{jet.Bool(true)}
 	if !userInfo.SuperUser {
-		wheres = []jet.BoolExpression{
+		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
@@ -166,7 +166,7 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 					),
 				),
 			),
-		}
+		)
 	}
 
 	if where != nil {
@@ -198,7 +198,6 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			tCreator.Firstname,
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
 			tQuali.CreatorJob,
 			tQualiResults.ID,
 			tQualiResults.QualificationID,
