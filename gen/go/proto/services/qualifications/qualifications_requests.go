@@ -266,7 +266,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 				UserId: request.UserId,
 				Title: &common.TranslateItem{
-					Key: "",
+					Key: "notifications.notifi.qualifications.request_updated.title",
 				},
 				Content: &common.TranslateItem{
 					Key:        "notifications.notifi.qualifications.request_updated.content",
