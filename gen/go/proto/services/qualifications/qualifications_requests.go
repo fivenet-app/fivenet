@@ -32,14 +32,16 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.qualifications.user_id", int64(*req.UserId)))
 	}
 
-	// TODO add condition for req.UserId
-
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	tQuali := tQuali.AS("qualificationshort")
 
 	condition := tQualiRequests.DeletedAt.IS_NULL().
 		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
+
+	if req.UserId != nil {
+		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(*req.UserId)))
+	}
 
 	if req.QualificationId != nil {
 		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)

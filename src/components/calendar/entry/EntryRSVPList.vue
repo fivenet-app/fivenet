@@ -33,6 +33,7 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
 
 <template>
     <div>
+        {{ data?.entries }}
         <!-- TODO -->
     </div>
 </template>

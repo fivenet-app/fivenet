@@ -3,9 +3,10 @@ import { addHours, format } from 'date-fns';
 import { z } from 'zod';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 
 defineProps<{
+    calendar?: Calendar;
     entry?: CalendarEntry;
 }>();
 
@@ -53,6 +54,8 @@ const canSubmit = ref(true);
                 </template>
 
                 <div>
+                    <!-- TODO Calendar selector if not calendar prop is given -->
+
                     <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
                         <UInput
                             v-model="state.title"
