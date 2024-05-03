@@ -1356,6 +1356,14 @@
             "copy_qualification": {
                 "title": "Qualification ID copied",
                 "content": "Qualification ID copied to clipboard."
+            },
+            "result_updated": {
+                "title": "Qualification Result available",
+                "content": "A qualification result has been created for you."
+            },
+            "request_updated": {
+                "title": "Qualification Request updated",
+                "content": "Your qualification request has been updated."
             }
         }
     },

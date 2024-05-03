@@ -243,11 +243,13 @@ func (b *Bot) Sync() error {
 	}()
 
 	for {
+		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
+
 		select {
 		case <-b.ctx.Done():
 			return nil
 
-		case <-time.After(b.appCfg.Get().Discord.SyncInterval.AsDuration()):
+		case <-time.After(syncInterval):
 			b.logger.Info("running discord sync")
 			func() {
 				ctx, span := b.tracer.Start(b.ctx, "discord_bot")

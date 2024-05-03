@@ -3,14 +3,18 @@ package qualifications
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -251,7 +255,34 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		// TODO send a notification to the user
+		request, err := s.getQualificationRequest(ctx, req.Request.QualificationId, userInfo.UserId, userInfo)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+
+		// Only send notification when it wasn't already in the same status
+		if request.Status == nil || request.Status.Enum() != req.Request.Status.Enum() {
+			nType := string(notifi.InfoType)
+			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
+				UserId: request.UserId,
+				Title: &common.TranslateItem{
+					Key: "",
+				},
+				Content: &common.TranslateItem{
+					Key:        "notifications.notifi.qualifications.request_updated.content",
+					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
+				},
+				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
+				Type:     &nType,
+				Data: &notifications.Data{
+					Link: &notifications.Link{
+						To: fmt.Sprintf("/qualifications/%d", request.QualificationId),
+					},
+				},
+			}); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		}
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {

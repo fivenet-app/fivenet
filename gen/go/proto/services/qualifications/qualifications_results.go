@@ -3,14 +3,18 @@ package qualifications
 import (
 	"context"
 	"errors"
+	"fmt"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -251,8 +255,6 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		req.Result.Id = uint64(lastId)
 
-		// TODO send a notification to the user
-
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
 		result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)
@@ -261,6 +263,11 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		}
 
 		req.Result.UserId = result.UserId
+
+		quali, err := s.getQualification(ctx, req.Result.QualificationId, nil, userInfo, false)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 
 		stmt := tQualiResults.
 			UPDATE(
@@ -285,6 +292,31 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+
+		// Only send notification when there is currently no score
+		if result.Score == nil {
+			nType := string(notifi.InfoType)
+			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
+				UserId: result.UserId,
+				Title: &common.TranslateItem{
+					Key: "",
+				},
+				Content: &common.TranslateItem{
+					Key:        "notifications.notifi.qualifications.result_updated.content",
+					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
+				},
+				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
+				Type:     &nType,
+				Data: &notifications.Data{
+					Link: &notifications.Link{
+						To: fmt.Sprintf("/qualifications/%d", result.QualificationId),
+					},
+				},
+			}); err != nil {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		}
+		// TODO send a notification to the user
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}

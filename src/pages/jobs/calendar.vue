@@ -154,6 +154,7 @@ const groupedCalendarEntries = computed(() => {
                     <div class="flex-initial">
                         <UButtonGroup class="inline-flex w-full">
                             <UButton
+                                v-if="can('CalendarService.CreateOrUpdateCalendarEntries')"
                                 color="gray"
                                 trailing-icon="i-mdi-plus"
                                 class="flex-1"

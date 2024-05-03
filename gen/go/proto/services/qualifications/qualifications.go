@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -42,6 +43,7 @@ type Server struct {
 	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
+	notif    notifi.INotifi
 }
 
 type Params struct {
@@ -55,6 +57,7 @@ type Params struct {
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
 	Config            *config.Config
+	Notif             notifi.INotifi
 }
 
 func NewServer(p Params) *Server {
@@ -65,6 +68,7 @@ func NewServer(p Params) *Server {
 		ps:       p.Perms,
 		enricher: p.UserAwareEnricher,
 		aud:      p.Audit,
+		notif:    p.Notif,
 	}
 
 	return s
