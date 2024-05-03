@@ -628,7 +628,8 @@
                 "discord": {
                     "description": "FiveNet Discord-Bot-Einstellungen.",
                     "bot_invite_url": "Bot-Einladungs-URL",
-                    "sync_interval": "Synchronisierungsinterval"
+                    "sync_interval": "Synchronisierungsinterval",
+                    "ignored_jobs": "Ignorierte Berufe (e.g., Insassen-Beruf)"
                 },
                 "save": {
                     "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
@@ -838,7 +839,7 @@
                 },
                 "three": {
                     "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
-                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub fivenet-app/fivenet README)</a>."
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub galexrt/fivenet README)</a>."
                 },
                 "four": {
                     "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
@@ -1004,6 +1005,24 @@
         },
         "UserDropdown": {
             "signed_in_as": "Angemeldet als"
+        },
+        "calendar": {
+            "CalendarCreateOrUpdateModal": {
+                "create": {
+                    "title": "Kalender erstellen"
+                },
+                "update": {
+                    "title": "Kalender aktualisieren"
+                }
+            },
+            "EntryCreateOrUpdateModal": {
+                "create": {
+                    "title": "Kalendereintrag erstellen"
+                },
+                "update": {
+                    "title": "Kalendereintrag aktualisieren"
+                }
+            }
         }
     },
     "notifications": {
@@ -1337,6 +1356,14 @@
             "copy_qualification": {
                 "title": "Qualifizierungs-ID kopiert",
                 "content": "Qualifizierungs-ID wurde in die Zwischenablage kopiert."
+            },
+            "result_updated": {
+                "title": "Qualifizierungsergebnis verfügbar",
+                "content": "Ein Qualifizierungsergebnis wurde für Sie erstellt."
+            },
+            "request_updated": {
+                "title": "Qualifizierungsanfrage wurde aktualisiert",
+                "content": "Deine Qualifizierungsanfrage wurde aktualisiert."
             }
         }
     },
@@ -1846,6 +1873,25 @@
             "DeleteQualificationReq": {
                 "key": "Löschen von Qualifizierungsanfragen",
                 "description": "Löschen von Qualifizierungsanfragen"
+            }
+        },
+        "CalendarService": {
+            "category": "Kalender",
+            "CreateOrUpdateCalendar": {
+                "key": "Erstellen und aktualisieren von Kalenders",
+                "description": "Verwalten von Kalenders."
+            },
+            "DeleteCalendar": {
+                "key": "Löschen von Kalenders",
+                "description": "Löschen von Kalenders."
+            },
+            "CreateOrUpdateCalendarEntries": {
+                "key": "Erstellen und aktualisieren ",
+                "description": "Erstellen und aktualisieren von Kalendereinträgen (teilen von Einträgen benötigt Teilen-Zugriff und erstellen Editieren-Zugriff.)"
+            },
+            "DeleteCalendarEntries": {
+                "key": "Löschen von Kalendereinträgen",
+                "description": "Löschen von Kalendareinträgen (benötigt Verwaltungs-Zugriff.)"
             }
         }
     },
