@@ -58,19 +58,25 @@ export interface Calendar {
      */
     closed: boolean;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 10;
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string color = 10;
+     */
+    color?: string;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 11;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 12;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 12;
+     * @generated from protobuf field: string creator_job = 13;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: resources.calendar.CalendarAccess access = 13;
+     * @generated from protobuf field: resources.calendar.CalendarAccess access = 14;
      */
     access?: CalendarAccess;
 }
@@ -117,35 +123,29 @@ export interface CalendarEntry {
      */
     title: string;
     /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: optional string color = 10;
-     */
-    color?: string;
-    /**
      * @sanitize
      *
-     * @generated from protobuf field: string content = 11;
+     * @generated from protobuf field: string content = 10;
      */
     content: string;
     /**
-     * @generated from protobuf field: bool public = 12;
+     * @generated from protobuf field: bool public = 11;
      */
     public: boolean;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 13;
+     * @generated from protobuf field: optional int32 creator_id = 12;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 14;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 13;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 15;
+     * @generated from protobuf field: string creator_job = 14;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: resources.calendar.CalendarAccess access = 16;
+     * @generated from protobuf field: resources.calendar.CalendarAccess access = 15;
      */
     access?: CalendarAccess;
 }
@@ -208,10 +208,11 @@ class Calendar$Type extends MessageType<Calendar> {
             { no: 7, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
             { no: 8, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 9, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 11, name: "creator", kind: "message", T: () => UserShort },
-            { no: 12, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 13, name: "access", kind: "message", T: () => CalendarAccess }
+            { no: 10, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } },
+            { no: 11, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "creator", kind: "message", T: () => UserShort },
+            { no: 13, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 14, name: "access", kind: "message", T: () => CalendarAccess }
         ]);
     }
     create(value?: PartialMessage<Calendar>): Calendar {
@@ -257,16 +258,19 @@ class Calendar$Type extends MessageType<Calendar> {
                 case /* bool closed */ 9:
                     message.closed = reader.bool();
                     break;
-                case /* optional int32 creator_id */ 10:
+                case /* optional string color */ 10:
+                    message.color = reader.string();
+                    break;
+                case /* optional int32 creator_id */ 11:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 11:
+                case /* optional resources.users.UserShort creator */ 12:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 12:
+                case /* string creator_job */ 13:
                     message.creatorJob = reader.string();
                     break;
-                case /* resources.calendar.CalendarAccess access */ 13:
+                case /* resources.calendar.CalendarAccess access */ 14:
                     message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -308,18 +312,21 @@ class Calendar$Type extends MessageType<Calendar> {
         /* bool closed = 9; */
         if (message.closed !== false)
             writer.tag(9, WireType.Varint).bool(message.closed);
-        /* optional int32 creator_id = 10; */
+        /* optional string color = 10; */
+        if (message.color !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.color);
+        /* optional int32 creator_id = 11; */
         if (message.creatorId !== undefined)
-            writer.tag(10, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 11; */
+            writer.tag(11, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 12; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 12; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 13; */
         if (message.creatorJob !== "")
-            writer.tag(12, WireType.LengthDelimited).string(message.creatorJob);
-        /* resources.calendar.CalendarAccess access = 13; */
+            writer.tag(13, WireType.LengthDelimited).string(message.creatorJob);
+        /* resources.calendar.CalendarAccess access = 14; */
         if (message.access)
-            CalendarAccess.internalBinaryWrite(message.access, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+            CalendarAccess.internalBinaryWrite(message.access, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -343,13 +350,12 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 7, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 8, name: "end_time", kind: "message", T: () => Timestamp },
             { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
-            { no: 10, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "12" } } } },
-            { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
-            { no: 12, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 14, name: "creator", kind: "message", T: () => UserShort },
-            { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 16, name: "access", kind: "message", T: () => CalendarAccess }
+            { no: 10, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
+            { no: 11, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 13, name: "creator", kind: "message", T: () => UserShort },
+            { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 15, name: "access", kind: "message", T: () => CalendarAccess }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -396,25 +402,22 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* string title */ 9:
                     message.title = reader.string();
                     break;
-                case /* optional string color */ 10:
-                    message.color = reader.string();
-                    break;
-                case /* string content */ 11:
+                case /* string content */ 10:
                     message.content = reader.string();
                     break;
-                case /* bool public */ 12:
+                case /* bool public */ 11:
                     message.public = reader.bool();
                     break;
-                case /* optional int32 creator_id */ 13:
+                case /* optional int32 creator_id */ 12:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 14:
+                case /* optional resources.users.UserShort creator */ 13:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 15:
+                case /* string creator_job */ 14:
                     message.creatorJob = reader.string();
                     break;
-                case /* resources.calendar.CalendarAccess access */ 16:
+                case /* resources.calendar.CalendarAccess access */ 15:
                     message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -456,27 +459,24 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* string title = 9; */
         if (message.title !== "")
             writer.tag(9, WireType.LengthDelimited).string(message.title);
-        /* optional string color = 10; */
-        if (message.color !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.color);
-        /* string content = 11; */
+        /* string content = 10; */
         if (message.content !== "")
-            writer.tag(11, WireType.LengthDelimited).string(message.content);
-        /* bool public = 12; */
+            writer.tag(10, WireType.LengthDelimited).string(message.content);
+        /* bool public = 11; */
         if (message.public !== false)
-            writer.tag(12, WireType.Varint).bool(message.public);
-        /* optional int32 creator_id = 13; */
+            writer.tag(11, WireType.Varint).bool(message.public);
+        /* optional int32 creator_id = 12; */
         if (message.creatorId !== undefined)
-            writer.tag(13, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 14; */
+            writer.tag(12, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 13; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 15; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 14; */
         if (message.creatorJob !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
-        /* resources.calendar.CalendarAccess access = 16; */
+            writer.tag(14, WireType.LengthDelimited).string(message.creatorJob);
+        /* resources.calendar.CalendarAccess access = 15; */
         if (message.access)
-            CalendarAccess.internalBinaryWrite(message.access, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+            CalendarAccess.internalBinaryWrite(message.access, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

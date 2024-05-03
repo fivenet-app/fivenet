@@ -3,11 +3,12 @@ import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range
 import { z } from 'zod';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import CalendarEntryModal from '~/components/calendar/CalendarEntryModal.vue';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarEntriesResponse, ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import CalendarEntryModal from '~/components/calendar/CalendarEntryModal.vue';
+import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 
 useHead({
     title: 'common.calendar',
@@ -148,8 +149,25 @@ const groupedCalendarEntries = computed(() => {
 <template>
     <PagesJobsLayout>
         <template #default>
-            <UContainer :ui="{ constrained: 'max-w-5xl' }" class="w-full p-2">
-                <UAccordion class="" :items="[{ slot: 'calendar', label: $t('common.calendar', 2), icon: 'i-mdi-calendar' }]">
+            <UDashboardToolbar class="flex w-full flex-row gap-2 p-2">
+                <template #default>
+                    <div class="flex-initial">
+                        <UButtonGroup class="inline-flex w-full">
+                            <UButton
+                                color="gray"
+                                trailing-icon="i-mdi-plus"
+                                class="flex-1"
+                                @click="modal.open(EntryCreateOrUpdateModal, {})"
+                            >
+                                {{ $t('common.create') }}
+                            </UButton>
+                        </UButtonGroup>
+                    </div>
+                </template>
+            </UDashboardToolbar>
+
+            <UContainer :ui="{ constrained: 'max-w-5xl' }" class="mt-2 w-full">
+                <UAccordion :items="[{ slot: 'calendar', label: $t('common.calendar', 2), icon: 'i-mdi-calendar' }]">
                     <template #calendar>
                         <div>
                             <DataPendingBlock

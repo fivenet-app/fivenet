@@ -11,10 +11,12 @@ const props = withDefaults(
         modelValue: string;
         disabled?: boolean;
         splitScreen?: boolean;
+        minHeight?: number;
     }>(),
     {
         disabled: false,
         splitScreen: false,
+        minHeight: 475,
     },
 );
 
@@ -34,7 +36,7 @@ const config = {
 
     language: locale.value,
     spellcheck: true,
-    minHeight: 475,
+    minHeight: props.minHeight,
     editorClassName: 'prose' + (theme.value.documents.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
     theme: theme.value.documents.editorTheme,
 

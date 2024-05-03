@@ -26,6 +26,7 @@ type fivenetCalendarTable struct {
 	Description mysql.ColumnString
 	Public      mysql.ColumnBool
 	Closed      mysql.ColumnBool
+	Color       mysql.ColumnString
 	CreatorID   mysql.ColumnInteger
 	CreatorJob  mysql.ColumnString
 
@@ -77,10 +78,11 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		DescriptionColumn = mysql.StringColumn("description")
 		PublicColumn      = mysql.BoolColumn("public")
 		ClosedColumn      = mysql.BoolColumn("closed")
+		ColorColumn       = mysql.StringColumn("color")
 		CreatorIDColumn   = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn  = mysql.StringColumn("creator_job")
-		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns        = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns    = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, NameColumn, DescriptionColumn, PublicColumn, ClosedColumn, ColorColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetCalendarTable{
@@ -96,6 +98,7 @@ func newFivenetCalendarTableImpl(schemaName, tableName, alias string) fivenetCal
 		Description: DescriptionColumn,
 		Public:      PublicColumn,
 		Closed:      ClosedColumn,
+		Color:       ColorColumn,
 		CreatorID:   CreatorIDColumn,
 		CreatorJob:  CreatorJobColumn,
 

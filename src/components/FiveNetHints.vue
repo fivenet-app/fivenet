@@ -28,8 +28,10 @@ const hints = shuffle([
         }"
     >
         <template #header>
-            <UIcon name="i-mdi-information-slab-circle" class="size-6" />
-            <strong class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+            <div class="inline-flex items-center">
+                <UIcon name="i-mdi-information-slab-circle" class="size-6" />
+                <strong class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+            </div>
         </template>
 
         <UCarousel :items="hints" :ui="{ item: 'basis-full' }" arrows>

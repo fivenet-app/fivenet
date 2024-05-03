@@ -1005,6 +1005,24 @@
         },
         "UserDropdown": {
             "signed_in_as": "Signed in as"
+        },
+        "calendar": {
+            "CalendarCreateOrUpdateModal": {
+                "create": {
+                    "title": "Create Calendar"
+                },
+                "update": {
+                    "title": "Update Calendar"
+                }
+            },
+            "EntryCreateOrUpdateModal": {
+                "create": {
+                    "title": "Create Calendar Entry"
+                },
+                "update": {
+                    "title": "Update Calendar Entry"
+                }
+            }
         }
     },
     "notifications": {

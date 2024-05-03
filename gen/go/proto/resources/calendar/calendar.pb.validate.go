@@ -243,6 +243,21 @@ func (m *Calendar) validate(all bool) error {
 
 	}
 
+	if m.Color != nil {
+
+		if utf8.RuneCountInString(m.GetColor()) > 12 {
+			err := CalendarValidationError{
+				field:  "Color",
+				reason: "value length must be at most 12 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if m.CreatorId != nil {
 		// no validation rules for CreatorId
 	}
@@ -630,21 +645,6 @@ func (m *CalendarEntry) validate(all bool) error {
 					cause:  err,
 				}
 			}
-		}
-
-	}
-
-	if m.Color != nil {
-
-		if utf8.RuneCountInString(m.GetColor()) > 12 {
-			err := CalendarEntryValidationError{
-				field:  "Color",
-				reason: "value length must be at most 12 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
 		}
 
 	}
