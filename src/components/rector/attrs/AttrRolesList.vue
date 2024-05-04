@@ -111,7 +111,8 @@ const columns = [
                                         <USelectMenu
                                             v-model="state.job"
                                             :options="availableJobs"
-                                            by="label"
+                                            by="name"
+                                            searchable
                                             :searchable-placeholder="$t('common.search_field')"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"

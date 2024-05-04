@@ -244,6 +244,12 @@ const accordionCategories = computed(() =>
         };
     }),
 );
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async () => {
+    canSubmit.value = false;
+    await updatePermissions().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -274,7 +280,7 @@ const accordionCategories = computed(() =>
                 <UDivider :label="$t('common.attributes', 2)" />
 
                 <div class="flex flex-col gap-4 py-2">
-                    <UButton :disabled="!changed" block @click="updatePermissions()">
+                    <UButton :disabled="!changed || !canSubmit" block @click="onSubmitThrottle">
                         {{ $t('common.save', 1) }}
                     </UButton>
 

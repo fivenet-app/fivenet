@@ -115,6 +115,7 @@ const columns = [
                                                 v-model="state.jobGrade"
                                                 :options="availableJobGrades"
                                                 by="grade"
+                                                searchable
                                                 :searchable-placeholder="$t('common.search_field')"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"

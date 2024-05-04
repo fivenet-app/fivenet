@@ -239,6 +239,12 @@ const accordionCategories = computed(() =>
         };
     }),
 );
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async () => {
+    canSubmit.value = false;
+    await updatePermissions().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -271,9 +277,9 @@ const accordionCategories = computed(() =>
                 <div class="flex flex-col gap-4 py-2">
                     <UButton
                         v-if="can('RectorService.UpdateRolePerms')"
-                        :disabled="!changed"
+                        :disabled="!changed || !canSubmit"
                         block
-                        @click="updatePermissions()"
+                        @click="onSubmitThrottle"
                     >
                         {{ $t('common.save', 1) }}
                     </UButton>

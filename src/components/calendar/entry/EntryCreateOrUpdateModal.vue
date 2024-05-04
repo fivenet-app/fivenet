@@ -14,6 +14,7 @@ const { isOpen } = useModal();
 
 const schema = z.object({
     title: z.string(),
+    color: z.string(),
     startTime: z.date(),
     endTime: z.date(),
     content: z.string(),
@@ -56,12 +57,23 @@ const canSubmit = ref(true);
                 <div>
                     <!-- TODO Calendar selector if not calendar prop is given -->
 
-                    <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
+                    <UFormGroup name="title" :label="$t('common.title')" class="flex-1">
                         <UInput
                             v-model="state.title"
-                            name="name"
+                            name="title"
                             type="text"
-                            :placeholder="$t('common.name')"
+                            :placeholder="$t('common.title')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                        <UInput
+                            v-model="state.color"
+                            name="color"
+                            type="text"
+                            :placeholder="$t('common.color')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
