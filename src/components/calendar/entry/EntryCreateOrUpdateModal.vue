@@ -5,7 +5,7 @@ import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 
-defineProps<{
+const props = defineProps<{
     calendar?: Calendar;
     entry?: CalendarEntry;
 }>();
@@ -13,17 +13,18 @@ defineProps<{
 const { isOpen } = useModal();
 
 const schema = z.object({
-    title: z.string(),
-    color: z.string(),
+    calendarId: z.string().optional(),
+    title: z.string().min(3).max(512),
     startTime: z.date(),
     endTime: z.date(),
-    content: z.string(),
+    content: z.string().max(10240),
     public: z.boolean(),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
+    calendarId: props.calendar?.id,
     title: '',
     startTime: new Date(),
     endTime: addHours(new Date(), 1),
@@ -55,9 +56,12 @@ const canSubmit = ref(true);
                 </template>
 
                 <div>
-                    <!-- TODO Calendar selector if not calendar prop is given -->
+                    <UFormGroup v-if="!calendar" name="calendar" :label="$t('common.calendar')" class="flex-1" required>
+                        <USelectMenu v-model="state.calendarId" value-attribute="id" searchable></USelectMenu>
+                        <!-- TODO Calendar selector if not calendar prop is given -->
+                    </UFormGroup>
 
-                    <UFormGroup name="title" :label="$t('common.title')" class="flex-1">
+                    <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
                         <UInput
                             v-model="state.title"
                             name="title"
@@ -68,18 +72,7 @@ const canSubmit = ref(true);
                         />
                     </UFormGroup>
 
-                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
-                        <UInput
-                            v-model="state.color"
-                            name="color"
-                            type="text"
-                            :placeholder="$t('common.color')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-
-                    <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1">
+                    <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
@@ -95,7 +88,7 @@ const canSubmit = ref(true);
                         </UPopover>
                     </UFormGroup>
 
-                    <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1">
+                    <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
                         <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
@@ -111,7 +104,7 @@ const canSubmit = ref(true);
                         </UPopover>
                     </UFormGroup>
 
-                    <UFormGroup name="content" :label="$t('common.content')" class="flex-1">
+                    <UFormGroup name="content" :label="$t('common.content')" class="flex-1" required>
                         <ClientOnly>
                             <DocEditor v-model="state.content" :min-height="250" />
                         </ClientOnly>

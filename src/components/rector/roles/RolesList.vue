@@ -98,6 +98,12 @@ const columns = [
         sortable: false,
     },
 ];
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async () => {
+    canSubmit.value = false;
+    await createRole().finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -135,8 +141,11 @@ const columns = [
 
                                         <div class="flex flex-initial flex-col justify-end">
                                             <UButton
-                                                :disabled="state.jobGrade === undefined || state.jobGrade!.grade <= 0"
-                                                @click="createRole()"
+                                                :disabled="
+                                                    state.jobGrade === undefined || state.jobGrade!.grade <= 0 || !canSubmit
+                                                "
+                                                :loading="!canSubmit"
+                                                @click="onSubmitThrottle"
                                             >
                                                 {{ $t('common.create') }}
                                             </UButton>

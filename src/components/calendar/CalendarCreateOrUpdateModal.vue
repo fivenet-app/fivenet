@@ -8,11 +8,23 @@ defineProps<{
 
 const { isOpen } = useModal();
 
-const schema = z.object({});
+const schema = z.object({
+    name: z.string().min(3).max(255),
+    description: z.string().max(512),
+    public: z.boolean(),
+    closed: z.boolean(),
+    color: z.string().max(12),
+});
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive<Schema>({});
+const state = reactive<Schema>({
+    name: '',
+    description: '',
+    public: false,
+    closed: false,
+    color: 'primary',
+});
 
 const canSubmit = ref(true);
 
@@ -38,7 +50,37 @@ const canSubmit = ref(true);
                 </template>
 
                 <div>
-                    <!-- TODO -->
+                    <UFormGroup name="title" :label="$t('common.name')" class="flex-1" required>
+                        <UInput
+                            v-model="state.name"
+                            name="name"
+                            type="text"
+                            :placeholder="$t('common.name')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                        <UInput
+                            v-model="state.color"
+                            name="color"
+                            type="text"
+                            :placeholder="$t('common.color')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
+
+                    <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                        <UTextarea
+                            v-model="state.description"
+                            name="description"
+                            :placeholder="$t('common.description')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
+                    </UFormGroup>
                 </div>
 
                 <template #footer>

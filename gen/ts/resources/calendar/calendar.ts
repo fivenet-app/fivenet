@@ -349,7 +349,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 6, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 7, name: "start_time", kind: "message", T: () => Timestamp },
             { no: 8, name: "end_time", kind: "message", T: () => Timestamp },
-            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "1024" } } } },
+            { no: 9, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 10, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
             { no: 11, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 12, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },

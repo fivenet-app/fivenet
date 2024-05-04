@@ -277,8 +277,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 <div class="flex flex-col gap-4 py-2">
                     <UButton
                         v-if="can('RectorService.UpdateRolePerms')"
-                        :disabled="!changed || !canSubmit"
                         block
+                        :disabled="!changed || !canSubmit"
+                        :loading="!canSubmit"
                         @click="onSubmitThrottle"
                     >
                         {{ $t('common.save', 1) }}

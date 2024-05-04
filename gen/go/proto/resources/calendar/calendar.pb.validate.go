@@ -427,10 +427,10 @@ func (m *CalendarEntry) validate(all bool) error {
 		}
 	}
 
-	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 1024 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 512 {
 		err := CalendarEntryValidationError{
 			field:  "Title",
-			reason: "value length must be between 3 and 1024 runes, inclusive",
+			reason: "value length must be between 3 and 512 runes, inclusive",
 		}
 		if !all {
 			return err

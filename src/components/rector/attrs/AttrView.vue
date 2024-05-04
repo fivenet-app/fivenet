@@ -280,7 +280,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 <UDivider :label="$t('common.attributes', 2)" />
 
                 <div class="flex flex-col gap-4 py-2">
-                    <UButton :disabled="!changed || !canSubmit" block @click="onSubmitThrottle">
+                    <UButton block :disabled="!changed || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
                         {{ $t('common.save', 1) }}
                     </UButton>
 

@@ -6,6 +6,7 @@ import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notific
 
 // In seconds
 const initialReconnectBackoffTime = 2;
+const maxBackoffTime = 40;
 
 export interface NotificationsState {
     notifications: Notification[];
@@ -168,8 +169,8 @@ export const useNotificatorStore = defineStore('notifications', {
         async restartStream(): Promise<void> {
             this.reconnecting = true;
 
-            // Reset back off time when over 2 minutes
-            if (this.reconnectBackoffTime > 120) {
+            // Reset back off time when over the max back off time
+            if (this.reconnectBackoffTime > maxBackoffTime) {
                 this.reconnectBackoffTime = initialReconnectBackoffTime;
             } else {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;

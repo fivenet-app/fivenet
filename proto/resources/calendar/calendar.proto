@@ -44,7 +44,7 @@ message CalendarEntry {
   // @sanitize
   string title = 9 [(validate.rules).string = {
     min_len: 3,
-    max_len: 1024
+    max_len: 512
   }];
   // @sanitize
   string content = 10 [(validate.rules).string = {
