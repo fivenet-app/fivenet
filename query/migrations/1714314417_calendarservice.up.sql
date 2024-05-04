@@ -35,6 +35,7 @@ CREATE TABLE
         `title` varchar(1024) NOT NULL,
         `content` longtext,
         `public` tinyint(1) DEFAULT 0,
+        `rsvp_open` tinyint(1) DEFAULT 0,
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,
         PRIMARY KEY (`id`),

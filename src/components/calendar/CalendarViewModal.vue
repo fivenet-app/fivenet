@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 
 defineProps<{
-    entry: CalendarEntry;
+    calendar: Calendar;
 }>();
 
 const { isOpen } = useModal();
@@ -15,27 +15,23 @@ const { isOpen } = useModal();
             <template #header>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
-                        <h3 class="text-2xl font-semibold leading-6">
-                            {{ entry.title }}
-                        </h3>
+                        <h3 class="text-2xl font-semibold leading-6">{{ $t('common.calendar') }}: {{ calendar.name }}</h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
 
-                    <p class="flex-1">
-                        {{ $d(toDate(entry.startTime), 'long') }} -
-                        {{ $d(toDate(entry.endTime), 'long') }}
-                    </p>
-
                     <div class="flex flex-row items-center gap-2">
                         <span>{{ $t('common.creator') }}:</span>
-                        <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
+                        <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
                     </div>
                 </div>
             </template>
 
             <div>
-                <p v-html="entry.content"></p>
+                <p class="flex-1">
+                    {{ $t('common.description') }}:
+                    {{ calendar.description ?? $t('common.na') }}
+                </p>
             </div>
 
             <template #footer>

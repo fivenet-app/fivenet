@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -37,14 +38,13 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 
 	countStmt := tCalendarRSVP.
 		SELECT(
-			jet.COUNT(jet.DISTINCT(tCalendar.ID)).AS("datacount.totalcount"),
+			jet.COUNT(tCalendarRSVP.UserID).AS("datacount.totalcount"),
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUsers,
-				tCalendar.CreatorID.EQ(tUsers.ID),
+				tCalendarRSVP.UserID.EQ(tUsers.ID),
 			),
 		).
-		GROUP_BY(tCalendarRSVP.CreatedAt).
 		WHERE(tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)))
 
 	var count database.DataCount
@@ -54,9 +54,15 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 		}
 	}
 
+	ownEntry, err := s.getRSVPCalendarEntry(ctx, entry.Id, userInfo.UserId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
 	resp := &ListCalendarEntryRSVPResponse{
 		Pagination: pag,
+		OwnEntry:   ownEntry,
 	}
 
 	if count.TotalCount <= 0 {
@@ -81,13 +87,14 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUsers,
-				tCalendar.CreatorID.EQ(tUsers.ID),
+				tCalendarRSVP.UserID.EQ(tUsers.ID),
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUsers.ID),
 			),
 		).
 		WHERE(tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id))).
+		ORDER_BY(tCalendarRSVP.Response.DESC()).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 
@@ -108,6 +115,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 
 	return resp, nil
 }
+
 func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRequest) (*RSVPCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
@@ -136,6 +144,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 		return nil, errorscalendar.ErrNoPerms
 	}
 
+	tCalendarRSVP := table.FivenetCalendarRsvp
 	stmt := tCalendarRSVP.
 		INSERT(
 			tCalendarRSVP.EntryID,
@@ -151,23 +160,17 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 			tCalendarRSVP.Response.SET(jet.Int16(int16(req.Entry.Response))),
 		)
 
-	res, err := stmt.ExecContext(ctx, s.db)
-	if err != nil {
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-	}
-
-	lastId, err := res.LastInsertId()
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	if err := s.createOrDeleteSubscription(ctx, entry.CalendarId, &entry.Id, userInfo.UserId, req.Subscribe, false); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, uint64(lastId))
+	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, req.Entry.EntryId, userInfo.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -183,7 +186,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 	}, nil
 }
 
-func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64) (*calendar.CalendarEntryRSVP, error) {
+func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {
 	stmt := tCalendarRSVP.
 		SELECT(
 			tCalendarRSVP.EntryID,
@@ -202,18 +205,23 @@ func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64) (*cal
 		).
 		FROM(tCalendarRSVP.
 			LEFT_JOIN(tUsers,
-				tCalendar.CreatorID.EQ(tUsers.ID),
+				tCalendarRSVP.UserID.EQ(tUsers.ID),
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tUsers.ID),
 			),
 		).
-		WHERE(tCalendarRSVP.EntryID.EQ(jet.Uint64(entryId))).
+		WHERE(jet.AND(
+			tCalendarRSVP.EntryID.EQ(jet.Uint64(entryId)),
+			tCalendarRSVP.UserID.EQ(jet.Int32(userId)),
+		)).
 		LIMIT(1)
 
 	var dest calendar.CalendarEntryRSVP
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	if dest.EntryId == 0 {

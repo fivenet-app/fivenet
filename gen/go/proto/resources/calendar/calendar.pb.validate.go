@@ -649,6 +649,10 @@ func (m *CalendarEntry) validate(all bool) error {
 
 	}
 
+	if m.RsvpOpen != nil {
+		// no validation rules for RsvpOpen
+	}
+
 	if m.CreatorId != nil {
 		// no validation rules for CreatorId
 	}
@@ -799,7 +803,7 @@ func (m *CalendarEntryRSVP) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if _, ok := RSVPResponses_name[int32(m.GetResponse())]; !ok {
+	if _, ok := RsvpResponses_name[int32(m.GetResponse())]; !ok {
 		err := CalendarEntryRSVPValidationError{
 			field:  "Response",
 			reason: "value must be one of the defined enum values",

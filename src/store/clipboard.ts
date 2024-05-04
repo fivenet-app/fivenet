@@ -5,6 +5,7 @@ import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templat
 import type { File } from '~~/gen/ts/resources/filestore/file';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
+import { useAuthStore } from './auth';
 
 export class ClipboardUser {
     public userId: number | undefined;
@@ -105,7 +106,11 @@ export const useClipboardStore = defineStore('clipboard', {
                 vehicles: [],
             } as ClipboardData,
         }) as ClipboardState,
-    persist: true,
+    persist: {
+        key(id) {
+            return `state-${useAuthStore().activeChar?.userId}-${id}`;
+        },
+    },
     actions: {
         getTemplateData(): TemplateData {
             const data: TemplateData = {

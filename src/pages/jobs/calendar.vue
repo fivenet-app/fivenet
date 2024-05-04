@@ -4,11 +4,14 @@ import { z } from 'zod';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
-import type { ListCalendarEntriesResponse, ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import CalendarEntryModal from '~/components/calendar/CalendarEntryModal.vue';
+import EntryViewModal from '~/components/calendar/entry/EntryViewModal.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
+import { useCalendarStore } from '~/store/calendar';
+import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
+import CalendarViewModal from '~/components/calendar/CalendarViewModal.vue';
 
 useHead({
     title: 'common.calendar',
@@ -24,6 +27,8 @@ const { d } = useI18n();
 
 const modal = useModal();
 
+const calendarStore = useCalendarStore();
+
 const schema = z.object({
     year: z.number(),
     month: z.number(),
@@ -32,9 +37,12 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const date = ref(new Date());
+watch(date, () => console.log(date.value));
+
 const query = reactive<Schema>({
-    year: 2024,
-    month: 4,
+    year: date.value.getFullYear(),
+    month: date.value.getMonth(),
     calendarIds: [],
 });
 
@@ -51,12 +59,11 @@ const {
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     try {
-        const call = $grpc.getCalendarClient().listCalendars({
+        const response = await calendarStore.listCalendars({
             pagination: {
                 offset: offset.value,
             },
         });
-        const { response } = await call;
 
         if (query.calendarIds.length === 0) {
             query.calendarIds = response.calendars.map((c) => c.id);
@@ -74,25 +81,16 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`calendar-entries-${query.year}-${query.month}`, () => listCalendarEntries(), { immediate: false });
-
-async function listCalendarEntries(): Promise<ListCalendarEntriesResponse> {
-    try {
-        const call = $grpc.getCalendarClient().listCalendarEntries({
-            year: 2024,
-            month: 4,
+} = useLazyAsyncData(
+    `calendar-entries-${query.year}-${query.month}-${query.calendarIds.join(':')}`,
+    () =>
+        calendarStore.listCalendarEntries({
+            year: query.year,
+            month: query.month,
             calendarIds: query.calendarIds,
-        });
-        const { response } = await call;
-
-        return response;
-    } catch (e) {
-        $grpc.handleError(e as RpcError);
-        throw e;
-    }
-}
-
-const date = ref(new Date());
+        }),
+    { immediate: false },
+);
 
 watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
 
@@ -101,7 +99,7 @@ function formatStartEndTime(entry: CalendarEntry): string {
     const end = entry.endTime ? toDate(entry.endTime) : undefined;
 
     if (!end) {
-        return '';
+        return d(start, 'time');
     }
 
     return d(start, 'time') + ' - ' + d(end, 'time');
@@ -111,9 +109,14 @@ type CalEntry = { key: string; customData: CalendarEntry & { class: string; time
 
 const transformedCalendarEntries = computed(() =>
     calendarEntries.value?.entries.map((entry) => {
+        const color = calendars.value?.calendars.find((c) => c.id === entry.calendarId)?.color ?? 'primary';
         return {
             key: entry.id,
-            customData: { ...entry, class: 'bg-blue-500 hover:!bg-blue-400 text-white', time: formatStartEndTime(entry) },
+            customData: {
+                ...entry,
+                class: `bg-${color}-500 hover:!bg-${color}-400 text-white`,
+                time: formatStartEndTime(entry),
+            },
             dates: [
                 {
                     start: toDate(entry.startTime),
@@ -149,21 +152,36 @@ const groupedCalendarEntries = computed(() => {
 <template>
     <PagesJobsLayout>
         <template #default>
-            <UDashboardToolbar class="flex w-full flex-row gap-2 p-2">
+            <UDashboardToolbar
+                v-if="can('CalendarService.CreateOrUpdateCalendarEntry') || can('CalendarService.CreateOrUpdateCalendar')"
+                class="flex w-full flex-row gap-2 p-2"
+            >
                 <template #default>
-                    <div class="flex-initial">
-                        <UButtonGroup class="inline-flex w-full">
-                            <UButton
-                                v-if="can('CalendarService.CreateOrUpdateCalendarEntries')"
-                                color="gray"
-                                trailing-icon="i-mdi-plus"
-                                class="flex-1"
-                                @click="modal.open(EntryCreateOrUpdateModal, {})"
-                            >
-                                {{ $t('common.create') }}
-                            </UButton>
-                        </UButtonGroup>
-                    </div>
+                    <UButtonGroup class="inline-flex w-full">
+                        <UButton
+                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry')"
+                            block
+                            color="gray"
+                            trailing-icon="i-mdi-plus"
+                            class="flex-1"
+                            @click="modal.open(EntryCreateOrUpdateModal, {})"
+                        >
+                            {{ $t('common.entry', 1) }}
+                            {{ $t('common.create') }}
+                        </UButton>
+
+                        <UButton
+                            v-if="can('CalendarService.CreateOrUpdateCalendar')"
+                            block
+                            color="gray"
+                            trailing-icon="i-mdi-plus"
+                            class="flex-1"
+                            @click="modal.open(CalendarCreateOrUpdateModal, {})"
+                        >
+                            {{ $t('common.calendar', 1) }}
+                            {{ $t('common.create') }}
+                        </UButton>
+                    </UButtonGroup>
                 </template>
             </UDashboardToolbar>
 
@@ -182,12 +200,23 @@ const groupedCalendarEntries = computed(() => {
                             />
                             <template v-else>
                                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                    <UTooltip
-                                        v-for="calendar in calendars?.calendars"
-                                        :key="calendar.id"
-                                        :text="calendar.description"
-                                    >
-                                        <UCheckbox :label="calendar.name" disabled :model-value="true" class="truncate" />
+                                    <UTooltip v-for="calendar in calendars?.calendars" :key="calendar.id" :text="calendar.name">
+                                        <div class="inline-flex items-center gap-2">
+                                            <UCheckbox disabled :model-value="true" class="truncate" />
+                                            <UButton
+                                                :color="calendar.color"
+                                                size="sm"
+                                                :label="calendar.name"
+                                                @click="
+                                                    modal.open(
+                                                        can('CalendarService.CreateOrUpdateCalendar')
+                                                            ? CalendarCreateOrUpdateModal
+                                                            : CalendarViewModal,
+                                                        { calendar: calendar },
+                                                    )
+                                                "
+                                            />
+                                        </div>
                                     </UTooltip>
                                 </div>
                             </template>
@@ -205,7 +234,7 @@ const groupedCalendarEntries = computed(() => {
                     class="hidden md:flex md:flex-1"
                     :attributes="transformedCalendarEntries"
                     @selected="
-                        modal.open(CalendarEntryModal, {
+                        modal.open(EntryViewModal, {
                             entry: $event,
                         })
                     "
@@ -228,7 +257,7 @@ const groupedCalendarEntries = computed(() => {
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="
-                                            modal.open(CalendarEntryModal, {
+                                            modal.open(EntryViewModal, {
                                                 entry: attr.customData,
                                             })
                                         "

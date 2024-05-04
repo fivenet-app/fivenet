@@ -429,7 +429,8 @@
         "tutor": "Tutor",
         "approved_by": "Genehmigt von",
         "clear": "Löschen",
-        "calendar": "Kalender | Kalenders"
+        "calendar": "Kalender | Kalenders",
+        "appointment": "Termin | Termine"
     },
     "components": {
         "partials": {
@@ -1885,7 +1886,7 @@
                 "key": "Löschen von Kalenders",
                 "description": "Löschen von Kalenders."
             },
-            "CreateOrUpdateCalendarEntries": {
+            "CreateOrUpdateCalendarEntry": {
                 "key": "Erstellen und aktualisieren ",
                 "description": "Erstellen und aktualisieren von Kalendereinträgen (teilen von Einträgen benötigt Teilen-Zugriff und erstellen Editieren-Zugriff.)"
             },

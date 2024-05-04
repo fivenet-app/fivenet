@@ -57,7 +57,7 @@ export type Perms =
     | 'TODOService.TODOMethod'
 	| 'AuthService.ChooseCharacter'
 	| 'CalendarService.CreateOrUpdateCalendar'
-	| 'CalendarService.CreateOrUpdateCalendarEntries'
+	| 'CalendarService.CreateOrUpdateCalendarEntry'
 	| 'CalendarService.DeleteCalendar'
 	| 'CalendarService.DeleteCalendarEntries'
 	| 'CentrumService.CreateDispatch'

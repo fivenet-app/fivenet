@@ -64,11 +64,11 @@ message GetCalendarEntryResponse {
   resources.calendar.CalendarEntry entry = 1;
 }
 
-message CreateOrUpdateCalendarEntriesRequest {
+message CreateOrUpdateCalendarEntryRequest {
   resources.calendar.CalendarEntry entry = 1 [(validate.rules).message.required = true];
 }
 
-message CreateOrUpdateCalendarEntriesResponse {
+message CreateOrUpdateCalendarEntryResponse {
   resources.calendar.CalendarEntry entry = 1;
 }
 
@@ -98,6 +98,7 @@ message ListCalendarEntryRSVPRequest {
 message ListCalendarEntryRSVPResponse {
   resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
   repeated resources.calendar.CalendarEntryRSVP entries = 2;
+  optional resources.calendar.CalendarEntryRSVP own_entry = 3;
 }
 
 message RSVPCalendarEntryRequest {
@@ -117,7 +118,7 @@ service CalendarService {
   rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
   // @perm: Name=Any
   rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse);
-  // @perm
+  // @perm: Attrs=Fields/StringList:[]string{"Job"}
   rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
   // @perm
   rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
@@ -125,10 +126,10 @@ service CalendarService {
   // @perm: Name=Any
   rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);
   // @perm
-  rpc CreateOrUpdateCalendarEntries(CreateOrUpdateCalendarEntriesRequest) returns (CreateOrUpdateCalendarEntriesResponse);
+  rpc CreateOrUpdateCalendarEntry(CreateOrUpdateCalendarEntryRequest) returns (CreateOrUpdateCalendarEntryResponse);
   // @perm
   rpc DeleteCalendarEntries(DeleteCalendarEntriesRequest) returns (DeleteCalendarEntriesResponse);
-  // @perm: Name=CreateOrUpdateCalendarEntries
+  // @perm: Name=CreateOrUpdateCalendarEntry
   rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse);
 
   // @perm: Name=Any

@@ -4,6 +4,7 @@
 package calendar
 
 import (
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/permissions"
 	permkeys "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar/perms"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 )
@@ -17,7 +18,7 @@ var PermsRemap = map[string]string{
 	"CalendarService/ListCalendarEntryRSVP": "Any",
 	"CalendarService/ListCalendars":         "Any",
 	"CalendarService/RSVPCalendarEntry":     "Any",
-	"CalendarService/ShareCalendarEntry":    "CalendarService/CreateOrUpdateCalendarEntries",
+	"CalendarService/ShareCalendarEntry":    "CalendarService/CreateOrUpdateCalendarEntry",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -31,11 +32,17 @@ func init() {
 		{
 			Category: permkeys.CalendarServicePerm,
 			Name:     permkeys.CalendarServiceCreateOrUpdateCalendarPerm,
-			Attrs:    []perms.Attr{},
+			Attrs: []perms.Attr{
+				{
+					Key:         permkeys.CalendarServiceCreateOrUpdateCalendarFieldsPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Job"},
+				},
+			},
 		},
 		{
 			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceCreateOrUpdateCalendarEntriesPerm,
+			Name:     permkeys.CalendarServiceCreateOrUpdateCalendarEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 		{

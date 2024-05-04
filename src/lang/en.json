@@ -429,7 +429,10 @@
         "tutor": "Tutor",
         "approved_by": "Approved by",
         "clear": "Clear",
-        "calendar": "Calendar | Calendars"
+        "calendar": "Calendar | Calendars",
+        "rsvp": "RSVP",
+        "maybe": "Maybe",
+        "appointment": "Appointment | Appointments"
     },
     "components": {
         "partials": {
@@ -1013,7 +1016,8 @@
                 },
                 "update": {
                     "title": "Update Calendar"
-                }
+                },
+                "private": "Private Calendar"
             },
             "EntryCreateOrUpdateModal": {
                 "create": {
@@ -1879,13 +1883,19 @@
             "category": "Calendar",
             "CreateOrUpdateCalendar": {
                 "key": "Create and update calendars",
-                "description": "Manage calendars."
+                "description": "Manage calendars.",
+                "attrs": {
+                    "Job": "Calendar for user's job"
+                },
+                "attrs_types": {
+                    "Fields": "Access to creating faction-own calendars"
+                }
             },
             "DeleteCalendar": {
                 "key": "Delete calendars",
                 "description": "Delete calendars"
             },
-            "CreateOrUpdateCalendarEntries": {
+            "CreateOrUpdateCalendarEntry": {
                 "key": "Create or update calendar entries",
                 "description": "Create or update calendar entries (sharing requires share access and creating requires edit access.)"
             },
@@ -2034,6 +2044,11 @@
                 "content": "You are missing required qualifications."
             },
             "ErrQualificationClosed": "Can't request or take a closed qualification!"
+        },
+        "CalendarService": {
+            "ErrFailedQuery": "Failed to load calendar data!",
+            "ErrNoPerms": "You don't have permissions to access this calendar data!",
+            "ErrOnePrivateCal": "You can only have one private calendar!"
         }
     },
     "system": {

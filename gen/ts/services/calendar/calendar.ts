@@ -140,18 +140,18 @@ export interface GetCalendarEntryResponse {
     entry?: CalendarEntry;
 }
 /**
- * @generated from protobuf message services.calendar.CreateOrUpdateCalendarEntriesRequest
+ * @generated from protobuf message services.calendar.CreateOrUpdateCalendarEntryRequest
  */
-export interface CreateOrUpdateCalendarEntriesRequest {
+export interface CreateOrUpdateCalendarEntryRequest {
     /**
      * @generated from protobuf field: resources.calendar.CalendarEntry entry = 1;
      */
     entry?: CalendarEntry;
 }
 /**
- * @generated from protobuf message services.calendar.CreateOrUpdateCalendarEntriesResponse
+ * @generated from protobuf message services.calendar.CreateOrUpdateCalendarEntryResponse
  */
-export interface CreateOrUpdateCalendarEntriesResponse {
+export interface CreateOrUpdateCalendarEntryResponse {
     /**
      * @generated from protobuf field: resources.calendar.CalendarEntry entry = 1;
      */
@@ -224,6 +224,10 @@ export interface ListCalendarEntryRSVPResponse {
      * @generated from protobuf field: repeated resources.calendar.CalendarEntryRSVP entries = 2;
      */
     entries: CalendarEntryRSVP[];
+    /**
+     * @generated from protobuf field: optional resources.calendar.CalendarEntryRSVP own_entry = 3;
+     */
+    ownEntry?: CalendarEntryRSVP;
 }
 /**
  * @generated from protobuf message services.calendar.RSVPCalendarEntryRequest
@@ -824,19 +828,19 @@ class GetCalendarEntryResponse$Type extends MessageType<GetCalendarEntryResponse
  */
 export const GetCalendarEntryResponse = new GetCalendarEntryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateOrUpdateCalendarEntriesRequest$Type extends MessageType<CreateOrUpdateCalendarEntriesRequest> {
+class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdateCalendarEntryRequest> {
     constructor() {
-        super("services.calendar.CreateOrUpdateCalendarEntriesRequest", [
+        super("services.calendar.CreateOrUpdateCalendarEntryRequest", [
             { no: 1, name: "entry", kind: "message", T: () => CalendarEntry, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
-    create(value?: PartialMessage<CreateOrUpdateCalendarEntriesRequest>): CreateOrUpdateCalendarEntriesRequest {
+    create(value?: PartialMessage<CreateOrUpdateCalendarEntryRequest>): CreateOrUpdateCalendarEntryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<CreateOrUpdateCalendarEntriesRequest>(this, message, value);
+            reflectionMergePartial<CreateOrUpdateCalendarEntryRequest>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateCalendarEntriesRequest): CreateOrUpdateCalendarEntriesRequest {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateCalendarEntryRequest): CreateOrUpdateCalendarEntryRequest {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -855,7 +859,7 @@ class CreateOrUpdateCalendarEntriesRequest$Type extends MessageType<CreateOrUpda
         }
         return message;
     }
-    internalBinaryWrite(message: CreateOrUpdateCalendarEntriesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CreateOrUpdateCalendarEntryRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.calendar.CalendarEntry entry = 1; */
         if (message.entry)
             CalendarEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -866,23 +870,23 @@ class CreateOrUpdateCalendarEntriesRequest$Type extends MessageType<CreateOrUpda
     }
 }
 /**
- * @generated MessageType for protobuf message services.calendar.CreateOrUpdateCalendarEntriesRequest
+ * @generated MessageType for protobuf message services.calendar.CreateOrUpdateCalendarEntryRequest
  */
-export const CreateOrUpdateCalendarEntriesRequest = new CreateOrUpdateCalendarEntriesRequest$Type();
+export const CreateOrUpdateCalendarEntryRequest = new CreateOrUpdateCalendarEntryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CreateOrUpdateCalendarEntriesResponse$Type extends MessageType<CreateOrUpdateCalendarEntriesResponse> {
+class CreateOrUpdateCalendarEntryResponse$Type extends MessageType<CreateOrUpdateCalendarEntryResponse> {
     constructor() {
-        super("services.calendar.CreateOrUpdateCalendarEntriesResponse", [
+        super("services.calendar.CreateOrUpdateCalendarEntryResponse", [
             { no: 1, name: "entry", kind: "message", T: () => CalendarEntry }
         ]);
     }
-    create(value?: PartialMessage<CreateOrUpdateCalendarEntriesResponse>): CreateOrUpdateCalendarEntriesResponse {
+    create(value?: PartialMessage<CreateOrUpdateCalendarEntryResponse>): CreateOrUpdateCalendarEntryResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         if (value !== undefined)
-            reflectionMergePartial<CreateOrUpdateCalendarEntriesResponse>(this, message, value);
+            reflectionMergePartial<CreateOrUpdateCalendarEntryResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateCalendarEntriesResponse): CreateOrUpdateCalendarEntriesResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateCalendarEntryResponse): CreateOrUpdateCalendarEntryResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -901,7 +905,7 @@ class CreateOrUpdateCalendarEntriesResponse$Type extends MessageType<CreateOrUpd
         }
         return message;
     }
-    internalBinaryWrite(message: CreateOrUpdateCalendarEntriesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CreateOrUpdateCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* resources.calendar.CalendarEntry entry = 1; */
         if (message.entry)
             CalendarEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
@@ -912,9 +916,9 @@ class CreateOrUpdateCalendarEntriesResponse$Type extends MessageType<CreateOrUpd
     }
 }
 /**
- * @generated MessageType for protobuf message services.calendar.CreateOrUpdateCalendarEntriesResponse
+ * @generated MessageType for protobuf message services.calendar.CreateOrUpdateCalendarEntryResponse
  */
-export const CreateOrUpdateCalendarEntriesResponse = new CreateOrUpdateCalendarEntriesResponse$Type();
+export const CreateOrUpdateCalendarEntryResponse = new CreateOrUpdateCalendarEntryResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class DeleteCalendarEntriesRequest$Type extends MessageType<DeleteCalendarEntriesRequest> {
     constructor() {
@@ -1154,7 +1158,8 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
     constructor() {
         super("services.calendar.ListCalendarEntryRSVPResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CalendarEntryRSVP }
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CalendarEntryRSVP },
+            { no: 3, name: "own_entry", kind: "message", T: () => CalendarEntryRSVP }
         ]);
     }
     create(value?: PartialMessage<ListCalendarEntryRSVPResponse>): ListCalendarEntryRSVPResponse {
@@ -1175,6 +1180,9 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
                 case /* repeated resources.calendar.CalendarEntryRSVP entries */ 2:
                     message.entries.push(CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options));
                     break;
+                case /* optional resources.calendar.CalendarEntryRSVP own_entry */ 3:
+                    message.ownEntry = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.ownEntry);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1193,6 +1201,9 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
         /* repeated resources.calendar.CalendarEntryRSVP entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             CalendarEntryRSVP.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.CalendarEntryRSVP own_entry = 3; */
+        if (message.ownEntry)
+            CalendarEntryRSVP.internalBinaryWrite(message.ownEntry, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1313,7 +1324,7 @@ export const CalendarService = new ServiceType("services.calendar.CalendarServic
     { name: "CreateOrUpdateCalendar", options: {}, I: CreateOrUpdateCalendarRequest, O: CreateOrUpdateCalendarResponse },
     { name: "DeleteCalendar", options: {}, I: DeleteCalendarRequest, O: DeleteCalendarResponse },
     { name: "GetCalendarEntry", options: {}, I: GetCalendarEntryRequest, O: GetCalendarEntryResponse },
-    { name: "CreateOrUpdateCalendarEntries", options: {}, I: CreateOrUpdateCalendarEntriesRequest, O: CreateOrUpdateCalendarEntriesResponse },
+    { name: "CreateOrUpdateCalendarEntry", options: {}, I: CreateOrUpdateCalendarEntryRequest, O: CreateOrUpdateCalendarEntryResponse },
     { name: "DeleteCalendarEntries", options: {}, I: DeleteCalendarEntriesRequest, O: DeleteCalendarEntriesResponse },
     { name: "ShareCalendarEntry", options: {}, I: ShareCalendarEntryRequest, O: ShareCalendarEntryResponse },
     { name: "ListCalendarEntryRSVP", options: {}, I: ListCalendarEntryRSVPRequest, O: ListCalendarEntryRSVPResponse },

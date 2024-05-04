@@ -131,6 +131,13 @@ onBeforeMount(async () => listJobs());
                             <template #option="{ option: job }">
                                 <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                             </template>
+
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.job')]) }}
+                            </template>
                         </USelectMenu>
                     </UFormGroup>
 
@@ -150,6 +157,12 @@ onBeforeMount(async () => listJobs());
                             </template>
                             <template #option="{ option: jobGrade }">
                                 <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty>
+                                {{ $t('common.not_found', [$t('common.job_grade')]) }}
                             </template>
                         </USelectMenu>
                     </UFormGroup>

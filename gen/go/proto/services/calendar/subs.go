@@ -3,11 +3,13 @@ package calendar
 import (
 	"context"
 
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
 func (s *Server) createOrDeleteSubscription(ctx context.Context, calendarId uint64, entryId *uint64, userId int32, subscribe bool, muted bool) error {
 	if subscribe {
+		tCalendarSubs := table.FivenetCalendarSubs
 		stmt := tCalendarSubs.
 			INSERT(
 				tCalendarSubs.CalendarID,

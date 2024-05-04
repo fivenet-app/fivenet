@@ -1556,23 +1556,23 @@ var _ interface {
 	ErrorName() string
 } = GetCalendarEntryResponseValidationError{}
 
-// Validate checks the field values on CreateOrUpdateCalendarEntriesRequest
-// with the rules defined in the proto definition for this message. If any
-// rules are violated, the first error encountered is returned, or nil if
-// there are no violations.
-func (m *CreateOrUpdateCalendarEntriesRequest) Validate() error {
+// Validate checks the field values on CreateOrUpdateCalendarEntryRequest with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *CreateOrUpdateCalendarEntryRequest) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrUpdateCalendarEntriesRequest
+// ValidateAll checks the field values on CreateOrUpdateCalendarEntryRequest
 // with the rules defined in the proto definition for this message. If any
 // rules are violated, the result is a list of violation errors wrapped in
-// CreateOrUpdateCalendarEntriesRequestMultiError, or nil if none found.
-func (m *CreateOrUpdateCalendarEntriesRequest) ValidateAll() error {
+// CreateOrUpdateCalendarEntryRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateCalendarEntryRequest) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrUpdateCalendarEntriesRequest) validate(all bool) error {
+func (m *CreateOrUpdateCalendarEntryRequest) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1580,7 +1580,7 @@ func (m *CreateOrUpdateCalendarEntriesRequest) validate(all bool) error {
 	var errors []error
 
 	if m.GetEntry() == nil {
-		err := CreateOrUpdateCalendarEntriesRequestValidationError{
+		err := CreateOrUpdateCalendarEntryRequestValidationError{
 			field:  "Entry",
 			reason: "value is required",
 		}
@@ -1594,7 +1594,7 @@ func (m *CreateOrUpdateCalendarEntriesRequest) validate(all bool) error {
 		switch v := interface{}(m.GetEntry()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateOrUpdateCalendarEntriesRequestValidationError{
+				errors = append(errors, CreateOrUpdateCalendarEntryRequestValidationError{
 					field:  "Entry",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1602,7 +1602,7 @@ func (m *CreateOrUpdateCalendarEntriesRequest) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateOrUpdateCalendarEntriesRequestValidationError{
+				errors = append(errors, CreateOrUpdateCalendarEntryRequestValidationError{
 					field:  "Entry",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1611,7 +1611,7 @@ func (m *CreateOrUpdateCalendarEntriesRequest) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateOrUpdateCalendarEntriesRequestValidationError{
+			return CreateOrUpdateCalendarEntryRequestValidationError{
 				field:  "Entry",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1620,20 +1620,20 @@ func (m *CreateOrUpdateCalendarEntriesRequest) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateOrUpdateCalendarEntriesRequestMultiError(errors)
+		return CreateOrUpdateCalendarEntryRequestMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrUpdateCalendarEntriesRequestMultiError is an error wrapping multiple
+// CreateOrUpdateCalendarEntryRequestMultiError is an error wrapping multiple
 // validation errors returned by
-// CreateOrUpdateCalendarEntriesRequest.ValidateAll() if the designated
+// CreateOrUpdateCalendarEntryRequest.ValidateAll() if the designated
 // constraints aren't met.
-type CreateOrUpdateCalendarEntriesRequestMultiError []error
+type CreateOrUpdateCalendarEntryRequestMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrUpdateCalendarEntriesRequestMultiError) Error() string {
+func (m CreateOrUpdateCalendarEntryRequestMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1642,12 +1642,12 @@ func (m CreateOrUpdateCalendarEntriesRequestMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrUpdateCalendarEntriesRequestMultiError) AllErrors() []error { return m }
+func (m CreateOrUpdateCalendarEntryRequestMultiError) AllErrors() []error { return m }
 
-// CreateOrUpdateCalendarEntriesRequestValidationError is the validation error
-// returned by CreateOrUpdateCalendarEntriesRequest.Validate if the designated
+// CreateOrUpdateCalendarEntryRequestValidationError is the validation error
+// returned by CreateOrUpdateCalendarEntryRequest.Validate if the designated
 // constraints aren't met.
-type CreateOrUpdateCalendarEntriesRequestValidationError struct {
+type CreateOrUpdateCalendarEntryRequestValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1655,24 +1655,24 @@ type CreateOrUpdateCalendarEntriesRequestValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrUpdateCalendarEntriesRequestValidationError) Field() string { return e.field }
+func (e CreateOrUpdateCalendarEntryRequestValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrUpdateCalendarEntriesRequestValidationError) Reason() string { return e.reason }
+func (e CreateOrUpdateCalendarEntryRequestValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrUpdateCalendarEntriesRequestValidationError) Cause() error { return e.cause }
+func (e CreateOrUpdateCalendarEntryRequestValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrUpdateCalendarEntriesRequestValidationError) Key() bool { return e.key }
+func (e CreateOrUpdateCalendarEntryRequestValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrUpdateCalendarEntriesRequestValidationError) ErrorName() string {
-	return "CreateOrUpdateCalendarEntriesRequestValidationError"
+func (e CreateOrUpdateCalendarEntryRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateCalendarEntryRequestValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateOrUpdateCalendarEntriesRequestValidationError) Error() string {
+func (e CreateOrUpdateCalendarEntryRequestValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1684,14 +1684,14 @@ func (e CreateOrUpdateCalendarEntriesRequestValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrUpdateCalendarEntriesRequest.%s: %s%s",
+		"invalid %sCreateOrUpdateCalendarEntryRequest.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrUpdateCalendarEntriesRequestValidationError{}
+var _ error = CreateOrUpdateCalendarEntryRequestValidationError{}
 
 var _ interface {
 	Field() string
@@ -1699,25 +1699,25 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrUpdateCalendarEntriesRequestValidationError{}
+} = CreateOrUpdateCalendarEntryRequestValidationError{}
 
-// Validate checks the field values on CreateOrUpdateCalendarEntriesResponse
-// with the rules defined in the proto definition for this message. If any
-// rules are violated, the first error encountered is returned, or nil if
-// there are no violations.
-func (m *CreateOrUpdateCalendarEntriesResponse) Validate() error {
+// Validate checks the field values on CreateOrUpdateCalendarEntryResponse with
+// the rules defined in the proto definition for this message. If any rules
+// are violated, the first error encountered is returned, or nil if there are
+// no violations.
+func (m *CreateOrUpdateCalendarEntryResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on CreateOrUpdateCalendarEntriesResponse
+// ValidateAll checks the field values on CreateOrUpdateCalendarEntryResponse
 // with the rules defined in the proto definition for this message. If any
 // rules are violated, the result is a list of violation errors wrapped in
-// CreateOrUpdateCalendarEntriesResponseMultiError, or nil if none found.
-func (m *CreateOrUpdateCalendarEntriesResponse) ValidateAll() error {
+// CreateOrUpdateCalendarEntryResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateCalendarEntryResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *CreateOrUpdateCalendarEntriesResponse) validate(all bool) error {
+func (m *CreateOrUpdateCalendarEntryResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1728,7 +1728,7 @@ func (m *CreateOrUpdateCalendarEntriesResponse) validate(all bool) error {
 		switch v := interface{}(m.GetEntry()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CreateOrUpdateCalendarEntriesResponseValidationError{
+				errors = append(errors, CreateOrUpdateCalendarEntryResponseValidationError{
 					field:  "Entry",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1736,7 +1736,7 @@ func (m *CreateOrUpdateCalendarEntriesResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, CreateOrUpdateCalendarEntriesResponseValidationError{
+				errors = append(errors, CreateOrUpdateCalendarEntryResponseValidationError{
 					field:  "Entry",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1745,7 +1745,7 @@ func (m *CreateOrUpdateCalendarEntriesResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return CreateOrUpdateCalendarEntriesResponseValidationError{
+			return CreateOrUpdateCalendarEntryResponseValidationError{
 				field:  "Entry",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -1754,20 +1754,20 @@ func (m *CreateOrUpdateCalendarEntriesResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return CreateOrUpdateCalendarEntriesResponseMultiError(errors)
+		return CreateOrUpdateCalendarEntryResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// CreateOrUpdateCalendarEntriesResponseMultiError is an error wrapping
-// multiple validation errors returned by
-// CreateOrUpdateCalendarEntriesResponse.ValidateAll() if the designated
+// CreateOrUpdateCalendarEntryResponseMultiError is an error wrapping multiple
+// validation errors returned by
+// CreateOrUpdateCalendarEntryResponse.ValidateAll() if the designated
 // constraints aren't met.
-type CreateOrUpdateCalendarEntriesResponseMultiError []error
+type CreateOrUpdateCalendarEntryResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m CreateOrUpdateCalendarEntriesResponseMultiError) Error() string {
+func (m CreateOrUpdateCalendarEntryResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1776,12 +1776,12 @@ func (m CreateOrUpdateCalendarEntriesResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m CreateOrUpdateCalendarEntriesResponseMultiError) AllErrors() []error { return m }
+func (m CreateOrUpdateCalendarEntryResponseMultiError) AllErrors() []error { return m }
 
-// CreateOrUpdateCalendarEntriesResponseValidationError is the validation error
-// returned by CreateOrUpdateCalendarEntriesResponse.Validate if the
-// designated constraints aren't met.
-type CreateOrUpdateCalendarEntriesResponseValidationError struct {
+// CreateOrUpdateCalendarEntryResponseValidationError is the validation error
+// returned by CreateOrUpdateCalendarEntryResponse.Validate if the designated
+// constraints aren't met.
+type CreateOrUpdateCalendarEntryResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1789,24 +1789,24 @@ type CreateOrUpdateCalendarEntriesResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e CreateOrUpdateCalendarEntriesResponseValidationError) Field() string { return e.field }
+func (e CreateOrUpdateCalendarEntryResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e CreateOrUpdateCalendarEntriesResponseValidationError) Reason() string { return e.reason }
+func (e CreateOrUpdateCalendarEntryResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e CreateOrUpdateCalendarEntriesResponseValidationError) Cause() error { return e.cause }
+func (e CreateOrUpdateCalendarEntryResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e CreateOrUpdateCalendarEntriesResponseValidationError) Key() bool { return e.key }
+func (e CreateOrUpdateCalendarEntryResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e CreateOrUpdateCalendarEntriesResponseValidationError) ErrorName() string {
-	return "CreateOrUpdateCalendarEntriesResponseValidationError"
+func (e CreateOrUpdateCalendarEntryResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateCalendarEntryResponseValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e CreateOrUpdateCalendarEntriesResponseValidationError) Error() string {
+func (e CreateOrUpdateCalendarEntryResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1818,14 +1818,14 @@ func (e CreateOrUpdateCalendarEntriesResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sCreateOrUpdateCalendarEntriesResponse.%s: %s%s",
+		"invalid %sCreateOrUpdateCalendarEntryResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = CreateOrUpdateCalendarEntriesResponseValidationError{}
+var _ error = CreateOrUpdateCalendarEntryResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1833,7 +1833,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = CreateOrUpdateCalendarEntriesResponseValidationError{}
+} = CreateOrUpdateCalendarEntryResponseValidationError{}
 
 // Validate checks the field values on DeleteCalendarEntriesRequest with the
 // rules defined in the proto definition for this message. If any rules are
@@ -2542,6 +2542,39 @@ func (m *ListCalendarEntryRSVPResponse) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return ListCalendarEntryRSVPResponseValidationError{
 					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.OwnEntry != nil {
+
+		if all {
+			switch v := interface{}(m.GetOwnEntry()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCalendarEntryRSVPResponseValidationError{
+						field:  "OwnEntry",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCalendarEntryRSVPResponseValidationError{
+						field:  "OwnEntry",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetOwnEntry()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCalendarEntryRSVPResponseValidationError{
+					field:  "OwnEntry",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

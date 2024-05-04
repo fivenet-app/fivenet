@@ -4,6 +4,7 @@ import { Calendar as VCalendar } from 'v-calendar';
 import type { DatePickerDate, DatePickerRangeObject } from 'v-calendar/dist/types/src/use/datePicker';
 import 'v-calendar/dist/style.css';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import type { Page } from 'v-calendar/dist/types/src/utils/page.js';
 
 defineOptions({
     inheritAttrs: false,
@@ -11,15 +12,15 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        modelValue: DatePickerDate | DatePickerRangeObject | null;
+        modelValue: DatePickerDate | DatePickerRangeObject;
     }>(),
     {
-        modelValue: null,
+        modelValue: new Date(),
     },
 );
 
 const emits = defineEmits<{
-    (e: 'update:model-value', value: Date | null): void;
+    (e: 'update:model-value', value: Date): void;
     (e: 'selected', entry: CalendarEntry): void;
 }>();
 
@@ -41,11 +42,30 @@ const attrs = {
 const masks = {
     weekdays: 'WWW',
 };
+
+function updateDate(event: Page[]): void {
+    if (!event.length) {
+        return;
+    }
+
+    const page = event[0];
+    date.value.setYear(page.year);
+    date.value.setMonth(page.month - 1);
+    date.value = date.value;
+}
 </script>
 
 <template>
     <div class="custom-calendar" :class="$attrs.class">
-        <VCalendar v-model="date" view="monthly" :columns="1" :rows="1" :masks="masks" v-bind="{ ...attrs, ...$attrs }">
+        <VCalendar
+            view="monthly"
+            :columns="1"
+            :rows="1"
+            :masks="masks"
+            v-bind="{ ...attrs, ...$attrs }"
+            :initial-page="{ year: date.getFullYear(), month: date.getMonth() + 1 }"
+            @did-move="updateDate($event)"
+        >
             <template #day-content="{ day, attributes }">
                 <div class="z-10 flex h-full flex-col overflow-hidden">
                     <span class="day-label text-sm text-gray-900 dark:text-white">{{ day.day }}</span>
@@ -53,7 +73,7 @@ const masks = {
                         <button
                             v-for="attr in attributes"
                             :key="attr.key"
-                            class="vc-day-entry mb-1 mt-0 rounded-sm p-1 text-left text-xs leading-tight"
+                            class="vc-day-entry mb-1 mt-0 w-full rounded-sm p-1 text-left text-xs leading-tight"
                             :class="attr.customData.class"
                             @click="$emit('selected', attr.customData)"
                         >

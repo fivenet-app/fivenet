@@ -326,9 +326,9 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 			tJobProps.DiscordGuildID.AS("guild.id"),
 		).
 		FROM(tJobProps).
-		WHERE(
+		WHERE(jet.AND(
 			tJobProps.DiscordGuildID.IS_NOT_NULL(),
-		)
+		))
 
 	var dest []*Guild
 	if err := stmt.QueryContext(ctx, b.db, &dest); err != nil {

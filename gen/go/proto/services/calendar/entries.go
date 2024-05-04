@@ -12,6 +12,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 )
@@ -57,6 +58,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
 			tCalendarEntry.Public,
+			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
 			tCreator.ID,
 			tCreator.Identifier,
@@ -134,23 +136,30 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequ
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
+	access, err := s.getAccess(ctx, entry.CalendarId, &entry.Id)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	entry.Access = access
+
 	return &GetCalendarEntryResponse{
 		Entry: entry,
 	}, nil
 }
 
-func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateOrUpdateCalendarEntriesRequest) (*CreateOrUpdateCalendarEntriesResponse, error) {
+func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrUpdateCalendarEntryRequest) (*CreateOrUpdateCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: CalendarService_ServiceDesc.ServiceName,
-		Method:  "CreateOrUpdateCalendarEntries",
+		Method:  "CreateOrUpdateCalendarEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	tCalendarEntry := table.FivenetCalendarEntries
 	if req.Entry.Id > 0 {
 		check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.Entry.CalendarId, req.Entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
 		if err != nil {
@@ -176,6 +185,7 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 				tCalendarEntry.StartTime,
 				tCalendarEntry.EndTime,
 				tCalendarEntry.Public,
+				tCalendarEntry.RsvpOpen,
 			).
 			SET(
 				tCalendarEntry.Title.SET(jet.String(req.Entry.Title)),
@@ -183,6 +193,7 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 				tCalendarEntry.StartTime.SET(startTime),
 				tCalendarEntry.EndTime.SET(endTime),
 				tCalendarEntry.Public.SET(jet.Bool(req.Entry.Public)),
+				tCalendarEntry.RsvpOpen.SET(jet.Bool(*req.Entry.RsvpOpen)),
 			).
 			WHERE(jet.AND(
 				tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.Id)),
@@ -212,6 +223,7 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 				tCalendarEntry.Title,
 				tCalendarEntry.Content,
 				tCalendarEntry.Public,
+				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.CreatorID,
 				tCalendarEntry.CreatorJob,
 			).
@@ -223,6 +235,7 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 				req.Entry.Title,
 				req.Entry.Content,
 				req.Entry.Public,
+				req.Entry.RsvpOpen,
 				userInfo.UserId,
 				userInfo.Job,
 			)
@@ -242,12 +255,12 @@ func (s *Server) CreateOrUpdateCalendarEntries(ctx context.Context, req *CreateO
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.Id)))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Uint64(req.Entry.Id)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	return &CreateOrUpdateCalendarEntriesResponse{
+	return &CreateOrUpdateCalendarEntryResponse{
 		Entry: entry,
 	}, nil
 }
@@ -348,6 +361,7 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
 			tCalendarEntry.Public,
+			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
 			tCalendarEntry.CreatorJob,
 			tCreator.ID,
@@ -361,15 +375,11 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 		).
 		FROM(tCalendarEntry.
 			LEFT_JOIN(tCreator,
-				tCalendar.CreatorID.EQ(tCreator.ID),
+				tCalendarEntry.CreatorID.EQ(tCreator.ID),
 			),
 		).
-		GROUP_BY(tCalendarEntry.ID)
-
-	if condition != nil {
-		stmt = stmt.WHERE(condition)
-
-	}
+		GROUP_BY(tCalendarEntry.ID).
+		WHERE(condition)
 
 	dest := &calendar.CalendarEntry{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {

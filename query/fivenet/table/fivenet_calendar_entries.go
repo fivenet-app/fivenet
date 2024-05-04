@@ -28,6 +28,7 @@ type fivenetCalendarEntriesTable struct {
 	Title      mysql.ColumnString
 	Content    mysql.ColumnString
 	Public     mysql.ColumnBool
+	RsvpOpen   mysql.ColumnBool
 	CreatorID  mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
 
@@ -81,10 +82,11 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		TitleColumn      = mysql.StringColumn("title")
 		ContentColumn    = mysql.StringColumn("content")
 		PublicColumn     = mysql.BoolColumn("public")
+		RsvpOpenColumn   = mysql.BoolColumn("rsvp_open")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, PublicColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, PublicColumn, CreatorIDColumn, CreatorJobColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, PublicColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, PublicColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn}
 	)
 
 	return fivenetCalendarEntriesTable{
@@ -102,6 +104,7 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		Title:      TitleColumn,
 		Content:    ContentColumn,
 		Public:     PublicColumn,
+		RsvpOpen:   RsvpOpenColumn,
 		CreatorID:  CreatorIDColumn,
 		CreatorJob: CreatorJobColumn,
 

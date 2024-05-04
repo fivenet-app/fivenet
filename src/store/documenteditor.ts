@@ -1,5 +1,6 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
+import { useAuthStore } from './auth';
 
 export interface DocumentEditorState {
     title: string;
@@ -18,7 +19,11 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
             state: '',
             category: undefined,
         }) as DocumentEditorState,
-    persist: true,
+    persist: {
+        key(id) {
+            return `state-${useAuthStore().activeChar?.userId}-${id}`;
+        },
+    },
     actions: {
         save(doc: DocumentEditorState): void {
             this.title = doc.title;
