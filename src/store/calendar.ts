@@ -3,6 +3,10 @@ import { CalendarEntry, type Calendar } from '~~/gen/ts/resources/calendar/calen
 import type {
     CreateOrUpdateCalendarEntryResponse,
     CreateOrUpdateCalendarResponse,
+    GetCalendarEntryRequest,
+    GetCalendarEntryResponse,
+    GetCalendarRequest,
+    GetCalendarResponse,
     ListCalendarEntriesRequest,
     ListCalendarEntriesResponse,
     ListCalendarsRequest,
@@ -28,6 +32,18 @@ export const useCalendarStore = defineStore('calendar', {
     },
     actions: {
         // Calendars
+        async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {
+            const { $grpc } = useNuxtApp();
+
+            try {
+                const call = $grpc.getCalendarClient().getCalendar(req);
+                const { response } = await call;
+
+                return response;
+            } catch (e) {
+                throw e;
+            }
+        },
         async listCalendars(req: ListCalendarsRequest): Promise<ListCalendarsResponse> {
             const { $grpc } = useNuxtApp();
 
@@ -59,6 +75,18 @@ export const useCalendarStore = defineStore('calendar', {
         },
 
         // Entries
+        async getCalendarEntry(req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> {
+            const { $grpc } = useNuxtApp();
+
+            try {
+                const call = $grpc.getCalendarClient().getCalendarEntry(req);
+                const { response } = await call;
+
+                return response;
+            } catch (e) {
+                throw e;
+            }
+        },
         async listCalendarEntries(req: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
             const { $grpc } = useNuxtApp();
 

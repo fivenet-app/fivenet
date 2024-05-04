@@ -17,7 +17,7 @@ func (m *Calendar) Sanitize() error {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
 	}
 
-	m.Name = htmlsanitizer.Sanitize(m.Name)
+	m.Name = htmlsanitizer.StripTags(m.Name)
 
 	return nil
 }
@@ -26,7 +26,7 @@ func (m *CalendarEntry) Sanitize() error {
 
 	m.Content = htmlsanitizer.Sanitize(m.Content)
 
-	m.Title = htmlsanitizer.Sanitize(m.Title)
+	m.Title = htmlsanitizer.StripTags(m.Title)
 
 	return nil
 }

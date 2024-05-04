@@ -38,7 +38,7 @@ export interface Calendar {
      */
     job?: string;
     /**
-     * @sanitize
+     * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string name = 6;
      */
@@ -117,7 +117,7 @@ export interface CalendarEntry {
      */
     endTime?: Timestamp;
     /**
-     * @sanitize
+     * @sanitize: method=StripTags
      *
      * @generated from protobuf field: string title = 9;
      */

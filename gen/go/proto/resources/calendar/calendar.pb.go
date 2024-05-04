@@ -85,7 +85,7 @@ type Calendar struct {
 	UpdatedAt *timestamp.Timestamp `protobuf:"bytes,3,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
 	DeletedAt *timestamp.Timestamp `protobuf:"bytes,4,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
 	Job       *string              `protobuf:"bytes,5,opt,name=job,proto3,oneof" json:"job,omitempty"`
-	// @sanitize
+	// @sanitize: method=StripTags
 	Name string `protobuf:"bytes,6,opt,name=name,proto3" json:"name,omitempty"`
 	// @sanitize: method=StripTags
 	Description *string `protobuf:"bytes,7,opt,name=description,proto3,oneof" json:"description,omitempty"`
@@ -242,7 +242,7 @@ type CalendarEntry struct {
 	Job        *string              `protobuf:"bytes,6,opt,name=job,proto3,oneof" json:"job,omitempty"`
 	StartTime  *timestamp.Timestamp `protobuf:"bytes,7,opt,name=start_time,json=startTime,proto3" json:"start_time,omitempty"`
 	EndTime    *timestamp.Timestamp `protobuf:"bytes,8,opt,name=end_time,json=endTime,proto3,oneof" json:"end_time,omitempty"`
-	// @sanitize
+	// @sanitize: method=StripTags
 	Title string `protobuf:"bytes,9,opt,name=title,proto3" json:"title,omitempty"`
 	// @sanitize
 	Content    string           `protobuf:"bytes,10,opt,name=content,proto3" json:"content,omitempty"`

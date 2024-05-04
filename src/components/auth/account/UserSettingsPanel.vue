@@ -3,6 +3,7 @@ import type { RoutePathSchema } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
+import { primaryColors, backgroundColors } from './settings';
 
 const { t } = useI18n();
 
@@ -47,35 +48,7 @@ watch(designDocumentsListStyle, async () => {
     }
 });
 
-const availableColors = [
-    // Gray Colors
-    'slate',
-    'cool',
-    'zinc',
-    'neutral',
-    'stone',
-    // Primary - Default
-    'green',
-    'teal',
-    'cyan',
-    'sky',
-    'blue',
-    'indigo',
-    'violet',
-    // Primary - Custom
-    'yellow',
-    'amber',
-    'lime',
-    'emerald',
-    'fuchsia',
-    'rose',
-    'pink',
-    'orange',
-    'red',
-    'purple',
-];
-
-const availableColorOptions = availableColors.map((color) => ({
+const availableColorOptions = [...primaryColors, ...backgroundColors].map((color) => ({
     label: color,
     chip: color,
 }));
@@ -98,6 +71,7 @@ watch(design.value, () => {
             <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
                 <USelectMenu
                     v-model="design.ui.primary"
+                    name="primaryColor"
                     :options="availableColorOptions"
                     option-attribute="label"
                     value-attribute="chip"
@@ -127,6 +101,7 @@ watch(design.value, () => {
             >
                 <USelectMenu
                     v-model="design.ui.gray"
+                    name="grayColor"
                     :options="availableColorOptions"
                     option-attribute="label"
                     value-attribute="chip"

@@ -1,17 +1,21 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import { useCalendarStore } from '~/store/calendar';
+import { primaryColors } from '~/components/auth/account/settings';
+import { useAuthStore } from '~/store/auth';
 
 const props = defineProps<{
-    calendar?: Calendar;
+    calendarId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
 
 const { isOpen } = useModal();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const calendarStore = useCalendarStore();
 
@@ -35,15 +39,33 @@ const state = reactive<Schema>({
     color: 'primary',
 });
 
+const {
+    data: calendar,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(
+    `calendar-calendar:${props.calendarId}`,
+    () => calendarStore.getCalendar({ calendarId: props.calendarId! }),
+    {
+        immediate: !!props.calendarId,
+    },
+);
+// TODO show data loading blocks and error
+
 async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCalendarResponse> {
     try {
         const response = await calendarStore.createOrUpdateCalendar({
             id: '0',
             name: values.name,
+            job: values.private ? undefined : activeChar.value?.job,
             public: values.public,
             closed: values.closed,
+            color: values.color,
             creatorJob: '',
         });
+
+        isOpen.value = false;
 
         return response;
     } catch (e) {
@@ -52,22 +74,26 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCal
     }
 }
 
+const availableColorOptions = primaryColors.map((color) => ({
+    label: color,
+    chip: color,
+}));
+
 function setFromProps(): void {
-    if (!props.calendar) {
+    if (!calendar.value?.calendar) {
         return;
     }
 
-    state.name = props.calendar.name;
-    state.description = props.calendar.description;
-    state.private = props.calendar.job === undefined;
-    state.public = props.calendar.public;
-    state.closed = props.calendar.closed;
-    state.color = props.calendar.color ?? 'primary';
+    state.name = calendar.value?.calendar?.name;
+    state.description = calendar.value?.calendar?.description;
+    state.private = calendar.value?.calendar?.job === undefined;
+    state.public = calendar.value?.calendar?.public;
+    state.closed = calendar.value?.calendar?.closed;
+    state.color = calendar.value?.calendar?.color ?? 'primary';
 }
 
-setFromProps();
-
-watch(props, () => setFromProps());
+watch(calendar, () => setFromProps());
+watch(props, () => refresh());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -107,14 +133,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
-                        <UInput
+                        <USelectMenu
                             v-model="state.color"
                             name="color"
-                            type="text"
-                            :placeholder="$t('common.color')"
+                            :options="availableColorOptions"
+                            option-attribute="label"
+                            value-attribute="chip"
+                            :searchable-placeholder="$t('common.search_field')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
-                        />
+                        >
+                            <template #label>
+                                <span class="size-2 rounded-full" :class="`bg-${state.color}-500 dark:bg-${state.color}-400`" />
+                                <span class="truncate">{{ state.color }}</span>
+                            </template>
+
+                            <template #option="{ option }">
+                                <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
+                                <span class="truncate">{{ option.label }}</span>
+                            </template>
+                        </USelectMenu>
                     </UFormGroup>
 
                     <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
@@ -135,6 +173,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         required
                     >
                         <UToggle v-model="state.private" :disabled="calendar !== undefined" />
+                    </UFormGroup>
+
+                    <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
+                        <!-- TODO -->
                     </UFormGroup>
                 </div>
 

@@ -10,7 +10,8 @@ import { useCalendarStore } from '~/store/calendar';
 
 const props = defineProps<{
     calendar?: Calendar;
-    entry?: CalendarEntry;
+    calendarId?: string;
+    entryId?: string;
 }>();
 
 const { $grpc } = useNuxtApp();
@@ -40,6 +41,20 @@ const state = reactive<Schema>({
     rsvpOpen: false,
     public: false,
 });
+
+const {
+    data: entry,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(
+    `calendar-entry:${props.entryId}`,
+    () => calendarStore.getCalendarEntry({ calendarId: props.calendarId!, entryId: props.entryId! }),
+    {
+        immediate: !!props.entryId && !!props.calendarId,
+    },
+);
+// TODO show data loading blocks and error
 
 async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpdateCalendarEntryResponse> {
     if (!values.calendar) {
@@ -73,20 +88,19 @@ function setFromProps(): void {
         state.calendar = props.calendar;
     }
 
-    if (!props.entry) {
+    if (!entry.value?.entry) {
         return;
     }
 
-    state.title = props.entry.title;
-    state.startTime = toDate(props.entry.startTime);
-    state.endTime = toDate(props.entry.endTime);
-    state.content = props.entry.content;
-    state.public = props.entry.public;
+    state.title = entry.value?.entry?.title;
+    state.startTime = toDate(entry.value?.entry?.startTime);
+    state.endTime = toDate(entry.value?.entry?.endTime);
+    state.content = entry.value?.entry?.content;
+    state.public = entry.value?.entry?.public;
 }
 
-setFromProps();
-
-watch(props, () => setFromProps());
+watch(entry, () => setFromProps());
+watch(props, () => refresh());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -206,6 +220,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1" required>
                         <UToggle v-model="state.rsvpOpen" />
+                    </UFormGroup>
+
+                    <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
+                        <!-- TODO -->
                     </UFormGroup>
                 </div>
 
