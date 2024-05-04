@@ -430,6 +430,8 @@
         "approved_by": "Genehmigt von",
         "clear": "Löschen",
         "calendar": "Kalender | Kalenders",
+        "rsvp": "RSVP",
+        "maybe": "Vielleicht",
         "appointment": "Termin | Termine"
     },
     "components": {
@@ -1014,7 +1016,8 @@
                 },
                 "update": {
                     "title": "Kalender aktualisieren"
-                }
+                },
+                "private": "Privater Kalender"
             },
             "EntryCreateOrUpdateModal": {
                 "create": {
@@ -1880,19 +1883,25 @@
             "category": "Kalender",
             "CreateOrUpdateCalendar": {
                 "key": "Erstellen und aktualisieren von Kalenders",
-                "description": "Verwalten von Kalenders."
+                "description": "Verwalten von Kalenders.",
+                "attrs": {
+                    "Job": "Kalender für Nutzer seinen Beruf"
+                },
+                "attrs_types": {
+                    "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
+                }
             },
             "DeleteCalendar": {
                 "key": "Löschen von Kalenders",
                 "description": "Löschen von Kalenders."
             },
-            "CreateOrUpdateCalendarEntry": {
-                "key": "Erstellen und aktualisieren ",
-                "description": "Erstellen und aktualisieren von Kalendereinträgen (teilen von Einträgen benötigt Teilen-Zugriff und erstellen Editieren-Zugriff.)"
-            },
             "DeleteCalendarEntries": {
                 "key": "Löschen von Kalendereinträgen",
                 "description": "Löschen von Kalendareinträgen (benötigt Verwaltungs-Zugriff.)"
+            },
+            "CreateOrUpdateCalendarEntry": {
+                "key": "Erstellen und aktualisieren ",
+                "description": "Erstellen und aktualisieren von Kalendereinträgen (teilen von Einträgen benötigt Teilen-Zugriff und erstellen Editieren-Zugriff.)"
             }
         }
     },
@@ -2035,6 +2044,11 @@
                 "content": "Ihnen fehlen Qualifizierungen die für diese Qualifizierung benötigt sind."
             },
             "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!"
+        },
+        "CalendarService": {
+            "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
+            "ErrNoPerms": "Sie haben keinen Zugriff auf diese Kalender Daten!",
+            "ErrOnePrivateCal": "Sie können nur einen privaten Kalender haben!"
         }
     },
     "system": {
