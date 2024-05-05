@@ -20,8 +20,8 @@ var (
 	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
 	tCalendarSubs  = table.FivenetCalendarSubs.AS("calendar_subs")
 
-	tCJobAccess  = table.FivenetCalendarJobAccess.AS("job_access")
-	tCUserAccess = table.FivenetCalendarUserAccess.AS("user_access")
+	tCJobAccess  = table.FivenetCalendarJobAccess.AS("calendar_job_access")
+	tCUserAccess = table.FivenetCalendarUserAccess.AS("calendar_user_access")
 
 	tUsers   = table.Users.AS("user_short")
 	tCreator = tUsers.AS("creator")

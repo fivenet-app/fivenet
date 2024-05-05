@@ -171,18 +171,6 @@ function calendarIdChange(calendarId: string, state: boolean): void {
                 <template #default>
                     <UButtonGroup class="inline-flex w-full">
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry')"
-                            block
-                            color="gray"
-                            trailing-icon="i-mdi-plus"
-                            class="flex-1"
-                            @click="modal.open(EntryCreateOrUpdateModal, {})"
-                        >
-                            {{ $t('common.entry', 1) }}
-                            {{ $t('common.create') }}
-                        </UButton>
-
-                        <UButton
                             v-if="can('CalendarService.CreateOrUpdateCalendar')"
                             block
                             color="gray"
@@ -191,6 +179,18 @@ function calendarIdChange(calendarId: string, state: boolean): void {
                             @click="modal.open(CalendarCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.calendar', 1) }}
+                            {{ $t('common.create') }}
+                        </UButton>
+
+                        <UButton
+                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry')"
+                            block
+                            color="gray"
+                            trailing-icon="i-mdi-plus"
+                            class="flex-1"
+                            @click="modal.open(EntryCreateOrUpdateModal, {})"
+                        >
+                            {{ $t('common.entry', 1) }}
                             {{ $t('common.create') }}
                         </UButton>
                     </UButtonGroup>

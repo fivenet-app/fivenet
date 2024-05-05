@@ -244,8 +244,8 @@
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
     - [CalendarEntry](#resources-calendar-CalendarEntry)
-    - [CalendarEntryData](#resources-calendar-CalendarEntryData)
     - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
+    - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
     - [CalendarShort](#resources-calendar-CalendarShort)
   
     - [RsvpResponses](#resources-calendar-RsvpResponses)
@@ -4144,17 +4144,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
-| data | [CalendarEntryData](#resources-calendar-CalendarEntryData) | optional |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarEntryData"></a>
-
-### CalendarEntryData
-TODO
+| recurring | [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring) | optional |  |
 
 
 
@@ -4174,6 +4164,22 @@ TODO
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | response | [RsvpResponses](#resources-calendar-RsvpResponses) |  |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarEntryRecurring"></a>
+
+### CalendarEntryRecurring
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| weekly | [bool](#bool) |  |  |
 
 
 

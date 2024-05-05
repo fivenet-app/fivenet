@@ -73,12 +73,15 @@ message CalendarEntry {
   optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
   string creator_job = 15 [(validate.rules).string.max_len = 20];
   resources.calendar.CalendarAccess access = 16;
-  optional CalendarEntryData data = 17;
+  optional CalendarEntryRecurring recurring = 17;
 }
 
-message CalendarEntryData {
-  // TODO
+message CalendarEntryRecurring {
+  resources.timestamp.Timestamp started_at = 1;
+  bool weekly = 2;
 }
+
+// TODO need a "who is subscribed to which public calendars" list object
 
 enum RsvpResponses {
   RSVP_RESPONSES_UNSPECIFIED = 0;

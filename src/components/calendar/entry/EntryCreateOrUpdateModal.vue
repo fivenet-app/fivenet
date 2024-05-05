@@ -40,7 +40,6 @@ const schema = z.object({
     endTime: z.date(),
     content: z.string().max(1000000),
     rsvpOpen: z.boolean(),
-    access: z.custom<CalendarAccess>(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -52,10 +51,6 @@ const state = reactive<Schema>({
     endTime: addHours(new Date(), 1),
     content: '',
     rsvpOpen: false,
-    access: {
-        jobs: [],
-        users: [],
-    },
 });
 
 const {

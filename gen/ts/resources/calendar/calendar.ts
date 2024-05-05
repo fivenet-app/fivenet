@@ -192,16 +192,22 @@ export interface CalendarEntry {
      */
     access?: CalendarAccess;
     /**
-     * @generated from protobuf field: optional resources.calendar.CalendarEntryData data = 17;
+     * @generated from protobuf field: optional resources.calendar.CalendarEntryRecurring recurring = 17;
      */
-    data?: CalendarEntryData;
+    recurring?: CalendarEntryRecurring;
 }
 /**
- * TODO
- *
- * @generated from protobuf message resources.calendar.CalendarEntryData
+ * @generated from protobuf message resources.calendar.CalendarEntryRecurring
  */
-export interface CalendarEntryData {
+export interface CalendarEntryRecurring {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp started_at = 1;
+     */
+    startedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: bool weekly = 2;
+     */
+    weekly: boolean;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarEntryRSVP
@@ -228,6 +234,8 @@ export interface CalendarEntryRSVP {
      */
     response: RsvpResponses;
 }
+// TODO need a "who is subscribed to which public calendars" list object
+
 /**
  * @generated from protobuf enum resources.calendar.RsvpResponses
  */
@@ -505,7 +513,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 14, name: "creator", kind: "message", T: () => UserShort },
             { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 16, name: "access", kind: "message", T: () => CalendarAccess },
-            { no: 17, name: "data", kind: "message", T: () => CalendarEntryData }
+            { no: 17, name: "recurring", kind: "message", T: () => CalendarEntryRecurring }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -572,8 +580,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* resources.calendar.CalendarAccess access */ 16:
                     message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
-                case /* optional resources.calendar.CalendarEntryData data */ 17:
-                    message.data = CalendarEntryData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                case /* optional resources.calendar.CalendarEntryRecurring recurring */ 17:
+                    message.recurring = CalendarEntryRecurring.internalBinaryRead(reader, reader.uint32(), options, message.recurring);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -635,9 +643,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* resources.calendar.CalendarAccess access = 16; */
         if (message.access)
             CalendarAccess.internalBinaryWrite(message.access, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.calendar.CalendarEntryData data = 17; */
-        if (message.data)
-            CalendarEntryData.internalBinaryWrite(message.data, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.CalendarEntryRecurring recurring = 17; */
+        if (message.recurring)
+            CalendarEntryRecurring.internalBinaryWrite(message.recurring, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -649,20 +657,49 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
  */
 export const CalendarEntry = new CalendarEntry$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class CalendarEntryData$Type extends MessageType<CalendarEntryData> {
+class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
     constructor() {
-        super("resources.calendar.CalendarEntryData", []);
+        super("resources.calendar.CalendarEntryRecurring", [
+            { no: 1, name: "started_at", kind: "message", T: () => Timestamp },
+            { no: 2, name: "weekly", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
     }
-    create(value?: PartialMessage<CalendarEntryData>): CalendarEntryData {
+    create(value?: PartialMessage<CalendarEntryRecurring>): CalendarEntryRecurring {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.weekly = false;
         if (value !== undefined)
-            reflectionMergePartial<CalendarEntryData>(this, message, value);
+            reflectionMergePartial<CalendarEntryRecurring>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarEntryData): CalendarEntryData {
-        return target ?? this.create();
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarEntryRecurring): CalendarEntryRecurring {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp started_at */ 1:
+                    message.startedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startedAt);
+                    break;
+                case /* bool weekly */ 2:
+                    message.weekly = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
-    internalBinaryWrite(message: CalendarEntryData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: CalendarEntryRecurring, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp started_at = 1; */
+        if (message.startedAt)
+            Timestamp.internalBinaryWrite(message.startedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* bool weekly = 2; */
+        if (message.weekly !== false)
+            writer.tag(2, WireType.Varint).bool(message.weekly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -670,9 +707,9 @@ class CalendarEntryData$Type extends MessageType<CalendarEntryData> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.calendar.CalendarEntryData
+ * @generated MessageType for protobuf message resources.calendar.CalendarEntryRecurring
  */
-export const CalendarEntryData = new CalendarEntryData$Type();
+export const CalendarEntryRecurring = new CalendarEntryRecurring$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
     constructor() {

@@ -10,6 +10,9 @@ import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 
 const props = defineProps<{
     calendarId?: string;
@@ -170,6 +173,7 @@ function setFromProps(): void {
             accessId++;
         });
     }
+    console.log('access', calendar.access);
 }
 
 watch(data, () => setFromProps());

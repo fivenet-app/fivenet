@@ -75,7 +75,7 @@ function updateDate(event: Page[]): void {
                             v-for="attr in attributes"
                             :key="attr.key"
                             class="vc-day-entry mb-1 mt-0 w-full rounded-sm p-1 text-left text-xs leading-tight"
-                            :class="attr.customData.class"
+                            :class="`bg-${attr.customData.color}-500 hover:bg-${attr.customData.color}-400 text-white`"
                             @click="$emit('selected', attr.customData)"
                         >
                             {{ attr.customData.title }}
