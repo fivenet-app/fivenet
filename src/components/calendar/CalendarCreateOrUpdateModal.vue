@@ -5,6 +5,11 @@ import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar
 import { useCalendarStore } from '~/store/calendar';
 import { primaryColors } from '~/components/auth/account/settings';
 import { useAuthStore } from '~/store/auth';
+import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     calendarId?: string;
@@ -19,6 +24,14 @@ const { activeChar } = storeToRefs(authStore);
 
 const calendarStore = useCalendarStore();
 
+const completorStore = useCompletorStore();
+
+const notifications = useNotificatorStore();
+
+const maxAccessEntries = 10;
+
+const canCreateNonPrivateCalendar = attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job');
+
 const schema = z.object({
     name: z.string().min(3).max(255),
     description: z.string().max(512).optional(),
@@ -26,6 +39,7 @@ const schema = z.object({
     public: z.boolean(),
     closed: z.boolean(),
     color: z.string().max(12),
+    access: z.custom<CalendarAccess>().optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -33,14 +47,14 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: '',
     description: '',
-    private: false,
+    private: true,
     public: false,
     closed: false,
     color: 'primary',
 });
 
 const {
-    data: calendar,
+    data: data,
     pending: loading,
     refresh,
     error,
@@ -54,15 +68,51 @@ const {
 // TODO show data loading blocks and error
 
 async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCalendarResponse> {
+    const reqAccess: CalendarAccess = {
+        jobs: [],
+        users: [],
+    };
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.userId) {
+                return;
+            }
+
+            reqAccess.users.push({
+                id: '0',
+                calendarId: data.value?.calendar?.id ?? '0',
+                userId: entry.values.userId,
+                access: entry.values.accessRole,
+            });
+        } else if (entry.type === 1) {
+            if (!entry.values.job) {
+                return;
+            }
+
+            reqAccess.jobs.push({
+                id: '0',
+                calendarId: data.value?.calendar?.id ?? '0',
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
+            });
+        }
+    });
+
     try {
         const response = await calendarStore.createOrUpdateCalendar({
-            id: '0',
+            id: data.value?.calendar?.id ?? '0',
             name: values.name,
             job: values.private ? undefined : activeChar.value?.job,
             public: values.public,
             closed: values.closed,
             color: values.color,
             creatorJob: '',
+            access: reqAccess,
         });
 
         isOpen.value = false;
@@ -80,20 +130,140 @@ const availableColorOptions = primaryColors.map((color) => ({
 }));
 
 function setFromProps(): void {
-    if (!calendar.value?.calendar) {
+    if (!data.value?.calendar) {
         return;
     }
 
-    state.name = calendar.value?.calendar?.name;
-    state.description = calendar.value?.calendar?.description;
-    state.private = calendar.value?.calendar?.job === undefined;
-    state.public = calendar.value?.calendar?.public;
-    state.closed = calendar.value?.calendar?.closed;
-    state.color = calendar.value?.calendar?.color ?? 'primary';
+    const calendar = data.value?.calendar;
+    state.name = calendar.name;
+    state.description = calendar.description;
+    state.private = calendar.job === undefined;
+    state.public = calendar.public;
+    state.closed = calendar.closed;
+    state.color = calendar.color ?? 'primary';
+
+    if (calendar.access) {
+        access.value.clear();
+
+        let accessId = 0;
+        calendar.access?.users.forEach((user) => {
+            const id = accessId.toString();
+            access.value.set(id, {
+                id,
+                type: 0,
+                values: { userId: user.userId, accessRole: user.access },
+            });
+            accessId++;
+        });
+
+        calendar.access?.jobs.forEach((job) => {
+            const id = accessId.toString();
+            access.value.set(id, {
+                id,
+                type: 1,
+                values: {
+                    job: job.job,
+                    accessRole: job.access,
+                    minimumGrade: job.minimumGrade,
+                },
+            });
+            accessId++;
+        });
+    }
 }
 
-watch(calendar, () => setFromProps());
+watch(data, () => setFromProps());
 watch(props, () => refresh());
+
+const access = ref<
+    Map<
+        string,
+        {
+            id: string;
+            type: number;
+            values: {
+                job?: string;
+                userId?: number;
+                accessRole?: AccessLevel;
+                minimumGrade?: number;
+            };
+        }
+    >
+>(new Map());
+
+function addAccessEntry(): void {
+    if (access.value.size > maxAccessEntries - 1) {
+        notifications.add({
+            title: { key: 'notifications.max_access_entry.title', parameters: {} },
+            description: {
+                key: 'notifications.max_access_entry.content',
+                parameters: { max: maxAccessEntries.toString() },
+            } as TranslateItem,
+            type: 'error',
+        });
+        return;
+    }
+
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
+    access.value.set(id.toString(), {
+        id: id.toString(),
+        type: 1,
+        values: {},
+    });
+}
+
+function removeAccessEntry(event: { id: string }): void {
+    access.value.delete(event.id);
+}
+
+function updateAccessEntryType(event: { id: string; type: number }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.type = event.type;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    if (event.job) {
+        accessEntry.values.job = event.job.name;
+        accessEntry.values.userId = undefined;
+    } else if (event.char) {
+        accessEntry.values.job = undefined;
+        accessEntry.values.userId = event.char.userId;
+    }
+
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.values.minimumGrade = event.rank.grade;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.values.accessRole = event.access;
+    access.value.set(event.id, accessEntry);
+}
+
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -110,7 +280,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{
-                                calendar
+                                calendarId
                                     ? $t('components.calendar.CalendarCreateOrUpdateModal.update.title')
                                     : $t('components.calendar.CalendarCreateOrUpdateModal.create.title')
                             }}
@@ -166,17 +336,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup
-                        v-if="attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job')"
                         name="private"
                         :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
                         class="flex-1"
                         required
                     >
-                        <UToggle v-model="state.private" :disabled="calendar !== undefined" />
+                        <UToggle v-model="state.private" :disabled="!canCreateNonPrivateCalendar || calendarId !== undefined" />
                     </UFormGroup>
 
                     <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
-                        <!-- TODO -->
+                        <CalendarAccessEntry
+                            v-for="entry in access.values()"
+                            :key="entry.id"
+                            :init="entry"
+                            :jobs="jobs"
+                            @type-change="updateAccessEntryType($event)"
+                            @name-change="updateAccessEntryName($event)"
+                            @rank-change="updateAccessEntryRank($event)"
+                            @access-change="updateAccessEntryAccess($event)"
+                            @delete-request="removeAccessEntry($event)"
+                        />
+
+                        <UButton
+                            :ui="{ rounded: 'rounded-full' }"
+                            icon="i-mdi-plus"
+                            :title="$t('components.documents.document_editor.add_permission')"
+                            @click="addAccessEntry()"
+                        />
                     </UFormGroup>
                 </div>
 
@@ -187,7 +373,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UButton>
 
                         <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ calendar ? $t('common.save') : $t('common.create') }}
+                            {{ data ? $t('common.save') : $t('common.create') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

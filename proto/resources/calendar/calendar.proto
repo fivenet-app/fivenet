@@ -25,11 +25,27 @@ message Calendar {
   bool public = 8;
   bool closed = 9;
   // @sanitize: method=StripTags
-  optional string color = 10 [(validate.rules).string.max_len = 12];
+  string color = 10 [(validate.rules).string.max_len = 12];
   optional int32 creator_id = 11;
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
   string creator_job = 13 [(validate.rules).string.max_len = 20];
   resources.calendar.CalendarAccess access = 14;
+}
+
+message CalendarShort {
+  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
+  optional resources.timestamp.Timestamp created_at = 2;
+  // @sanitize: method=StripTags
+  string name = 6 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 255
+  }];
+  // @sanitize: method=StripTags
+  optional string description = 7 [(validate.rules).string.max_len = 512];
+  bool public = 8;
+  bool closed = 9;
+  // @sanitize: method=StripTags
+  string color = 10 [(validate.rules).string.max_len = 12];
 }
 
 message CalendarEntry {
@@ -38,25 +54,26 @@ message CalendarEntry {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   uint64 calendar_id = 5 [jstype = JS_STRING];
-  optional string job = 6 [(validate.rules).string.max_len = 20];
-  resources.timestamp.Timestamp start_time = 7;
-  optional resources.timestamp.Timestamp end_time = 8;
+  optional Calendar calendar = 6;
+  optional string job = 7 [(validate.rules).string.max_len = 20];
+  resources.timestamp.Timestamp start_time = 8;
+  optional resources.timestamp.Timestamp end_time = 9;
   // @sanitize: method=StripTags
-  string title = 9 [(validate.rules).string = {
+  string title = 10 [(validate.rules).string = {
     min_len: 3,
     max_len: 512
   }];
   // @sanitize
-  string content = 10 [(validate.rules).string = {
+  string content = 11 [(validate.rules).string = {
     min_len: 20,
     max_bytes: 1000000 // 1 Megabyte
   }];
-  bool public = 11;
-  optional bool rsvp_open = 12;
-  optional int32 creator_id = 13;
-  optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
-  string creator_job = 15 [(validate.rules).string.max_len = 20];
-  resources.calendar.CalendarAccess access = 16;
+  bool public = 12;
+  optional bool rsvp_open = 13;
+  optional int32 creator_id = 14;
+  optional resources.users.UserShort creator = 15; // @gotags: alias:"creator"
+  string creator_job = 16 [(validate.rules).string.max_len = 20];
+  resources.calendar.CalendarAccess access = 17;
 }
 
 enum RsvpResponses {

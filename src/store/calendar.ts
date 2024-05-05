@@ -15,6 +15,7 @@ import type {
 import { useAuthStore } from './auth';
 
 export interface CalendarState {
+    activeCalendarIds: string[];
     calendars: Calendar[];
     entries: CalendarEntry[];
 }
@@ -22,6 +23,7 @@ export interface CalendarState {
 export const useCalendarStore = defineStore('calendar', {
     state: () =>
         ({
+            activeCalendarIds: [],
             calendars: [],
             entries: [],
         }) as CalendarState,
@@ -68,8 +70,30 @@ export const useCalendarStore = defineStore('calendar', {
                 });
                 const { response } = await call;
 
+                if (response.calendar) {
+                    this.calendars.push(response.calendar);
+                }
+
                 return response;
             } catch (e) {
+                throw e;
+            }
+        },
+        async deleteCalendar(id: string): Promise<void> {
+            const { $grpc } = useNuxtApp();
+
+            try {
+                const call = $grpc.getCalendarClient().deleteCalendar({
+                    calendarId: id,
+                });
+                await call;
+
+                const idx = this.calendars.findIndex((c) => c.id === id);
+                if (idx > -1) {
+                    this.calendars.splice(idx, 1);
+                }
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
                 throw e;
             }
         },
@@ -109,8 +133,32 @@ export const useCalendarStore = defineStore('calendar', {
                 });
                 const { response } = await call;
 
+                if (response.entry) {
+                    this.entries.push(response.entry);
+                }
+
                 return response;
             } catch (e) {
+                throw e;
+            }
+        },
+
+        async deleteCalendarEntry(calendarId: string, entryId: string): Promise<void> {
+            const { $grpc } = useNuxtApp();
+
+            try {
+                const call = $grpc.getCalendarClient().deleteCalendarEntries({
+                    calendarId: calendarId,
+                    entryId: entryId,
+                });
+                await call;
+
+                const idx = this.entries.findIndex((c) => c.calendarId === calendarId && c.id === entryId);
+                if (idx > -1) {
+                    this.entries.splice(idx, 1);
+                }
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
                 throw e;
             }
         },

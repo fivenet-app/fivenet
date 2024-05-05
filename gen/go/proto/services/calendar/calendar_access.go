@@ -80,29 +80,45 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64, entryId *uint
 	return dest, nil
 }
 
-func (s *Server) checkIfUserHasAccessToCalendar(ctx context.Context, calendarId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, calendarId)
+func (s *Server) checkIfUserHasAccessToCalendar(ctx context.Context, calendarId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool) (bool, error) {
+	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, publicOk, calendarId)
 	return len(out) > 0, err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendars(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, calendarIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, calendarIds...)
+func (s *Server) checkIfUserHasAccessToCalendars(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, calendarIds ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToCalendarIDs(ctx, userInfo, access, publicOk, calendarIds...)
 	return len(out) == len(calendarIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, calendarIds ...uint64) ([]uint64, error) {
+type calendarAccessEntry struct {
+	ID     uint64 `alias:"calendar.id"`
+	Public bool   `alias:"calendar.public"`
+}
+
+func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, calendarIds ...uint64) ([]*calendarAccessEntry, error) {
+	var dest []*calendarAccessEntry
 	if len(calendarIds) == 0 {
-		return calendarIds, nil
+		return dest, nil
 	}
 
 	// Allow superusers access to any docs
 	if userInfo.SuperUser {
-		return calendarIds, nil
+		for i := 0; i < len(calendarIds); i++ {
+			dest = append(dest, &calendarAccessEntry{
+				ID: calendarIds[i],
+			})
+		}
+		return dest, nil
 	}
 
 	ids := make([]jet.Expression, len(calendarIds))
 	for i := 0; i < len(calendarIds); i++ {
 		ids[i] = jet.Uint64(calendarIds[i])
+	}
+
+	condition := jet.Bool(false)
+	if publicOk {
+		condition = tCalendar.Public.IS_TRUE()
 	}
 
 	stmt := tCalendar.
@@ -130,6 +146,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 			tCalendar.ID.IN(ids...),
 			tCalendar.DeletedAt.IS_NULL(),
 			jet.OR(
+				condition,
 				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				tCalendar.CreatorJob.EQ(jet.String(userInfo.Job)),
 				jet.AND(
@@ -145,16 +162,13 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 		)).
 		ORDER_BY(tCalendar.ID.DESC(), tCJobAccess.MinimumGrade)
 
-	var dest struct {
-		IDs []uint64 `alias:"calendar.id"`
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest.IDs); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
 
-	return dest.IDs, nil
+	return dest, nil
 }
 
 func (s *Server) handleCalendarAccessChanges(ctx context.Context, tx qrm.DB, mode calendar.AccessLevelUpdateMode, calendarId uint64, entryId *uint64, access *calendar.CalendarAccess) error {

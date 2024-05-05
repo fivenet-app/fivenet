@@ -45,6 +45,20 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 
 	resp := &ListCalendarEntriesResponse{}
 
+	if len(req.CalendarIds) == 0 {
+		return resp, nil
+	}
+
+	ids := []jet.Expression{}
+	for i := 0; i < len(req.CalendarIds); i++ {
+		if req.CalendarIds[i] == 0 {
+			continue
+		}
+		ids = append(ids, jet.Uint64(req.CalendarIds[i]))
+	}
+
+	condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
+
 	stmt := tCalendarEntry.
 		SELECT(
 			tCalendarEntry.ID,
@@ -52,11 +66,17 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCalendarEntry.UpdatedAt,
 			tCalendarEntry.DeletedAt,
 			tCalendarEntry.CalendarID,
+			tCalendarShort.ID,
+			tCalendarShort.Name,
+			tCalendarShort.Color,
+			tCalendarShort.Description,
+			tCalendarShort.Public,
+			tCalendarShort.Closed,
+			tCalendarShort.Color,
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
 			tCalendarEntry.Title,
-			tCalendarEntry.Content,
 			tCalendarEntry.Public,
 			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
@@ -71,6 +91,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(tCalendarEntry.
+			INNER_JOIN(tCalendarShort,
+				tCalendarShort.ID.EQ(tCalendarEntry.CalendarID).
+					AND(tCalendarShort.DeletedAt.IS_NULL()),
+			).
 			LEFT_JOIN(tCUserAccess,
 				jet.OR(
 					tCUserAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
@@ -98,7 +122,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		).
 		GROUP_BY(tCalendarEntry.ID).
 		WHERE(condition).
-		LIMIT(200)
+		LIMIT(100)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -120,7 +144,7 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequ
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Check if user has access to existing calendar
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -161,7 +185,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 
 	tCalendarEntry := table.FivenetCalendarEntries
 	if req.Entry.Id > 0 {
-		check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.Entry.CalendarId, req.Entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
+		check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.Entry.CalendarId, req.Entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
@@ -206,7 +230,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
+		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
@@ -277,7 +301,7 @@ func (s *Server) DeleteCalendarEntries(ctx context.Context, req *DeleteCalendarE
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -323,7 +347,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_SHARE, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -355,6 +379,13 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCalendarEntry.UpdatedAt,
 			tCalendarEntry.DeletedAt,
 			tCalendarEntry.CalendarID,
+			tCalendarShort.ID,
+			tCalendarShort.Name,
+			tCalendarShort.Color,
+			tCalendarShort.Description,
+			tCalendarShort.Public,
+			tCalendarShort.Closed,
+			tCalendarShort.Color,
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
@@ -374,12 +405,17 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCreator.PhoneNumber,
 		).
 		FROM(tCalendarEntry.
+			INNER_JOIN(tCalendarShort,
+				tCalendarShort.ID.EQ(tCalendarEntry.CalendarID).
+					AND(tCalendarShort.DeletedAt.IS_NULL()),
+			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).
-		WHERE(condition)
+		WHERE(condition).
+		LIMIT(1)
 
 	dest := &calendar.CalendarEntry{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {

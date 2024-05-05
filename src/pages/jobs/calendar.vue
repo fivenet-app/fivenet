@@ -7,11 +7,11 @@ import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import EntryViewModal from '~/components/calendar/entry/EntryViewModal.vue';
+import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
 import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
-import CalendarViewModal from '~/components/calendar/CalendarViewModal.vue';
+import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 
 useHead({
     title: 'common.calendar',
@@ -26,24 +26,27 @@ const { $grpc } = useNuxtApp();
 const { d } = useI18n();
 
 const modal = useModal();
+const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
+const { activeCalendarIds } = storeToRefs(calendarStore);
 
 const schema = z.object({
     year: z.number(),
     month: z.number(),
-    calendarIds: z.string().array().max(25),
 });
 
 type Schema = z.output<typeof schema>;
 
 const date = ref(new Date());
-watch(date, () => console.log(date.value));
+watch(date, () => {
+    query.year = date.value.getFullYear();
+    query.month = date.value.getMonth();
+});
 
 const query = reactive<Schema>({
     year: date.value.getFullYear(),
     month: date.value.getMonth(),
-    calendarIds: [],
 });
 
 const page = ref(1);
@@ -65,8 +68,8 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             },
         });
 
-        if (query.calendarIds.length === 0) {
-            query.calendarIds = response.calendars.map((c) => c.id);
+        if (activeCalendarIds.value.length === 0) {
+            activeCalendarIds.value = response.calendars.map((c) => c.id);
         }
 
         return response;
@@ -78,16 +81,15 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
 
 const {
     data: calendarEntries,
-    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(
-    `calendar-entries-${query.year}-${query.month}-${query.calendarIds.join(':')}`,
+    `calendar-entries-${query.year}-${query.month}-${activeCalendarIds.value.join(':')}`,
     () =>
         calendarStore.listCalendarEntries({
             year: query.year,
             month: query.month,
-            calendarIds: query.calendarIds,
+            calendarIds: activeCalendarIds.value,
         }),
     { immediate: false },
 );
@@ -147,6 +149,16 @@ const groupedCalendarEntries = computed(() => {
 
     return groups;
 });
+
+function calendarIdChange(calendarId: string, state: boolean): void {
+    if (state) {
+        if (!activeCalendarIds.value.includes(calendarId)) {
+            activeCalendarIds.value.push(calendarId);
+        }
+    } else {
+        activeCalendarIds.value = activeCalendarIds.value.filter((cId) => cId !== calendarId);
+    }
+}
 </script>
 
 <template>
@@ -202,18 +214,19 @@ const groupedCalendarEntries = computed(() => {
                                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
                                     <UTooltip v-for="calendar in calendars?.calendars" :key="calendar.id" :text="calendar.name">
                                         <div class="inline-flex items-center gap-2">
-                                            <UCheckbox disabled :model-value="true" class="truncate" />
+                                            <UCheckbox
+                                                :model-value="activeCalendarIds.includes(calendar.id)"
+                                                class="truncate"
+                                                @change="calendarIdChange(calendar.id, $event)"
+                                            />
                                             <UButton
                                                 :color="calendar.color"
                                                 size="sm"
+                                                truncate
                                                 :label="calendar.name"
                                                 @click="
-                                                    modal.open(
-                                                        can('CalendarService.CreateOrUpdateCalendar')
-                                                            ? CalendarCreateOrUpdateModal
-                                                            : CalendarViewModal,
-                                                        { calendar: calendar },
-                                                    )
+                                                    can('CalendarService.CreateOrUpdateCalendar') &&
+                                                        slideover.open(CalendarViewSlideover, { calendarId: calendar.id })
                                                 "
                                             />
                                         </div>
@@ -225,8 +238,7 @@ const groupedCalendarEntries = computed(() => {
                 </UAccordion>
             </UContainer>
 
-            <DataPendingBlock v-if="loading || calendarsLoading" :message="$t('common.loading', [$t('common.calendar', 2)])" />
-            <DataErrorBlock v-else-if="error" :retry="refresh" />
+            <DataErrorBlock v-if="error" :retry="refresh" />
 
             <div v-else class="overflow-x-auto">
                 <MonthCalendarClient
@@ -234,8 +246,9 @@ const groupedCalendarEntries = computed(() => {
                     class="hidden md:flex md:flex-1"
                     :attributes="transformedCalendarEntries"
                     @selected="
-                        modal.open(EntryViewModal, {
-                            entry: $event,
+                        slideover.open(EntryViewSlideover, {
+                            entryId: $event.id,
+                            calendarId: $event.calendarId,
                         })
                     "
                 />
@@ -257,8 +270,9 @@ const groupedCalendarEntries = computed(() => {
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="
-                                            modal.open(EntryViewModal, {
-                                                entry: attr.customData,
+                                            slideover.open(EntryViewSlideover, {
+                                                entryId: attr.customData.id,
+                                                calendarId: attr.customData.calendarId,
                                             })
                                         "
                                     >

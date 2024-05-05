@@ -4,9 +4,17 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
-import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import { useCalendarStore } from '~/store/calendar';
+import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
     calendar?: Calendar;
@@ -20,6 +28,12 @@ const { isOpen } = useModal();
 
 const calendarStore = useCalendarStore();
 
+const completorStore = useCompletorStore();
+
+const notifications = useNotificatorStore();
+
+const maxAccessEntries = 10;
+
 const schema = z.object({
     calendar: z.custom<Calendar>().optional(),
     title: z.string().min(3).max(512),
@@ -28,6 +42,7 @@ const schema = z.object({
     content: z.string().max(10240),
     public: z.boolean(),
     rsvpOpen: z.boolean(),
+    access: z.custom<CalendarAccess>(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -38,12 +53,16 @@ const state = reactive<Schema>({
     startTime: new Date(),
     endTime: addHours(new Date(), 1),
     content: '',
-    rsvpOpen: false,
     public: false,
+    rsvpOpen: false,
+    access: {
+        jobs: [],
+        users: [],
+    },
 });
 
 const {
-    data: entry,
+    data,
     pending: loading,
     refresh,
     error,
@@ -51,19 +70,55 @@ const {
     `calendar-entry:${props.entryId}`,
     () => calendarStore.getCalendarEntry({ calendarId: props.calendarId!, entryId: props.entryId! }),
     {
-        immediate: !!props.entryId && !!props.calendarId,
+        immediate: !!props.calendarId && !!props.entryId,
     },
 );
-// TODO show data loading blocks and error
 
 async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpdateCalendarEntryResponse> {
     if (!values.calendar) {
         throw 'No Calendar selected';
     }
 
+    const reqAccess: CalendarAccess = {
+        jobs: [],
+        users: [],
+    };
+    access.value.forEach((entry) => {
+        if (entry.values.accessRole === undefined) {
+            return;
+        }
+
+        if (entry.type === 0) {
+            if (!entry.values.userId) {
+                return;
+            }
+
+            reqAccess.users.push({
+                id: '0',
+                calendarId: values.calendar!.id,
+                entryId: data.value?.entry?.id ?? '0',
+                userId: entry.values.userId,
+                access: entry.values.accessRole,
+            });
+        } else if (entry.type === 1) {
+            if (!entry.values.job) {
+                return;
+            }
+
+            reqAccess.jobs.push({
+                id: '0',
+                calendarId: values.calendar!.id,
+                entryId: data.value?.entry?.id ?? '0',
+                job: entry.values.job,
+                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
+                access: entry.values.accessRole,
+            });
+        }
+    });
+
     try {
         const response = await calendarStore.createOrUpdateCalendarEntry({
-            id: '0',
+            id: data.value?.entry?.id ?? '0',
             calendarId: values.calendar.id,
             title: values.title,
             startTime: toTimestamp(values.startTime),
@@ -72,6 +127,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
             public: values.public,
             rsvpOpen: values.rsvpOpen,
             creatorJob: '',
+            access: reqAccess,
         });
 
         isOpen.value = false;
@@ -88,19 +144,139 @@ function setFromProps(): void {
         state.calendar = props.calendar;
     }
 
-    if (!entry.value?.entry) {
+    if (!data.value?.entry) {
         return;
     }
 
-    state.title = entry.value?.entry?.title;
-    state.startTime = toDate(entry.value?.entry?.startTime);
-    state.endTime = toDate(entry.value?.entry?.endTime);
-    state.content = entry.value?.entry?.content;
-    state.public = entry.value?.entry?.public;
+    const entry = data.value?.entry;
+    state.title = entry.title;
+    state.startTime = toDate(entry.startTime);
+    state.endTime = toDate(entry.endTime);
+    state.content = entry.content;
+    state.public = entry.public;
+
+    if (entry.access) {
+        access.value.clear();
+
+        let accessId = 0;
+        entry.access?.users.forEach((user) => {
+            const id = accessId.toString();
+            access.value.set(id, {
+                id,
+                type: 0,
+                values: { userId: user.userId, accessRole: user.access },
+            });
+            accessId++;
+        });
+
+        entry.access?.jobs.forEach((job) => {
+            const id = accessId.toString();
+            access.value.set(id, {
+                id,
+                type: 1,
+                values: {
+                    job: job.job,
+                    accessRole: job.access,
+                    minimumGrade: job.minimumGrade,
+                },
+            });
+            accessId++;
+        });
+    }
 }
 
-watch(entry, () => setFromProps());
+watch(data, () => setFromProps());
 watch(props, () => refresh());
+
+const access = ref<
+    Map<
+        string,
+        {
+            id: string;
+            type: number;
+            values: {
+                job?: string;
+                userId?: number;
+                accessRole?: AccessLevel;
+                minimumGrade?: number;
+            };
+        }
+    >
+>(new Map());
+
+function addAccessEntry(): void {
+    if (access.value.size > maxAccessEntries - 1) {
+        notifications.add({
+            title: { key: 'notifications.max_access_entry.title', parameters: {} },
+            description: {
+                key: 'notifications.max_access_entry.content',
+                parameters: { max: maxAccessEntries.toString() },
+            } as TranslateItem,
+            type: 'error',
+        });
+        return;
+    }
+
+    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
+    access.value.set(id.toString(), {
+        id: id.toString(),
+        type: 1,
+        values: {},
+    });
+}
+
+function removeAccessEntry(event: { id: string }): void {
+    access.value.delete(event.id);
+}
+
+function updateAccessEntryType(event: { id: string; type: number }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.type = event.type;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    if (event.job) {
+        accessEntry.values.job = event.job.name;
+        accessEntry.values.userId = undefined;
+    } else if (event.char) {
+        accessEntry.values.job = undefined;
+        accessEntry.values.userId = event.char.userId;
+    }
+
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.values.minimumGrade = event.rank.grade;
+    access.value.set(event.id, accessEntry);
+}
+
+function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
+    const accessEntry = access.value.get(event.id);
+    if (!accessEntry) {
+        return;
+    }
+
+    accessEntry.values.accessRole = event.access;
+    access.value.set(event.id, accessEntry);
+}
+
+const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -117,7 +293,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <div class="flex items-center justify-between">
                         <h3 class="text-2xl font-semibold leading-6">
                             {{
-                                entry
+                                entryId
                                     ? $t('components.calendar.EntryCreateOrUpdateModal.update.title')
                                     : $t('components.calendar.EntryCreateOrUpdateModal.create.title')
                             }}
@@ -128,103 +304,138 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <UFormGroup v-if="!calendar" name="calendar" :label="$t('common.calendar')" class="flex-1" required>
-                        <USelectMenu
-                            v-model="state.calendar"
-                            :searchable="
-                                async (query) => (await calendarStore.listCalendars({ pagination: { offset: 0 } })).calendars
-                            "
-                            :search-attributes="['name']"
-                            option-attribute="name"
-                            by="id"
-                            :placeholder="$t('common.calendar')"
-                            :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        >
-                            <template #label>
-                                <template v-if="state.calendar">
+                    <DataPendingBlock
+                        v-if="props.entryId && loading"
+                        :message="$t('common.loading', [$t('common.entry', 1)])"
+                    />
+                    <DataErrorBlock
+                        v-else-if="props.entryId && error"
+                        :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock
+                        v-if="props.entryId && (!data || !data.entry)"
+                        :type="$t('common.entry', 1)"
+                        icon="i-mdi-comment-text-multiple"
+                    />
+
+                    <template v-else>
+                        <UFormGroup name="calendar" :label="$t('common.calendar')" class="flex-1" required>
+                            <USelectMenu
+                                v-model="state.calendar"
+                                :searchable="
+                                    async (query) =>
+                                        (await calendarStore.listCalendars({ pagination: { offset: 0 } })).calendars
+                                "
+                                :search-attributes="['name']"
+                                option-attribute="name"
+                                by="id"
+                                :placeholder="$t('common.calendar')"
+                                :searchable-placeholder="$t('common.search_field')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            >
+                                <template #label>
+                                    <template v-if="state.calendar">
+                                        <span
+                                            class="size-2 rounded-full"
+                                            :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                                        />
+                                        <span class="truncate">{{ state.calendar?.name }}</span>
+                                    </template>
+                                </template>
+
+                                <template #option="{ option }">
                                     <span
                                         class="size-2 rounded-full"
-                                        :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                                        :class="`bg-${option.color ?? 'primary'}-500 dark:bg-${option.color ?? 'primary'}-400`"
                                     />
-                                    <span class="truncate">{{ state.calendar?.name }}</span>
+                                    <span class="truncate">{{ option.name }}</span>
                                 </template>
-                            </template>
 
-                            <template #option="{ option }">
-                                <span
-                                    class="size-2 rounded-full"
-                                    :class="`bg-${option.color ?? 'primary'}-500 dark:bg-${option.color ?? 'primary'}-400`"
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.calendar', 1)]) }}
+                                </template>
+                            </USelectMenu>
+                        </UFormGroup>
+
+                        <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
+                            <UInput
+                                v-model="state.title"
+                                name="title"
+                                type="text"
+                                :placeholder="$t('common.title')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
+                            <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UButton
+                                    variant="outline"
+                                    color="gray"
+                                    block
+                                    icon="i-mdi-calendar-month"
+                                    :label="state.startTime ? format(state.startTime, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
                                 />
-                                <span class="truncate">{{ option.name }}</span>
-                            </template>
 
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.calendar', 1)]) }}
-                            </template>
-                        </USelectMenu>
-                    </UFormGroup>
+                                <template #panel="{ close }">
+                                    <DatePickerClient v-model="state.startTime" mode="dateTime" is24hr @close="close" />
+                                </template>
+                            </UPopover>
+                        </UFormGroup>
 
-                    <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
-                        <UInput
-                            v-model="state.title"
-                            name="title"
-                            type="text"
-                            :placeholder="$t('common.title')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
+                        <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
+                            <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UButton
+                                    variant="outline"
+                                    color="gray"
+                                    block
+                                    icon="i-mdi-calendar-month"
+                                    :label="state.endTime ? format(state.endTime, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
+                                />
 
-                    <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
-                        <UPopover :popper="{ placement: 'bottom-start' }">
-                            <UButton
-                                variant="outline"
-                                color="gray"
-                                block
-                                icon="i-mdi-calendar-month"
-                                :label="state.startTime ? format(state.startTime, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
+                                <template #panel="{ close }">
+                                    <DatePickerClient v-model="state.endTime" mode="dateTime" is24hr @close="close" />
+                                </template>
+                            </UPopover>
+                        </UFormGroup>
+
+                        <UFormGroup name="content" :label="$t('common.content')" class="flex-1" required>
+                            <ClientOnly>
+                                <DocEditor v-model="state.content" :min-height="250" />
+                            </ClientOnly>
+                        </UFormGroup>
+
+                        <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1" required>
+                            <UToggle v-model="state.rsvpOpen" />
+                        </UFormGroup>
+
+                        <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
+                            <CalendarAccessEntry
+                                v-for="entry in access.values()"
+                                :key="entry.id"
+                                :init="entry"
+                                :jobs="jobs"
+                                @type-change="updateAccessEntryType($event)"
+                                @name-change="updateAccessEntryName($event)"
+                                @rank-change="updateAccessEntryRank($event)"
+                                @access-change="updateAccessEntryAccess($event)"
+                                @delete-request="removeAccessEntry($event)"
                             />
 
-                            <template #panel="{ close }">
-                                <DatePickerClient v-model="state.startTime" mode="dateTime" is24hr @close="close" />
-                            </template>
-                        </UPopover>
-                    </UFormGroup>
-
-                    <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
-                        <UPopover :popper="{ placement: 'bottom-start' }">
                             <UButton
-                                variant="outline"
-                                color="gray"
-                                block
-                                icon="i-mdi-calendar-month"
-                                :label="state.endTime ? format(state.endTime, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
+                                :ui="{ rounded: 'rounded-full' }"
+                                icon="i-mdi-plus"
+                                :title="$t('components.documents.document_editor.add_permission')"
+                                @click="addAccessEntry()"
                             />
-
-                            <template #panel="{ close }">
-                                <DatePickerClient v-model="state.endTime" mode="dateTime" is24hr @close="close" />
-                            </template>
-                        </UPopover>
-                    </UFormGroup>
-
-                    <UFormGroup name="content" :label="$t('common.content')" class="flex-1" required>
-                        <ClientOnly>
-                            <DocEditor v-model="state.content" :min-height="250" />
-                        </ClientOnly>
-                    </UFormGroup>
-
-                    <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1" required>
-                        <UToggle v-model="state.rsvpOpen" />
-                    </UFormGroup>
-
-                    <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
-                        <!-- TODO -->
-                    </UFormGroup>
+                        </UFormGroup>
+                    </template>
                 </div>
 
                 <template #footer>
@@ -234,7 +445,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UButton>
 
                         <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
-                            {{ entry ? $t('common.save') : $t('common.create') }}
+                            {{ data ? $t('common.save') : $t('common.create') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

@@ -141,7 +141,7 @@ func (s *Server) GetCalendar(ctx context.Context, req *GetCalendarRequest) (*Get
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	// Check if user has access to existing calendar
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -193,9 +193,8 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	if req.Calendar.Color == nil {
-		color := "primary"
-		req.Calendar.Color = &color
+	if req.Calendar.Color == "" {
+		req.Calendar.Color = "primary"
 	}
 
 	// Begin transaction
@@ -209,7 +208,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 	tCalendar := table.FivenetCalendar
 	// Check if user has access to existing calendar
 	if req.Calendar.Id > 0 {
-		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE)
+		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
@@ -217,7 +216,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 			return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 		}
 
-		calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)))
+		calendar, err := s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.Calendar.Id)))
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
@@ -241,8 +240,11 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				tCalendar.Description.SET(jet.String(*req.Calendar.Description)),
 				tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
 				tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
-				tCalendar.Color.SET(jet.String(*req.Calendar.Color)),
-			)
+				tCalendar.Color.SET(jet.String(req.Calendar.Color)),
+			).
+			WHERE(jet.AND(
+				tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)),
+			))
 
 		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -252,7 +254,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 	} else {
 		// Allow only one private calendar per user
 		if req.Calendar.Job == nil {
-			calendar, err := s.getCalendar(ctx, userInfo, tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)))
+			calendar, err := s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").CreatorID.EQ(jet.Int32(userInfo.UserId)))
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 			}
@@ -288,7 +290,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				tCalendar.Description.SET(jet.String("VALUES(`description`)")),
 				tCalendar.Public.SET(jet.Bool(req.Calendar.Public)),
 				tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
-				tCalendar.Color.SET(jet.String(*req.Calendar.Color)),
+				tCalendar.Color.SET(jet.String(req.Calendar.Color)),
 			)
 		res, err := stmt.ExecContext(ctx, s.db)
 		if err != nil {
@@ -338,7 +340,7 @@ func (s *Server) DeleteCalendar(ctx context.Context, req *DeleteCalendarRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -394,7 +396,8 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			),
 		).
 		GROUP_BY(tCalendar.ID).
-		WHERE(condition)
+		WHERE(condition).
+		LIMIT(1)
 
 	dest := &calendar.Calendar{}
 	if err := stmt.QueryContext(ctx, s.db, dest); err != nil {

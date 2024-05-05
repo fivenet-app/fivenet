@@ -74,6 +74,17 @@ func (m *Calendar) validate(all bool) error {
 
 	// no validation rules for Closed
 
+	if utf8.RuneCountInString(m.GetColor()) > 12 {
+		err := CalendarValidationError{
+			field:  "Color",
+			reason: "value length must be at most 12 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
 		err := CalendarValidationError{
 			field:  "CreatorJob",
@@ -243,21 +254,6 @@ func (m *Calendar) validate(all bool) error {
 
 	}
 
-	if m.Color != nil {
-
-		if utf8.RuneCountInString(m.GetColor()) > 12 {
-			err := CalendarValidationError{
-				field:  "Color",
-				reason: "value length must be at most 12 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
 	if m.CreatorId != nil {
 		// no validation rules for CreatorId
 	}
@@ -371,6 +367,182 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CalendarValidationError{}
+
+// Validate checks the field values on CalendarShort with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CalendarShort) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CalendarShort with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CalendarShortMultiError, or
+// nil if none found.
+func (m *CalendarShort) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CalendarShort) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	if l := utf8.RuneCountInString(m.GetName()); l < 3 || l > 255 {
+		err := CalendarShortValidationError{
+			field:  "Name",
+			reason: "value length must be between 3 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for Public
+
+	// no validation rules for Closed
+
+	if utf8.RuneCountInString(m.GetColor()) > 12 {
+		err := CalendarShortValidationError{
+			field:  "Color",
+			reason: "value length must be at most 12 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarShortValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarShortValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarShortValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Description != nil {
+
+		if utf8.RuneCountInString(m.GetDescription()) > 512 {
+			err := CalendarShortValidationError{
+				field:  "Description",
+				reason: "value length must be at most 512 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CalendarShortMultiError(errors)
+	}
+
+	return nil
+}
+
+// CalendarShortMultiError is an error wrapping multiple validation errors
+// returned by CalendarShort.ValidateAll() if the designated constraints
+// aren't met.
+type CalendarShortMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CalendarShortMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CalendarShortMultiError) AllErrors() []error { return m }
+
+// CalendarShortValidationError is the validation error returned by
+// CalendarShort.Validate if the designated constraints aren't met.
+type CalendarShortValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CalendarShortValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CalendarShortValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CalendarShortValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CalendarShortValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CalendarShortValidationError) ErrorName() string { return "CalendarShortValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CalendarShortValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCalendarShort.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CalendarShortValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CalendarShortValidationError{}
 
 // Validate checks the field values on CalendarEntry with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -593,6 +765,39 @@ func (m *CalendarEntry) validate(all bool) error {
 			if err := v.Validate(); err != nil {
 				return CalendarEntryValidationError{
 					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Calendar != nil {
+
+		if all {
+			switch v := interface{}(m.GetCalendar()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarEntryValidationError{
+						field:  "Calendar",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarEntryValidationError{
+						field:  "Calendar",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCalendar()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarEntryValidationError{
+					field:  "Calendar",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

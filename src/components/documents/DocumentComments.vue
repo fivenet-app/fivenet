@@ -174,7 +174,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :retry="refresh"
             />
             <DataNoDataBlock
-                v-if="!data || !data.comments || data?.comments.length === 0"
+                v-else-if="!data || !data.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 icon="i-mdi-comment-text-multiple"
                 :focus="focusCommentField"

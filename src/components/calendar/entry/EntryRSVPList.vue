@@ -36,7 +36,11 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
     }
 }
 
-async function rsvpCalendarEntry(rsvpResponse: RsvpResponses): Promise<RSVPCalendarEntryResponse> {
+async function rsvpCalendarEntry(rsvpResponse: RsvpResponses): Promise<void | RSVPCalendarEntryResponse> {
+    if (data.value?.ownEntry?.response === rsvpResponse) {
+        return;
+    }
+
     try {
         const call = $grpc.getCalendarClient().rSVPCalendarEntry({
             entry: {
@@ -47,6 +51,8 @@ async function rsvpCalendarEntry(rsvpResponse: RsvpResponses): Promise<RSVPCalen
             subscribe: true,
         });
         const { response } = await call;
+
+        data.value!.ownEntry = response.entry;
 
         return response;
     } catch (e) {

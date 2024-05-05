@@ -28,7 +28,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -136,7 +136,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 		return nil, errorscalendar.ErrFailedQuery
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW)
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, entry.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}

@@ -9,9 +9,7 @@ import (
 
 func (m *Calendar) Sanitize() error {
 
-	if m.Color != nil {
-		*m.Color = htmlsanitizer.StripTags(*m.Color)
-	}
+	m.Color = htmlsanitizer.StripTags(m.Color)
 
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.StripTags(*m.Description)
@@ -27,6 +25,19 @@ func (m *CalendarEntry) Sanitize() error {
 	m.Content = htmlsanitizer.Sanitize(m.Content)
 
 	m.Title = htmlsanitizer.StripTags(m.Title)
+
+	return nil
+}
+
+func (m *CalendarShort) Sanitize() error {
+
+	m.Color = htmlsanitizer.StripTags(m.Color)
+
+	if m.Description != nil {
+		*m.Description = htmlsanitizer.StripTags(*m.Description)
+	}
+
+	m.Name = htmlsanitizer.StripTags(m.Name)
 
 	return nil
 }

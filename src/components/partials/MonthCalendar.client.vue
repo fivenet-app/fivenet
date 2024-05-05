@@ -49,9 +49,10 @@ function updateDate(event: Page[]): void {
     }
 
     const page = event[0];
-    date.value.setYear(page.year);
-    date.value.setMonth(page.month - 1);
-    date.value = date.value;
+    const newDate = new Date();
+    newDate.setFullYear(page.year);
+    newDate.setMonth(page.month - 1);
+    date.value = newDate;
 }
 </script>
 

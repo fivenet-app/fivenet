@@ -10,8 +10,8 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calendarId uint64, entryId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, access, entryId)
+func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calendarId uint64, entryId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool) (bool, error) {
+	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, access, publicOk, entryId)
 	if err != nil {
 		return false, err
 	}
@@ -20,7 +20,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calend
 		return true, nil
 	}
 
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, calendarId, userInfo, access)
+	check, err := s.checkIfUserHasAccessToCalendar(ctx, calendarId, userInfo, access, publicOk)
 	if err != nil {
 		return false, err
 	}
@@ -28,24 +28,33 @@ func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calend
 	return check, err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarEntries(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, entryIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, access, entryIds...)
+func (s *Server) checkIfUserHasAccessToCalendarEntries(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, entryIds ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, access, publicOk, entryIds...)
 	return len(out) == len(entryIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, entryIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, entryIds ...uint64) ([]uint64, error) {
+	var dest []uint64
 	if len(entryIds) == 0 {
-		return entryIds, nil
+		return dest, nil
 	}
 
 	// Allow superusers access to any docs
 	if userInfo.SuperUser {
-		return entryIds, nil
+		for i := 0; i < len(entryIds); i++ {
+			dest = append(dest, entryIds[i])
+		}
+		return dest, nil
 	}
 
 	ids := make([]jet.Expression, len(entryIds))
 	for i := 0; i < len(entryIds); i++ {
 		ids[i] = jet.Uint64(entryIds[i])
+	}
+
+	condition := jet.Bool(false)
+	if publicOk {
+		condition = tCalendarEntry.Public.IS_TRUE()
 	}
 
 	stmt := tCalendarEntry.
@@ -73,6 +82,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 			tCalendarEntry.ID.IN(ids...),
 			tCalendarEntry.DeletedAt.IS_NULL(),
 			jet.OR(
+				condition,
 				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.Job)),
 				jet.AND(
@@ -88,14 +98,11 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 		)).
 		ORDER_BY(tCalendarEntry.ID.DESC(), tCJobAccess.MinimumGrade)
 
-	var dest struct {
-		IDs []uint64 `alias:"calendar_entry.id"`
-	}
-	if err := stmt.QueryContext(ctx, s.db, &dest.IDs); err != nil {
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}
 	}
 
-	return dest.IDs, nil
+	return dest, nil
 }
