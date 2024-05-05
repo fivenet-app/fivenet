@@ -24,7 +24,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		tCalendarEntry.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
-				tCalendarShort.Public.IS_TRUE(),
+				tCalendar.Public.IS_TRUE(),
 				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
@@ -66,13 +66,13 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCalendarEntry.UpdatedAt,
 			tCalendarEntry.DeletedAt,
 			tCalendarEntry.CalendarID,
-			tCalendarShort.ID,
-			tCalendarShort.Name,
-			tCalendarShort.Color,
-			tCalendarShort.Description,
-			tCalendarShort.Public,
-			tCalendarShort.Closed,
-			tCalendarShort.Color,
+			tCalendar.ID,
+			tCalendar.Name,
+			tCalendar.Color,
+			tCalendar.Description,
+			tCalendar.Public,
+			tCalendar.Closed,
+			tCalendar.Color,
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
@@ -90,9 +90,9 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(tCalendarEntry.
-			INNER_JOIN(tCalendarShort,
-				tCalendarShort.ID.EQ(tCalendarEntry.CalendarID).
-					AND(tCalendarShort.DeletedAt.IS_NULL()),
+			INNER_JOIN(tCalendar,
+				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
+					AND(tCalendar.DeletedAt.IS_NULL()),
 			).
 			LEFT_JOIN(tCUserAccess,
 				jet.OR(
@@ -374,13 +374,13 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCalendarEntry.UpdatedAt,
 			tCalendarEntry.DeletedAt,
 			tCalendarEntry.CalendarID,
-			tCalendarShort.ID,
-			tCalendarShort.Name,
-			tCalendarShort.Color,
-			tCalendarShort.Description,
-			tCalendarShort.Public,
-			tCalendarShort.Closed,
-			tCalendarShort.Color,
+			tCalendar.ID,
+			tCalendar.Name,
+			tCalendar.Color,
+			tCalendar.Description,
+			tCalendar.Public,
+			tCalendar.Closed,
+			tCalendar.Color,
 			tCalendarEntry.Job,
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
@@ -400,9 +400,9 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(tCalendarEntry.
-			INNER_JOIN(tCalendarShort,
-				tCalendarShort.ID.EQ(tCalendarEntry.CalendarID).
-					AND(tCalendarShort.DeletedAt.IS_NULL()),
+			INNER_JOIN(tCalendar,
+				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
+					AND(tCalendar.DeletedAt.IS_NULL()),
 			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),

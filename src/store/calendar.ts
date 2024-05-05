@@ -69,7 +69,12 @@ export const useCalendarStore = defineStore('calendar', {
                 const { response } = await call;
 
                 if (response.calendar) {
-                    this.calendars.push(response.calendar);
+                    const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
+                    if (idx > -1) {
+                        this.calendars[idx] = response.calendar;
+                    } else {
+                        this.calendars.push(response.calendar);
+                    }
                 }
 
                 return response;
@@ -133,6 +138,12 @@ export const useCalendarStore = defineStore('calendar', {
 
                 if (response.entry) {
                     this.entries.push(response.entry);
+                    const idx = this.entries.findIndex((c) => c.id === response.entry!.id);
+                    if (idx > -1) {
+                        this.entries[idx] = response.entry;
+                    } else {
+                        this.entries.push(response.entry);
+                    }
                 }
 
                 return response;

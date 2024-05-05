@@ -893,6 +893,39 @@ func (m *CalendarEntry) validate(all bool) error {
 
 	}
 
+	if m.Data != nil {
+
+		if all {
+			switch v := interface{}(m.GetData()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarEntryValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarEntryValidationError{
+						field:  "Data",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarEntryValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return CalendarEntryMultiError(errors)
 	}
@@ -970,6 +1003,108 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CalendarEntryValidationError{}
+
+// Validate checks the field values on CalendarEntryData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *CalendarEntryData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CalendarEntryData with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CalendarEntryDataMultiError, or nil if none found.
+func (m *CalendarEntryData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CalendarEntryData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return CalendarEntryDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// CalendarEntryDataMultiError is an error wrapping multiple validation errors
+// returned by CalendarEntryData.ValidateAll() if the designated constraints
+// aren't met.
+type CalendarEntryDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CalendarEntryDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CalendarEntryDataMultiError) AllErrors() []error { return m }
+
+// CalendarEntryDataValidationError is the validation error returned by
+// CalendarEntryData.Validate if the designated constraints aren't met.
+type CalendarEntryDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CalendarEntryDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CalendarEntryDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CalendarEntryDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CalendarEntryDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CalendarEntryDataValidationError) ErrorName() string {
+	return "CalendarEntryDataValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CalendarEntryDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCalendarEntryData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CalendarEntryDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CalendarEntryDataValidationError{}
 
 // Validate checks the field values on CalendarEntryRSVP with the rules defined
 // in the proto definition for this message. If any rules are violated, the

@@ -30,6 +30,8 @@ const {
 );
 
 const entry = computed(() => data.value?.entry);
+
+const color = computed(() => entry.value?.calendar?.color ?? 'primary');
 </script>
 
 <template>
@@ -49,7 +51,7 @@ const entry = computed(() => data.value?.entry);
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            <span>{{ $t('common.appointment', 1) }}: {{ entry?.title ?? $t('common.appointment', 1) }}</span>
+                            <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UButton
                                 v-if="entry && checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.EDIT)"
@@ -58,7 +60,6 @@ const entry = computed(() => data.value?.entry);
                                 icon="i-mdi-pencil"
                                 @click="
                                     modal.open(EntryCreateOrUpdateModal, {
-                                        calendar: entry?.calendar,
                                         calendarId: entry?.calendarId,
                                         entryId: entry?.id,
                                     })
@@ -94,12 +95,23 @@ const entry = computed(() => data.value?.entry);
 
                 <template v-else>
                     <p>
-                        {{ $t('common.date') }}: {{ $d(toDate(entry?.startTime), 'long') }} -
+                        <span class="font-semibold">{{ $t('common.calendar', 1) }}</span
+                        >:
+                        <span>
+                            <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+
+                            {{ entry.calendar?.name }}
+                        </span>
+                    </p>
+
+                    <p>
+                        <span class="font-semibold">{{ $t('common.date') }}</span
+                        >: {{ $d(toDate(entry?.startTime), 'long') }} -
                         {{ $d(toDate(entry?.endTime), 'long') }}
                     </p>
 
                     <div class="flex flex-row items-center gap-2">
-                        <span>{{ $t('common.creator') }}:</span>
+                        <span class="font-semibold">{{ $t('common.creator') }}:</span>
                         <CitizenInfoPopover :user="entry?.creator" show-avatar-in-name />
                     </div>
 

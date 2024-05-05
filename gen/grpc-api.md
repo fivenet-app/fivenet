@@ -244,6 +244,7 @@
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
     - [CalendarEntry](#resources-calendar-CalendarEntry)
+    - [CalendarEntryData](#resources-calendar-CalendarEntryData)
     - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
     - [CalendarShort](#resources-calendar-CalendarShort)
   
@@ -4143,6 +4144,17 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
+| data | [CalendarEntryData](#resources-calendar-CalendarEntryData) | optional |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarEntryData"></a>
+
+### CalendarEntryData
+TODO
 
 
 

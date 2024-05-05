@@ -107,7 +107,7 @@ function formatStartEndTime(entry: CalendarEntry): string {
     return d(start, 'time') + ' - ' + d(end, 'time');
 }
 
-type CalEntry = { key: string; customData: CalendarEntry & { class: string; time: string }; dates: DateRangeSource[] };
+type CalEntry = { key: string; customData: CalendarEntry & { color: string; time: string }; dates: DateRangeSource[] };
 
 const transformedCalendarEntries = computed(() =>
     calendarEntries.value?.entries.map((entry) => {
@@ -116,7 +116,7 @@ const transformedCalendarEntries = computed(() =>
             key: entry.id,
             customData: {
                 ...entry,
-                class: `bg-${color}-500 hover:!bg-${color}-400 text-white`,
+                color: color,
                 time: formatStartEndTime(entry),
             },
             dates: [
@@ -264,7 +264,7 @@ function calendarIdChange(calendarId: string, state: boolean): void {
                         <template v-for="entries in groupedCalendarEntries" :key="entries.key">
                             <UDivider class="text-lg font-semibold">{{ $d(entries.date, 'date') }}</UDivider>
 
-                            <ul role="list" class="list-disc">
+                            <ul role="list">
                                 <li v-for="attr in entries.entries" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
@@ -276,7 +276,11 @@ function calendarIdChange(calendarId: string, state: boolean): void {
                                         "
                                     >
                                         <span class="inline-flex items-center gap-1">
-                                            <UBadge :class="attr.customData.class" label="&nbsp;" />
+                                            <UBadge
+                                                :color="attr.customData.color"
+                                                :ui="{ rounded: 'rounded-full' }"
+                                                label="&nbsp;"
+                                            />
 
                                             <template v-if="attr.customData.time">
                                                 {{ attr.customData.time }}

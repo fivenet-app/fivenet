@@ -4,7 +4,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
-import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import { useCalendarStore } from '~/store/calendar';
 import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
@@ -17,7 +17,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
-    calendar?: Calendar;
     calendarId?: string;
     entryId?: string;
 }>();
@@ -35,7 +34,7 @@ const notifications = useNotificatorStore();
 const maxAccessEntries = 10;
 
 const schema = z.object({
-    calendar: z.custom<Calendar>().optional(),
+    calendar: z.custom<CalendarShort>().optional(),
     title: z.string().min(3).max(512),
     startTime: z.date(),
     endTime: z.date(),
@@ -47,7 +46,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    calendar: props.calendar,
+    calendar: undefined,
     title: '',
     startTime: new Date(),
     endTime: addHours(new Date(), 1),
@@ -137,15 +136,16 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
 }
 
 function setFromProps(): void {
-    if (props.calendar) {
-        state.calendar = props.calendar;
-    }
-
     if (!data.value?.entry) {
         return;
     }
 
     const entry = data.value?.entry;
+    if (entry.calendar) {
+        state.calendar = entry.calendar;
+    }
+    console.log('entry cal', entry.calendarId, entry.calendar);
+
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
@@ -320,6 +320,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="calendar" :label="$t('common.calendar')" class="flex-1" required>
                             <USelectMenu
                                 v-model="state.calendar"
+                                :disabled="!entryId"
                                 :searchable="
                                     async (query) =>
                                         (await calendarStore.listCalendars({ pagination: { offset: 0 } })).calendars

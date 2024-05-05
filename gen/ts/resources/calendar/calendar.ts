@@ -191,6 +191,17 @@ export interface CalendarEntry {
      * @generated from protobuf field: resources.calendar.CalendarAccess access = 16;
      */
     access?: CalendarAccess;
+    /**
+     * @generated from protobuf field: optional resources.calendar.CalendarEntryData data = 17;
+     */
+    data?: CalendarEntryData;
+}
+/**
+ * TODO
+ *
+ * @generated from protobuf message resources.calendar.CalendarEntryData
+ */
+export interface CalendarEntryData {
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarEntryRSVP
@@ -493,7 +504,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 14, name: "creator", kind: "message", T: () => UserShort },
             { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 16, name: "access", kind: "message", T: () => CalendarAccess }
+            { no: 16, name: "access", kind: "message", T: () => CalendarAccess },
+            { no: 17, name: "data", kind: "message", T: () => CalendarEntryData }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -560,6 +572,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* resources.calendar.CalendarAccess access */ 16:
                     message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
+                case /* optional resources.calendar.CalendarEntryData data */ 17:
+                    message.data = CalendarEntryData.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -620,6 +635,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* resources.calendar.CalendarAccess access = 16; */
         if (message.access)
             CalendarAccess.internalBinaryWrite(message.access, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.CalendarEntryData data = 17; */
+        if (message.data)
+            CalendarEntryData.internalBinaryWrite(message.data, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -630,6 +648,31 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
  * @generated MessageType for protobuf message resources.calendar.CalendarEntry
  */
 export const CalendarEntry = new CalendarEntry$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CalendarEntryData$Type extends MessageType<CalendarEntryData> {
+    constructor() {
+        super("resources.calendar.CalendarEntryData", []);
+    }
+    create(value?: PartialMessage<CalendarEntryData>): CalendarEntryData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CalendarEntryData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarEntryData): CalendarEntryData {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: CalendarEntryData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.calendar.CalendarEntryData
+ */
+export const CalendarEntryData = new CalendarEntryData$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
     constructor() {
