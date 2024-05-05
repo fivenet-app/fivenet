@@ -2206,7 +2206,18 @@
         "rector": {
             "UserInfoSyncUnemployedMode": {
                 "GIVE_ROLE": "Give Role",
-                "KICK": "Kick"
+                "KICK": "Kick",
+                "UNSPECIFIED": "Unspecified"
+            }
+        },
+        "calendar": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "SHARE": "Share",
+                "EDIT": "Edit",
+                "MANAGE": "Manage"
             }
         }
     },
