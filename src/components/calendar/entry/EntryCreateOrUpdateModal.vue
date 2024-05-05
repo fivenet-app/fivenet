@@ -139,7 +139,6 @@ function setFromProps(): void {
     if (entry.calendar) {
         state.calendar = entry.calendar;
     }
-    console.log('entry cal', entry.calendarId, entry.calendar);
 
     state.title = entry.title;
     state.startTime = toDate(entry.startTime);

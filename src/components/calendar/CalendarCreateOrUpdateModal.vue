@@ -173,7 +173,6 @@ function setFromProps(): void {
             accessId++;
         });
     }
-    console.log('access', calendar.access);
 }
 
 watch(data, () => setFromProps());
