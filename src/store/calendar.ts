@@ -15,7 +15,6 @@ import type {
 import { useAuthStore } from './auth';
 
 export interface CalendarState {
-    activeCalendarIds: string[];
     calendars: Calendar[];
     entries: CalendarEntry[];
 }
@@ -23,7 +22,6 @@ export interface CalendarState {
 export const useCalendarStore = defineStore('calendar', {
     state: () =>
         ({
-            activeCalendarIds: [],
             calendars: [],
             entries: [],
         }) as CalendarState,

@@ -24,7 +24,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		tCalendarEntry.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
-				tCalendarEntry.Public.IS_TRUE(),
+				tCalendarShort.Public.IS_TRUE(),
 				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
@@ -77,7 +77,6 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
 			tCalendarEntry.Title,
-			tCalendarEntry.Public,
 			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
 			tCreator.ID,
@@ -208,7 +207,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.Content,
 				tCalendarEntry.StartTime,
 				tCalendarEntry.EndTime,
-				tCalendarEntry.Public,
 				tCalendarEntry.RsvpOpen,
 			).
 			SET(
@@ -216,7 +214,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.Content.SET(jet.String(req.Entry.Content)),
 				tCalendarEntry.StartTime.SET(startTime),
 				tCalendarEntry.EndTime.SET(endTime),
-				tCalendarEntry.Public.SET(jet.Bool(req.Entry.Public)),
 				tCalendarEntry.RsvpOpen.SET(jet.Bool(*req.Entry.RsvpOpen)),
 			).
 			WHERE(jet.AND(
@@ -246,7 +243,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.EndTime,
 				tCalendarEntry.Title,
 				tCalendarEntry.Content,
-				tCalendarEntry.Public,
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.CreatorID,
 				tCalendarEntry.CreatorJob,
@@ -258,7 +254,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				req.Entry.EndTime,
 				req.Entry.Title,
 				req.Entry.Content,
-				req.Entry.Public,
 				req.Entry.RsvpOpen,
 				userInfo.UserId,
 				userInfo.Job,
@@ -391,7 +386,6 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCalendarEntry.EndTime,
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
-			tCalendarEntry.Public,
 			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
 			tCalendarEntry.CreatorJob,
@@ -403,6 +397,7 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
+			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendarShort,
@@ -411,6 +406,9 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			).
 			LEFT_JOIN(tCreator,
 				tCalendarEntry.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tCalendarEntry.CreatorID),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).

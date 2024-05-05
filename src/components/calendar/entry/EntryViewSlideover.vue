@@ -34,12 +34,22 @@ const entry = computed(() => data.value?.entry);
 
 <template>
     <USlideover :ui="{ width: 'w-full sm:max-w-2xl' }" :overlay="false">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+        >
             <template #header>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
+                            <span>{{ $t('common.appointment', 1) }}: {{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UButton
                                 v-if="entry && checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.EDIT)"
@@ -70,16 +80,6 @@ const entry = computed(() => data.value?.entry);
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
-
-                    <p class="flex-1">
-                        {{ $d(toDate(entry?.startTime), 'long') }} -
-                        {{ $d(toDate(entry?.endTime), 'long') }}
-                    </p>
-
-                    <div class="flex flex-row items-center gap-2">
-                        <span>{{ $t('common.creator') }}:</span>
-                        <CitizenInfoPopover :user="entry?.creator" show-avatar-in-name />
-                    </div>
                 </div>
             </template>
 
@@ -90,16 +90,27 @@ const entry = computed(() => data.value?.entry);
                     :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
                     :retry="refresh"
                 />
-                <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-comment-text-multiple" />
+                <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
-                    <p v-html="entry.content"></p>
+                    <p>
+                        {{ $t('common.date') }}: {{ $d(toDate(entry?.startTime), 'long') }} -
+                        {{ $d(toDate(entry?.endTime), 'long') }}
+                    </p>
+
+                    <div class="flex flex-row items-center gap-2">
+                        <span>{{ $t('common.creator') }}:</span>
+                        <CitizenInfoPopover :user="entry?.creator" show-avatar-in-name />
+                    </div>
 
                     <template v-if="entry.rsvpOpen">
-                        <UDivider class="mb-2 mt-2" />
-
                         <EntryRSVPList :entry-id="entry.id" :rsvp-open="entry.rsvpOpen" />
                     </template>
+
+                    <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                        <!-- eslint-disable vue/no-v-html -->
+                        <div class="prose prose-invert min-w-full px-4 py-2" v-html="entry.content"></div>
+                    </div>
                 </template>
             </div>
 
@@ -113,3 +124,16 @@ const entry = computed(() => data.value?.entry);
         </UCard>
     </USlideover>
 </template>
+
+<style scoped>
+.contentView:deep(.prose) {
+    * {
+        margin-top: 4px;
+        margin-bottom: 4px;
+    }
+
+    input[type='checkbox']:checked {
+        opacity: 1;
+    }
+}
+</style>

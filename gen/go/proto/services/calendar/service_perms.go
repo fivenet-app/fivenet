@@ -36,7 +36,7 @@ func init() {
 				{
 					Key:         permkeys.CalendarServiceCreateOrUpdateCalendarFieldsPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Job"},
+					ValidValues: []string{"Job", "Public"},
 				},
 			},
 		},

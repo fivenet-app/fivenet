@@ -291,79 +291,113 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <UFormGroup name="title" :label="$t('common.name')" class="flex-1" required>
-                        <UInput
-                            v-model="state.name"
-                            name="name"
-                            type="text"
-                            :placeholder="$t('common.name')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
+                    <DataPendingBlock
+                        v-if="props.calendarId && loading"
+                        :message="$t('common.loading', [$t('common.calendar', 1)])"
+                    />
+                    <DataErrorBlock
+                        v-else-if="props.calendarId && error"
+                        :title="$t('common.unable_to_load', [$t('common.calendar', 1)])"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock
+                        v-if="props.calendarId && (!data || !data.calendar)"
+                        :type="$t('common.calendar', 1)"
+                        icon="i-mdi-calendar"
+                    />
 
-                    <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
-                        <USelectMenu
-                            v-model="state.color"
-                            name="color"
-                            :options="availableColorOptions"
-                            option-attribute="label"
-                            value-attribute="chip"
-                            :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+                    <template v-else>
+                        <UFormGroup name="title" :label="$t('common.name')" class="flex-1" required>
+                            <UInput
+                                v-model="state.name"
+                                name="name"
+                                type="text"
+                                :placeholder="$t('common.name')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
+                            <USelectMenu
+                                v-model="state.color"
+                                name="color"
+                                :options="availableColorOptions"
+                                option-attribute="label"
+                                value-attribute="chip"
+                                :searchable-placeholder="$t('common.search_field')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            >
+                                <template #label>
+                                    <span
+                                        class="size-2 rounded-full"
+                                        :class="`bg-${state.color}-500 dark:bg-${state.color}-400`"
+                                    />
+                                    <span class="truncate">{{ state.color }}</span>
+                                </template>
+
+                                <template #option="{ option }">
+                                    <span
+                                        class="size-2 rounded-full"
+                                        :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`"
+                                    />
+                                    <span class="truncate">{{ option.label }}</span>
+                                </template>
+                            </USelectMenu>
+                        </UFormGroup>
+
+                        <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
+                            <UTextarea
+                                v-model="state.description"
+                                name="description"
+                                :placeholder="$t('common.description')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup
+                            name="private"
+                            :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
+                            class="flex-1"
                         >
-                            <template #label>
-                                <span class="size-2 rounded-full" :class="`bg-${state.color}-500 dark:bg-${state.color}-400`" />
-                                <span class="truncate">{{ state.color }}</span>
-                            </template>
+                            <UToggle
+                                v-model="state.private"
+                                :disabled="!canCreateNonPrivateCalendar || calendarId !== undefined"
+                            />
+                        </UFormGroup>
 
-                            <template #option="{ option }">
-                                <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
-                                <span class="truncate">{{ option.label }}</span>
-                            </template>
-                        </USelectMenu>
-                    </UFormGroup>
+                        <UFormGroup
+                            v-if="can('SuperUser') || attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public')"
+                            name="public"
+                            :label="$t('common.public')"
+                            class="flex-1"
+                        >
+                            <UToggle v-model="state.public" />
+                        </UFormGroup>
 
-                    <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
-                        <UTextarea
-                            v-model="state.description"
-                            name="description"
-                            :placeholder="$t('common.description')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
+                        <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
+                            <CalendarAccessEntry
+                                v-for="entry in access.values()"
+                                :key="entry.id"
+                                :init="entry"
+                                :jobs="jobs"
+                                @type-change="updateAccessEntryType($event)"
+                                @name-change="updateAccessEntryName($event)"
+                                @rank-change="updateAccessEntryRank($event)"
+                                @access-change="updateAccessEntryAccess($event)"
+                                @delete-request="removeAccessEntry($event)"
+                            />
 
-                    <UFormGroup
-                        name="private"
-                        :label="$t('components.calendar.CalendarCreateOrUpdateModal.private')"
-                        class="flex-1"
-                        required
-                    >
-                        <UToggle v-model="state.private" :disabled="!canCreateNonPrivateCalendar || calendarId !== undefined" />
-                    </UFormGroup>
-
-                    <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
-                        <CalendarAccessEntry
-                            v-for="entry in access.values()"
-                            :key="entry.id"
-                            :init="entry"
-                            :jobs="jobs"
-                            @type-change="updateAccessEntryType($event)"
-                            @name-change="updateAccessEntryName($event)"
-                            @rank-change="updateAccessEntryRank($event)"
-                            @access-change="updateAccessEntryAccess($event)"
-                            @delete-request="removeAccessEntry($event)"
-                        />
-
-                        <UButton
-                            :ui="{ rounded: 'rounded-full' }"
-                            icon="i-mdi-plus"
-                            :title="$t('components.documents.document_editor.add_permission')"
-                            @click="addAccessEntry()"
-                        />
-                    </UFormGroup>
+                            <UButton
+                                :ui="{ rounded: 'rounded-full' }"
+                                icon="i-mdi-plus"
+                                :title="$t('components.documents.document_editor.add_permission')"
+                                @click="addAccessEntry()"
+                            />
+                        </UFormGroup>
+                    </template>
                 </div>
 
                 <template #footer>

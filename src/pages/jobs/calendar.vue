@@ -21,19 +21,17 @@ definePageMeta({
     requiresAuth: true,
 });
 
-const { $grpc } = useNuxtApp();
-
 const { d } = useI18n();
 
 const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
-const { activeCalendarIds } = storeToRefs(calendarStore);
 
 const schema = z.object({
     year: z.number(),
     month: z.number(),
+    calendarIds: z.string().array().max(25),
 });
 
 type Schema = z.output<typeof schema>;
@@ -47,6 +45,7 @@ watch(date, () => {
 const query = reactive<Schema>({
     year: date.value.getFullYear(),
     month: date.value.getMonth(),
+    calendarIds: [],
 });
 
 const page = ref(1);
@@ -68,13 +67,14 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             },
         });
 
-        if (activeCalendarIds.value.length === 0) {
-            activeCalendarIds.value = response.calendars.map((c) => c.id);
+        if (query.calendarIds.length === 0) {
+            query.calendarIds = response.calendars.map((c) => c.id);
         }
+
+        refresh();
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
         throw e;
     }
 }
@@ -84,12 +84,12 @@ const {
     refresh,
     error,
 } = useLazyAsyncData(
-    `calendar-entries-${query.year}-${query.month}-${activeCalendarIds.value.join(':')}`,
+    `calendar-entries-${query.year}-${query.month}-${query.calendarIds.join(':')}`,
     () =>
         calendarStore.listCalendarEntries({
             year: query.year,
             month: query.month,
-            calendarIds: activeCalendarIds.value,
+            calendarIds: query.calendarIds,
         }),
     { immediate: false },
 );
@@ -152,11 +152,11 @@ const groupedCalendarEntries = computed(() => {
 
 function calendarIdChange(calendarId: string, state: boolean): void {
     if (state) {
-        if (!activeCalendarIds.value.includes(calendarId)) {
-            activeCalendarIds.value.push(calendarId);
+        if (!query.calendarIds.includes(calendarId)) {
+            query.calendarIds.push(calendarId);
         }
     } else {
-        activeCalendarIds.value = activeCalendarIds.value.filter((cId) => cId !== calendarId);
+        query.calendarIds = query.calendarIds.filter((cId) => cId !== calendarId);
     }
 }
 </script>
@@ -212,25 +212,24 @@ function calendarIdChange(calendarId: string, state: boolean): void {
                             />
                             <template v-else>
                                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                    <UTooltip v-for="calendar in calendars?.calendars" :key="calendar.id" :text="calendar.name">
-                                        <div class="inline-flex items-center gap-2">
-                                            <UCheckbox
-                                                :model-value="activeCalendarIds.includes(calendar.id)"
-                                                class="truncate"
-                                                @change="calendarIdChange(calendar.id, $event)"
-                                            />
-                                            <UButton
-                                                :color="calendar.color"
-                                                size="sm"
-                                                truncate
-                                                :label="calendar.name"
-                                                @click="
-                                                    can('CalendarService.CreateOrUpdateCalendar') &&
-                                                        slideover.open(CalendarViewSlideover, { calendarId: calendar.id })
-                                                "
-                                            />
-                                        </div>
-                                    </UTooltip>
+                                    <div
+                                        v-for="calendar in calendars?.calendars"
+                                        :key="calendar.id"
+                                        class="inline-flex items-center gap-2"
+                                    >
+                                        <UCheckbox
+                                            :model-value="query.calendarIds.includes(calendar.id)"
+                                            class="truncate"
+                                            @change="calendarIdChange(calendar.id, $event)"
+                                        />
+                                        <UButton
+                                            :color="calendar.color"
+                                            size="sm"
+                                            truncate
+                                            :label="calendar.name"
+                                            @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                                        />
+                                    </div>
                                 </div>
                             </template>
                         </div>

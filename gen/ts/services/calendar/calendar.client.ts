@@ -52,7 +52,7 @@ export interface ICalendarServiceClient {
      */
     getCalendar(input: GetCalendarRequest, options?: RpcOptions): UnaryCall<GetCalendarRequest, GetCalendarResponse>;
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Job"}
+     * @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
      *
      * @generated from protobuf rpc: CreateOrUpdateCalendar(services.calendar.CreateOrUpdateCalendarRequest) returns (services.calendar.CreateOrUpdateCalendarResponse);
      */
@@ -137,7 +137,7 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
         return stackIntercept<GetCalendarRequest, GetCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Fields/StringList:[]string{"Job"}
+     * @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
      *
      * @generated from protobuf rpc: CreateOrUpdateCalendar(services.calendar.CreateOrUpdateCalendarRequest) returns (services.calendar.CreateOrUpdateCalendarResponse);
      */

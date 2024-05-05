@@ -42,7 +42,7 @@ type CalendarServiceClient interface {
 	ListCalendars(ctx context.Context, in *ListCalendarsRequest, opts ...grpc.CallOption) (*ListCalendarsResponse, error)
 	// @perm: Name=Any
 	GetCalendar(ctx context.Context, in *GetCalendarRequest, opts ...grpc.CallOption) (*GetCalendarResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Job"}
+	// @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
 	CreateOrUpdateCalendar(ctx context.Context, in *CreateOrUpdateCalendarRequest, opts ...grpc.CallOption) (*CreateOrUpdateCalendarResponse, error)
 	// @perm
 	DeleteCalendar(ctx context.Context, in *DeleteCalendarRequest, opts ...grpc.CallOption) (*DeleteCalendarResponse, error)
@@ -177,7 +177,7 @@ type CalendarServiceServer interface {
 	ListCalendars(context.Context, *ListCalendarsRequest) (*ListCalendarsResponse, error)
 	// @perm: Name=Any
 	GetCalendar(context.Context, *GetCalendarRequest) (*GetCalendarResponse, error)
-	// @perm: Attrs=Fields/StringList:[]string{"Job"}
+	// @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
 	CreateOrUpdateCalendar(context.Context, *CreateOrUpdateCalendarRequest) (*CreateOrUpdateCalendarResponse, error)
 	// @perm
 	DeleteCalendar(context.Context, *DeleteCalendarRequest) (*DeleteCalendarResponse, error)

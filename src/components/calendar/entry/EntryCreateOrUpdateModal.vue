@@ -39,8 +39,7 @@ const schema = z.object({
     title: z.string().min(3).max(512),
     startTime: z.date(),
     endTime: z.date(),
-    content: z.string().max(10240),
-    public: z.boolean(),
+    content: z.string().max(1000000),
     rsvpOpen: z.boolean(),
     access: z.custom<CalendarAccess>(),
 });
@@ -53,7 +52,6 @@ const state = reactive<Schema>({
     startTime: new Date(),
     endTime: addHours(new Date(), 1),
     content: '',
-    public: false,
     rsvpOpen: false,
     access: {
         jobs: [],
@@ -124,7 +122,6 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
             startTime: toTimestamp(values.startTime),
             endTime: toTimestamp(values.endTime),
             content: values.content,
-            public: values.public,
             rsvpOpen: values.rsvpOpen,
             creatorJob: '',
             access: reqAccess,
@@ -153,7 +150,7 @@ function setFromProps(): void {
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
     state.content = entry.content;
-    state.public = entry.public;
+    state.rsvpOpen = entry.rsvpOpen !== undefined;
 
     if (entry.access) {
         access.value.clear();
@@ -316,7 +313,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <DataNoDataBlock
                         v-if="props.entryId && (!data || !data.entry)"
                         :type="$t('common.entry', 1)"
-                        icon="i-mdi-comment-text-multiple"
+                        icon="i-mdi-calendar"
                     />
 
                     <template v-else>

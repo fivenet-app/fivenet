@@ -76,47 +76,6 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
 
 <template>
     <div>
-        <div class="flex flex-col">
-            <template v-if="!data?.entries || !data?.entries.length">
-                {{ $t('common.not_found', [$t('common.rsvp')]) }}
-            </template>
-            <template v-else>
-                <div class="mb-2 inline-flex items-center gap-2">
-                    <UAvatarGroup size="sm" :max="3">
-                        <UAvatar
-                            v-for="rsvp in data?.entries.slice(0, 3)"
-                            :src="rsvp.user?.avatar?.url"
-                            :alt="`${rsvp.user?.firstname} ${rsvp.user?.lastname}`"
-                        />
-                    </UAvatarGroup>
-                    <p v-if="data?.entries.length > 3">...</p>
-                </div>
-
-                <UAccordion
-                    variant="ghost"
-                    :items="[{ slot: 'rsvp', label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]"
-                >
-                    <template #rsvp>
-                        <UContainer>
-                            <div class="flex flex-col gap-2">
-                                <div v-for="(rsvp, key) in groupedEntries" :key="key">
-                                    <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
-                                    <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
-                                        <template v-if="!rsvp?.length">
-                                            {{ $t('common.none') }}
-                                        </template>
-                                        <template v-else>
-                                            <CitizenInfoPopover v-for="entry in rsvp" :user="entry.user" />
-                                        </template>
-                                    </div>
-                                </div>
-                            </div>
-                        </UContainer>
-                    </template>
-                </UAccordion>
-            </template>
-        </div>
-
         <template v-if="rsvpOpen">
             <UDivider />
 
@@ -156,5 +115,38 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 </UButton>
             </UButtonGroup>
         </template>
+
+        <div v-if="data?.entries && !data?.entries.length" class="flex flex-col">
+            <div class="mb-2 inline-flex items-center gap-2">
+                <UAvatarGroup size="sm" :max="3">
+                    <UAvatar
+                        v-for="rsvp in data?.entries.slice(0, 3)"
+                        :src="rsvp.user?.avatar?.url"
+                        :alt="`${rsvp.user?.firstname} ${rsvp.user?.lastname}`"
+                    />
+                </UAvatarGroup>
+                <UAvatar v-if="data?.entries.length > 3" alt="..." />
+            </div>
+
+            <UAccordion variant="ghost" :items="[{ slot: 'rsvp', label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]">
+                <template #rsvp>
+                    <UContainer>
+                        <div class="flex flex-col gap-2">
+                            <div v-for="(rsvp, key) in groupedEntries" :key="key">
+                                <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
+                                <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
+                                    <template v-if="!rsvp?.length">
+                                        {{ $t('common.none') }}
+                                    </template>
+                                    <template v-else>
+                                        <CitizenInfoPopover v-for="entry in rsvp" :user="entry.user" />
+                                    </template>
+                                </div>
+                            </div>
+                        </div>
+                    </UContainer>
+                </template>
+            </UAccordion>
+        </div>
     </div>
 </template>

@@ -118,7 +118,7 @@ service CalendarService {
   rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
   // @perm: Name=Any
   rpc GetCalendar(GetCalendarRequest) returns (GetCalendarResponse);
-  // @perm: Attrs=Fields/StringList:[]string{"Job"}
+  // @perm: Attrs=Fields/StringList:[]string{"Job", "Public"}
   rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
   // @perm
   rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);

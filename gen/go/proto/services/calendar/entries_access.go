@@ -54,7 +54,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 
 	condition := jet.Bool(false)
 	if publicOk {
-		condition = tCalendarEntry.Public.IS_TRUE()
+		condition = tCalendar.Public.IS_TRUE()
 	}
 
 	stmt := tCalendarEntry.
@@ -62,6 +62,10 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 			tCalendarEntry.ID,
 		).
 		FROM(tCalendarEntry.
+			INNER_JOIN(tCalendar,
+				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
+					AND(tCalendar.DeletedAt.IS_NULL()),
+			).
 			LEFT_JOIN(tCUserAccess,
 				tCUserAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
 					AND(tCUserAccess.EntryID.EQ(tCalendarEntry.ID)).
@@ -82,7 +86,6 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 			tCalendarEntry.ID.IN(ids...),
 			tCalendarEntry.DeletedAt.IS_NULL(),
 			jet.OR(
-				condition,
 				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.Job)),
 				jet.AND(
@@ -94,6 +97,7 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 					tCJobAccess.Access.IS_NOT_NULL(),
 					tCJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
 				),
+				condition,
 			),
 		)).
 		ORDER_BY(tCalendarEntry.ID.DESC(), tCJobAccess.MinimumGrade)

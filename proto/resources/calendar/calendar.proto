@@ -68,12 +68,11 @@ message CalendarEntry {
     min_len: 20,
     max_bytes: 1000000 // 1 Megabyte
   }];
-  bool public = 12;
-  optional bool rsvp_open = 13;
-  optional int32 creator_id = 14;
-  optional resources.users.UserShort creator = 15; // @gotags: alias:"creator"
-  string creator_job = 16 [(validate.rules).string.max_len = 20];
-  resources.calendar.CalendarAccess access = 17;
+  optional bool rsvp_open = 12;
+  optional int32 creator_id = 13;
+  optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
+  string creator_job = 15 [(validate.rules).string.max_len = 20];
+  resources.calendar.CalendarAccess access = 16;
 }
 
 enum RsvpResponses {

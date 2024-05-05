@@ -227,6 +227,10 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 			req.Calendar.Description = &empty
 		}
 
+		if !slices.Contains(fields, "Public") && calendar.Public && req.Calendar.Public {
+			req.Calendar.Public = false
+		}
+
 		stmt := tCalendar.
 			UPDATE(
 				tCalendar.Name,
@@ -389,10 +393,14 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
+			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(tCalendar.
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tCalendar.CreatorID),
 			),
 		).
 		GROUP_BY(tCalendar.ID).

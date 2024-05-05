@@ -4138,7 +4138,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  | @sanitize: method=StripTags |
 | content | [string](#string) |  | @sanitize |
-| public | [bool](#bool) |  |  |
 | rsvp_open | [bool](#bool) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
@@ -9056,7 +9055,7 @@ Results ====================================================================
 | ListCalendarEntries | [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse) | @perm: Name=Any |
 | ListCalendars | [ListCalendarsRequest](#services-calendar-ListCalendarsRequest) | [ListCalendarsResponse](#services-calendar-ListCalendarsResponse) | @perm: Name=Any |
 | GetCalendar | [GetCalendarRequest](#services-calendar-GetCalendarRequest) | [GetCalendarResponse](#services-calendar-GetCalendarResponse) | @perm: Name=Any |
-| CreateOrUpdateCalendar | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;} |
+| CreateOrUpdateCalendar | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;, &#34;Public&#34;} |
 | DeleteCalendar | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm |
 | GetCalendarEntry | [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest) | [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse) | @perm: Name=Any |
 | CreateOrUpdateCalendarEntry | [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse) | @perm |

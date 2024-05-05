@@ -447,7 +447,7 @@ defineShortcuts({
                 <h2 class="sr-only">
                     {{ $t('common.content') }}
                 </h2>
-                <div class="documentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                     <!-- eslint-disable vue/no-v-html -->
                     <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
                 </div>
@@ -546,7 +546,7 @@ defineShortcuts({
 </template>
 
 <style scoped>
-.documentView:deep(.prose) {
+.contentView:deep(.prose) {
     * {
         margin-top: 4px;
         margin-bottom: 4px;

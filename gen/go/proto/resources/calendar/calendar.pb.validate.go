@@ -632,8 +632,6 @@ func (m *CalendarEntry) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Public
-
 	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
 		err := CalendarEntryValidationError{
 			field:  "CreatorJob",

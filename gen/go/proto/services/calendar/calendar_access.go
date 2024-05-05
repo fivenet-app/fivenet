@@ -146,7 +146,6 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 			tCalendar.ID.IN(ids...),
 			tCalendar.DeletedAt.IS_NULL(),
 			jet.OR(
-				condition,
 				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 				tCalendar.CreatorJob.EQ(jet.String(userInfo.Job)),
 				jet.AND(
@@ -158,6 +157,7 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 					tCJobAccess.Access.IS_NOT_NULL(),
 					tCJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
 				),
+				condition,
 			),
 		)).
 		ORDER_BY(tCalendar.ID.DESC(), tCJobAccess.MinimumGrade)

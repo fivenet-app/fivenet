@@ -30,12 +30,22 @@ const calendar = computed(() => data.value?.calendar);
 
 <template>
     <USlideover :ui="{ width: 'w-full sm:max-w-2xl' }" :overlay="false">
-        <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
+        <UCard
+            class="flex flex-1 flex-col"
+            :ui="{
+                body: {
+                    base: 'flex-1 min-h-[calc(100vh-(2*var(--header-height)))] max-h-[calc(100vh-(2*var(--header-height)))] overflow-y-auto',
+                    padding: 'px-1 py-2 sm:p-2',
+                },
+                ring: '',
+                divide: 'divide-y divide-gray-100 dark:divide-gray-800',
+            }"
+        >
             <template #header>
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            <span>{{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar', 1) }}</span>
+                            <span>{{ $t('common.calendar', 1) }}: {{ calendar?.name ?? $t('common.calendar', 1) }}</span>
 
                             <UButton
                                 v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)"
@@ -64,11 +74,6 @@ const calendar = computed(() => data.value?.calendar);
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
                     </div>
-
-                    <div class="flex flex-row items-center gap-2">
-                        <span>{{ $t('common.creator') }}:</span>
-                        <CitizenInfoPopover :user="calendar?.creator" show-avatar-in-name />
-                    </div>
                 </div>
             </template>
 
@@ -82,7 +87,14 @@ const calendar = computed(() => data.value?.calendar);
                 <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar', 1)" icon="i-mdi-comment-text-multiple" />
 
                 <template v-else>
-                    <p class="flex-1">
+                    <div class="flex flex-row items-center gap-2">
+                        <span>{{ $t('common.creator') }}:</span>
+                        <CitizenInfoPopover :user="calendar?.creator" show-avatar-in-name />
+                    </div>
+
+                    <p>{{ $t('common.public') }}: {{ calendar.public ? $t('common.yes') : $t('common.no') }}</p>
+
+                    <p>
                         {{ $t('common.description') }}:
                         {{ calendar.description ?? $t('common.na') }}
                     </p>

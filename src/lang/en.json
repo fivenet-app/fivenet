@@ -432,7 +432,8 @@
         "calendar": "Calendar | Calendars",
         "rsvp": "RSVP",
         "maybe": "Maybe",
-        "appointment": "Appointment | Appointments"
+        "appointment": "Appointment | Appointments",
+        "public": "Public"
     },
     "components": {
         "partials": {
