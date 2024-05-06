@@ -1027,6 +1027,9 @@
                 "update": {
                     "title": "Update Calendar Entry"
                 }
+            },
+            "FindCalendarsModal": {
+                "title": "Find Calendars"
             }
         }
     },
