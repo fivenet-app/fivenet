@@ -326,7 +326,8 @@ const modal = useModal();
 
 const clipboardLink = computed(() =>
     [
-        activeChar.value
+        activeChar.value &&
+        can(['DocStoreService.CreateDocument', 'CitizenStoreService.GetUser', 'DMVService.ListVehicles'], 'oneof')
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',
