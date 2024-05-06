@@ -432,7 +432,8 @@
         "calendar": "Kalender | Kalenders",
         "rsvp": "RSVP",
         "maybe": "Vielleicht",
-        "appointment": "Termin | Termine"
+        "appointment": "Termin | Termine",
+        "public": "Öffentlich"
     },
     "components": {
         "partials": {
@@ -1026,6 +1027,9 @@
                 "update": {
                     "title": "Kalendereintrag aktualisieren"
                 }
+            },
+            "FindCalendarsModal": {
+                "title": "Kalendar finden"
             }
         }
     },
