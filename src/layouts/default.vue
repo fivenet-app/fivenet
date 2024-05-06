@@ -96,6 +96,7 @@ const links = computed(() =>
                     permission: 'JobsConductService.ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+            permission: 'JobsService.ListColleagues' as Perms,
         },
         {
             label: t('common.calendar'),
