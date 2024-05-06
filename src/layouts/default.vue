@@ -87,7 +87,7 @@ const links = computed(() =>
                 },
                 {
                     label: t('common.calendar'),
-                    to: '/jobs/calendar',
+                    to: '/calendar',
                 },
                 {
                     label: t('common.timeclock'),
@@ -100,6 +100,15 @@ const links = computed(() =>
                     permission: 'JobsConductService.ListConductEntries' as Perms,
                 },
             ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+        },
+        {
+            label: t('common.calendar', 1),
+            icon: 'i-mdi-calendar-outline',
+            to: '/calendar',
+            tooltip: {
+                text: t('common.calendar', 1),
+                shortcuts: ['G', 'K'],
+            },
         },
         {
             label: t('common.qualification', 2),

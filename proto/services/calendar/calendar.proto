@@ -53,6 +53,12 @@ message DeleteCalendarRequest {
 
 message DeleteCalendarResponse {}
 
+message SubscribeToCalendarRequest {
+  resources.calendar.CalendarSub sub = 1;
+}
+
+message SubscribeToCalendarResponse {}
+
 // Calendar Entries
 
 message GetCalendarEntryRequest {
@@ -122,6 +128,8 @@ service CalendarService {
   rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
   // @perm
   rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
+  // @perm
+  rpc SubscribeToCalendar(SubscribeToCalendarRequest) returns (SubscribeToCalendarResponse);
 
   // @perm: Name=Any
   rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);

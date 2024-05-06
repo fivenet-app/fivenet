@@ -99,6 +99,67 @@ const calendar = computed(() => data.value?.calendar);
                         {{ calendar.description ?? $t('common.na') }}
                     </p>
                 </template>
+
+                <UAccordion
+                    multiple
+                    :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
+                    :unmount="true"
+                >
+                    <template #access>
+                        <UContainer>
+                            <DataNoDataBlock
+                                v-if="
+                                    !calendar?.access ||
+                                    (calendar?.access?.jobs.length === 0 && calendar?.access?.users.length === 0)
+                                "
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <div v-else class="flex flex-col gap-2">
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in calendar?.access?.jobs"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-info-500" />
+                                        <span>
+                                            {{ entry.jobLabel
+                                            }}<span
+                                                v-if="entry.minimumGrade > 0"
+                                                :title="`${entry.jobLabel} - ${$t('common.rank')} ${entry.minimumGrade}`"
+                                            >
+                                                ({{ entry.jobGradeLabel }})</span
+                                            >
+                                            -
+                                            {{ $t(`enums.calendar.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="entry in calendar?.access?.users"
+                                        :key="entry.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-amber-500" />
+                                        <span :title="`${$t('common.id')} ${entry.userId}`">
+                                            {{ entry.user?.firstname }}
+                                            {{ entry.user?.lastname }} -
+                                            {{ $t(`enums.calendar.AccessLevel.${AccessLevel[entry.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+                            </div>
+                        </UContainer>
+                    </template>
+                </UAccordion>
             </div>
 
             <template #footer>

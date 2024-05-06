@@ -124,6 +124,64 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                         <div class="prose prose-invert min-w-full px-4 py-2" v-html="entry.content"></div>
                     </div>
                 </template>
+
+                <UAccordion
+                    multiple
+                    :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
+                    :unmount="true"
+                >
+                    <template #access>
+                        <UContainer>
+                            <DataNoDataBlock
+                                v-if="!entry?.access || (entry?.access?.jobs.length === 0 && entry?.access?.users.length === 0)"
+                                icon="i-mdi-file-search"
+                                :message="$t('common.not_found', [$t('common.access', 2)])"
+                            />
+
+                            <div v-else class="flex flex-col gap-2">
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="item in entry?.access?.jobs"
+                                        :key="item.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-info-500" />
+                                        <span>
+                                            {{ item.jobLabel
+                                            }}<span
+                                                v-if="item.minimumGrade > 0"
+                                                :title="`${item.jobLabel} - ${$t('common.rank')} ${item.minimumGrade}`"
+                                            >
+                                                ({{ item.jobGradeLabel }})</span
+                                            >
+                                            -
+                                            {{ $t(`enums.calendar.AccessLevel.${AccessLevel[item.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+
+                                <div class="flex flex-row flex-wrap gap-1">
+                                    <UBadge
+                                        v-for="item in entry?.access?.users"
+                                        :key="item.id"
+                                        color="black"
+                                        class="inline-flex gap-1"
+                                        size="md"
+                                    >
+                                        <span class="size-2 rounded-full bg-amber-500" />
+                                        <span :title="`${$t('common.id')} ${item.userId}`">
+                                            {{ item.user?.firstname }}
+                                            {{ item.user?.lastname }} -
+                                            {{ $t(`enums.calendar.AccessLevel.${AccessLevel[item.access]}`) }}
+                                        </span>
+                                    </UBadge>
+                                </div>
+                            </div>
+                        </UContainer>
+                    </template>
+                </UAccordion>
             </div>
 
             <template #footer>
