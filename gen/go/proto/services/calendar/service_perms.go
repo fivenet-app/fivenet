@@ -17,8 +17,10 @@ var PermsRemap = map[string]string{
 	"CalendarService/ListCalendarEntries":   "Any",
 	"CalendarService/ListCalendarEntryRSVP": "Any",
 	"CalendarService/ListCalendars":         "Any",
+	"CalendarService/ListSubscriptions":     "Any",
 	"CalendarService/RSVPCalendarEntry":     "Any",
 	"CalendarService/ShareCalendarEntry":    "CalendarService/CreateOrUpdateCalendarEntry",
+	"CalendarService/SubscribeToCalendar":   "Any",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {
@@ -52,7 +54,7 @@ func init() {
 		},
 		{
 			Category: permkeys.CalendarServicePerm,
-			Name:     permkeys.CalendarServiceDeleteCalendarEntriesPerm,
+			Name:     permkeys.CalendarServiceDeleteCalendarEntryPerm,
 			Attrs:    []perms.Attr{},
 		},
 	})

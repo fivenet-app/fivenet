@@ -317,7 +317,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :disabled="!entryId"
                                 :searchable="
                                     async (query) =>
-                                        (await calendarStore.listCalendars({ pagination: { offset: 0 } })).calendars
+                                        (
+                                            await calendarStore.listCalendars({
+                                                pagination: { offset: 0 },
+                                                onlySubscribed: true,
+                                            })
+                                        ).calendars
                                 "
                                 :search-attributes="['name']"
                                 option-attribute="name"

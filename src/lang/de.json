@@ -1899,7 +1899,7 @@
                 "key": "Löschen von Kalenders",
                 "description": "Löschen von Kalenders."
             },
-            "DeleteCalendarEntries": {
+            "DeleteCalendarEntry": {
                 "key": "Löschen von Kalendereinträgen",
                 "description": "Löschen von Kalendareinträgen (benötigt Verwaltungs-Zugriff.)"
             },

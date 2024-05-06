@@ -9,21 +9,11 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar;calendar";
 
-message ListCalendarEntriesRequest {
-  int32 year = 1 [(validate.rules).int32 = { gte: 2023 }];
-  int32 month = 2 [(validate.rules).int32 = {
-    gte: 1,
-    lte: 12,
-  }];
-  repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
-}
-
-message ListCalendarEntriesResponse {
-  repeated resources.calendar.CalendarEntry entries = 1;
-}
+// Calendar
 
 message ListCalendarsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  bool only_subscribed = 2;
 }
 
 message ListCalendarsResponse {
@@ -53,13 +43,20 @@ message DeleteCalendarRequest {
 
 message DeleteCalendarResponse {}
 
-message SubscribeToCalendarRequest {
-  resources.calendar.CalendarSub sub = 1;
+// Calendar Entries
+
+message ListCalendarEntriesRequest {
+  int32 year = 1 [(validate.rules).int32 = { gte: 2023 }];
+  int32 month = 2 [(validate.rules).int32 = {
+    gte: 1,
+    lte: 12,
+  }];
+  repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
 }
 
-message SubscribeToCalendarResponse {}
-
-// Calendar Entries
+message ListCalendarEntriesResponse {
+  repeated resources.calendar.CalendarEntry entries = 1;
+}
 
 message GetCalendarEntryRequest {
   uint64 calendar_id = 1 [jstype = JS_STRING];
@@ -78,12 +75,12 @@ message CreateOrUpdateCalendarEntryResponse {
   resources.calendar.CalendarEntry entry = 1;
 }
 
-message DeleteCalendarEntriesRequest {
+message DeleteCalendarEntryRequest {
   uint64 calendar_id = 1 [jstype = JS_STRING];
   uint64 entry_id = 2 [jstype = JS_STRING];
 }
 
-message DeleteCalendarEntriesResponse {}
+message DeleteCalendarEntryResponse {}
 
 message ShareCalendarEntryRequest {
   uint64 entry_id = 1 [jstype = JS_STRING];
@@ -116,10 +113,25 @@ message RSVPCalendarEntryResponse {
   resources.calendar.CalendarEntryRSVP entry = 1;
 }
 
-service CalendarService {
-  // @perm: Name=Any
-  rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse);
+// Subs
 
+message ListSubscriptionsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+}
+
+message ListSubscriptionsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.calendar.CalendarSub subs = 2;
+}
+
+message SubscribeToCalendarRequest {
+  resources.calendar.CalendarSub sub = 1;
+  bool delete = 2;
+}
+
+message SubscribeToCalendarResponse {}
+
+service CalendarService {
   // @perm: Name=Any
   rpc ListCalendars(ListCalendarsRequest) returns (ListCalendarsResponse);
   // @perm: Name=Any
@@ -128,15 +140,15 @@ service CalendarService {
   rpc CreateOrUpdateCalendar(CreateOrUpdateCalendarRequest) returns (CreateOrUpdateCalendarResponse);
   // @perm
   rpc DeleteCalendar(DeleteCalendarRequest) returns (DeleteCalendarResponse);
-  // @perm
-  rpc SubscribeToCalendar(SubscribeToCalendarRequest) returns (SubscribeToCalendarResponse);
 
+  // @perm: Name=Any
+  rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse);
   // @perm: Name=Any
   rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);
   // @perm
   rpc CreateOrUpdateCalendarEntry(CreateOrUpdateCalendarEntryRequest) returns (CreateOrUpdateCalendarEntryResponse);
   // @perm
-  rpc DeleteCalendarEntries(DeleteCalendarEntriesRequest) returns (DeleteCalendarEntriesResponse);
+  rpc DeleteCalendarEntry(DeleteCalendarEntryRequest) returns (DeleteCalendarEntryResponse);
   // @perm: Name=CreateOrUpdateCalendarEntry
   rpc ShareCalendarEntry(ShareCalendarEntryRequest) returns (ShareCalendarEntryResponse);
 
@@ -144,4 +156,9 @@ service CalendarService {
   rpc ListCalendarEntryRSVP(ListCalendarEntryRSVPRequest) returns (ListCalendarEntryRSVPResponse);
   // @perm: Name=Any
   rpc RSVPCalendarEntry(RSVPCalendarEntryRequest) returns (RSVPCalendarEntryResponse);
+
+  // @perm: Name=Any
+  rpc ListSubscriptions(ListSubscriptionsRequest) returns (ListSubscriptionsResponse);
+  // @perm: Name=Any
+  rpc SubscribeToCalendar(SubscribeToCalendarRequest) returns (SubscribeToCalendarResponse);
 }

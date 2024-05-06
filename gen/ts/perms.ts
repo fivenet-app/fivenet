@@ -59,7 +59,7 @@ export type Perms =
 	| 'CalendarService.CreateOrUpdateCalendar'
 	| 'CalendarService.CreateOrUpdateCalendarEntry'
 	| 'CalendarService.DeleteCalendar'
-	| 'CalendarService.DeleteCalendarEntries'
+	| 'CalendarService.DeleteCalendarEntry'
 	| 'CentrumService.CreateDispatch'
 	| 'CentrumService.CreateOrUpdateUnit'
 	| 'CentrumService.DeleteDispatch'

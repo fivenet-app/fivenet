@@ -23,6 +23,10 @@ import (
 func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (*ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	if req.OnlySubscribed {
+		// TODO
+	}
+
 	condition := jet.AND(
 		tCalendar.DeletedAt.IS_NULL(),
 		jet.OR(

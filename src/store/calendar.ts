@@ -156,7 +156,7 @@ export const useCalendarStore = defineStore('calendar', {
             const { $grpc } = useNuxtApp();
 
             try {
-                const call = $grpc.getCalendarClient().deleteCalendarEntries({
+                const call = $grpc.getCalendarClient().deleteCalendarEntry({
                     calendarId: calendarId,
                     entryId: entryId,
                 });

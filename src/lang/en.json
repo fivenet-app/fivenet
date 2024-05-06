@@ -1899,7 +1899,7 @@
                 "key": "Delete calendars",
                 "description": "Delete calendars"
             },
-            "DeleteCalendarEntries": {
+            "DeleteCalendarEntry": {
                 "key": "Delete Calendar Entries",
                 "description": "Delete entries from calendars (requires manage access.)"
             },

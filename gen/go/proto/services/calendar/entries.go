@@ -284,12 +284,12 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 	}, nil
 }
 
-func (s *Server) DeleteCalendarEntries(ctx context.Context, req *DeleteCalendarEntriesRequest) (*DeleteCalendarEntriesResponse, error) {
+func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEntryRequest) (*DeleteCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: CalendarService_ServiceDesc.ServiceName,
-		Method:  "DeleteCalendarEntries",
+		Method:  "DeleteCalendarEntry",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
@@ -322,7 +322,7 @@ func (s *Server) DeleteCalendarEntries(ctx context.Context, req *DeleteCalendarE
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
-	return &DeleteCalendarEntriesResponse{}, nil
+	return &DeleteCalendarEntryResponse{}, nil
 }
 
 func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error) {

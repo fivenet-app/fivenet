@@ -1137,6 +1137,183 @@ var _ interface {
 	ErrorName() string
 } = CalendarEntryRecurringValidationError{}
 
+// Validate checks the field values on CalendarSub with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CalendarSub) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CalendarSub with the rules defined in
+// the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CalendarSubMultiError, or
+// nil if none found.
+func (m *CalendarSub) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CalendarSub) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for CalendarId
+
+	// no validation rules for UserId
+
+	// no validation rules for Confirmed
+
+	// no validation rules for Muted
+
+	if m.EntryId != nil {
+		// no validation rules for EntryId
+	}
+
+	if m.User != nil {
+
+		if all {
+			switch v := interface{}(m.GetUser()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarSubValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarSubValidationError{
+						field:  "User",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarSubValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarSubValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarSubValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarSubValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return CalendarSubMultiError(errors)
+	}
+
+	return nil
+}
+
+// CalendarSubMultiError is an error wrapping multiple validation errors
+// returned by CalendarSub.ValidateAll() if the designated constraints aren't met.
+type CalendarSubMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CalendarSubMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CalendarSubMultiError) AllErrors() []error { return m }
+
+// CalendarSubValidationError is the validation error returned by
+// CalendarSub.Validate if the designated constraints aren't met.
+type CalendarSubValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CalendarSubValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CalendarSubValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CalendarSubValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CalendarSubValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CalendarSubValidationError) ErrorName() string { return "CalendarSubValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CalendarSubValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCalendarSub.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CalendarSubValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CalendarSubValidationError{}
+
 // Validate checks the field values on CalendarEntryRSVP with the rules defined
 // in the proto definition for this message. If any rules are violated, the
 // first error encountered is returned, or nil if there are no violations.

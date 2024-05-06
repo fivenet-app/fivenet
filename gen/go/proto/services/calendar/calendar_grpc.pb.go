@@ -19,25 +19,25 @@ import (
 const _ = grpc.SupportPackageIsVersion7
 
 const (
-	CalendarService_ListCalendarEntries_FullMethodName         = "/services.calendar.CalendarService/ListCalendarEntries"
 	CalendarService_ListCalendars_FullMethodName               = "/services.calendar.CalendarService/ListCalendars"
 	CalendarService_GetCalendar_FullMethodName                 = "/services.calendar.CalendarService/GetCalendar"
 	CalendarService_CreateOrUpdateCalendar_FullMethodName      = "/services.calendar.CalendarService/CreateOrUpdateCalendar"
 	CalendarService_DeleteCalendar_FullMethodName              = "/services.calendar.CalendarService/DeleteCalendar"
+	CalendarService_ListCalendarEntries_FullMethodName         = "/services.calendar.CalendarService/ListCalendarEntries"
 	CalendarService_GetCalendarEntry_FullMethodName            = "/services.calendar.CalendarService/GetCalendarEntry"
 	CalendarService_CreateOrUpdateCalendarEntry_FullMethodName = "/services.calendar.CalendarService/CreateOrUpdateCalendarEntry"
-	CalendarService_DeleteCalendarEntries_FullMethodName       = "/services.calendar.CalendarService/DeleteCalendarEntries"
+	CalendarService_DeleteCalendarEntry_FullMethodName         = "/services.calendar.CalendarService/DeleteCalendarEntry"
 	CalendarService_ShareCalendarEntry_FullMethodName          = "/services.calendar.CalendarService/ShareCalendarEntry"
 	CalendarService_ListCalendarEntryRSVP_FullMethodName       = "/services.calendar.CalendarService/ListCalendarEntryRSVP"
 	CalendarService_RSVPCalendarEntry_FullMethodName           = "/services.calendar.CalendarService/RSVPCalendarEntry"
+	CalendarService_ListSubscriptions_FullMethodName           = "/services.calendar.CalendarService/ListSubscriptions"
+	CalendarService_SubscribeToCalendar_FullMethodName         = "/services.calendar.CalendarService/SubscribeToCalendar"
 )
 
 // CalendarServiceClient is the client API for CalendarService service.
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type CalendarServiceClient interface {
-	// @perm: Name=Any
-	ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error)
 	// @perm: Name=Any
 	ListCalendars(ctx context.Context, in *ListCalendarsRequest, opts ...grpc.CallOption) (*ListCalendarsResponse, error)
 	// @perm: Name=Any
@@ -47,17 +47,23 @@ type CalendarServiceClient interface {
 	// @perm
 	DeleteCalendar(ctx context.Context, in *DeleteCalendarRequest, opts ...grpc.CallOption) (*DeleteCalendarResponse, error)
 	// @perm: Name=Any
+	ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error)
+	// @perm: Name=Any
 	GetCalendarEntry(ctx context.Context, in *GetCalendarEntryRequest, opts ...grpc.CallOption) (*GetCalendarEntryResponse, error)
 	// @perm
 	CreateOrUpdateCalendarEntry(ctx context.Context, in *CreateOrUpdateCalendarEntryRequest, opts ...grpc.CallOption) (*CreateOrUpdateCalendarEntryResponse, error)
 	// @perm
-	DeleteCalendarEntries(ctx context.Context, in *DeleteCalendarEntriesRequest, opts ...grpc.CallOption) (*DeleteCalendarEntriesResponse, error)
+	DeleteCalendarEntry(ctx context.Context, in *DeleteCalendarEntryRequest, opts ...grpc.CallOption) (*DeleteCalendarEntryResponse, error)
 	// @perm: Name=CreateOrUpdateCalendarEntry
 	ShareCalendarEntry(ctx context.Context, in *ShareCalendarEntryRequest, opts ...grpc.CallOption) (*ShareCalendarEntryResponse, error)
 	// @perm: Name=Any
 	ListCalendarEntryRSVP(ctx context.Context, in *ListCalendarEntryRSVPRequest, opts ...grpc.CallOption) (*ListCalendarEntryRSVPResponse, error)
 	// @perm: Name=Any
 	RSVPCalendarEntry(ctx context.Context, in *RSVPCalendarEntryRequest, opts ...grpc.CallOption) (*RSVPCalendarEntryResponse, error)
+	// @perm: Name=Any
+	ListSubscriptions(ctx context.Context, in *ListSubscriptionsRequest, opts ...grpc.CallOption) (*ListSubscriptionsResponse, error)
+	// @perm: Name=Any
+	SubscribeToCalendar(ctx context.Context, in *SubscribeToCalendarRequest, opts ...grpc.CallOption) (*SubscribeToCalendarResponse, error)
 }
 
 type calendarServiceClient struct {
@@ -66,15 +72,6 @@ type calendarServiceClient struct {
 
 func NewCalendarServiceClient(cc grpc.ClientConnInterface) CalendarServiceClient {
 	return &calendarServiceClient{cc}
-}
-
-func (c *calendarServiceClient) ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error) {
-	out := new(ListCalendarEntriesResponse)
-	err := c.cc.Invoke(ctx, CalendarService_ListCalendarEntries_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
 }
 
 func (c *calendarServiceClient) ListCalendars(ctx context.Context, in *ListCalendarsRequest, opts ...grpc.CallOption) (*ListCalendarsResponse, error) {
@@ -113,6 +110,15 @@ func (c *calendarServiceClient) DeleteCalendar(ctx context.Context, in *DeleteCa
 	return out, nil
 }
 
+func (c *calendarServiceClient) ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error) {
+	out := new(ListCalendarEntriesResponse)
+	err := c.cc.Invoke(ctx, CalendarService_ListCalendarEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 func (c *calendarServiceClient) GetCalendarEntry(ctx context.Context, in *GetCalendarEntryRequest, opts ...grpc.CallOption) (*GetCalendarEntryResponse, error) {
 	out := new(GetCalendarEntryResponse)
 	err := c.cc.Invoke(ctx, CalendarService_GetCalendarEntry_FullMethodName, in, out, opts...)
@@ -131,9 +137,9 @@ func (c *calendarServiceClient) CreateOrUpdateCalendarEntry(ctx context.Context,
 	return out, nil
 }
 
-func (c *calendarServiceClient) DeleteCalendarEntries(ctx context.Context, in *DeleteCalendarEntriesRequest, opts ...grpc.CallOption) (*DeleteCalendarEntriesResponse, error) {
-	out := new(DeleteCalendarEntriesResponse)
-	err := c.cc.Invoke(ctx, CalendarService_DeleteCalendarEntries_FullMethodName, in, out, opts...)
+func (c *calendarServiceClient) DeleteCalendarEntry(ctx context.Context, in *DeleteCalendarEntryRequest, opts ...grpc.CallOption) (*DeleteCalendarEntryResponse, error) {
+	out := new(DeleteCalendarEntryResponse)
+	err := c.cc.Invoke(ctx, CalendarService_DeleteCalendarEntry_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -167,12 +173,28 @@ func (c *calendarServiceClient) RSVPCalendarEntry(ctx context.Context, in *RSVPC
 	return out, nil
 }
 
+func (c *calendarServiceClient) ListSubscriptions(ctx context.Context, in *ListSubscriptionsRequest, opts ...grpc.CallOption) (*ListSubscriptionsResponse, error) {
+	out := new(ListSubscriptionsResponse)
+	err := c.cc.Invoke(ctx, CalendarService_ListSubscriptions_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *calendarServiceClient) SubscribeToCalendar(ctx context.Context, in *SubscribeToCalendarRequest, opts ...grpc.CallOption) (*SubscribeToCalendarResponse, error) {
+	out := new(SubscribeToCalendarResponse)
+	err := c.cc.Invoke(ctx, CalendarService_SubscribeToCalendar_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // CalendarServiceServer is the server API for CalendarService service.
 // All implementations must embed UnimplementedCalendarServiceServer
 // for forward compatibility
 type CalendarServiceServer interface {
-	// @perm: Name=Any
-	ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error)
 	// @perm: Name=Any
 	ListCalendars(context.Context, *ListCalendarsRequest) (*ListCalendarsResponse, error)
 	// @perm: Name=Any
@@ -182,17 +204,23 @@ type CalendarServiceServer interface {
 	// @perm
 	DeleteCalendar(context.Context, *DeleteCalendarRequest) (*DeleteCalendarResponse, error)
 	// @perm: Name=Any
+	ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error)
+	// @perm: Name=Any
 	GetCalendarEntry(context.Context, *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error)
 	// @perm
 	CreateOrUpdateCalendarEntry(context.Context, *CreateOrUpdateCalendarEntryRequest) (*CreateOrUpdateCalendarEntryResponse, error)
 	// @perm
-	DeleteCalendarEntries(context.Context, *DeleteCalendarEntriesRequest) (*DeleteCalendarEntriesResponse, error)
+	DeleteCalendarEntry(context.Context, *DeleteCalendarEntryRequest) (*DeleteCalendarEntryResponse, error)
 	// @perm: Name=CreateOrUpdateCalendarEntry
 	ShareCalendarEntry(context.Context, *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error)
 	// @perm: Name=Any
 	ListCalendarEntryRSVP(context.Context, *ListCalendarEntryRSVPRequest) (*ListCalendarEntryRSVPResponse, error)
 	// @perm: Name=Any
 	RSVPCalendarEntry(context.Context, *RSVPCalendarEntryRequest) (*RSVPCalendarEntryResponse, error)
+	// @perm: Name=Any
+	ListSubscriptions(context.Context, *ListSubscriptionsRequest) (*ListSubscriptionsResponse, error)
+	// @perm: Name=Any
+	SubscribeToCalendar(context.Context, *SubscribeToCalendarRequest) (*SubscribeToCalendarResponse, error)
 	mustEmbedUnimplementedCalendarServiceServer()
 }
 
@@ -200,9 +228,6 @@ type CalendarServiceServer interface {
 type UnimplementedCalendarServiceServer struct {
 }
 
-func (UnimplementedCalendarServiceServer) ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ListCalendarEntries not implemented")
-}
 func (UnimplementedCalendarServiceServer) ListCalendars(context.Context, *ListCalendarsRequest) (*ListCalendarsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCalendars not implemented")
 }
@@ -215,14 +240,17 @@ func (UnimplementedCalendarServiceServer) CreateOrUpdateCalendar(context.Context
 func (UnimplementedCalendarServiceServer) DeleteCalendar(context.Context, *DeleteCalendarRequest) (*DeleteCalendarResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCalendar not implemented")
 }
+func (UnimplementedCalendarServiceServer) ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListCalendarEntries not implemented")
+}
 func (UnimplementedCalendarServiceServer) GetCalendarEntry(context.Context, *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCalendarEntry not implemented")
 }
 func (UnimplementedCalendarServiceServer) CreateOrUpdateCalendarEntry(context.Context, *CreateOrUpdateCalendarEntryRequest) (*CreateOrUpdateCalendarEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateCalendarEntry not implemented")
 }
-func (UnimplementedCalendarServiceServer) DeleteCalendarEntries(context.Context, *DeleteCalendarEntriesRequest) (*DeleteCalendarEntriesResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method DeleteCalendarEntries not implemented")
+func (UnimplementedCalendarServiceServer) DeleteCalendarEntry(context.Context, *DeleteCalendarEntryRequest) (*DeleteCalendarEntryResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteCalendarEntry not implemented")
 }
 func (UnimplementedCalendarServiceServer) ShareCalendarEntry(context.Context, *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ShareCalendarEntry not implemented")
@@ -232,6 +260,12 @@ func (UnimplementedCalendarServiceServer) ListCalendarEntryRSVP(context.Context,
 }
 func (UnimplementedCalendarServiceServer) RSVPCalendarEntry(context.Context, *RSVPCalendarEntryRequest) (*RSVPCalendarEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RSVPCalendarEntry not implemented")
+}
+func (UnimplementedCalendarServiceServer) ListSubscriptions(context.Context, *ListSubscriptionsRequest) (*ListSubscriptionsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListSubscriptions not implemented")
+}
+func (UnimplementedCalendarServiceServer) SubscribeToCalendar(context.Context, *SubscribeToCalendarRequest) (*SubscribeToCalendarResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SubscribeToCalendar not implemented")
 }
 func (UnimplementedCalendarServiceServer) mustEmbedUnimplementedCalendarServiceServer() {}
 
@@ -244,24 +278,6 @@ type UnsafeCalendarServiceServer interface {
 
 func RegisterCalendarServiceServer(s grpc.ServiceRegistrar, srv CalendarServiceServer) {
 	s.RegisterService(&CalendarService_ServiceDesc, srv)
-}
-
-func _CalendarService_ListCalendarEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ListCalendarEntriesRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(CalendarServiceServer).ListCalendarEntries(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: CalendarService_ListCalendarEntries_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CalendarServiceServer).ListCalendarEntries(ctx, req.(*ListCalendarEntriesRequest))
-	}
-	return interceptor(ctx, in, info, handler)
 }
 
 func _CalendarService_ListCalendars_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
@@ -336,6 +352,24 @@ func _CalendarService_DeleteCalendar_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CalendarService_ListCalendarEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListCalendarEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalendarServiceServer).ListCalendarEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CalendarService_ListCalendarEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalendarServiceServer).ListCalendarEntries(ctx, req.(*ListCalendarEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _CalendarService_GetCalendarEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetCalendarEntryRequest)
 	if err := dec(in); err != nil {
@@ -372,20 +406,20 @@ func _CalendarService_CreateOrUpdateCalendarEntry_Handler(srv interface{}, ctx c
 	return interceptor(ctx, in, info, handler)
 }
 
-func _CalendarService_DeleteCalendarEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(DeleteCalendarEntriesRequest)
+func _CalendarService_DeleteCalendarEntry_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteCalendarEntryRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(CalendarServiceServer).DeleteCalendarEntries(ctx, in)
+		return srv.(CalendarServiceServer).DeleteCalendarEntry(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: CalendarService_DeleteCalendarEntries_FullMethodName,
+		FullMethod: CalendarService_DeleteCalendarEntry_FullMethodName,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(CalendarServiceServer).DeleteCalendarEntries(ctx, req.(*DeleteCalendarEntriesRequest))
+		return srv.(CalendarServiceServer).DeleteCalendarEntry(ctx, req.(*DeleteCalendarEntryRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -444,6 +478,42 @@ func _CalendarService_RSVPCalendarEntry_Handler(srv interface{}, ctx context.Con
 	return interceptor(ctx, in, info, handler)
 }
 
+func _CalendarService_ListSubscriptions_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListSubscriptionsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalendarServiceServer).ListSubscriptions(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CalendarService_ListSubscriptions_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalendarServiceServer).ListSubscriptions(ctx, req.(*ListSubscriptionsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CalendarService_SubscribeToCalendar_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SubscribeToCalendarRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalendarServiceServer).SubscribeToCalendar(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CalendarService_SubscribeToCalendar_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalendarServiceServer).SubscribeToCalendar(ctx, req.(*SubscribeToCalendarRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // CalendarService_ServiceDesc is the grpc.ServiceDesc for CalendarService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -451,10 +521,6 @@ var CalendarService_ServiceDesc = grpc.ServiceDesc{
 	ServiceName: "services.calendar.CalendarService",
 	HandlerType: (*CalendarServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
-		{
-			MethodName: "ListCalendarEntries",
-			Handler:    _CalendarService_ListCalendarEntries_Handler,
-		},
 		{
 			MethodName: "ListCalendars",
 			Handler:    _CalendarService_ListCalendars_Handler,
@@ -472,6 +538,10 @@ var CalendarService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CalendarService_DeleteCalendar_Handler,
 		},
 		{
+			MethodName: "ListCalendarEntries",
+			Handler:    _CalendarService_ListCalendarEntries_Handler,
+		},
+		{
 			MethodName: "GetCalendarEntry",
 			Handler:    _CalendarService_GetCalendarEntry_Handler,
 		},
@@ -480,8 +550,8 @@ var CalendarService_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _CalendarService_CreateOrUpdateCalendarEntry_Handler,
 		},
 		{
-			MethodName: "DeleteCalendarEntries",
-			Handler:    _CalendarService_DeleteCalendarEntries_Handler,
+			MethodName: "DeleteCalendarEntry",
+			Handler:    _CalendarService_DeleteCalendarEntry_Handler,
 		},
 		{
 			MethodName: "ShareCalendarEntry",
@@ -494,6 +564,14 @@ var CalendarService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "RSVPCalendarEntry",
 			Handler:    _CalendarService_RSVPCalendarEntry_Handler,
+		},
+		{
+			MethodName: "ListSubscriptions",
+			Handler:    _CalendarService_ListSubscriptions_Handler,
+		},
+		{
+			MethodName: "SubscribeToCalendar",
+			Handler:    _CalendarService_SubscribeToCalendar_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

@@ -4,41 +4,39 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { CalendarService } from "./calendar";
+import type { SubscribeToCalendarResponse } from "./calendar";
+import type { SubscribeToCalendarRequest } from "./calendar";
+import type { ListSubscriptionsResponse } from "./calendar";
+import type { ListSubscriptionsRequest } from "./calendar";
 import type { RSVPCalendarEntryResponse } from "./calendar";
 import type { RSVPCalendarEntryRequest } from "./calendar";
 import type { ListCalendarEntryRSVPResponse } from "./calendar";
 import type { ListCalendarEntryRSVPRequest } from "./calendar";
 import type { ShareCalendarEntryResponse } from "./calendar";
 import type { ShareCalendarEntryRequest } from "./calendar";
-import type { DeleteCalendarEntriesResponse } from "./calendar";
-import type { DeleteCalendarEntriesRequest } from "./calendar";
+import type { DeleteCalendarEntryResponse } from "./calendar";
+import type { DeleteCalendarEntryRequest } from "./calendar";
 import type { CreateOrUpdateCalendarEntryResponse } from "./calendar";
 import type { CreateOrUpdateCalendarEntryRequest } from "./calendar";
 import type { GetCalendarEntryResponse } from "./calendar";
 import type { GetCalendarEntryRequest } from "./calendar";
+import type { ListCalendarEntriesResponse } from "./calendar";
+import type { ListCalendarEntriesRequest } from "./calendar";
 import type { DeleteCalendarResponse } from "./calendar";
 import type { DeleteCalendarRequest } from "./calendar";
 import type { CreateOrUpdateCalendarResponse } from "./calendar";
 import type { CreateOrUpdateCalendarRequest } from "./calendar";
 import type { GetCalendarResponse } from "./calendar";
 import type { GetCalendarRequest } from "./calendar";
+import { stackIntercept } from "@protobuf-ts/runtime-rpc";
 import type { ListCalendarsResponse } from "./calendar";
 import type { ListCalendarsRequest } from "./calendar";
-import { stackIntercept } from "@protobuf-ts/runtime-rpc";
-import type { ListCalendarEntriesResponse } from "./calendar";
-import type { ListCalendarEntriesRequest } from "./calendar";
 import type { UnaryCall } from "@protobuf-ts/runtime-rpc";
 import type { RpcOptions } from "@protobuf-ts/runtime-rpc";
 /**
  * @generated from protobuf service services.calendar.CalendarService
  */
 export interface ICalendarServiceClient {
-    /**
-     * @perm: Name=Any
-     *
-     * @generated from protobuf rpc: ListCalendarEntries(services.calendar.ListCalendarEntriesRequest) returns (services.calendar.ListCalendarEntriesResponse);
-     */
-    listCalendarEntries(input: ListCalendarEntriesRequest, options?: RpcOptions): UnaryCall<ListCalendarEntriesRequest, ListCalendarEntriesResponse>;
     /**
      * @perm: Name=Any
      *
@@ -66,6 +64,12 @@ export interface ICalendarServiceClient {
     /**
      * @perm: Name=Any
      *
+     * @generated from protobuf rpc: ListCalendarEntries(services.calendar.ListCalendarEntriesRequest) returns (services.calendar.ListCalendarEntriesResponse);
+     */
+    listCalendarEntries(input: ListCalendarEntriesRequest, options?: RpcOptions): UnaryCall<ListCalendarEntriesRequest, ListCalendarEntriesResponse>;
+    /**
+     * @perm: Name=Any
+     *
      * @generated from protobuf rpc: GetCalendarEntry(services.calendar.GetCalendarEntryRequest) returns (services.calendar.GetCalendarEntryResponse);
      */
     getCalendarEntry(input: GetCalendarEntryRequest, options?: RpcOptions): UnaryCall<GetCalendarEntryRequest, GetCalendarEntryResponse>;
@@ -78,9 +82,9 @@ export interface ICalendarServiceClient {
     /**
      * @perm
      *
-     * @generated from protobuf rpc: DeleteCalendarEntries(services.calendar.DeleteCalendarEntriesRequest) returns (services.calendar.DeleteCalendarEntriesResponse);
+     * @generated from protobuf rpc: DeleteCalendarEntry(services.calendar.DeleteCalendarEntryRequest) returns (services.calendar.DeleteCalendarEntryResponse);
      */
-    deleteCalendarEntries(input: DeleteCalendarEntriesRequest, options?: RpcOptions): UnaryCall<DeleteCalendarEntriesRequest, DeleteCalendarEntriesResponse>;
+    deleteCalendarEntry(input: DeleteCalendarEntryRequest, options?: RpcOptions): UnaryCall<DeleteCalendarEntryRequest, DeleteCalendarEntryResponse>;
     /**
      * @perm: Name=CreateOrUpdateCalendarEntry
      *
@@ -99,6 +103,18 @@ export interface ICalendarServiceClient {
      * @generated from protobuf rpc: RSVPCalendarEntry(services.calendar.RSVPCalendarEntryRequest) returns (services.calendar.RSVPCalendarEntryResponse);
      */
     rSVPCalendarEntry(input: RSVPCalendarEntryRequest, options?: RpcOptions): UnaryCall<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListSubscriptions(services.calendar.ListSubscriptionsRequest) returns (services.calendar.ListSubscriptionsResponse);
+     */
+    listSubscriptions(input: ListSubscriptionsRequest, options?: RpcOptions): UnaryCall<ListSubscriptionsRequest, ListSubscriptionsResponse>;
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: SubscribeToCalendar(services.calendar.SubscribeToCalendarRequest) returns (services.calendar.SubscribeToCalendarResponse);
+     */
+    subscribeToCalendar(input: SubscribeToCalendarRequest, options?: RpcOptions): UnaryCall<SubscribeToCalendarRequest, SubscribeToCalendarResponse>;
 }
 /**
  * @generated from protobuf service services.calendar.CalendarService
@@ -112,19 +128,10 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
     /**
      * @perm: Name=Any
      *
-     * @generated from protobuf rpc: ListCalendarEntries(services.calendar.ListCalendarEntriesRequest) returns (services.calendar.ListCalendarEntriesResponse);
-     */
-    listCalendarEntries(input: ListCalendarEntriesRequest, options?: RpcOptions): UnaryCall<ListCalendarEntriesRequest, ListCalendarEntriesResponse> {
-        const method = this.methods[0], opt = this._transport.mergeOptions(options);
-        return stackIntercept<ListCalendarEntriesRequest, ListCalendarEntriesResponse>("unary", this._transport, method, opt, input);
-    }
-    /**
-     * @perm: Name=Any
-     *
      * @generated from protobuf rpc: ListCalendars(services.calendar.ListCalendarsRequest) returns (services.calendar.ListCalendarsResponse);
      */
     listCalendars(input: ListCalendarsRequest, options?: RpcOptions): UnaryCall<ListCalendarsRequest, ListCalendarsResponse> {
-        const method = this.methods[1], opt = this._transport.mergeOptions(options);
+        const method = this.methods[0], opt = this._transport.mergeOptions(options);
         return stackIntercept<ListCalendarsRequest, ListCalendarsResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -133,7 +140,7 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
      * @generated from protobuf rpc: GetCalendar(services.calendar.GetCalendarRequest) returns (services.calendar.GetCalendarResponse);
      */
     getCalendar(input: GetCalendarRequest, options?: RpcOptions): UnaryCall<GetCalendarRequest, GetCalendarResponse> {
-        const method = this.methods[2], opt = this._transport.mergeOptions(options);
+        const method = this.methods[1], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetCalendarRequest, GetCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -142,7 +149,7 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
      * @generated from protobuf rpc: CreateOrUpdateCalendar(services.calendar.CreateOrUpdateCalendarRequest) returns (services.calendar.CreateOrUpdateCalendarResponse);
      */
     createOrUpdateCalendar(input: CreateOrUpdateCalendarRequest, options?: RpcOptions): UnaryCall<CreateOrUpdateCalendarRequest, CreateOrUpdateCalendarResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[2], opt = this._transport.mergeOptions(options);
         return stackIntercept<CreateOrUpdateCalendarRequest, CreateOrUpdateCalendarResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -151,8 +158,17 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
      * @generated from protobuf rpc: DeleteCalendar(services.calendar.DeleteCalendarRequest) returns (services.calendar.DeleteCalendarResponse);
      */
     deleteCalendar(input: DeleteCalendarRequest, options?: RpcOptions): UnaryCall<DeleteCalendarRequest, DeleteCalendarResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteCalendarRequest, DeleteCalendarResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListCalendarEntries(services.calendar.ListCalendarEntriesRequest) returns (services.calendar.ListCalendarEntriesResponse);
+     */
+    listCalendarEntries(input: ListCalendarEntriesRequest, options?: RpcOptions): UnaryCall<ListCalendarEntriesRequest, ListCalendarEntriesResponse> {
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListCalendarEntriesRequest, ListCalendarEntriesResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=Any
@@ -175,11 +191,11 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
     /**
      * @perm
      *
-     * @generated from protobuf rpc: DeleteCalendarEntries(services.calendar.DeleteCalendarEntriesRequest) returns (services.calendar.DeleteCalendarEntriesResponse);
+     * @generated from protobuf rpc: DeleteCalendarEntry(services.calendar.DeleteCalendarEntryRequest) returns (services.calendar.DeleteCalendarEntryResponse);
      */
-    deleteCalendarEntries(input: DeleteCalendarEntriesRequest, options?: RpcOptions): UnaryCall<DeleteCalendarEntriesRequest, DeleteCalendarEntriesResponse> {
+    deleteCalendarEntry(input: DeleteCalendarEntryRequest, options?: RpcOptions): UnaryCall<DeleteCalendarEntryRequest, DeleteCalendarEntryResponse> {
         const method = this.methods[7], opt = this._transport.mergeOptions(options);
-        return stackIntercept<DeleteCalendarEntriesRequest, DeleteCalendarEntriesResponse>("unary", this._transport, method, opt, input);
+        return stackIntercept<DeleteCalendarEntryRequest, DeleteCalendarEntryResponse>("unary", this._transport, method, opt, input);
     }
     /**
      * @perm: Name=CreateOrUpdateCalendarEntry
@@ -207,5 +223,23 @@ export class CalendarServiceClient implements ICalendarServiceClient, ServiceInf
     rSVPCalendarEntry(input: RSVPCalendarEntryRequest, options?: RpcOptions): UnaryCall<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse> {
         const method = this.methods[10], opt = this._transport.mergeOptions(options);
         return stackIntercept<RSVPCalendarEntryRequest, RSVPCalendarEntryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: ListSubscriptions(services.calendar.ListSubscriptionsRequest) returns (services.calendar.ListSubscriptionsResponse);
+     */
+    listSubscriptions(input: ListSubscriptionsRequest, options?: RpcOptions): UnaryCall<ListSubscriptionsRequest, ListSubscriptionsResponse> {
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListSubscriptionsRequest, ListSubscriptionsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=Any
+     *
+     * @generated from protobuf rpc: SubscribeToCalendar(services.calendar.SubscribeToCalendarRequest) returns (services.calendar.SubscribeToCalendarResponse);
+     */
+    subscribeToCalendar(input: SubscribeToCalendarRequest, options?: RpcOptions): UnaryCall<SubscribeToCalendarRequest, SubscribeToCalendarResponse> {
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SubscribeToCalendarRequest, SubscribeToCalendarResponse>("unary", this._transport, method, opt, input);
     }
 }

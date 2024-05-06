@@ -66,6 +66,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             pagination: {
                 offset: offset.value,
             },
+            onlySubscribed: true,
         });
 
         if (query.calendarIds.length === 0) {
@@ -166,7 +167,10 @@ const isOpen = ref(false);
 
 <template>
     <UDashboardPage>
-        <UDashboardPanel grow>
+        <UDashboardPanel
+            class="h-full flex-shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
+            grow
+        >
             <UDashboardNavbar :title="$t('common.calendar', 1)">
                 <template #right>
                     <UButtonGroup
@@ -184,7 +188,6 @@ const isOpen = ref(false);
                             @click="modal.open(CalendarCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.calendar', 1) }}
-                            {{ $t('common.create') }}
                         </UButton>
 
                         <UButton
@@ -196,7 +199,6 @@ const isOpen = ref(false);
                             @click="modal.open(EntryCreateOrUpdateModal, {})"
                         >
                             {{ $t('common.entry', 1) }}
-                            {{ $t('common.create') }}
                         </UButton>
                     </UButtonGroup>
                 </template>

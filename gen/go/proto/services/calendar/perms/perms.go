@@ -14,5 +14,5 @@ const (
 	CalendarServiceCreateOrUpdateCalendarFieldsPermField perms.Key  = "Fields"
 	CalendarServiceCreateOrUpdateCalendarEntryPerm       perms.Name = "CreateOrUpdateCalendarEntry"
 	CalendarServiceDeleteCalendarPerm                    perms.Name = "DeleteCalendar"
-	CalendarServiceDeleteCalendarEntriesPerm             perms.Name = "DeleteCalendarEntries"
+	CalendarServiceDeleteCalendarEntryPerm               perms.Name = "DeleteCalendarEntry"
 )
