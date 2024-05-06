@@ -138,6 +138,15 @@ function updateDate(event: Page[]): void {
     border-radius: 0;
     width: 100%;
 
+    & .vc-header {
+        margin-top: 2px;
+        padding-left: 0;
+        padding-right: 0;
+    }
+    & .vc-weeks {
+        padding-left: 0;
+        padding-right: 0;
+    }
     & .vc-weekday {
         background-color: rgb(var(--color-primary-400));
         border-bottom: var(--weekday-border);

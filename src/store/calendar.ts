@@ -53,8 +53,14 @@ export const useCalendarStore = defineStore('calendar', {
                 const call = $grpc.getCalendarClient().listCalendars(req);
                 const { response } = await call;
 
-                // TODO improve..
-                this.calendars = response.calendars;
+                response.calendars.forEach((calendar) => {
+                    const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
+                    if (idx > -1) {
+                        this.calendars[idx] = calendar;
+                    } else {
+                        this.calendars.push(calendar);
+                    }
+                });
 
                 return response;
             } catch (e) {
@@ -123,6 +129,15 @@ export const useCalendarStore = defineStore('calendar', {
             try {
                 const call = $grpc.getCalendarClient().listCalendarEntries(req);
                 const { response } = await call;
+
+                response.entries.forEach((entry) => {
+                    const idx = this.entries.findIndex((c) => c.id === entry!.id);
+                    if (idx > -1) {
+                        this.entries[idx] = entry;
+                    } else {
+                        this.entries.push(entry);
+                    }
+                });
 
                 return response;
             } catch (e) {

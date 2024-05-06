@@ -95,7 +95,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
 
                 <template v-else>
                     <p>
-                        <span class="font-semibold">{{ $t('common.calendar', 1) }}</span
+                        <span class="font-semibold">{{ $t('common.calendar') }}</span
                         >:
                         <span>
                             <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />

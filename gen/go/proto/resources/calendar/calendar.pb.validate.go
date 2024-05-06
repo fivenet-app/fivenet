@@ -1265,36 +1265,42 @@ func (m *CalendarEntryRecurring) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetStartedAt()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, CalendarEntryRecurringValidationError{
-					field:  "StartedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, CalendarEntryRecurringValidationError{
-					field:  "StartedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetStartedAt()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return CalendarEntryRecurringValidationError{
-				field:  "StartedAt",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
+	// no validation rules for Every
 
-	// no validation rules for Weekly
+	// no validation rules for Count
+
+	if m.Until != nil {
+
+		if all {
+			switch v := interface{}(m.GetUntil()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarEntryRecurringValidationError{
+						field:  "Until",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarEntryRecurringValidationError{
+						field:  "Until",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetUntil()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarEntryRecurringValidationError{
+					field:  "Until",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
 		return CalendarEntryRecurringMultiError(errors)

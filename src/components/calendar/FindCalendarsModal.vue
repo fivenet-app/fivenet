@@ -72,15 +72,11 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
             </template>
 
             <div>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar', 2)])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :message="$t('common.loading', [$t('common.calendar', 2)])"
-                    :retry="refresh"
-                />
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar')])" />
+                <DataErrorBlock v-else-if="error" :message="$t('common.loading', [$t('common.calendar')])" :retry="refresh" />
                 <DataNoDataBlock
                     v-else-if="!data?.calendars || data?.calendars.length === 0"
-                    :type="`${$t('common.calendar')} ${$t('common.calendar', 2)}`"
+                    :type="`${$t('common.calendar')} ${$t('common.calendar')}`"
                     icon="i-mdi-calendar"
                 />
 

@@ -240,13 +240,17 @@ export interface CalendarEntry {
  */
 export interface CalendarEntryRecurring {
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp started_at = 1;
+     * @generated from protobuf field: string every = 1;
      */
-    startedAt?: Timestamp;
+    every: string;
     /**
-     * @generated from protobuf field: bool weekly = 2;
+     * @generated from protobuf field: int32 count = 2;
      */
-    weekly: boolean;
+    count: number;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp until = 3;
+     */
+    until?: Timestamp;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarEntrySub
@@ -829,13 +833,15 @@ export const CalendarEntry = new CalendarEntry$Type();
 class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
     constructor() {
         super("resources.calendar.CalendarEntryRecurring", [
-            { no: 1, name: "started_at", kind: "message", T: () => Timestamp },
-            { no: 2, name: "weekly", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "every", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "until", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<CalendarEntryRecurring>): CalendarEntryRecurring {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.weekly = false;
+        message.every = "";
+        message.count = 0;
         if (value !== undefined)
             reflectionMergePartial<CalendarEntryRecurring>(this, message, value);
         return message;
@@ -845,11 +851,14 @@ class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.timestamp.Timestamp started_at */ 1:
-                    message.startedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startedAt);
+                case /* string every */ 1:
+                    message.every = reader.string();
                     break;
-                case /* bool weekly */ 2:
-                    message.weekly = reader.bool();
+                case /* int32 count */ 2:
+                    message.count = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp until */ 3:
+                    message.until = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.until);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -863,12 +872,15 @@ class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
         return message;
     }
     internalBinaryWrite(message: CalendarEntryRecurring, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.timestamp.Timestamp started_at = 1; */
-        if (message.startedAt)
-            Timestamp.internalBinaryWrite(message.startedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool weekly = 2; */
-        if (message.weekly !== false)
-            writer.tag(2, WireType.Varint).bool(message.weekly);
+        /* string every = 1; */
+        if (message.every !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.every);
+        /* int32 count = 2; */
+        if (message.count !== 0)
+            writer.tag(2, WireType.Varint).int32(message.count);
+        /* optional resources.timestamp.Timestamp until = 3; */
+        if (message.until)
+            Timestamp.internalBinaryWrite(message.until, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

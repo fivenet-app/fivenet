@@ -90,8 +90,9 @@ message CalendarEntry {
 }
 
 message CalendarEntryRecurring {
-  resources.timestamp.Timestamp started_at = 1;
-  bool weekly = 2;
+  string every = 1;
+  int32 count = 2;
+  optional resources.timestamp.Timestamp until = 3;
 }
 
 message CalendarEntrySub {

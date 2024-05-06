@@ -99,6 +99,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
 			tUserProps.Avatar.AS("creator.avatar"),
+			tCalendarEntry.Recurring,
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendar,
@@ -231,13 +232,15 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.StartTime,
 				tCalendarEntry.EndTime,
 				tCalendarEntry.RsvpOpen,
+				tCalendarEntry.Recurring,
 			).
 			SET(
-				tCalendarEntry.Title.SET(jet.String(req.Entry.Title)),
-				tCalendarEntry.Content.SET(jet.String(req.Entry.Content)),
-				tCalendarEntry.StartTime.SET(startTime),
-				tCalendarEntry.EndTime.SET(endTime),
-				tCalendarEntry.RsvpOpen.SET(jet.Bool(*req.Entry.RsvpOpen)),
+				req.Entry.Title,
+				req.Entry.Content,
+				startTime,
+				endTime,
+				req.Entry.RsvpOpen,
+				req.Entry.Recurring,
 			).
 			WHERE(jet.AND(
 				tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.Id)),
@@ -267,6 +270,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.Title,
 				tCalendarEntry.Content,
 				tCalendarEntry.RsvpOpen,
+				tCalendarEntry.Recurring,
 				tCalendarEntry.CreatorID,
 				tCalendarEntry.CreatorJob,
 			).
@@ -278,6 +282,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				req.Entry.Title,
 				req.Entry.Content,
 				req.Entry.RsvpOpen,
+				req.Entry.Recurring,
 				userInfo.UserId,
 				userInfo.Job,
 			)
@@ -421,6 +426,7 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
 			tUserProps.Avatar.AS("creator.avatar"),
+			tCalendarEntry.Recurring,
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendar,

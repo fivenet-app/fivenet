@@ -68,7 +68,6 @@ const {
         immediate: !!props.calendarId,
     },
 );
-// TODO show data loading blocks and error
 
 async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCalendarResponse> {
     const reqAccess: CalendarAccess = {
@@ -296,16 +295,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div>
                     <DataPendingBlock
                         v-if="props.calendarId && loading"
-                        :message="$t('common.loading', [$t('common.calendar', 1)])"
+                        :message="$t('common.loading', [$t('common.calendar')])"
                     />
                     <DataErrorBlock
                         v-else-if="props.calendarId && error"
-                        :title="$t('common.unable_to_load', [$t('common.calendar', 1)])"
+                        :title="$t('common.unable_to_load', [$t('common.calendar')])"
                         :retry="refresh"
                     />
                     <DataNoDataBlock
                         v-if="props.calendarId && (!data || !data.calendar)"
-                        :type="$t('common.calendar', 1)"
+                        :type="$t('common.calendar')"
                         icon="i-mdi-calendar"
                     />
 

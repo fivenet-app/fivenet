@@ -102,11 +102,11 @@ const links = computed(() =>
             ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
         },
         {
-            label: t('common.calendar', 1),
+            label: t('common.calendar'),
             icon: 'i-mdi-calendar-outline',
             to: '/calendar',
             tooltip: {
-                text: t('common.calendar', 1),
+                text: t('common.calendar'),
                 shortcuts: ['G', 'K'],
             },
         },

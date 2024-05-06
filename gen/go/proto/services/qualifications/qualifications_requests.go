@@ -43,10 +43,6 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 	condition := tQualiRequests.DeletedAt.IS_NULL().
 		AND(tQualiRequests.Status.NOT_EQ(jet.Int16(int16(qualifications.RequestStatus_REQUEST_STATUS_COMPLETED))))
 
-	if req.UserId != nil {
-		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(*req.UserId)))
-	}
-
 	if req.QualificationId != nil {
 		check, err := s.checkIfUserHasAccessToQuali(ctx, *req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
 		if err != nil {
@@ -61,10 +57,7 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 		condition = condition.AND(jet.AND(
 			tQuali.DeletedAt.IS_NULL(),
 			jet.OR(
-				jet.AND(
-					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
-				),
+				tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)),
 				jet.AND(
 					tQJobAccess.Access.IS_NOT_NULL(),
 					jet.OR(
@@ -77,6 +70,12 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 				),
 			),
 		))
+	}
+
+	if req.UserId != nil {
+		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(*req.UserId)))
+	} else if req.QualificationId == nil {
+		condition = condition.AND(tUser.Job.EQ(jet.String(userInfo.Job))).AND(tQualiRequests.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
 
 	if len(req.Status) > 0 {
@@ -103,6 +102,9 @@ func (s *Server) ListQualificationRequests(ctx context.Context, req *ListQualifi
 					tQJobAccess.QualificationID.EQ(tQuali.ID).
 						AND(tQJobAccess.Job.EQ(jet.String(userInfo.Job))).
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
+				).
+				LEFT_JOIN(tUser,
+					tQualiRequests.UserID.EQ(tUser.ID),
 				),
 		).
 		WHERE(condition)

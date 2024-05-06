@@ -45,7 +45,7 @@ const calendar = computed(() => data.value?.calendar);
                 <div class="flex flex-col gap-1">
                     <div class="flex items-center justify-between">
                         <h3 class="inline-flex gap-2 text-2xl font-semibold leading-6">
-                            <span>{{ $t('common.calendar', 1) }}: {{ calendar?.name ?? $t('common.calendar', 1) }}</span>
+                            <span>{{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}</span>
 
                             <UButton
                                 v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)"
@@ -78,13 +78,13 @@ const calendar = computed(() => data.value?.calendar);
             </template>
 
             <div>
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar', 1)])" />
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.calendar')])" />
                 <DataErrorBlock
                     v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.calendar', 1)])"
+                    :title="$t('common.unable_to_load', [$t('common.calendar')])"
                     :retry="refresh"
                 />
-                <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar', 1)" icon="i-mdi-comment-text-multiple" />
+                <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-comment-text-multiple" />
 
                 <template v-else>
                     <div class="flex flex-row items-center gap-2">

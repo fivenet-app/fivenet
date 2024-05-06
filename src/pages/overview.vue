@@ -42,7 +42,7 @@ const items = [
         icon: 'i-mdi-briefcase-outline',
     },
     {
-        title: t('common.calendar', 1),
+        title: t('common.calendar'),
         description: t('pages.overview.features.calendar'),
         to: { name: 'calendar' },
         icon: 'i-mdi-calendar-outline',

@@ -4185,8 +4185,9 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| weekly | [bool](#bool) |  |  |
+| every | [string](#string) |  |  |
+| count | [int32](#int32) |  |  |
+| until | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 
 
 

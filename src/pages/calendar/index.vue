@@ -13,6 +13,7 @@ import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
+import { addDays } from 'date-fns';
 
 useHead({
     title: 'common.calendar',
@@ -28,6 +29,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
+// TODO use store data instead of our separate data calls
 const { activeCalendarIds } = storeToRefs(calendarStore);
 
 const schema = z.object({
@@ -112,7 +114,11 @@ function formatStartEndTime(entry: CalendarEntry): string {
     return d(start, 'time') + ' - ' + d(end, 'time');
 }
 
-type CalEntry = { key: string; customData: CalendarEntry & { color: string; time: string }; dates: DateRangeSource[] };
+type CalEntry = {
+    key: string;
+    customData: CalendarEntry & { color: string; time: string };
+    dates: DateRangeSource | DateRangeSource[];
+};
 
 const transformedCalendarEntries = computed(() =>
     calendarEntries.value?.entries.map((entry) => {
@@ -128,6 +134,12 @@ const transformedCalendarEntries = computed(() =>
                 {
                     start: toDate(entry.startTime),
                     end: entry.endTime ? toDate(entry.endTime) : undefined,
+                    repeat: entry.recurring
+                        ? {
+                              every: [entry.recurring.count, entry.recurring.every],
+                              until: addDays(toDate(entry.recurring?.until), 31),
+                          }
+                        : undefined,
                 },
             ] as DateRangeSource[],
         };
@@ -174,7 +186,7 @@ const isOpen = ref(false);
             class="h-full flex-shrink-0 border-b border-gray-200 lg:w-[--width] lg:border-b-0 lg:border-r dark:border-gray-800"
             grow
         >
-            <UDashboardNavbar :title="$t('common.calendar', 1)">
+            <UDashboardNavbar :title="$t('common.calendar')">
                 <template #right>
                     <UButtonGroup
                         v-if="
@@ -190,7 +202,7 @@ const isOpen = ref(false);
                             class="flex-1"
                             @click="modal.open(CalendarCreateOrUpdateModal, {})"
                         >
-                            {{ $t('common.calendar', 1) }}
+                            {{ $t('common.calendar') }}
                         </UButton>
 
                         <UButton
@@ -208,40 +220,44 @@ const isOpen = ref(false);
             </UDashboardNavbar>
 
             <UContainer :ui="{ constrained: 'max-w-5xl' }" class="mt-2 w-full xl:hidden">
-                <UAccordion :items="[{ slot: 'calendar', label: $t('common.calendar', 2), icon: 'i-mdi-calendar' }]">
+                <UAccordion :items="[{ slot: 'calendar', label: $t('common.calendar'), icon: 'i-mdi-calendar' }]">
                     <template #calendar>
                         <div>
                             <DataPendingBlock
                                 v-if="calendarsLoading"
-                                :message="$t('common.loading', [$t('common.calendar', 2)])"
+                                :message="$t('common.loading', [$t('common.calendar')])"
                             />
                             <DataErrorBlock
                                 v-else-if="calendarsError"
-                                :message="$t('common.loading', [$t('common.calendar', 2)])"
+                                :message="$t('common.loading', [$t('common.calendar')])"
                                 :retry="calendarsRefresh"
                             />
-                            <template v-else>
-                                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                    <div
-                                        v-for="calendar in calendars?.calendars"
-                                        :key="calendar.id"
-                                        class="inline-flex items-center gap-2"
-                                    >
-                                        <UCheckbox
-                                            :model-value="query.calendarIds.includes(calendar.id)"
-                                            class="truncate"
-                                            @change="calendarIdChange(calendar.id, $event)"
-                                        />
-                                        <UButton
-                                            :color="calendar.color"
-                                            size="sm"
-                                            truncate
-                                            :label="calendar.name"
-                                            @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
-                                        />
-                                    </div>
+
+                            <div v-else class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                <div
+                                    v-for="calendar in calendars?.calendars"
+                                    :key="calendar.id"
+                                    class="inline-flex items-center gap-2"
+                                >
+                                    <UCheckbox
+                                        :model-value="query.calendarIds.includes(calendar.id)"
+                                        class="truncate"
+                                        @change="calendarIdChange(calendar.id, $event)"
+                                    />
+
+                                    <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+
+                                    <UButton
+                                        :color="calendar.color"
+                                        size="sm"
+                                        variant="link"
+                                        :padded="false"
+                                        truncate
+                                        :label="calendar.name"
+                                        @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                                    />
                                 </div>
-                            </template>
+                            </div>
                         </div>
                     </template>
                 </UAccordion>
@@ -310,7 +326,7 @@ const isOpen = ref(false);
             </div>
         </UDashboardPanel>
 
-        <UDashboardPanel v-model="isOpen" collapsible side="right" class="!hidden max-w-xs flex-1 xl:!flex">
+        <UDashboardPanel v-model="isOpen" collapsible side="right" class="!hidden max-w-64 flex-1 xl:!flex">
             <UDashboardNavbar>
                 <template #right>
                     <UButtonGroup
@@ -327,7 +343,7 @@ const isOpen = ref(false);
                             class="flex-1"
                             @click="modal.open(CalendarCreateOrUpdateModal, {})"
                         >
-                            {{ $t('common.calendar', 1) }}
+                            {{ $t('common.calendar') }}
                         </UButton>
 
                         <UButton
@@ -346,36 +362,36 @@ const isOpen = ref(false);
 
             <div class="m-2 flex h-full flex-col gap-2">
                 <div>
-                    <p class="font-semibold">{{ $t('common.calendar', 2) }}</p>
+                    <p class="font-semibold">{{ $t('common.calendar') }}</p>
 
-                    <DataPendingBlock v-if="calendarsLoading" :message="$t('common.loading', [$t('common.calendar', 2)])" />
+                    <DataPendingBlock v-if="calendarsLoading" :message="$t('common.loading', [$t('common.calendar')])" />
                     <DataErrorBlock
                         v-else-if="calendarsError"
-                        :message="$t('common.loading', [$t('common.calendar', 2)])"
+                        :message="$t('common.loading', [$t('common.calendar')])"
                         :retry="calendarsRefresh"
                     />
-                    <template v-else>
-                        <div class="grid grid-cols-1 gap-2">
-                            <div
-                                v-for="calendar in calendars?.calendars"
-                                :key="calendar.id"
-                                class="inline-flex items-center gap-2"
-                            >
-                                <UCheckbox
-                                    :model-value="query.calendarIds.includes(calendar.id)"
-                                    class="truncate"
-                                    @change="calendarIdChange(calendar.id, $event)"
-                                />
-                                <UButton
-                                    :color="calendar.color"
-                                    size="sm"
-                                    truncate
-                                    :label="calendar.name"
-                                    @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
-                                />
-                            </div>
+
+                    <div v-else class="grid grid-cols-1 gap-2">
+                        <div v-for="calendar in calendars?.calendars" :key="calendar.id" class="inline-flex items-center gap-2">
+                            <UCheckbox
+                                :model-value="query.calendarIds.includes(calendar.id)"
+                                class="truncate"
+                                @change="calendarIdChange(calendar.id, $event)"
+                            />
+
+                            <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+
+                            <UButton
+                                :color="calendar.color"
+                                :padded="false"
+                                variant="link"
+                                size="sm"
+                                truncate
+                                :label="calendar.name"
+                                @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                            />
                         </div>
-                    </template>
+                    </div>
                 </div>
 
                 <div class="flex-1" />
