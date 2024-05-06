@@ -175,20 +175,11 @@ defineShortcuts({
                                     by="name"
                                     :search="
                                         async (search: string) => {
-                                            if (!can('CompletorService.CompleteDocumentCategories')) {
-                                                return [];
-                                            }
-
-                                            categoriesLoading = true;
-                                            const { $grpc } = useNuxtApp();
                                             try {
-                                                const call = $grpc.getCompletorClient().completeDocumentCategories({
-                                                    search: search,
-                                                });
-                                                const { response } = await call;
-
+                                                categoriesLoading = true;
+                                                const categories = await completorStore.completeDocumentCategories(search);
                                                 categoriesLoading = false;
-                                                return response.categories;
+                                                return categories;
                                             } catch (e) {
                                                 $grpc.handleError(e as RpcError);
                                                 throw e;

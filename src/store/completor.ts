@@ -49,6 +49,10 @@ export const useCompletorStore = defineStore('completor', {
             );
         },
         async completeCitizens(req: CompleteCitizensRequest): Promise<UserShort[]> {
+            if (!can('CompletorService.CompleteCitizens')) {
+                return [];
+            }
+
             const { $grpc } = useNuxtApp();
             try {
                 const call = $grpc.getCompletorClient().completeCitizens(req);

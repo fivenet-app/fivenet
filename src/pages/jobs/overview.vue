@@ -56,14 +56,15 @@ const showRadioFrequency = ref(false);
 
                         <UCard v-if="jobProps?.radioFrequency">
                             <template #header>
-                                <h3 class="text-lg font-semibold">
-                                    {{ $t('common.radio_frequency') }}
+                                <h3 class="inline-flex items-center gap-1 text-lg font-semibold">
+                                    <UIcon name="i-mdi-radio-handheld" class="size-7" />
+
+                                    <span>{{ $t('common.radio_frequency') }}</span>
                                 </h3>
                             </template>
 
                             <div class="flex flex-col gap-2">
-                                <div class="flex items-center text-center text-lg font-bold">
-                                    <UIcon name="i-mdi-radio-handheld" class="h-auto w-7" />
+                                <div class="flex items-center justify-center text-lg font-bold">
                                     <span
                                         :class="showRadioFrequency ? '' : 'blur'"
                                         @click="showRadioFrequency = !showRadioFrequency"
