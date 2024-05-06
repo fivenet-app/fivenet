@@ -86,10 +86,6 @@ const links = computed(() =>
                     permission: 'JobsService.ListColleagueActivity' as Perms,
                 },
                 {
-                    label: t('common.calendar'),
-                    to: '/calendar',
-                },
-                {
                     label: t('common.timeclock'),
                     to: '/jobs/timeclock',
                     permission: 'JobsTimeclockService.ListTimeclock' as Perms,

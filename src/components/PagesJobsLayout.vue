@@ -23,11 +23,6 @@ const links = [
         permission: 'JobsService.ListColleagueActivity' as Perms,
     },
     {
-        label: t('common.calendar'),
-        to: { name: 'jobs-calendar' },
-        icon: 'i-mdi-calendar-month',
-    },
-    {
         label: t('pages.jobs.timeclock.title'),
         to: { name: 'jobs-timeclock' },
         icon: 'i-mdi-timeline-clock',
