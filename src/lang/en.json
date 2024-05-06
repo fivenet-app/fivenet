@@ -1902,13 +1902,13 @@
                 "key": "Delete calendars",
                 "description": "Delete calendars"
             },
-            "DeleteCalendarEntry": {
-                "key": "Delete Calendar Entries",
-                "description": "Delete entries from calendars (requires manage access.)"
-            },
             "CreateOrUpdateCalendarEntry": {
                 "key": "Create or update calendar entries",
                 "description": "Create or update calendar entries (sharing requires share access and creating requires edit access.)"
+            },
+            "DeleteCalendarEntry": {
+                "key": "Delete Calendar Entries",
+                "description": "Delete entries from calendars (requires manage access.)"
             }
         }
     },
