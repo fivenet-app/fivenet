@@ -372,7 +372,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="can('SuperUser') || attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public')"
+                            v-if="attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public')"
                             name="public"
                             :label="$t('common.public')"
                             class="flex-1"

@@ -17,6 +17,7 @@ import { useAuthStore } from './auth';
 export interface CalendarState {
     calendars: Calendar[];
     entries: CalendarEntry[];
+    activeCalendarIds: string[];
 }
 
 export const useCalendarStore = defineStore('calendar', {
@@ -24,6 +25,7 @@ export const useCalendarStore = defineStore('calendar', {
         ({
             calendars: [],
             entries: [],
+            activeCalendarIds: [],
         }) as CalendarState,
     persist: {
         key(id) {
@@ -51,6 +53,7 @@ export const useCalendarStore = defineStore('calendar', {
                 const call = $grpc.getCalendarClient().listCalendars(req);
                 const { response } = await call;
 
+                // TODO improve..
                 this.calendars = response.calendars;
 
                 return response;

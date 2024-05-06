@@ -23,30 +23,46 @@ import (
 func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (*ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	if req.OnlySubscribed {
-		// TODO
+	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_BLOCKED
+	if req.MinAccessLevel != nil {
+		minAccessLevel = *req.MinAccessLevel
 	}
 
 	condition := jet.AND(
 		tCalendar.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
-				tCalendar.Public.IS_TRUE(),
+				tCalendar.ID.IN(tCalendarSubs.
+					SELECT(
+						tCalendarSubs.CalendarID,
+					).
+					FROM(tCalendarSubs).
+					WHERE(jet.AND(
+						tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
+					)),
+				),
 				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
 				jet.AND(
 					tCUserAccess.Access.IS_NOT_NULL(),
-					tCUserAccess.Access.NOT_EQ(jet.Int32(int32(calendar.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					tCUserAccess.Access.GT(jet.Int32(int32(minAccessLevel))),
 				),
 				jet.AND(
 					tCUserAccess.Access.IS_NULL(),
 					tCJobAccess.Access.IS_NOT_NULL(),
-					tCJobAccess.Access.NOT_EQ(jet.Int32(int32(calendar.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+					tCJobAccess.Access.GT(jet.Int32(int32(minAccessLevel))),
 				),
 			),
 		),
 	)
+
+	if req.OnlyPublic {
+		condition = jet.AND(
+			tCalendar.DeletedAt.IS_NULL(),
+			tCalendar.Public.IS_TRUE(),
+		)
+	}
 
 	countStmt := tCalendar.
 		SELECT(
@@ -100,7 +116,20 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 			tCalendar.Closed,
 			tCalendar.Color,
 			tCalendar.CreatorID,
-			tCalendar.CreatorJob,
+			tCreator.ID,
+			tCreator.Identifier,
+			tCreator.Job,
+			tCreator.JobGrade,
+			tCreator.Firstname,
+			tCreator.Lastname,
+			tCreator.Dateofbirth,
+			tCreator.PhoneNumber,
+			tUserProps.Avatar.AS("creator.avatar"),
+			tCalendarSubs.CalendarID,
+			tCalendarSubs.UserID,
+			tCalendarSubs.CreatedAt,
+			tCalendarSubs.Confirmed,
+			tCalendarSubs.Muted,
 		).
 		FROM(tCalendar.
 			LEFT_JOIN(tCUserAccess,
@@ -116,6 +145,13 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 			).
 			LEFT_JOIN(tCreator,
 				tCalendar.CreatorID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tUserProps,
+				tUserProps.UserID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tCalendarSubs,
+				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
+					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId))),
 			),
 		).
 		GROUP_BY(tCalendar.ID).
@@ -165,6 +201,18 @@ func (s *Server) GetCalendar(ctx context.Context, req *GetCalendarRequest) (*Get
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
+
+	for i := 0; i < len(access.Jobs); i++ {
+		s.enricher.EnrichJobInfo(access.Jobs[i])
+	}
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := 0; i < len(access.Users); i++ {
+		if access.Users[i].User != nil {
+			jobInfoFn(access.Users[i].User)
+		}
+	}
+
 	calendar.Access = access
 
 	return &GetCalendarResponse{
@@ -398,6 +446,11 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			tCreator.Dateofbirth,
 			tCreator.PhoneNumber,
 			tUserProps.Avatar.AS("creator.avatar"),
+			tCalendarSubs.CalendarID,
+			tCalendarSubs.UserID,
+			tCalendarSubs.CreatedAt,
+			tCalendarSubs.Confirmed,
+			tCalendarSubs.Muted,
 		).
 		FROM(tCalendar.
 			LEFT_JOIN(tCreator,
@@ -405,6 +458,10 @@ func (s *Server) getCalendar(ctx context.Context, userInfo *userinfo.UserInfo, c
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tCalendar.CreatorID),
+			).
+			LEFT_JOIN(tCalendarSubs,
+				tCalendarSubs.CalendarID.EQ(tCalendar.ID).
+					AND(tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId))),
 			),
 		).
 		GROUP_BY(tCalendar.ID).

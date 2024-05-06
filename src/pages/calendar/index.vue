@@ -28,6 +28,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
+const { activeCalendarIds } = storeToRefs(calendarStore);
 
 const schema = z.object({
     year: z.number(),
@@ -58,6 +59,7 @@ const {
     data: calendars,
     pending: calendarsLoading,
     error: calendarsError,
+    refresh: calendarsRefresh,
 } = useLazyAsyncData(`calendars-${query.year}-${query.month}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
@@ -66,14 +68,14 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             pagination: {
                 offset: offset.value,
             },
-            onlySubscribed: true,
+            onlyPublic: false,
         });
 
         if (query.calendarIds.length === 0) {
             query.calendarIds = response.calendars.map((c) => c.id);
+        } else {
+            refresh();
         }
-
-        refresh();
 
         return response;
     } catch (e) {
@@ -96,6 +98,7 @@ const {
     { immediate: false },
 );
 
+watch(query, () => (activeCalendarIds.value = query.calendarIds));
 watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function formatStartEndTime(entry: CalendarEntry): string {
@@ -215,7 +218,7 @@ const isOpen = ref(false);
                             <DataErrorBlock
                                 v-else-if="calendarsError"
                                 :message="$t('common.loading', [$t('common.calendar', 2)])"
-                                :retry="refresh"
+                                :retry="calendarsRefresh"
                             />
                             <template v-else>
                                 <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
@@ -349,7 +352,7 @@ const isOpen = ref(false);
                     <DataErrorBlock
                         v-else-if="calendarsError"
                         :message="$t('common.loading', [$t('common.calendar', 2)])"
-                        :retry="refresh"
+                        :retry="calendarsRefresh"
                     />
                     <template v-else>
                         <div class="grid grid-cols-1 gap-2">

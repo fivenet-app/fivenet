@@ -13,7 +13,8 @@
                 "jobs": "Infos about your job and employee management.",
                 "livemap": "Live position of dispatches and your colleagues.",
                 "centrum": "Dispatch Center, for dispatching Dispatches.",
-                "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions."
+                "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
+                "calendar": "Public, private and job events all in this nice calendar."
             }
         },
         "documents": {
@@ -433,7 +434,9 @@
         "rsvp": "RSVP",
         "maybe": "Maybe",
         "appointment": "Appointment | Appointments",
-        "public": "Public"
+        "public": "Public",
+        "subscribe": "Subscribe",
+        "unsubscribe": "Unsubscribe"
     },
     "components": {
         "partials": {

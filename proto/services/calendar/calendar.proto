@@ -13,7 +13,8 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/calend
 
 message ListCalendarsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  bool only_subscribed = 2;
+  bool only_public = 2;
+  optional resources.calendar.AccessLevel min_access_level = 3;
 }
 
 message ListCalendarsResponse {
@@ -129,7 +130,9 @@ message SubscribeToCalendarRequest {
   bool delete = 2;
 }
 
-message SubscribeToCalendarResponse {}
+message SubscribeToCalendarResponse {
+  resources.calendar.CalendarSub sub = 1;
+}
 
 service CalendarService {
   // @perm: Name=Any

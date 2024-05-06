@@ -17,6 +17,7 @@ import { CalendarAccess } from "../../resources/calendar/access";
 import { CalendarEntry } from "../../resources/calendar/calendar";
 import { Calendar } from "../../resources/calendar/calendar";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { AccessLevel } from "../../resources/calendar/access";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Calendar
 
@@ -29,9 +30,13 @@ export interface ListCalendarsRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: bool only_subscribed = 2;
+     * @generated from protobuf field: bool only_public = 2;
      */
-    onlySubscribed: boolean;
+    onlyPublic: boolean;
+    /**
+     * @generated from protobuf field: optional resources.calendar.AccessLevel min_access_level = 3;
+     */
+    minAccessLevel?: AccessLevel;
 }
 /**
  * @generated from protobuf message services.calendar.ListCalendarsResponse
@@ -299,18 +304,23 @@ export interface SubscribeToCalendarRequest {
  * @generated from protobuf message services.calendar.SubscribeToCalendarResponse
  */
 export interface SubscribeToCalendarResponse {
+    /**
+     * @generated from protobuf field: resources.calendar.CalendarSub sub = 1;
+     */
+    sub?: CalendarSub;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
     constructor() {
         super("services.calendar.ListCalendarsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "only_subscribed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "only_public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] }
         ]);
     }
     create(value?: PartialMessage<ListCalendarsRequest>): ListCalendarsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.onlySubscribed = false;
+        message.onlyPublic = false;
         if (value !== undefined)
             reflectionMergePartial<ListCalendarsRequest>(this, message, value);
         return message;
@@ -323,8 +333,11 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* bool only_subscribed */ 2:
-                    message.onlySubscribed = reader.bool();
+                case /* bool only_public */ 2:
+                    message.onlyPublic = reader.bool();
+                    break;
+                case /* optional resources.calendar.AccessLevel min_access_level */ 3:
+                    message.minAccessLevel = reader.int32();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -341,9 +354,12 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* bool only_subscribed = 2; */
-        if (message.onlySubscribed !== false)
-            writer.tag(2, WireType.Varint).bool(message.onlySubscribed);
+        /* bool only_public = 2; */
+        if (message.onlyPublic !== false)
+            writer.tag(2, WireType.Varint).bool(message.onlyPublic);
+        /* optional resources.calendar.AccessLevel min_access_level = 3; */
+        if (message.minAccessLevel !== undefined)
+            writer.tag(3, WireType.Varint).int32(message.minAccessLevel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1528,7 +1544,9 @@ export const SubscribeToCalendarRequest = new SubscribeToCalendarRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class SubscribeToCalendarResponse$Type extends MessageType<SubscribeToCalendarResponse> {
     constructor() {
-        super("services.calendar.SubscribeToCalendarResponse", []);
+        super("services.calendar.SubscribeToCalendarResponse", [
+            { no: 1, name: "sub", kind: "message", T: () => CalendarSub }
+        ]);
     }
     create(value?: PartialMessage<SubscribeToCalendarResponse>): SubscribeToCalendarResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1537,9 +1555,28 @@ class SubscribeToCalendarResponse$Type extends MessageType<SubscribeToCalendarRe
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SubscribeToCalendarResponse): SubscribeToCalendarResponse {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.calendar.CalendarSub sub */ 1:
+                    message.sub = CalendarSub.internalBinaryRead(reader, reader.uint32(), options, message.sub);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: SubscribeToCalendarResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.calendar.CalendarSub sub = 1; */
+        if (message.sub)
+            CalendarSub.internalBinaryWrite(message.sub, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

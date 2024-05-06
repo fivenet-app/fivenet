@@ -101,22 +101,14 @@ const calendar = computed(() => data.value?.calendar);
                 </template>
 
                 <UAccordion
+                    v-if="calendar?.access && (calendar?.access?.jobs.length > 0 || calendar?.access?.users.length > 0)"
                     multiple
                     :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
                     :unmount="true"
                 >
                     <template #access>
                         <UContainer>
-                            <DataNoDataBlock
-                                v-if="
-                                    !calendar?.access ||
-                                    (calendar?.access?.jobs.length === 0 && calendar?.access?.users.length === 0)
-                                "
-                                icon="i-mdi-file-search"
-                                :message="$t('common.not_found', [$t('common.access', 2)])"
-                            />
-
-                            <div v-else class="flex flex-col gap-2">
+                            <div class="flex flex-col gap-2">
                                 <div class="flex flex-row flex-wrap gap-1">
                                     <UBadge
                                         v-for="entry in calendar?.access?.jobs"

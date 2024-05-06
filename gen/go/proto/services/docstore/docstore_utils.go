@@ -31,12 +31,12 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 					jet.OR(
 						jet.AND(
 							tDUserAccess.Access.IS_NOT_NULL(),
-							tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tDUserAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 						jet.AND(
 							tDUserAccess.Access.IS_NULL(),
 							tDJobAccess.Access.IS_NOT_NULL(),
-							tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tDJobAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 					),
 				),
@@ -157,12 +157,12 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 					jet.OR(
 						jet.AND(
 							tDUserAccess.Access.IS_NOT_NULL(),
-							tDUserAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tDUserAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 						jet.AND(
 							tDUserAccess.Access.IS_NULL(),
 							tDJobAccess.Access.IS_NOT_NULL(),
-							tDJobAccess.Access.NOT_EQ(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+							tDJobAccess.Access.GT(jet.Int32(int32(documents.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 						),
 					),
 				),

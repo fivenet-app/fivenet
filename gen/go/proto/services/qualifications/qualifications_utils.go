@@ -36,7 +36,7 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 					),
 					jet.AND(
 						tQJobAccess.Access.IS_NOT_NULL(),
-						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),
@@ -162,7 +162,7 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 					jet.AND(
 						tQJobAccess.Access.IS_NOT_NULL(),
-						tQJobAccess.Access.NOT_EQ(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
+						tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
 					),
 				),
 			),

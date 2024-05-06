@@ -42,6 +42,12 @@ const items = [
         icon: 'i-mdi-briefcase-outline',
     },
     {
+        title: t('common.calendar', 1),
+        description: t('pages.overview.features.calendar'),
+        to: { name: 'calendar' },
+        icon: 'i-mdi-calendar-outline',
+    },
+    {
         title: t('common.qualification', 2),
         description: t('pages.overview.features.qualifications'),
         to: { name: 'qualifications' },

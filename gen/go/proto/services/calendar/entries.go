@@ -20,11 +20,22 @@ import (
 func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	subsSelect := tCalendarSubs.
+		SELECT(
+			tCalendarSubs.CalendarID,
+		).
+		FROM(tCalendarSubs).
+		WHERE(jet.AND(
+			tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
+		))
+
+	subCondition := tCalendar.ID.IN(subsSelect)
+
 	condition := jet.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
-				tCalendar.Public.IS_TRUE(),
+				subCondition,
 				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(
@@ -163,6 +174,18 @@ func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequ
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
+
+	for i := 0; i < len(access.Jobs); i++ {
+		s.enricher.EnrichJobInfo(access.Jobs[i])
+	}
+
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
+	for i := 0; i < len(access.Users); i++ {
+		if access.Users[i].User != nil {
+			jobInfoFn(access.Users[i].User)
+		}
+	}
+
 	entry.Access = access
 
 	return &GetCalendarEntryResponse{

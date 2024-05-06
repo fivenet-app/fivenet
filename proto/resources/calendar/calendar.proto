@@ -29,7 +29,8 @@ message Calendar {
   optional int32 creator_id = 11;
   optional resources.users.UserShort creator = 12; // @gotags: alias:"creator"
   string creator_job = 13 [(validate.rules).string.max_len = 20];
-  resources.calendar.CalendarAccess access = 14;
+  optional CalendarSub subscription = 14;
+  resources.calendar.CalendarAccess access = 15;
 }
 
 message CalendarShort {
@@ -46,7 +47,19 @@ message CalendarShort {
   bool closed = 9;
   // @sanitize: method=StripTags
   string color = 10 [(validate.rules).string.max_len = 12];
+  optional CalendarSub subscription = 14;
 }
+
+message CalendarSub {
+  uint64 calendar_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
+  optional resources.users.UserShort user = 3;
+  optional resources.timestamp.Timestamp created_at = 4;
+  bool confirmed = 5;
+  bool muted = 6;
+}
+
+// Entry
 
 message CalendarEntry {
   uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
@@ -72,8 +85,8 @@ message CalendarEntry {
   optional int32 creator_id = 13;
   optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
   string creator_job = 15 [(validate.rules).string.max_len = 20];
-  resources.calendar.CalendarAccess access = 16;
-  optional CalendarEntryRecurring recurring = 17;
+  optional CalendarEntryRecurring recurring = 16;
+  resources.calendar.CalendarAccess access = 17;
 }
 
 message CalendarEntryRecurring {
@@ -81,9 +94,9 @@ message CalendarEntryRecurring {
   bool weekly = 2;
 }
 
-message CalendarSub {
+message CalendarEntrySub {
   uint64 calendar_id = 1 [jstype = JS_STRING];
-  optional uint64 entry_id = 2 [jstype = JS_STRING];
+  uint64 entry_id = 2 [jstype = JS_STRING];
   int32 user_id = 3;
   optional resources.users.UserShort user = 4;
   optional resources.timestamp.Timestamp created_at = 5;

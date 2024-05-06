@@ -1,11 +1,15 @@
 <script lang="ts" setup>
 import { useCalendarStore } from '~/store/calendar';
-import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
+import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import Pagination from '../partials/Pagination.vue';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { isOpen } = useModal();
+
+const { $grpc } = useNuxtApp();
 
 const calendarStore = useCalendarStore();
 
@@ -20,8 +24,32 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             pagination: {
                 offset: offset.value,
             },
-            onlySubscribed: true,
+            onlyPublic: true,
         });
+
+        return response;
+    } catch (e) {
+        throw e;
+    }
+}
+
+async function subscribeToCalendar(calendarId: string, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
+    try {
+        const call = $grpc.getCalendarClient().subscribeToCalendar({
+            delete: !subscribe,
+            sub: {
+                calendarId: calendarId,
+                confirmed: true,
+                muted: false,
+                userId: 0,
+            },
+        });
+        const { response } = await call;
+
+        const calendar = data.value?.calendars.find((c) => c.id === calendarId);
+        if (calendar) {
+            calendar.subscription = response.sub;
+        }
 
         return response;
     } catch (e) {
@@ -57,9 +85,39 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
                 />
 
                 <template v-else>
-                    <!-- TODO -->
+                    <ul role="list" class="m-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800">
+                        <li
+                            v-for="calendar in data?.calendars"
+                            :key="calendar.id"
+                            class="flex flex-initial items-center justify-between gap-1"
+                        >
+                            <div class="inline-flex gap-1">
+                                <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
 
-                    {{ data.calendars }}
+                                <span>{{ calendar.name }}</span>
+                                <span v-if="calendar.description" class="hidden sm:block"
+                                    >({{ $t('common.description') }}: {{ calendar.description }})</span
+                                >
+
+                                <CitizenInfoPopover v-if="calendar.creator" :user="calendar.creator" />
+                            </div>
+
+                            <div>
+                                <UButton
+                                    v-if="calendar.subscription"
+                                    color="red"
+                                    @click="subscribeToCalendar(calendar.id, false)"
+                                >
+                                    {{ $t('common.unsubscribe') }}
+                                </UButton>
+                                <UButton v-else color="amber" @click="subscribeToCalendar(calendar.id, true)">
+                                    {{ $t('common.subscribe') }}
+                                </UButton>
+                            </div>
+                        </li>
+                    </ul>
+
+                    <Pagination v-model="page" :pagination="data?.pagination" />
                 </template>
             </div>
 

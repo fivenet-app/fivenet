@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	calendar "github.com/fivenet-app/fivenet/gen/go/proto/resources/calendar"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = calendar.AccessLevel(0)
 )
 
 // Validate checks the field values on ListCalendarsRequest with the rules
@@ -97,7 +101,11 @@ func (m *ListCalendarsRequest) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for OnlySubscribed
+	// no validation rules for OnlyPublic
+
+	if m.MinAccessLevel != nil {
+		// no validation rules for MinAccessLevel
+	}
 
 	if len(errors) > 0 {
 		return ListCalendarsRequestMultiError(errors)
@@ -3401,6 +3409,35 @@ func (m *SubscribeToCalendarResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetSub()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubscribeToCalendarResponseValidationError{
+					field:  "Sub",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubscribeToCalendarResponseValidationError{
+					field:  "Sub",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSub()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubscribeToCalendarResponseValidationError{
+				field:  "Sub",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
 	if len(errors) > 0 {
 		return SubscribeToCalendarResponseMultiError(errors)

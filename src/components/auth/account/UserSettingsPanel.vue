@@ -19,6 +19,8 @@ const homepages: { name: string; path: RoutePathSchema; permission?: Perms }[] =
     { name: t('pages.vehicles.title'), path: '/vehicles', permission: 'DMVService.ListVehicles' },
     { name: t('pages.documents.title'), path: '/documents', permission: 'DocStoreService.ListDocuments' },
     { name: t('pages.jobs.overview.title'), path: '/jobs/overview' },
+    { name: t('common.calendar', 1), path: '/calendar' },
+    { name: t('common.qualification', 2), path: '/qualifications', permission: 'QualificationsService.ListQualifications' },
     { name: t('common.livemap'), path: '/livemap', permission: 'LivemapperService.Stream' },
     { name: t('common.dispatch_center'), path: '/centrum', permission: 'CentrumService.TakeControl' },
 ];

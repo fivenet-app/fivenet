@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { addHours, format } from 'date-fns';
+import { addHours, addMinutes, format, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
@@ -7,7 +7,7 @@ import DocEditor from '~/components/partials/DocEditor.vue';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import { useCalendarStore } from '~/store/calendar';
-import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
+import { AccessLevel, type CalendarAccess } from '~~/gen/ts/resources/calendar/access';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { useCompletorStore } from '~/store/completor';
@@ -179,6 +179,28 @@ function setFromProps(): void {
 watch(data, () => setFromProps());
 watch(props, () => refresh());
 
+watch(
+    () => state.startTime,
+    () => {
+        const endTime = state.endTime;
+
+        if (!isSameDay(state.startTime, state.endTime)) {
+            endTime.setFullYear(state.startTime.getFullYear());
+            endTime.setMonth(state.startTime.getMonth());
+            endTime.setDate(state.startTime.getDate());
+
+            if (isSameHour(state.startTime, endTime) && isSameMinute(state.startTime, endTime)) {
+                endTime.setHours(addHours(state.startTime, 1).getHours());
+                endTime.setMinutes(addMinutes(state.startTime, 30).getMinutes());
+            } else if (isSameHour(state.startTime, endTime)) {
+                endTime.setHours(addHours(state.startTime, 1).getHours());
+            }
+
+            state.endTime = endTime;
+        }
+    },
+);
+
 const access = ref<
     Map<
         string,
@@ -314,13 +336,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="calendar" :label="$t('common.calendar')" class="flex-1" required>
                             <USelectMenu
                                 v-model="state.calendar"
-                                :disabled="!entryId"
+                                :disabled="!!entryId"
                                 :searchable="
                                     async (query) =>
                                         (
                                             await calendarStore.listCalendars({
                                                 pagination: { offset: 0 },
-                                                onlySubscribed: true,
+                                                onlyPublic: false,
+                                                minAccessLevel: AccessLevel.EDIT,
                                             })
                                         ).calendars
                                 "
@@ -377,7 +400,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     color="gray"
                                     block
                                     icon="i-mdi-calendar-month"
-                                    :label="state.startTime ? format(state.startTime, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
+                                    :label="format(state.startTime, 'dd.MM.yyyy HH:mm')"
                                 />
 
                                 <template #panel="{ close }">
@@ -389,11 +412,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
                             <UPopover :popper="{ placement: 'bottom-start' }">
                                 <UButton
+                                    :key="state.endTime.toDateString()"
                                     variant="outline"
                                     color="gray"
                                     block
                                     icon="i-mdi-calendar-month"
-                                    :label="state.endTime ? format(state.endTime, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
+                                    :label="format(state.endTime, 'dd.MM.yyyy HH:mm')"
                                 />
 
                                 <template #panel="{ close }">

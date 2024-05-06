@@ -30,6 +30,7 @@ type fivenetCalendarEntriesTable struct {
 	RsvpOpen   mysql.ColumnBool
 	CreatorID  mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
+	Recurring  mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -83,8 +84,9 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		RsvpOpenColumn   = mysql.BoolColumn("rsvp_open")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn}
+		RecurringColumn  = mysql.StringColumn("recurring")
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn}
 	)
 
 	return fivenetCalendarEntriesTable{
@@ -104,6 +106,7 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		RsvpOpen:   RsvpOpenColumn,
 		CreatorID:  CreatorIDColumn,
 		CreatorJob: CreatorJobColumn,
+		Recurring:  RecurringColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,
