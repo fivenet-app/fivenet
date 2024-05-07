@@ -5,6 +5,7 @@
 
 - [resources/accounts/accounts.proto](#resources_accounts_accounts-proto)
     - [Account](#resources-accounts-Account)
+    - [Character](#resources-accounts-Character)
   
 - [resources/accounts/oauth2.proto](#resources_accounts_oauth2-proto)
     - [OAuth2Account](#resources-accounts-OAuth2Account)
@@ -636,6 +637,23 @@
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | username | [string](#string) |  |  |
 | license | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-accounts-Character"></a>
+
+### Character
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| available | [bool](#bool) |  |  |
+| group | [string](#string) |  |  |
+| char | [resources.users.User](#resources-users-User) |  |  |
 
 
 
@@ -4512,7 +4530,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| chars | [resources.users.User](#resources-users-User) | repeated |  |
+| chars | [resources.accounts.Character](#resources-accounts-Character) | repeated |  |
 
 
 

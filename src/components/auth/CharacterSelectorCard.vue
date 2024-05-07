@@ -10,9 +10,15 @@ const authStore = useAuthStore();
 const { lastCharID } = storeToRefs(authStore);
 const { chooseCharacter } = authStore;
 
-const props = defineProps<{
-    char: User;
-}>();
+const props = withDefaults(
+    defineProps<{
+        char: User;
+        disabled?: boolean;
+    }>(),
+    {
+        disabled: false,
+    },
+);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
@@ -69,8 +75,9 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             <UButton
                 block
                 class="inline-flex items-center"
-                :disabled="!canSubmit"
+                :disabled="disabled || !canSubmit"
                 :loading="!canSubmit"
+                :icon="disabled ? 'i-mdi-lock' : undefined"
                 @click="onSubmitThrottle(char.userId)"
             >
                 {{ $t('common.choose') }}

@@ -302,6 +302,12 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
+	if req.Entry.Access != nil {
+		if err := s.handleCalendarAccessChanges(ctx, s.db, calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED, req.Entry.CalendarId, &req.Entry.Id, req.Entry.Access); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+	}
+
 	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Uint64(req.Entry.Id)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)

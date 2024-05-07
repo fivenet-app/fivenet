@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.accounts;
 
 import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts;accounts";
@@ -13,4 +14,10 @@ message Account {
   optional resources.timestamp.Timestamp updated_at = 3;
   string username = 4 [(validate.rules).string.max_len = 24];
   string license = 5 [(validate.rules).string.max_len = 64];
+}
+
+message Character {
+  bool available = 1;
+  string group = 2;
+  resources.users.User char = 3;
 }

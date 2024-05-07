@@ -11,8 +11,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../../resources/users/jobs";
 import { User } from "../../resources/users/users";
+import { JobProps } from "../../resources/users/jobs";
+import { Character } from "../../resources/accounts/accounts";
 import { OAuth2Account } from "../../resources/accounts/oauth2";
 import { OAuth2Provider } from "../../resources/accounts/oauth2";
 import { Account } from "../../resources/accounts/accounts";
@@ -171,9 +172,9 @@ export interface GetCharactersRequest {
  */
 export interface GetCharactersResponse {
     /**
-     * @generated from protobuf field: repeated resources.users.User chars = 1;
+     * @generated from protobuf field: repeated resources.accounts.Character chars = 1;
      */
-    chars: User[];
+    chars: Character[];
 }
 /**
  * @generated from protobuf message services.auth.ChooseCharacterRequest
@@ -894,7 +895,7 @@ export const GetCharactersRequest = new GetCharactersRequest$Type();
 class GetCharactersResponse$Type extends MessageType<GetCharactersResponse> {
     constructor() {
         super("services.auth.GetCharactersResponse", [
-            { no: 1, name: "chars", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => User }
+            { no: 1, name: "chars", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Character }
         ]);
     }
     create(value?: PartialMessage<GetCharactersResponse>): GetCharactersResponse {
@@ -909,8 +910,8 @@ class GetCharactersResponse$Type extends MessageType<GetCharactersResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* repeated resources.users.User chars */ 1:
-                    message.chars.push(User.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.accounts.Character chars */ 1:
+                    message.chars.push(Character.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -924,9 +925,9 @@ class GetCharactersResponse$Type extends MessageType<GetCharactersResponse> {
         return message;
     }
     internalBinaryWrite(message: GetCharactersResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* repeated resources.users.User chars = 1; */
+        /* repeated resources.accounts.Character chars = 1; */
         for (let i = 0; i < message.chars.length; i++)
-            User.internalBinaryWrite(message.chars[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            Character.internalBinaryWrite(message.chars[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

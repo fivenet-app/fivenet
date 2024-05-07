@@ -7,6 +7,7 @@ import (
 	"slices"
 	"strings"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -139,6 +140,7 @@ func (s *Server) getAccountFromDB(ctx context.Context, condition jet.BoolExpress
 			tAccounts.OverrideJob,
 			tAccounts.OverrideJobGrade,
 			tAccounts.Superuser,
+			tAccounts.LastChar,
 		).
 		FROM(tAccounts).
 		WHERE(
@@ -465,6 +467,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 				tUserProps.Avatar.AS("user.avatar"),
 				s.customDB.Columns.User.GetVisum(tUsers.Alias()),
 				s.customDB.Columns.User.GetPlaytime(tUsers.Alias()),
+				tUsers.Group.AS("character.group"),
 			}.Get()...,
 		).
 		FROM(tUsers.
@@ -494,6 +497,41 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		}
 
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+	}
+
+	isSuperUser := false
+	for i := 0; i < len(resp.Chars); i++ {
+		if slices.Contains(s.superuserGroups, resp.Chars[i].Group) || slices.Contains(s.superuserUsers, claims.Subject) {
+			isSuperUser = true
+			break
+		}
+	}
+
+	// If last char lock is enabled ensure to mark the one char as available only
+	if s.appCfg.Get().Auth.LastCharLock && acc.LastChar != nil && !isSuperUser {
+		idx := slices.IndexFunc(resp.Chars, func(char *accounts.Character) bool {
+			return char.Char != nil && char.Char.UserId == *acc.LastChar
+		})
+
+		if idx > -1 {
+			resp.Chars[idx].Available = true
+		}
+
+		// Sort chars for convience of the user
+		slices.SortFunc(resp.Chars, func(a, b *accounts.Character) int {
+			switch {
+			case a.Available == false && b.Available == true:
+				return +1
+			case a.Available == true && b.Available == false:
+				return -1
+			default:
+				return 0
+			}
+		})
+	} else {
+		for i := 0; i < len(resp.Chars); i++ {
+			resp.Chars[i].Available = true
+		}
 	}
 
 	return resp, nil
@@ -592,6 +630,11 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
+
+	// If char lock is active, make sure that the user is choosing the correct char
+	if !isSuperUser && s.appCfg.Get().Auth.LastCharLock && account.LastChar != nil && *account.LastChar != req.CharId {
+		return nil, errswrap.NewError(err, errorsauth.ErrCharLock)
+	}
 
 	// Reset override jobs when person is not a superuser but has an override set..
 	if !isSuperUser &&
