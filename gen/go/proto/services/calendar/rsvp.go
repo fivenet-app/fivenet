@@ -166,6 +166,10 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 		}
 	}
 
+	if err := s.createOrDeleteEntrySubscription(ctx, entry.CalendarId, entry.Id, userInfo.UserId, req.Subscribe, true, false); err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
 	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, req.Entry.EntryId, userInfo.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)

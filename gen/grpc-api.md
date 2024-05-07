@@ -247,6 +247,7 @@
     - [CalendarEntry](#resources-calendar-CalendarEntry)
     - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
     - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
+    - [CalendarEntrySub](#resources-calendar-CalendarEntrySub)
     - [CalendarShort](#resources-calendar-CalendarShort)
     - [CalendarSub](#resources-calendar-CalendarSub)
   
@@ -4205,6 +4206,27 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | every | [string](#string) |  |  |
 | count | [int32](#int32) |  |  |
 | until | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+
+
+
+
+
+
+<a name="resources-calendar-CalendarEntrySub"></a>
+
+### CalendarEntrySub
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| calendar_id | [uint64](#uint64) |  |  |
+| entry_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| confirmed | [bool](#bool) |  |  |
+| muted | [bool](#bool) |  |  |
 
 
 
