@@ -48,7 +48,11 @@ const calendar = computed(() => data.value?.calendar);
                             <span>{{ $t('common.calendar') }}: {{ calendar?.name ?? $t('common.calendar') }}</span>
 
                             <UButton
-                                v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)"
+                                v-if="
+                                    calendar &&
+                                    can('CalendarService.CreateOrUpdateCalendar') &&
+                                    checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
+                                "
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-pencil"
@@ -60,7 +64,11 @@ const calendar = computed(() => data.value?.calendar);
                             />
 
                             <UButton
-                                v-if="calendar && checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)"
+                                v-if="
+                                    calendar &&
+                                    can('CalendarService.DeleteCalendar') &&
+                                    checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)
+                                "
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"

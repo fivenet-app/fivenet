@@ -54,7 +54,11 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UButton
-                                v-if="entry && checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.EDIT)"
+                                v-if="
+                                    entry &&
+                                    can('CalendarService.CreateOrUpdateCalendarEntry') &&
+                                    checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.EDIT)
+                                "
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-pencil"
@@ -67,7 +71,11 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             />
 
                             <UButton
-                                v-if="entry && checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.MANAGE)"
+                                v-if="
+                                    entry &&
+                                    can('CalendarService.DeleteCalendarEntry') &&
+                                    checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.MANAGE)
+                                "
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"
@@ -126,7 +134,11 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                 </template>
 
                 <UAccordion
-                    v-if="!entry?.access && (entry?.access?.jobs.length > 0 || entry?.access?.users.length > 0)"
+                    v-if="
+                        !entry?.access &&
+                        ((entry?.access?.jobs && entry?.access?.jobs.length > 0) ||
+                            (entry?.access?.users && entry?.access?.users.length > 0))
+                    "
                     multiple
                     :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
                     :unmount="true"
