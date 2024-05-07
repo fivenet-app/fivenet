@@ -160,14 +160,16 @@ const columns = [
             <PhoneNumberBlock :number="colleague.phoneNumber" />
         </template>
         <template #actions-data="{ row: colleague }">
-            <ULink
-                v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
-                icon="i-mdi-eye"
-                :to="{
-                    name: 'jobs-colleagues-id-actvitiy',
-                    params: { id: colleague.userId ?? 0 },
-                }"
-            />
+            <div :key="colleague.id">
+                <ULink
+                    v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
+                    icon="i-mdi-eye"
+                    :to="{
+                        name: 'jobs-colleagues-id-actvitiy',
+                        params: { id: colleague.userId ?? 0 },
+                    }"
+                />
+            </div>
         </template>
     </UTable>
 

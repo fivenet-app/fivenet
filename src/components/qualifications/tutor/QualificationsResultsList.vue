@@ -168,17 +168,19 @@ defineExpose({
                         <CitizenInfoPopover v-if="result.creator" :user="result.creator" />
                     </template>
                     <template #actions-data="{ row: result }">
-                        <UButton
-                            v-if="can('QualificationsService.DeleteQualificationResult')"
-                            class="flex-initial"
-                            variant="link"
-                            icon="i-mdi-trash-can"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => deleteQualificationResult(result.id),
-                                })
-                            "
-                        />
+                        <div :key="result.id">
+                            <UButton
+                                v-if="can('QualificationsService.DeleteQualificationResult')"
+                                class="flex-initial"
+                                variant="link"
+                                icon="i-mdi-trash-can"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () => deleteQualificationResult(result.id),
+                                    })
+                                "
+                            />
+                        </div>
                     </template>
                 </UTable>
 

@@ -160,58 +160,61 @@ defineExpose({
                         <CitizenInfoPopover v-if="request.approver" :user="request.approver" />
                     </template>
                     <template #actions-data="{ row: request }">
-                        <UButton
-                            v-if="request.status !== RequestStatus.DENIED"
-                            variant="link"
-                            icon="i-mdi-close-thick"
-                            color="red"
-                            @click="
-                                modal.open(QualificationRequestTutorModal, {
-                                    request: request,
-                                    status: RequestStatus.DENIED,
-                                    onRefresh: onRefresh,
-                                })
-                            "
-                        />
+                        <div :key="`${request.userId}-${request.approverId}-${request.status}`">
+                            <UButton
+                                v-if="request.status !== RequestStatus.DENIED"
+                                variant="link"
+                                icon="i-mdi-close-thick"
+                                color="red"
+                                @click="
+                                    modal.open(QualificationRequestTutorModal, {
+                                        request: request,
+                                        status: RequestStatus.DENIED,
+                                        onRefresh: onRefresh,
+                                    })
+                                "
+                            />
 
-                        <UButton
-                            v-if="request.status !== RequestStatus.ACCEPTED"
-                            variant="link"
-                            icon="i-mdi-check-bold"
-                            color="green"
-                            @click="
-                                modal.open(QualificationRequestTutorModal, {
-                                    request: request,
-                                    status: RequestStatus.ACCEPTED,
-                                    onRefresh: onRefresh,
-                                })
-                            "
-                        />
+                            <UButton
+                                v-if="request.status !== RequestStatus.ACCEPTED"
+                                variant="link"
+                                icon="i-mdi-check-bold"
+                                color="green"
+                                @click="
+                                    modal.open(QualificationRequestTutorModal, {
+                                        request: request,
+                                        status: RequestStatus.ACCEPTED,
+                                        onRefresh: onRefresh,
+                                    })
+                                "
+                            />
 
-                        <UButton
-                            v-if="request.status === RequestStatus.ACCEPTED"
-                            variant="link"
-                            icon="i-mdi-star"
-                            color="amber"
-                            @click="
-                                modal.open(QualificationResultTutorModal, {
-                                    qualificationId: request.qualificationId,
-                                    userId: request.userId,
-                                    onRefresh: onRefresh,
-                                })
-                            "
-                        />
+                            <UButton
+                                v-if="request.status === RequestStatus.ACCEPTED"
+                                variant="link"
+                                icon="i-mdi-star"
+                                color="amber"
+                                @click="
+                                    modal.open(QualificationResultTutorModal, {
+                                        qualificationId: request.qualificationId,
+                                        userId: request.userId,
+                                        onRefresh: onRefresh,
+                                    })
+                                "
+                            />
 
-                        <UButton
-                            v-if="can('QualificationsService.DeleteQualificationReq')"
-                            variant="link"
-                            icon="i-mdi-trash-can"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => deleteQualificationRequest(request.qualificationId, request.userId),
-                                })
-                            "
-                        />
+                            <UButton
+                                v-if="can('QualificationsService.DeleteQualificationReq')"
+                                variant="link"
+                                icon="i-mdi-trash-can"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () =>
+                                            deleteQualificationRequest(request.qualificationId, request.userId),
+                                    })
+                                "
+                            />
+                        </div>
                     </template>
                 </UTable>
 

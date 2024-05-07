@@ -329,7 +329,11 @@ defineShortcuts({
         </template>
         <template #height-data="{ row: citizen }"> {{ citizen.height.value }}cm </template>
         <template #actions-data="{ row: citizen }">
-            <div v-if="can('CitizenStoreService.GetUser')" class="flex flex-col justify-end gap-1 md:flex-row">
+            <div
+                v-if="can('CitizenStoreService.GetUser')"
+                :key="citizen.userId"
+                class="flex flex-col justify-end gap-1 md:flex-row"
+            >
                 <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
 
                 <UButton

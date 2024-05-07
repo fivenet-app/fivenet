@@ -217,25 +217,25 @@ defineShortcuts({
         :rows="data?.vehicles"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
     >
-        <template #plate-data="{ row }">
-            <LicensePlate :plate="row.plate" class="mr-2" />
+        <template #plate-data="{ row: vehicle }">
+            <LicensePlate :plate="vehicle.plate" class="mr-2" />
         </template>
-        <template #type-data="{ row }">
-            {{ toTitleCase(row.type) }}
+        <template #type-data="{ row: vehicle }">
+            {{ toTitleCase(vehicle.type) }}
         </template>
-        <template v-if="!hideOwner" #owner-data="{ row }">
-            <CitizenInfoPopover :user="row.owner" />
+        <template v-if="!hideOwner" #owner-data="{ row: vehicle }">
+            <CitizenInfoPopover :user="vehicle.owner" />
         </template>
-        <template #actions-data="{ row }">
-            <div class="flex flex-row justify-end">
-                <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(row)" />
+        <template #actions-data="{ row: vehicle }">
+            <div :key="vehicle.plate" class="flex flex-row justify-end">
+                <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
                 <UButton
                     v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
                     variant="link"
                     icon="i-mdi-account-eye"
                     :to="{
                         name: 'citizens-id',
-                        params: { id: row.owner?.userId ?? 0 },
+                        params: { id: vehicle.owner?.userId ?? 0 },
                     }"
                 />
             </div>

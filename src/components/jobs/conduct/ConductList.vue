@@ -184,11 +184,10 @@ defineShortcuts({
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.search')" class="flex-1">
-                        <UInputMenu
+                        <USelectMenu
                             ref="input"
                             v-model="query.user"
-                            nullable
-                            :search="
+                            :searchable="
                                 async (query: string) => {
                                     usersLoading = true;
                                     const colleagues = await completorStore.listColleagues({
@@ -221,7 +220,7 @@ defineShortcuts({
                             <template #trailing>
                                 <UKbd value="/" />
                             </template>
-                        </UInputMenu>
+                        </USelectMenu>
                     </UFormGroup>
 
                     <UFormGroup name="types" :label="$t('common.type')" class="flex-1">
@@ -334,42 +333,44 @@ defineShortcuts({
             <ColleagueInfoPopover :user="conduct.creator.value" :hide-props="true" />
         </template>
         <template #actions-data="{ row: conduct }">
-            <UButtonGroup class="inline-flex">
-                <UButton
-                    variant="link"
-                    icon="i-mdi-eye"
-                    @click="
-                        slideover.open(ConductViewSlideover, {
-                            entry: conduct,
-                        })
-                    "
-                />
+            <div :key="conduct.id">
+                <UButtonGroup class="inline-flex">
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-eye"
+                        @click="
+                            slideover.open(ConductViewSlideover, {
+                                entry: conduct,
+                            })
+                        "
+                    />
 
-                <UButton
-                    v-if="can('JobsConductService.UpdateConductEntry')"
-                    variant="link"
-                    icon="i-mdi-pencil"
-                    @click="
-                        modal.open(ConductCreateOrUpdateModal, {
-                            entry: conduct,
-                            userId: userId,
-                            onCreated: ($event) => data?.entries.unshift($event),
-                            onUpdated: ($event) => updateEntryInPlace($event),
-                        })
-                    "
-                />
+                    <UButton
+                        v-if="can('JobsConductService.UpdateConductEntry')"
+                        variant="link"
+                        icon="i-mdi-pencil"
+                        @click="
+                            modal.open(ConductCreateOrUpdateModal, {
+                                entry: conduct,
+                                userId: userId,
+                                onCreated: ($event) => data?.entries.unshift($event),
+                                onUpdated: ($event) => updateEntryInPlace($event),
+                            })
+                        "
+                    />
 
-                <UButton
-                    v-if="can('JobsConductService.DeleteConductEntry')"
-                    variant="link"
-                    icon="i-mdi-trash-can"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteConductEntry(conduct.id),
-                        })
-                    "
-                />
-            </UButtonGroup>
+                    <UButton
+                        v-if="can('JobsConductService.DeleteConductEntry')"
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteConductEntry(conduct.id),
+                            })
+                        "
+                    />
+                </UButtonGroup>
+            </div>
         </template>
     </UTable>
 

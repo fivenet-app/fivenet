@@ -29,8 +29,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
-// TODO use store data instead of our separate data calls
-const { activeCalendarIds } = storeToRefs(calendarStore);
+const { activeCalendarIds, calendars, entries } = storeToRefs(calendarStore);
 
 const schema = z.object({
     year: z.number(),
@@ -54,11 +53,11 @@ const query = reactive<Schema>({
 
 const page = ref(1);
 const offset = computed(() =>
-    calendars.value?.pagination?.pageSize ? calendars.value?.pagination?.pageSize * (page.value - 1) : 0,
+    calendarsData.value?.pagination?.pageSize ? calendarsData.value?.pagination?.pageSize * (page.value - 1) : 0,
 );
 
 const {
-    data: calendars,
+    data: calendarsData,
     pending: calendarsLoading,
     error: calendarsError,
     refresh: calendarsRefresh,
@@ -85,11 +84,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
     }
 }
 
-const {
-    data: calendarEntries,
-    refresh,
-    error,
-} = useLazyAsyncData(
+const { refresh, error } = useLazyAsyncData(
     `calendar-entries-${query.year}-${query.month}-${query.calendarIds.join(':')}`,
     () =>
         calendarStore.listCalendarEntries({
@@ -121,8 +116,8 @@ type CalEntry = {
 };
 
 const transformedCalendarEntries = computed(() =>
-    calendarEntries.value?.entries.map((entry) => {
-        const color = calendars.value?.calendars.find((c) => c.id === entry.calendarId)?.color ?? 'primary';
+    entries.value.map((entry) => {
+        const color = calendars.value.find((c) => c.id === entry.calendarId)?.color ?? 'primary';
         return {
             key: entry.id,
             customData: {
@@ -234,11 +229,7 @@ const isOpen = ref(false);
                             />
 
                             <div v-else class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                <div
-                                    v-for="calendar in calendars?.calendars"
-                                    :key="calendar.id"
-                                    class="inline-flex items-center gap-2"
-                                >
+                                <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2">
                                     <UCheckbox
                                         :model-value="query.calendarIds.includes(calendar.id)"
                                         class="truncate"
@@ -372,7 +363,7 @@ const isOpen = ref(false);
                     />
 
                     <div v-else class="grid grid-cols-1 gap-2">
-                        <div v-for="calendar in calendars?.calendars" :key="calendar.id" class="inline-flex items-center gap-2">
+                        <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2">
                             <UCheckbox
                                 :model-value="query.calendarIds.includes(calendar.id)"
                                 class="truncate"

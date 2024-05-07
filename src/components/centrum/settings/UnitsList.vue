@@ -125,7 +125,7 @@ const columns = [
             {{ unit.homePostal ?? $t('common.na') }}
         </template>
         <template #actions-data="{ row: unit }">
-            <div class="flex items-center">
+            <div .key="unit.id" class="flex items-center">
                 <UButton
                     v-if="can('CentrumService.CreateOrUpdateUnit')"
                     variant="link"

@@ -89,30 +89,32 @@ const columns = [
                 :ui="{ th: { padding: 'px-0.5 py-0.5' }, td: { padding: 'px-1 py-0.5' } }"
             >
                 <template #actions-data="{ row: marker }">
-                    <UButtonGroup class="inline-flex w-full">
-                        <UButton
-                            variant="link"
-                            icon="i-mdi-map-marker"
-                            :title="$t('common.mark')"
-                            @click="goto({ x: marker.info!.x, y: marker.info!.y })"
-                        >
-                            <span class="sr-only">{{ $t('common.mark') }}</span>
-                        </UButton>
+                    <div :key="marker.id">
+                        <UButtonGroup class="inline-flex w-full">
+                            <UButton
+                                variant="link"
+                                icon="i-mdi-map-marker"
+                                :title="$t('common.mark')"
+                                @click="goto({ x: marker.info!.x, y: marker.info!.y })"
+                            >
+                                <span class="sr-only">{{ $t('common.mark') }}</span>
+                            </UButton>
 
-                        <UButton
-                            v-if="can('LivemapperService.DeleteMarker')"
-                            :title="$t('common.delete')"
-                            variant="link"
-                            icon="i-mdi-trash-can"
-                            @click="
-                                modal.open(ConfirmModal, {
-                                    confirm: async () => deleteMarker(marker.info!.id),
-                                })
-                            "
-                        >
-                            <span class="sr-only">{{ $t('common.delete') }}</span>
-                        </UButton>
-                    </UButtonGroup>
+                            <UButton
+                                v-if="can('LivemapperService.DeleteMarker')"
+                                :title="$t('common.delete')"
+                                variant="link"
+                                icon="i-mdi-trash-can"
+                                @click="
+                                    modal.open(ConfirmModal, {
+                                        confirm: async () => deleteMarker(marker.info!.id),
+                                    })
+                                "
+                            >
+                                <span class="sr-only">{{ $t('common.delete') }}</span>
+                            </UButton>
+                        </UButtonGroup>
+                    </div>
                 </template>
                 <template #createdAt-data="{ row: marker }">
                     <GenericTime :value="marker.info?.createdAt" type="compact" />

@@ -52,7 +52,10 @@ async function rsvpCalendarEntry(rsvpResponse: RsvpResponses): Promise<void | RS
         });
         const { response } = await call;
 
-        data.value!.ownEntry = response.entry;
+        if (response.entry) {
+            data.value!.ownEntry = response.entry;
+            data.value!.entries.push(response.entry);
+        }
 
         return response;
     } catch (e) {
@@ -77,8 +80,6 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
 <template>
     <div>
         <template v-if="rsvpOpen">
-            <UDivider />
-
             <UButtonGroup class="inline-flex w-full">
                 <UButton
                     block
@@ -91,6 +92,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 >
                     {{ $t('common.yes') }}
                 </UButton>
+
                 <UButton
                     block
                     class="flex-1"
@@ -102,6 +104,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 >
                     {{ $t('common.maybe') }}
                 </UButton>
+
                 <UButton
                     block
                     class="flex-1"
@@ -116,14 +119,12 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
             </UButtonGroup>
         </template>
 
-        <div v-if="data?.entries && !data?.entries.length" class="flex flex-col">
-            <div class="mb-2 inline-flex items-center gap-2">
+        <div v-if="data?.entries && data?.entries.length > 0" class="flex flex-col">
+            <div class="mb-2 mt-2 inline-flex items-center gap-2">
                 <UAvatarGroup size="sm" :max="3">
-                    <UAvatar
-                        v-for="rsvp in data?.entries.slice(0, 3)"
-                        :src="rsvp.user?.avatar?.url"
-                        :alt="`${rsvp.user?.firstname} ${rsvp.user?.lastname}`"
-                    />
+                    <UTooltip v-for="rsvp in data?.entries.slice(0, 3)" :text="toDate(rsvp.createdAt).toLocaleString()">
+                        <UAvatar :src="rsvp.user?.avatar?.url" :alt="`${rsvp.user?.firstname} ${rsvp.user?.lastname}`" />
+                    </UTooltip>
                 </UAvatarGroup>
                 <UAvatar v-if="data?.entries.length > 3" alt="..." />
             </div>

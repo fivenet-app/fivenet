@@ -697,6 +697,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		if resp.Activity[i].SourceUser != nil {
 			jobInfoFn(resp.Activity[i].SourceUser)
 		}
+
 		if resp.Activity[i].TargetUser != nil {
 			jobInfoFn(resp.Activity[i].TargetUser)
 		}

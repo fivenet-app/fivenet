@@ -222,33 +222,35 @@ defineShortcuts({
             {{ colleague.dateofbirth.value }}
         </template>
         <template #actions-data="{ row: colleague }">
-            <UButton
-                v-if="
-                    can('JobsService.SetJobsUserProps') &&
-                    checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
-                "
-                variant="link"
-                icon="i-mdi-island"
-                @click="
-                    modal.open(SelfServicePropsAbsenceDateModal, {
-                        userId: colleague.userId,
-                        'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
-                    })
-                "
-            />
+            <div :key="colleague.id">
+                <UButton
+                    v-if="
+                        can('JobsService.SetJobsUserProps') &&
+                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
+                    "
+                    variant="link"
+                    icon="i-mdi-island"
+                    @click="
+                        modal.open(SelfServicePropsAbsenceDateModal, {
+                            userId: colleague.userId,
+                            'onUpdate:absenceDates': ($event) => updateAbsenceDates($event),
+                        })
+                    "
+                />
 
-            <UButton
-                v-if="
-                    can('JobsService.GetColleague') &&
-                    checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
-                "
-                variant="link"
-                icon="i-mdi-eye"
-                :to="{
-                    name: 'jobs-colleagues-id-actvitiy',
-                    params: { id: colleague.userId ?? 0 },
-                }"
-            />
+                <UButton
+                    v-if="
+                        can('JobsService.GetColleague') &&
+                        checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
+                    "
+                    variant="link"
+                    icon="i-mdi-eye"
+                    :to="{
+                        name: 'jobs-colleagues-id-actvitiy',
+                        params: { id: colleague.userId ?? 0 },
+                    }"
+                />
+            </div>
         </template>
     </UTable>
 
