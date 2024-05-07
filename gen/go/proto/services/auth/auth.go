@@ -184,10 +184,22 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
+	var chooseCharResp *ChooseCharacterResponse
+	if s.appCfg.Get().Auth.LastCharLock && account.LastChar != nil {
+		ctx = auth.SetTokenInGRPCContext(ctx, token)
+		chooseCharResp, err = s.ChooseCharacter(ctx, &ChooseCharacterRequest{
+			CharId: *account.LastChar,
+		})
+		if err != nil {
+			chooseCharResp = nil
+		}
+	}
+
 	return &LoginResponse{
 		Token:     token,
 		Expires:   timestamp.New(claims.ExpiresAt.Time),
 		AccountId: account.ID,
+		Char:      chooseCharResp,
 	}, nil
 }
 

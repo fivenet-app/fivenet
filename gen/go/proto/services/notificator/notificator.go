@@ -358,7 +358,7 @@ func (s *Server) checkUser(ctx context.Context, userInfo userinfo.UserInfo) (isS
 	return nil, restart, nil
 }
 
-func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClaims, bool, *TokenUpdate, error) {
+func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClaims, bool, *CharUpdate, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
 		return nil, true, nil, auth.ErrInvalidToken
@@ -383,9 +383,9 @@ func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClai
 			return nil, true, nil, auth.ErrCheckToken
 		}
 
-		tu := &TokenUpdate{
-			NewToken: &newToken,
-			Expires:  timestamp.New(claims.ExpiresAt.Time),
+		tu := &CharUpdate{
+			Token:   newToken,
+			Expires: timestamp.New(claims.ExpiresAt.Time),
 		}
 
 		return claims, true, tu, nil
@@ -394,7 +394,7 @@ func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClai
 	return claims, false, nil, nil
 }
 
-func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, currentUserInfo userinfo.UserInfo) error {
+func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *CharUpdate, currentUserInfo userinfo.UserInfo) error {
 	userInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
 	if err != nil {
 		return err
@@ -409,8 +409,8 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *TokenUpdate, cu
 	if err != nil {
 		return err
 	}
-	tu.UserInfo = char
 	tu.JobProps = jobProps
+	tu.Char = char
 
 	// Update current user info with new data from database
 	currentUserInfo.UserId = char.UserId

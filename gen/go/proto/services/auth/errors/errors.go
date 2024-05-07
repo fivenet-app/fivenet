@@ -20,5 +20,5 @@ var (
 	ErrAccountDuplicate    = status.Error(codes.InvalidArgument, "errors.AuthService.ErrAccountDuplicate")
 	ErrChangeUsername      = status.Error(codes.InvalidArgument, "errors.AuthService.ErrChangeUsername")
 	ErrBadUsername         = status.Error(codes.InvalidArgument, "errors.AuthService.ErrBadUsername")
-	ErrCharLock            = status.Error(codes.InvalidArgument, "errors.AuthService.ErrCharLock")
+	ErrCharLock            = status.Error(codes.InvalidArgument, "errors.AuthService.ErrCharLock.title;errors.AuthService.ErrCharLock.content")
 )

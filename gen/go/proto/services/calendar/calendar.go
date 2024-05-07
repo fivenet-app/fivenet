@@ -14,12 +14,11 @@ import (
 )
 
 var (
-	tCalendar            = table.FivenetCalendar.AS("calendar")
-	tCalendarShort       = tCalendar.AS("calendar_short")
-	tCalendarEntry       = table.FivenetCalendarEntries.AS("calendar_entry")
-	tCalendarRSVP        = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
-	tCalendarSubs        = table.FivenetCalendarSubs.AS("calendar_sub")
-	tCalendarEntriesSubs = table.FivenetCalendarEntriesSubs.AS("calendar_entry_sub")
+	tCalendar      = table.FivenetCalendar.AS("calendar")
+	tCalendarShort = tCalendar.AS("calendar_short")
+	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
+	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
+	tCalendarSubs  = table.FivenetCalendarSubs.AS("calendar_sub")
 
 	tCJobAccess  = table.FivenetCalendarJobAccess.AS("calendar_job_access")
 	tCUserAccess = table.FivenetCalendarUserAccess.AS("calendar_user_access")

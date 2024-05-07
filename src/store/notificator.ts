@@ -73,18 +73,18 @@ export const useNotificatorStore = defineStore('notifications', {
                             const authStore = useAuthStore();
 
                             // Update active char when updated user info is received
-                            if (tokenUpdate.userInfo) {
+                            if (tokenUpdate.char) {
                                 console.debug('Notificator: Updated UserInfo received');
 
-                                authStore.setActiveChar(tokenUpdate.userInfo);
+                                authStore.setActiveChar(tokenUpdate.char);
                                 authStore.setPermissions(tokenUpdate.permissions);
                                 authStore.setJobProps(tokenUpdate.jobProps);
                             }
 
-                            if (tokenUpdate.newToken && tokenUpdate.expires) {
+                            if (tokenUpdate.token && tokenUpdate.expires) {
                                 console.debug('Notificator: New Token received');
 
-                                authStore.setAccessToken(tokenUpdate.newToken, toDate(tokenUpdate.expires) as null | Date);
+                                authStore.setAccessToken(tokenUpdate.token, toDate(tokenUpdate.expires) as null | Date);
 
                                 this.add({
                                     title: { key: 'notifications.renewed_token.title', parameters: {} },

@@ -864,33 +864,35 @@ var _ interface {
 	ErrorName() string
 } = StreamResponseValidationError{}
 
-// Validate checks the field values on TokenUpdate with the rules defined in
-// the proto definition for this message. If any rules are violated, the first
+// Validate checks the field values on CharUpdate with the rules defined in the
+// proto definition for this message. If any rules are violated, the first
 // error encountered is returned, or nil if there are no violations.
-func (m *TokenUpdate) Validate() error {
+func (m *CharUpdate) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on TokenUpdate with the rules defined in
+// ValidateAll checks the field values on CharUpdate with the rules defined in
 // the proto definition for this message. If any rules are violated, the
-// result is a list of violation errors wrapped in TokenUpdateMultiError, or
+// result is a list of violation errors wrapped in CharUpdateMultiError, or
 // nil if none found.
-func (m *TokenUpdate) ValidateAll() error {
+func (m *CharUpdate) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *TokenUpdate) validate(all bool) error {
+func (m *CharUpdate) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	// no validation rules for Token
+
 	if all {
 		switch v := interface{}(m.GetExpires()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, TokenUpdateValidationError{
+				errors = append(errors, CharUpdateValidationError{
 					field:  "Expires",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -898,7 +900,7 @@ func (m *TokenUpdate) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, TokenUpdateValidationError{
+				errors = append(errors, CharUpdateValidationError{
 					field:  "Expires",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -907,7 +909,7 @@ func (m *TokenUpdate) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetExpires()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return TokenUpdateValidationError{
+			return CharUpdateValidationError{
 				field:  "Expires",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -915,89 +917,77 @@ func (m *TokenUpdate) validate(all bool) error {
 		}
 	}
 
-	if m.NewToken != nil {
-		// no validation rules for NewToken
-	}
-
-	if m.UserInfo != nil {
-
-		if all {
-			switch v := interface{}(m.GetUserInfo()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, TokenUpdateValidationError{
-						field:  "UserInfo",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, TokenUpdateValidationError{
-						field:  "UserInfo",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetUserInfo()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return TokenUpdateValidationError{
-					field:  "UserInfo",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.JobProps != nil {
-
-		if all {
-			switch v := interface{}(m.GetJobProps()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, TokenUpdateValidationError{
-						field:  "JobProps",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, TokenUpdateValidationError{
-						field:  "JobProps",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetJobProps()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return TokenUpdateValidationError{
+	if all {
+		switch v := interface{}(m.GetJobProps()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CharUpdateValidationError{
 					field:  "JobProps",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CharUpdateValidationError{
+					field:  "JobProps",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
 			}
 		}
+	} else if v, ok := interface{}(m.GetJobProps()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CharUpdateValidationError{
+				field:  "JobProps",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
 
+	if all {
+		switch v := interface{}(m.GetChar()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CharUpdateValidationError{
+					field:  "Char",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CharUpdateValidationError{
+					field:  "Char",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetChar()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CharUpdateValidationError{
+				field:  "Char",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
 	}
 
 	if len(errors) > 0 {
-		return TokenUpdateMultiError(errors)
+		return CharUpdateMultiError(errors)
 	}
 
 	return nil
 }
 
-// TokenUpdateMultiError is an error wrapping multiple validation errors
-// returned by TokenUpdate.ValidateAll() if the designated constraints aren't met.
-type TokenUpdateMultiError []error
+// CharUpdateMultiError is an error wrapping multiple validation errors
+// returned by CharUpdate.ValidateAll() if the designated constraints aren't met.
+type CharUpdateMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m TokenUpdateMultiError) Error() string {
+func (m CharUpdateMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1006,11 +996,11 @@ func (m TokenUpdateMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m TokenUpdateMultiError) AllErrors() []error { return m }
+func (m CharUpdateMultiError) AllErrors() []error { return m }
 
-// TokenUpdateValidationError is the validation error returned by
-// TokenUpdate.Validate if the designated constraints aren't met.
-type TokenUpdateValidationError struct {
+// CharUpdateValidationError is the validation error returned by
+// CharUpdate.Validate if the designated constraints aren't met.
+type CharUpdateValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1018,22 +1008,22 @@ type TokenUpdateValidationError struct {
 }
 
 // Field function returns field value.
-func (e TokenUpdateValidationError) Field() string { return e.field }
+func (e CharUpdateValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e TokenUpdateValidationError) Reason() string { return e.reason }
+func (e CharUpdateValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e TokenUpdateValidationError) Cause() error { return e.cause }
+func (e CharUpdateValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e TokenUpdateValidationError) Key() bool { return e.key }
+func (e CharUpdateValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e TokenUpdateValidationError) ErrorName() string { return "TokenUpdateValidationError" }
+func (e CharUpdateValidationError) ErrorName() string { return "CharUpdateValidationError" }
 
 // Error satisfies the builtin error interface
-func (e TokenUpdateValidationError) Error() string {
+func (e CharUpdateValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1045,14 +1035,14 @@ func (e TokenUpdateValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sTokenUpdate.%s: %s%s",
+		"invalid %sCharUpdate.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = TokenUpdateValidationError{}
+var _ error = CharUpdateValidationError{}
 
 var _ interface {
 	Field() string
@@ -1060,4 +1050,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = TokenUpdateValidationError{}
+} = CharUpdateValidationError{}

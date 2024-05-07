@@ -42,16 +42,16 @@ message StreamResponse {
 
   oneof data {
     resources.notifications.Notification notification = 3;
-    TokenUpdate token = 4;
+    CharUpdate token = 4;
   }
 }
 
-message TokenUpdate {
-  optional string new_token = 1;
+message CharUpdate {
+  string token = 1;
   resources.timestamp.Timestamp expires = 2;
   repeated string permissions = 3;
-  optional resources.users.User user_info = 4;
-  optional resources.users.JobProps job_props = 5;
+  resources.users.JobProps job_props = 4;
+  resources.users.User char = 5;
 }
 
 service NotificatorService {

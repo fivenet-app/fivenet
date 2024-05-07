@@ -94,8 +94,29 @@ export const useAuthStore = defineStore('auth', {
                 const { response } = await call;
 
                 this.loginStop(null);
-                this.setAccessToken(response.token, toDate(response.expires));
+
                 this.username = username;
+                if (!response.char) {
+                    console.info('Simple login response received, redirecting to char selector');
+                    this.setAccessToken(response.token, toDate(response.expires));
+
+                    const route = useRoute();
+
+                    await navigateTo({
+                        name: 'auth-character-selector',
+                        query: route.query,
+                    });
+                } else {
+                    console.info('Received fast-tracked char response for char id:', response.char.char?.userId);
+                    this.setActiveChar(response.char.char ?? null);
+                    this.setAccessToken(response.char.token, toDate(response.char.expires));
+                    this.setPermissions(response.char.permissions);
+                    this.setJobProps(response.char.jobProps);
+
+                    // @ts-ignore the route should be valid, as we test it against a valid URL list
+                    const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
+                    await navigateTo(target);
+                }
             } catch (e) {
                 this.loginStop((e as RpcError).message);
                 this.setAccessToken(null, null);
@@ -141,8 +162,8 @@ export const useAuthStore = defineStore('auth', {
                     throw new Error('Server Error! No character in choose character response.');
                 }
 
-                this.setAccessToken(response.token, toDate(response.expires));
                 this.setActiveChar(response.char);
+                this.setAccessToken(response.token, toDate(response.expires));
                 this.setPermissions(response.permissions);
                 this.setJobProps(response.jobProps);
 

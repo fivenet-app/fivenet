@@ -247,7 +247,6 @@
     - [CalendarEntry](#resources-calendar-CalendarEntry)
     - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
     - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
-    - [CalendarEntrySub](#resources-calendar-CalendarEntrySub)
     - [CalendarShort](#resources-calendar-CalendarShort)
     - [CalendarSub](#resources-calendar-CalendarSub)
   
@@ -486,13 +485,13 @@
     - [LivemapperService](#services-livemapper-LivemapperService)
   
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
+    - [CharUpdate](#services-notificator-CharUpdate)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
     - [GetNotificationsResponse](#services-notificator-GetNotificationsResponse)
     - [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest)
     - [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse)
     - [StreamRequest](#services-notificator-StreamRequest)
     - [StreamResponse](#services-notificator-StreamResponse)
-    - [TokenUpdate](#services-notificator-TokenUpdate)
   
     - [NotificatorService](#services-notificator-NotificatorService)
   
@@ -4212,27 +4211,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources-calendar-CalendarEntrySub"></a>
-
-### CalendarEntrySub
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
-| entry_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| confirmed | [bool](#bool) |  |  |
-| muted | [bool](#bool) |  |  |
-
-
-
-
-
-
 <a name="resources-calendar-CalendarShort"></a>
 
 ### CalendarShort
@@ -7522,6 +7500,25 @@ Templates ==================================================================
 
 
 
+<a name="services-notificator-CharUpdate"></a>
+
+### CharUpdate
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| token | [string](#string) |  |  |
+| expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| permissions | [string](#string) | repeated |  |
+| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+| char | [resources.users.User](#resources-users-User) |  |  |
+
+
+
+
+
+
 <a name="services-notificator-GetNotificationsRequest"></a>
 
 ### GetNotificationsRequest
@@ -7606,26 +7603,7 @@ Templates ==================================================================
 | notification_count | [int32](#int32) |  |  |
 | restart | [bool](#bool) | optional |  |
 | notification | [resources.notifications.Notification](#resources-notifications-Notification) |  |  |
-| token | [TokenUpdate](#services-notificator-TokenUpdate) |  |  |
-
-
-
-
-
-
-<a name="services-notificator-TokenUpdate"></a>
-
-### TokenUpdate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| new_token | [string](#string) | optional |  |
-| expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| permissions | [string](#string) | repeated |  |
-| user_info | [resources.users.User](#resources-users-User) | optional |  |
-| job_props | [resources.users.JobProps](#resources-users-JobProps) | optional |  |
+| token | [CharUpdate](#services-notificator-CharUpdate) |  |  |
 
 
 

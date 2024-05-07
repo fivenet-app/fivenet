@@ -1937,7 +1937,10 @@
             "ErrAccountDuplicate": "Username already taken, please use a different username.",
             "ErrChangeUsername": "Failed to change your username!",
             "ErrBadUsername": "Please verify the usernames correctness! Please try with a different username.",
-            "ErrCharLock": "Char lock is active! Please select the available character and try again."
+            "ErrCharLock": {
+                "title": "Char lock is active!",
+                "content": "Please select an available character and try again."
+            }
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Failed to list/ get citizens data!",

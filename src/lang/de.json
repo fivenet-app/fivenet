@@ -1937,7 +1937,10 @@
             "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen.",
             "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
             "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut.",
-            "ErrCharLock": "Charakter-Sperre ist aktiv! Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
+            "ErrCharLock": {
+                "title": "Charakter-Sperre ist aktiv!",
+                "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
+            }
         },
         "CitizenStoreService": {
             "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
