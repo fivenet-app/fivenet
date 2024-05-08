@@ -95,10 +95,10 @@ const zIndexOffset = computed(() => {
                     </UButton>
                 </div>
 
-                <span class="font-semibold"
-                    >{{ $t('common.dispatch') }}:
-                    <IDCopyBadge :id="dispatch.id" prefix="DSP" variant="link" :padded="false" :hide-icon="true"
-                /></span>
+                <p>
+                    <span class="font-semibold">{{ $t('common.dispatch') }}:</span>
+                    <UButton :label="`DSP-${dispatch.id}`" variant="link" :padded="false" @click="selected(dispatch.id)" />
+                </p>
 
                 <ul role="list">
                     <li>
