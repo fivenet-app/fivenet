@@ -139,7 +139,10 @@ const canSubmit = ref(true);
                                                 :icon="notificationCategoryToIcon(not.category)"
                                                 trailing-icon="i-mdi-link-variant"
                                                 class="inline-flex items-center gap-1"
-                                                @click="markRead(not.id)"
+                                                @click="
+                                                    markRead(not.id);
+                                                    $emit('clicked');
+                                                "
                                             >
                                                 {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                             </UButton>
