@@ -20,7 +20,7 @@ import (
 func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEntryRSVPRequest) (*ListCalendarEntryRSVPResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -128,7 +128,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.EntryId)))
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.EntryId)), false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -164,10 +164,6 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 		if !dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
-	}
-
-	if err := s.createOrDeleteEntrySubscription(ctx, entry.CalendarId, entry.Id, userInfo.UserId, req.Subscribe, true, false); err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	rsvpEntry, err := s.getRSVPCalendarEntry(ctx, req.Entry.EntryId, userInfo.UserId)

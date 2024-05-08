@@ -7,14 +7,13 @@ import DocEditor from '~/components/partials/DocEditor.vue';
 import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import { useCalendarStore } from '~/store/calendar';
-import { AccessLevel, type CalendarAccess } from '~~/gen/ts/resources/calendar/access';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import { useCompletorStore } from '~/store/completor';
-import { useNotificatorStore } from '~/store/notificator';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import { useCompletorStore } from '~/store/completor';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     calendarId?: string;
@@ -29,9 +28,7 @@ const calendarStore = useCalendarStore();
 
 const completorStore = useCompletorStore();
 
-const notifications = useNotificatorStore();
-
-const maxAccessEntries = 10;
+const usersLoading = ref(false);
 
 const schema = z.object({
     calendar: z.custom<CalendarShort>().optional(),
@@ -40,6 +37,7 @@ const schema = z.object({
     endTime: z.date(),
     content: z.string().min(20).max(1000000),
     rsvpOpen: z.boolean(),
+    users: z.custom<UserShort>().array().max(20),
 });
 
 type Schema = z.output<typeof schema>;
@@ -51,6 +49,7 @@ const state = reactive<Schema>({
     endTime: addHours(new Date(), 1),
     content: '',
     rsvpOpen: false,
+    users: [],
 });
 
 const {
@@ -71,43 +70,6 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
         throw 'No Calendar selected';
     }
 
-    const reqAccess: CalendarAccess = {
-        jobs: [],
-        users: [],
-    };
-    access.value.forEach((entry) => {
-        if (entry.values.accessRole === undefined) {
-            return;
-        }
-
-        if (entry.type === 0) {
-            if (!entry.values.userId) {
-                return;
-            }
-
-            reqAccess.users.push({
-                id: '0',
-                calendarId: values.calendar!.id,
-                entryId: data.value?.entry?.id ?? '0',
-                userId: entry.values.userId,
-                access: entry.values.accessRole,
-            });
-        } else if (entry.type === 1) {
-            if (!entry.values.job) {
-                return;
-            }
-
-            reqAccess.jobs.push({
-                id: '0',
-                calendarId: values.calendar!.id,
-                entryId: data.value?.entry?.id ?? '0',
-                job: entry.values.job,
-                minimumGrade: entry.values.minimumGrade ? entry.values.minimumGrade : 0,
-                access: entry.values.accessRole,
-            });
-        }
-    });
-
     try {
         const response = await calendarStore.createOrUpdateCalendarEntry({
             id: data.value?.entry?.id ?? '0',
@@ -118,7 +80,6 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
             content: values.content,
             rsvpOpen: values.rsvpOpen,
             creatorJob: '',
-            access: reqAccess,
         });
 
         isOpen.value = false;
@@ -145,35 +106,6 @@ function setFromProps(): void {
     state.endTime = toDate(entry.endTime);
     state.content = entry.content;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
-
-    if (entry.access) {
-        access.value.clear();
-
-        let accessId = 0;
-        entry.access?.users.forEach((user) => {
-            const id = accessId.toString();
-            access.value.set(id, {
-                id,
-                type: 0,
-                values: { userId: user.userId, accessRole: user.access },
-            });
-            accessId++;
-        });
-
-        entry.access?.jobs.forEach((job) => {
-            const id = accessId.toString();
-            access.value.set(id, {
-                id,
-                type: 1,
-                values: {
-                    job: job.job,
-                    accessRole: job.access,
-                    minimumGrade: job.minimumGrade,
-                },
-            });
-            accessId++;
-        });
-    }
 }
 
 watch(data, () => setFromProps());
@@ -200,96 +132,6 @@ watch(
         }
     },
 );
-
-const access = ref<
-    Map<
-        string,
-        {
-            id: string;
-            type: number;
-            values: {
-                job?: string;
-                userId?: number;
-                accessRole?: AccessLevel;
-                minimumGrade?: number;
-            };
-        }
-    >
->(new Map());
-
-function addAccessEntry(): void {
-    if (access.value.size > maxAccessEntries - 1) {
-        notifications.add({
-            title: { key: 'notifications.max_access_entry.title', parameters: {} },
-            description: {
-                key: 'notifications.max_access_entry.content',
-                parameters: { max: maxAccessEntries.toString() },
-            } as TranslateItem,
-            type: 'error',
-        });
-        return;
-    }
-
-    const id = access.value.size > 0 ? parseInt([...access.value.keys()]?.pop() ?? '1', 10) + 1 : 0;
-    access.value.set(id.toString(), {
-        id: id.toString(),
-        type: 1,
-        values: {},
-    });
-}
-
-function removeAccessEntry(event: { id: string }): void {
-    access.value.delete(event.id);
-}
-
-function updateAccessEntryType(event: { id: string; type: number }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.type = event.type;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryName(event: { id: string; job?: Job; char?: UserShort }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    if (event.job) {
-        accessEntry.values.job = event.job.name;
-        accessEntry.values.userId = undefined;
-    } else if (event.char) {
-        accessEntry.values.job = undefined;
-        accessEntry.values.userId = event.char.userId;
-    }
-
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryRank(event: { id: string; rank: JobGrade }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.minimumGrade = event.rank.grade;
-    access.value.set(event.id, accessEntry);
-}
-
-function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): void {
-    const accessEntry = access.value.get(event.id);
-    if (!accessEntry) {
-        return;
-    }
-
-    accessEntry.values.accessRole = event.access;
-    access.value.set(event.id, accessEntry);
-}
-
-const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJobs());
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -436,26 +278,54 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UToggle v-model="state.rsvpOpen" />
                         </UFormGroup>
 
-                        <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
-                            <CalendarAccessEntry
-                                v-for="entry in access.values()"
-                                :key="entry.id"
-                                :init="entry"
-                                :jobs="jobs"
-                                @type-change="updateAccessEntryType($event)"
-                                @name-change="updateAccessEntryName($event)"
-                                @rank-change="updateAccessEntryRank($event)"
-                                @access-change="updateAccessEntryAccess($event)"
-                                @delete-request="removeAccessEntry($event)"
-                            />
-
-                            <UButton
-                                :ui="{ rounded: 'rounded-full' }"
-                                icon="i-mdi-plus"
-                                :title="$t('components.documents.document_editor.add_permission')"
-                                @click="addAccessEntry()"
-                            />
+                        <UFormGroup name="users" :label="$t('common.guest', 2)" class="flex-1">
+                            <USelectMenu
+                                v-model="state.users"
+                                multiple
+                                :searchable="
+                                    async (query: string) => {
+                                        usersLoading = true;
+                                        const users = await completorStore.completeCitizens({
+                                            search: query,
+                                        });
+                                        usersLoading = false;
+                                        return users.map((u) => ({
+                                            entryId: entryId ?? '0',
+                                            userId: u.userId,
+                                            user: u,
+                                        }));
+                                    }
+                                "
+                                :search-attributes="['firstname', 'lastname']"
+                                block
+                                :placeholder="$t('common.citizen', 2)"
+                                trailing
+                                by="userId"
+                                :searchable-placeholder="$t('common.search_field')"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            >
+                                <template #option="{ option: user }">
+                                    {{ `${user?.user?.firstname} ${user?.user?.lastname} (${user?.user?.dateofbirth})` }}
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                            </USelectMenu>
                         </UFormGroup>
+
+                        <div v-if="state.users.length > 0" class="mt-2 overflow-hidden rounded-md bg-base-900">
+                            <ul role="list" class="grid grid-cols-2 text-sm font-medium text-gray-100 lg:grid-cols-3">
+                                <li
+                                    v-for="user in state.users"
+                                    :key="user.userId"
+                                    class="flex items-center border-b border-gray-100 px-4 py-2 dark:border-gray-800"
+                                >
+                                    <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
+                                </li>
+                            </ul>
+                        </div>
                     </template>
                 </div>
 

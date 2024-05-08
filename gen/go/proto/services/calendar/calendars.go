@@ -71,12 +71,10 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 		FROM(tCalendar.
 			LEFT_JOIN(tCUserAccess,
 				tCUserAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCUserAccess.EntryID.IS_NULL()).
 					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
 			).
 			LEFT_JOIN(tCJobAccess,
 				tCJobAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCJobAccess.EntryID.IS_NULL()).
 					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
 					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
@@ -134,12 +132,10 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 		FROM(tCalendar.
 			LEFT_JOIN(tCUserAccess,
 				tCUserAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCUserAccess.EntryID.IS_NULL()).
 					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
 			).
 			LEFT_JOIN(tCJobAccess,
 				tCJobAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCJobAccess.EntryID.IS_NULL()).
 					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
 					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
@@ -197,7 +193,7 @@ func (s *Server) GetCalendar(ctx context.Context, req *GetCalendarRequest) (*Get
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	access, err := s.getAccess(ctx, calendar.Id, nil)
+	access, err := s.getAccess(ctx, calendar.Id)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -257,7 +253,6 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tCalendar := table.FivenetCalendar
 	// Check if user has access to existing calendar
 	if req.Calendar.Id > 0 {
 		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Calendar.Id, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
@@ -268,7 +263,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 			return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 		}
 
-		calendar, err := s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").ID.EQ(jet.Uint64(req.Calendar.Id)))
+		calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)))
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
@@ -283,6 +278,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 			req.Calendar.Public = false
 		}
 
+		tCalendar := table.FivenetCalendar
 		stmt := tCalendar.
 			UPDATE(
 				tCalendar.Name,
@@ -308,9 +304,10 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		// Allow only one private calendar per user
+		// Allow only one private calendar per user (job field will be null for private calendars)
 		if req.Calendar.Job == nil {
-			calendar, err := s.getCalendar(ctx, userInfo, tCalendar.AS("calendar").CreatorID.EQ(jet.Int32(userInfo.UserId)))
+			calendar, err := s.getCalendar(ctx, userInfo, tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)).
+				AND(tCalendar.Job.IS_NULL()))
 			if err != nil {
 				return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 			}
@@ -320,6 +317,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 			}
 		}
 
+		tCalendar := table.FivenetCalendar
 		stmt := tCalendar.
 			INSERT(
 				tCalendar.Job,
@@ -365,7 +363,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
-	if err := s.handleCalendarAccessChanges(ctx, tx, calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED, req.Calendar.Id, nil, req.Calendar.Access); err != nil {
+	if err := s.handleCalendarAccessChanges(ctx, tx, calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED, req.Calendar.Id, req.Calendar.Access); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 

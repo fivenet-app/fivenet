@@ -88,7 +88,7 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
                             class="flex flex-initial items-center justify-between gap-1"
                         >
                             <div class="inline-flex gap-1">
-                                <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+                                <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
 
                                 <span>{{ calendar.name }}</span>
                                 <span v-if="calendar.description" class="hidden sm:block"

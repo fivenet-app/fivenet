@@ -107,7 +107,11 @@ export enum NotificationCategory {
     /**
      * @generated from protobuf enum value: NOTIFICATION_CATEGORY_DOCUMENT = 2;
      */
-    DOCUMENT = 2
+    DOCUMENT = 2,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_CATEGORY_CALENDAR = 3;
+     */
+    CALENDAR = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Notification$Type extends MessageType<Notification> {

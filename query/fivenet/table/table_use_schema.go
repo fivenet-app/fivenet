@@ -15,7 +15,6 @@ func UseSchema(schema string) {
 	FivenetAuditLog = FivenetAuditLog.FromSchema(schema)
 	FivenetCalendar = FivenetCalendar.FromSchema(schema)
 	FivenetCalendarEntries = FivenetCalendarEntries.FromSchema(schema)
-	FivenetCalendarEntriesSubs = FivenetCalendarEntriesSubs.FromSchema(schema)
 	FivenetCalendarJobAccess = FivenetCalendarJobAccess.FromSchema(schema)
 	FivenetCalendarRsvp = FivenetCalendarRsvp.FromSchema(schema)
 	FivenetCalendarSubs = FivenetCalendarSubs.FromSchema(schema)

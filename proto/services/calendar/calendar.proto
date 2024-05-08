@@ -85,12 +85,10 @@ message DeleteCalendarEntryResponse {}
 
 message ShareCalendarEntryRequest {
   uint64 entry_id = 1 [jstype = JS_STRING];
-  resources.calendar.CalendarAccess access = 2;
+  repeated int32 user_ids = 2;
 }
 
-message ShareCalendarEntryResponse {
-  resources.calendar.CalendarAccess access = 1;
-}
+message ShareCalendarEntryResponse {}
 
 // RSVP
 

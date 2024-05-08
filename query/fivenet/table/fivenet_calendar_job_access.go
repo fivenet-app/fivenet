@@ -20,7 +20,6 @@ type fivenetCalendarJobAccessTable struct {
 	ID           mysql.ColumnInteger
 	CreatedAt    mysql.ColumnTimestamp
 	CalendarID   mysql.ColumnInteger
-	EntryID      mysql.ColumnInteger
 	Job          mysql.ColumnString
 	MinimumGrade mysql.ColumnInteger
 	Access       mysql.ColumnInteger
@@ -67,12 +66,11 @@ func newFivenetCalendarJobAccessTableImpl(schemaName, tableName, alias string) f
 		IDColumn           = mysql.IntegerColumn("id")
 		CreatedAtColumn    = mysql.TimestampColumn("created_at")
 		CalendarIDColumn   = mysql.IntegerColumn("calendar_id")
-		EntryIDColumn      = mysql.IntegerColumn("entry_id")
 		JobColumn          = mysql.StringColumn("job")
 		MinimumGradeColumn = mysql.IntegerColumn("minimum_grade")
 		AccessColumn       = mysql.IntegerColumn("access")
-		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, CalendarIDColumn, EntryIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
-		mutableColumns     = mysql.ColumnList{CreatedAtColumn, CalendarIDColumn, EntryIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		allColumns         = mysql.ColumnList{IDColumn, CreatedAtColumn, CalendarIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
+		mutableColumns     = mysql.ColumnList{CreatedAtColumn, CalendarIDColumn, JobColumn, MinimumGradeColumn, AccessColumn}
 	)
 
 	return fivenetCalendarJobAccessTable{
@@ -82,7 +80,6 @@ func newFivenetCalendarJobAccessTableImpl(schemaName, tableName, alias string) f
 		ID:           IDColumn,
 		CreatedAt:    CreatedAtColumn,
 		CalendarID:   CalendarIDColumn,
-		EntryID:      EntryIDColumn,
 		Job:          JobColumn,
 		MinimumGrade: MinimumGradeColumn,
 		Access:       AccessColumn,

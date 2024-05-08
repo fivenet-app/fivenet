@@ -8,7 +8,7 @@ defineOptions({
 const props = withDefaults(
     defineProps<{
         value: Date | Timestamp | undefined;
-        type?: 'short' | 'long' | 'compact' | 'date';
+        type?: 'date' | 'short' | 'long' | 'compact' | 'time';
         ago?: boolean;
         updateInterval?: number;
         updateCallback?: () => string;

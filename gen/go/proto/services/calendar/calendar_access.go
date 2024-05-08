@@ -12,26 +12,20 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
-func (s *Server) getAccess(ctx context.Context, calendarId uint64, entryId *uint64) (*calendar.CalendarAccess, error) {
+func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.CalendarAccess, error) {
 	dest := &calendar.CalendarAccess{}
-
-	jobCondition := tCJobAccess.CalendarID.EQ(jet.Uint64(calendarId))
-	if entryId != nil {
-		jobCondition = jobCondition.AND(tCJobAccess.EntryID.EQ(jet.Uint64(*entryId)))
-	}
 
 	jobStmt := tCJobAccess.
 		SELECT(
 			tCJobAccess.ID,
 			tCJobAccess.CreatedAt,
 			tCJobAccess.CalendarID,
-			tCJobAccess.EntryID,
 			tCJobAccess.Job,
 			tCJobAccess.MinimumGrade,
 			tCJobAccess.Access,
 		).
 		FROM(tCJobAccess).
-		WHERE(jobCondition).
+		WHERE(tCJobAccess.CalendarID.EQ(jet.Uint64(calendarId))).
 		ORDER_BY(tCJobAccess.ID.ASC())
 
 	if err := jobStmt.QueryContext(ctx, s.db, &dest.Jobs); err != nil {
@@ -40,17 +34,11 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64, entryId *uint
 		}
 	}
 
-	userCondition := tCUserAccess.CalendarID.EQ(jet.Uint64(calendarId))
-	if entryId != nil {
-		userCondition = userCondition.AND(tCUserAccess.EntryID.EQ(jet.Uint64(*entryId)))
-	}
-
 	userStmt := tCUserAccess.
 		SELECT(
 			tCUserAccess.ID,
 			tCUserAccess.CreatedAt,
 			tCUserAccess.CalendarID,
-			tCUserAccess.EntryID,
 			tCUserAccess.UserID,
 			tCUserAccess.Access,
 			tUsers.ID,
@@ -68,7 +56,7 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64, entryId *uint
 					tUsers.ID.EQ(tCUserAccess.UserID),
 				),
 		).
-		WHERE(userCondition).
+		WHERE(tCUserAccess.CalendarID.EQ(jet.Uint64(calendarId))).
 		ORDER_BY(tCUserAccess.ID.ASC())
 
 	if err := userStmt.QueryContext(ctx, s.db, &dest.Jobs); err != nil {
@@ -128,12 +116,10 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 		FROM(tCalendar.
 			LEFT_JOIN(tCUserAccess,
 				tCUserAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCUserAccess.EntryID.IS_NULL()).
 					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
 			).
 			LEFT_JOIN(tCJobAccess,
 				tCJobAccess.CalendarID.EQ(tCalendar.ID).
-					AND(tCJobAccess.EntryID.IS_NULL()).
 					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
 					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 			).
@@ -171,9 +157,9 @@ func (s *Server) checkIfUserHasAccessToCalendarIDs(ctx context.Context, userInfo
 	return dest, nil
 }
 
-func (s *Server) handleCalendarAccessChanges(ctx context.Context, tx qrm.DB, mode calendar.AccessLevelUpdateMode, calendarId uint64, entryId *uint64, access *calendar.CalendarAccess) error {
+func (s *Server) handleCalendarAccessChanges(ctx context.Context, tx qrm.DB, mode calendar.AccessLevelUpdateMode, calendarId uint64, access *calendar.CalendarAccess) error {
 	// Get existing job and user accesses from database
-	current, err := s.getAccess(ctx, calendarId, entryId)
+	current, err := s.getAccess(ctx, calendarId)
 	if err != nil {
 		return err
 	}
@@ -184,25 +170,25 @@ func (s *Server) handleCalendarAccessChanges(ctx context.Context, tx qrm.DB, mod
 	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE:
 		toCreate, toUpdate, toDelete := s.compareCalendarAccess(current, access)
 
-		if err := s.createCalendarAccess(ctx, tx, calendarId, entryId, toCreate); err != nil {
+		if err := s.createCalendarAccess(ctx, tx, calendarId, toCreate); err != nil {
 			return err
 		}
 
-		if err := s.updateCalendarAccess(ctx, tx, calendarId, entryId, toUpdate); err != nil {
+		if err := s.updateCalendarAccess(ctx, tx, calendarId, toUpdate); err != nil {
 			return err
 		}
 
-		if err := s.deleteCalendarAccess(ctx, tx, calendarId, entryId, toDelete); err != nil {
+		if err := s.deleteCalendarAccess(ctx, tx, calendarId, toDelete); err != nil {
 			return err
 		}
 
 	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
-		if err := s.deleteCalendarAccess(ctx, tx, calendarId, entryId, access); err != nil {
+		if err := s.deleteCalendarAccess(ctx, tx, calendarId, access); err != nil {
 			return err
 		}
 
 	case calendar.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR:
-		if err := s.clearCalendarAccess(ctx, tx, calendarId, entryId); err != nil {
+		if err := s.clearCalendarAccess(ctx, tx, calendarId); err != nil {
 			return err
 		}
 	}
@@ -317,7 +303,7 @@ func (s *Server) compareCalendarAccess(current, in *calendar.CalendarAccess) (to
 	return
 }
 
-func (s *Server) createCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, entryId *uint64, access *calendar.CalendarAccess) error {
+func (s *Server) createCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, access *calendar.CalendarAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -329,14 +315,12 @@ func (s *Server) createCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 			stmt := tCJobAccess.
 				INSERT(
 					tCJobAccess.CalendarID,
-					tCJobAccess.EntryID,
 					tCJobAccess.Job,
 					tCJobAccess.MinimumGrade,
 					tCJobAccess.Access,
 				).
 				VALUES(
 					calendarId,
-					entryId,
 					access.Jobs[k].Job,
 					access.Jobs[k].MinimumGrade,
 					access.Jobs[k].Access,
@@ -355,13 +339,11 @@ func (s *Server) createCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 			stmt := tCUserAccess.
 				INSERT(
 					tCUserAccess.CalendarID,
-					tCUserAccess.EntryID,
 					tCUserAccess.UserID,
 					tCUserAccess.Access,
 				).
 				VALUES(
 					calendarId,
-					entryId,
 					access.Users[k].UserId,
 					access.Users[k].Access,
 				)
@@ -375,7 +357,7 @@ func (s *Server) createCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 	return nil
 }
 
-func (s *Server) updateCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, entryId *uint64, access *calendar.CalendarAccess) error {
+func (s *Server) updateCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, access *calendar.CalendarAccess) error {
 	if access == nil {
 		return nil
 	}
@@ -387,14 +369,12 @@ func (s *Server) updateCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 			stmt := tCJobAccess.
 				UPDATE(
 					tCJobAccess.CalendarID,
-					tCJobAccess.EntryID,
 					tCJobAccess.Job,
 					tCJobAccess.MinimumGrade,
 					tCJobAccess.Access,
 				).
 				SET(
 					calendarId,
-					entryId,
 					access.Jobs[k].Job,
 					access.Jobs[k].MinimumGrade,
 					access.Jobs[k].Access,
@@ -416,13 +396,11 @@ func (s *Server) updateCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 			stmt := tCUserAccess.
 				UPDATE(
 					tCUserAccess.CalendarID,
-					tCUserAccess.EntryID,
 					tCUserAccess.UserID,
 					tCUserAccess.Access,
 				).
 				SET(
 					calendarId,
-					entryId,
 					access.Users[k].UserId,
 					access.Users[k].Access,
 				).
@@ -439,14 +417,9 @@ func (s *Server) updateCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 	return nil
 }
 
-func (s *Server) deleteCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, entryId *uint64, access *calendar.CalendarAccess) error {
+func (s *Server) deleteCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, access *calendar.CalendarAccess) error {
 	if access == nil {
 		return nil
-	}
-
-	entryIdColumn := jet.IntExp(jet.NULL)
-	if entryId != nil {
-		entryIdColumn = jet.Uint64(*entryId)
 	}
 
 	if access.Jobs != nil && len(access.Jobs) > 0 {
@@ -465,7 +438,6 @@ func (s *Server) deleteCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 				jet.AND(
 					tCJobAccess.ID.IN(jobIds...),
 					tCJobAccess.CalendarID.EQ(jet.Uint64(calendarId)),
-					tCJobAccess.EntryID.EQ(entryIdColumn),
 				),
 			).
 			LIMIT(25)
@@ -491,7 +463,6 @@ func (s *Server) deleteCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 				jet.AND(
 					tCUserAccess.ID.IN(uaIds...),
 					tCUserAccess.CalendarID.EQ(jet.Uint64(calendarId)),
-					tCUserAccess.EntryID.EQ(entryIdColumn),
 				),
 			).
 			LIMIT(25)
@@ -504,17 +475,11 @@ func (s *Server) deleteCalendarAccess(ctx context.Context, tx qrm.DB, calendarId
 	return nil
 }
 
-func (s *Server) clearCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64, entryId *uint64) error {
-	entryIdColumn := jet.IntExp(jet.NULL)
-	if entryId != nil {
-		entryIdColumn = jet.Uint64(*entryId)
-	}
-
+func (s *Server) clearCalendarAccess(ctx context.Context, tx qrm.DB, calendarId uint64) error {
 	jobStmt := tCJobAccess.
 		DELETE().
 		WHERE(jet.AND(
 			tCJobAccess.CalendarID.EQ(jet.Uint64(calendarId)),
-			tCJobAccess.EntryID.EQ(entryIdColumn),
 		))
 
 	if _, err := jobStmt.ExecContext(ctx, tx); err != nil {
@@ -525,7 +490,6 @@ func (s *Server) clearCalendarAccess(ctx context.Context, tx qrm.DB, calendarId 
 		DELETE().
 		WHERE(jet.AND(
 			tCUserAccess.CalendarID.EQ(jet.Uint64(calendarId)),
-			tCUserAccess.EntryID.EQ(entryIdColumn),
 		))
 
 	if _, err := userStmt.ExecContext(ctx, tx); err != nil {

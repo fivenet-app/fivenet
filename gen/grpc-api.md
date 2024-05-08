@@ -247,7 +247,6 @@
     - [CalendarEntry](#resources-calendar-CalendarEntry)
     - [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP)
     - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
-    - [CalendarEntrySub](#resources-calendar-CalendarEntrySub)
     - [CalendarShort](#resources-calendar-CalendarShort)
     - [CalendarSub](#resources-calendar-CalendarSub)
   
@@ -2638,6 +2637,7 @@
 | NOTIFICATION_CATEGORY_UNSPECIFIED | 0 |  |
 | NOTIFICATION_CATEGORY_GENERAL | 1 |  |
 | NOTIFICATION_CATEGORY_DOCUMENT | 2 |  |
+| NOTIFICATION_CATEGORY_CALENDAR | 3 |  |
 
 
  
@@ -4037,7 +4037,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | calendar_id | [uint64](#uint64) |  |  |
-| entry_id | [uint64](#uint64) | optional |  |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional | @gotags: alias:&#34;job_label&#34; |
 | minimum_grade | [int32](#int32) |  |  |
@@ -4060,7 +4059,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | calendar_id | [uint64](#uint64) |  |  |
-| entry_id | [uint64](#uint64) | optional |  |
 | user_id | [int32](#int32) |  |  |
 | user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
 | access | [AccessLevel](#resources-calendar-AccessLevel) |  |  |
@@ -4169,7 +4167,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | recurring | [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring) | optional |  |
-| access | [CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
 
 
 
@@ -4206,27 +4203,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | every | [string](#string) |  |  |
 | count | [int32](#int32) |  |  |
 | until | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-
-
-
-
-
-
-<a name="resources-calendar-CalendarEntrySub"></a>
-
-### CalendarEntrySub
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
-| entry_id | [uint64](#uint64) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [resources.users.UserShort](#resources-users-UserShort) | optional |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| confirmed | [bool](#bool) |  |  |
-| muted | [bool](#bool) |  |  |
 
 
 
@@ -9136,7 +9112,7 @@ Results ====================================================================
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | entry_id | [uint64](#uint64) |  |  |
-| access | [resources.calendar.CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
+| user_ids | [int32](#int32) | repeated |  |
 
 
 
@@ -9147,11 +9123,6 @@ Results ====================================================================
 
 ### ShareCalendarEntryResponse
 
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| access | [resources.calendar.CalendarAccess](#resources-calendar-CalendarAccess) |  |  |
 
 
 

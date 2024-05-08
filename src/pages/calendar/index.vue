@@ -117,12 +117,11 @@ type CalEntry = {
 
 const transformedCalendarEntries = computed(() =>
     entries.value.map((entry) => {
-        const color = calendars.value.find((c) => c.id === entry.calendarId)?.color ?? 'primary';
         return {
             key: entry.id,
             customData: {
                 ...entry,
-                color: color,
+                color: entry.calendar?.color ?? 'primary',
                 time: formatStartEndTime(entry),
             },
             dates: [
@@ -201,7 +200,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry')"
+                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry') && calendars.length > 0"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -228,25 +227,35 @@ const isOpen = ref(false);
                                 :retry="calendarsRefresh"
                             />
 
-                            <div v-else class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2">
-                                    <UCheckbox
-                                        :model-value="query.calendarIds.includes(calendar.id)"
-                                        class="truncate"
-                                        @change="calendarIdChange(calendar.id, $event)"
-                                    />
+                            <div v-else class="flex flex-col gap-4">
+                                <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
+                                    {{ $t('components.calendar.FindCalendarsModal.title') }}
+                                </UButton>
 
-                                    <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+                                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                    <div
+                                        v-for="calendar in calendars"
+                                        :key="calendar.id"
+                                        class="inline-flex items-center gap-2"
+                                    >
+                                        <UCheckbox
+                                            :model-value="query.calendarIds.includes(calendar.id)"
+                                            class="truncate"
+                                            @change="calendarIdChange(calendar.id, $event)"
+                                        />
 
-                                    <UButton
-                                        :color="calendar.color"
-                                        size="sm"
-                                        variant="link"
-                                        :padded="false"
-                                        truncate
-                                        :label="calendar.name"
-                                        @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
-                                    />
+                                        <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+
+                                        <UButton
+                                            :color="calendar.color"
+                                            size="sm"
+                                            variant="link"
+                                            :padded="false"
+                                            truncate
+                                            :label="calendar.name"
+                                            @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                                        />
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -296,7 +305,7 @@ const isOpen = ref(false);
                                             <UBadge
                                                 :color="attr.customData.color"
                                                 :ui="{ rounded: 'rounded-full' }"
-                                                label="&nbsp;"
+                                                size="lg"
                                             />
 
                                             <template v-if="attr.customData.time">
@@ -351,7 +360,7 @@ const isOpen = ref(false);
                 </template>
             </UDashboardNavbar>
 
-            <div class="m-2 flex h-full flex-col gap-2">
+            <div class="mx-2 mb-2 flex h-full flex-col gap-2">
                 <div>
                     <p class="font-semibold">{{ $t('common.calendar') }}</p>
 
@@ -370,7 +379,7 @@ const isOpen = ref(false);
                                 @change="calendarIdChange(calendar.id, $event)"
                             />
 
-                            <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+                            <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" />
 
                             <UButton
                                 :color="calendar.color"
@@ -388,6 +397,7 @@ const isOpen = ref(false);
                 <div class="flex-1" />
 
                 <UDivider class="sticky bottom-0" />
+
                 <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}
                 </UButton>

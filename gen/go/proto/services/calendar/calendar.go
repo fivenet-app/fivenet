@@ -5,6 +5,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/storage"
@@ -18,9 +19,8 @@ var (
 	tCalendarShort = tCalendar.AS("calendar_short")
 	tCalendarSubs  = table.FivenetCalendarSubs.AS("calendar_sub")
 
-	tCalendarEntry       = table.FivenetCalendarEntries.AS("calendar_entry")
-	tCalendarRSVP        = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
-	tCalendarEntriesSubs = table.FivenetCalendarEntriesSubs.AS("calendar_entry_sub")
+	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
+	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")
 
 	tCJobAccess  = table.FivenetCalendarJobAccess.AS("calendar_job_access")
 	tCUserAccess = table.FivenetCalendarUserAccess.AS("calendar_user_access")
@@ -40,6 +40,7 @@ type Server struct {
 	aud      audit.IAuditer
 	st       storage.IStorage
 	appCfg   appconfig.IConfig
+	notif    notifi.INotifi
 }
 
 type Params struct {
@@ -51,6 +52,7 @@ type Params struct {
 	Aud       audit.IAuditer
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
+	Notif     notifi.INotifi
 }
 
 func NewServer(p Params) *Server {
@@ -61,6 +63,7 @@ func NewServer(p Params) *Server {
 		aud:      p.Aud,
 		st:       p.Storage,
 		appCfg:   p.AppConfig,
+		notif:    p.Notif,
 	}
 }
 

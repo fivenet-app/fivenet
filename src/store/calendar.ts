@@ -9,6 +9,8 @@ import type {
     GetCalendarResponse,
     ListCalendarEntriesRequest,
     ListCalendarEntriesResponse,
+    ListCalendarEntryRSVPRequest,
+    ListCalendarEntryRSVPResponse,
     ListCalendarsRequest,
     ListCalendarsResponse,
 } from '~~/gen/ts/services/calendar/calendar';
@@ -31,6 +33,7 @@ export const useCalendarStore = defineStore('calendar', {
         key(id) {
             return `state-${useAuthStore().activeChar?.userId}-${id}`;
         },
+        paths: ['activeCalendarIds'],
     },
     actions: {
         // Calendars
@@ -53,14 +56,16 @@ export const useCalendarStore = defineStore('calendar', {
                 const call = $grpc.getCalendarClient().listCalendars(req);
                 const { response } = await call;
 
-                response.calendars.forEach((calendar) => {
-                    const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
-                    if (idx > -1) {
-                        this.calendars[idx] = calendar;
-                    } else {
-                        this.calendars.push(calendar);
-                    }
-                });
+                if (!req.onlyPublic) {
+                    response.calendars.forEach((calendar) => {
+                        const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
+                        if (idx > -1) {
+                            this.calendars[idx] = calendar;
+                        } else {
+                            this.calendars.push(calendar);
+                        }
+                    });
+                }
 
                 return response;
             } catch (e) {
@@ -84,6 +89,8 @@ export const useCalendarStore = defineStore('calendar', {
                     } else {
                         this.calendars.push(response.calendar);
                     }
+
+                    this.activeCalendarIds.push(response.calendar.id);
                 }
 
                 return response;
@@ -155,8 +162,7 @@ export const useCalendarStore = defineStore('calendar', {
                 const { response } = await call;
 
                 if (response.entry) {
-                    this.entries.push(response.entry);
-                    const idx = this.entries.findIndex((c) => c.id === response.entry!.id);
+                    const idx = this.entries.findIndex((e) => e.id === response.entry?.id);
                     if (idx > -1) {
                         this.entries[idx] = response.entry;
                     } else {
@@ -184,6 +190,21 @@ export const useCalendarStore = defineStore('calendar', {
                 if (idx > -1) {
                     this.entries.splice(idx, 1);
                 }
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
+        },
+
+        // RSVP
+        async listCalendarEntryRSVP(req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> {
+            const { $grpc } = useNuxtApp();
+
+            try {
+                const call = $grpc.getCalendarClient().listCalendarEntryRSVP(req);
+                const { response } = await call;
+
+                return response;
             } catch (e) {
                 $grpc.handleError(e as RpcError);
                 throw e;

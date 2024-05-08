@@ -436,7 +436,8 @@
         "appointment": "Appointment | Appointments",
         "public": "Public",
         "subscribe": "Subscribe",
-        "unsubscribe": "Unsubscribe"
+        "unsubscribe": "Unsubscribe",
+        "guest": "Guest | Guests"
     },
     "components": {
         "partials": {
@@ -1033,6 +1034,9 @@
             },
             "FindCalendarsModal": {
                 "title": "Find Calendars"
+            },
+            "EntryShareModal": {
+                "title": "Share Calendar Entry"
             }
         }
     },
@@ -1375,6 +1379,12 @@
             "request_updated": {
                 "title": "Qualification Request updated",
                 "content": "Your qualification request has been updated."
+            }
+        },
+        "calendar": {
+            "entry_shared_with_you": {
+                "title": "Invited to \"{title}\" by {name}",
+                "content": "You have been invited to \"{title}\", check your calendar to respond."
             }
         }
     },

@@ -11,7 +11,7 @@ import (
 )
 
 func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calendarId uint64, entryId uint64, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, access, publicOk, entryId)
+	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, publicOk, entryId)
 	if err != nil {
 		return false, err
 	}
@@ -28,12 +28,12 @@ func (s *Server) checkIfUserHasAccessToCalendarEntry(ctx context.Context, calend
 	return check, err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarEntries(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, entryIds ...uint64) (bool, error) {
-	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, access, publicOk, entryIds...)
+func (s *Server) checkIfUserHasAccessToCalendarEntries(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, entryIds ...uint64) (bool, error) {
+	out, err := s.checkIfUserHasAccessToCalendarEntryIDs(ctx, userInfo, publicOk, entryIds...)
 	return len(out) == len(entryIds), err
 }
 
-func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, userInfo *userinfo.UserInfo, access calendar.AccessLevel, publicOk bool, entryIds ...uint64) ([]uint64, error) {
+func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, userInfo *userinfo.UserInfo, publicOk bool, entryIds ...uint64) ([]uint64, error) {
 	var dest []uint64
 	if len(entryIds) == 0 {
 		return dest, nil
@@ -60,47 +60,31 @@ func (s *Server) checkIfUserHasAccessToCalendarEntryIDs(ctx context.Context, use
 	stmt := tCalendarEntry.
 		SELECT(
 			tCalendarEntry.ID,
+			tCalendarRSVP.EntryID,
 		).
 		FROM(tCalendarEntry.
+			LEFT_JOIN(tCalendarRSVP,
+				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
+			).
 			INNER_JOIN(tCalendar,
 				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
 					AND(tCalendar.DeletedAt.IS_NULL()),
-			).
-			LEFT_JOIN(tCUserAccess,
-				tCUserAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
-					AND(tCUserAccess.EntryID.EQ(tCalendarEntry.ID)).
-					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tCJobAccess,
-				tCJobAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
-					AND(tCJobAccess.EntryID.EQ(tCalendarEntry.ID)).
-					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-			).
-			LEFT_JOIN(tCreator,
-				tCalendarEntry.CreatorID.EQ(tCreator.ID),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).
 		WHERE(jet.AND(
-			tCalendarEntry.ID.IN(ids...),
 			tCalendarEntry.DeletedAt.IS_NULL(),
+			tCalendarRSVP.EntryID.IN(ids...),
 			jet.OR(
-				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.Job)),
 				jet.AND(
-					tCUserAccess.Access.IS_NOT_NULL(),
-					tCUserAccess.Access.GT_EQ(jet.Int32(int32(access))),
+					tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					tCalendarEntry.CreatorJob.EQ(jet.String(userInfo.Job)),
 				),
-				jet.AND(
-					tCUserAccess.Access.IS_NULL(),
-					tCJobAccess.Access.IS_NOT_NULL(),
-					tCJobAccess.Access.GT_EQ(jet.Int32(int32(access))),
-				),
+				tCalendarRSVP.EntryID.IS_NOT_NULL(),
 				condition,
 			),
 		)).
-		ORDER_BY(tCalendarEntry.ID.DESC(), tCJobAccess.MinimumGrade)
+		ORDER_BY(tCalendarEntry.ID.DESC())
 
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

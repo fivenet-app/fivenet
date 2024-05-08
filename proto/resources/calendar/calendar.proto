@@ -86,23 +86,12 @@ message CalendarEntry {
   optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
   string creator_job = 15 [(validate.rules).string.max_len = 20];
   optional CalendarEntryRecurring recurring = 16;
-  resources.calendar.CalendarAccess access = 17;
 }
 
 message CalendarEntryRecurring {
   string every = 1;
   int32 count = 2;
   optional resources.timestamp.Timestamp until = 3;
-}
-
-message CalendarEntrySub {
-  uint64 calendar_id = 1 [jstype = JS_STRING];
-  uint64 entry_id = 2 [jstype = JS_STRING];
-  int32 user_id = 3;
-  optional resources.users.UserShort user = 4;
-  optional resources.timestamp.Timestamp created_at = 5;
-  bool confirmed = 6;
-  bool muted = 7;
 }
 
 enum RsvpResponses {

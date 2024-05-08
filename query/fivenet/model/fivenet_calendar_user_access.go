@@ -15,7 +15,6 @@ type FivenetCalendarUserAccess struct {
 	ID         uint64     `sql:"primary_key" json:"id"`
 	CreatedAt  *time.Time `json:"created_at"`
 	CalendarID *uint64    `json:"calendar_id"`
-	EntryID    *uint64    `json:"entry_id"`
 	UserID     int32      `json:"user_id"`
 	Access     int16      `json:"access"`
 }

@@ -22,6 +22,7 @@ func (x *AppConfig) Default() {
 			LastCharLock:  false,
 		}
 	}
+
 	if x.Perms == nil {
 		x.Perms = &Perms{
 			Default: []*Perm{

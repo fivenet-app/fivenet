@@ -131,7 +131,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     <li
                                         v-for="user in state.users"
                                         :key="user.userId"
-                                        class="inline-flex items-center px-6 py-4"
+                                        class="inline-flex items-center px-4 py-2"
                                     >
                                         <CitizenInfoPopover :user="user" show-avatar show-avatar-in-name />
                                     </li>

@@ -20,7 +20,6 @@ type fivenetCalendarUserAccessTable struct {
 	ID         mysql.ColumnInteger
 	CreatedAt  mysql.ColumnTimestamp
 	CalendarID mysql.ColumnInteger
-	EntryID    mysql.ColumnInteger
 	UserID     mysql.ColumnInteger
 	Access     mysql.ColumnInteger
 
@@ -66,11 +65,10 @@ func newFivenetCalendarUserAccessTableImpl(schemaName, tableName, alias string) 
 		IDColumn         = mysql.IntegerColumn("id")
 		CreatedAtColumn  = mysql.TimestampColumn("created_at")
 		CalendarIDColumn = mysql.IntegerColumn("calendar_id")
-		EntryIDColumn    = mysql.IntegerColumn("entry_id")
 		UserIDColumn     = mysql.IntegerColumn("user_id")
 		AccessColumn     = mysql.IntegerColumn("access")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, CalendarIDColumn, EntryIDColumn, UserIDColumn, AccessColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, CalendarIDColumn, EntryIDColumn, UserIDColumn, AccessColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, CalendarIDColumn, UserIDColumn, AccessColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, CalendarIDColumn, UserIDColumn, AccessColumn}
 	)
 
 	return fivenetCalendarUserAccessTable{
@@ -80,7 +78,6 @@ func newFivenetCalendarUserAccessTableImpl(schemaName, tableName, alias string) 
 		ID:         IDColumn,
 		CreatedAt:  CreatedAtColumn,
 		CalendarID: CalendarIDColumn,
-		EntryID:    EntryIDColumn,
 		UserID:     UserIDColumn,
 		Access:     AccessColumn,
 

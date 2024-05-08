@@ -644,11 +644,13 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
 
 	// If char lock is active, make sure that the user is choosing the correct char
-	if !isSuperUser && s.appCfg.Get().Auth.LastCharLock && account.LastChar != nil && *account.LastChar != req.CharId {
+	if (account.Superuser == nil || !*account.Superuser) &&
+		s.appCfg.Get().Auth.LastCharLock && account.LastChar != nil &&
+		*account.LastChar != req.CharId {
 		return nil, errswrap.NewError(err, errorsauth.ErrCharLock)
 	}
 
-	// Reset override jobs when person is not a superuser but has an override set..
+	// Reset override jobs when char is not a superuser but has an override set..
 	if !isSuperUser &&
 		((account.Superuser != nil && *account.Superuser) ||
 			account.OverrideJob != nil) {

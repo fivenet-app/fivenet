@@ -2078,35 +2078,6 @@ func (m *ShareCalendarEntryRequest) validate(all bool) error {
 
 	// no validation rules for EntryId
 
-	if all {
-		switch v := interface{}(m.GetAccess()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ShareCalendarEntryRequestValidationError{
-					field:  "Access",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ShareCalendarEntryRequestValidationError{
-					field:  "Access",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ShareCalendarEntryRequestValidationError{
-				field:  "Access",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
 	if len(errors) > 0 {
 		return ShareCalendarEntryRequestMultiError(errors)
 	}
@@ -2208,35 +2179,6 @@ func (m *ShareCalendarEntryResponse) validate(all bool) error {
 	}
 
 	var errors []error
-
-	if all {
-		switch v := interface{}(m.GetAccess()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, ShareCalendarEntryResponseValidationError{
-					field:  "Access",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, ShareCalendarEntryResponseValidationError{
-					field:  "Access",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return ShareCalendarEntryResponseValidationError{
-				field:  "Access",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
 
 	if len(errors) > 0 {
 		return ShareCalendarEntryResponseMultiError(errors)

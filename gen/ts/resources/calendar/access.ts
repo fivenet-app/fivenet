@@ -42,27 +42,23 @@ export interface CalendarJobAccess {
      */
     calendarId: string;
     /**
-     * @generated from protobuf field: optional uint64 entry_id = 4 [jstype = JS_STRING];
-     */
-    entryId?: string;
-    /**
-     * @generated from protobuf field: string job = 5;
+     * @generated from protobuf field: string job = 4;
      */
     job: string;
     /**
-     * @generated from protobuf field: optional string job_label = 6;
+     * @generated from protobuf field: optional string job_label = 5;
      */
     jobLabel?: string; // @gotags: alias:"job_label"
     /**
-     * @generated from protobuf field: int32 minimum_grade = 7;
+     * @generated from protobuf field: int32 minimum_grade = 6;
      */
     minimumGrade: number;
     /**
-     * @generated from protobuf field: optional string job_grade_label = 8;
+     * @generated from protobuf field: optional string job_grade_label = 7;
      */
     jobGradeLabel?: string; // @gotags: alias:"job_grade_label"
     /**
-     * @generated from protobuf field: resources.calendar.AccessLevel access = 9;
+     * @generated from protobuf field: resources.calendar.AccessLevel access = 8;
      */
     access: AccessLevel;
 }
@@ -83,19 +79,15 @@ export interface CalendarUserAccess {
      */
     calendarId: string;
     /**
-     * @generated from protobuf field: optional uint64 entry_id = 4 [jstype = JS_STRING];
-     */
-    entryId?: string;
-    /**
-     * @generated from protobuf field: int32 user_id = 5;
+     * @generated from protobuf field: int32 user_id = 4;
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 6;
+     * @generated from protobuf field: optional resources.users.UserShort user = 5;
      */
     user?: UserShort;
     /**
-     * @generated from protobuf field: resources.calendar.AccessLevel access = 7;
+     * @generated from protobuf field: resources.calendar.AccessLevel access = 6;
      */
     access: AccessLevel;
 }
@@ -211,12 +203,11 @@ class CalendarJobAccess$Type extends MessageType<CalendarJobAccess> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "entry_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 6, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 7, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 8, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 9, name: "access", kind: "enum", T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 6, name: "minimum_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 7, name: "job_grade_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 8, name: "access", kind: "enum", T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CalendarJobAccess>): CalendarJobAccess {
@@ -244,22 +235,19 @@ class CalendarJobAccess$Type extends MessageType<CalendarJobAccess> {
                 case /* uint64 calendar_id = 3 [jstype = JS_STRING];*/ 3:
                     message.calendarId = reader.uint64().toString();
                     break;
-                case /* optional uint64 entry_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.entryId = reader.uint64().toString();
-                    break;
-                case /* string job */ 5:
+                case /* string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* optional string job_label */ 6:
+                case /* optional string job_label */ 5:
                     message.jobLabel = reader.string();
                     break;
-                case /* int32 minimum_grade */ 7:
+                case /* int32 minimum_grade */ 6:
                     message.minimumGrade = reader.int32();
                     break;
-                case /* optional string job_grade_label */ 8:
+                case /* optional string job_grade_label */ 7:
                     message.jobGradeLabel = reader.string();
                     break;
-                case /* resources.calendar.AccessLevel access */ 9:
+                case /* resources.calendar.AccessLevel access */ 8:
                     message.access = reader.int32();
                     break;
                 default:
@@ -283,24 +271,21 @@ class CalendarJobAccess$Type extends MessageType<CalendarJobAccess> {
         /* uint64 calendar_id = 3 [jstype = JS_STRING]; */
         if (message.calendarId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.calendarId);
-        /* optional uint64 entry_id = 4 [jstype = JS_STRING]; */
-        if (message.entryId !== undefined)
-            writer.tag(4, WireType.Varint).uint64(message.entryId);
-        /* string job = 5; */
+        /* string job = 4; */
         if (message.job !== "")
-            writer.tag(5, WireType.LengthDelimited).string(message.job);
-        /* optional string job_label = 6; */
+            writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* optional string job_label = 5; */
         if (message.jobLabel !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.jobLabel);
-        /* int32 minimum_grade = 7; */
+            writer.tag(5, WireType.LengthDelimited).string(message.jobLabel);
+        /* int32 minimum_grade = 6; */
         if (message.minimumGrade !== 0)
-            writer.tag(7, WireType.Varint).int32(message.minimumGrade);
-        /* optional string job_grade_label = 8; */
+            writer.tag(6, WireType.Varint).int32(message.minimumGrade);
+        /* optional string job_grade_label = 7; */
         if (message.jobGradeLabel !== undefined)
-            writer.tag(8, WireType.LengthDelimited).string(message.jobGradeLabel);
-        /* resources.calendar.AccessLevel access = 9; */
+            writer.tag(7, WireType.LengthDelimited).string(message.jobGradeLabel);
+        /* resources.calendar.AccessLevel access = 8; */
         if (message.access !== 0)
-            writer.tag(9, WireType.Varint).int32(message.access);
+            writer.tag(8, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -318,10 +303,9 @@ class CalendarUserAccess$Type extends MessageType<CalendarUserAccess> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "entry_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "access", kind: "enum", T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
+            { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 5, name: "user", kind: "message", T: () => UserShort },
+            { no: 6, name: "access", kind: "enum", T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"], options: { "validate.rules": { enum: { definedOnly: true } } } }
         ]);
     }
     create(value?: PartialMessage<CalendarUserAccess>): CalendarUserAccess {
@@ -348,16 +332,13 @@ class CalendarUserAccess$Type extends MessageType<CalendarUserAccess> {
                 case /* uint64 calendar_id = 3 [jstype = JS_STRING];*/ 3:
                     message.calendarId = reader.uint64().toString();
                     break;
-                case /* optional uint64 entry_id = 4 [jstype = JS_STRING];*/ 4:
-                    message.entryId = reader.uint64().toString();
-                    break;
-                case /* int32 user_id */ 5:
+                case /* int32 user_id */ 4:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort user */ 6:
+                case /* optional resources.users.UserShort user */ 5:
                     message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* resources.calendar.AccessLevel access */ 7:
+                case /* resources.calendar.AccessLevel access */ 6:
                     message.access = reader.int32();
                     break;
                 default:
@@ -381,18 +362,15 @@ class CalendarUserAccess$Type extends MessageType<CalendarUserAccess> {
         /* uint64 calendar_id = 3 [jstype = JS_STRING]; */
         if (message.calendarId !== "0")
             writer.tag(3, WireType.Varint).uint64(message.calendarId);
-        /* optional uint64 entry_id = 4 [jstype = JS_STRING]; */
-        if (message.entryId !== undefined)
-            writer.tag(4, WireType.Varint).uint64(message.entryId);
-        /* int32 user_id = 5; */
+        /* int32 user_id = 4; */
         if (message.userId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 6; */
+            writer.tag(4, WireType.Varint).int32(message.userId);
+        /* optional resources.users.UserShort user = 5; */
         if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.calendar.AccessLevel access = 7; */
+            UserShort.internalBinaryWrite(message.user, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.calendar.AccessLevel access = 6; */
         if (message.access !== 0)
-            writer.tag(7, WireType.Varint).int32(message.access);
+            writer.tag(6, WireType.Varint).int32(message.access);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -9,6 +9,8 @@ import EntryCreateOrUpdateModal from './EntryCreateOrUpdateModal.vue';
 import { checkCalendarAccess } from '../helpers';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { isSameDay } from 'date-fns';
 
 const props = defineProps<{
     calendarId: string;
@@ -30,6 +32,7 @@ const {
 );
 
 const entry = computed(() => data.value?.entry);
+const access = computed(() => data.value?.entry?.calendar?.access);
 
 const color = computed(() => entry.value?.calendar?.color ?? 'primary');
 </script>
@@ -57,7 +60,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                                 v-if="
                                     entry &&
                                     can('CalendarService.CreateOrUpdateCalendarEntry') &&
-                                    checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.EDIT)
+                                    checkCalendarAccess(access, entry?.creator, AccessLevel.EDIT)
                                 "
                                 variant="link"
                                 :padded="false"
@@ -74,7 +77,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                                 v-if="
                                     entry &&
                                     can('CalendarService.DeleteCalendarEntry') &&
-                                    checkCalendarAccess(entry?.access, entry?.creator, AccessLevel.MANAGE)
+                                    checkCalendarAccess(access, entry?.creator, AccessLevel.MANAGE)
                                 "
                                 variant="link"
                                 :padded="false"
@@ -92,7 +95,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                 </div>
             </template>
 
-            <div>
+            <div class="flex h-full flex-1 flex-col">
                 <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.entry', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"
@@ -102,29 +105,39 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                 <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
-                    <p>
-                        <span class="font-semibold">{{ $t('common.calendar') }}</span
-                        >:
-                        <span>
-                            <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" label="&nbsp;" />
+                    <p class="inline-flex items-center gap-2">
+                        <span class="font-semibold">{{ $t('common.calendar') }}:</span>
 
-                            {{ entry.calendar?.name }}
-                        </span>
+                        <UButton variant="link">
+                            <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+
+                            {{ entry.calendar?.name ?? $t('common.na') }}
+                        </UButton>
                     </p>
 
-                    <p>
-                        <span class="font-semibold">{{ $t('common.date') }}</span
-                        >: {{ $d(toDate(entry?.startTime), 'long') }} -
-                        {{ $d(toDate(entry?.endTime), 'long') }}
+                    <p class="inline-flex items-center gap-2">
+                        <span class="font-semibold">{{ $t('common.date') }}:</span>
+                        <GenericTime :value="entry?.startTime" type="long" />
+                        <template v-if="entry.endTime">
+                            -
+                            <GenericTime
+                                :value="entry?.endTime"
+                                :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
+                            />
+                        </template>
                     </p>
 
-                    <div class="flex flex-row items-center gap-2">
+                    <div class="inline-flex items-center gap-2">
                         <span class="font-semibold">{{ $t('common.creator') }}:</span>
                         <CitizenInfoPopover :user="entry?.creator" show-avatar-in-name />
                     </div>
 
+                    <UDivider />
+
                     <template v-if="entry.rsvpOpen">
                         <EntryRSVPList :entry-id="entry.id" :rsvp-open="entry.rsvpOpen" />
+
+                        <UDivider />
                     </template>
 
                     <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
@@ -132,63 +145,6 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                         <div class="prose prose-invert min-w-full px-4 py-2" v-html="entry.content"></div>
                     </div>
                 </template>
-
-                <UAccordion
-                    v-if="
-                        !entry?.access &&
-                        ((entry?.access?.jobs && entry?.access?.jobs.length > 0) ||
-                            (entry?.access?.users && entry?.access?.users.length > 0))
-                    "
-                    multiple
-                    :items="[{ slot: 'access', label: $t('common.access'), icon: 'i-mdi-lock' }]"
-                    :unmount="true"
-                >
-                    <template #access>
-                        <UContainer>
-                            <div class="flex flex-col gap-2">
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="item in entry?.access?.jobs"
-                                        :key="item.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-info-500" />
-                                        <span>
-                                            {{ item.jobLabel
-                                            }}<span
-                                                v-if="item.minimumGrade > 0"
-                                                :title="`${item.jobLabel} - ${$t('common.rank')} ${item.minimumGrade}`"
-                                            >
-                                                ({{ item.jobGradeLabel }})</span
-                                            >
-                                            -
-                                            {{ $t(`enums.calendar.AccessLevel.${AccessLevel[item.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
-
-                                <div class="flex flex-row flex-wrap gap-1">
-                                    <UBadge
-                                        v-for="item in entry?.access?.users"
-                                        :key="item.id"
-                                        color="black"
-                                        class="inline-flex gap-1"
-                                        size="md"
-                                    >
-                                        <span class="size-2 rounded-full bg-amber-500" />
-                                        <span :title="`${$t('common.id')} ${item.userId}`">
-                                            {{ item.user?.firstname }}
-                                            {{ item.user?.lastname }} -
-                                            {{ $t(`enums.calendar.AccessLevel.${AccessLevel[item.access]}`) }}
-                                        </span>
-                                    </UBadge>
-                                </div>
-                            </div>
-                        </UContainer>
-                    </template>
-                </UAccordion>
             </div>
 
             <template #footer>

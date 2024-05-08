@@ -230,10 +230,6 @@ export interface CalendarEntry {
      * @generated from protobuf field: optional resources.calendar.CalendarEntryRecurring recurring = 16;
      */
     recurring?: CalendarEntryRecurring;
-    /**
-     * @generated from protobuf field: resources.calendar.CalendarAccess access = 17;
-     */
-    access?: CalendarAccess;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarEntryRecurring
@@ -251,39 +247,6 @@ export interface CalendarEntryRecurring {
      * @generated from protobuf field: optional resources.timestamp.Timestamp until = 3;
      */
     until?: Timestamp;
-}
-/**
- * @generated from protobuf message resources.calendar.CalendarEntrySub
- */
-export interface CalendarEntrySub {
-    /**
-     * @generated from protobuf field: uint64 calendar_id = 1 [jstype = JS_STRING];
-     */
-    calendarId: string;
-    /**
-     * @generated from protobuf field: uint64 entry_id = 2 [jstype = JS_STRING];
-     */
-    entryId: string;
-    /**
-     * @generated from protobuf field: int32 user_id = 3;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: optional resources.users.UserShort user = 4;
-     */
-    user?: UserShort;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 5;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: bool confirmed = 6;
-     */
-    confirmed: boolean;
-    /**
-     * @generated from protobuf field: bool muted = 7;
-     */
-    muted: boolean;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarEntryRSVP
@@ -685,8 +648,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 14, name: "creator", kind: "message", T: () => UserShort },
             { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 16, name: "recurring", kind: "message", T: () => CalendarEntryRecurring },
-            { no: 17, name: "access", kind: "message", T: () => CalendarAccess }
+            { no: 16, name: "recurring", kind: "message", T: () => CalendarEntryRecurring }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -753,9 +715,6 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* optional resources.calendar.CalendarEntryRecurring recurring */ 16:
                     message.recurring = CalendarEntryRecurring.internalBinaryRead(reader, reader.uint32(), options, message.recurring);
                     break;
-                case /* resources.calendar.CalendarAccess access */ 17:
-                    message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -816,9 +775,6 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* optional resources.calendar.CalendarEntryRecurring recurring = 16; */
         if (message.recurring)
             CalendarEntryRecurring.internalBinaryWrite(message.recurring, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* resources.calendar.CalendarAccess access = 17; */
-        if (message.access)
-            CalendarAccess.internalBinaryWrite(message.access, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -891,99 +847,6 @@ class CalendarEntryRecurring$Type extends MessageType<CalendarEntryRecurring> {
  * @generated MessageType for protobuf message resources.calendar.CalendarEntryRecurring
  */
 export const CalendarEntryRecurring = new CalendarEntryRecurring$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CalendarEntrySub$Type extends MessageType<CalendarEntrySub> {
-    constructor() {
-        super("resources.calendar.CalendarEntrySub", [
-            { no: 1, name: "calendar_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "user", kind: "message", T: () => UserShort },
-            { no: 5, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "confirmed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
-        ]);
-    }
-    create(value?: PartialMessage<CalendarEntrySub>): CalendarEntrySub {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.calendarId = "0";
-        message.entryId = "0";
-        message.userId = 0;
-        message.confirmed = false;
-        message.muted = false;
-        if (value !== undefined)
-            reflectionMergePartial<CalendarEntrySub>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarEntrySub): CalendarEntrySub {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.calendarId = reader.uint64().toString();
-                    break;
-                case /* uint64 entry_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.entryId = reader.uint64().toString();
-                    break;
-                case /* int32 user_id */ 3:
-                    message.userId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort user */ 4:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 5:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* bool confirmed */ 6:
-                    message.confirmed = reader.bool();
-                    break;
-                case /* bool muted */ 7:
-                    message.muted = reader.bool();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CalendarEntrySub, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 calendar_id = 1 [jstype = JS_STRING]; */
-        if (message.calendarId !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.calendarId);
-        /* uint64 entry_id = 2 [jstype = JS_STRING]; */
-        if (message.entryId !== "0")
-            writer.tag(2, WireType.Varint).uint64(message.entryId);
-        /* int32 user_id = 3; */
-        if (message.userId !== 0)
-            writer.tag(3, WireType.Varint).int32(message.userId);
-        /* optional resources.users.UserShort user = 4; */
-        if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp created_at = 5; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* bool confirmed = 6; */
-        if (message.confirmed !== false)
-            writer.tag(6, WireType.Varint).bool(message.confirmed);
-        /* bool muted = 7; */
-        if (message.muted !== false)
-            writer.tag(7, WireType.Varint).bool(message.muted);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.calendar.CalendarEntrySub
- */
-export const CalendarEntrySub = new CalendarEntrySub$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CalendarEntryRSVP$Type extends MessageType<CalendarEntryRSVP> {
     constructor() {

@@ -317,10 +317,6 @@ func (m *CalendarJobAccess) validate(all bool) error {
 
 	}
 
-	if m.EntryId != nil {
-		// no validation rules for EntryId
-	}
-
 	if m.JobLabel != nil {
 
 		if utf8.RuneCountInString(m.GetJobLabel()) > 50 {
@@ -510,10 +506,6 @@ func (m *CalendarUserAccess) validate(all bool) error {
 			}
 		}
 
-	}
-
-	if m.EntryId != nil {
-		// no validation rules for EntryId
 	}
 
 	if m.User != nil {

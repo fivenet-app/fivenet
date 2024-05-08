@@ -13,7 +13,6 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { CalendarSub } from "../../resources/calendar/calendar";
 import { CalendarEntryRSVP } from "../../resources/calendar/calendar";
-import { CalendarAccess } from "../../resources/calendar/access";
 import { CalendarEntry } from "../../resources/calendar/calendar";
 import { Calendar } from "../../resources/calendar/calendar";
 import { PaginationResponse } from "../../resources/common/database/database";
@@ -196,18 +195,14 @@ export interface ShareCalendarEntryRequest {
      */
     entryId: string;
     /**
-     * @generated from protobuf field: resources.calendar.CalendarAccess access = 2;
+     * @generated from protobuf field: repeated int32 user_ids = 2;
      */
-    access?: CalendarAccess;
+    userIds: number[];
 }
 /**
  * @generated from protobuf message services.calendar.ShareCalendarEntryResponse
  */
 export interface ShareCalendarEntryResponse {
-    /**
-     * @generated from protobuf field: resources.calendar.CalendarAccess access = 1;
-     */
-    access?: CalendarAccess;
 }
 // RSVP
 
@@ -1077,12 +1072,13 @@ class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryReque
     constructor() {
         super("services.calendar.ShareCalendarEntryRequest", [
             { no: 1, name: "entry_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "access", kind: "message", T: () => CalendarAccess }
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ShareCalendarEntryRequest>): ShareCalendarEntryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.entryId = "0";
+        message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<ShareCalendarEntryRequest>(this, message, value);
         return message;
@@ -1095,8 +1091,12 @@ class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryReque
                 case /* uint64 entry_id = 1 [jstype = JS_STRING];*/ 1:
                     message.entryId = reader.uint64().toString();
                     break;
-                case /* resources.calendar.CalendarAccess access */ 2:
-                    message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
+                case /* repeated int32 user_ids */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1113,9 +1113,13 @@ class ShareCalendarEntryRequest$Type extends MessageType<ShareCalendarEntryReque
         /* uint64 entry_id = 1 [jstype = JS_STRING]; */
         if (message.entryId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.entryId);
-        /* resources.calendar.CalendarAccess access = 2; */
-        if (message.access)
-            CalendarAccess.internalBinaryWrite(message.access, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 user_ids = 2; */
+        if (message.userIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1129,9 +1133,7 @@ export const ShareCalendarEntryRequest = new ShareCalendarEntryRequest$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ShareCalendarEntryResponse$Type extends MessageType<ShareCalendarEntryResponse> {
     constructor() {
-        super("services.calendar.ShareCalendarEntryResponse", [
-            { no: 1, name: "access", kind: "message", T: () => CalendarAccess }
-        ]);
+        super("services.calendar.ShareCalendarEntryResponse", []);
     }
     create(value?: PartialMessage<ShareCalendarEntryResponse>): ShareCalendarEntryResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
@@ -1140,28 +1142,9 @@ class ShareCalendarEntryResponse$Type extends MessageType<ShareCalendarEntryResp
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ShareCalendarEntryResponse): ShareCalendarEntryResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.calendar.CalendarAccess access */ 1:
-                    message.access = CalendarAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
+        return target ?? this.create();
     }
     internalBinaryWrite(message: ShareCalendarEntryResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.calendar.CalendarAccess access = 1; */
-        if (message.access)
-            CalendarAccess.internalBinaryWrite(message.access, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
