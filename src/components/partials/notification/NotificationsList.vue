@@ -3,11 +3,11 @@ import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
-import Pagination from '../Pagination.vue';
+import Pagination from '~/components/partials/Pagination.vue';
+import { notificationCategoryToIcon } from './helpers';
 
 defineEmits<{
     (e: 'clicked'): void;
@@ -136,16 +136,17 @@ const canSubmit = ref(true);
                                             <UButton
                                                 variant="link"
                                                 :to="not.data.link.to"
+                                                :icon="notificationCategoryToIcon(not.category)"
                                                 trailing-icon="i-mdi-link-variant"
                                                 class="inline-flex items-center gap-1"
-                                                @click="$emit('clicked')"
+                                                @click="markRead(not.id)"
                                             >
                                                 {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
                                             </UButton>
                                         </template>
-                                        <span v-else>
+                                        <template v-else>
                                             {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                        </span>
+                                        </template>
                                     </p>
                                     <p class="mt-1 flex text-xs leading-5 text-gray-200">
                                         {{ $t(not.content!.key, not.content?.parameters ?? {}) }}

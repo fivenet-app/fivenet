@@ -1,5 +1,6 @@
 import type { NotificationColor } from '#ui/types';
 import type { NotificationType } from '~/composables/notifications';
+import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 
 export function notificationTypeToIcon(t?: NotificationType): string {
     switch (t) {
@@ -26,5 +27,17 @@ export function notificationTypeToColor(t?: NotificationType): NotificationColor
         case 'info':
         default:
             return 'blue';
+    }
+}
+
+export function notificationCategoryToIcon(category: NotificationCategory): string {
+    switch (category) {
+        case NotificationCategory.DOCUMENT:
+            return 'i-mdi-file-document-box-multiple-outline';
+        case NotificationCategory.CALENDAR:
+            return 'i-mdi-calendar-outline';
+
+        default:
+            return '';
     }
 }

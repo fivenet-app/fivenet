@@ -455,10 +455,10 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.TranslateItem{
-			Key: "notifications.notifi.document_request_added.title",
+			Key: "notifications.document_request_added.title",
 		},
 		Content: &common.TranslateItem{
-			Key:        "notifications.notifi.document_request_added.content",
+			Key:        "notifications.document_request_added.content",
 			Parameters: map[string]string{"title": doc.Title},
 		},
 		Type:     &nType,

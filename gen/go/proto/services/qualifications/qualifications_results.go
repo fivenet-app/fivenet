@@ -302,10 +302,10 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 				UserId: result.UserId,
 				Title: &common.TranslateItem{
-					Key: "notifications.notifi.qualifications.result_updated.title",
+					Key: "notifications.qualifications.result_updated.title",
 				},
 				Content: &common.TranslateItem{
-					Key:        "notifications.notifi.qualifications.result_updated.content",
+					Key:        "notifications.qualifications.result_updated.content",
 					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
 				},
 				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,

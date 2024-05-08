@@ -61,10 +61,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 
 	stmt := tCalendarRSVP.
 		SELECT(
-			tCalendarRSVP.EntryID,
-			tCalendarRSVP.CreatedAt,
 			tCalendarRSVP.UserID,
-			tCalendarRSVP.Response,
 		).
 		FROM(tCalendarRSVP).
 		WHERE(jet.AND(
@@ -78,6 +75,9 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 	}
 
 	newUsers := []int32{}
+	if len(rsvps) == 0 {
+		newUsers = append(newUsers, req.UserIds...)
+	}
 	for _, rsvp := range rsvps {
 		if !slices.Contains(req.UserIds, rsvp.UserId) {
 			newUsers = append(newUsers, rsvp.UserId)
@@ -153,14 +153,14 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: newUser,
 			Title: &common.TranslateItem{
-				Key: "notifications.notifi.calendar.entry_shared_with_you.title",
+				Key: "notifications.calendar.entry_shared_with_you.title",
 				Parameters: map[string]string{
 					"title": entry.Title,
 					"name":  fmt.Sprintf("%s %s", sourceUser.Firstname, sourceUser.Lastname),
 				},
 			},
 			Content: &common.TranslateItem{
-				Key:        "notifications.notifi.calendar.entry_shared_with_you.content",
+				Key:        "notifications.calendar.entry_shared_with_you.content",
 				Parameters: map[string]string{"title": entry.Title},
 			},
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR,

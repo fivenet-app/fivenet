@@ -138,6 +138,7 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 			condition,
 		).
 		OFFSET(req.Pagination.Offset).
+		ORDER_BY(tNotifications.ID.DESC()).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Notifications); err != nil {
