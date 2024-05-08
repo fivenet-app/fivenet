@@ -102,7 +102,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 	for i := 0; i < len(req.UserIds); i++ {
 		insertStmt = insertStmt.VALUES(
 			req.EntryId,
-			req.UserIds,
+			req.UserIds[i],
 		)
 	}
 
