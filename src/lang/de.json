@@ -436,7 +436,8 @@
         "appointment": "Termin | Termine",
         "public": "Öffentlich",
         "subscribe": "Abonnieren",
-        "unsubscribe": "Abbestellen"
+        "unsubscribe": "Abbestellen",
+        "guest": "Gast | Gäste"
     },
     "components": {
         "partials": {
@@ -1033,6 +1034,9 @@
             },
             "FindCalendarsModal": {
                 "title": "Kalender finden"
+            },
+            "EntryShareModal": {
+                "title": "Kalender Eintrag teilen"
             }
         }
     },
@@ -1375,6 +1379,12 @@
             "request_updated": {
                 "title": "Qualifizierungsanfrage wurde aktualisiert",
                 "content": "Deine Qualifizierungsanfrage wurde aktualisiert."
+            }
+        },
+        "calendar": {
+            "entry_shared_with_you": {
+                "title": "Eingeladen zu \"{title}\" von {name}",
+                "content": "Sie wurden zu \"{title}\" eingeladen, schaue im Kalendar nach um zu Antworten."
             }
         }
     },
