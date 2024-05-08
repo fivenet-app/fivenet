@@ -8,11 +8,18 @@ import { useCalendarStore } from '~/store/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import EntryShareForm from './EntryShareForm.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
-const props = defineProps<{
-    entryId: string;
-    rsvpOpen?: boolean;
-}>();
+const props = withDefaults(
+    defineProps<{
+        entryId: string;
+        rsvpOpen?: boolean;
+        showRemove?: boolean;
+    }>(),
+    {
+        showRemove: true,
+    },
+);
 
 const { $grpc } = useNuxtApp();
 
@@ -49,21 +56,21 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
     }
 }
 
-async function rsvpCalendarEntry(rsvpResponse: RsvpResponses): Promise<void | RSVPCalendarEntryResponse> {
+async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean): Promise<void | RSVPCalendarEntryResponse> {
     if (data.value?.ownEntry?.response === rsvpResponse) {
         return;
     }
 
     try {
-        const call = $grpc.getCalendarClient().rSVPCalendarEntry({
+        const response = await calendarStore.rsvpCalendarEntry({
             entry: {
                 entryId: props.entryId,
                 response: rsvpResponse,
                 userId: activeChar.value?.userId!,
             },
             subscribe: true,
+            remove: remove,
         });
-        const { response } = await call;
 
         if (response.entry) {
             data.value!.ownEntry = response.entry;
@@ -140,24 +147,45 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 </UButton>
             </UButtonGroup>
 
-            <UButton icon="i-mdi-share" @click="openShare = !openShare" />
+            <UButtonGroup class="inline-flex">
+                <UButton
+                    v-if="data?.ownEntry && showRemove"
+                    icon="i-mdi-calendar-remove"
+                    color="white"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => rsvpCalendarEntry(RsvpResponses.NO, true),
+                        })
+                    "
+                />
+
+                <UButton :icon="!openShare ? 'i-mdi-share' : 'i-mdi-close'" @click="openShare = !openShare" />
+            </UButtonGroup>
         </div>
 
         <EntryShareForm v-if="openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
 
-        <div v-if="data?.entries && data?.entries.length > 0" class="mt-2 flex flex-col">
-            <UAccordion variant="ghost" :items="[{ slot: 'rsvp', label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]">
-                <template #rsvp>
-                    <UContainer>
-                        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.entry', 1)])" />
-                        <DataErrorBlock
-                            v-else-if="error"
-                            :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
-                            :retry="refresh"
-                        />
-                        <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
+        <UAccordion
+            variant="ghost"
+            :items="[{ slot: 'rsvp', label: $t('common.rsvp'), icon: 'i-mdi-calendar-question' }]"
+            class="mt-2 flex flex-col"
+        >
+            <template #rsvp>
+                <UContainer>
+                    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.entry', 1)])" />
+                    <DataErrorBlock
+                        v-else-if="error"
+                        :title="$t('common.unable_to_load', [$t('common.entry', 1)])"
+                        :retry="refresh"
+                    />
+                    <DataNoDataBlock v-else-if="!data" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
-                        <div v-else class="flex flex-col gap-2">
+                    <div v-else class="flex flex-col gap-2">
+                        <template v-if="data.entries.length === 0">
+                            <p>{{ $t('common.none', [$t('common.response', 2)]) }}</p>
+                        </template>
+
+                        <template v-else>
                             <template v-for="(rsvp, key) in groupedEntries" :key="key">
                                 <div v-if="!rsvp || rsvp?.length > 0">
                                     <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
@@ -166,10 +194,10 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                                     </div>
                                 </div>
                             </template>
-                        </div>
-                    </UContainer>
-                </template>
-            </UAccordion>
-        </div>
+                        </template>
+                    </div>
+                </UContainer>
+            </template>
+        </UAccordion>
     </div>
 </template>

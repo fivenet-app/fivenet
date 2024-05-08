@@ -437,7 +437,8 @@
         "public": "Öffentlich",
         "subscribe": "Abonnieren",
         "unsubscribe": "Abbestellen",
-        "guest": "Gast | Gäste"
+        "guest": "Gast | Gäste",
+        "response": "Antwort | Antworten"
     },
     "components": {
         "partials": {
@@ -1225,19 +1226,17 @@
                 "content": "Dokument ID in die Zwischenablage kopiert."
             }
         },
-        "notifi": {
-            "document_relation_mentioned": {
-                "title": "Dokument: Sie wurden erwähnt",
-                "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
-            },
-            "document_request_added": {
-                "title": "Dokument: Anfrage wurde erstellt",
-                "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
-            },
-            "document_comment_added": {
-                "title": "Dokument: Neuer Kommentar",
-                "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
-            }
+        "document_relation_mentioned": {
+            "title": "Dokument: Sie wurden erwähnt",
+            "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+        },
+        "document_request_added": {
+            "title": "Dokument: Anfrage wurde erstellt",
+            "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
+        },
+        "document_comment_added": {
+            "title": "Dokument: Neuer Kommentar",
+            "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
         },
         "templates": {
             "created": {

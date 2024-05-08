@@ -8839,7 +8839,6 @@ Results ====================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
 | entry_id | [uint64](#uint64) |  |  |
 
 
@@ -8890,7 +8889,6 @@ Results ====================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| calendar_id | [uint64](#uint64) |  |  |
 | entry_id | [uint64](#uint64) |  |  |
 
 
@@ -9082,6 +9080,7 @@ Results ====================================================================
 | ----- | ---- | ----- | ----------- |
 | entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) |  |  |
 | subscribe | [bool](#bool) |  |  |
+| remove | [bool](#bool) | optional |  |
 
 
 
@@ -9096,7 +9095,7 @@ Results ====================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) |  |  |
+| entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
 
 
 

@@ -1351,8 +1351,6 @@ func (m *GetCalendarEntryRequest) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for CalendarId
-
 	// no validation rules for EntryId
 
 	if len(errors) > 0 {
@@ -1866,8 +1864,6 @@ func (m *DeleteCalendarEntryRequest) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for CalendarId
 
 	// no validation rules for EntryId
 
@@ -2668,6 +2664,10 @@ func (m *RSVPCalendarEntryRequest) validate(all bool) error {
 
 	// no validation rules for Subscribe
 
+	if m.Remove != nil {
+		// no validation rules for Remove
+	}
+
 	if len(errors) > 0 {
 		return RSVPCalendarEntryRequestMultiError(errors)
 	}
@@ -2770,33 +2770,37 @@ func (m *RSVPCalendarEntryResponse) validate(all bool) error {
 
 	var errors []error
 
-	if all {
-		switch v := interface{}(m.GetEntry()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, RSVPCalendarEntryResponseValidationError{
-					field:  "Entry",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
+	if m.Entry != nil {
+
+		if all {
+			switch v := interface{}(m.GetEntry()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, RSVPCalendarEntryResponseValidationError{
+						field:  "Entry",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, RSVPCalendarEntryResponseValidationError{
+						field:  "Entry",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
 			}
-		case interface{ Validate() error }:
+		} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				errors = append(errors, RSVPCalendarEntryResponseValidationError{
+				return RSVPCalendarEntryResponseValidationError{
 					field:  "Entry",
 					reason: "embedded message failed validation",
 					cause:  err,
-				})
+				}
 			}
 		}
-	} else if v, ok := interface{}(m.GetEntry()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return RSVPCalendarEntryResponseValidationError{
-				field:  "Entry",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
+
 	}
 
 	if len(errors) > 0 {

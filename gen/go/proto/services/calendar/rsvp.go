@@ -144,6 +144,24 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 		return nil, errorscalendar.ErrNoPerms
 	}
 
+	if req.Remove == nil || !*req.Remove {
+		stmt := tCalendarRSVP.
+			DELETE().
+			WHERE(jet.AND(
+				tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)),
+				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
+			)).
+			LIMIT(1)
+
+		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+
+		auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+
+		return &RSVPCalendarEntryResponse{}, nil
+	}
+
 	tCalendarRSVP := table.FivenetCalendarRsvp
 	stmt := tCalendarRSVP.
 		INSERT(
@@ -180,6 +198,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 	return &RSVPCalendarEntryResponse{
 		Entry: rsvpEntry,
 	}, nil
+
 }
 
 func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {

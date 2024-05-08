@@ -131,8 +131,8 @@ function updateDate(event: Page[]): void {
 .custom-calendar:deep(.vc-container) {
     --day-border: 1px solid rgb(var(--color-gray-700));
     --day-border-highlight: 1px solid rgb(var(--color-gray-600));
-    --day-width: 120px;
-    --day-height: 120px;
+    --day-width: 110px;
+    --day-height: 140px;
     --weekday-border: 1px solid rgb(var(--color-primary-900));
 
     border-radius: 0;

@@ -23,24 +23,27 @@ import (
 func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (*ListCalendarsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	subsCondition := tCalendar.ID.IN(tCalendarSubs.
+		SELECT(
+			tCalendarSubs.CalendarID,
+		).
+		FROM(tCalendarSubs).
+		WHERE(jet.AND(
+			tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
+		)),
+	)
+
 	minAccessLevel := calendar.AccessLevel_ACCESS_LEVEL_BLOCKED
 	if req.MinAccessLevel != nil {
 		minAccessLevel = *req.MinAccessLevel
+		subsCondition = jet.Bool(false)
 	}
 
 	condition := jet.AND(
 		tCalendar.DeletedAt.IS_NULL(),
 		jet.OR(
 			jet.OR(
-				tCalendar.ID.IN(tCalendarSubs.
-					SELECT(
-						tCalendarSubs.CalendarID,
-					).
-					FROM(tCalendarSubs).
-					WHERE(jet.AND(
-						tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
-					)),
-				),
+				subsCondition,
 				tCalendar.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
 			jet.OR(

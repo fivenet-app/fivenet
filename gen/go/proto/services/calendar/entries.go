@@ -151,20 +151,20 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	// Check if user has access to existing calendar
-	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, req.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
-	}
-
 	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if entry == nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+	}
+
+	// Check if user has access to existing calendar
+	check, err := s.checkIfUserHasAccessToCalendarEntry(ctx, entry.CalendarId, req.EntryId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_VIEW, true)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if !check {
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
@@ -324,7 +324,15 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), true)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if entry == nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+	}
+
+	check, err := s.checkIfUserHasAccessToCalendar(ctx, entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_MANAGE, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -340,7 +348,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 			tCalendarEntry.DeletedAt.SET(jet.CURRENT_TIMESTAMP()),
 		).
 		WHERE(jet.AND(
-			tCalendarEntry.CalendarID.EQ(jet.Uint64(req.CalendarId)),
+			tCalendarEntry.CalendarID.EQ(jet.Uint64(entry.CalendarId)),
 			tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)),
 		))
 

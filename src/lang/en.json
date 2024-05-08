@@ -437,7 +437,8 @@
         "public": "Public",
         "subscribe": "Subscribe",
         "unsubscribe": "Unsubscribe",
-        "guest": "Guest | Guests"
+        "guest": "Guest | Guests",
+        "response": "Response | Responses"
     },
     "components": {
         "partials": {

@@ -45,8 +45,8 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     calendar: undefined,
     title: '',
-    startTime: new Date(),
-    endTime: addHours(new Date(), 1),
+    startTime: addHours(new Date(), 1),
+    endTime: addHours(new Date(), 2),
     content: '',
     rsvpOpen: false,
     users: [],
@@ -57,13 +57,9 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(
-    `calendar-entry:${props.entryId}`,
-    () => calendarStore.getCalendarEntry({ calendarId: props.calendarId!, entryId: props.entryId! }),
-    {
-        immediate: !!props.calendarId && !!props.entryId,
-    },
-);
+} = useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId! }), {
+    immediate: !!props.calendarId && !!props.entryId,
+});
 
 async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpdateCalendarEntryResponse> {
     if (!values.calendar) {
@@ -242,7 +238,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     color="gray"
                                     block
                                     icon="i-mdi-calendar-month"
-                                    :label="format(state.startTime, 'dd.MM.yyyy HH:mm')"
+                                    :label="state.startTime ? format(state.startTime, 'dd.MM.yyyy HH:mm') : 'dd.MM.yyyy HH:mm'"
                                 />
 
                                 <template #panel="{ close }">
@@ -254,12 +250,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
                             <UPopover :popper="{ placement: 'bottom-start' }">
                                 <UButton
-                                    :key="state.endTime.toDateString()"
                                     variant="outline"
                                     color="gray"
                                     block
                                     icon="i-mdi-calendar-month"
-                                    :label="format(state.endTime, 'dd.MM.yyyy HH:mm')"
+                                    :label="state.endTime ? format(state.endTime, 'dd.MM.yyyy HH:mm') : 'dd.MM.yyyy HH:mm'"
                                 />
 
                                 <template #panel="{ close }">
@@ -289,11 +284,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             search: query,
                                         });
                                         usersLoading = false;
-                                        return users.map((u) => ({
-                                            entryId: entryId ?? '0',
-                                            userId: u.userId,
-                                            user: u,
-                                        }));
+                                        return users;
                                     }
                                 "
                                 :search-attributes="['firstname', 'lastname']"
@@ -306,7 +297,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 @focusout="focusTablet(false)"
                             >
                                 <template #option="{ option: user }">
-                                    {{ `${user?.user?.firstname} ${user?.user?.lastname} (${user?.user?.dateofbirth})` }}
+                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                 </template>
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

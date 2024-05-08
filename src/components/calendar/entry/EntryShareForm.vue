@@ -82,8 +82,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <h3 class="text-xl font-semibold leading-6">
                         {{ $t('components.calendar.EntryShareModal.title') }}
                     </h3>
-
-                    <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="$emit('close')" />
                 </div>
             </template>
 

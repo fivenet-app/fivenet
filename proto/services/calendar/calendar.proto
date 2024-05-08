@@ -60,8 +60,7 @@ message ListCalendarEntriesResponse {
 }
 
 message GetCalendarEntryRequest {
-  uint64 calendar_id = 1 [jstype = JS_STRING];
-  uint64 entry_id = 2 [jstype = JS_STRING];
+  uint64 entry_id = 1 [jstype = JS_STRING];
 }
 
 message GetCalendarEntryResponse {
@@ -77,8 +76,7 @@ message CreateOrUpdateCalendarEntryResponse {
 }
 
 message DeleteCalendarEntryRequest {
-  uint64 calendar_id = 1 [jstype = JS_STRING];
-  uint64 entry_id = 2 [jstype = JS_STRING];
+  uint64 entry_id = 1 [jstype = JS_STRING];
 }
 
 message DeleteCalendarEntryResponse {}
@@ -106,10 +104,11 @@ message ListCalendarEntryRSVPResponse {
 message RSVPCalendarEntryRequest {
   resources.calendar.CalendarEntryRSVP entry = 1;
   bool subscribe = 2;
+  optional bool remove = 3;
 }
 
 message RSVPCalendarEntryResponse {
-  resources.calendar.CalendarEntryRSVP entry = 1;
+  optional resources.calendar.CalendarEntryRSVP entry = 1;
 }
 
 // Subs

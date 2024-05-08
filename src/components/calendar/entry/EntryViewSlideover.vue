@@ -13,7 +13,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { isSameDay } from 'date-fns';
 
 const props = defineProps<{
-    calendarId: string;
     entryId: string;
 }>();
 
@@ -21,15 +20,14 @@ const modal = useModal();
 const { isOpen } = useSlideover();
 
 const calendarStore = useCalendarStore();
+const { calendars } = storeToRefs(calendarStore);
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`calendar-${props.calendarId}-entry:${props.entryId}`, () =>
-    calendarStore.getCalendarEntry({ calendarId: props.calendarId, entryId: props.entryId }),
-);
+} = useLazyAsyncData(`calendar-entry:${props.entryId}`, () => calendarStore.getCalendarEntry({ entryId: props.entryId }));
 
 const entry = computed(() => data.value?.entry);
 const access = computed(() => data.value?.entry?.calendar?.access);
@@ -84,7 +82,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                                 icon="i-mdi-trash-can"
                                 @click="
                                     modal.open(ConfirmModal, {
-                                        confirm: async () => calendarStore.deleteCalendarEntry(entry?.calendarId!, entry?.id!),
+                                        confirm: async () => calendarStore.deleteCalendarEntry(entry?.id!),
                                     })
                                 "
                             />
@@ -135,7 +133,11 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                     <UDivider />
 
                     <template v-if="entry.rsvpOpen">
-                        <EntryRSVPList :entry-id="entry.id" :rsvp-open="entry.rsvpOpen" />
+                        <EntryRSVPList
+                            :entry-id="entry.id"
+                            :rsvp-open="entry.rsvpOpen"
+                            :show-remove="!calendars.find((c) => c.id === entry?.calendarId)"
+                        />
 
                         <UDivider />
                     </template>

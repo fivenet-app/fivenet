@@ -14,6 +14,7 @@ import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrU
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
 import { addDays } from 'date-fns';
+import { useRouteQuery } from '@vueuse/router';
 
 useHead({
     title: 'common.calendar',
@@ -171,6 +172,22 @@ function calendarIdChange(calendarId: string, state: boolean): void {
     }
 }
 
+const entryIdQuery = useRouteQuery('entry_id', undefined, { transform: Number });
+watch(entryIdQuery, () => {
+    if (!entryIdQuery.value) {
+        return;
+    }
+
+    slideover.open(EntryViewSlideover, {
+        entryId: entryIdQuery.value.toString(),
+    });
+});
+if (entryIdQuery.value) {
+    slideover.open(EntryViewSlideover, {
+        entryId: entryIdQuery.value.toString(),
+    });
+}
+
 const isOpen = ref(false);
 </script>
 
@@ -273,7 +290,6 @@ const isOpen = ref(false);
                     @selected="
                         slideover.open(EntryViewSlideover, {
                             entryId: $event.id,
-                            calendarId: $event.calendarId,
                         })
                     "
                 />
@@ -297,7 +313,6 @@ const isOpen = ref(false);
                                         @click="
                                             slideover.open(EntryViewSlideover, {
                                                 entryId: attr.customData.id,
-                                                calendarId: attr.customData.calendarId,
                                             })
                                         "
                                     >

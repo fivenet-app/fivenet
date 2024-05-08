@@ -13,6 +13,8 @@ import type {
     ListCalendarEntryRSVPResponse,
     ListCalendarsRequest,
     ListCalendarsResponse,
+    RSVPCalendarEntryRequest,
+    RSVPCalendarEntryResponse,
 } from '~~/gen/ts/services/calendar/calendar';
 import { useAuthStore } from './auth';
 
@@ -56,6 +58,7 @@ export const useCalendarStore = defineStore('calendar', {
                 const call = $grpc.getCalendarClient().listCalendars(req);
                 const { response } = await call;
 
+                // Only "register" calendars in list when they are accessible by the user
                 if (!req.onlyPublic) {
                     response.calendars.forEach((calendar) => {
                         const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
@@ -176,17 +179,16 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
 
-        async deleteCalendarEntry(calendarId: string, entryId: string): Promise<void> {
+        async deleteCalendarEntry(entryId: string): Promise<void> {
             const { $grpc } = useNuxtApp();
 
             try {
                 const call = $grpc.getCalendarClient().deleteCalendarEntry({
-                    calendarId: calendarId,
                     entryId: entryId,
                 });
                 await call;
 
-                const idx = this.entries.findIndex((c) => c.calendarId === calendarId && c.id === entryId);
+                const idx = this.entries.findIndex((c) => c.id === entryId);
                 if (idx > -1) {
                     this.entries.splice(idx, 1);
                 }
@@ -202,6 +204,18 @@ export const useCalendarStore = defineStore('calendar', {
 
             try {
                 const call = $grpc.getCalendarClient().listCalendarEntryRSVP(req);
+                const { response } = await call;
+
+                return response;
+            } catch (e) {
+                $grpc.handleError(e as RpcError);
+                throw e;
+            }
+        },
+        async rsvpCalendarEntry(req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> {
+            const { $grpc } = useNuxtApp();
+            try {
+                const call = $grpc.getCalendarClient().rSVPCalendarEntry(req);
                 const { response } = await call;
 
                 return response;
