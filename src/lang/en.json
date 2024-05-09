@@ -1226,18 +1226,6 @@
                 "content": "Document ID copied to clipboard."
             }
         },
-        "document_relation_mentioned": {
-            "title": "Document: You have been mentioned",
-            "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
-        },
-        "document_request_added": {
-            "title": "Document: Request has been created",
-            "content": "A request against your \"{title}\" document has been added."
-        },
-        "document_comment_added": {
-            "title": "Document: New comment",
-            "content": "A new comment has been posted on \"{title}\" document."
-        },
         "templates": {
             "created": {
                 "title": "Template: Created",
@@ -1385,6 +1373,18 @@
                 "title": "Invited to \"{title}\" by {name}",
                 "content": "You have been invited to \"{title}\", check your calendar to respond."
             }
+        },
+        "document_relation_mentioned": {
+            "title": "Document: You have been mentioned",
+            "content": "You have been mentioned in \"{title}\" document. Click here to go to the document."
+        },
+        "document_request_added": {
+            "title": "Document: Request has been created",
+            "content": "A request against your \"{title}\" document has been added."
+        },
+        "document_comment_added": {
+            "title": "Document: New comment",
+            "content": "A new comment has been posted on \"{title}\" document."
         }
     },
     "perms": {
@@ -2068,7 +2068,15 @@
         "CalendarService": {
             "ErrFailedQuery": "Failed to load calendar data!",
             "ErrNoPerms": "You don't have permissions to access this calendar data!",
-            "ErrOnePrivateCal": "You can only have one private calendar!"
+            "ErrOnePrivateCal": "You can only have one private calendar!",
+            "ErrCalendarClosed": {
+                "title": "Calendar is closed",
+                "content": "The calendar is closed and can't be used anymore."
+            },
+            "ErrEntryClosed": {
+                "title": "Calendar Entry is closed",
+                "content": "The calendar entry is closed and can't be RSVPed to anymore."
+            }
         }
     },
     "system": {
@@ -2238,6 +2246,14 @@
                 "SHARE": "Share",
                 "EDIT": "Edit",
                 "MANAGE": "Manage"
+            }
+        },
+        "notifications": {
+            "NotificationCategory": {
+                "UNSPECIFIED": "Unspecified",
+                "GENERAL": "General",
+                "DOCUMENT": "Documents",
+                "CALENDAR": "Calendar"
             }
         }
     },
