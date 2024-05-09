@@ -57,15 +57,9 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 		}
 	}
 
-	ownEntry, err := s.getRSVPCalendarEntry(ctx, entry.Id, userInfo.UserId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-
 	pag, limit := req.Pagination.GetResponse(count.TotalCount)
 	resp := &ListCalendarEntryRSVPResponse{
 		Pagination: pag,
-		OwnEntry:   ownEntry,
 	}
 
 	if count.TotalCount <= 0 {

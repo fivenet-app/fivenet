@@ -4168,6 +4168,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | recurring | [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring) | optional |  |
+| rsvp | [CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
 
 
 
@@ -9004,7 +9005,6 @@ Results ====================================================================
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
 | entries | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | repeated |  |
-| own_entry | [resources.calendar.CalendarEntryRSVP](#resources-calendar-CalendarEntryRSVP) | optional |  |
 
 
 

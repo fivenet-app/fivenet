@@ -1,5 +1,6 @@
 import { defineStore, type StoreDefinition } from 'pinia';
-import { CalendarEntry, type Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import { CalendarEntry, RsvpResponses, type Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
     CreateOrUpdateCalendarEntryResponse,
     CreateOrUpdateCalendarResponse,
@@ -45,6 +46,15 @@ export const useCalendarStore = defineStore('calendar', {
             try {
                 const call = $grpc.getCalendarClient().getCalendar(req);
                 const { response } = await call;
+
+                if (response.calendar) {
+                    const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
+                    if (idx > -1) {
+                        this.calendars[idx] = response.calendar;
+                    } else {
+                        this.calendars.push(response.calendar);
+                    }
+                }
 
                 return response;
             } catch (e) {
@@ -128,6 +138,15 @@ export const useCalendarStore = defineStore('calendar', {
                 const call = $grpc.getCalendarClient().getCalendarEntry(req);
                 const { response } = await call;
 
+                if (response.entry) {
+                    const idx = this.entries.findIndex((c) => c.id === response.entry!.id);
+                    if (idx > -1) {
+                        this.entries[idx] = response.entry;
+                    } else {
+                        this.entries.push(response.entry);
+                    }
+                }
+
                 return response;
             } catch (e) {
                 throw e;
@@ -155,7 +174,10 @@ export const useCalendarStore = defineStore('calendar', {
                 throw e;
             }
         },
-        async createOrUpdateCalendarEntry(entry: CalendarEntry): Promise<CreateOrUpdateCalendarEntryResponse> {
+        async createOrUpdateCalendarEntry(
+            entry: CalendarEntry,
+            users?: UserShort[],
+        ): Promise<CreateOrUpdateCalendarEntryResponse> {
             const { $grpc } = useNuxtApp();
 
             try {
@@ -171,6 +193,14 @@ export const useCalendarStore = defineStore('calendar', {
                     } else {
                         this.entries.push(response.entry);
                     }
+                }
+
+                if (users && users.length > 0) {
+                    const call = $grpc.getCalendarClient().shareCalendarEntry({
+                        entryId: entry.id,
+                        userIds: users.map((u) => u.userId),
+                    });
+                    await call;
                 }
 
                 return response;
@@ -217,6 +247,16 @@ export const useCalendarStore = defineStore('calendar', {
             try {
                 const call = $grpc.getCalendarClient().rSVPCalendarEntry(req);
                 const { response } = await call;
+
+                // Retrieve calendar entry if a "should be visible" response and it is not in our list yet
+                if (req.entry?.entryId && response.entry?.response && response.entry.response > RsvpResponses.HIDDEN) {
+                    const entry = this.entries.find((e) => e.id === response.entry?.entryId);
+                    if (!entry) {
+                        await this.getCalendarEntry({ entryId: req.entry?.entryId });
+                    } else {
+                        entry.rsvp = response.entry;
+                    }
+                }
 
                 return response;
             } catch (e) {

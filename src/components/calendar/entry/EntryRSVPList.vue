@@ -5,13 +5,14 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCalendarStore } from '~/store/calendar';
-import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
+import { CalendarEntryRSVP, RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import EntryShareForm from './EntryShareForm.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = withDefaults(
     defineProps<{
+        modelValue: CalendarEntryRSVP | undefined;
         entryId: string;
         rsvpOpen?: boolean;
         disabled?: boolean;
@@ -22,6 +23,10 @@ const props = withDefaults(
     },
 );
 
+const emits = defineEmits<{
+    (e: 'update:modelValue', entry: CalendarEntryRSVP | undefined): void;
+}>();
+
 const { $grpc } = useNuxtApp();
 
 const modal = useModal();
@@ -30,6 +35,8 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const calendarStore = useCalendarStore();
+
+const ownEntry = useVModel(props, 'modelValue', emits);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -58,7 +65,7 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
 }
 
 async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean): Promise<void | RSVPCalendarEntryResponse> {
-    if (data.value?.ownEntry?.response === rsvpResponse) {
+    if (ownEntry.value?.response === rsvpResponse) {
         return;
     }
 
@@ -74,7 +81,6 @@ async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean):
         });
 
         if (response.entry) {
-            data.value!.ownEntry = response.entry;
             const idx = data.value!.entries.findIndex(
                 (e) => e.entryId === response.entry?.entryId && e.userId === response.entry?.userId,
             );
@@ -84,6 +90,7 @@ async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean):
                 data.value!.entries.push(response.entry);
             }
         }
+        ownEntry.value = response.entry;
 
         return response;
     } catch (e) {
@@ -118,7 +125,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="green"
-                    :variant="data?.ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
+                    :variant="ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.YES)"
                 >
                     {{ $t('common.yes') }}
@@ -130,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="amber"
-                    :variant="data?.ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
+                    :variant="ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.MAYBE)"
                 >
                     {{ $t('common.maybe') }}
@@ -142,7 +149,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="red"
-                    :variant="data?.ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
+                    :variant="ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"
                     @click="onSubmitThrottle(RsvpResponses.NO)"
                 >
                     {{ $t('common.no') }}
@@ -151,7 +158,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
 
             <UButtonGroup class="inline-flex">
                 <UButton
-                    v-if="data?.ownEntry && showRemove"
+                    v-if="ownEntry && showRemove"
                     icon="i-mdi-calendar-remove"
                     color="white"
                     @click="

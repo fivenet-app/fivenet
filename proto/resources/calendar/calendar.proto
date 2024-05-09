@@ -87,6 +87,7 @@ message CalendarEntry {
   optional resources.users.UserShort creator = 15; // @gotags: alias:"creator"
   string creator_job = 16 [(validate.rules).string.max_len = 20];
   optional CalendarEntryRecurring recurring = 17;
+  optional CalendarEntryRSVP rsvp = 18;
 }
 
 message CalendarEntryRecurring {

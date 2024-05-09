@@ -379,6 +379,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UToggle v-model="state.public" />
                         </UFormGroup>
 
+                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                            <UToggle v-model="state.closed" />
+                        </UFormGroup>
+
                         <UFormGroup name="access" :label="$t('common.access')" class="flex-1">
                             <CalendarAccessEntry
                                 v-for="entry in access.values()"

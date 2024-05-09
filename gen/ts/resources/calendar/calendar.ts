@@ -234,6 +234,10 @@ export interface CalendarEntry {
      * @generated from protobuf field: optional resources.calendar.CalendarEntryRecurring recurring = 17;
      */
     recurring?: CalendarEntryRecurring;
+    /**
+     * @generated from protobuf field: optional resources.calendar.CalendarEntryRSVP rsvp = 18;
+     */
+    rsvp?: CalendarEntryRSVP;
 }
 /**
  * @generated from protobuf message resources.calendar.CalendarEntryRecurring
@@ -661,7 +665,8 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 15, name: "creator", kind: "message", T: () => UserShort },
             { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 17, name: "recurring", kind: "message", T: () => CalendarEntryRecurring }
+            { no: 17, name: "recurring", kind: "message", T: () => CalendarEntryRecurring },
+            { no: 18, name: "rsvp", kind: "message", T: () => CalendarEntryRSVP }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -732,6 +737,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* optional resources.calendar.CalendarEntryRecurring recurring */ 17:
                     message.recurring = CalendarEntryRecurring.internalBinaryRead(reader, reader.uint32(), options, message.recurring);
                     break;
+                case /* optional resources.calendar.CalendarEntryRSVP rsvp */ 18:
+                    message.rsvp = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.rsvp);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -795,6 +803,9 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* optional resources.calendar.CalendarEntryRecurring recurring = 17; */
         if (message.recurring)
             CalendarEntryRecurring.internalBinaryWrite(message.recurring, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.calendar.CalendarEntryRSVP rsvp = 18; */
+        if (message.rsvp)
+            CalendarEntryRSVP.internalBinaryWrite(message.rsvp, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

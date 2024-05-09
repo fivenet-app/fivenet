@@ -99,7 +99,6 @@ message ListCalendarEntryRSVPRequest {
 message ListCalendarEntryRSVPResponse {
   resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
   repeated resources.calendar.CalendarEntryRSVP entries = 2;
-  optional resources.calendar.CalendarEntryRSVP own_entry = 3;
 }
 
 message RSVPCalendarEntryRequest {

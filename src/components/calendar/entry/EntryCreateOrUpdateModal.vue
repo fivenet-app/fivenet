@@ -36,7 +36,7 @@ const schema = z.object({
     startTime: z.date(),
     endTime: z.date(),
     content: z.string().min(20).max(1000000),
-    open: z.boolean(),
+    closed: z.boolean(),
     rsvpOpen: z.boolean(),
     users: z.custom<UserShort>().array().max(20),
 });
@@ -49,7 +49,7 @@ const state = reactive<Schema>({
     startTime: addHours(new Date(), 1),
     endTime: addHours(new Date(), 2),
     content: '',
-    open: false,
+    closed: false,
     rsvpOpen: true,
     users: [],
 });
@@ -69,17 +69,20 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
     }
 
     try {
-        const response = await calendarStore.createOrUpdateCalendarEntry({
-            id: data.value?.entry?.id ?? '0',
-            calendarId: values.calendar.id,
-            title: values.title,
-            startTime: toTimestamp(values.startTime),
-            endTime: toTimestamp(values.endTime),
-            content: values.content,
-            closed: !values.open,
-            rsvpOpen: values.rsvpOpen,
-            creatorJob: '',
-        });
+        const response = await calendarStore.createOrUpdateCalendarEntry(
+            {
+                id: data.value?.entry?.id ?? '0',
+                calendarId: values.calendar.id,
+                title: values.title,
+                startTime: toTimestamp(values.startTime),
+                endTime: toTimestamp(values.endTime),
+                content: values.content,
+                closed: values.closed,
+                rsvpOpen: values.rsvpOpen,
+                creatorJob: '',
+            },
+            state.users,
+        );
 
         isOpen.value = false;
 
@@ -104,6 +107,7 @@ function setFromProps(): void {
     state.startTime = toDate(entry.startTime);
     state.endTime = toDate(entry.endTime);
     state.content = entry.content;
+    state.closed = entry.closed;
     state.rsvpOpen = entry.rsvpOpen !== undefined;
 }
 
@@ -272,8 +276,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </ClientOnly>
                         </UFormGroup>
 
-                        <UFormGroup name="closed" :label="`${$t('common.open', 2)}?`" class="flex-1">
-                            <UToggle v-model="state.open" />
+                        <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-1">
+                            <UToggle v-model="state.closed" />
                         </UFormGroup>
 
                         <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1">

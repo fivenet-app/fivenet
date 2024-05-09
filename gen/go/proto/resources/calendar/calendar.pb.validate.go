@@ -1138,6 +1138,39 @@ func (m *CalendarEntry) validate(all bool) error {
 
 	}
 
+	if m.Rsvp != nil {
+
+		if all {
+			switch v := interface{}(m.GetRsvp()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, CalendarEntryValidationError{
+						field:  "Rsvp",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, CalendarEntryValidationError{
+						field:  "Rsvp",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetRsvp()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return CalendarEntryValidationError{
+					field:  "Rsvp",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return CalendarEntryMultiError(errors)
 	}

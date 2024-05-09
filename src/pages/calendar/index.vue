@@ -173,6 +173,7 @@ function calendarIdChange(calendarId: string, state: boolean): void {
 }
 
 const entryIdQuery = useRouteQuery('entry_id', undefined, { transform: Number });
+
 watch(entryIdQuery, () => {
     if (!entryIdQuery.value) {
         return;
@@ -182,6 +183,7 @@ watch(entryIdQuery, () => {
         entryId: entryIdQuery.value.toString(),
     });
 });
+
 if (entryIdQuery.value) {
     slideover.open(EntryViewSlideover, {
         entryId: entryIdQuery.value.toString(),

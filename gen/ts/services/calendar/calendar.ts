@@ -227,10 +227,6 @@ export interface ListCalendarEntryRSVPResponse {
      * @generated from protobuf field: repeated resources.calendar.CalendarEntryRSVP entries = 2;
      */
     entries: CalendarEntryRSVP[];
-    /**
-     * @generated from protobuf field: optional resources.calendar.CalendarEntryRSVP own_entry = 3;
-     */
-    ownEntry?: CalendarEntryRSVP;
 }
 /**
  * @generated from protobuf message services.calendar.RSVPCalendarEntryRequest
@@ -1205,8 +1201,7 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
     constructor() {
         super("services.calendar.ListCalendarEntryRSVPResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CalendarEntryRSVP },
-            { no: 3, name: "own_entry", kind: "message", T: () => CalendarEntryRSVP }
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => CalendarEntryRSVP }
         ]);
     }
     create(value?: PartialMessage<ListCalendarEntryRSVPResponse>): ListCalendarEntryRSVPResponse {
@@ -1227,9 +1222,6 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
                 case /* repeated resources.calendar.CalendarEntryRSVP entries */ 2:
                     message.entries.push(CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.calendar.CalendarEntryRSVP own_entry */ 3:
-                    message.ownEntry = CalendarEntryRSVP.internalBinaryRead(reader, reader.uint32(), options, message.ownEntry);
-                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1248,9 +1240,6 @@ class ListCalendarEntryRSVPResponse$Type extends MessageType<ListCalendarEntryRS
         /* repeated resources.calendar.CalendarEntryRSVP entries = 2; */
         for (let i = 0; i < message.entries.length; i++)
             CalendarEntryRSVP.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.calendar.CalendarEntryRSVP own_entry = 3; */
-        if (message.ownEntry)
-            CalendarEntryRSVP.internalBinaryWrite(message.ownEntry, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

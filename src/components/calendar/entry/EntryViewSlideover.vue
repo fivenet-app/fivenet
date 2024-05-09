@@ -158,6 +158,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
 
                     <template v-if="entry.rsvpOpen">
                         <EntryRSVPList
+                            v-model="entry.rsvp"
                             :entry-id="entry.id"
                             :rsvp-open="entry.rsvpOpen"
                             :disabled="entry.closed"

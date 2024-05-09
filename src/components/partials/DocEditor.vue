@@ -20,13 +20,13 @@ const props = withDefaults(
     },
 );
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'update:modelValue', content: string): void;
 }>();
 
 const editorRef = ref<JoditEditor | null>(null);
 
-const content = useVModel(props, 'modelValue', emit);
+const content = useVModel(props, 'modelValue', emits);
 
 const settingsStore = useSettingsStore();
 const { design: theme, locale } = storeToRefs(settingsStore);

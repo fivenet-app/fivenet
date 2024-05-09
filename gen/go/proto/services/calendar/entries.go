@@ -28,30 +28,28 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 	condition := jet.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
 		jet.OR(
-			jet.OR(
-				tCalendar.ID.IN(
-					tCalendarSubs.
-						SELECT(
-							tCalendarSubs.CalendarID,
-						).
-						FROM(tCalendarSubs).
-						WHERE(jet.AND(
-							tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
-						)),
-				),
-				tCalendarEntry.ID.IN(
-					tCalendarRSVP.
-						SELECT(
-							tCalendarRSVP.EntryID,
-						).
-						FROM(tCalendarRSVP).
-						WHERE(jet.AND(
-							tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
-							tCalendarRSVP.Response.GT(jet.Int16(int16(rsvpResponse))),
-						)),
-				),
-				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+			tCalendar.ID.IN(
+				tCalendarSubs.
+					SELECT(
+						tCalendarSubs.CalendarID,
+					).
+					FROM(tCalendarSubs).
+					WHERE(jet.AND(
+						tCalendarSubs.UserID.EQ(jet.Int32(userInfo.UserId)),
+					)),
 			),
+			tCalendarEntry.ID.IN(
+				tCalendarRSVP.
+					SELECT(
+						tCalendarRSVP.EntryID,
+					).
+					FROM(tCalendarRSVP).
+					WHERE(jet.AND(
+						tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
+						tCalendarRSVP.Response.GT(jet.Int16(int16(rsvpResponse))),
+					)),
+			),
+			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			jet.OR(
 				jet.AND(
 					tCUserAccess.Access.IS_NOT_NULL(),
@@ -113,6 +111,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCreator.PhoneNumber,
 			tUserProps.Avatar.AS("creator.avatar"),
 			tCalendarEntry.Recurring,
+			tCalendarRSVP.EntryID,
+			tCalendarRSVP.CreatedAt,
+			tCalendarRSVP.UserID,
+			tCalendarRSVP.Response,
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendar,
@@ -133,6 +135,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tCreator.ID),
+			).
+			LEFT_JOIN(tCalendarRSVP,
+				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)).
+					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).
@@ -405,6 +411,10 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCreator.PhoneNumber,
 			tUserProps.Avatar.AS("creator.avatar"),
 			tCalendarEntry.Recurring,
+			tCalendarRSVP.EntryID,
+			tCalendarRSVP.CreatedAt,
+			tCalendarRSVP.UserID,
+			tCalendarRSVP.Response,
 		).
 		FROM(tCalendarEntry.
 			INNER_JOIN(tCalendar,
@@ -416,6 +426,10 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			).
 			LEFT_JOIN(tUserProps,
 				tUserProps.UserID.EQ(tCalendarEntry.CreatorID),
+			).
+			LEFT_JOIN(tCalendarRSVP,
+				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)).
+					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
 			),
 		).
 		GROUP_BY(tCalendarEntry.ID).
