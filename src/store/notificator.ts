@@ -52,6 +52,8 @@ export const useNotificatorStore = defineStore('notifications', {
 
             this.abort = new AbortController();
             this.reconnecting = false;
+            const authStore = useAuthStore();
+
             const { $grpc } = useNuxtApp();
 
             try {
@@ -68,32 +70,7 @@ export const useNotificatorStore = defineStore('notifications', {
                     this.notificationsCount = resp.notificationCount;
 
                     if (resp.data.oneofKind !== undefined) {
-                        if (resp.data.oneofKind === 'token') {
-                            const tokenUpdate = resp.data.token;
-
-                            const authStore = useAuthStore();
-
-                            // Update active char when updated user info is received
-                            if (tokenUpdate.char) {
-                                console.debug('Notificator: Updated UserInfo received');
-
-                                authStore.setActiveChar(tokenUpdate.char);
-                                authStore.setPermissions(tokenUpdate.permissions);
-                                authStore.setJobProps(tokenUpdate.jobProps);
-                            }
-
-                            if (tokenUpdate.token && tokenUpdate.expires) {
-                                console.debug('Notificator: New Token received');
-
-                                authStore.setAccessToken(tokenUpdate.token, toDate(tokenUpdate.expires) as null | Date);
-
-                                this.add({
-                                    title: { key: 'notifications.renewed_token.title', parameters: {} },
-                                    description: { key: 'notifications.renewed_token.content', parameters: {} },
-                                    type: 'info',
-                                });
-                            }
-                        } else if (resp.data.oneofKind === 'notification') {
+                        if (resp.data.oneofKind === 'notification') {
                             const n = resp.data.notification;
                             const nType: NotificationType = (n.type as NotificationType) ?? 'info';
 
@@ -114,9 +91,7 @@ export const useNotificatorStore = defineStore('notifications', {
 
                             if (n.data?.link !== undefined) {
                                 if (n.data.link.external === true) {
-                                    not.onClick = async () => {
-                                        navigateTo(n.data!.link!.to, { external: true });
-                                    };
+                                    not.onClick = async () => navigateTo(n.data!.link!.to, { external: true });
                                 } else {
                                     // @ts-ignore route from a notification is a string
                                     const route = useRouter().resolve(n.data!.link!.to);
@@ -132,6 +107,13 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
 
                             this.add(not);
+                            break;
+                        } else if (resp.data.oneofKind === 'refreshToken') {
+                            console.info('Notificator: Refreshing token...');
+                            await authStore.chooseCharacter();
+                            break;
+                        } else if (resp.data.oneofKind === 'jobProps') {
+                            authStore.setJobProps(resp.data.jobProps);
                             break;
                         } else {
                             // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..

@@ -1,14 +1,5 @@
 import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
-import {
-    ServerStreamingCall,
-    UnaryCall,
-    type MethodInfo,
-    type NextServerStreamingFn,
-    type NextUnaryFn,
-    type RpcInterceptor,
-    type RpcOptions,
-    type RpcTransport,
-} from '@protobuf-ts/runtime-rpc';
+import { type RpcTransport } from '@protobuf-ts/runtime-rpc';
 import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -42,50 +33,15 @@ export default defineNuxtPlugin({
     },
 });
 
-export class AuthInterceptor implements RpcInterceptor {
-    interceptUnary(next: NextUnaryFn, method: MethodInfo, input: object, options: RpcOptions): UnaryCall {
-        if (!options.meta) {
-            options.meta = {};
-        }
-
-        const { accessToken } = useAuthStore();
-        if (accessToken !== null) {
-            options.meta.Authorization = 'Bearer ' + accessToken;
-        }
-
-        return next(method, input, options);
-    }
-
-    interceptServerStreaming?(
-        next: NextServerStreamingFn,
-        method: MethodInfo,
-        input: object,
-        options: RpcOptions,
-    ): ServerStreamingCall {
-        if (!options.meta) {
-            options.meta = {};
-        }
-
-        const { accessToken } = useAuthStore();
-        if (accessToken !== null) {
-            options.meta.Authorization = 'Bearer ' + accessToken;
-        }
-
-        return next(method, input, options);
-    }
-}
-
 export class GRPCClients {
-    private authInterceptor: AuthInterceptor;
     private transport: GrpcWebFetchTransport;
 
     constructor() {
-        this.authInterceptor = new AuthInterceptor();
-
         this.transport = new GrpcWebFetchTransport({
             baseUrl: '/grpc',
             format: 'text',
-            interceptors: [this.authInterceptor],
+            interceptors: [],
+            fetchInit: { credentials: 'same-origin' },
         });
     }
 
@@ -197,16 +153,7 @@ export class GRPCClients {
     }
 
     // GRPC Clients ===============================================================
-    // Account / Auth - Unauthorized and authorized clients
-    getUnAuthClient(): AuthServiceClient {
-        return new AuthServiceClient(
-            new GrpcWebFetchTransport({
-                baseUrl: '/grpc',
-                format: 'text',
-            }),
-        );
-    }
-
+    // Auth
     getAuthClient(): AuthServiceClient {
         return new AuthServiceClient(this.transport);
     }

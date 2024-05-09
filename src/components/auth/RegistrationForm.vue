@@ -30,7 +30,7 @@ const state = reactive({
 
 async function createAccount(values: Schema): Promise<void> {
     try {
-        await $grpc.getUnAuthClient().createAccount({
+        await $grpc.getAuthClient().createAccount({
             regToken: values.registrationToken.toString(),
             username: values.username,
             password: values.password,

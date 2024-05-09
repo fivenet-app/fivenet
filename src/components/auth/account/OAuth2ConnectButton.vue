@@ -1,10 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
 import { OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
-
-const authStore = useAuthStore();
-
-const { accessToken } = storeToRefs(authStore);
 
 defineProps<{
     provider: OAuth2Provider;
@@ -17,6 +12,6 @@ defineProps<{
             {{ $t('common.connect') }}
         </UButton>
         <input type="hidden" name="connect-only" value="true" />
-        <input type="hidden" name="token" :value="accessToken" />
+        <!--<input type="hidden" name="token" :value="accessToken" />-->
     </form>
 </template>

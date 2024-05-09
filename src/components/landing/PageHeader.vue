@@ -8,7 +8,7 @@ const { t } = useI18n();
 const appConfig = useAppConfig();
 
 const authStore = useAuthStore();
-const { accessToken } = storeToRefs(authStore);
+const { username } = storeToRefs(authStore);
 
 const links = [
     {
@@ -38,7 +38,7 @@ const modal = useModal();
                 @click="modal.open(LanguageSwitcherModal, {})"
             />
 
-            <template v-if="!accessToken">
+            <template v-if="!username">
                 <UButton :label="$t('components.auth.LoginForm.title')" icon="i-mdi-login" color="gray" to="/auth/login" />
                 <UButton
                     v-if="appConfig.login.signupEnabled"

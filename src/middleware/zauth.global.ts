@@ -4,7 +4,7 @@ import { useNotificatorStore } from '~/store/notificator';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
     const authStore = useAuthStore();
-    const { activeChar, accessToken, lastCharID } = storeToRefs(authStore);
+    const { activeChar, username, lastCharID } = storeToRefs(authStore);
 
     // Default is that a page requires authentication, but if it doesn't exit quickly
     if (to.meta.requiresAuth === false) {
@@ -12,13 +12,13 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
     }
 
     // Auth token is not null and only needed
-    if (to.meta.authOnlyToken && accessToken.value !== null) {
+    if (to.meta.authOnlyToken && username.value !== null) {
         return true;
     }
 
     const redirect = to.query.redirect ?? to.fullPath;
     // Check if user has access token
-    if (accessToken.value !== null) {
+    if (username.value !== null) {
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
         if (activeChar.value === null) {
             // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
@@ -65,7 +65,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                 type: 'warning',
             });
 
-            if (accessToken.value !== null) {
+            if (username.value !== null) {
                 return navigateTo({
                     name: 'overview',
                 });

@@ -15,10 +15,10 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { doLogout } = authStore;
-const { accessToken } = storeToRefs(authStore);
+const { username } = storeToRefs(authStore);
 
 onMounted(async () => {
-    if (!accessToken.value) {
+    if (!username.value) {
         navigateTo({ name: 'auth-login' });
         return;
     }

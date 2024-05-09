@@ -62,19 +62,15 @@ export interface LoginRequest {
  */
 export interface LoginResponse {
     /**
-     * @generated from protobuf field: string token = 1;
-     */
-    token: string;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1;
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: uint64 account_id = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 account_id = 2 [jstype = JS_STRING];
      */
     accountId: string;
     /**
-     * @generated from protobuf field: optional services.auth.ChooseCharacterResponse char = 4;
+     * @generated from protobuf field: optional services.auth.ChooseCharacterResponse char = 3;
      */
     char?: ChooseCharacterResponse;
 }
@@ -96,11 +92,7 @@ export interface ChangePasswordRequest {
  */
 export interface ChangePasswordResponse {
     /**
-     * @generated from protobuf field: string token = 1;
-     */
-    token: string;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1;
      */
     expires?: Timestamp;
 }
@@ -190,23 +182,19 @@ export interface ChooseCharacterRequest {
  */
 export interface ChooseCharacterResponse {
     /**
-     * @generated from protobuf field: string token = 1;
-     */
-    token: string;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1;
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: repeated string permissions = 3;
+     * @generated from protobuf field: repeated string permissions = 2;
      */
     permissions: string[];
     /**
-     * @generated from protobuf field: resources.users.JobProps job_props = 4;
+     * @generated from protobuf field: resources.users.JobProps job_props = 3;
      */
     jobProps?: JobProps;
     /**
-     * @generated from protobuf field: resources.users.User char = 5;
+     * @generated from protobuf field: resources.users.User char = 4;
      */
     char?: User;
 }
@@ -260,19 +248,15 @@ export interface SetSuperUserModeRequest {
  */
 export interface SetSuperUserModeResponse {
     /**
-     * @generated from protobuf field: string token = 1;
-     */
-    token: string;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp expires = 1;
      */
     expires?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.users.JobProps job_props = 3;
+     * @generated from protobuf field: optional resources.users.JobProps job_props = 2;
      */
     jobProps?: JobProps;
     /**
-     * @generated from protobuf field: resources.users.User char = 4;
+     * @generated from protobuf field: resources.users.User char = 3;
      */
     char?: User;
 }
@@ -445,15 +429,13 @@ export const LoginRequest = new LoginRequest$Type();
 class LoginResponse$Type extends MessageType<LoginResponse> {
     constructor() {
         super("services.auth.LoginResponse", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "char", kind: "message", T: () => ChooseCharacterResponse }
+            { no: 1, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 2, name: "account_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 3, name: "char", kind: "message", T: () => ChooseCharacterResponse }
         ]);
     }
     create(value?: PartialMessage<LoginResponse>): LoginResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.token = "";
         message.accountId = "0";
         if (value !== undefined)
             reflectionMergePartial<LoginResponse>(this, message, value);
@@ -464,16 +446,13 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string token */ 1:
-                    message.token = reader.string();
-                    break;
-                case /* resources.timestamp.Timestamp expires */ 2:
+                case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* uint64 account_id = 3 [jstype = JS_STRING];*/ 3:
+                case /* uint64 account_id = 2 [jstype = JS_STRING];*/ 2:
                     message.accountId = reader.uint64().toString();
                     break;
-                case /* optional services.auth.ChooseCharacterResponse char */ 4:
+                case /* optional services.auth.ChooseCharacterResponse char */ 3:
                     message.char = ChooseCharacterResponse.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
                 default:
@@ -488,18 +467,15 @@ class LoginResponse$Type extends MessageType<LoginResponse> {
         return message;
     }
     internalBinaryWrite(message: LoginResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string token = 1; */
-        if (message.token !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.token);
-        /* resources.timestamp.Timestamp expires = 2; */
+        /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 account_id = 3 [jstype = JS_STRING]; */
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 account_id = 2 [jstype = JS_STRING]; */
         if (message.accountId !== "0")
-            writer.tag(3, WireType.Varint).uint64(message.accountId);
-        /* optional services.auth.ChooseCharacterResponse char = 4; */
+            writer.tag(2, WireType.Varint).uint64(message.accountId);
+        /* optional services.auth.ChooseCharacterResponse char = 3; */
         if (message.char)
-            ChooseCharacterResponse.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            ChooseCharacterResponse.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -569,13 +545,11 @@ export const ChangePasswordRequest = new ChangePasswordRequest$Type();
 class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
     constructor() {
         super("services.auth.ChangePasswordResponse", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp }
+            { no: 1, name: "expires", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ChangePasswordResponse>): ChangePasswordResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.token = "";
         if (value !== undefined)
             reflectionMergePartial<ChangePasswordResponse>(this, message, value);
         return message;
@@ -585,10 +559,7 @@ class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string token */ 1:
-                    message.token = reader.string();
-                    break;
-                case /* resources.timestamp.Timestamp expires */ 2:
+                case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
                 default:
@@ -603,12 +574,9 @@ class ChangePasswordResponse$Type extends MessageType<ChangePasswordResponse> {
         return message;
     }
     internalBinaryWrite(message: ChangePasswordResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string token = 1; */
-        if (message.token !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.token);
-        /* resources.timestamp.Timestamp expires = 2; */
+        /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -989,16 +957,14 @@ export const ChooseCharacterRequest = new ChooseCharacterRequest$Type();
 class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> {
     constructor() {
         super("services.auth.ChooseCharacterResponse", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 5, name: "char", kind: "message", T: () => User }
+            { no: 1, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 2, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "job_props", kind: "message", T: () => JobProps },
+            { no: 4, name: "char", kind: "message", T: () => User }
         ]);
     }
     create(value?: PartialMessage<ChooseCharacterResponse>): ChooseCharacterResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.token = "";
         message.permissions = [];
         if (value !== undefined)
             reflectionMergePartial<ChooseCharacterResponse>(this, message, value);
@@ -1009,19 +975,16 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string token */ 1:
-                    message.token = reader.string();
-                    break;
-                case /* resources.timestamp.Timestamp expires */ 2:
+                case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* repeated string permissions */ 3:
+                case /* repeated string permissions */ 2:
                     message.permissions.push(reader.string());
                     break;
-                case /* resources.users.JobProps job_props */ 4:
+                case /* resources.users.JobProps job_props */ 3:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
-                case /* resources.users.User char */ 5:
+                case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
                 default:
@@ -1036,21 +999,18 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         return message;
     }
     internalBinaryWrite(message: ChooseCharacterResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string token = 1; */
-        if (message.token !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.token);
-        /* resources.timestamp.Timestamp expires = 2; */
+        /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string permissions = 3; */
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated string permissions = 2; */
         for (let i = 0; i < message.permissions.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.permissions[i]);
-        /* resources.users.JobProps job_props = 4; */
+            writer.tag(2, WireType.LengthDelimited).string(message.permissions[i]);
+        /* resources.users.JobProps job_props = 3; */
         if (message.jobProps)
-            JobProps.internalBinaryWrite(message.jobProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.User char = 5; */
+            JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.User char = 4; */
         if (message.char)
-            User.internalBinaryWrite(message.char, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+            User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1285,15 +1245,13 @@ export const SetSuperUserModeRequest = new SetSuperUserModeRequest$Type();
 class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse> {
     constructor() {
         super("services.auth.SetSuperUserModeResponse", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 4, name: "char", kind: "message", T: () => User }
+            { no: 1, name: "expires", kind: "message", T: () => Timestamp },
+            { no: 2, name: "job_props", kind: "message", T: () => JobProps },
+            { no: 3, name: "char", kind: "message", T: () => User }
         ]);
     }
     create(value?: PartialMessage<SetSuperUserModeResponse>): SetSuperUserModeResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.token = "";
         if (value !== undefined)
             reflectionMergePartial<SetSuperUserModeResponse>(this, message, value);
         return message;
@@ -1303,16 +1261,13 @@ class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string token */ 1:
-                    message.token = reader.string();
-                    break;
-                case /* resources.timestamp.Timestamp expires */ 2:
+                case /* resources.timestamp.Timestamp expires */ 1:
                     message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
                     break;
-                case /* optional resources.users.JobProps job_props */ 3:
+                case /* optional resources.users.JobProps job_props */ 2:
                     message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
                     break;
-                case /* resources.users.User char */ 4:
+                case /* resources.users.User char */ 3:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
                     break;
                 default:
@@ -1327,18 +1282,15 @@ class SetSuperUserModeResponse$Type extends MessageType<SetSuperUserModeResponse
         return message;
     }
     internalBinaryWrite(message: SetSuperUserModeResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string token = 1; */
-        if (message.token !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.token);
-        /* resources.timestamp.Timestamp expires = 2; */
+        /* resources.timestamp.Timestamp expires = 1; */
         if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.JobProps job_props = 3; */
+            Timestamp.internalBinaryWrite(message.expires, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.users.JobProps job_props = 2; */
         if (message.jobProps)
-            JobProps.internalBinaryWrite(message.jobProps, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.User char = 4; */
+            JobProps.internalBinaryWrite(message.jobProps, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.User char = 3; */
         if (message.char)
-            User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            User.internalBinaryWrite(message.char, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

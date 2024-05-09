@@ -6,7 +6,7 @@ import { notificationTypeToIcon, notificationTypeToColor } from '~/components/pa
 const { t } = useI18n();
 
 const authStore = useAuthStore();
-const { accessToken, activeChar } = storeToRefs(authStore);
+const { username, activeChar } = storeToRefs(authStore);
 
 const notificatorStore = useNotificatorStore();
 const { notifications } = storeToRefs(notificatorStore);
@@ -14,7 +14,7 @@ const { startStream, stopStream } = notificatorStore;
 
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
-    if (accessToken.value !== null && activeChar.value !== null) {
+    if (username.value !== null && activeChar.value !== null) {
         return startStream();
     } else {
         await stopStream();
@@ -22,7 +22,7 @@ async function toggleStream(): Promise<void> {
     }
 }
 
-watch(accessToken, async () => toggleStream());
+watch(username, async () => toggleStream());
 watch(activeChar, async () => toggleStream());
 
 onMounted(async () => toggleStream());

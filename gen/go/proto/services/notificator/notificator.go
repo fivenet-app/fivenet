@@ -9,7 +9,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
-	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
@@ -289,10 +288,6 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 
 	for {
-		resp := &StreamResponse{
-			NotificationCount: notsCount,
-		}
-
 		select {
 		case <-srv.Context().Done():
 			return nil
@@ -304,8 +299,9 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				return err
 			}
 			if data != nil {
-				resp.Data = data
-
+				resp := &StreamResponse{
+					Data: data,
+				}
 				if err := srv.Send(resp); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
@@ -317,7 +313,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			}
 
 			// Make sure the notification is in sync (again)
-			resp.NotificationCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
+			notsCount, err = s.getNotificationCount(srv.Context(), userInfo.UserId)
 			if err != nil {
 				return errswrap.NewError(err, ErrFailedStream)
 			}
@@ -338,10 +334,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				return errswrap.NewError(err, ErrFailedStream)
 			}
 
-			resp.Data = &StreamResponse_Notification{
-				Notification: &dest,
+			notsCount++
+			resp := &StreamResponse{
+				NotificationCount: notsCount,
+				Data: &StreamResponse_Notification{
+					Notification: &dest,
+				},
 			}
-			resp.NotificationCount++
 
 			if err := srv.Send(resp); err != nil {
 				return errswrap.NewError(err, ErrFailedStream)
@@ -360,104 +359,23 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 		return nil, true, errswrap.NewError(err, auth.ErrCharLock)
 	}
 
-	claims, restart, tu, err := s.checkAndUpdateToken(ctx)
-	if err != nil {
-		return nil, false, errswrap.NewError(err, ErrFailedStream)
-	}
-
-	if tu != nil && claims.CharID > 0 {
-		if err := s.checkAndUpdateUserInfo(ctx, tu, currentUserInfo, newUserInfo); err != nil {
-			return nil, false, errswrap.NewError(err, ErrFailedStream)
-		}
-
-		return &StreamResponse_Token{
-			Token: tu,
-		}, true, nil
-	}
-
-	return nil, restart, nil
-}
-
-func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClaims, bool, *CharUpdate, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, true, nil, auth.ErrInvalidToken
+		return nil, true, auth.ErrInvalidToken
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, true, nil, auth.ErrInvalidToken
+		return nil, true, auth.ErrInvalidToken
 	}
 
-	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime {
-		if claims.RenewedCount >= auth.TokenMaxRenews {
-			return nil, true, nil, auth.ErrInvalidToken
-		}
-
-		// Increase re-newed count
-		claims.RenewedCount++
-
-		auth.SetTokenClaimsTimes(claims)
-		newToken, err := s.tm.NewWithClaims(claims)
-		if err != nil {
-			return nil, true, nil, auth.ErrCheckToken
-		}
-
-		tu := &CharUpdate{
-			Token:   newToken,
-			Expires: timestamp.New(claims.ExpiresAt.Time),
-		}
-
-		return claims, true, tu, nil
+	// Either token should be renewed or new user info is not equal
+	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime || !currentUserInfo.Equal(newUserInfo) {
+		// Cause client to refresh token
+		return &StreamResponse_RefreshToken{RefreshToken: true}, true, nil
 	}
 
-	return claims, false, nil, nil
-}
-
-func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *CharUpdate, currentUserInfo userinfo.UserInfo, newUserInfo *userinfo.UserInfo) error {
-	// If the user is logged into a character, update user info and load permissions of user
-	if currentUserInfo.Equal(newUserInfo) {
-		return nil
-	}
-
-	char, jobProps, group, err := s.getCharacter(ctx, newUserInfo.UserId)
-	if err != nil {
-		return err
-	}
-	tu.JobProps = jobProps
-	tu.Char = char
-
-	// Update current user info with new data from database
-	currentUserInfo.UserId = char.UserId
-	currentUserInfo.Job = char.Job
-	currentUserInfo.JobGrade = char.JobGrade
-	currentUserInfo.Group = group
-
-	ps, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
-		UserId:   newUserInfo.UserId,
-		Job:      newUserInfo.Job,
-		JobGrade: newUserInfo.JobGrade,
-	})
-	if err != nil {
-		return auth.ErrUserNoPerms
-	}
-	tu.Permissions = ps.GuardNames()
-
-	if newUserInfo.CanBeSuper {
-		tu.Permissions = append(tu.Permissions, auth.PermCanBeSuperKey)
-
-		if newUserInfo.SuperUser {
-			tu.Permissions = append(tu.Permissions, auth.PermSuperUserKey)
-		}
-	}
-
-	attrs, err := s.p.FlattenRoleAttributes(newUserInfo.Job, newUserInfo.JobGrade)
-	if err != nil {
-		return auth.ErrUserNoPerms
-	}
-	tu.Permissions = append(tu.Permissions, attrs...)
-
-	return nil
+	return nil, false, nil
 }
 
 func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {

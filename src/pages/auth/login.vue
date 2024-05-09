@@ -1,6 +1,4 @@
 <script lang="ts" setup>
-import { type NavigationFailure } from 'vue-router';
-import type { TypedRouteFromName } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
@@ -18,7 +16,8 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
-const { setAccessToken } = authStore;
+const { setAccessTokenExpiration } = authStore;
+const { username } = storeToRefs(authStore);
 
 const notifications = useNotificatorStore();
 
@@ -29,9 +28,10 @@ const showLogin = ref(true);
 onMounted(async () => {
     const query = route.query;
     // `t` and `exp` set, means social login was successful
-    if (query.t && query.t !== '' && query.exp && query.exp !== '') {
+    if (query.u && query.u !== '' && query.exp && query.exp !== '') {
         console.info('Login: Got access token via query param (oauth2 login)');
-        setAccessToken(query.t as string, query.exp as string);
+        username.value = query.u as string;
+        setAccessTokenExpiration(query.exp as string);
 
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },

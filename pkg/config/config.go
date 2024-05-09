@@ -55,6 +55,7 @@ type HTTP struct {
 	Sessions    Sessions `yaml:"sessions"`
 	Links       Links    `yaml:"links"`
 	PublicURL   string   `yaml:"publicURL"`
+	Origins     []string `yaml:"origins"`
 }
 
 type Sessions struct {

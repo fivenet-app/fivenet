@@ -4,9 +4,7 @@ package services.notificator;
 
 import "resources/common/database/database.proto";
 import "resources/notifications/notifications.proto";
-import "resources/timestamp/timestamp.proto";
 import "resources/users/jobs.proto";
-import "resources/users/users.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/notificator;notificator";
@@ -50,16 +48,9 @@ message StreamResponse {
 
   oneof data {
     resources.notifications.Notification notification = 3;
-    CharUpdate token = 4;
+    bool refresh_token = 4;
+    resources.users.JobProps job_props = 5;
   }
-}
-
-message CharUpdate {
-  string token = 1;
-  resources.timestamp.Timestamp expires = 2;
-  repeated string permissions = 3;
-  resources.users.JobProps job_props = 4;
-  resources.users.User char = 5;
 }
 
 service NotificatorService {

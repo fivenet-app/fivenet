@@ -15,6 +15,10 @@ tracing:
 http:
   listen: ":8080"
   adminListen: ":7070"
+  publicURL: "https://fivenet.example.com"
+  origins:
+    - "https://fivenet.example.com"
+    #- "http://localhost:3000" # Only for development
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "localhost"

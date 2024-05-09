@@ -13,7 +13,7 @@ definePageMeta({
 });
 
 const authStore = useAuthStore();
-const { accessToken } = storeToRefs(authStore);
+const { username } = storeToRefs(authStore);
 </script>
 
 <template>
@@ -30,7 +30,7 @@ const { accessToken } = storeToRefs(authStore);
                         color: 'gray',
                         click: () => useRouter().back(),
                     },
-                    accessToken
+                    username
                         ? {
                               label: $t('common.overview'),
                               trailingIcon: 'i-mdi-home',

@@ -485,7 +485,6 @@
     - [LivemapperService](#services-livemapper-LivemapperService)
   
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
-    - [CharUpdate](#services-notificator-CharUpdate)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
     - [GetNotificationsResponse](#services-notificator-GetNotificationsResponse)
     - [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest)
@@ -4309,7 +4308,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
 | expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 
 
@@ -4366,7 +4364,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
 | expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | permissions | [string](#string) | repeated |  |
 | job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
@@ -4541,7 +4538,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
 | expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | account_id | [uint64](#uint64) |  |  |
 | char | [ChooseCharacterResponse](#services-auth-ChooseCharacterResponse) | optional |  |
@@ -4600,7 +4596,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
 | expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | job_props | [resources.users.JobProps](#resources-users-JobProps) | optional |  |
 | char | [resources.users.User](#resources-users-User) |  |  |
@@ -7502,25 +7497,6 @@ Templates ==================================================================
 
 
 
-<a name="services-notificator-CharUpdate"></a>
-
-### CharUpdate
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| token | [string](#string) |  |  |
-| expires | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| permissions | [string](#string) | repeated |  |
-| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-| char | [resources.users.User](#resources-users-User) |  |  |
-
-
-
-
-
-
 <a name="services-notificator-GetNotificationsRequest"></a>
 
 ### GetNotificationsRequest
@@ -7606,7 +7582,8 @@ Templates ==================================================================
 | notification_count | [int32](#int32) |  |  |
 | restart | [bool](#bool) | optional |  |
 | notification | [resources.notifications.Notification](#resources-notifications-Notification) |  |  |
-| token | [CharUpdate](#services-notificator-CharUpdate) |  |  |
+| refresh_token | [bool](#bool) |  |  |
+| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
 
 
 

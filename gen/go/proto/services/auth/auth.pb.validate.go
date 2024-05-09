@@ -479,8 +479,6 @@ func (m *LoginResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Token
-
 	if all {
 		switch v := interface{}(m.GetExpires()).(type) {
 		case interface{ ValidateAll() error }:
@@ -790,8 +788,6 @@ func (m *ChangePasswordResponse) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Token
 
 	if all {
 		switch v := interface{}(m.GetExpires()).(type) {
@@ -2079,8 +2075,6 @@ func (m *ChooseCharacterResponse) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Token
-
 	if all {
 		switch v := interface{}(m.GetExpires()).(type) {
 		case interface{ ValidateAll() error }:
@@ -2809,8 +2803,6 @@ func (m *SetSuperUserModeResponse) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for Token
 
 	if all {
 		switch v := interface{}(m.GetExpires()).(type) {

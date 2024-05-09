@@ -12,7 +12,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
         // Token expired, redirect to login
         if (expiration <= now) {
             console.info('Auth: Token expired, redirecting to login.');
-            authStore.setAccessToken(null, null);
+            authStore.setAccessTokenExpiration(null, null);
 
             // Only update the redirect query param if it isn't set already
             const redirect = to.query.redirect ?? to.fullPath;

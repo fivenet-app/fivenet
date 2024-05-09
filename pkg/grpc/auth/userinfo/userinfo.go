@@ -32,7 +32,53 @@ func (u *UserInfo) Equal(in *UserInfo) bool {
 		return false
 	}
 
-	return *u == *in
+	if u.Enabled != in.Enabled {
+		return false
+	}
+	if u.AccountId != in.AccountId {
+		return false
+	}
+	if u.License != in.License {
+		return false
+	}
+	if (u.LastChar == nil && in.LastChar != nil) ||
+		(u.LastChar != nil && in.LastChar == nil) ||
+		(u.LastChar != nil && in.LastChar != nil && *u.LastChar != *in.LastChar) {
+		return false
+	}
+
+	if u.UserId != in.UserId {
+		return false
+	}
+	if u.Job != in.Job {
+		return false
+	}
+	if u.JobGrade != in.JobGrade {
+		return false
+	}
+
+	if u.Group != in.Group {
+		return false
+	}
+	if u.CanBeSuper != in.CanBeSuper {
+		return false
+	}
+	if u.SuperUser != in.SuperUser {
+		return false
+	}
+
+	if (u.OverrideJob == nil && in.OverrideJob != nil) ||
+		(u.OverrideJob != nil && in.OverrideJob == nil) ||
+		(u.OverrideJob != nil && in.OverrideJob != nil && *u.OverrideJob != *in.OverrideJob) {
+		return false
+	}
+	if (u.OverrideJobGrade == nil && in.OverrideJobGrade != nil) ||
+		(u.OverrideJobGrade != nil && in.OverrideJobGrade == nil) ||
+		(u.OverrideJobGrade != nil && in.OverrideJobGrade != nil && *u.OverrideJobGrade != *in.OverrideJobGrade) {
+		return false
+	}
+
+	return true
 }
 
 func (u *UserInfo) Clone() UserInfo {
@@ -41,6 +87,7 @@ func (u *UserInfo) Clone() UserInfo {
 		AccountId: u.AccountId,
 		License:   u.License,
 
+		LastChar:   u.LastChar,
 		Group:      u.Group,
 		CanBeSuper: u.CanBeSuper,
 		SuperUser:  u.SuperUser,

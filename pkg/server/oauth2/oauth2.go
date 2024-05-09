@@ -44,6 +44,7 @@ type OAuth2 struct {
 	db     *sql.DB
 	tm     *auth.TokenMgr
 
+	domain       string
 	oauthConfigs map[string]providers.IProvider
 }
 
@@ -56,6 +57,7 @@ func New(p Params) *OAuth2 {
 		logger:       p.Logger,
 		db:           p.DB,
 		tm:           p.TM,
+		domain:       p.Config.HTTP.Sessions.Domain,
 		oauthConfigs: make(map[string]providers.IProvider, len(p.Config.OAuth2.Providers)),
 	}
 
@@ -289,8 +291,10 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&t=%s&exp=%d",
-		url.QueryEscape(newToken),
+	c.SetCookie(auth.CookieName, newToken, 6*24*60*60, "/", o.domain, false, true)
+
+	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s&exp=%d",
+		url.QueryEscape(*account.Username),
 		claims.ExpiresAt.Time.UTC().UnixNano()/1e6,
 	))
 }

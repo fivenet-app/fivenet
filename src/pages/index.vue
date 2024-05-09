@@ -19,12 +19,12 @@ const { t } = useI18n();
 const appConfig = useAppConfig();
 
 const authStore = useAuthStore();
-const { accessToken } = storeToRefs(authStore);
+const { username } = storeToRefs(authStore);
 
 const router = useRouter();
 
 onBeforeMount(async () => {
-    if (accessToken.value) {
+    if (username.value) {
         // @ts-ignore the route should be valid, as we test it against a valid URL list
         const target = router.resolve(useSettingsStore().startpage ?? '/overview');
         return navigateTo(target);
@@ -36,7 +36,7 @@ const appVersion = __APP_VERSION__.split('-')[0];
 const links = computed(
     () =>
         [
-            accessToken.value
+            username.value
                 ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg', to: '/overview' }
                 : {
                       label: t('components.auth.LoginForm.title'),

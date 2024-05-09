@@ -8,7 +8,6 @@ import { User } from '~~/gen/ts/resources/users/users';
 import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 
 export interface AuthState {
-    accessToken: null | string;
     accessTokenExpiration: null | Date;
     username: null | string;
     lastCharID: number;
@@ -23,7 +22,6 @@ export const useAuthStore = defineStore('auth', {
     state: () =>
         ({
             // Persisted to Local Storage
-            accessToken: null,
             accessTokenExpiration: null,
             lastCharID: 0,
             username: null,
@@ -41,7 +39,7 @@ export const useAuthStore = defineStore('auth', {
             } as JobProps,
         }) as AuthState,
     persist: {
-        paths: ['accessToken', 'accessTokenExpiration', 'lastCharID', 'username'],
+        paths: ['accessTokenExpiration', 'lastCharID', 'username'],
     },
     actions: {
         loginStart(): void {
@@ -51,8 +49,7 @@ export const useAuthStore = defineStore('auth', {
             this.loggingIn = false;
             this.loginError = errorMessage;
         },
-        setAccessToken(accessToken: null | string, expiration: null | string | Date): void {
-            this.accessToken = accessToken;
+        setAccessTokenExpiration(expiration: null | string | Date): void {
             if (typeof expiration === 'string') {
                 expiration = new Date(expiration);
             }
@@ -74,7 +71,7 @@ export const useAuthStore = defineStore('auth', {
             }
         },
         clearAuthInfo(): void {
-            this.setAccessToken(null, null);
+            this.setAccessTokenExpiration(null);
             this.setActiveChar(null);
             this.setPermissions([]);
             this.setJobProps(undefined);
@@ -90,7 +87,7 @@ export const useAuthStore = defineStore('auth', {
 
             const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getUnAuthClient().login({ username, password });
+                const call = $grpc.getAuthClient().login({ username, password });
                 const { response } = await call;
 
                 this.loginStop(null);
@@ -98,7 +95,7 @@ export const useAuthStore = defineStore('auth', {
                 this.username = username;
                 if (!response.char) {
                     console.info('Simple login response received, redirecting to char selector');
-                    this.setAccessToken(response.token, toDate(response.expires));
+                    this.setAccessTokenExpiration(toDate(response.expires));
 
                     const route = useRoute();
 
@@ -109,7 +106,7 @@ export const useAuthStore = defineStore('auth', {
                 } else {
                     console.info('Received fast-tracked char response for char id:', response.char.char?.userId);
                     this.setActiveChar(response.char.char ?? null);
-                    this.setAccessToken(response.char.token, toDate(response.char.expires));
+                    this.setAccessTokenExpiration(toDate(response.char.expires));
                     this.setPermissions(response.char.permissions);
                     this.setJobProps(response.char.jobProps);
 
@@ -119,7 +116,7 @@ export const useAuthStore = defineStore('auth', {
                 }
             } catch (e) {
                 this.loginStop((e as RpcError).message);
-                this.setAccessToken(null, null);
+                this.setAccessTokenExpiration(null);
                 $grpc.handleError(e as RpcError);
                 throw e;
             }
@@ -163,7 +160,7 @@ export const useAuthStore = defineStore('auth', {
                 }
 
                 this.setActiveChar(response.char);
-                this.setAccessToken(response.token, toDate(response.expires));
+                this.setAccessTokenExpiration(toDate(response.expires));
                 this.setPermissions(response.permissions);
                 this.setJobProps(response.jobProps);
 
@@ -206,7 +203,7 @@ export const useAuthStore = defineStore('auth', {
                     this.permissions = this.permissions.filter((p) => p !== 'superuser');
                 }
 
-                this.setAccessToken(response.token, toDate(response.expires));
+                this.setAccessTokenExpiration(toDate(response.expires));
                 this.setActiveChar(response.char!);
                 this.setJobProps(response.jobProps);
 

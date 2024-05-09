@@ -15,7 +15,7 @@ const notifications = useNotificatorStore();
 
 async function forgotPassword(values: Schema): Promise<void> {
     try {
-        await $grpc.getUnAuthClient().forgotPassword({
+        await $grpc.getAuthClient().forgotPassword({
             regToken: values.registrationToken.toString(),
             new: values.password,
         });

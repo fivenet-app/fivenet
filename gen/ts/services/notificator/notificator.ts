@@ -11,9 +11,7 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { User } from "../../resources/users/users";
 import { JobProps } from "../../resources/users/jobs";
-import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Notification } from "../../resources/notifications/notifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { NotificationCategory } from "../../resources/notifications/notifications";
@@ -97,39 +95,20 @@ export interface StreamResponse {
          */
         notification: Notification;
     } | {
-        oneofKind: "token";
+        oneofKind: "refreshToken";
         /**
-         * @generated from protobuf field: services.notificator.CharUpdate token = 4;
+         * @generated from protobuf field: bool refresh_token = 4;
          */
-        token: CharUpdate;
+        refreshToken: boolean;
+    } | {
+        oneofKind: "jobProps";
+        /**
+         * @generated from protobuf field: resources.users.JobProps job_props = 5;
+         */
+        jobProps: JobProps;
     } | {
         oneofKind: undefined;
     };
-}
-/**
- * @generated from protobuf message services.notificator.CharUpdate
- */
-export interface CharUpdate {
-    /**
-     * @generated from protobuf field: string token = 1;
-     */
-    token: string;
-    /**
-     * @generated from protobuf field: resources.timestamp.Timestamp expires = 2;
-     */
-    expires?: Timestamp;
-    /**
-     * @generated from protobuf field: repeated string permissions = 3;
-     */
-    permissions: string[];
-    /**
-     * @generated from protobuf field: resources.users.JobProps job_props = 4;
-     */
-    jobProps?: JobProps;
-    /**
-     * @generated from protobuf field: resources.users.User char = 5;
-     */
-    char?: User;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> {
@@ -395,7 +374,8 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
             { no: 1, name: "notification_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
             { no: 3, name: "notification", kind: "message", oneof: "data", T: () => Notification },
-            { no: 4, name: "token", kind: "message", oneof: "data", T: () => CharUpdate }
+            { no: 4, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "job_props", kind: "message", oneof: "data", T: () => JobProps }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -423,10 +403,16 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                         notification: Notification.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notification)
                     };
                     break;
-                case /* services.notificator.CharUpdate token */ 4:
+                case /* bool refresh_token */ 4:
                     message.data = {
-                        oneofKind: "token",
-                        token: CharUpdate.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).token)
+                        oneofKind: "refreshToken",
+                        refreshToken: reader.bool()
+                    };
+                    break;
+                case /* resources.users.JobProps job_props */ 5:
+                    message.data = {
+                        oneofKind: "jobProps",
+                        jobProps: JobProps.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobProps)
                     };
                     break;
                 default:
@@ -450,9 +436,12 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* resources.notifications.Notification notification = 3; */
         if (message.data.oneofKind === "notification")
             Notification.internalBinaryWrite(message.data.notification, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* services.notificator.CharUpdate token = 4; */
-        if (message.data.oneofKind === "token")
-            CharUpdate.internalBinaryWrite(message.data.token, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* bool refresh_token = 4; */
+        if (message.data.oneofKind === "refreshToken")
+            writer.tag(4, WireType.Varint).bool(message.data.refreshToken);
+        /* resources.users.JobProps job_props = 5; */
+        if (message.data.oneofKind === "jobProps")
+            JobProps.internalBinaryWrite(message.data.jobProps, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -463,82 +452,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.notificator.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CharUpdate$Type extends MessageType<CharUpdate> {
-    constructor() {
-        super("services.notificator.CharUpdate", [
-            { no: 1, name: "token", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "expires", kind: "message", T: () => Timestamp },
-            { no: 3, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
-            { no: 4, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 5, name: "char", kind: "message", T: () => User }
-        ]);
-    }
-    create(value?: PartialMessage<CharUpdate>): CharUpdate {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.token = "";
-        message.permissions = [];
-        if (value !== undefined)
-            reflectionMergePartial<CharUpdate>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CharUpdate): CharUpdate {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* string token */ 1:
-                    message.token = reader.string();
-                    break;
-                case /* resources.timestamp.Timestamp expires */ 2:
-                    message.expires = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.expires);
-                    break;
-                case /* repeated string permissions */ 3:
-                    message.permissions.push(reader.string());
-                    break;
-                case /* resources.users.JobProps job_props */ 4:
-                    message.jobProps = JobProps.internalBinaryRead(reader, reader.uint32(), options, message.jobProps);
-                    break;
-                case /* resources.users.User char */ 5:
-                    message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CharUpdate, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string token = 1; */
-        if (message.token !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.token);
-        /* resources.timestamp.Timestamp expires = 2; */
-        if (message.expires)
-            Timestamp.internalBinaryWrite(message.expires, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated string permissions = 3; */
-        for (let i = 0; i < message.permissions.length; i++)
-            writer.tag(3, WireType.LengthDelimited).string(message.permissions[i]);
-        /* resources.users.JobProps job_props = 4; */
-        if (message.jobProps)
-            JobProps.internalBinaryWrite(message.jobProps, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.User char = 5; */
-        if (message.char)
-            User.internalBinaryWrite(message.char, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.notificator.CharUpdate
- */
-export const CharUpdate = new CharUpdate$Type();
 /**
  * @generated ServiceType for protobuf service services.notificator.NotificatorService
  */

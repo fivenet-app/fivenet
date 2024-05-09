@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/internal/tests/servers"
 	grpcserver "github.com/fivenet-app/fivenet/pkg/grpc"
 	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/utils/http"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -88,16 +89,21 @@ func TestFullAuthFlow(t *testing.T) {
 	// user-3: Login with valid account that has one char
 	loginReq.Username = "user-3"
 	loginReq.Password = "password"
-	res, err = client.Login(ctx, loginReq)
+	md := metadata.New(map[string]string{})
+	res, err = client.Login(ctx, loginReq, grpc.Header(&md))
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
 	if res == nil {
 		assert.FailNow(t, "user-3: Login with valid account failed, response is nil")
 	}
-	assert.NotEmpty(t, res.GetToken())
+	cookies := md.Get("set-cookie")
+	cookie, err := http.ParseSetCookie(cookies[0])
+	require.NoError(t, err)
+	userToken := cookie.Value
+	assert.NotEmpty(t, userToken)
 
 	// user-3: Create authenticated metadate and get characters (only has one char)
-	md := metadata.New(map[string]string{"Authorization": "Bearer " + res.GetToken()})
+	md = metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq := &GetCharactersRequest{}
 	getCharsRes, err := client.GetCharacters(ctx, getCharsReq)
@@ -117,10 +123,10 @@ func TestFullAuthFlow(t *testing.T) {
 	if res == nil {
 		assert.FailNow(t, "user-1: Login with valid account failed, response is nil")
 	}
-	assert.NotEmpty(t, res.GetToken())
+	assert.NotEmpty(t, userToken)
 
 	// user-1: Create authenticated metadate and get characters
-	md = metadata.New(map[string]string{"Authorization": "Bearer " + res.GetToken()})
+	md = metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq = &GetCharactersRequest{}
 	getCharsRes, err = client.GetCharacters(ctx, getCharsReq)

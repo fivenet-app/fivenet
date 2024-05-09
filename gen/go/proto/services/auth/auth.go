@@ -53,6 +53,7 @@ type Server struct {
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
 
+	domain          string
 	oauth2Providers []*config.OAuth2Provider
 	customDB        config.CustomDB
 	superuserGroups []string
@@ -86,6 +87,7 @@ func NewServer(p Params) *Server {
 		ui:       p.UI,
 		appCfg:   p.AppConfig,
 
+		domain:          p.Config.HTTP.Sessions.Domain,
 		oauth2Providers: p.Config.OAuth2.Providers,
 		customDB:        p.Config.Database.Custom,
 		superuserGroups: p.Config.Auth.SuperuserGroups,
@@ -195,8 +197,9 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 		}
 	}
 
+	s.setTokenCookie(ctx, token)
+
 	return &LoginResponse{
-		Token:     token,
 		Expires:   timestamp.New(claims.ExpiresAt.Time),
 		AccountId: account.ID,
 		Char:      chooseCharResp,
@@ -204,6 +207,8 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
+	s.destroyTokenCookie(ctx)
+
 	return &LogoutResponse{
 		Success: true,
 	}, nil
@@ -325,8 +330,9 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
+	s.setTokenCookie(ctx, newToken)
+
 	return &ChangePasswordResponse{
-		Token:   newToken,
 		Expires: timestamp.New(newClaims.ExpiresAt.Time),
 	}, nil
 }
@@ -712,8 +718,9 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		State:   int16(rector.EventType_EVENT_TYPE_VIEWED),
 	}, char.UserShort())
 
+	s.setTokenCookie(ctx, newToken)
+
 	return &ChooseCharacterResponse{
-		Token:       newToken,
 		Expires:     timestamp.New(newClaims.ExpiresAt.Time),
 		Permissions: ps,
 		JobProps:    jProps,
@@ -794,8 +801,9 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
+	s.setTokenCookie(ctx, newToken)
+
 	return &SetSuperUserModeResponse{
-		Token:    newToken,
 		Expires:  timestamp.New(newClaims.ExpiresAt.Time),
 		JobProps: jobProps,
 		Char:     char,

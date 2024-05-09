@@ -44,10 +44,9 @@ message LoginRequest {
 }
 
 message LoginResponse {
-  string token = 1;
-  resources.timestamp.Timestamp expires = 2;
-  uint64 account_id = 3 [jstype = JS_STRING];
-  optional ChooseCharacterResponse char = 4;
+  resources.timestamp.Timestamp expires = 1;
+  uint64 account_id = 2 [jstype = JS_STRING];
+  optional ChooseCharacterResponse char = 3;
 }
 
 message ChangePasswordRequest {
@@ -62,8 +61,7 @@ message ChangePasswordRequest {
 }
 
 message ChangePasswordResponse {
-  string token = 1;
-  resources.timestamp.Timestamp expires = 2;
+  resources.timestamp.Timestamp expires = 1;
 }
 
 message ChangeUsernameRequest {
@@ -113,11 +111,10 @@ message ChooseCharacterRequest {
 }
 
 message ChooseCharacterResponse {
-  string token = 1;
-  resources.timestamp.Timestamp expires = 2;
-  repeated string permissions = 3;
-  resources.users.JobProps job_props = 4;
-  resources.users.User char = 5;
+  resources.timestamp.Timestamp expires = 1;
+  repeated string permissions = 2;
+  resources.users.JobProps job_props = 3;
+  resources.users.User char = 4;
 }
 
 message LogoutRequest {}
@@ -140,10 +137,9 @@ message SetSuperUserModeRequest {
 }
 
 message SetSuperUserModeResponse {
-  string token = 1;
-  resources.timestamp.Timestamp expires = 2;
-  optional resources.users.JobProps job_props = 3;
-  resources.users.User char = 4;
+  resources.timestamp.Timestamp expires = 1;
+  optional resources.users.JobProps job_props = 2;
+  resources.users.User char = 3;
 }
 
 service AuthService {

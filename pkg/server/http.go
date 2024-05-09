@@ -11,6 +11,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
 	"github.com/gin-contrib/static"
@@ -128,6 +129,17 @@ func NewEngine(p EngineParams) *gin.Engine {
 		}),
 	}))
 	e.Use(ginzap.RecoveryWithZap(p.Logger, true))
+
+	// CORS
+	e.Use(cors.New(cors.Config{
+		AllowOrigins:           p.Config.HTTP.Origins,
+		AllowMethods:           []string{"GET", "POST", "HEAD", "OPTIONS"},
+		AllowHeaders:           []string{"Origin", "Content-Length", "Content-Type"},
+		AllowBrowserExtensions: true,
+		ExposeHeaders:          []string{"Content-Length", "Content-Type", "Accept-Encoding"},
+		AllowCredentials:       true,
+		MaxAge:                 4 * time.Hour,
+	}))
 
 	// Sessions
 	sessStore := cookie.NewStore([]byte(p.Config.HTTP.Sessions.CookieSecret))
