@@ -511,22 +511,14 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
 
-	isSuperUser := false
-	for i := 0; i < len(resp.Chars); i++ {
-		if slices.Contains(s.superuserGroups, resp.Chars[i].Group) || slices.Contains(s.superuserUsers, claims.Subject) {
-			isSuperUser = true
-			break
-		}
-	}
-
 	// If last char lock is enabled ensure to mark the one char as available only
-	if s.appCfg.Get().Auth.LastCharLock && acc.LastChar != nil && !isSuperUser {
-		idx := slices.IndexFunc(resp.Chars, func(char *accounts.Character) bool {
-			return char.Char != nil && char.Char.UserId == *acc.LastChar
-		})
-
-		if idx > -1 {
-			resp.Chars[idx].Available = true
+	if s.appCfg.Get().Auth.LastCharLock && acc.LastChar != nil {
+		for i := 0; i < len(resp.Chars); i++ {
+			if resp.Chars[i].Char.UserId == *acc.LastChar ||
+				slices.Contains(s.superuserGroups, resp.Chars[i].Group) || slices.Contains(s.superuserUsers, claims.Subject) {
+				resp.Chars[i].Available = true
+				continue
+			}
 		}
 
 		// Sort chars for convience of the user

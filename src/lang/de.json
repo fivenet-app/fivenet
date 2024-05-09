@@ -964,7 +964,11 @@
                 "title": "Charakter Auswahl"
             },
             "CharacterSelectorCard": {
-                "disabled_char_tooltip": "Charakter-Sperre ist aktiv! Nur auf Ihren letzten Online-Charakter kann zugegriffen werden."
+                "char_lock_alert": {
+                    "title": "Charakter-Sperre ist aktiv!",
+                    "description": "Nur auf Ihren letzten Online-Charakter kann zugegriffen werden."
+                },
+                "disabled_char": "Charakter-Sperre ist aktiv!"
             }
         },
         "citizens": {

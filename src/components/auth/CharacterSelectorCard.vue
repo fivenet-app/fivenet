@@ -85,7 +85,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 :icon="disabled ? 'i-mdi-lock' : undefined"
                 @click="onSubmitThrottle(char.userId)"
             >
-                {{ !disabled ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char_tooltip') }}
+                {{ !disabled ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char') }}
             </UButton>
         </template>
     </UCard>

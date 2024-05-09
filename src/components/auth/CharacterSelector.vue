@@ -60,5 +60,16 @@ watch(chars, async () => {
         >
             <CharacterSelectorCard :key="item.userId" :char="item.char" :disabled="!item.available" />
         </UCarousel>
+
+        <UContainer class="mt-4" :ui="{ constrained: 'max-w-xl' }">
+            <UAlert
+                :ui="{ wrapper: 'relative overflow-hidden' }"
+                icon="i-mdi-information"
+                color="primary"
+                variant="subtle"
+                :title="$t('components.auth.CharacterSelectorCard.char_lock_alert.title')"
+                :description="$t('components.auth.CharacterSelectorCard.char_lock_alert.description')"
+            />
+        </UContainer>
     </div>
 </template>
