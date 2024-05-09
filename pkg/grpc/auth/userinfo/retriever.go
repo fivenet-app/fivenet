@@ -81,7 +81,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 
 	stmt := tUsers.
 		SELECT(
-			tFivenetAccounts.ID.AS("userinfo.acc_id"),
+			tFivenetAccounts.ID.AS("userinfo.account_id"),
 			tFivenetAccounts.Enabled.AS("userinfo.enabled"),
 			tFivenetAccounts.License.AS("userinfo.license"),
 			tFivenetAccounts.OverrideJob.AS("userinfo.override_job"),
