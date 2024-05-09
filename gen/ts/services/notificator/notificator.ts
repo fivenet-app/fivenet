@@ -4,10 +4,10 @@
 import { ServiceType } from "@protobuf-ts/runtime-rpc";
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
 import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
@@ -16,6 +16,7 @@ import { JobProps } from "../../resources/users/jobs";
 import { Timestamp } from "../../resources/timestamp/timestamp";
 import { Notification } from "../../resources/notifications/notifications";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { NotificationCategory } from "../../resources/notifications/notifications";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.notificator.GetNotificationsRequest
@@ -29,6 +30,10 @@ export interface GetNotificationsRequest {
      * @generated from protobuf field: optional bool include_read = 2;
      */
     includeRead?: boolean;
+    /**
+     * @generated from protobuf field: repeated resources.notifications.NotificationCategory categories = 3;
+     */
+    categories: NotificationCategory[];
 }
 /**
  * @generated from protobuf message services.notificator.GetNotificationsResponse
@@ -131,11 +136,13 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
     constructor() {
         super("services.notificator.GetNotificationsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "include_read", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "include_read", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "categories", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "validate.rules": { repeated: { maxItems: "4", items: { enum: { definedOnly: true } } } } } }
         ]);
     }
     create(value?: PartialMessage<GetNotificationsRequest>): GetNotificationsRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.categories = [];
         if (value !== undefined)
             reflectionMergePartial<GetNotificationsRequest>(this, message, value);
         return message;
@@ -150,6 +157,13 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
                     break;
                 case /* optional bool include_read */ 2:
                     message.includeRead = reader.bool();
+                    break;
+                case /* repeated resources.notifications.NotificationCategory categories */ 3:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.categories.push(reader.int32());
+                    else
+                        message.categories.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -169,6 +183,13 @@ class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> 
         /* optional bool include_read = 2; */
         if (message.includeRead !== undefined)
             writer.tag(2, WireType.Varint).bool(message.includeRead);
+        /* repeated resources.notifications.NotificationCategory categories = 3; */
+        if (message.categories.length) {
+            writer.tag(3, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.categories.length; i++)
+                writer.int32(message.categories[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

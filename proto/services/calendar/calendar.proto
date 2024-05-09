@@ -53,6 +53,7 @@ message ListCalendarEntriesRequest {
     lte: 12,
   }];
   repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
+  optional bool show_hidden = 4;
 }
 
 message ListCalendarEntriesResponse {

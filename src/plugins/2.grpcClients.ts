@@ -137,7 +137,17 @@ export class GRPCClients {
                     break;
 
                 case 'permission_denied':
-                    notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: {} };
+                    if (!err.message.includes('ErrCharLock')) {
+                        notification.title = { key: 'notifications.grpc_errors.permission_denied.title', parameters: {} };
+                    } else {
+                        // In case of a permission denied char lock error, user must re-select their char
+                        navigateTo({
+                            name: 'auth-character-selector',
+                            query: { redirect: route.query.redirect ?? route.fullPath },
+                            replace: true,
+                            force: true,
+                        });
+                    }
                     break;
 
                 case 'not_found':

@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	timestamp "github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -53,6 +54,7 @@ type Server struct {
 	ui       userinfo.UserInfoRetriever
 	js       *events.JSWrapper
 	enricher *mstlystcdata.Enricher
+	appCfg   appconfig.IConfig
 }
 
 type Params struct {
@@ -60,13 +62,14 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger   *zap.Logger
-	DB       *sql.DB
-	Perms    perms.Permissions
-	TM       *auth.TokenMgr
-	UI       userinfo.UserInfoRetriever
-	JS       *events.JSWrapper
-	Enricher *mstlystcdata.Enricher
+	Logger    *zap.Logger
+	DB        *sql.DB
+	Perms     perms.Permissions
+	TM        *auth.TokenMgr
+	UI        userinfo.UserInfoRetriever
+	JS        *events.JSWrapper
+	Enricher  *mstlystcdata.Enricher
+	AppConfig appconfig.IConfig
 }
 
 func NewServer(p Params) *Server {
@@ -78,6 +81,7 @@ func NewServer(p Params) *Server {
 		ui:       p.UI,
 		js:       p.JS,
 		enricher: p.Enricher,
+		appCfg:   p.AppConfig,
 	}
 
 	return s
@@ -93,10 +97,16 @@ func (s *Server) GetNotifications(ctx context.Context, req *GetNotificationsRequ
 	tNotifications := tNotifications.AS("notification")
 	condition := tNotifications.UserID.EQ(jet.Int32(userInfo.UserId))
 	if req.IncludeRead != nil && !*req.IncludeRead {
-		condition = jet.AND(
-			condition,
-			tNotifications.ReadAt.IS_NULL(),
-		)
+		condition = condition.AND(tNotifications.ReadAt.IS_NULL())
+	}
+
+	if len(req.Categories) > 0 {
+		categoryIds := make([]jet.Expression, len(req.Categories))
+		for i := 0; i < len(req.Categories); i++ {
+			categoryIds[i] = jet.Int16(int16(req.Categories[i]))
+		}
+
+		condition = condition.AND(tNotifications.Category.IN(categoryIds...))
 	}
 
 	countStmt := tNotifications.
@@ -256,13 +266,13 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}()
 
 	// Update Ticker
-	updateTicker := time.NewTicker(45 * time.Second)
+	updateTicker := time.NewTicker(35 * time.Second)
 	defer updateTicker.Stop()
 
 	// Check user token validity and update if necessary
 	data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
 	if err != nil {
-		return errswrap.NewError(err, ErrFailedStream)
+		return err
 	}
 
 	notsCount, err := s.getNotificationCount(srv.Context(), userInfo.UserId)
@@ -291,7 +301,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			// Check user token validity
 			data, stop, err := s.checkUser(srv.Context(), currentUserInfo)
 			if err != nil {
-				return errswrap.NewError(err, ErrFailedStream)
+				return err
 			}
 			if data != nil {
 				resp.Data = data
@@ -340,15 +350,24 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 	}
 }
 
-func (s *Server) checkUser(ctx context.Context, userInfo userinfo.UserInfo) (isStreamResponse_Data, bool, error) {
+func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInfo) (isStreamResponse_Data, bool, error) {
+	newUserInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
+	if err != nil {
+		return nil, true, errswrap.NewError(err, ErrFailedStream)
+	}
+
+	if currentUserInfo.LastChar != nil && *newUserInfo.LastChar != currentUserInfo.UserId && s.appCfg.Get().Auth.LastCharLock {
+		return nil, true, errswrap.NewError(err, auth.ErrCharLock)
+	}
+
 	claims, restart, tu, err := s.checkAndUpdateToken(ctx)
 	if err != nil {
-		return nil, false, err
+		return nil, false, errswrap.NewError(err, ErrFailedStream)
 	}
 
 	if tu != nil && claims.CharID > 0 {
-		if err := s.checkAndUpdateUserInfo(ctx, tu, userInfo); err != nil {
-			return nil, false, err
+		if err := s.checkAndUpdateUserInfo(ctx, tu, currentUserInfo, newUserInfo); err != nil {
+			return nil, false, errswrap.NewError(err, ErrFailedStream)
 		}
 
 		return &StreamResponse_Token{
@@ -395,18 +414,13 @@ func (s *Server) checkAndUpdateToken(ctx context.Context) (*auth.CitizenInfoClai
 	return claims, false, nil, nil
 }
 
-func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *CharUpdate, currentUserInfo userinfo.UserInfo) error {
-	userInfo, err := s.ui.GetUserInfo(ctx, currentUserInfo.UserId, currentUserInfo.AccountId)
-	if err != nil {
-		return err
-	}
-
+func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *CharUpdate, currentUserInfo userinfo.UserInfo, newUserInfo *userinfo.UserInfo) error {
 	// If the user is logged into a character, update user info and load permissions of user
-	if currentUserInfo.Equal(userInfo) {
+	if currentUserInfo.Equal(newUserInfo) {
 		return nil
 	}
 
-	char, jobProps, group, err := s.getCharacter(ctx, userInfo.UserId)
+	char, jobProps, group, err := s.getCharacter(ctx, newUserInfo.UserId)
 	if err != nil {
 		return err
 	}
@@ -420,20 +434,24 @@ func (s *Server) checkAndUpdateUserInfo(ctx context.Context, tu *CharUpdate, cur
 	currentUserInfo.Group = group
 
 	ps, err := s.p.GetPermissionsOfUser(&userinfo.UserInfo{
-		UserId:   userInfo.UserId,
-		Job:      userInfo.Job,
-		JobGrade: userInfo.JobGrade,
+		UserId:   newUserInfo.UserId,
+		Job:      newUserInfo.Job,
+		JobGrade: newUserInfo.JobGrade,
 	})
 	if err != nil {
 		return auth.ErrUserNoPerms
 	}
 	tu.Permissions = ps.GuardNames()
 
-	if userInfo.SuperUser {
-		tu.Permissions = append(tu.Permissions, auth.PermSuperUserKey)
+	if newUserInfo.CanBeSuper {
+		tu.Permissions = append(tu.Permissions, auth.PermCanBeSuperKey)
+
+		if newUserInfo.SuperUser {
+			tu.Permissions = append(tu.Permissions, auth.PermSuperUserKey)
+		}
 	}
 
-	attrs, err := s.p.FlattenRoleAttributes(userInfo.Job, userInfo.JobGrade)
+	attrs, err := s.p.FlattenRoleAttributes(newUserInfo.Job, newUserInfo.JobGrade)
 	if err != nil {
 		return auth.ErrUserNoPerms
 	}

@@ -20,6 +20,7 @@ import DocumentRequestsModal from '~/components/documents/requests/DocumentReque
 import { useAuthStore } from '~/store/auth';
 import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 const props = defineProps<{
     documentId: string;
@@ -376,18 +377,7 @@ defineShortcuts({
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" color="red" class="size-5" />
-                        <span>
-                            {{ $t('common.close', 2) }}
-                        </span>
-                    </UBadge>
-                    <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" color="green" class="size-5" />
-                        <span>
-                            {{ $t('common.open', 2) }}
-                        </span>
-                    </UBadge>
+                    <OpenClosedBadge :closed="doc.closed" />
 
                     <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-note-check" class="size-5" />

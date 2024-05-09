@@ -20,6 +20,11 @@ import (
 func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
+	rsvpResponse := calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN
+	if req.ShowHidden != nil && *req.ShowHidden {
+		rsvpResponse = calendar.RsvpResponses_RSVP_RESPONSES_UNSPECIFIED
+	}
+
 	condition := jet.AND(
 		tCalendarEntry.DeletedAt.IS_NULL(),
 		jet.OR(
@@ -40,9 +45,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 							tCalendarRSVP.EntryID,
 						).
 						FROM(tCalendarRSVP).
-						WHERE(
+						WHERE(jet.AND(
 							tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
-						),
+							tCalendarRSVP.Response.GT(jet.Int16(int16(rsvpResponse))),
+						)),
 				),
 				tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 			),
@@ -94,6 +100,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 			tCalendarEntry.StartTime,
 			tCalendarEntry.EndTime,
 			tCalendarEntry.Title,
+			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
 			tCreator.ID,
@@ -151,7 +158,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 func (s *Server) GetCalendarEntry(ctx context.Context, req *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), true)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -191,6 +198,22 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 	}
 	defer s.aud.Log(auditEntry, req)
 
+	check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if !check {
+		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+	}
+
+	calendar, err := s.getCalendar(ctx, userInfo, tCalendar.ID.EQ(jet.Uint64(req.Entry.CalendarId)))
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+	if calendar == nil || calendar.Closed {
+		return nil, errorscalendar.ErrCalendarClosed
+	}
+
 	req.Entry.CreatorId = &userInfo.UserId
 
 	// Begin transaction
@@ -203,14 +226,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 
 	tCalendarEntry := table.FivenetCalendarEntries
 	if req.Entry.Id > 0 {
-		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT, false)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
-		}
-
 		startTime := jet.TimestampExp(jet.NULL)
 		if req.Entry.StartTime != nil {
 			startTime = jet.TimestampT(req.Entry.StartTime.AsTime())
@@ -226,6 +241,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.Content,
 				tCalendarEntry.StartTime,
 				tCalendarEntry.EndTime,
+				tCalendarEntry.Closed,
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
 			).
@@ -234,6 +250,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				req.Entry.Content,
 				startTime,
 				endTime,
+				req.Entry.Closed,
 				req.Entry.RsvpOpen,
 				req.Entry.Recurring,
 			).
@@ -248,14 +265,6 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	} else {
-		check, err := s.checkIfUserHasAccessToCalendar(ctx, req.Entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_EDIT, false)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-		if !check {
-			return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
-		}
-
 		stmt := tCalendarEntry.
 			INSERT(
 				tCalendarEntry.CalendarID,
@@ -276,6 +285,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				req.Entry.EndTime,
 				req.Entry.Title,
 				req.Entry.Content,
+				req.Entry.Closed,
 				req.Entry.RsvpOpen,
 				req.Entry.Recurring,
 				userInfo.UserId,
@@ -302,7 +312,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Uint64(req.Entry.Id)), true)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Uint64(req.Entry.Id)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -324,7 +334,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), true)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -361,7 +371,7 @@ func (s *Server) DeleteCalendarEntry(ctx context.Context, req *DeleteCalendarEnt
 	return &DeleteCalendarEntryResponse{}, nil
 }
 
-func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression, withParticipants bool) (*calendar.CalendarEntry, error) {
+func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, condition jet.BoolExpression) (*calendar.CalendarEntry, error) {
 	stmt := tCalendarEntry.
 		SELECT(
 			tCalendarEntry.ID,
@@ -381,6 +391,7 @@ func (s *Server) getEntry(ctx context.Context, userInfo *userinfo.UserInfo, cond
 			tCalendarEntry.EndTime,
 			tCalendarEntry.Title,
 			tCalendarEntry.Content,
+			tCalendarEntry.Closed,
 			tCalendarEntry.RsvpOpen,
 			tCalendarEntry.CreatorID,
 			tCalendarEntry.CreatorJob,

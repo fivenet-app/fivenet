@@ -36,6 +36,7 @@ const schema = z.object({
     startTime: z.date(),
     endTime: z.date(),
     content: z.string().min(20).max(1000000),
+    open: z.boolean(),
     rsvpOpen: z.boolean(),
     users: z.custom<UserShort>().array().max(20),
 });
@@ -48,7 +49,8 @@ const state = reactive<Schema>({
     startTime: addHours(new Date(), 1),
     endTime: addHours(new Date(), 2),
     content: '',
-    rsvpOpen: false,
+    open: false,
+    rsvpOpen: true,
     users: [],
 });
 
@@ -74,6 +76,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
             startTime: toTimestamp(values.startTime),
             endTime: toTimestamp(values.endTime),
             content: values.content,
+            closed: !values.open,
             rsvpOpen: values.rsvpOpen,
             creatorJob: '',
         });
@@ -183,7 +186,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 onlyPublic: false,
                                                 minAccessLevel: AccessLevel.EDIT,
                                             })
-                                        ).calendars
+                                        ).calendars?.filter((c) => !c.closed)
                                 "
                                 :search-attributes="['name']"
                                 option-attribute="name"
@@ -269,7 +272,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </ClientOnly>
                         </UFormGroup>
 
-                        <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1" required>
+                        <UFormGroup name="closed" :label="`${$t('common.open', 2)}?`" class="flex-1">
+                            <UToggle v-model="state.open" />
+                        </UFormGroup>
+
+                        <UFormGroup name="rsvpOpen" :label="$t('common.rsvp')" class="flex-1">
                             <UToggle v-model="state.rsvpOpen" />
                         </UFormGroup>
 

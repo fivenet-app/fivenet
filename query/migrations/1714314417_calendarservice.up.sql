@@ -34,6 +34,7 @@ CREATE TABLE
         `end_time` datetime(3) DEFAULT NULL,
         `title` varchar(1024) NOT NULL,
         `content` longtext,
+        `closed` tinyint(1) DEFAULT 0,
         `rsvp_open` tinyint(1) DEFAULT 0,
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,

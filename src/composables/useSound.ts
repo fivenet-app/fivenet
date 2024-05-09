@@ -1,6 +1,6 @@
 import { useState } from '#imports';
 
-export type SoundBites = 'centrum/attention' | 'centrum/message-incoming' | 'centrum/morse-sos';
+export type SoundBites = 'centrum/attention' | 'centrum/message-incoming' | 'centrum/morse-sos' | 'notification';
 
 export type Sound = {
     id?: string;

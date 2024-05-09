@@ -33,7 +33,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), false)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -46,10 +46,13 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
 	}
 
-	resp := &ShareCalendarEntryResponse{}
+	if entry.Closed {
+		return nil, errorscalendar.ErrEntryClosed
+	}
 
 	req.UserIds = utils.RemoveSliceDuplicates(req.UserIds)
 
+	resp := &ShareCalendarEntryResponse{}
 	if len(req.UserIds) == 0 {
 		return resp, nil
 	}
@@ -97,12 +100,14 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 		INSERT(
 			tCalendarRSVP.EntryID,
 			tCalendarRSVP.UserID,
+			tCalendarRSVP.Response,
 		)
 
 	for i := 0; i < len(req.UserIds); i++ {
 		insertStmt = insertStmt.VALUES(
 			req.EntryId,
 			req.UserIds[i],
+			calendar.RsvpResponses_RSVP_RESPONSES_RECEIVED,
 		)
 	}
 

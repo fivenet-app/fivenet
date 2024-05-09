@@ -118,6 +118,10 @@ export interface ListCalendarEntriesRequest {
      * @generated from protobuf field: repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
      */
     calendarIds: string[];
+    /**
+     * @generated from protobuf field: optional bool show_hidden = 4;
+     */
+    showHidden?: boolean;
 }
 /**
  * @generated from protobuf message services.calendar.ListCalendarEntriesResponse
@@ -678,7 +682,8 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
         super("services.calendar.ListCalendarEntriesRequest", [
             { no: 1, name: "year", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 2023 } } } },
             { no: 2, name: "month", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { lte: 12, gte: 1 } } } },
-            { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
+            { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "show_hidden", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListCalendarEntriesRequest>): ListCalendarEntriesRequest {
@@ -708,6 +713,9 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
                     else
                         message.calendarIds.push(reader.uint64().toString());
                     break;
+                case /* optional bool show_hidden */ 4:
+                    message.showHidden = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -733,6 +741,9 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
                 writer.uint64(message.calendarIds[i]);
             writer.join();
         }
+        /* optional bool show_hidden = 4; */
+        if (message.showHidden !== undefined)
+            writer.tag(4, WireType.Varint).bool(message.showHidden);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -34,12 +34,9 @@ withDefaults(
             class="inline-flex items-center gap-1 p-px"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
-            <ProfilePictureImg
-                v-if="showAvatarInName"
-                :src="user.avatar?.url"
-                :name="`${user.firstname} ${user.lastname}`"
-                size="xs"
-            />
+            <template #leading v-if="showAvatarInName">
+                <ProfilePictureImg :src="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" size="2xs" />
+            </template>
 
             <span class="truncate" :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>
         </UButton>

@@ -4,9 +4,12 @@ import (
 	"context"
 	"testing"
 
+	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	grpc_metadata "github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
+	"go.uber.org/fx/fxtest"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/grpc/status"
@@ -24,7 +27,12 @@ func TestGRPCAuthFunc(t *testing.T) {
 			AccountId: basicCitizenInfoClaim.AccID,
 		},
 	})
-	grpcAuth := NewGRPCAuth(ui, tm)
+	appCfg, err := appconfig.NewTest(appconfig.TestParams{
+		LC: fxtest.NewLifecycle(t),
+	})
+	require.NoError(t, err)
+
+	grpcAuth := NewGRPCAuth(ui, tm, appCfg)
 
 	for _, run := range []struct {
 		md        metadata.MD

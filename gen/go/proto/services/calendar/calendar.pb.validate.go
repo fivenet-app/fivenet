@@ -1112,6 +1112,10 @@ func (m *ListCalendarEntriesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.ShowHidden != nil {
+		// no validation rules for ShowHidden
+	}
+
 	if len(errors) > 0 {
 		return ListCalendarEntriesRequestMultiError(errors)
 	}

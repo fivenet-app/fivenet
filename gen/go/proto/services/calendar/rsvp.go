@@ -20,7 +20,7 @@ import (
 func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEntryRSVPRequest) (*ListCalendarEntryRSVPResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)), false)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.EntryId)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -128,7 +128,7 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.EntryId)), false)
+	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.ID.EQ(jet.Uint64(req.Entry.EntryId)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
@@ -144,22 +144,12 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 		return nil, errorscalendar.ErrNoPerms
 	}
 
-	if req.Remove == nil || !*req.Remove {
-		stmt := tCalendarRSVP.
-			DELETE().
-			WHERE(jet.AND(
-				tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)),
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
-			)).
-			LIMIT(1)
+	if entry.Closed {
+		return nil, errorscalendar.ErrEntryClosed
+	}
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
-
-		auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
-
-		return &RSVPCalendarEntryResponse{}, nil
+	if req.Remove != nil && *req.Remove {
+		req.Entry.Response = calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN
 	}
 
 	tCalendarRSVP := table.FivenetCalendarRsvp

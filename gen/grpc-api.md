@@ -4162,6 +4162,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  | @sanitize: method=StripTags |
 | content | [string](#string) |  | @sanitize |
+| closed | [bool](#bool) |  |  |
 | rsvp_open | [bool](#bool) | optional |  |
 | creator_id | [int32](#int32) | optional |  |
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
@@ -4261,9 +4262,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | Name | Number | Description |
 | ---- | ------ | ----------- |
 | RSVP_RESPONSES_UNSPECIFIED | 0 |  |
-| RSVP_RESPONSES_NO | 1 |  |
-| RSVP_RESPONSES_MAYBE | 2 |  |
-| RSVP_RESPONSES_YES | 3 |  |
+| RSVP_RESPONSES_HIDDEN | 1 |  |
+| RSVP_RESPONSES_RECEIVED | 2 |  |
+| RSVP_RESPONSES_NO | 3 |  |
+| RSVP_RESPONSES_MAYBE | 4 |  |
+| RSVP_RESPONSES_YES | 5 |  |
 
 
  
@@ -7527,6 +7530,7 @@ Templates ==================================================================
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | include_read | [bool](#bool) | optional |  |
+| categories | [resources.notifications.NotificationCategory](#resources-notifications-NotificationCategory) | repeated |  |
 
 
 
@@ -8952,6 +8956,7 @@ Results ====================================================================
 | year | [int32](#int32) |  |  |
 | month | [int32](#int32) |  |  |
 | calendar_ids | [uint64](#uint64) | repeated |  |
+| show_hidden | [bool](#bool) | optional |  |
 
 
 

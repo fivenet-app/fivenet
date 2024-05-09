@@ -3,6 +3,7 @@ package auth
 import (
 	"context"
 
+	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/interceptors/logging"
 	"go.opentelemetry.io/otel/attribute"
@@ -39,17 +40,20 @@ var (
 	ErrUserNoPerms      = status.Error(codes.PermissionDenied, "errors.pkg-auth.ErrUserNoPerms")
 	ErrNoUserInfo       = status.Error(codes.Unauthenticated, "errors.pkg-auth.ErrNoUserInfo")
 	ErrPermissionDenied = status.Errorf(codes.PermissionDenied, "errors.pkg-auth.ErrPermissionDenied")
+	ErrCharLock         = status.Error(codes.PermissionDenied, "errors.AuthService.ErrCharLock.title;errors.AuthService.ErrCharLock.content") // Copied from the auth service
 )
 
 type GRPCAuth struct {
-	ui userinfo.UserInfoRetriever
-	tm *TokenMgr
+	ui     userinfo.UserInfoRetriever
+	tm     *TokenMgr
+	appCfg appconfig.IConfig
 }
 
-func NewGRPCAuth(ui userinfo.UserInfoRetriever, tm *TokenMgr) *GRPCAuth {
+func NewGRPCAuth(ui userinfo.UserInfoRetriever, tm *TokenMgr, appConfig appconfig.IConfig) *GRPCAuth {
 	return &GRPCAuth{
-		ui: ui,
-		tm: tm,
+		ui:     ui,
+		tm:     tm,
+		appCfg: appConfig,
 	}
 }
 
@@ -86,6 +90,13 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 		attribute.Int("fivenet.auth.char_id", int(tInfo.CharID)),
 		attribute.String("fivenet.job", userInfo.Job),
 	)
+
+	if userInfo.LastChar != nil && *userInfo.LastChar != userInfo.UserId && g.appCfg.Get().Auth.LastCharLock {
+		if !userInfo.SuperUser || !userInfo.CanBeSuper {
+			return nil, ErrCharLock
+
+		}
+	}
 
 	return context.WithValue(ctx, userInfoCtxMarkerKey, userInfo), nil
 }

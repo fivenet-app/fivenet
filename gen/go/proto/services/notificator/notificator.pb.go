@@ -30,8 +30,9 @@ type GetNotificationsRequest struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Pagination  *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
-	IncludeRead *bool                       `protobuf:"varint,2,opt,name=include_read,json=includeRead,proto3,oneof" json:"include_read,omitempty"`
+	Pagination  *database.PaginationRequest          `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
+	IncludeRead *bool                                `protobuf:"varint,2,opt,name=include_read,json=includeRead,proto3,oneof" json:"include_read,omitempty"`
+	Categories  []notifications.NotificationCategory `protobuf:"varint,3,rep,packed,name=categories,proto3,enum=resources.notifications.NotificationCategory" json:"categories,omitempty"`
 }
 
 func (x *GetNotificationsRequest) Reset() {
@@ -78,6 +79,13 @@ func (x *GetNotificationsRequest) GetIncludeRead() bool {
 		return *x.IncludeRead
 	}
 	return false
+}
+
+func (x *GetNotificationsRequest) GetCategories() []notifications.NotificationCategory {
+	if x != nil {
+		return x.Categories
+	}
+	return nil
 }
 
 type GetNotificationsResponse struct {
@@ -470,7 +478,7 @@ var file_services_notificator_notificator_proto_rawDesc = []byte{
 	0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x1a, 0x1b, 0x72, 0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65,
 	0x73, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2f, 0x75, 0x73, 0x65, 0x72, 0x73, 0x2e, 0x70, 0x72,
 	0x6f, 0x74, 0x6f, 0x1a, 0x17, 0x76, 0x61, 0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x2f, 0x76, 0x61,
-	0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0xaa, 0x01, 0x0a,
+	0x6c, 0x69, 0x64, 0x61, 0x74, 0x65, 0x2e, 0x70, 0x72, 0x6f, 0x74, 0x6f, 0x22, 0x8a, 0x02, 0x0a,
 	0x17, 0x47, 0x65, 0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e,
 	0x73, 0x52, 0x65, 0x71, 0x75, 0x65, 0x73, 0x74, 0x12, 0x56, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69,
 	0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x18, 0x01, 0x20, 0x01, 0x28, 0x0b, 0x32, 0x2c, 0x2e, 0x72,
@@ -480,7 +488,13 @@ var file_services_notificator_notificator_proto_rawDesc = []byte{
 	0x01, 0x02, 0x10, 0x01, 0x52, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61, 0x74, 0x69, 0x6f, 0x6e,
 	0x12, 0x26, 0x0a, 0x0c, 0x69, 0x6e, 0x63, 0x6c, 0x75, 0x64, 0x65, 0x5f, 0x72, 0x65, 0x61, 0x64,
 	0x18, 0x02, 0x20, 0x01, 0x28, 0x08, 0x48, 0x00, 0x52, 0x0b, 0x69, 0x6e, 0x63, 0x6c, 0x75, 0x64,
-	0x65, 0x52, 0x65, 0x61, 0x64, 0x88, 0x01, 0x01, 0x42, 0x0f, 0x0a, 0x0d, 0x5f, 0x69, 0x6e, 0x63,
+	0x65, 0x52, 0x65, 0x61, 0x64, 0x88, 0x01, 0x01, 0x12, 0x5e, 0x0a, 0x0a, 0x63, 0x61, 0x74, 0x65,
+	0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x18, 0x03, 0x20, 0x03, 0x28, 0x0e, 0x32, 0x2d, 0x2e, 0x72,
+	0x65, 0x73, 0x6f, 0x75, 0x72, 0x63, 0x65, 0x73, 0x2e, 0x6e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63,
+	0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x2e, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74,
+	0x69, 0x6f, 0x6e, 0x43, 0x61, 0x74, 0x65, 0x67, 0x6f, 0x72, 0x79, 0x42, 0x0f, 0xfa, 0x42, 0x0c,
+	0x92, 0x01, 0x09, 0x10, 0x04, 0x22, 0x05, 0x82, 0x01, 0x02, 0x10, 0x01, 0x52, 0x0a, 0x63, 0x61,
+	0x74, 0x65, 0x67, 0x6f, 0x72, 0x69, 0x65, 0x73, 0x42, 0x0f, 0x0a, 0x0d, 0x5f, 0x69, 0x6e, 0x63,
 	0x6c, 0x75, 0x64, 0x65, 0x5f, 0x72, 0x65, 0x61, 0x64, 0x22, 0xb6, 0x01, 0x0a, 0x18, 0x47, 0x65,
 	0x74, 0x4e, 0x6f, 0x74, 0x69, 0x66, 0x69, 0x63, 0x61, 0x74, 0x69, 0x6f, 0x6e, 0x73, 0x52, 0x65,
 	0x73, 0x70, 0x6f, 0x6e, 0x73, 0x65, 0x12, 0x4d, 0x0a, 0x0a, 0x70, 0x61, 0x67, 0x69, 0x6e, 0x61,
@@ -577,40 +591,42 @@ func file_services_notificator_notificator_proto_rawDescGZIP() []byte {
 
 var file_services_notificator_notificator_proto_msgTypes = make([]protoimpl.MessageInfo, 7)
 var file_services_notificator_notificator_proto_goTypes = []interface{}{
-	(*GetNotificationsRequest)(nil),     // 0: services.notificator.GetNotificationsRequest
-	(*GetNotificationsResponse)(nil),    // 1: services.notificator.GetNotificationsResponse
-	(*MarkNotificationsRequest)(nil),    // 2: services.notificator.MarkNotificationsRequest
-	(*MarkNotificationsResponse)(nil),   // 3: services.notificator.MarkNotificationsResponse
-	(*StreamRequest)(nil),               // 4: services.notificator.StreamRequest
-	(*StreamResponse)(nil),              // 5: services.notificator.StreamResponse
-	(*CharUpdate)(nil),                  // 6: services.notificator.CharUpdate
-	(*database.PaginationRequest)(nil),  // 7: resources.common.database.PaginationRequest
-	(*database.PaginationResponse)(nil), // 8: resources.common.database.PaginationResponse
-	(*notifications.Notification)(nil),  // 9: resources.notifications.Notification
-	(*timestamp.Timestamp)(nil),         // 10: resources.timestamp.Timestamp
-	(*users.JobProps)(nil),              // 11: resources.users.JobProps
-	(*users.User)(nil),                  // 12: resources.users.User
+	(*GetNotificationsRequest)(nil),         // 0: services.notificator.GetNotificationsRequest
+	(*GetNotificationsResponse)(nil),        // 1: services.notificator.GetNotificationsResponse
+	(*MarkNotificationsRequest)(nil),        // 2: services.notificator.MarkNotificationsRequest
+	(*MarkNotificationsResponse)(nil),       // 3: services.notificator.MarkNotificationsResponse
+	(*StreamRequest)(nil),                   // 4: services.notificator.StreamRequest
+	(*StreamResponse)(nil),                  // 5: services.notificator.StreamResponse
+	(*CharUpdate)(nil),                      // 6: services.notificator.CharUpdate
+	(*database.PaginationRequest)(nil),      // 7: resources.common.database.PaginationRequest
+	(notifications.NotificationCategory)(0), // 8: resources.notifications.NotificationCategory
+	(*database.PaginationResponse)(nil),     // 9: resources.common.database.PaginationResponse
+	(*notifications.Notification)(nil),      // 10: resources.notifications.Notification
+	(*timestamp.Timestamp)(nil),             // 11: resources.timestamp.Timestamp
+	(*users.JobProps)(nil),                  // 12: resources.users.JobProps
+	(*users.User)(nil),                      // 13: resources.users.User
 }
 var file_services_notificator_notificator_proto_depIdxs = []int32{
 	7,  // 0: services.notificator.GetNotificationsRequest.pagination:type_name -> resources.common.database.PaginationRequest
-	8,  // 1: services.notificator.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
-	9,  // 2: services.notificator.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
-	9,  // 3: services.notificator.StreamResponse.notification:type_name -> resources.notifications.Notification
-	6,  // 4: services.notificator.StreamResponse.token:type_name -> services.notificator.CharUpdate
-	10, // 5: services.notificator.CharUpdate.expires:type_name -> resources.timestamp.Timestamp
-	11, // 6: services.notificator.CharUpdate.job_props:type_name -> resources.users.JobProps
-	12, // 7: services.notificator.CharUpdate.char:type_name -> resources.users.User
-	0,  // 8: services.notificator.NotificatorService.GetNotifications:input_type -> services.notificator.GetNotificationsRequest
-	2,  // 9: services.notificator.NotificatorService.MarkNotifications:input_type -> services.notificator.MarkNotificationsRequest
-	4,  // 10: services.notificator.NotificatorService.Stream:input_type -> services.notificator.StreamRequest
-	1,  // 11: services.notificator.NotificatorService.GetNotifications:output_type -> services.notificator.GetNotificationsResponse
-	3,  // 12: services.notificator.NotificatorService.MarkNotifications:output_type -> services.notificator.MarkNotificationsResponse
-	5,  // 13: services.notificator.NotificatorService.Stream:output_type -> services.notificator.StreamResponse
-	11, // [11:14] is the sub-list for method output_type
-	8,  // [8:11] is the sub-list for method input_type
-	8,  // [8:8] is the sub-list for extension type_name
-	8,  // [8:8] is the sub-list for extension extendee
-	0,  // [0:8] is the sub-list for field type_name
+	8,  // 1: services.notificator.GetNotificationsRequest.categories:type_name -> resources.notifications.NotificationCategory
+	9,  // 2: services.notificator.GetNotificationsResponse.pagination:type_name -> resources.common.database.PaginationResponse
+	10, // 3: services.notificator.GetNotificationsResponse.notifications:type_name -> resources.notifications.Notification
+	10, // 4: services.notificator.StreamResponse.notification:type_name -> resources.notifications.Notification
+	6,  // 5: services.notificator.StreamResponse.token:type_name -> services.notificator.CharUpdate
+	11, // 6: services.notificator.CharUpdate.expires:type_name -> resources.timestamp.Timestamp
+	12, // 7: services.notificator.CharUpdate.job_props:type_name -> resources.users.JobProps
+	13, // 8: services.notificator.CharUpdate.char:type_name -> resources.users.User
+	0,  // 9: services.notificator.NotificatorService.GetNotifications:input_type -> services.notificator.GetNotificationsRequest
+	2,  // 10: services.notificator.NotificatorService.MarkNotifications:input_type -> services.notificator.MarkNotificationsRequest
+	4,  // 11: services.notificator.NotificatorService.Stream:input_type -> services.notificator.StreamRequest
+	1,  // 12: services.notificator.NotificatorService.GetNotifications:output_type -> services.notificator.GetNotificationsResponse
+	3,  // 13: services.notificator.NotificatorService.MarkNotifications:output_type -> services.notificator.MarkNotificationsResponse
+	5,  // 14: services.notificator.NotificatorService.Stream:output_type -> services.notificator.StreamResponse
+	12, // [12:15] is the sub-list for method output_type
+	9,  // [9:12] is the sub-list for method input_type
+	9,  // [9:9] is the sub-list for extension type_name
+	9,  // [9:9] is the sub-list for extension extendee
+	0,  // [0:9] is the sub-list for field type_name
 }
 
 func init() { file_services_notificator_notificator_proto_init() }

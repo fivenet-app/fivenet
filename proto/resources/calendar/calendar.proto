@@ -81,11 +81,12 @@ message CalendarEntry {
     min_len: 20,
     max_bytes: 1000000 // 1 Megabyte
   }];
-  optional bool rsvp_open = 12;
-  optional int32 creator_id = 13;
-  optional resources.users.UserShort creator = 14; // @gotags: alias:"creator"
-  string creator_job = 15 [(validate.rules).string.max_len = 20];
-  optional CalendarEntryRecurring recurring = 16;
+  bool closed = 12;
+  optional bool rsvp_open = 13;
+  optional int32 creator_id = 14;
+  optional resources.users.UserShort creator = 15; // @gotags: alias:"creator"
+  string creator_job = 16 [(validate.rules).string.max_len = 20];
+  optional CalendarEntryRecurring recurring = 17;
 }
 
 message CalendarEntryRecurring {
@@ -96,9 +97,11 @@ message CalendarEntryRecurring {
 
 enum RsvpResponses {
   RSVP_RESPONSES_UNSPECIFIED = 0;
-  RSVP_RESPONSES_NO = 1;
-  RSVP_RESPONSES_MAYBE = 2;
-  RSVP_RESPONSES_YES = 3;
+  RSVP_RESPONSES_HIDDEN = 1;
+  RSVP_RESPONSES_RECEIVED = 2;
+  RSVP_RESPONSES_NO = 3;
+  RSVP_RESPONSES_MAYBE = 4;
+  RSVP_RESPONSES_YES = 5;
 }
 
 message CalendarEntryRSVP {

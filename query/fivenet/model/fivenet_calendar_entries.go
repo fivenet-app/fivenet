@@ -22,6 +22,7 @@ type FivenetCalendarEntries struct {
 	EndTime    *time.Time `json:"end_time"`
 	Title      string     `json:"title"`
 	Content    *string    `json:"content"`
+	Closed     *bool      `json:"closed"`
 	RsvpOpen   *bool      `json:"rsvp_open"`
 	CreatorID  *int32     `json:"creator_id"`
 	CreatorJob string     `json:"creator_job"`

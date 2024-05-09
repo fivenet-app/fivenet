@@ -2,6 +2,7 @@
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Qualification, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { resultStatusToBadgeColor } from './helpers';
+import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 defineProps<{
     qualification: Qualification;
@@ -39,18 +40,7 @@ defineProps<{
                         </span>
                     </UBadge>
 
-                    <UBadge v-if="qualification.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" class="size-5" />
-                        <span>
-                            {{ $t('common.close', 2) }}
-                        </span>
-                    </UBadge>
-                    <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" class="size-5" />
-                        <span>
-                            {{ $t('common.open', 2) }}
-                        </span>
-                    </UBadge>
+                    <OpenClosedBadge :closed="qualification.closed" />
                 </div>
 
                 <p v-if="qualification.createdAt" class="mt-1 text-xs leading-5">

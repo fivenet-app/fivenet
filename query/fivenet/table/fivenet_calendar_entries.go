@@ -27,6 +27,7 @@ type fivenetCalendarEntriesTable struct {
 	EndTime    mysql.ColumnTimestamp
 	Title      mysql.ColumnString
 	Content    mysql.ColumnString
+	Closed     mysql.ColumnBool
 	RsvpOpen   mysql.ColumnBool
 	CreatorID  mysql.ColumnInteger
 	CreatorJob mysql.ColumnString
@@ -81,12 +82,13 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		EndTimeColumn    = mysql.TimestampColumn("end_time")
 		TitleColumn      = mysql.StringColumn("title")
 		ContentColumn    = mysql.StringColumn("content")
+		ClosedColumn     = mysql.BoolColumn("closed")
 		RsvpOpenColumn   = mysql.BoolColumn("rsvp_open")
 		CreatorIDColumn  = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn = mysql.StringColumn("creator_job")
 		RecurringColumn  = mysql.StringColumn("recurring")
-		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn}
-		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn}
+		allColumns       = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn}
+		mutableColumns   = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, CalendarIDColumn, JobColumn, StartTimeColumn, EndTimeColumn, TitleColumn, ContentColumn, ClosedColumn, RsvpOpenColumn, CreatorIDColumn, CreatorJobColumn, RecurringColumn}
 	)
 
 	return fivenetCalendarEntriesTable{
@@ -103,6 +105,7 @@ func newFivenetCalendarEntriesTableImpl(schemaName, tableName, alias string) fiv
 		EndTime:    EndTimeColumn,
 		Title:      TitleColumn,
 		Content:    ContentColumn,
+		Closed:     ClosedColumn,
 		RsvpOpen:   RsvpOpenColumn,
 		CreatorID:  CreatorIDColumn,
 		CreatorJob: CreatorJobColumn,

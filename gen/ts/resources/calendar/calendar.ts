@@ -211,23 +211,27 @@ export interface CalendarEntry {
      */
     content: string;
     /**
-     * @generated from protobuf field: optional bool rsvp_open = 12;
+     * @generated from protobuf field: bool closed = 12;
+     */
+    closed: boolean;
+    /**
+     * @generated from protobuf field: optional bool rsvp_open = 13;
      */
     rsvpOpen?: boolean;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 13;
+     * @generated from protobuf field: optional int32 creator_id = 14;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 14;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 15;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: string creator_job = 15;
+     * @generated from protobuf field: string creator_job = 16;
      */
     creatorJob: string;
     /**
-     * @generated from protobuf field: optional resources.calendar.CalendarEntryRecurring recurring = 16;
+     * @generated from protobuf field: optional resources.calendar.CalendarEntryRecurring recurring = 17;
      */
     recurring?: CalendarEntryRecurring;
 }
@@ -282,17 +286,25 @@ export enum RsvpResponses {
      */
     UNSPECIFIED = 0,
     /**
-     * @generated from protobuf enum value: RSVP_RESPONSES_NO = 1;
+     * @generated from protobuf enum value: RSVP_RESPONSES_HIDDEN = 1;
      */
-    NO = 1,
+    HIDDEN = 1,
     /**
-     * @generated from protobuf enum value: RSVP_RESPONSES_MAYBE = 2;
+     * @generated from protobuf enum value: RSVP_RESPONSES_RECEIVED = 2;
      */
-    MAYBE = 2,
+    RECEIVED = 2,
     /**
-     * @generated from protobuf enum value: RSVP_RESPONSES_YES = 3;
+     * @generated from protobuf enum value: RSVP_RESPONSES_NO = 3;
      */
-    YES = 3
+    NO = 3,
+    /**
+     * @generated from protobuf enum value: RSVP_RESPONSES_MAYBE = 4;
+     */
+    MAYBE = 4,
+    /**
+     * @generated from protobuf enum value: RSVP_RESPONSES_YES = 5;
+     */
+    YES = 5
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Calendar$Type extends MessageType<Calendar> {
@@ -644,11 +656,12 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
             { no: 9, name: "end_time", kind: "message", T: () => Timestamp },
             { no: 10, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
             { no: 11, name: "content", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1000000" } } } },
-            { no: 12, name: "rsvp_open", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 13, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 14, name: "creator", kind: "message", T: () => UserShort },
-            { no: 15, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 16, name: "recurring", kind: "message", T: () => CalendarEntryRecurring }
+            { no: 12, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 13, name: "rsvp_open", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 14, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 15, name: "creator", kind: "message", T: () => UserShort },
+            { no: 16, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 17, name: "recurring", kind: "message", T: () => CalendarEntryRecurring }
         ]);
     }
     create(value?: PartialMessage<CalendarEntry>): CalendarEntry {
@@ -657,6 +670,7 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         message.calendarId = "0";
         message.title = "";
         message.content = "";
+        message.closed = false;
         message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<CalendarEntry>(this, message, value);
@@ -700,19 +714,22 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
                 case /* string content */ 11:
                     message.content = reader.string();
                     break;
-                case /* optional bool rsvp_open */ 12:
+                case /* bool closed */ 12:
+                    message.closed = reader.bool();
+                    break;
+                case /* optional bool rsvp_open */ 13:
                     message.rsvpOpen = reader.bool();
                     break;
-                case /* optional int32 creator_id */ 13:
+                case /* optional int32 creator_id */ 14:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 14:
+                case /* optional resources.users.UserShort creator */ 15:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* string creator_job */ 15:
+                case /* string creator_job */ 16:
                     message.creatorJob = reader.string();
                     break;
-                case /* optional resources.calendar.CalendarEntryRecurring recurring */ 16:
+                case /* optional resources.calendar.CalendarEntryRecurring recurring */ 17:
                     message.recurring = CalendarEntryRecurring.internalBinaryRead(reader, reader.uint32(), options, message.recurring);
                     break;
                 default:
@@ -760,21 +777,24 @@ class CalendarEntry$Type extends MessageType<CalendarEntry> {
         /* string content = 11; */
         if (message.content !== "")
             writer.tag(11, WireType.LengthDelimited).string(message.content);
-        /* optional bool rsvp_open = 12; */
+        /* bool closed = 12; */
+        if (message.closed !== false)
+            writer.tag(12, WireType.Varint).bool(message.closed);
+        /* optional bool rsvp_open = 13; */
         if (message.rsvpOpen !== undefined)
-            writer.tag(12, WireType.Varint).bool(message.rsvpOpen);
-        /* optional int32 creator_id = 13; */
+            writer.tag(13, WireType.Varint).bool(message.rsvpOpen);
+        /* optional int32 creator_id = 14; */
         if (message.creatorId !== undefined)
-            writer.tag(13, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 14; */
+            writer.tag(14, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 15; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(14, WireType.LengthDelimited).fork(), options).join();
-        /* string creator_job = 15; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(15, WireType.LengthDelimited).fork(), options).join();
+        /* string creator_job = 16; */
         if (message.creatorJob !== "")
-            writer.tag(15, WireType.LengthDelimited).string(message.creatorJob);
-        /* optional resources.calendar.CalendarEntryRecurring recurring = 16; */
+            writer.tag(16, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional resources.calendar.CalendarEntryRecurring recurring = 17; */
         if (message.recurring)
-            CalendarEntryRecurring.internalBinaryWrite(message.recurring, writer.tag(16, WireType.LengthDelimited).fork(), options).join();
+            CalendarEntryRecurring.internalBinaryWrite(message.recurring, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

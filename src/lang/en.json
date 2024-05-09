@@ -2068,7 +2068,15 @@
         "CalendarService": {
             "ErrFailedQuery": "Failed to load calendar data!",
             "ErrNoPerms": "You don't have permissions to access this calendar data!",
-            "ErrOnePrivateCal": "You can only have one private calendar!"
+            "ErrOnePrivateCal": "You can only have one private calendar!",
+            "ErrCalendarClosed": {
+                "title": "Calendar is closed",
+                "content": "The calendar is closed and can't be used anymore."
+            },
+            "ErrEntryClosed": {
+                "title": "Calendar Entry is closed",
+                "content": "The calendar entry is closed and can't be RSVPed to anymore."
+            }
         }
     },
     "system": {
@@ -2238,6 +2246,14 @@
                 "SHARE": "Share",
                 "EDIT": "Edit",
                 "MANAGE": "Manage"
+            }
+        },
+        "notifications": {
+            "NotificationCategory": {
+                "UNSPECIFIED": "Unspecified",
+                "GENERAL": "General",
+                "DOCUMENT": "Documents",
+                "CALENDAR": "Calendar"
             }
         }
     },

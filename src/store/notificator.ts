@@ -2,6 +2,7 @@ import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { type Notification, type NotificationType } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
+import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 
 // In seconds
@@ -100,38 +101,38 @@ export const useNotificatorStore = defineStore('notifications', {
                                 continue;
                             }
 
-                            switch (n.category) {
-                                default: {
-                                    const not: Notification = {
-                                        title: { key: n.title.key, parameters: n.title.parameters },
-                                        description: {
-                                            key: n.content.key,
-                                            parameters: n.content.parameters,
-                                        },
-                                        type: nType,
-                                        category: n.category,
-                                        data: n.data,
+                            const not: Notification = {
+                                title: { key: n.title.key, parameters: n.title.parameters },
+                                description: {
+                                    key: n.content.key,
+                                    parameters: n.content.parameters,
+                                },
+                                type: nType,
+                                category: n.category,
+                                data: n.data,
+                            };
+
+                            if (n.data?.link !== undefined) {
+                                if (n.data.link.external === true) {
+                                    not.onClick = async () => {
+                                        navigateTo(n.data!.link!.to, { external: true });
                                     };
+                                } else {
+                                    // @ts-ignore route from a notification is a string
+                                    const route = useRouter().resolve(n.data!.link!.to);
 
-                                    if (n.data?.link !== undefined) {
-                                        if (n.data.link.external === true) {
-                                            not.onClick = async () => {
-                                                navigateTo(n.data!.link!.to, { external: true });
-                                            };
-                                        } else {
-                                            // @ts-ignore route from a notification is a string
-                                            const route = useRouter().resolve(n.data!.link!.to);
-
-                                            not.onClick = async () => {
-                                                navigateTo(route);
-                                            };
-                                        }
-                                    }
-
-                                    this.add(not);
-                                    break;
+                                    not.onClick = async () => {
+                                        navigateTo(route);
+                                    };
                                 }
                             }
+
+                            if (n.category === NotificationCategory.CALENDAR) {
+                                useSound().play({ name: 'notification' });
+                            }
+
+                            this.add(not);
+                            break;
                         } else {
                             // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
@@ -149,7 +150,12 @@ export const useNotificatorStore = defineStore('notifications', {
                 const error = e as RpcError;
                 if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
-                    this.restartStream();
+
+                    if (error.message.includes('ErrCharLock')) {
+                        $grpc.handleError(error);
+                    } else {
+                        this.restartStream();
+                    }
                 }
             }
 

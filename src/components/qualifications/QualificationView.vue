@@ -18,6 +18,7 @@ import QualificationRequestUserModal from '~/components/qualifications/Qualifica
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import QualificationTutorView from './tutor/QualificationTutorView.vue';
+import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 const props = defineProps<{
     qualificationId: string;
@@ -190,18 +191,7 @@ const accordionItems = computed(() =>
                 </div>
 
                 <div class="mb-2 flex gap-2">
-                    <UBadge v-if="qualification.closed" color="red" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock" color="red" class="size-5" />
-                        <span>
-                            {{ $t('common.close', 2) }}
-                        </span>
-                    </UBadge>
-                    <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-lock-open-variant" color="green" class="size-5" />
-                        <span>
-                            {{ $t('common.open', 2) }}
-                        </span>
-                    </UBadge>
+                    <OpenClosedBadge :closed="qualification.closed" />
 
                     <UBadge
                         v-if="qualification.result?.status"

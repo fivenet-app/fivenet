@@ -13,6 +13,7 @@ type UserInfo struct {
 	Enabled   bool
 	AccountId uint64
 	License   string
+	LastChar  *int32
 
 	UserId   int32
 	Job      string

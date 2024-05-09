@@ -47,8 +47,8 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 
 	userCache := cache.NewContext(
 		ctx,
-		cache.AsLRU[int32, *UserInfo](lru.WithCapacity(300)),
-		cache.WithJanitorInterval[int32, *UserInfo](30*time.Second),
+		cache.AsLRU[int32, *UserInfo](lru.WithCapacity(350)),
+		cache.WithJanitorInterval[int32, *UserInfo](25*time.Second),
 	)
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
@@ -61,7 +61,7 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 		db: p.DB,
 
 		userCache:    userCache,
-		userCacheTTL: 30 * time.Second,
+		userCacheTTL: 25 * time.Second,
 
 		superuserGroups: p.Config.Auth.SuperuserGroups,
 		superuserUsers:  p.Config.Auth.SuperuserUsers,

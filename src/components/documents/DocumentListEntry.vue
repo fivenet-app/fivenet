@@ -3,6 +3,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 defineProps<{
     doc: DocumentShort;
@@ -41,18 +42,7 @@ defineProps<{
                     </UBadge>
 
                     <div class="flex flex-1 flex-row items-center justify-end gap-1">
-                        <UBadge v-if="doc.closed" color="red" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-lock" color="red" class="size-5" />
-                            <span>
-                                {{ $t('common.close', 2) }}
-                            </span>
-                        </UBadge>
-                        <UBadge v-else color="green" class="inline-flex gap-1" size="md">
-                            <UIcon name="i-mdi-lock-open-variant" color="green" class="size-5" />
-                            <span>
-                                {{ $t('common.open', 2) }}
-                            </span>
-                        </UBadge>
+                        <OpenClosedBadge :closed="doc.closed" />
                     </div>
                 </div>
 

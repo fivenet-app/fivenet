@@ -11,6 +11,7 @@ import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { isSameDay } from 'date-fns';
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 
 const props = defineProps<{
     entryId: string;
@@ -103,10 +104,38 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                 <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
+                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                        <OpenClosedBadge :closed="entry.closed" />
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-account" class="size-5" />
+                            <span class="inline-flex items-center gap-1">
+                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover :user="entry.creator" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar" class="size-5" />
+                            <span>
+                                {{ $t('common.created_at') }}
+                                <GenericTime :value="entry.createdAt" type="long" />
+                            </span>
+                        </UBadge>
+
+                        <UBadge v-if="entry.updatedAt" color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-calendar-edit" class="size-5" />
+                            <span>
+                                {{ $t('common.updated_at') }}
+                                <GenericTime :value="entry.updatedAt" type="long" />
+                            </span>
+                        </UBadge>
+                    </div>
+
                     <p class="inline-flex items-center gap-2">
                         <span class="font-semibold">{{ $t('common.calendar') }}:</span>
 
-                        <UButton variant="link">
+                        <UButton variant="link" :padded="false">
                             <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" size="lg" />
 
                             {{ entry.calendar?.name ?? $t('common.na') }}
@@ -125,17 +154,13 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                         </template>
                     </p>
 
-                    <div class="inline-flex items-center gap-2">
-                        <span class="font-semibold">{{ $t('common.creator') }}:</span>
-                        <CitizenInfoPopover :user="entry?.creator" show-avatar-in-name />
-                    </div>
-
                     <UDivider />
 
                     <template v-if="entry.rsvpOpen">
                         <EntryRSVPList
                             :entry-id="entry.id"
                             :rsvp-open="entry.rsvpOpen"
+                            :disabled="entry.closed"
                             :show-remove="!calendars.find((c) => c.id === entry?.calendarId)"
                         />
 

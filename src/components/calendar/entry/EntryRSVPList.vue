@@ -14,6 +14,7 @@ const props = withDefaults(
     defineProps<{
         entryId: string;
         rsvpOpen?: boolean;
+        disabled?: boolean;
         showRemove?: boolean;
     }>(),
     {
@@ -113,7 +114,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 <UButton
                     block
                     class="flex-1"
-                    :disabled="!canSubmit"
+                    :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="green"
                     :variant="data?.ownEntry?.response === RsvpResponses.YES ? 'soft' : 'solid'"
@@ -125,7 +126,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 <UButton
                     block
                     class="flex-1"
-                    :disabled="!canSubmit"
+                    :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="amber"
                     :variant="data?.ownEntry?.response === RsvpResponses.MAYBE ? 'soft' : 'solid'"
@@ -137,7 +138,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                 <UButton
                     block
                     class="flex-1"
-                    :disabled="!canSubmit"
+                    :disabled="!canSubmit || disabled"
                     :loading="!canSubmit"
                     color="red"
                     :variant="data?.ownEntry?.response === RsvpResponses.NO ? 'soft' : 'solid'"

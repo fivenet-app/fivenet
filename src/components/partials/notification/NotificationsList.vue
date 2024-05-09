@@ -8,6 +8,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 import Pagination from '~/components/partials/Pagination.vue';
 import { notificationCategoryToIcon } from './helpers';
+import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
 
 defineEmits<{
     (e: 'clicked'): void;
@@ -15,16 +16,26 @@ defineEmits<{
 
 const { $grpc } = useNuxtApp();
 
+const { t } = useI18n();
+
 const notificator = useNotificatorStore();
+
+const categories: { mode: NotificationCategory }[] = [
+    { mode: NotificationCategory.GENERAL },
+    { mode: NotificationCategory.DOCUMENT },
+    { mode: NotificationCategory.CALENDAR },
+];
 
 const schema = z.object({
     includeRead: z.boolean(),
+    categories: z.nativeEnum(NotificationCategory).array().max(4),
 });
 
 type Schema = z.output<typeof schema>;
 
 const query = reactive<Schema>({
     includeRead: false,
+    categories: [...categories.map((c) => c.mode)],
 });
 
 const page = ref(1);
@@ -41,6 +52,7 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
                 offset: offset.value,
             },
             includeRead: query.includeRead,
+            categories: query.categories,
         });
 
         const { response } = await call;
@@ -77,6 +89,10 @@ async function markRead(...ids: string[]): Promise<void> {
     });
 }
 
+function notificationCategoriesToLabel(categories: NotificationCategory[]): string {
+    return categories.map((c) => t(`enums.notifications.NotificationCategory.${NotificationCategory[c ?? 0]}`)).join(', ');
+}
+
 watch(offset, async () => refresh());
 watchDebounced(query, async () => refresh(), { debounce: 500, maxWait: 1500 });
 
@@ -89,10 +105,35 @@ const canSubmit = ref(true);
         <div class="sm:flex-auto">
             <UForm :schema="schema" :state="query" @submit="refresh()">
                 <div class="flex flex-row items-center gap-2">
-                    <UFormGroup name="search" :label="$t('components.notifications.include_read')" class="flex-1">
+                    <UFormGroup name="includeRead" :label="$t('components.notifications.include_read')" class="flex-initial">
                         <UToggle v-model="query.includeRead">
                             <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
                         </UToggle>
+                    </UFormGroup>
+
+                    <UFormGroup name="categories" :label="$t('common.category', 2)" class="flex-1">
+                        <USelectMenu
+                            v-model="query.categories"
+                            multiple
+                            name="categories"
+                            :options="categories"
+                            option-attribute="label"
+                            value-attribute="chip"
+                            :searchable-placeholder="$t('common.search_field')"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        >
+                            <template #label>
+                                <template v-if="query.categories">
+                                    <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
+                                </template>
+                            </template>
+                            <template #option="{ option }">
+                                <span class="truncate">{{
+                                    $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)
+                                }}</span>
+                            </template>
+                        </USelectMenu>
                     </UFormGroup>
 
                     <UFormGroup class="flex-initial">

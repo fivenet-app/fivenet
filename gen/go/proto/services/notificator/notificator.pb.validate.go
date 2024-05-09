@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	notifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = notifications.NotificationCategory(0)
 )
 
 // Validate checks the field values on GetNotificationsRequest with the rules
@@ -95,6 +99,33 @@ func (m *GetNotificationsRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if len(m.GetCategories()) > 4 {
+		err := GetNotificationsRequestValidationError{
+			field:  "Categories",
+			reason: "value must contain no more than 4 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	for idx, item := range m.GetCategories() {
+		_, _ = idx, item
+
+		if _, ok := notifications.NotificationCategory_name[int32(item)]; !ok {
+			err := GetNotificationsRequestValidationError{
+				field:  fmt.Sprintf("Categories[%v]", idx),
+				reason: "value must be one of the defined enum values",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if m.IncludeRead != nil {
