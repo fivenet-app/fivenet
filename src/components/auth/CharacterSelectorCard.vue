@@ -82,7 +82,7 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 class="inline-flex items-center"
                 :disabled="disabled || !canSubmit"
                 :loading="!canSubmit"
-                :icon="disabled ? 'i-mdi-lock' : 'i-mdi-cursor-default-click'"
+                :icon="disabled ? 'i-mdi-lock' : undefined"
                 @click="onSubmitThrottle(char.userId)"
             >
                 {{ !disabled ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char_tooltip') }}
