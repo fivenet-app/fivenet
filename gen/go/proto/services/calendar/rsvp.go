@@ -36,6 +36,9 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 		return nil, errorscalendar.ErrNoPerms
 	}
 
+	condition := tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)).
+		AND(tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_HIDDEN))))
+
 	countStmt := tCalendarRSVP.
 		SELECT(
 			jet.COUNT(tCalendarRSVP.UserID).AS("datacount.totalcount"),
@@ -45,7 +48,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 				tCalendarRSVP.UserID.EQ(tUsers.ID),
 			),
 		).
-		WHERE(tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id)))
+		WHERE(condition)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -93,7 +96,7 @@ func (s *Server) ListCalendarEntryRSVP(ctx context.Context, req *ListCalendarEnt
 				tUserProps.UserID.EQ(tUsers.ID),
 			),
 		).
-		WHERE(tCalendarRSVP.EntryID.EQ(jet.Uint64(entry.Id))).
+		WHERE(condition).
 		ORDER_BY(tCalendarRSVP.Response.DESC()).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)

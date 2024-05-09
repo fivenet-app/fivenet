@@ -6,11 +6,11 @@
 - [resources/accounts/accounts.proto](#resources_accounts_accounts-proto)
     - [Account](#resources-accounts-Account)
     - [Character](#resources-accounts-Character)
-  
+
 - [resources/accounts/oauth2.proto](#resources_accounts_oauth2-proto)
     - [OAuth2Account](#resources-accounts-OAuth2Account)
     - [OAuth2Provider](#resources-accounts-OAuth2Provider)
-  
+
 - [resources/centrum/dispatches.proto](#resources_centrum_dispatches-proto)
     - [Dispatch](#resources-centrum-Dispatch)
     - [DispatchAssignment](#resources-centrum-DispatchAssignment)
@@ -18,76 +18,76 @@
     - [DispatchReference](#resources-centrum-DispatchReference)
     - [DispatchReferences](#resources-centrum-DispatchReferences)
     - [DispatchStatus](#resources-centrum-DispatchStatus)
-  
+
     - [DispatchReferenceType](#resources-centrum-DispatchReferenceType)
     - [StatusDispatch](#resources-centrum-StatusDispatch)
     - [TakeDispatchResp](#resources-centrum-TakeDispatchResp)
-  
+
 - [resources/centrum/general.proto](#resources_centrum_general-proto)
     - [Attributes](#resources-centrum-Attributes)
     - [Disponents](#resources-centrum-Disponents)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
-  
+
 - [resources/centrum/settings.proto](#resources_centrum_settings-proto)
     - [PredefinedStatus](#resources-centrum-PredefinedStatus)
     - [Settings](#resources-centrum-Settings)
     - [Timings](#resources-centrum-Timings)
-  
+
     - [CentrumMode](#resources-centrum-CentrumMode)
-  
+
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
     - [UnitAssignment](#resources-centrum-UnitAssignment)
     - [UnitAssignments](#resources-centrum-UnitAssignments)
     - [UnitStatus](#resources-centrum-UnitStatus)
-  
+
     - [StatusUnit](#resources-centrum-StatusUnit)
-  
+
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [OrderBy](#resources-common-database-OrderBy)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
     - [PaginationResponse](#resources-common-database-PaginationResponse)
-  
+
 - [resources/common/i18n.proto](#resources_common_i18n-proto)
     - [TranslateItem](#resources-common-TranslateItem)
     - [TranslateItem.ParametersEntry](#resources-common-TranslateItem-ParametersEntry)
-  
+
 - [resources/documents/access.proto](#resources_documents_access-proto)
     - [DocumentAccess](#resources-documents-DocumentAccess)
     - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
     - [DocumentUserAccess](#resources-documents-DocumentUserAccess)
-  
+
     - [AccessLevel](#resources-documents-AccessLevel)
     - [AccessLevelUpdateMode](#resources-documents-AccessLevelUpdateMode)
-  
+
 - [resources/documents/activity.proto](#resources_documents_activity-proto)
     - [DocAccessRequested](#resources-documents-DocAccessRequested)
     - [DocActivity](#resources-documents-DocActivity)
     - [DocActivityData](#resources-documents-DocActivityData)
     - [DocOwnerChanged](#resources-documents-DocOwnerChanged)
     - [DocUpdated](#resources-documents-DocUpdated)
-  
+
     - [DocActivityType](#resources-documents-DocActivityType)
-  
+
 - [resources/documents/category.proto](#resources_documents_category-proto)
     - [Category](#resources-documents-Category)
-  
+
 - [resources/documents/comment.proto](#resources_documents_comment-proto)
     - [Comment](#resources-documents-Comment)
-  
+
 - [resources/documents/documents.proto](#resources_documents_documents-proto)
     - [Document](#resources-documents-Document)
     - [DocumentReference](#resources-documents-DocumentReference)
     - [DocumentRelation](#resources-documents-DocumentRelation)
     - [DocumentShort](#resources-documents-DocumentShort)
-  
+
     - [DocContentType](#resources-documents-DocContentType)
     - [DocReference](#resources-documents-DocReference)
     - [DocRelation](#resources-documents-DocRelation)
-  
+
 - [resources/documents/requests.proto](#resources_documents_requests-proto)
     - [DocRequest](#resources-documents-DocRequest)
-  
+
 - [resources/documents/templates.proto](#resources_documents_templates-proto)
     - [ObjectSpecs](#resources-documents-ObjectSpecs)
     - [Template](#resources-documents-Template)
@@ -96,11 +96,11 @@
     - [TemplateRequirements](#resources-documents-TemplateRequirements)
     - [TemplateSchema](#resources-documents-TemplateSchema)
     - [TemplateShort](#resources-documents-TemplateShort)
-  
+
 - [resources/filestore/file.proto](#resources_filestore_file-proto)
     - [File](#resources-filestore-File)
     - [FileInfo](#resources-filestore-FileInfo)
-  
+
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
     - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
@@ -108,23 +108,23 @@
     - [JobsUserActivity](#resources-jobs-JobsUserActivity)
     - [JobsUserActivityData](#resources-jobs-JobsUserActivityData)
     - [JobsUserProps](#resources-jobs-JobsUserProps)
-  
+
     - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
-  
+
 - [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
     - [ConductEntry](#resources-jobs-ConductEntry)
-  
+
     - [ConductType](#resources-jobs-ConductType)
-  
+
 - [resources/jobs/timeclock.proto](#resources_jobs_timeclock-proto)
     - [TimeclockEntry](#resources-jobs-TimeclockEntry)
     - [TimeclockStats](#resources-jobs-TimeclockStats)
     - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
-  
+
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
     - [LawBook](#resources-laws-LawBook)
-  
+
 - [resources/livemap/livemap.proto](#resources_livemap_livemap-proto)
     - [CircleMarker](#resources-livemap-CircleMarker)
     - [Coords](#resources-livemap-Coords)
@@ -133,19 +133,19 @@
     - [MarkerInfo](#resources-livemap-MarkerInfo)
     - [MarkerMarker](#resources-livemap-MarkerMarker)
     - [UserMarker](#resources-livemap-UserMarker)
-  
+
     - [MarkerType](#resources-livemap-MarkerType)
-  
+
 - [resources/livemap/tracker.proto](#resources_livemap_tracker-proto)
     - [UsersUpdateEvent](#resources-livemap-UsersUpdateEvent)
-  
+
 - [resources/notifications/notifications.proto](#resources_notifications_notifications-proto)
     - [Data](#resources-notifications-Data)
     - [Link](#resources-notifications-Link)
     - [Notification](#resources-notifications-Notification)
-  
+
     - [NotificationCategory](#resources-notifications-NotificationCategory)
-  
+
 - [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
     - [JobGradeList](#resources-permissions-JobGradeList)
@@ -155,7 +155,7 @@
     - [Role](#resources-permissions-Role)
     - [RoleAttribute](#resources-permissions-RoleAttribute)
     - [StringList](#resources-permissions-StringList)
-  
+
 - [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
     - [ExamQuestion](#resources-qualifications-ExamQuestion)
     - [ExamQuestionChoices](#resources-qualifications-ExamQuestionChoices)
@@ -170,7 +170,7 @@
     - [ExamSettings](#resources-qualifications-ExamSettings)
     - [QualificationExam](#resources-qualifications-QualificationExam)
     - [QualificationExamResponse](#resources-qualifications-QualificationExamResponse)
-  
+
 - [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
     - [Qualification](#resources-qualifications-Qualification)
     - [QualificationAccess](#resources-qualifications-QualificationAccess)
@@ -180,17 +180,17 @@
     - [QualificationRequirement](#resources-qualifications-QualificationRequirement)
     - [QualificationResult](#resources-qualifications-QualificationResult)
     - [QualificationShort](#resources-qualifications-QualificationShort)
-  
+
     - [AccessLevel](#resources-qualifications-AccessLevel)
     - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
-  
+
 - [resources/rector/audit.proto](#resources_rector_audit-proto)
     - [AuditEntry](#resources-rector-AuditEntry)
-  
+
     - [EventType](#resources-rector-EventType)
-  
+
 - [resources/rector/config.proto](#resources_rector_config-proto)
     - [AppConfig](#resources-rector-AppConfig)
     - [Auth](#resources-rector-Auth)
@@ -202,10 +202,10 @@
     - [UnemployedJob](#resources-rector-UnemployedJob)
     - [UserTracker](#resources-rector-UserTracker)
     - [Website](#resources-rector-Website)
-  
+
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
-  
+
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
     - [GroupSyncSettings](#resources-users-GroupSyncSettings)
@@ -217,9 +217,9 @@
     - [QuickButtons](#resources-users-QuickButtons)
     - [StatusLogSettings](#resources-users-StatusLogSettings)
     - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
-  
+
     - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
-  
+
 - [resources/users/users.proto](#resources_users_users-proto)
     - [CitizenAttribute](#resources-users-CitizenAttribute)
     - [CitizenAttributes](#resources-users-CitizenAttributes)
@@ -228,20 +228,20 @@
     - [UserActivity](#resources-users-UserActivity)
     - [UserProps](#resources-users-UserProps)
     - [UserShort](#resources-users-UserShort)
-  
+
     - [UserActivityType](#resources-users-UserActivityType)
-  
+
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
-  
+
 - [resources/calendar/access.proto](#resources_calendar_access-proto)
     - [CalendarAccess](#resources-calendar-CalendarAccess)
     - [CalendarJobAccess](#resources-calendar-CalendarJobAccess)
     - [CalendarUserAccess](#resources-calendar-CalendarUserAccess)
-  
+
     - [AccessLevel](#resources-calendar-AccessLevel)
     - [AccessLevelUpdateMode](#resources-calendar-AccessLevelUpdateMode)
-  
+
 - [resources/calendar/calendar.proto](#resources_calendar_calendar-proto)
     - [Calendar](#resources-calendar-Calendar)
     - [CalendarEntry](#resources-calendar-CalendarEntry)
@@ -249,9 +249,9 @@
     - [CalendarEntryRecurring](#resources-calendar-CalendarEntryRecurring)
     - [CalendarShort](#resources-calendar-CalendarShort)
     - [CalendarSub](#resources-calendar-CalendarSub)
-  
+
     - [RsvpResponses](#resources-calendar-RsvpResponses)
-  
+
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -275,9 +275,9 @@
     - [LogoutResponse](#services-auth-LogoutResponse)
     - [SetSuperUserModeRequest](#services-auth-SetSuperUserModeRequest)
     - [SetSuperUserModeResponse](#services-auth-SetSuperUserModeResponse)
-  
+
     - [AuthService](#services-auth-AuthService)
-  
+
 - [services/centrum/centrum.proto](#services_centrum_centrum-proto)
     - [AssignDispatchRequest](#services-centrum-AssignDispatchRequest)
     - [AssignDispatchResponse](#services-centrum-AssignDispatchResponse)
@@ -320,9 +320,9 @@
     - [UpdateSettingsResponse](#services-centrum-UpdateSettingsResponse)
     - [UpdateUnitStatusRequest](#services-centrum-UpdateUnitStatusRequest)
     - [UpdateUnitStatusResponse](#services-centrum-UpdateUnitStatusResponse)
-  
+
     - [CentrumService](#services-centrum-CentrumService)
-  
+
 - [services/citizenstore/citizenstore.proto](#services_citizenstore_citizenstore-proto)
     - [GetUserRequest](#services-citizenstore-GetUserRequest)
     - [GetUserResponse](#services-citizenstore-GetUserResponse)
@@ -336,9 +336,9 @@
     - [SetProfilePictureResponse](#services-citizenstore-SetProfilePictureResponse)
     - [SetUserPropsRequest](#services-citizenstore-SetUserPropsRequest)
     - [SetUserPropsResponse](#services-citizenstore-SetUserPropsResponse)
-  
+
     - [CitizenStoreService](#services-citizenstore-CitizenStoreService)
-  
+
 - [services/completor/completor.proto](#services_completor_completor-proto)
     - [CompleteCitizenAttributesRequest](#services-completor-CompleteCitizenAttributesRequest)
     - [CompleteCitizenAttributesResponse](#services-completor-CompleteCitizenAttributesResponse)
@@ -350,15 +350,15 @@
     - [CompleteJobsResponse](#services-completor-CompleteJobsResponse)
     - [ListLawBooksRequest](#services-completor-ListLawBooksRequest)
     - [ListLawBooksResponse](#services-completor-ListLawBooksResponse)
-  
+
     - [CompletorService](#services-completor-CompletorService)
-  
+
 - [services/dmv/vehicles.proto](#services_dmv_vehicles-proto)
     - [ListVehiclesRequest](#services-dmv-ListVehiclesRequest)
     - [ListVehiclesResponse](#services-dmv-ListVehiclesResponse)
-  
+
     - [DMVService](#services-dmv-DMVService)
-  
+
 - [services/docstore/docstore.proto](#services_docstore_docstore-proto)
     - [AddDocumentReferenceRequest](#services-docstore-AddDocumentReferenceRequest)
     - [AddDocumentReferenceResponse](#services-docstore-AddDocumentReferenceResponse)
@@ -428,9 +428,9 @@
     - [UpdateDocumentResponse](#services-docstore-UpdateDocumentResponse)
     - [UpdateTemplateRequest](#services-docstore-UpdateTemplateRequest)
     - [UpdateTemplateResponse](#services-docstore-UpdateTemplateResponse)
-  
+
     - [DocStoreService](#services-docstore-DocStoreService)
-  
+
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueRequest](#services-jobs-GetColleagueRequest)
     - [GetColleagueResponse](#services-jobs-GetColleagueResponse)
@@ -446,9 +446,9 @@
     - [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse)
     - [SetMOTDRequest](#services-jobs-SetMOTDRequest)
     - [SetMOTDResponse](#services-jobs-SetMOTDResponse)
-  
+
     - [JobsService](#services-jobs-JobsService)
-  
+
 - [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
     - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
     - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
@@ -456,9 +456,9 @@
     - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
     - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
     - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
-  
+
     - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
-  
+
 - [services/jobs/conduct.proto](#services_jobs_conduct-proto)
     - [CreateConductEntryRequest](#services-jobs-CreateConductEntryRequest)
     - [CreateConductEntryResponse](#services-jobs-CreateConductEntryResponse)
@@ -468,9 +468,9 @@
     - [ListConductEntriesResponse](#services-jobs-ListConductEntriesResponse)
     - [UpdateConductEntryRequest](#services-jobs-UpdateConductEntryRequest)
     - [UpdateConductEntryResponse](#services-jobs-UpdateConductEntryResponse)
-  
+
     - [JobsConductService](#services-jobs-JobsConductService)
-  
+
 - [services/livemapper/livemap.proto](#services_livemapper_livemap-proto)
     - [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest)
     - [CreateOrUpdateMarkerResponse](#services-livemapper-CreateOrUpdateMarkerResponse)
@@ -481,9 +481,9 @@
     - [StreamRequest](#services-livemapper-StreamRequest)
     - [StreamResponse](#services-livemapper-StreamResponse)
     - [UserMarkersUpdates](#services-livemapper-UserMarkersUpdates)
-  
+
     - [LivemapperService](#services-livemapper-LivemapperService)
-  
+
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
     - [CharUpdate](#services-notificator-CharUpdate)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
@@ -492,9 +492,9 @@
     - [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse)
     - [StreamRequest](#services-notificator-StreamRequest)
     - [StreamResponse](#services-notificator-StreamResponse)
-  
+
     - [NotificatorService](#services-notificator-NotificatorService)
-  
+
 - [services/qualifications/qualifications.proto](#services_qualifications_qualifications-proto)
     - [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest)
     - [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse)
@@ -522,17 +522,17 @@
     - [SetQualificationAccessResponse](#services-qualifications-SetQualificationAccessResponse)
     - [UpdateQualificationRequest](#services-qualifications-UpdateQualificationRequest)
     - [UpdateQualificationResponse](#services-qualifications-UpdateQualificationResponse)
-  
+
     - [QualificationsService](#services-qualifications-QualificationsService)
-  
+
 - [services/rector/config.proto](#services_rector_config-proto)
     - [GetAppConfigRequest](#services-rector-GetAppConfigRequest)
     - [GetAppConfigResponse](#services-rector-GetAppConfigResponse)
     - [UpdateAppConfigRequest](#services-rector-UpdateAppConfigRequest)
     - [UpdateAppConfigResponse](#services-rector-UpdateAppConfigResponse)
-  
+
     - [RectorConfigService](#services-rector-RectorConfigService)
-  
+
 - [services/rector/filestore.proto](#services_rector_filestore-proto)
     - [DeleteFileRequest](#services-rector-DeleteFileRequest)
     - [DeleteFileResponse](#services-rector-DeleteFileResponse)
@@ -540,9 +540,9 @@
     - [ListFilesResponse](#services-rector-ListFilesResponse)
     - [UploadFileRequest](#services-rector-UploadFileRequest)
     - [UploadFileResponse](#services-rector-UploadFileResponse)
-  
+
     - [RectorFilestoreService](#services-rector-RectorFilestoreService)
-  
+
 - [services/rector/laws.proto](#services_rector_laws-proto)
     - [CreateOrUpdateLawBookRequest](#services-rector-CreateOrUpdateLawBookRequest)
     - [CreateOrUpdateLawBookResponse](#services-rector-CreateOrUpdateLawBookResponse)
@@ -552,9 +552,9 @@
     - [DeleteLawBookResponse](#services-rector-DeleteLawBookResponse)
     - [DeleteLawRequest](#services-rector-DeleteLawRequest)
     - [DeleteLawResponse](#services-rector-DeleteLawResponse)
-  
+
     - [RectorLawsService](#services-rector-RectorLawsService)
-  
+
 - [services/rector/rector.proto](#services_rector_rector-proto)
     - [AttrsUpdate](#services-rector-AttrsUpdate)
     - [CreateRoleRequest](#services-rector-CreateRoleRequest)
@@ -579,9 +579,9 @@
     - [UpdateRolePermsResponse](#services-rector-UpdateRolePermsResponse)
     - [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest)
     - [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse)
-  
+
     - [RectorService](#services-rector-RectorService)
-  
+
 - [services/calendar/calendar.proto](#services_calendar_calendar-proto)
     - [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest)
     - [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse)
@@ -609,9 +609,9 @@
     - [ShareCalendarEntryResponse](#services-calendar-ShareCalendarEntryResponse)
     - [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest)
     - [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse)
-  
+
     - [CalendarService](#services-calendar-CalendarService)
-  
+
 - [Scalar Value Types](#scalar-value-types)
 
 
@@ -658,13 +658,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -712,13 +712,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -852,7 +852,7 @@
 
 
 
- 
+
 
 
 <a name="resources-centrum-DispatchReferenceType"></a>
@@ -906,11 +906,11 @@
 | TAKE_DISPATCH_RESP_DECLINED | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -969,13 +969,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1036,7 +1036,7 @@
 
 
 
- 
+
 
 
 <a name="resources-centrum-CentrumMode"></a>
@@ -1053,11 +1053,11 @@
 | CENTRUM_MODE_SIMPLIFIED | 4 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -1155,7 +1155,7 @@
 
 
 
- 
+
 
 
 <a name="resources-centrum-StatusUnit"></a>
@@ -1175,11 +1175,11 @@
 | STATUS_UNIT_BUSY | 7 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -1239,13 +1239,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1287,13 +1287,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1363,7 +1363,7 @@
 
 
 
- 
+
 
 
 <a name="resources-documents-AccessLevel"></a>
@@ -1396,11 +1396,11 @@
 | ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -1500,7 +1500,7 @@
 
 
 
- 
+
 
 
 <a name="resources-documents-DocActivityType"></a>
@@ -1531,11 +1531,11 @@
 | DOC_ACTIVITY_TYPE_REQUESTED_DELETION | 18 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -1563,13 +1563,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1602,13 +1602,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1728,7 +1728,7 @@
 
 
 
- 
+
 
 
 <a name="resources-documents-DocContentType"></a>
@@ -1772,11 +1772,11 @@
 | DOC_RELATION_CAUSED | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -1812,13 +1812,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -1970,13 +1970,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -2023,13 +2023,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -2154,7 +2154,7 @@
 
 
 
- 
+
 
 
 <a name="resources-jobs-JobsUserActivityType"></a>
@@ -2172,11 +2172,11 @@
 | JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -2211,7 +2211,7 @@
 
 
 
- 
+
 
 
 <a name="resources-jobs-ConductType"></a>
@@ -2230,11 +2230,11 @@
 | CONDUCT_TYPE_NOTE | 6 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -2302,13 +2302,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -2361,13 +2361,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -2505,7 +2505,7 @@
 
 
 
- 
+
 
 
 <a name="resources-livemap-MarkerType"></a>
@@ -2521,11 +2521,11 @@
 | MARKER_TYPE_ICON | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -2551,13 +2551,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -2624,7 +2624,7 @@
 
 
 
- 
+
 
 
 <a name="resources-notifications-NotificationCategory"></a>
@@ -2640,11 +2640,11 @@
 | NOTIFICATION_CATEGORY_CALENDAR | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -2808,13 +2808,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -3031,13 +3031,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -3235,7 +3235,7 @@
 
 
 
- 
+
 
 
 <a name="resources-qualifications-AccessLevel"></a>
@@ -3298,11 +3298,11 @@
 | RESULT_STATUS_SUCCESSFUL | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -3338,7 +3338,7 @@
 
 
 
- 
+
 
 
 <a name="resources-rector-EventType"></a>
@@ -3356,11 +3356,11 @@
 | EVENT_TYPE_DELETED | 5 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -3536,13 +3536,13 @@
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -3571,13 +3571,13 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -3759,7 +3759,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
+
 
 
 <a name="resources-users-UserInfoSyncUnemployedMode"></a>
@@ -3774,11 +3774,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | USER_INFO_SYNC_UNEMPLOYED_MODE_KICK | 2 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -3945,7 +3945,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
+
 
 
 <a name="resources-users-UserActivityType"></a>
@@ -3961,11 +3961,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | USER_ACTIVITY_TYPE_CREATED | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -3993,13 +3993,13 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
 
- 
+
+
+
+
 
 
 
@@ -4067,7 +4067,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
+
 
 
 <a name="resources-calendar-AccessLevel"></a>
@@ -4099,11 +4099,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -4251,7 +4251,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
+
 
 
 <a name="resources-calendar-RsvpResponses"></a>
@@ -4263,17 +4263,17 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ---- | ------ | ----------- |
 | RSVP_RESPONSES_UNSPECIFIED | 0 |  |
 | RSVP_RESPONSES_HIDDEN | 1 |  |
-| RSVP_RESPONSES_RECEIVED | 2 |  |
+| RSVP_RESPONSES_INVITED | 2 |  |
 | RSVP_RESPONSES_NO | 3 |  |
 | RSVP_RESPONSES_MAYBE | 4 |  |
 | RSVP_RESPONSES_YES | 5 |  |
 
 
- 
 
- 
 
- 
+
+
+
 
 
 
@@ -4608,11 +4608,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-auth-AuthService"></a>
@@ -4634,7 +4634,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | DeleteOAuth2Connection | [DeleteOAuth2ConnectionRequest](#services-auth-DeleteOAuth2ConnectionRequest) | [DeleteOAuth2ConnectionResponse](#services-auth-DeleteOAuth2ConnectionResponse) |  |
 | SetSuperUserMode | [SetSuperUserModeRequest](#services-auth-SetSuperUserModeRequest) | [SetSuperUserModeResponse](#services-auth-SetSuperUserModeResponse) |  |
 
- 
+
 
 
 
@@ -5241,11 +5241,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-centrum-CentrumService"></a>
@@ -5276,7 +5276,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | UpdateUnitStatus | [UpdateUnitStatusRequest](#services-centrum-UpdateUnitStatusRequest) | [UpdateUnitStatusResponse](#services-centrum-UpdateUnitStatusResponse) | @perm: Name=TakeDispatch |
 | UpdateDispatchStatus | [UpdateDispatchStatusRequest](#services-centrum-UpdateDispatchStatusRequest) | [UpdateDispatchStatusResponse](#services-centrum-UpdateDispatchStatusResponse) | @perm: Name=TakeDispatch |
 
- 
+
 
 
 
@@ -5476,11 +5476,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-citizenstore-CitizenStoreService"></a>
@@ -5497,7 +5497,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | SetProfilePicture | [SetProfilePictureRequest](#services-citizenstore-SetProfilePictureRequest) | [SetProfilePictureResponse](#services-citizenstore-SetProfilePictureResponse) | @perm: Name=Any |
 | ManageCitizenAttributes | [ManageCitizenAttributesRequest](#services-citizenstore-ManageCitizenAttributesRequest) | [ManageCitizenAttributesResponse](#services-citizenstore-ManageCitizenAttributesResponse) | @perm |
 
- 
+
 
 
 
@@ -5657,11 +5657,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-completor-CompletorService"></a>
@@ -5677,7 +5677,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ListLawBooks | [ListLawBooksRequest](#services-completor-ListLawBooksRequest) | [ListLawBooksResponse](#services-completor-ListLawBooksResponse) | @perm: Name=Any |
 | CompleteCitizenAttributes | [CompleteCitizenAttributesRequest](#services-completor-CompleteCitizenAttributesRequest) | [CompleteCitizenAttributesResponse](#services-completor-CompleteCitizenAttributesResponse) | @perm: Attrs=Jobs/JobList |
 
- 
+
 
 
 
@@ -5722,11 +5722,11 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-dmv-DMVService"></a>
@@ -5738,7 +5738,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----------- | ------------ | ------------- | ------------|
 | ListVehicles | [ListVehiclesRequest](#services-dmv-ListVehiclesRequest) | [ListVehiclesResponse](#services-dmv-ListVehiclesResponse) | @perm |
 
- 
+
 
 
 
@@ -6767,11 +6767,11 @@ Templates ==================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-docstore-DocStoreService"></a>
@@ -6816,7 +6816,7 @@ Templates ==================================================================
 | UpdateCategory | [UpdateCategoryRequest](#services-docstore-UpdateCategoryRequest) | [UpdateCategoryResponse](#services-docstore-UpdateCategoryResponse) | @perm: Name=CreateCategory |
 | DeleteCategory | [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest) | [DeleteCategoryResponse](#services-docstore-DeleteCategoryResponse) | @perm |
 
- 
+
 
 
 
@@ -7034,11 +7034,11 @@ Templates ==================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-jobs-JobsService"></a>
@@ -7056,7 +7056,7 @@ Templates ==================================================================
 | GetMOTD | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | SetMOTD | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
 
- 
+
 
 
 
@@ -7166,11 +7166,11 @@ Templates ==================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-jobs-JobsTimeclockService"></a>
@@ -7184,7 +7184,7 @@ Templates ==================================================================
 | GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
 | ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
 
- 
+
 
 
 
@@ -7314,11 +7314,11 @@ Templates ==================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-jobs-JobsConductService"></a>
@@ -7333,7 +7333,7 @@ Templates ==================================================================
 | UpdateConductEntry | [UpdateConductEntryRequest](#services-jobs-UpdateConductEntryRequest) | [UpdateConductEntryResponse](#services-jobs-UpdateConductEntryResponse) | @perm |
 | DeleteConductEntry | [DeleteConductEntryRequest](#services-jobs-DeleteConductEntryRequest) | [DeleteConductEntryResponse](#services-jobs-DeleteConductEntryResponse) | @perm |
 
- 
+
 
 
 
@@ -7472,11 +7472,11 @@ Templates ==================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-livemapper-LivemapperService"></a>
@@ -7490,7 +7490,7 @@ Templates ==================================================================
 | CreateOrUpdateMarker | [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest) | [CreateOrUpdateMarkerResponse](#services-livemapper-CreateOrUpdateMarkerResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
 | DeleteMarker | [DeleteMarkerRequest](#services-livemapper-DeleteMarkerRequest) | [DeleteMarkerResponse](#services-livemapper-DeleteMarkerResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;} |
 
- 
+
 
 
 
@@ -7611,11 +7611,11 @@ Templates ==================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-notificator-NotificatorService"></a>
@@ -7629,7 +7629,7 @@ Templates ==================================================================
 | MarkNotifications | [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest) | [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse) | @perm: Name=Any |
 | Stream | [StreamRequest](#services-notificator-StreamRequest) | [StreamResponse](#services-notificator-StreamResponse) stream | @perm: Name=Any |
 
- 
+
 
 
 
@@ -8022,11 +8022,11 @@ Results ====================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-qualifications-QualificationsService"></a>
@@ -8048,7 +8048,7 @@ Results ====================================================================
 | CreateOrUpdateQualificationResult | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm |
 | DeleteQualificationResult | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm |
 
- 
+
 
 
 
@@ -8113,11 +8113,11 @@ Results ====================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-rector-RectorConfigService"></a>
@@ -8130,7 +8130,7 @@ Results ====================================================================
 | GetAppConfig | [GetAppConfigRequest](#services-rector-GetAppConfigRequest) | [GetAppConfigResponse](#services-rector-GetAppConfigResponse) | @perm: Name=SuperUser |
 | UpdateAppConfig | [UpdateAppConfigRequest](#services-rector-UpdateAppConfigRequest) | [UpdateAppConfigResponse](#services-rector-UpdateAppConfigResponse) | @perm: Name=SuperUser |
 
- 
+
 
 
 
@@ -8229,11 +8229,11 @@ Results ====================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-rector-RectorFilestoreService"></a>
@@ -8247,7 +8247,7 @@ Results ====================================================================
 | UploadFile | [UploadFileRequest](#services-rector-UploadFileRequest) | [UploadFileResponse](#services-rector-UploadFileResponse) | @perm: Name=SuperUser |
 | DeleteFile | [DeleteFileRequest](#services-rector-DeleteFileRequest) | [DeleteFileResponse](#services-rector-DeleteFileResponse) | @perm: Name=SuperUser |
 
- 
+
 
 
 
@@ -8367,11 +8367,11 @@ Results ====================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-rector-RectorLawsService"></a>
@@ -8386,7 +8386,7 @@ Results ====================================================================
 | CreateOrUpdateLaw | [CreateOrUpdateLawRequest](#services-rector-CreateOrUpdateLawRequest) | [CreateOrUpdateLawResponse](#services-rector-CreateOrUpdateLawResponse) | @perm: Name=SuperUser |
 | DeleteLaw | [DeleteLawRequest](#services-rector-DeleteLawRequest) | [DeleteLawResponse](#services-rector-DeleteLawResponse) | @perm: Name=SuperUser |
 
- 
+
 
 
 
@@ -8739,11 +8739,11 @@ Results ====================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-rector-RectorService"></a>
@@ -8764,7 +8764,7 @@ Results ====================================================================
 | ViewAuditLog | [ViewAuditLogRequest](#services-rector-ViewAuditLogRequest) | [ViewAuditLogResponse](#services-rector-ViewAuditLogResponse) | @perm |
 | UpdateRoleLimits | [UpdateRoleLimitsRequest](#services-rector-UpdateRoleLimitsRequest) | [UpdateRoleLimitsResponse](#services-rector-UpdateRoleLimitsResponse) | @perm: Name=SuperUser |
 
- 
+
 
 
 
@@ -9163,11 +9163,11 @@ Results ====================================================================
 
 
 
- 
 
- 
 
- 
+
+
+
 
 
 <a name="services-calendar-CalendarService"></a>
@@ -9191,7 +9191,7 @@ Results ====================================================================
 | ListSubscriptions | [ListSubscriptionsRequest](#services-calendar-ListSubscriptionsRequest) | [ListSubscriptionsResponse](#services-calendar-ListSubscriptionsResponse) | @perm: Name=Any |
 | SubscribeToCalendar | [SubscribeToCalendarRequest](#services-calendar-SubscribeToCalendarRequest) | [SubscribeToCalendarResponse](#services-calendar-SubscribeToCalendarResponse) | @perm: Name=Any |
 
- 
+
 
 
 

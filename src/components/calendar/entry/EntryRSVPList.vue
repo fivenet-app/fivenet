@@ -96,6 +96,7 @@ const groupedEntries = computed(() => ({
     yes: data.value?.entries.filter((e) => e.response === RsvpResponses.YES),
     maybe: data.value?.entries.filter((e) => e.response === RsvpResponses.MAYBE),
     no: data.value?.entries.filter((e) => e.response === RsvpResponses.NO),
+    invited: data.value?.entries.filter((e) => e.response === RsvpResponses.INVITED),
 }));
 
 const openShare = ref(false);

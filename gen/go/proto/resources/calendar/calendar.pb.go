@@ -28,7 +28,7 @@ type RsvpResponses int32
 const (
 	RsvpResponses_RSVP_RESPONSES_UNSPECIFIED RsvpResponses = 0
 	RsvpResponses_RSVP_RESPONSES_HIDDEN      RsvpResponses = 1
-	RsvpResponses_RSVP_RESPONSES_RECEIVED    RsvpResponses = 2
+	RsvpResponses_RSVP_RESPONSES_INVITED    RsvpResponses = 2
 	RsvpResponses_RSVP_RESPONSES_NO          RsvpResponses = 3
 	RsvpResponses_RSVP_RESPONSES_MAYBE       RsvpResponses = 4
 	RsvpResponses_RSVP_RESPONSES_YES         RsvpResponses = 5
@@ -39,7 +39,7 @@ var (
 	RsvpResponses_name = map[int32]string{
 		0: "RSVP_RESPONSES_UNSPECIFIED",
 		1: "RSVP_RESPONSES_HIDDEN",
-		2: "RSVP_RESPONSES_RECEIVED",
+		2: "RSVP_RESPONSES_INVITED",
 		3: "RSVP_RESPONSES_NO",
 		4: "RSVP_RESPONSES_MAYBE",
 		5: "RSVP_RESPONSES_YES",
@@ -47,7 +47,7 @@ var (
 	RsvpResponses_value = map[string]int32{
 		"RSVP_RESPONSES_UNSPECIFIED": 0,
 		"RSVP_RESPONSES_HIDDEN":      1,
-		"RSVP_RESPONSES_RECEIVED":    2,
+		"RSVP_RESPONSES_INVITED":    2,
 		"RSVP_RESPONSES_NO":          3,
 		"RSVP_RESPONSES_MAYBE":       4,
 		"RSVP_RESPONSES_YES":         5,

@@ -107,7 +107,7 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 		insertStmt = insertStmt.VALUES(
 			req.EntryId,
 			req.UserIds[i],
-			calendar.RsvpResponses_RSVP_RESPONSES_RECEIVED,
+			calendar.RsvpResponses_RSVP_RESPONSES_INVITED,
 		)
 	}
 

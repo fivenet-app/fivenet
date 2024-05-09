@@ -438,7 +438,8 @@
         "subscribe": "Abonnieren",
         "unsubscribe": "Abbestellen",
         "guest": "Gast | Gäste",
-        "response": "Antwort | Antworten"
+        "response": "Antwort | Antworten",
+        "invited": "Eingeladen"
     },
     "components": {
         "partials": {

@@ -438,7 +438,8 @@
         "subscribe": "Subscribe",
         "unsubscribe": "Unsubscribe",
         "guest": "Guest | Guests",
-        "response": "Response | Responses"
+        "response": "Response | Responses",
+        "invited": "Invited"
     },
     "components": {
         "partials": {
