@@ -47,20 +47,25 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                     {{ $t('common.last_used') }}
                 </UBadge>
             </dd>
+
             <dt class="text-sm font-medium">
                 {{ $t('common.job') }}
             </dt>
             <dd class="text-sm">{{ char.jobLabel }} ({{ char.jobGradeLabel }})</dd>
+
             <dt class="text-sm font-medium">
                 {{ $t('common.date_of_birth') }}
             </dt>
             <dd class="text-sm">{{ char.dateofbirth }}</dd>
+
             <dt class="text-sm font-medium">{{ $t('common.height') }}</dt>
             <dd class="text-sm">{{ char.height }}cm</dd>
+
             <template v-if="char.visum">
                 <dt class="text-sm font-medium">{{ $t('common.visum') }}</dt>
                 <dd class="text-sm">{{ char.visum }}</dd>
             </template>
+
             <template v-if="char.playtime">
                 <dt class="text-sm font-medium">
                     {{ $t('common.playtime') }}
@@ -77,10 +82,10 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
                 class="inline-flex items-center"
                 :disabled="disabled || !canSubmit"
                 :loading="!canSubmit"
-                :icon="disabled ? 'i-mdi-lock' : undefined"
+                :icon="disabled ? 'i-mdi-lock' : 'i-mdi-cursor-default-click'"
                 @click="onSubmitThrottle(char.userId)"
             >
-                {{ $t('common.choose') }}
+                {{ !disabled ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char_tooltip') }}
             </UButton>
         </template>
     </UCard>

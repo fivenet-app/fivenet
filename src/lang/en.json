@@ -962,6 +962,9 @@
             },
             "CharacterSelector": {
                 "title": "Character Selector"
+            },
+            "CharacterSelectorCard": {
+                "disabled_char_tooltip": "Char lock is active! Only your last online character can be accessed."
             }
         },
         "citizens": {

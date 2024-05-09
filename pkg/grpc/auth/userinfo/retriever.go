@@ -10,9 +10,12 @@ import (
 	cache "github.com/Code-Hex/go-generics-cache"
 	"github.com/Code-Hex/go-generics-cache/policy/lru"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"go.uber.org/fx"
 )
+
+const cacheTTL = 20 * time.Second
 
 var (
 	ErrAccountError = fmt.Errorf("failed to retrieve account data")
@@ -48,7 +51,7 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 	userCache := cache.NewContext(
 		ctx,
 		cache.AsLRU[int32, *UserInfo](lru.WithCapacity(350)),
-		cache.WithJanitorInterval[int32, *UserInfo](25*time.Second),
+		cache.WithJanitorInterval[int32, *UserInfo](cacheTTL),
 	)
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
@@ -61,7 +64,7 @@ func NewUIRetriever(p Params) UserInfoRetriever {
 		db: p.DB,
 
 		userCache:    userCache,
-		userCacheTTL: 25 * time.Second,
+		userCacheTTL: cacheTTL,
 
 		superuserGroups: p.Config.Auth.SuperuserGroups,
 		superuserUsers:  p.Config.Auth.SuperuserUsers,
@@ -74,7 +77,6 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 	if dest, ok = ui.userCache.Get(userId); ok {
 		return dest, nil
 	}
-
 	if dest == nil {
 		dest = &UserInfo{}
 	}
@@ -104,7 +106,7 @@ func (ui *UIRetriever) GetUserInfo(ctx context.Context, userId int32, accountId 
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, ui.db, dest); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, ErrAccountError)
 	}
 
 	// If account is not enabled, fail here
