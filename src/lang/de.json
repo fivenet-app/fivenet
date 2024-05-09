@@ -1226,18 +1226,6 @@
                 "content": "Dokument ID in die Zwischenablage kopiert."
             }
         },
-        "document_relation_mentioned": {
-            "title": "Dokument: Sie wurden erwähnt",
-            "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
-        },
-        "document_request_added": {
-            "title": "Dokument: Anfrage wurde erstellt",
-            "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
-        },
-        "document_comment_added": {
-            "title": "Dokument: Neuer Kommentar",
-            "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
-        },
         "templates": {
             "created": {
                 "title": "Vorlage: Erstellt",
@@ -1385,6 +1373,18 @@
                 "title": "Eingeladen zu \"{title}\" von {name}",
                 "content": "Sie wurden zu \"{title}\" eingeladen, schaue im Kalendar nach um zu Antworten."
             }
+        },
+        "document_relation_mentioned": {
+            "title": "Dokument: Sie wurden erwähnt",
+            "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+        },
+        "document_request_added": {
+            "title": "Dokument: Anfrage wurde erstellt",
+            "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
+        },
+        "document_comment_added": {
+            "title": "Dokument: Neuer Kommentar",
+            "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
         }
     },
     "perms": {
@@ -2068,7 +2068,15 @@
         "CalendarService": {
             "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
             "ErrNoPerms": "Sie haben keinen Zugriff auf diese Kalender Daten!",
-            "ErrOnePrivateCal": "Sie können nur einen privaten Kalender haben!"
+            "ErrOnePrivateCal": "Sie können nur einen privaten Kalender haben!",
+            "ErrCalendarClosed": {
+                "title": "Kalender ist geschlossen",
+                "content": "Der Kalender ist geschlossen und kann nicht mehr genutzt werden."
+            },
+            "ErrEntryClosed": {
+                "title": "Kalendar Eintrag ist geschlossen",
+                "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
+            }
         }
     },
     "system": {
@@ -2238,6 +2246,14 @@
                 "SHARE": "Teilen",
                 "EDIT": "Editieren",
                 "MANAGE": "Verwalten"
+            }
+        },
+        "notifications": {
+            "NotificationCategory": {
+                "UNSPECIFIED": "Unbestimmt",
+                "GENERAL": "Allgemein",
+                "DOCUMENT": "Dokumente",
+                "CALENDAR": "Kalender"
             }
         }
     },
