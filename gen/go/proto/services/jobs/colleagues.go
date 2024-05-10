@@ -101,6 +101,9 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	if typesAttr != nil {
 		types = typesAttr.([]string)
 	}
+	if len(types) == 0 && userInfo.SuperUser {
+		types = append(types, "AbsenceDate", "Note")
+	}
 
 	columns := []jet.Projection{
 		tUser.Identifier,
@@ -136,7 +139,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 				).
 				LEFT_JOIN(tJobsUserProps,
 					tJobsUserProps.UserID.EQ(tUser.ID).
-						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+						AND(tJobsUserProps.Job.EQ(jet.String(userInfo.Job))),
 				),
 		).
 		WHERE(condition).
@@ -164,6 +167,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 }
 
 func (s *Server) getColleague(ctx context.Context, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
+	tUser := tUser.AS("colleague")
 	columns := []jet.Projection{
 		tUser.Identifier,
 		tUser.Firstname,
@@ -180,7 +184,6 @@ func (s *Server) getColleague(ctx context.Context, job string, userId int32, wit
 	}
 	columns = append(columns, withColumns...)
 
-	tUser := tUser.AS("colleague")
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
@@ -193,7 +196,7 @@ func (s *Server) getColleague(ctx context.Context, job string, userId int32, wit
 				).
 				LEFT_JOIN(tJobsUserProps,
 					tJobsUserProps.UserID.EQ(tUser.ID).
-						AND(tUser.Job.EQ(jet.String(job))),
+						AND(tJobsUserProps.Job.EQ(jet.String(job))),
 				),
 		).
 		WHERE(
@@ -292,6 +295,9 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 	var types perms.StringList
 	if typesAttr != nil {
 		types = typesAttr.([]string)
+	}
+	if len(types) == 0 && userInfo.SuperUser {
+		types = append(types, "AbsenceDate", "Note")
 	}
 
 	withColumns := []jet.Projection{}
@@ -463,12 +469,14 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
+			tJobsUserProps.Note,
 		).
 		VALUES(
 			req.Props.UserId,
 			userInfo.Job,
 			absenceBegin,
 			absenceEnd,
+			req.Props.Note,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
 			updateSets...,
@@ -501,7 +509,9 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
 	}
-	if *req.Props.Note != *props.Note {
+	if ((req.Props.Note == nil && props.Note == nil) ||
+		(req.Props.Note == nil && props.Note != nil) || (req.Props.Note != nil && props.Note == nil)) ||
+		*req.Props.Note != *props.Note {
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
@@ -700,7 +710,6 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	if typesAttr != nil {
 		types = typesAttr.([]string)
 	}
-
 	if len(types) == 0 {
 		if !userInfo.SuperUser {
 			return resp, nil

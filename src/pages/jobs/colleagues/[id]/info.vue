@@ -37,12 +37,14 @@ const { activeChar } = storeToRefs(authStore);
 
 const schema = z.object({
     note: z.string().min(0).max(512),
+    reason: z.string().min(3).max(255),
 });
 
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     note: props.colleague?.props?.note ?? '',
+    reason: '',
 });
 watch(props, () => {
     if (!props.colleague?.props) {
@@ -59,7 +61,7 @@ async function setJobsUserNote(values: Schema): Promise<void | SetJobsUserPropsR
 
     try {
         const call = $grpc.getJobsClient().setJobsUserProps({
-            reason: '',
+            reason: values.reason,
             props: {
                 userId: props.colleague.userId,
                 job: '',
@@ -151,10 +153,10 @@ watch(editing, () => {
                 </template>
             </div>
 
-            <div class="flex flex-1">
+            <div class="flex flex-1 flex-col gap-2">
                 <template v-if="!editing">
                     <div class="w-full flex-1">
-                        <p class="prose prose-invert">
+                        <p class="prose prose-invert whitespace-pre-wrap">
                             {{ colleague?.props?.note ?? $t('common.na') }}
                         </p>
                     </div>
@@ -170,6 +172,10 @@ watch(editing, () => {
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
+                    </UFormGroup>
+
+                    <UFormGroup name="reason" :label="$t('common.reason')" class="w-full" required>
+                        <UInput v-model="state.reason" type="text" name="reason" />
                     </UFormGroup>
                 </template>
             </div>

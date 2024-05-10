@@ -88,7 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <div class="flex">
             <template v-if="!editing">
                 <div class="w-full flex-1">
-                    <p class="prose prose-invert">
+                    <p class="prose prose-invert line-clamp-5 whitespace-pre-wrap">
                         {{ state.motd }}
                     </p>
                 </div>
