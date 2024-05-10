@@ -18,8 +18,8 @@ func (s *Server) setTokenCookie(ctx context.Context, token string) {
 		Expires:  time.Now().Add(auth.TokenExpireTime),
 		Path:     "/",
 		Domain:   s.domain,
-		SameSite: http.SameSiteStrictMode,
-		Secure:   false,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
 	}
 	header := metadata.Pairs("set-cookie", cookie.String())
 	// send the header back to the gateway
@@ -34,8 +34,8 @@ func (s *Server) destroyTokenCookie(ctx context.Context) {
 		Expires:  time.Time{},
 		Path:     "/",
 		Domain:   s.domain,
-		SameSite: http.SameSiteStrictMode,
-		Secure:   false,
+		SameSite: http.SameSiteNoneMode,
+		Secure:   true,
 	}
 	header := metadata.Pairs("set-cookie", cookie.String())
 	// send the header back to the gateway

@@ -134,11 +134,11 @@ func NewEngine(p EngineParams) *gin.Engine {
 	e.Use(cors.New(cors.Config{
 		AllowOrigins:           p.Config.HTTP.Origins,
 		AllowMethods:           []string{"GET", "POST", "HEAD", "OPTIONS"},
-		AllowHeaders:           []string{"Origin", "Content-Length", "Content-Type"},
+		AllowHeaders:           []string{"Origin", "Content-Length", "Content-Type", "Cookie"},
 		AllowBrowserExtensions: true,
 		ExposeHeaders:          []string{"Content-Length", "Content-Type", "Accept-Encoding"},
 		AllowCredentials:       true,
-		MaxAge:                 4 * time.Hour,
+		MaxAge:                 1 * time.Hour,
 	}))
 
 	// Sessions
