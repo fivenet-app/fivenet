@@ -1919,7 +1919,8 @@
                 "key": "Erstellen und aktualisieren von Kalendern",
                 "description": "Verwalten von Kalendern.",
                 "attrs": {
-                    "Job": "Kalender für Nutzer seinen Beruf"
+                    "Job": "Kalender für Nutzer seinen Beruf",
+                    "Public": "Öffentliche Kalender, die jede Person abonnieren kann"
                 },
                 "attrs_types": {
                     "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
