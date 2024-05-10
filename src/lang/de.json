@@ -91,14 +91,15 @@
             "colleagues": {
                 "title": "Kollegen",
                 "single": {
-                    "title": "Kollegen-Info"
+                    "title": "Kollegen-Info",
+                    "activity": "Kollegen-Info: Aktivität",
+                    "conduct": "Kollegen-Info: Führungsregister",
+                    "qualifications": "Kollegen-Info: Qualifizierungen",
+                    "timeclock": "Kollegen-Info: Stempeluhr"
                 }
             },
             "conduct": {
                 "title": "Führungsregister"
-            },
-            "requests": {
-                "title": "Anfragen"
             },
             "timeclock": {
                 "title": "Stempeluhr"
