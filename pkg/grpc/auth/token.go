@@ -14,14 +14,12 @@ import (
 const (
 	TokenExpireTime  = 96 * time.Hour
 	TokenRenewalTime = 48 * time.Hour
-	TokenMaxRenews   = 5
 )
 
 type CitizenInfoClaims struct {
-	AccID        uint64 `json:"accid"`
-	Username     string `json:"usr"`
-	CharID       int32  `json:"chrid"`
-	RenewedCount int32  `json:"renwc"`
+	AccID    uint64 `json:"accid"`
+	Username string `json:"usr"`
+	CharID   int32  `json:"chrid"`
 
 	jwt.RegisteredClaims
 }
@@ -62,9 +60,8 @@ func (t *TokenMgr) ParseWithClaims(tokenString string) (*CitizenInfoClaims, erro
 
 func BuildTokenClaimsFromAccount(account *model.FivenetAccounts, activeChar *users.User) *CitizenInfoClaims {
 	claims := &CitizenInfoClaims{
-		AccID:        account.ID,
-		Username:     *account.Username,
-		RenewedCount: 0,
+		AccID:    account.ID,
+		Username: *account.Username,
 		RegisteredClaims: jwt.RegisteredClaims{
 			Issuer:   "fivenet",
 			Subject:  account.License,

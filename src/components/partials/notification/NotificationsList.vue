@@ -165,7 +165,8 @@ const canSubmit = ref(true);
                     :type="$t('common.notification', 2)"
                     icon="i-mdi-bell"
                 />
-                <template v-else>
+
+                <div v-else class="relative overflow-x-auto">
                     <ul class="flex flex-col">
                         <li
                             v-for="not in data?.notifications"
@@ -240,7 +241,7 @@ const canSubmit = ref(true);
                             </div>
                         </li>
                     </ul>
-                </template>
+                </div>
 
                 <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
             </div>

@@ -15,7 +15,7 @@ func (s *Server) setTokenCookie(ctx context.Context, token string) {
 		Name:     auth.CookieName,
 		Value:    token,
 		HttpOnly: true,
-		Expires:  time.Now().Add(6 * 24 * time.Hour),
+		Expires:  time.Now().Add(auth.TokenExpireTime),
 		Path:     "/",
 		Domain:   s.domain,
 		SameSite: http.SameSiteStrictMode,

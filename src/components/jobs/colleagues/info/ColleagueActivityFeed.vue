@@ -169,11 +169,14 @@ watchDebounced(query, async () => refresh(), {
         icon="i-mdi-bulletin-board"
         :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
     />
-    <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-        <li v-for="activity in data?.activity" :key="activity.id" class="px-2 py-4">
-            <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
-        </li>
-    </ul>
+
+    <div v-else class="relative overflow-x-auto">
+        <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+            <li v-for="activity in data?.activity" :key="activity.id" class="px-2 py-4">
+                <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
+            </li>
+        </ul>
+    </div>
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

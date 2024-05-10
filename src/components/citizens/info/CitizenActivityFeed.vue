@@ -58,6 +58,7 @@ watch(offset, async () => refresh());
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
             icon="i-mdi-bulletin-board"
         />
+
         <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
             <li v-for="activity in data?.activity" :key="activity.id" class="py-4">
                 <CitizenActivityFeedEntry :activity="activity" />
