@@ -74,13 +74,23 @@ export interface JobsUserProps {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_begin = 2;
+     * @generated from protobuf field: string job = 2;
+     */
+    job: string;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_begin = 3;
      */
     absenceBegin?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_end = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp absence_end = 4;
      */
     absenceEnd?: Timestamp;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string note = 5;
+     */
+    note?: string;
 }
 /**
  * @generated from protobuf message resources.jobs.JobsUserActivity
@@ -205,7 +215,11 @@ export enum JobsUserActivityType {
     /**
      * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
      */
-    ABSENCE_DATE = 5
+    ABSENCE_DATE = 5,
+    /**
+     * @generated from protobuf enum value: JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
+     */
+    NOTE = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Colleague$Type extends MessageType<Colleague> {
@@ -342,13 +356,16 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
     constructor() {
         super("resources.jobs.JobsUserProps", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 2, name: "absence_begin", kind: "message", T: () => Timestamp },
-            { no: 3, name: "absence_end", kind: "message", T: () => Timestamp }
+            { no: 2, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 3, name: "absence_begin", kind: "message", T: () => Timestamp },
+            { no: 4, name: "absence_end", kind: "message", T: () => Timestamp },
+            { no: 5, name: "note", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<JobsUserProps>): JobsUserProps {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
+        message.job = "";
         if (value !== undefined)
             reflectionMergePartial<JobsUserProps>(this, message, value);
         return message;
@@ -361,11 +378,17 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* optional resources.timestamp.Timestamp absence_begin */ 2:
+                case /* string job */ 2:
+                    message.job = reader.string();
+                    break;
+                case /* optional resources.timestamp.Timestamp absence_begin */ 3:
                     message.absenceBegin = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceBegin);
                     break;
-                case /* optional resources.timestamp.Timestamp absence_end */ 3:
+                case /* optional resources.timestamp.Timestamp absence_end */ 4:
                     message.absenceEnd = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.absenceEnd);
+                    break;
+                case /* optional string note */ 5:
+                    message.note = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -382,12 +405,18 @@ class JobsUserProps$Type extends MessageType<JobsUserProps> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* optional resources.timestamp.Timestamp absence_begin = 2; */
+        /* string job = 2; */
+        if (message.job !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.job);
+        /* optional resources.timestamp.Timestamp absence_begin = 3; */
         if (message.absenceBegin)
-            Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp absence_end = 3; */
+            Timestamp.internalBinaryWrite(message.absenceBegin, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp absence_end = 4; */
         if (message.absenceEnd)
-            Timestamp.internalBinaryWrite(message.absenceEnd, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.absenceEnd, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional string note = 5; */
+        if (message.note !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.note);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

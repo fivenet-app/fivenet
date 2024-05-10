@@ -75,6 +75,7 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
     if (colleague.props === undefined) {
         colleague.props = {
             userId: colleague.userId,
+            job: colleague.job,
             absenceBegin: value.absenceBegin,
             absenceEnd: value.absenceEnd,
         };
@@ -246,7 +247,7 @@ defineShortcuts({
                     variant="link"
                     icon="i-mdi-eye"
                     :to="{
-                        name: 'jobs-colleagues-id-actvitiy',
+                        name: 'jobs-colleagues-id-info',
                         params: { id: colleague.userId ?? 0 },
                     }"
                 />

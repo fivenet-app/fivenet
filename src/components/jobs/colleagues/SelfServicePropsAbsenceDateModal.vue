@@ -51,6 +51,7 @@ const state = reactive<Schema>({
 async function setAbsenceDate(values: Schema): Promise<void> {
     const userProps: JobsUserProps = {
         userId: props.userId,
+        job: '',
         absenceBegin: values.absenceBegin ? toTimestamp(values.absenceBegin) : {},
         absenceEnd: values.absenceEnd ? toTimestamp(values.absenceEnd) : {},
     };

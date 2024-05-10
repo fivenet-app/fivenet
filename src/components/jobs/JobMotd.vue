@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { $grpc } = useNuxtApp();
@@ -17,10 +19,28 @@ async function getMOTD(): Promise<GetMOTDResponse> {
     }
 }
 
-async function setMOTD(motd: string): Promise<SetMOTDResponse> {
+const schema = z.object({
+    motd: z.string().min(0).max(512),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive<Schema>({
+    motd: data.value?.motd ?? '',
+});
+
+watch(data, () => {
+    if (!data.value) {
+        return;
+    }
+
+    state.motd = data.value.motd;
+});
+
+async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
     try {
         const call = $grpc.getJobsClient().setMOTD({
-            motd,
+            motd: values.motd,
         });
         const { response } = await call;
 
@@ -32,18 +52,11 @@ async function setMOTD(motd: string): Promise<SetMOTDResponse> {
 }
 
 const canSubmit = ref(true);
-const onSubmit = async (e: string): Promise<SetMOTDResponse> => {
-    const response = await setMOTD(e).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-
-    if (data.value !== null) {
-        data.value.motd = response.motd;
-    }
-
-    return response;
-};
-const onSubmitThrottle = useThrottleFn(async (e: string) => {
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await onSubmit(e);
+    await setMOTD(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    refresh();
+    editing.value = !editing.value;
 }, 1000);
 
 const canEdit = can('JobsService.SetMOTD');
@@ -58,7 +71,7 @@ watch(editing, () => {
 </script>
 
 <template>
-    <div v-if="data !== null" class="w-full flex-col">
+    <UForm v-if="data !== null" :schema="schema" :state="state" class="w-full flex-col" @submit="onSubmitThrottle">
         <div class="flex items-center">
             <h4 v-if="data.motd.length > 0 || canEdit" class="flex-1 text-base font-semibold leading-6">
                 {{ $t('common.motd') }}
@@ -67,15 +80,7 @@ watch(editing, () => {
             <template v-if="canEdit">
                 <UButton v-if="!editing" variant="link" icon="i-mdi-pencil" :loading="!canSubmit" @click="editing = !editing" />
                 <div v-else class="flex flex-row gap-1">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-content-save"
-                        :loading="!canSubmit"
-                        @click="
-                            onSubmitThrottle(data?.motd ?? '');
-                            editing = !editing;
-                        "
-                    />
+                    <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
                     <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
                 </div>
             </template>
@@ -85,20 +90,22 @@ watch(editing, () => {
             <template v-if="!editing">
                 <div class="w-full flex-1">
                     <p class="prose prose-invert">
-                        {{ data.motd }}
+                        {{ state.motd }}
                     </p>
                 </div>
             </template>
             <template v-else>
-                <UTextarea
-                    v-model="data.motd"
-                    :rows="2"
-                    :maxrows="6"
-                    name="content"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
+                <UFormGroup name="motd" class="w-full">
+                    <UTextarea
+                        v-model="state.motd"
+                        :rows="2"
+                        :maxrows="6"
+                        name="motd"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    />
+                </UFormGroup>
             </template>
         </div>
-    </div>
+    </UForm>
 </template>

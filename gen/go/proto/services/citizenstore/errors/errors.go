@@ -9,7 +9,7 @@ var (
 	ErrFailedQuery              = status.Error(codes.Internal, "errors.CitizenStoreService.ErrFailedQuery")
 	ErrJobGradeNoPermission     = status.Error(codes.NotFound, "errors.CitizenStoreService.ErrJobGradeNoPermission")
 	ErrReasonRequired           = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrReasonRequired")
-	ErrPropsWantedDenied        = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrUserPropsWantedDenied")
+	ErrPropsWantedDenied        = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsWantedDenied")
 	ErrPropsJobDenied           = status.Error(codes.PermissionDenied, "errors.CitizenStoreService.ErrPropsJobDenied")
 	ErrPropsJobPublic           = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobPublic")
 	ErrPropsJobInvalid          = status.Error(codes.InvalidArgument, "errors.CitizenStoreService.ErrPropsJobInvalid")

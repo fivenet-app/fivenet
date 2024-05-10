@@ -92,20 +92,41 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		return resp, nil
 	}
 
+	// Field Permission Check
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
+	}
+
+	columns := []jet.Projection{
+		tUser.Identifier,
+		tUser.Job,
+		tUser.JobGrade,
+		tUser.Firstname,
+		tUser.Lastname,
+		tUser.Dateofbirth,
+		tUser.PhoneNumber,
+		tUserProps.Avatar.AS("colleague.avatar"),
+		tJobsUserProps.UserID,
+		tJobsUserProps.Job,
+		tJobsUserProps.AbsenceBegin,
+		tJobsUserProps.AbsenceEnd,
+	}
+	for _, fType := range types {
+		switch fType {
+		case "Note":
+			columns = append(columns, tJobsUserProps.Note)
+		}
+	}
+
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
-			tUser.Identifier,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("colleague.avatar"),
-			tJobsUserProps.UserID,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
+			columns...,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
@@ -142,22 +163,28 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	return resp, nil
 }
 
-func (s *Server) getColleague(ctx context.Context, job string, userId int32) (*jobs.Colleague, error) {
+func (s *Server) getColleague(ctx context.Context, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
+	columns := []jet.Projection{
+		tUser.Identifier,
+		tUser.Firstname,
+		tUser.Lastname,
+		tUser.Job,
+		tUser.JobGrade,
+		tUser.Dateofbirth,
+		tUser.PhoneNumber,
+		tUserProps.Avatar.AS("colleague.avatar"),
+		tJobsUserProps.UserID,
+		tJobsUserProps.Job,
+		tJobsUserProps.AbsenceBegin,
+		tJobsUserProps.AbsenceEnd,
+	}
+	columns = append(columns, withColumns...)
+
 	tUser := tUser.AS("colleague")
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
-			tUser.Identifier,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("colleague.avatar"),
-			tJobsUserProps.UserID,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
+			columns...,
 		).
 		FROM(
 			tUser.
@@ -198,22 +225,22 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
+	// Access Permission Check
+	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
+	var access perms.StringList
+	if accessAttr != nil {
+		access = accessAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, userInfo.Job, req.UserId)
+	targetUser, err := s.getColleague(ctx, userInfo.Job, req.UserId, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
+	if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
@@ -221,7 +248,25 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	colleague, err := s.getColleague(ctx, userInfo.Job, targetUser.UserId)
+	// Field Permission Check
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
+	}
+
+	withColumns := []jet.Projection{}
+	for _, fType := range types {
+		switch fType {
+		case "Note":
+			withColumns = append(withColumns, tJobsUserProps.Note)
+		}
+	}
+
+	colleague, err := s.getColleague(ctx, userInfo.Job, targetUser.UserId, withColumns)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -236,7 +281,25 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	colleague, err := s.getColleague(ctx, userInfo.Job, userInfo.UserId)
+	// Field Permission Check
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
+	}
+
+	withColumns := []jet.Projection{}
+	for _, fType := range types {
+		switch fType {
+		case "Note":
+			withColumns = append(withColumns, tJobsUserProps.Note)
+		}
+	}
+
+	colleague, err := s.getColleague(ctx, userInfo.Job, userInfo.UserId, withColumns)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -251,6 +314,7 @@ func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.Jobs
 	stmt := tJobsUserProps.
 		SELECT(
 			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
 		).
@@ -284,22 +348,26 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	// Field Permission Check
-	fieldsAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
+	if req.Reason == "" {
+		return nil, errorsjobs.ErrReasonRequired
+	}
+
+	// Access Permission Check
+	accessAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsAccessPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
-	var fields perms.StringList
-	if fieldsAttr != nil {
-		fields = fieldsAttr.([]string)
+	var access perms.StringList
+	if accessAttr != nil {
+		access = accessAttr.([]string)
 	}
 
-	targetUser, err := s.getColleague(ctx, userInfo.Job, req.Props.UserId)
+	targetUser, err := s.getColleague(ctx, userInfo.Job, req.Props.UserId, nil)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if !s.checkIfHasAccessToColleague(fields, userInfo, &users.UserShort{
+	if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
@@ -310,6 +378,16 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	props, err := s.getJobsUserProps(ctx, req.Props.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+
+	// Types Permission Check
+	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsTypesPermField)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
+	var types perms.StringList
+	if typesAttr != nil {
+		types = typesAttr.([]string)
 	}
 
 	absenceBegin := jet.DateExp(jet.NULL)
@@ -331,6 +409,21 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		req.Props.AbsenceEnd = props.AbsenceEnd
 	}
 
+	updateSets := []jet.ColumnAssigment{
+		tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
+		tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
+	}
+	// Generate the update sets
+	if req.Props.Note != nil {
+		if !slices.Contains(types, "Note") {
+			return nil, errorsjobs.ErrPropsWantedDenied
+		}
+
+		updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*req.Props.Note)))
+	} else {
+		req.Props.Note = props.Note
+	}
+
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -342,17 +435,18 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	stmt := tJobsUserProps.
 		INSERT(
 			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
 		).
 		VALUES(
 			req.Props.UserId,
+			userInfo.Job,
 			absenceBegin,
 			absenceEnd,
 		).
 		ON_DUPLICATE_KEY_UPDATE(
-			tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
-			tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
+			updateSets...,
 		)
 
 	if _, err := stmt.ExecContext(ctx, tx); err != nil {
@@ -378,6 +472,17 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 					},
 				},
 			},
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+	}
+	if *req.Props.Note != *props.Note {
+		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
+			Job:          userInfo.Job,
+			SourceUserId: userInfo.UserId,
+			TargetUserId: req.Props.UserId,
+			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NOTE,
+			Reason:       req.Reason,
 		}); err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -545,7 +650,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	} else {
 		userId := req.UserIds[0]
 
-		targetUser, err := s.getColleague(ctx, userInfo.Job, userId)
+		targetUser, err := s.getColleague(ctx, userInfo.Job, userId, nil)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 		}
@@ -576,7 +681,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			return resp, nil
 		}
 
-		types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE")
+		types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE")
 	}
 
 	if len(req.ActivityTypes) > 0 {
@@ -648,6 +753,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tTargetUser.PhoneNumber,
 			tTargetUserProps.Avatar.AS("target_user.avatar"),
 			tTargetJobsUserProps.UserID,
+			tTargetJobsUserProps.Job,
 			tTargetJobsUserProps.AbsenceBegin,
 			tTargetJobsUserProps.AbsenceEnd,
 			tSourceUser.ID,

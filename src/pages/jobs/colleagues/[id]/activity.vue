@@ -10,13 +10,13 @@ definePageMeta({
     requiresAuth: true,
     permission: 'JobsService.GetColleague',
     validate: async (route) => {
-        route = route as TypedRouteFromName<'jobs-colleagues-id-actvitiy'>;
+        route = route as TypedRouteFromName<'jobs-colleagues-id-activity'>;
         // Check if the id is made up of digits
         return /^\d+$/.test(route.params.id);
     },
 });
 
-const route = useRoute('jobs-colleagues-id-actvitiy');
+const route = useRoute('jobs-colleagues-id-activity');
 </script>
 
 <template>

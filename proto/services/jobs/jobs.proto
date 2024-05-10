@@ -85,11 +85,11 @@ service JobsService {
   // @perm: Name=ListColleagues
   rpc GetSelf(GetSelfRequest) returns (GetSelfResponse);
 
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
   rpc GetColleague(GetColleagueRequest) returns (GetColleagueResponse);
-  // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"}
+  // @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
   rpc ListColleagueActivity(ListColleagueActivityRequest) returns (ListColleagueActivityResponse);
-  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+  // @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
   rpc SetJobsUserProps(SetJobsUserPropsRequest) returns (SetJobsUserPropsResponse);
 
   // @perm: Name=Any

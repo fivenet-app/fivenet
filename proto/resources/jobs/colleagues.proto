@@ -31,8 +31,11 @@ message Colleague {
 
 message JobsUserProps {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
-  optional resources.timestamp.Timestamp absence_begin = 2;
-  optional resources.timestamp.Timestamp absence_end = 3;
+  string job = 2 [(validate.rules).string.max_len = 20];
+  optional resources.timestamp.Timestamp absence_begin = 3;
+  optional resources.timestamp.Timestamp absence_end = 4;
+  // @sanitize: method=StripTags
+  optional string note = 5;
 }
 
 enum JobsUserActivityType {
@@ -42,6 +45,7 @@ enum JobsUserActivityType {
   JOBS_USER_ACTIVITY_TYPE_PROMOTED = 3;
   JOBS_USER_ACTIVITY_TYPE_DEMOTED = 4;
   JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE = 5;
+  JOBS_USER_ACTIVITY_TYPE_NOTE = 6;
 }
 
 message JobsUserActivity {

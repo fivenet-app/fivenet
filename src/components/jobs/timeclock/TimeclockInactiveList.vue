@@ -165,7 +165,7 @@ const columns = [
                     v-if="checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')"
                     icon="i-mdi-eye"
                     :to="{
-                        name: 'jobs-colleagues-id-actvitiy',
+                        name: 'jobs-colleagues-id-info',
                         params: { id: colleague.userId ?? 0 },
                     }"
                 />

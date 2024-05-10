@@ -439,7 +439,8 @@
         "unsubscribe": "Unsubscribe",
         "guest": "Guest | Guests",
         "response": "Response | Responses",
-        "invited": "Invited"
+        "invited": "Invited",
+        "note": "Note"
     },
     "components": {
         "partials": {
@@ -1762,10 +1763,13 @@
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
-                    "Any": "Any"
+                    "Any": "Any",
+                    "Note": "Note",
+                    "AbsenceDate": "Absence Date"
                 },
                 "attrs_types": {
-                    "Access": "Access to factions-own colleague"
+                    "Access": "Access to factions-own colleague",
+                    "Types": "Colleague Properties"
                 }
             },
             "SetJobsUserProps": {
@@ -1775,10 +1779,13 @@
                     "Own": "Own",
                     "Lower_Rank": "Lower Rank",
                     "Same_Rank": "Same Rank",
-                    "Any": "Any"
+                    "Any": "Any",
+                    "Note": "Note",
+                    "AbsenceDate": "Absence Date"
                 },
                 "attrs_types": {
-                    "Access": "Access to factions-own colleague's properties"
+                    "Access": "Access to factions-own colleague's properties",
+                    "Types": "Colleague Properties"
                 }
             },
             "ListColleagueActivity": {
@@ -1789,7 +1796,8 @@
                     "FIRED": "Fired",
                     "PROMOTED": "Promoted",
                     "DEMOTED": "Demoted",
-                    "ABSENCE_DATE": "Absence Date"
+                    "ABSENCE_DATE": "Absence Date",
+                    "NOTE": "Note"
                 },
                 "attrs_types": {
                     "Types": "Types"
@@ -2063,7 +2071,9 @@
             }
         },
         "JobsService": {
-            "ErrFailedQuery": "Failed to get job data!"
+            "ErrFailedQuery": "Failed to get job data!",
+            "ErrPropsWantedDenied": "You are not allowed to set a user wanted status!",
+            "ErrReasonRequired": "A reason must be provided!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",

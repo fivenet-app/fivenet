@@ -6,5 +6,7 @@ import (
 )
 
 var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.JobsService.ErrFailedQuery")
+	ErrFailedQuery       = status.Error(codes.Internal, "errors.JobsService.ErrFailedQuery")
+	ErrPropsWantedDenied = status.Error(codes.PermissionDenied, "errors.JobsService.ErrPropsWantedDenied")
+	ErrReasonRequired    = status.Error(codes.InvalidArgument, "errors.JobsService.ErrReasonRequired")
 )

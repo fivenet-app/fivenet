@@ -126,6 +126,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			tUser.PhoneNumber,
 			tUserUserProps.Avatar.AS("target_user.avatar"),
 			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
 			tConduct.CreatorID,

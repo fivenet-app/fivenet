@@ -66,6 +66,11 @@ func init() {
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
 				},
+				{
+					Key:         permkeys.JobsServiceGetColleagueTypesPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Note"},
+				},
 			},
 		},
 		{
@@ -75,7 +80,7 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceListColleagueActivityTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"},
+					ValidValues: []string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"},
 				},
 			},
 		},
@@ -92,6 +97,11 @@ func init() {
 					Key:         permkeys.JobsServiceSetJobsUserPropsAccessPermField,
 					Type:        permissions.StringListAttributeType,
 					ValidValues: []string{"Own", "Lower_Rank", "Same_Rank", "Any"},
+				},
+				{
+					Key:         permkeys.JobsServiceSetJobsUserPropsTypesPermField,
+					Type:        permissions.StringListAttributeType,
+					ValidValues: []string{"Note"},
 				},
 			},
 		},

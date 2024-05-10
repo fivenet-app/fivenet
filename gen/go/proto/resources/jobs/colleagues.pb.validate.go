@@ -353,6 +353,17 @@ func (m *JobsUserProps) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if utf8.RuneCountInString(m.GetJob()) > 20 {
+		err := JobsUserPropsValidationError{
+			field:  "Job",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.AbsenceBegin != nil {
 
 		if all {
@@ -417,6 +428,10 @@ func (m *JobsUserProps) validate(all bool) error {
 			}
 		}
 
+	}
+
+	if m.Note != nil {
+		// no validation rules for Note
 	}
 
 	if len(errors) > 0 {

@@ -123,6 +123,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("user_short.avatar"),
 			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
 		).
@@ -284,6 +285,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 			tUser.PhoneNumber,
 			tUserProps.Avatar.AS("colleague.avatar"),
 			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
 			tJobsUserProps.AbsenceEnd,
 		).

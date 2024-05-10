@@ -38,19 +38,19 @@ export interface IJobsServiceClient {
      */
     getSelf(input: GetSelfRequest, options?: RpcOptions): UnaryCall<GetSelfRequest, GetSelfResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
      *
      * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
      */
     getColleague(input: GetColleagueRequest, options?: RpcOptions): UnaryCall<GetColleagueRequest, GetColleagueResponse>;
     /**
-     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"}
+     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
      *
      * @generated from protobuf rpc: ListColleagueActivity(services.jobs.ListColleagueActivityRequest) returns (services.jobs.ListColleagueActivityResponse);
      */
     listColleagueActivity(input: ListColleagueActivityRequest, options?: RpcOptions): UnaryCall<ListColleagueActivityRequest, ListColleagueActivityResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
      *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */
@@ -96,7 +96,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetSelfRequest, GetSelfResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
      *
      * @generated from protobuf rpc: GetColleague(services.jobs.GetColleagueRequest) returns (services.jobs.GetColleagueResponse);
      */
@@ -105,7 +105,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<GetColleagueRequest, GetColleagueResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE"}
+     * @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
      *
      * @generated from protobuf rpc: ListColleagueActivity(services.jobs.ListColleagueActivityRequest) returns (services.jobs.ListColleagueActivityResponse);
      */
@@ -114,7 +114,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ListColleagueActivityRequest, ListColleagueActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
      *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */

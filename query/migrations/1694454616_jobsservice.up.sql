@@ -56,9 +56,11 @@ END;
 -- Table: fivenet_jobs_user_props
 CREATE TABLE IF NOT EXISTS `fivenet_jobs_user_props` (
   `user_id` int(11) NOT NULL,
+  `job` varchar(20) NOT NULL,
   `absence_begin` date DEFAULT NULL,
   `absence_end` date DEFAULT NULL,
-  UNIQUE KEY `idx_fivenet_jobs_user_props_unique` (`user_id`),
+  `note` text DEFAULT NULL,
+  UNIQUE KEY `idx_fivenet_jobs_user_props_unique` (`user_id`, `job`),
   CONSTRAINT `fk_fivenet_jobs_user_props_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB;
 

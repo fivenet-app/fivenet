@@ -13,3 +13,12 @@ func (m *JobsUserActivity) Sanitize() error {
 
 	return nil
 }
+
+func (m *JobsUserProps) Sanitize() error {
+
+	if m.Note != nil {
+		*m.Note = htmlsanitizer.StripTags(*m.Note)
+	}
+
+	return nil
+}
