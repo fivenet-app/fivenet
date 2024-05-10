@@ -1919,7 +1919,8 @@
                 "key": "Create and update calendars",
                 "description": "Manage calendars.",
                 "attrs": {
-                    "Job": "Calendar for user's job"
+                    "Job": "Calendar for user's job",
+                    "Public": "Public calendar's for anyone to subscribe to"
                 },
                 "attrs_types": {
                     "Fields": "Access to creating faction-own calendars"

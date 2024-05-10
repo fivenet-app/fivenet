@@ -178,12 +178,12 @@ export const markerIcons = [
 export const markerFallbackIcon = MapMarkerQuestionIcon;
 
 export function convertDynamicIconNameToComponent(s: string): string {
-    return (
-        uppercaseFirstLetter(
-            s
-                .replace('i-mdi-', '')
-                .toLowerCase()
-                .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', '')),
-        ) + 'Icon'
-    );
+    return s.includes('i-mdi-')
+        ? uppercaseFirstLetter(
+              s
+                  .replace('i-mdi-', '')
+                  .toLowerCase()
+                  .replace(/([-_][a-z])/g, (group) => group.toUpperCase().replace('-', '').replace('_', '')),
+          ) + 'Icon'
+        : s;
 }
