@@ -91,9 +91,9 @@ watchDebounced(query, async () => refresh(), {
 </script>
 
 <template>
-    <UDashboardToolbar v-if="userId === undefined && accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
+    <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
         <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
-            <UFormGroup name="colleagues" :label="$t('common.search')" class="flex-1">
+            <UFormGroup v-if="userId === undefined" name="colleagues" :label="$t('common.search')" class="flex-1">
                 <USelectMenu
                     v-model="query.colleagues"
                     multiple
@@ -130,11 +130,16 @@ watchDebounced(query, async () => refresh(), {
                     <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
                 </USelectMenu>
             </UFormGroup>
+            <div v-else class="flex-1" />
 
-            <UFormGroup name="types" :label="$t('common.type', 2)">
+            <UFormGroup
+                v-if="accessAttrs.some((a) => colleagueSearchAttrs.includes(a))"
+                name="types"
+                :label="$t('common.type', 2)"
+            >
                 <USelectMenu
                     v-model="query.types"
-                    class="min-w-40 flex-initial"
+                    class="w-48 min-w-40 flex-initial"
                     multiple
                     block
                     trailing
