@@ -228,8 +228,9 @@ defineShortcuts({
             <CitizenInfoPopover :user="vehicle.owner" />
         </template>
         <template #actions-data="{ row: vehicle }">
-            <div :key="vehicle.plate" class="flex flex-row justify-end">
+            <div :key="vehicle.plate" class="flex flex-col justify-end md:flex-row">
                 <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
+
                 <UButton
                     v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
                     variant="link"

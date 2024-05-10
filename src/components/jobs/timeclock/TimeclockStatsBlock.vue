@@ -50,6 +50,28 @@ async function updateStats(): Promise<void> {
 watch(props, async () => updateStats());
 
 onBeforeMount(async () => updateStats());
+
+const loadingState = ref(false);
+watch(
+    () => props.loading,
+    () => {
+        if (props.loading) {
+            loadingState.value = true;
+        }
+    },
+);
+watchDebounced(
+    () => props.loading,
+    () => {
+        if (!props.loading) {
+            loadingState.value = false;
+        }
+    },
+    {
+        debounce: 750,
+        maxWait: 1250,
+    },
+);
 </script>
 
 <template>
@@ -62,8 +84,8 @@ onBeforeMount(async () => updateStats());
                     variant="link"
                     icon="i-mdi-refresh"
                     :title="$t('common.refresh')"
-                    :disabled="loading"
-                    :loading="loading"
+                    :disabled="loading || loadingState"
+                    :loading="loading || loadingState"
                     @click="$emit('refresh')"
                 >
                     {{ $t('common.refresh') }}

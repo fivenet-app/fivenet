@@ -223,7 +223,7 @@ defineShortcuts({
             {{ colleague.dateofbirth.value }}
         </template>
         <template #actions-data="{ row: colleague }">
-            <div :key="colleague.id">
+            <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
                 <UButton
                     v-if="
                         can('JobsService.SetJobsUserProps') &&

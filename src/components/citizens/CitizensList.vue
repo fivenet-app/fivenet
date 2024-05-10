@@ -145,11 +145,13 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    {
-        key: 'actions',
-        label: t('common.action', 2),
-        sortable: false,
-    },
+    can('CitizenStoreService.GetUser')
+        ? {
+              key: 'actions',
+              label: t('common.action', 2),
+              sortable: false,
+          }
+        : undefined,
 ].filter((c) => c !== undefined) as { key: string; label: string; class?: string; rowClass?: string; sortable?: boolean }[];
 
 const input = ref<{ input: HTMLInputElement }>();
@@ -328,12 +330,8 @@ defineShortcuts({
             {{ citizen.dateofbirth.value }}
         </template>
         <template #height-data="{ row: citizen }"> {{ citizen.height.value }}cm </template>
-        <template #actions-data="{ row: citizen }">
-            <div
-                v-if="can('CitizenStoreService.GetUser')"
-                :key="citizen.userId"
-                class="flex flex-col justify-end gap-1 md:flex-row"
-            >
+        <template v-if="can('CitizenStoreService.GetUser')" #actions-data="{ row: citizen }">
+            <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
                 <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
 
                 <UButton
