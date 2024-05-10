@@ -89,21 +89,21 @@ func TestFullAuthFlow(t *testing.T) {
 	// user-3: Login with valid account that has one char
 	loginReq.Username = "user-3"
 	loginReq.Password = "password"
-	md := metadata.New(map[string]string{})
-	res, err = client.Login(ctx, loginReq, grpc.Header(&md))
+	mdUser1 := metadata.New(map[string]string{})
+	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser1))
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
 	if res == nil {
 		assert.FailNow(t, "user-3: Login with valid account failed, response is nil")
 	}
-	cookies := md.Get("set-cookie")
+	cookies := mdUser1.Get("set-cookie")
 	cookie, err := http.ParseSetCookie(cookies[0])
 	require.NoError(t, err)
 	userToken := cookie.Value
 	assert.NotEmpty(t, userToken)
 
 	// user-3: Create authenticated metadate and get characters (only has one char)
-	md = metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
+	md := metadata.New(map[string]string{"Authorization": "Bearer " + userToken})
 	ctx = metadata.NewOutgoingContext(ctx, md)
 	getCharsReq := &GetCharactersRequest{}
 	getCharsRes, err := client.GetCharacters(ctx, getCharsReq)
@@ -117,12 +117,17 @@ func TestFullAuthFlow(t *testing.T) {
 	// user-1: Login with valid account (2 chars)
 	loginReq.Username = "user-1"
 	loginReq.Password = "password"
-	res, err = client.Login(ctx, loginReq)
+	mdUser2 := metadata.New(map[string]string{})
+	res, err = client.Login(ctx, loginReq, grpc.Header(&mdUser2))
 	assert.NoError(t, err)
 	assert.NotNil(t, res)
 	if res == nil {
 		assert.FailNow(t, "user-1: Login with valid account failed, response is nil")
 	}
+	cookies = mdUser2.Get("set-cookie")
+	cookie, err = http.ParseSetCookie(cookies[0])
+	require.NoError(t, err)
+	userToken = cookie.Value
 	assert.NotEmpty(t, userToken)
 
 	// user-1: Create authenticated metadate and get characters
