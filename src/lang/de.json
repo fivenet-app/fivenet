@@ -439,7 +439,8 @@
         "unsubscribe": "Abbestellen",
         "guest": "Gast | Gäste",
         "response": "Antwort | Antworten",
-        "invited": "Eingeladen"
+        "invited": "Eingeladen",
+        "note": "Notiz"
     },
     "components": {
         "partials": {
@@ -1762,10 +1763,13 @@
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
                     "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
+                    "Any": "Egal",
+                    "Note": "Notiz",
+                    "AbsenceDate": "Abwesenheitsdatum"
                 },
                 "attrs_types": {
-                    "Access": "Zugriff auf Kollegen"
+                    "Access": "Zugriff auf Kollegen",
+                    "Types": "Kollegen-Eigenschaften"
                 }
             },
             "SetJobsUserProps": {
@@ -1775,10 +1779,13 @@
                     "Own": "Eigene",
                     "Lower_Rank": "Niedrigerer Rang",
                     "Same_Rank": "Gleicher Rang",
-                    "Any": "Egal"
+                    "Any": "Egal",
+                    "Note": "Notiz",
+                    "AbsenceDate": "Abwesenheitsdatum"
                 },
                 "attrs_types": {
-                    "Access": "Zugriff auf Kollegen Eigenschaften"
+                    "Access": "Zugriff auf Kollegen Eigenschaften",
+                    "Types": "Kollegen-Eigenschaften"
                 }
             },
             "ListColleagueActivity": {
@@ -1789,7 +1796,8 @@
                     "FIRED": "Gefeuert",
                     "PROMOTED": "Befördert",
                     "DEMOTED": "Degradiert",
-                    "ABSENCE_DATE": "Abwesenheitsdatum"
+                    "ABSENCE_DATE": "Abwesenheitsdatum",
+                    "NOTE": "Notiz"
                 },
                 "attrs_types": {
                     "Types": "Aktivitäts-Arten"
@@ -2063,7 +2071,9 @@
             }
         },
         "JobsService": {
-            "ErrFailedQuery": "Fehler beim laden der Berufsdaten!"
+            "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
+            "ErrPropsWantedDenied": "Sie haben keine Berechtigung den Bürger zur Fahndung auszuschreiben!",
+            "ErrReasonRequired": "Ein Grund muss gegeben sein!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
