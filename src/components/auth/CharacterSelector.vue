@@ -61,7 +61,7 @@ watch(chars, async () => {
             <CharacterSelectorCard :key="item.userId" :char="item.char" :disabled="!item.available" />
         </UCarousel>
 
-        <UContainer class="mt-4" :ui="{ constrained: 'max-w-xl' }">
+        <UContainer v-if="chars?.find((c) => c.available === false)" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
             <UAlert
                 :ui="{ wrapper: 'relative overflow-hidden' }"
                 icon="i-mdi-information"
