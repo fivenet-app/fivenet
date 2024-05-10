@@ -9,6 +9,8 @@ import CitizenSetMugShotModal from '~/components/citizens/info/props/CitizenSetM
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { File } from '~~/gen/ts/resources/filestore/file';
+import { useAuthStore } from '~/store/auth';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -26,6 +28,9 @@ const emits = defineEmits<{
     (e: 'update:trafficInfractionPoints', value: number): void;
     (e: 'update:mugShot', value?: File): void;
 }>();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
@@ -205,6 +210,19 @@ if (props.registerShortcuts) {
                 {{ $t('components.citizens.CitizenInfoProfile.create_new_document') }}
             </UButton>
         </UTooltip>
+
+        <UButton
+            v-if="
+                activeChar?.job === user.job &&
+                can('JobsService.GetColleague') &&
+                checkIfCanAccessColleague(activeChar!, user, 'JobsService.GetColleague')
+            "
+            block
+            icon="i-mdi-account-circle"
+            :to="`/jobs/colleagues/${user.userId}/info`"
+        >
+            {{ $t('components.citizens.CitizenInfoProfile.go_to_colleague_info') }}
+        </UButton>
 
         <UDivider />
 

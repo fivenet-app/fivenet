@@ -3,7 +3,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 
-export function checkIfCanAccessColleague(activeChar: UserShort | User, target: Colleague, perm: Perms): boolean {
+export function checkIfCanAccessColleague(activeChar: UserShort | User, target: Colleague | User, perm: Perms): boolean {
     const authStore = useAuthStore();
     if (authStore.isSuperuser) {
         return true;

@@ -12,7 +12,7 @@ defineProps<{
 <template>
     <div class="w-full grow lg:flex">
         <div class="flex-1 px-4 py-5 sm:p-0">
-            <dl class="space-y-4 sm:space-y-0 xl:grid xl:grid-cols-2">
+            <dl class="space-y-4 sm:space-y-0 2xl:grid 2xl:grid-cols-2">
                 <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.date_of_birth') }}

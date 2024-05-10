@@ -986,7 +986,8 @@
                 "set_wanted": "Set Person Wanted",
                 "set_job": "Set Person's Job",
                 "set_traffic_points": "Set Traffic Infraction Points",
-                "set_mug_shot": "Set Mug Shot Photo"
+                "set_mug_shot": "Set Mug Shot Photo",
+                "go_to_colleague_info": "Go to Colleague Info"
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {

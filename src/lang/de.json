@@ -986,7 +986,8 @@
                 "set_wanted": "Person zur Fahndung ausschreiben",
                 "set_job": "Job der Person setzen",
                 "set_traffic_points": "Setze StVo Punkte",
-                "set_mug_shot": "Setze Fahndungsfoto"
+                "set_mug_shot": "Setze Fahndungsfoto",
+                "go_to_colleague_info": "Gehe zu Kollegen-Info"
             },
             "CitizenInfoActivityFeedEntry": {
                 "traffic_infraction_points": {
