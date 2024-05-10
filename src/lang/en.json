@@ -2221,7 +2221,8 @@
                 "FIRED": "Fired",
                 "HIRED": "Hired",
                 "PROMOTED": "Promoted",
-                "DEMOTED": "Demoted"
+                "DEMOTED": "Demoted",
+                "NOTE": "Note updated"
             }
         },
         "qualifications": {
