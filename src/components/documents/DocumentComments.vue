@@ -32,13 +32,14 @@ const { $grpc } = useNuxtApp();
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
-    `document-${props.documentId}-comments-${page.value}`,
-    () => getComments(),
-    {
-        immediate: false,
-    },
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`document-${props.documentId}-comments-${page.value}`, () => getComments(), {
+    immediate: false,
+});
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
@@ -167,7 +168,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </div>
 
         <div class="mt-2">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.comment', 2)])" />
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.comment', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.comment', 2)])"
@@ -179,11 +180,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 icon="i-mdi-comment-text-multiple"
                 :focus="focusCommentField"
             />
-            <ul
-                v-if="data && data.comments && data.comments.length > 0"
-                role="list"
-                class="divide-y divide-gray-100 dark:divide-gray-800"
-            >
+
+            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                 <DocumentCommentEntry
                     v-for="(comment, idx) in data?.comments"
                     :key="comment.id"
@@ -192,7 +190,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 />
             </ul>
 
-            <Pagination v-model="page" :pagination="data?.pagination" disable-border />
+            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" disable-border />
         </div>
     </div>
 </template>

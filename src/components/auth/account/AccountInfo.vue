@@ -15,7 +15,7 @@ const { $grpc } = useNuxtApp();
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
-const { data: account, pending, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
+const { data: account, pending: loading, refresh, error } = useLazyAsyncData(`accountinfo`, () => getAccountInfo());
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
@@ -52,7 +52,7 @@ const modal = useModal();
         </template>
         <template v-else>
             <DataPendingBlock
-                v-if="pending"
+                v-if="loading"
                 :message="$t('common.loading', [`${$t('common.account')} ${$t('common.info')}`])"
             />
             <DataErrorBlock

@@ -46,7 +46,7 @@ const queryDoc = ref('');
 
 const {
     data: documents,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc}`, () => listDocuments());
@@ -333,7 +333,7 @@ function removeReference(id: string): void {
                                 <div class="-my-2 mx-0 overflow-x-auto">
                                     <div class="inline-block min-w-full py-2 align-middle">
                                         <DataPendingBlock
-                                            v-if="pending"
+                                            v-if="loading"
                                             :message="$t('common.loading', [$t('common.document', 2)])"
                                         />
                                         <DataErrorBlock

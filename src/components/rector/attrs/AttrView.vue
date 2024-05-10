@@ -24,7 +24,12 @@ const modal = useModal();
 
 const notifications = useNotificatorStore();
 
-const { data: role, pending, refresh, error } = useLazyAsyncData(`rector-roles-${props.roleId}`, () => getRole(props.roleId));
+const {
+    data: role,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`rector-roles-${props.roleId}`, () => getRole(props.roleId));
 
 const changed = ref(false);
 
@@ -255,7 +260,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 <template>
     <div class="w-full">
         <div class="px-1 sm:px-2">
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.role', 2)])" />
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
             <DataNoDataBlock v-else-if="role === null" :type="$t('common.role', 2)" />
 

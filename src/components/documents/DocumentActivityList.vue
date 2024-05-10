@@ -15,9 +15,12 @@ const { $grpc } = useNuxtApp();
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () =>
-    listDocumentActivity(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`document-${props.documentId}-${page.value}`, () => listDocumentActivity());
 
 async function listDocumentActivity(): Promise<ListDocumentActivityResponse> {
     try {
@@ -42,7 +45,7 @@ watch(offset, async () => refresh());
 
 <template>
     <div>
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
+        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-else-if="data === null || data.activity.length === 0"
@@ -56,6 +59,6 @@ watch(offset, async () => refresh());
             </div>
         </template>
 
-        <Pagination v-model="page" :pagination="data?.pagination" />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </div>
 </template>

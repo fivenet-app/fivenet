@@ -9,7 +9,7 @@ import CategoriesModal from '~/components/documents/categories/CategoriesModal.v
 
 const { $grpc } = useNuxtApp();
 
-const { data: categories, pending, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
+const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
 const items = ref<CardElements>([]);
 
@@ -62,9 +62,10 @@ const modal = useModal();
         </template>
     </UDashboardNavbar>
 
-    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.category', 2)])" />
+    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.category', 2)])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.category', 2)])" :retry="refresh" />
     <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
+
     <div v-else class="flex justify-center">
         <CardsList
             :items="items"

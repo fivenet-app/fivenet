@@ -13,7 +13,7 @@ const notifications = useNotificatorStore();
 
 const { t, d } = useI18n();
 
-const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const { data: lawBooks, pending: loading, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
 export type SelectedPenalty = {
     law: Law;
@@ -180,7 +180,7 @@ const columns = [
     <div class="py-2">
         <div class="pb-2 sm:flex sm:items-center">
             <div class="sm:flex-auto">
-                <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.law', 2)])" class="mt-5" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.not_found', [$t('common.law', 2)])"

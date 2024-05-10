@@ -30,9 +30,12 @@ const { $grpc } = useNuxtApp();
 
 const modal = useModal();
 
-const { data, pending, refresh, error } = useLazyAsyncData(`qualification-${props.qualificationId}`, () =>
-    getQualification(props.qualificationId),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualification-${props.qualificationId}`, () => getQualification(props.qualificationId));
 
 async function getQualification(qualificationId: string): Promise<GetQualificationResponse> {
     try {
@@ -104,7 +107,7 @@ const accordionItems = computed(() =>
         </template>
     </UDashboardNavbar>
 
-    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.qualifications', 1)])" />
+    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.qualifications', 1)])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.qualifications', 1)])" :retry="refresh" />
     <DataNoDataBlock
         v-else-if="!qualification"

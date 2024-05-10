@@ -8,7 +8,7 @@ import type { Law } from '~~/gen/ts/resources/laws/laws';
 
 const completorStore = useCompletorStore();
 
-const { data: lawBooks, pending, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
+const { data: lawBooks, pending: loading, refresh, error } = useLazyAsyncData(`lawbooks`, () => completorStore.listLawBooks());
 
 function deletedLawBook(id: string): void {
     if (!lawBooks.value) {
@@ -61,7 +61,7 @@ function updateLaw(event: { id: string; law: Law }): void {
     </UDashboardNavbar>
 
     <UDashboardPanelContent>
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.law', 2)])" />
+        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.law', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.law', 2)])" :retry="refresh" />
         <DataNoDataBlock
             v-else-if="lawBooks === null || lawBooks.length === 0"

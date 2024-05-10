@@ -112,9 +112,9 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
                             </div>
                         </li>
                     </ul>
-
-                    <Pagination v-model="page" :pagination="data?.pagination" />
                 </template>
+
+                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
             </div>
 
             <template #footer>

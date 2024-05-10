@@ -54,7 +54,12 @@ const tabs: { slot: string; label: string; icon: string; permission: Perms }[] =
     },
 ].filter((tab) => can(tab.permission));
 
-const { data: user, pending, refresh, error } = useLazyAsyncData(`citizen-${props.userId}`, () => getUser(props.userId));
+const {
+    data: user,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`citizen-${props.userId}`, () => getUser(props.userId));
 
 async function getUser(userId: number): Promise<User> {
     try {
@@ -118,7 +123,7 @@ const isOpen = ref(false);
             </UDashboardNavbar>
 
             <UDashboardPanelContent>
-                <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.citizen', 1)])" />
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.citizen', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.citizen', 1)])"

@@ -17,9 +17,12 @@ const props = defineProps<{
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${page.value}`, () =>
-    listUserDocuments(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`citizeninfo-documents-${props.userId}-${page.value}`, () => listUserDocuments());
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
@@ -73,7 +76,7 @@ const columns = [
     />
     <template v-else>
         <UTable
-            :loading="pending"
+            :loading="loading"
             :columns="columns"
             :rows="data?.relations"
             :empty-state="{
@@ -129,6 +132,6 @@ const columns = [
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </template>
 </template>

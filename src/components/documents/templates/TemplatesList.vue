@@ -16,7 +16,7 @@ defineOptions({
 
 const { $grpc } = useNuxtApp();
 
-const { data: templates, pending, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
+const { data: templates, pending: loading, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 
 async function listTemplates(): Promise<TemplateShort[]> {
     try {
@@ -43,7 +43,7 @@ function selected(idx: number): TemplateShort {
 </script>
 
 <template>
-    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
+    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
     <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
     <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
 

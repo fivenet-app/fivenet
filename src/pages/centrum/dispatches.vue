@@ -171,7 +171,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                 />
                             </div>
 
-                            <Pagination v-model="page" :pagination="data?.pagination" />
+                            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
                         </div>
                     </Pane>
                 </Splitpanes>

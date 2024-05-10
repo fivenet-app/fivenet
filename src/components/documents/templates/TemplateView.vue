@@ -27,7 +27,7 @@ const reqs = ref<undefined | TemplateRequirements>();
 
 const {
     data: template,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`documents-template-${props.templateId}`, () => getTemplate());
@@ -221,7 +221,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
     </UDashboardNavbar>
 
     <UContainer class="w-full">
-        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.template', 2)])" />
+        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.template', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.template', 2)])" :retry="refresh" />
         <DataNoDataBlock v-else-if="!template" :type="$t('common.template', 2)" />
 

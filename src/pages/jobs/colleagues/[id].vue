@@ -30,7 +30,7 @@ const route = useRoute('jobs-colleagues-id-info');
 
 const {
     data: colleague,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`jobs-colleague-${route.params.id as string}`, () => getColleague(parseInt(route.params.id)));
@@ -87,7 +87,7 @@ const links = [
     <PagesJobsLayout>
         <template #default>
             <UDashboardPanelContent>
-                <DataPendingBlock v-if="!colleague && pending" :message="$t('common.loading', [$t('common.colleague', 1)])" />
+                <DataPendingBlock v-if="!colleague && loading" :message="$t('common.loading', [$t('common.colleague', 1)])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.colleague', 1)])"
@@ -95,6 +95,7 @@ const links = [
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="colleague === null || !colleague.colleague" />
+
                 <template v-else>
                     <ColleagueInfo :colleague="colleague.colleague" />
 

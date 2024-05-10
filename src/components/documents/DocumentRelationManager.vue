@@ -51,7 +51,7 @@ const queryCitizens = ref('');
 
 const {
     data: citizens,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId?.toString()}-relations-citzens-${queryCitizens.value}`, () => listCitizens());
@@ -295,7 +295,7 @@ function removeRelation(id: string): void {
                                 <div class="-my-2 mx-0 overflow-x-auto">
                                     <div class="inline-block min-w-full py-2 align-middle">
                                         <DataPendingBlock
-                                            v-if="pending"
+                                            v-if="loading"
                                             :message="$t('common.loading', [$t('common.citizen', 2)])"
                                         />
                                         <DataErrorBlock

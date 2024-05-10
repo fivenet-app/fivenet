@@ -15,9 +15,12 @@ const props = defineProps<{
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${page.value}`, () =>
-    listUserActivity(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${page.value}`, () => listUserActivity());
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
@@ -42,7 +45,7 @@ watch(offset, async () => refresh());
 <template>
     <div>
         <DataPendingBlock
-            v-if="pending"
+            v-if="loading"
             :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"
         />
         <DataErrorBlock
@@ -61,6 +64,6 @@ watch(offset, async () => refresh());
             </li>
         </ul>
 
-        <Pagination v-model="page" :pagination="data?.pagination" />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </div>
 </template>

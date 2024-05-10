@@ -50,9 +50,13 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 
 const selectedUsersIds = computed(() => (props.userId !== undefined ? [props.userId] : query.colleagues.map((u) => u.userId)));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
-    `jobs-colleague-${page.value}-${selectedUsersIds.value.join(',')}-${query.types.join(':')}`,
-    () => listColleagueActivity(selectedUsersIds.value, query.types),
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`jobs-colleague-${page.value}-${selectedUsersIds.value.join(',')}-${query.types.join(':')}`, () =>
+    listColleagueActivity(selectedUsersIds.value, query.types),
 );
 
 async function listColleagueActivity(
@@ -152,7 +156,7 @@ watchDebounced(query, async () => refresh(), {
     </UDashboardToolbar>
 
     <DataPendingBlock
-        v-if="pending"
+        v-if="loading"
         :message="$t('common.loading', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
     />
     <DataErrorBlock
@@ -171,5 +175,5 @@ watchDebounced(query, async () => refresh(), {
         </li>
     </ul>
 
-    <Pagination v-model="page" :pagination="data?.pagination" />
+    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

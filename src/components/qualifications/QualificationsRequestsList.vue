@@ -23,9 +23,13 @@ const { $grpc } = useNuxtApp();
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
-    `qualifications-requests-${page.value}-${props.qualificationId}`,
-    () => listQualificationsRequests(props.qualificationId),
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualifications-requests-${page.value}-${props.qualificationId}`, () =>
+    listQualificationsRequests(props.qualificationId),
 );
 
 async function listQualificationsRequests(
@@ -67,7 +71,7 @@ watch(offset, async () => refresh());
         </template>
 
         <div>
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.request', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.request', 2)])"
@@ -91,7 +95,7 @@ watch(offset, async () => refresh());
         </div>
 
         <template #footer>
-            <Pagination v-model="page" :pagination="data?.pagination" disable-border />
+            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" disable-border />
         </template>
     </UCard>
 </template>

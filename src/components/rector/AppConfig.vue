@@ -19,7 +19,7 @@ const { streamerMode } = storeToRefs(settingsStore);
 
 const notifications = useNotificatorStore();
 
-const { data: config, pending, refresh, error } = useLazyAsyncData(`rector-appconfig`, () => getAppConfig());
+const { data: config, pending: loading, refresh, error } = useLazyAsyncData(`rector-appconfig`, () => getAppConfig());
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
@@ -259,7 +259,7 @@ const tabs = [
                 </template>
             </UDashboardNavbar>
 
-            <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.setting', 2)])" />
+            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.setting', 2)])" />
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.setting', 2)])"

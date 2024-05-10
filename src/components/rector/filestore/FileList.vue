@@ -172,7 +172,7 @@ const columns = [
                 </template>
             </UTable>
 
-            <Pagination v-model="page" :pagination="data?.pagination" infinite />
+            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" infinite />
         </template>
     </template>
 </template>

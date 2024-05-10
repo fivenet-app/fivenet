@@ -44,7 +44,12 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(
     `rector-audit-${page.value}-${query.from}-${query.to}-${query.method}-${query.service}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
     () => viewAuditLog(),
 );
@@ -279,7 +284,7 @@ const columns = [
     <div class="relative overflow-x-auto">
         <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.audit_log', 2)])" :retry="refresh" />
 
-        <UTable v-else :loading="pending" :columns="columns" :rows="data?.logs">
+        <UTable v-else :loading="loading" :columns="columns" :rows="data?.logs">
             <template #actions-data="{ row }">
                 <UButton
                     variant="link"
@@ -312,6 +317,6 @@ const columns = [
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </div>
 </template>

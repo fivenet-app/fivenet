@@ -55,7 +55,7 @@ const offset = ref(0);
 
 const {
     data: requests,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.doc.id}-requests-${offset.value}`, () => listDocumnetReqs(props.doc.id));
@@ -176,7 +176,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <div>
-                        <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.request', 2)])" />
+                        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.request', 2)])" />
                         <DataErrorBlock
                             v-else-if="error"
                             :title="$t('common.unable_to_load', [$t('common.request', 2)])"

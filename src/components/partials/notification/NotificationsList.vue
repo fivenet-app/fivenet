@@ -41,9 +41,12 @@ const query = reactive<Schema>({
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending, refresh, error } = useLazyAsyncData(`notifications-${page.value}-${query.includeRead}`, () =>
-    getNotifications(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`notifications-${page.value}-${query.includeRead}`, () => getNotifications());
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
@@ -151,7 +154,7 @@ const canSubmit = ref(true);
     <div class="mt-2 flow-root">
         <div class="-my-2 mx-0 overflow-x-auto">
             <div class="inline-block min-w-full px-1 py-2 align-middle">
-                <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.notification', 2)])" />
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.notification', 2)])" />
                 <DataErrorBlock
                     v-else-if="error"
                     :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
@@ -239,7 +242,7 @@ const canSubmit = ref(true);
                     </ul>
                 </template>
 
-                <Pagination v-model="page" :pagination="data?.pagination" />
+                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
             </div>
         </div>
     </div>

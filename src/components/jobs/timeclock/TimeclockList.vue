@@ -341,7 +341,7 @@ const input = ref<{ input: HTMLInputElement }>();
             </template>
         </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" />
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </template>
 
     <UAccordion v-if="data && data.stats" :items="[{ slot: 'stats', label: $t('common.stats') }]" class="px-3 py-0.5">

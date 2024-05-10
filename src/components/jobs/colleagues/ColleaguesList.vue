@@ -255,5 +255,5 @@ defineShortcuts({
         </template>
     </UTable>
 
-    <Pagination v-model="page" :pagination="data?.pagination" />
+    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

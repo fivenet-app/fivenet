@@ -44,7 +44,7 @@ const commentCount = ref<undefined | number>();
 
 const {
     data: doc,
-    pending,
+    pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(`document-${props.documentId}`, () => getDocument(props.documentId));
@@ -249,7 +249,7 @@ defineShortcuts({
         </template>
     </UDashboardNavbar>
 
-    <DataPendingBlock v-if="pending" :message="$t('common.loading', [$t('common.document', 2)])" />
+    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.document', 2)])" />
     <template v-else-if="error">
         <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DocumentRequestAccess v-if="error.message.endsWith('ErrDocViewDenied')" :document-id="documentId" class="mt-2" />
