@@ -57,7 +57,7 @@
     },
     "devDependencies": {
         "@nuxt/devtools": "1.2.0",
-        "@nuxt/eslint-config": "^0.3.10",
+        "@nuxt/eslint-config": "^0.3.12",
         "@nuxtjs/i18n": "8.3.1",
         "@pinia-plugin-persistedstate/nuxt": "1.2.0",
         "@protobuf-ts/plugin": "2.9.4",
