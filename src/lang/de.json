@@ -2221,7 +2221,8 @@
                 "FIRED": "Gefeuert",
                 "HIRED": "Angestellt",
                 "PROMOTED": "Befördert",
-                "DEMOTED": "Degradiert"
+                "DEMOTED": "Degradiert",
+                "NOTE": "Notiz aktualisiert"
             }
         },
         "qualifications": {
