@@ -142,7 +142,7 @@ export const useAuthStore = defineStore('auth', {
                 throw e;
             }
         },
-        async chooseCharacter(charId?: number, redirect?: string): Promise<void> {
+        async chooseCharacter(charId?: number, redirect?: boolean): Promise<void> {
             if (charId === undefined) {
                 charId = this.lastCharID;
             }
@@ -153,7 +153,7 @@ export const useAuthStore = defineStore('auth', {
                     useClipboardStore().clear();
                 }
 
-                const call = $grpc.getAuthClient().chooseCharacter({ charId });
+                const call = $grpc.getAuthClient().chooseCharacter({ charId: charId });
                 const { response } = await call;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');
@@ -164,19 +164,17 @@ export const useAuthStore = defineStore('auth', {
                 this.setPermissions(response.permissions);
                 this.setJobProps(response.jobProps);
 
-                if (redirect !== undefined) {
+                if (redirect) {
+                    const redirect = useRoute().query.redirect ?? useSettingsStore().startpage ?? '/overview';
                     const path = redirect || '/overview';
                     const url = new URL('https://example.com' + path);
+
                     // @ts-ignore the route should be valid, as we test it against a valid URL list
                     await navigateTo({
                         path: url.pathname,
                         query: parseQuery(url.search),
                         hash: url.hash,
                     });
-                } else {
-                    // @ts-ignore the route should be valid, as we test it against a valid URL list
-                    const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
-                    await navigateTo(target);
                 }
             } catch (e) {
                 $grpc.handleError(e as RpcError);

@@ -1,4 +1,4 @@
-import { type RouteLocationNormalized } from 'vue-router';
+import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 
@@ -25,14 +25,30 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
             if (lastCharID.value > 0) {
                 const { setActiveChar, setPermissions, setJobProps } = authStore;
                 try {
-                    await authStore.chooseCharacter(authStore.lastCharID, redirect.toString());
+                    await authStore.chooseCharacter(authStore.lastCharID);
+
+                    if (redirect !== undefined) {
+                        const path = redirect || '/overview';
+                        const url = new URL('https://example.com' + path);
+                        // @ts-ignore the route should be valid, as we test it against a valid URL list
+                        await navigateTo({
+                            path: url.pathname,
+                            query: parseQuery(url.search),
+                            hash: url.hash,
+                        });
+                    } else {
+                        // @ts-ignore the route should be valid, as we test it against a valid URL list
+                        const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
+                        await navigateTo(target);
+                    }
                 } catch (e) {
                     setActiveChar(null);
                     setPermissions([]);
                     setJobProps(undefined);
+
                     return navigateTo({
                         name: 'auth-character-selector',
-                        query: { redirect },
+                        query: { redirect: redirect },
                     });
                 }
             }

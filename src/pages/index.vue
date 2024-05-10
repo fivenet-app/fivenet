@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { parseQuery } from 'vue-router';
 import type { Button } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
@@ -21,13 +22,23 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
 
-const router = useRouter();
+const settingsStore = useSettingsStore();
+const { startpage } = storeToRefs(settingsStore);
+
+const route = useRoute('index');
 
 onBeforeMount(async () => {
     if (username.value) {
+        const redirect = route.query.redirect ?? startpage.value ?? '/overview';
+        const path = redirect || '/overview';
+        const url = new URL('https://example.com' + path);
+
         // @ts-ignore the route should be valid, as we test it against a valid URL list
-        const target = router.resolve(useSettingsStore().startpage ?? '/overview');
-        return navigateTo(target);
+        await navigateTo({
+            path: url.pathname,
+            query: parseQuery(url.search),
+            hash: url.hash,
+        });
     }
 });
 

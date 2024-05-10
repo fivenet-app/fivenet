@@ -28,6 +28,28 @@ const total = computed(() => props.pagination?.totalCount ?? 0);
 const pageSize = computed(() => props.pagination?.pageSize ?? 1);
 
 const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
+
+const loadingState = ref(false);
+watch(
+    () => props.loading,
+    () => {
+        if (props.loading) {
+            loadingState.value = true;
+        }
+    },
+);
+watchDebounced(
+    () => props.loading,
+    () => {
+        if (!props.loading) {
+            loadingState.value = false;
+        }
+    },
+    {
+        debounce: 750,
+        maxWait: 1250,
+    },
+);
 </script>
 
 <template>
@@ -62,10 +84,10 @@ const totalPages = computed(() => Math.ceil(total.value / pageSize.value));
             <UButton
                 v-if="refresh"
                 variant="link"
-                trailing-icon="i-mdi-refresh"
+                icon="i-mdi-refresh"
                 :title="$t('common.refresh')"
-                :disabled="loading"
-                :loading="loading"
+                :disabled="loading || loadingState"
+                :loading="loading || loadingState"
                 @click="refresh()"
             >
                 {{ $t('common.refresh') }}

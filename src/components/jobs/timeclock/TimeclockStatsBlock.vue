@@ -60,7 +60,7 @@ onBeforeMount(async () => updateStats());
 
                 <UButton
                     variant="link"
-                    trailing-icon="i-mdi-refresh"
+                    icon="i-mdi-refresh"
                     :title="$t('common.refresh')"
                     :disabled="loading"
                     :loading="loading"

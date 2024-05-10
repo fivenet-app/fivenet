@@ -23,7 +23,7 @@ const props = withDefaults(
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
-    await chooseCharacter(props.char.userId).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await chooseCharacter(props.char.userId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 </script>
 

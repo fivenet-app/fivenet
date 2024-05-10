@@ -12,6 +12,8 @@ export function jobsUserActivityTypeBGColor(activityType: JobsUserActivityType |
             return '!text-green-500';
         case JobsUserActivityType.DEMOTED:
             return '!text-orange-500';
+        case JobsUserActivityType.NOTE:
+            return '!text-teal-500';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return '!text-info-500';
@@ -30,6 +32,8 @@ export function jobsUserActivityTypeIcon(activityType: JobsUserActivityType | un
             return 'i-mdi-chevron-double-up';
         case JobsUserActivityType.DEMOTED:
             return 'i-mdi-chevron-double-down';
+        case JobsUserActivityType.NOTE:
+            return 'i-mdi-note-edit';
         case JobsUserActivityType.UNSPECIFIED:
         default:
             return 'i-mdi-help';

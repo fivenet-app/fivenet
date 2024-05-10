@@ -103,7 +103,7 @@ watch(editing, () => {
 
 <template>
     <UContainer class="w-full">
-        <div class="w-full grow lg:flex">
+        <div class="w-full grow lg:flex lg:flex-col">
             <div class="flex-1 px-4 py-5 sm:p-0">
                 <dl class="space-y-4 sm:space-y-0 xl:grid xl:grid-cols-2">
                     <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
@@ -123,62 +123,69 @@ watch(editing, () => {
                             <PhoneNumberBlock :number="colleague.phoneNumber" />
                         </dd>
                     </div>
+
+                    <!-- Note -->
+                    <div
+                        v-if="colleague && canDo.view"
+                        class="col-span-2 border-b border-gray-100 px-4 py-5 sm:flex dark:border-gray-800"
+                    >
+                        <UForm :schema="schema" :state="state" class="w-full" @submit="onSubmitThrottle">
+                            <div class="flex items-center">
+                                <h4 class="flex-1 text-sm font-semibold leading-6">
+                                    {{ $t('common.note') }}
+                                </h4>
+
+                                <div v-if="canDo.edit" class="mb-1">
+                                    <UButton
+                                        v-if="!editing"
+                                        icon="i-mdi-pencil"
+                                        :loading="!canSubmit"
+                                        @click="editing = !editing"
+                                    />
+                                    <template v-else>
+                                        <UButtonGroup>
+                                            <UButton type="submit" icon="i-mdi-content-save" :loading="!canSubmit" />
+                                            <UButton
+                                                color="red"
+                                                icon="i-mdi-cancel"
+                                                :loading="!canSubmit"
+                                                @click="editing = !editing"
+                                            />
+                                        </UButtonGroup>
+                                    </template>
+                                </div>
+                            </div>
+
+                            <div class="flex flex-1 flex-col gap-2">
+                                <template v-if="!editing">
+                                    <div class="w-full flex-1">
+                                        <p class="prose prose-invert whitespace-pre-wrap text-base-800 dark:text-base-300">
+                                            {{ colleague?.props?.note ?? $t('common.na') }}
+                                        </p>
+                                    </div>
+                                </template>
+                                <template v-else>
+                                    <UFormGroup name="note" class="w-full">
+                                        <UTextarea
+                                            v-model="state.note"
+                                            block
+                                            :rows="6"
+                                            :maxrows="10"
+                                            name="note"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </UFormGroup>
+
+                                    <UFormGroup name="reason" :label="$t('common.reason')" class="w-full" required>
+                                        <UInput v-model="state.reason" type="text" name="reason" />
+                                    </UFormGroup>
+                                </template>
+                            </div>
+                        </UForm>
+                    </div>
                 </dl>
             </div>
         </div>
-
-        <!-- Note -->
-        <UForm
-            v-if="colleague && canDo.view"
-            :schema="schema"
-            :state="state"
-            class="w-full flex-col"
-            @submit="onSubmitThrottle"
-        >
-            <div class="flex items-center">
-                <h4 class="flex-1 text-base font-semibold leading-6">{{ $t('common.note') }}:</h4>
-
-                <template v-if="canDo.edit">
-                    <UButton
-                        v-if="!editing"
-                        variant="link"
-                        icon="i-mdi-pencil"
-                        :loading="!canSubmit"
-                        @click="editing = !editing"
-                    />
-                    <div v-else class="flex flex-row gap-1">
-                        <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
-                        <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
-                    </div>
-                </template>
-            </div>
-
-            <div class="flex flex-1 flex-col gap-2">
-                <template v-if="!editing">
-                    <div class="w-full flex-1">
-                        <p class="prose prose-invert whitespace-pre-wrap">
-                            {{ colleague?.props?.note ?? $t('common.na') }}
-                        </p>
-                    </div>
-                </template>
-                <template v-else>
-                    <UFormGroup name="note" class="w-full">
-                        <UTextarea
-                            v-model="state.note"
-                            block
-                            :rows="6"
-                            :maxrows="10"
-                            name="note"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
-                    </UFormGroup>
-
-                    <UFormGroup name="reason" :label="$t('common.reason')" class="w-full" required>
-                        <UInput v-model="state.reason" type="text" name="reason" />
-                    </UFormGroup>
-                </template>
-            </div>
-        </UForm>
     </UContainer>
 </template>

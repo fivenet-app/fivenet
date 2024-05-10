@@ -110,7 +110,7 @@ export const useNotificatorStore = defineStore('notifications', {
                             break;
                         } else if (resp.data.oneofKind === 'refreshToken') {
                             console.info('Notificator: Refreshing token...');
-                            await authStore.chooseCharacter();
+                            await authStore.chooseCharacter(undefined);
                             break;
                         } else if (resp.data.oneofKind === 'jobProps') {
                             authStore.setJobProps(resp.data.jobProps);

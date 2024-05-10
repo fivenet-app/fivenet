@@ -92,44 +92,21 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		return resp, nil
 	}
 
-	// Field Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
-	}
-	if len(types) == 0 && userInfo.SuperUser {
-		types = append(types, "AbsenceDate", "Note")
-	}
-
-	columns := []jet.Projection{
-		tUser.Identifier,
-		tUser.Job,
-		tUser.JobGrade,
-		tUser.Firstname,
-		tUser.Lastname,
-		tUser.Dateofbirth,
-		tUser.PhoneNumber,
-		tUserProps.Avatar.AS("colleague.avatar"),
-		tJobsUserProps.UserID,
-		tJobsUserProps.Job,
-		tJobsUserProps.AbsenceBegin,
-		tJobsUserProps.AbsenceEnd,
-	}
-	for _, fType := range types {
-		switch fType {
-		case "Note":
-			columns = append(columns, tJobsUserProps.Note)
-		}
-	}
-
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
-			columns...,
+			tUser.Identifier,
+			tUser.Job,
+			tUser.JobGrade,
+			tUser.Firstname,
+			tUser.Lastname,
+			tUser.Dateofbirth,
+			tUser.PhoneNumber,
+			tUserProps.Avatar.AS("colleague.avatar"),
+			tJobsUserProps.UserID,
+			tJobsUserProps.Job,
+			tJobsUserProps.AbsenceBegin,
+			tJobsUserProps.AbsenceEnd,
 		).
 		OPTIMIZER_HINTS(jet.OptimizerHint("idx_users_firstname_lastname_fulltext")).
 		FROM(
@@ -319,7 +296,6 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 }
 
 func (s *Server) getJobsUserProps(ctx context.Context, userId int32, job string, fields []string) (*jobs.JobsUserProps, error) {
-	tJobsUserProps := tJobsUserProps.AS("jobsuserprops")
 	columns := []jet.Projection{
 		tJobsUserProps.Job,
 		tJobsUserProps.AbsenceBegin,
@@ -440,6 +416,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		req.Props.AbsenceEnd = props.AbsenceEnd
 	}
 
+	tJobsUserProps := table.FivenetJobsUserProps
 	updateSets := []jet.ColumnAssigment{
 		tJobsUserProps.AbsenceBegin.SET(jet.DateExp(jet.Raw("VALUES(`absence_begin`)"))),
 		tJobsUserProps.AbsenceEnd.SET(jet.DateExp(jet.Raw("VALUES(`absence_end`)"))),
@@ -487,10 +464,8 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	}
 
 	// Compare absence dates if any were set
-	if props.AbsenceBegin == nil ||
-		props.AbsenceEnd == nil ||
-		((req.Props.AbsenceBegin == nil || req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0) &&
-			(req.Props.AbsenceEnd == nil || req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0)) {
+	if req.Props.AbsenceBegin != nil && (props.AbsenceBegin == nil || req.Props.AbsenceBegin.AsTime().Compare(props.AbsenceBegin.AsTime()) != 0) ||
+		req.Props.AbsenceEnd != nil && (props.AbsenceEnd == nil || req.Props.AbsenceEnd.AsTime().Compare(props.AbsenceEnd.AsTime()) != 0) {
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
@@ -713,9 +688,9 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 	if len(types) == 0 {
 		if !userInfo.SuperUser {
 			return resp, nil
+		} else {
+			types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE")
 		}
-
-		types = append(types, "HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE")
 	}
 
 	if len(req.ActivityTypes) > 0 {
