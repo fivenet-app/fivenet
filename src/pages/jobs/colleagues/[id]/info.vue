@@ -6,12 +6,13 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useAuthStore } from '~/store/auth';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 
 useHead({
-    title: 'pages.citizens.id.title',
+    title: 'pages.jobs.colleagues.single.title',
 });
 definePageMeta({
-    title: 'pages.citizens.id.title',
+    title: 'pages.jobs.colleagues.single.title',
     requiresAuth: true,
     permission: 'JobsService.GetColleague',
     validate: async (route) => {
@@ -42,6 +43,13 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     note: props.colleague?.props?.note ?? '',
+});
+watch(props, () => {
+    if (!props.colleague?.props) {
+        return;
+    }
+
+    state.note = props.colleague.props.note ?? '';
 });
 
 async function setJobsUserNote(values: Schema): Promise<void | SetJobsUserPropsResponse> {
@@ -74,10 +82,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     editing.value = !editing.value;
 }, 1000);
 
-const canEdit =
-    can('JobsService.SetJobsUserProps') &&
-    attr('JobsService.SetJobsUserProps', 'Types', 'Note') &&
-    checkIfCanAccessColleague(activeChar.value!, props.colleague, 'JobsService.SetJobsUserProps');
+const canDo = computed(() => ({
+    view: can('JobsService.GetColleague') && attr('JobsService.GetColleague', 'Types', 'Note'),
+    edit:
+        can('JobsService.SetJobsUserProps') &&
+        attr('JobsService.SetJobsUserProps', 'Types', 'Note') &&
+        checkIfCanAccessColleague(activeChar.value!, props.colleague, 'JobsService.SetJobsUserProps'),
+}));
 
 const editing = ref(false);
 
@@ -90,12 +101,42 @@ watch(editing, () => {
 
 <template>
     <UContainer class="w-full">
-        <!-- Note -->
-        <UForm v-if="colleague" :schema="schema" :state="state" class="w-full flex-col" @submit="onSubmitThrottle">
-            <div class="flex items-center">
-                <h4 v-if="canEdit" class="flex-1 text-base font-semibold leading-6">{{ $t('common.note') }}:</h4>
+        <div class="w-full grow lg:flex">
+            <div class="flex-1 px-4 py-5 sm:p-0">
+                <dl class="space-y-4 sm:space-y-0 xl:grid xl:grid-cols-2">
+                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                        <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
+                            {{ $t('common.date_of_birth') }}
+                        </dt>
+                        <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
+                            {{ colleague.dateofbirth }}
+                        </dd>
+                    </div>
 
-                <template v-if="canEdit">
+                    <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                        <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
+                            {{ $t('common.phone_number') }}
+                        </dt>
+                        <dd class="mt-1 text-sm text-base-800 sm:col-span-2 sm:ml-6 sm:mt-0 dark:text-base-300">
+                            <PhoneNumberBlock :number="colleague.phoneNumber" />
+                        </dd>
+                    </div>
+                </dl>
+            </div>
+        </div>
+
+        <!-- Note -->
+        <UForm
+            v-if="colleague && canDo.view"
+            :schema="schema"
+            :state="state"
+            class="w-full flex-col"
+            @submit="onSubmitThrottle"
+        >
+            <div class="flex items-center">
+                <h4 class="flex-1 text-base font-semibold leading-6">{{ $t('common.note') }}:</h4>
+
+                <template v-if="canDo.edit">
                     <UButton
                         v-if="!editing"
                         variant="link"
@@ -104,7 +145,7 @@ watch(editing, () => {
                         @click="editing = !editing"
                     />
                     <div v-else class="flex flex-row gap-1">
-                        <UButton variant="link" icon="i-mdi-content-save" :loading="!canSubmit" @click="onSubmitThrottle" />
+                        <UButton type="submit" variant="link" icon="i-mdi-content-save" :loading="!canSubmit" />
                         <UButton variant="link" icon="i-mdi-cancel" :loading="!canSubmit" @click="editing = !editing" />
                     </div>
                 </template>
@@ -114,7 +155,7 @@ watch(editing, () => {
                 <template v-if="!editing">
                     <div class="w-full flex-1">
                         <p class="prose prose-invert">
-                            {{ colleague?.props?.note }}
+                            {{ colleague?.props?.note ?? $t('common.na') }}
                         </p>
                     </div>
                 </template>

@@ -91,14 +91,15 @@
             "colleagues": {
                 "title": "Colleagues",
                 "single": {
-                    "title": "Colleague Info"
+                    "title": "Colleague Info",
+                    "activity": "Colleague Info: Activity",
+                    "conduct": "Colleague Info: Conduct Register",
+                    "qualifications": "Colleague Info: Qualifications",
+                    "timeclock": "Colleague Info: Timeclock"
                 }
             },
             "conduct": {
                 "title": "Conduct Register"
-            },
-            "requests": {
-                "title": "Requests"
             },
             "timeclock": {
                 "title": "Time Clock"

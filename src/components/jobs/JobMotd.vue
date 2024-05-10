@@ -20,7 +20,7 @@ async function getMOTD(): Promise<GetMOTDResponse> {
 }
 
 const schema = z.object({
-    motd: z.string().min(0).max(512),
+    motd: z.string().min(0).max(1024),
 });
 
 type Schema = z.output<typeof schema>;
@@ -51,23 +51,22 @@ async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
     }
 }
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await setMOTD(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-    refresh();
-    editing.value = !editing.value;
-}, 1000);
-
 const canEdit = can('JobsService.SetMOTD');
 
 const editing = ref(false);
 
-watch(editing, () => {
+watch(editing, async () => {
     if (!editing.value) {
         refresh();
     }
 });
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+    await setMOTD(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    editing.value = !editing.value;
+}, 1000);
 </script>
 
 <template>

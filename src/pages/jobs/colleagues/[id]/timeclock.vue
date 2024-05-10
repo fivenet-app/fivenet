@@ -3,10 +3,10 @@ import type { TypedRouteFromName } from '@typed-router';
 import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
 
 useHead({
-    title: 'pages.citizens.id.title',
+    title: 'pages.jobs.colleagues.single.timeclock',
 });
 definePageMeta({
-    title: 'pages.citizens.id.title',
+    title: 'pages.jobs.colleagues.single.timeclock',
     requiresAuth: true,
     permission: 'JobsTimeclockService.ListTimeclock',
     validate: async (route) => {

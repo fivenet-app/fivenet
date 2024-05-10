@@ -3,10 +3,10 @@ import type { TypedRouteFromName } from '@typed-router';
 import ConductList from '~/components/jobs/conduct/ConductList.vue';
 
 useHead({
-    title: 'pages.citizens.id.title',
+    title: 'pages.jobs.colleagues.single.conduct',
 });
 definePageMeta({
-    title: 'pages.citizens.id.title',
+    title: 'pages.jobs.colleagues.single.conduct',
     requiresAuth: true,
     permission: 'JobsConductService.ListConductEntries',
     validate: async (route) => {

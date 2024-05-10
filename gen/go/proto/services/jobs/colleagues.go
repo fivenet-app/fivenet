@@ -257,6 +257,9 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 	if typesAttr != nil {
 		types = typesAttr.([]string)
 	}
+	if userInfo.SuperUser {
+		types = []string{"Note"}
+	}
 
 	withColumns := []jet.Projection{}
 	for _, fType := range types {
@@ -309,17 +312,31 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 	}, nil
 }
 
-func (s *Server) getJobsUserProps(ctx context.Context, userId int32) (*jobs.JobsUserProps, error) {
+func (s *Server) getJobsUserProps(ctx context.Context, userId int32, job string, fields []string) (*jobs.JobsUserProps, error) {
 	tJobsUserProps := tJobsUserProps.AS("jobsuserprops")
+	columns := []jet.Projection{
+		tJobsUserProps.Job,
+		tJobsUserProps.AbsenceBegin,
+		tJobsUserProps.AbsenceEnd,
+	}
+
+	for _, field := range fields {
+		switch field {
+		case "Note":
+			columns = append(columns, tJobsUserProps.Note)
+		}
+	}
+
 	stmt := tJobsUserProps.
 		SELECT(
 			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
+			columns...,
 		).
 		FROM(tJobsUserProps).
-		WHERE(tJobsUserProps.UserID.EQ(jet.Int32(userId))).
+		WHERE(jet.AND(
+			tJobsUserProps.UserID.EQ(jet.Int32(userId)),
+			tJobsUserProps.Job.EQ(jet.String(job)),
+		)).
 		LIMIT(1)
 
 	dest := &jobs.JobsUserProps{
@@ -375,11 +392,6 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		return nil, errorsjobs.ErrFailedQuery
 	}
 
-	props, err := s.getJobsUserProps(ctx, req.Props.UserId)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
-
 	// Types Permission Check
 	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceSetJobsUserPropsPerm, permsjobs.JobsServiceSetJobsUserPropsTypesPermField)
 	if err != nil {
@@ -389,10 +401,23 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	if typesAttr != nil {
 		types = typesAttr.([]string)
 	}
+	if len(types) == 0 && userInfo.SuperUser {
+		types = append(types, "AbsenceDate", "Note")
+	}
+
+	props, err := s.getJobsUserProps(ctx, req.Props.UserId, targetUser.Job, types)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+	}
 
 	absenceBegin := jet.DateExp(jet.NULL)
 	absenceEnd := jet.DateExp(jet.NULL)
 	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
+		// Allow users to set their own absence date regardless of types perms check
+		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") {
+			return nil, errorsjobs.ErrPropsWantedDenied
+		}
+
 		if req.Props.AbsenceBegin.Timestamp == nil {
 			req.Props.AbsenceBegin = nil
 		} else {
@@ -495,7 +520,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	props, err = s.getJobsUserProps(ctx, req.Props.UserId)
+	props, err = s.getJobsUserProps(ctx, req.Props.UserId, targetUser.Job, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
