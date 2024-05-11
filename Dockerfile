@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1
 
 # Frontend Build
-FROM docker.io/library/node:20.12.2-alpine3.18 AS nodebuilder
+FROM docker.io/library/node:20.13.1-alpine3.18 AS nodebuilder
 ARG NUXT_UI_PRO_LICENSE
 WORKDIR /app
 COPY . ./
@@ -13,7 +13,7 @@ RUN rm -rf ./.nuxt/ && \
     NUXT_UI_PRO_LICENSE=${NUXT_UI_PRO_LICENSE} pnpm generate
 
 # Backend Build
-FROM docker.io/library/golang:1.22.2 AS gobuilder
+FROM docker.io/library/golang:1.22.3 AS gobuilder
 WORKDIR /go/src/github.com/fivenet-app/fivenet/
 COPY . ./
 RUN apt-get update && \
