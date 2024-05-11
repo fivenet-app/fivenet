@@ -53,6 +53,7 @@ const categories = computed(() => [
             { shortcuts: ['G', 'V'], name: t('common.goto_item', [t('common.vehicle', 2)]) },
             { shortcuts: ['G', 'D'], name: t('common.goto_item', [t('common.document', 2)]) },
             { shortcuts: ['G', 'J'], name: t('common.goto_item', [t('common.job')]) },
+            { shortcuts: ['G', 'K'], name: t('common.goto_item', [t('common.calendar')]) },
             { shortcuts: ['G', 'Q'], name: t('common.goto_item', [t('common.qualification', 2)]) },
             { shortcuts: ['G', 'M'], name: t('common.goto_item', [t('common.livemap')]) },
             { shortcuts: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },

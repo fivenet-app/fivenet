@@ -20,23 +20,25 @@ import type {
 import { useAuthStore } from './auth';
 
 export interface CalendarState {
+    activeCalendarIds: string[];
+    weeklyView: boolean;
     calendars: Calendar[];
     entries: CalendarEntry[];
-    activeCalendarIds: string[];
 }
 
 export const useCalendarStore = defineStore('calendar', {
     state: () =>
         ({
+            activeCalendarIds: [],
+            weeklyView: false,
             calendars: [],
             entries: [],
-            activeCalendarIds: [],
         }) as CalendarState,
     persist: {
         key(id) {
             return `state-${useAuthStore().activeChar?.userId}-${id}`;
         },
-        paths: ['activeCalendarIds'],
+        paths: ['activeCalendarIds', 'weeklyView'],
     },
     actions: {
         // Calendars

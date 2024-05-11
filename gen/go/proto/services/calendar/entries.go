@@ -64,7 +64,8 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		),
 	)
 
-	condition = condition.AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTime(int(req.Year), time.Month(req.Month), 1, 0, 0, 0)))
+	condition = condition.AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTime(int(req.Year), time.Month(req.Month), 1, 0, 0, 0))).
+		AND(tCalendarEntry.StartTime.LT(jet.DateTime(int(req.Year), time.Month(req.Month+1), 1, 0, 0, 0)))
 
 	resp := &ListCalendarEntriesResponse{}
 
@@ -279,6 +280,7 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 				tCalendarEntry.EndTime,
 				tCalendarEntry.Title,
 				tCalendarEntry.Content,
+				tCalendarEntry.Closed,
 				tCalendarEntry.RsvpOpen,
 				tCalendarEntry.Recurring,
 				tCalendarEntry.CreatorID,

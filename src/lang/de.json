@@ -441,7 +441,9 @@
         "guest": "Gast | Gäste",
         "response": "Antwort | Antworten",
         "invited": "Eingeladen",
-        "note": "Notiz"
+        "note": "Notiz",
+        "weekly_view": "Wöchentliche Ansicht",
+        "today": "Heute"
     },
     "components": {
         "partials": {

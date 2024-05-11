@@ -8,6 +8,7 @@ import { useCalendarStore } from '~/store/calendar';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 const props = defineProps<{
     calendarId: string;
@@ -95,12 +96,28 @@ const calendar = computed(() => data.value?.calendar);
                 <DataNoDataBlock v-else-if="!calendar" :type="$t('common.calendar')" icon="i-mdi-comment-text-multiple" />
 
                 <template v-else>
-                    <div class="flex flex-row items-center gap-2">
-                        <span>{{ $t('common.creator') }}:</span>
-                        <CitizenInfoPopover :user="calendar?.creator" show-avatar-in-name />
-                    </div>
+                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
+                        <OpenClosedBadge :closed="calendar.closed" />
 
-                    <p>{{ $t('common.public') }}: {{ calendar.public ? $t('common.yes') : $t('common.no') }}</p>
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon name="i-mdi-account" class="size-5" />
+                            <span class="inline-flex items-center gap-1">
+                                <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
+                                <CitizenInfoPopover :user="calendar.creator" show-avatar-in-name />
+                            </span>
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex gap-1" size="md">
+                            <UIcon :name="calendar.public ? 'i-mdi-public' : 'i-mdi-calendar-lock'" class="size-5" />
+                            <span>
+                                {{
+                                    calendar.public
+                                        ? $t('components.calendar.CalendarCreateOrUpdateModal.public')
+                                        : $t('components.calendar.CalendarCreateOrUpdateModal.private')
+                                }}
+                            </span>
+                        </UBadge>
+                    </div>
 
                     <p>
                         {{ $t('common.description') }}:

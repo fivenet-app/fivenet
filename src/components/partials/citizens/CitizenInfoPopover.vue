@@ -35,7 +35,7 @@ withDefaults(
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
         >
             <template #leading v-if="showAvatarInName">
-                <ProfilePictureImg :src="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" size="2xs" />
+                <ProfilePictureImg :src="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" size="3xs" />
             </template>
 
             <span class="truncate" :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>

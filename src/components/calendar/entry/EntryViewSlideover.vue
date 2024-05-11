@@ -104,14 +104,41 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                 <DataNoDataBlock v-else-if="!entry" :type="$t('common.entry', 1)" icon="i-mdi-calendar" />
 
                 <template v-else>
-                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-0">
+                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
+                        <UBadge color="black" class="inline-flex items-center gap-1" size="lg">
+                            <UIcon name="i-mdi-access-time" class="size-5" />
+                            <span>
+                                {{ $t('common.date') }}
+                                <GenericTime :value="entry?.startTime" type="long" />
+                                <template v-if="entry.endTime">
+                                    -
+                                    <GenericTime
+                                        :value="entry?.endTime"
+                                        :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
+                                    />
+                                </template>
+                            </span>
+                        </UBadge>
+
+                        <UBadge color="black" class="inline-flex items-center gap-1" size="md">
+                            <UIcon name="i-mdi-calendar" class="size-5" />
+                            <span>
+                                {{ $t('common.calendar') }}
+                                <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+
+                                {{ entry.calendar?.name ?? $t('common.na') }}
+                            </span>
+                        </UBadge>
+                    </div>
+
+                    <div class="flex snap-x flex-row flex-wrap gap-2 overflow-x-auto pb-3 sm:pb-2">
                         <OpenClosedBadge :closed="entry.closed" />
 
                         <UBadge color="black" class="inline-flex gap-1" size="md">
                             <UIcon name="i-mdi-account" class="size-5" />
                             <span class="inline-flex items-center gap-1">
                                 <span class="text-sm font-medium">{{ $t('common.created_by') }}</span>
-                                <CitizenInfoPopover :user="entry.creator" />
+                                <CitizenInfoPopover :user="entry.creator" show-avatar-in-name />
                             </span>
                         </UBadge>
 
@@ -131,28 +158,6 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             </span>
                         </UBadge>
                     </div>
-
-                    <p class="inline-flex items-center gap-2">
-                        <span class="font-semibold">{{ $t('common.calendar') }}:</span>
-
-                        <UButton variant="link" :padded="false">
-                            <UBadge :color="color" :ui="{ rounded: 'rounded-full' }" size="lg" />
-
-                            {{ entry.calendar?.name ?? $t('common.na') }}
-                        </UButton>
-                    </p>
-
-                    <p class="inline-flex items-center gap-2">
-                        <span class="font-semibold">{{ $t('common.date') }}:</span>
-                        <GenericTime :value="entry?.startTime" type="long" />
-                        <template v-if="entry.endTime">
-                            -
-                            <GenericTime
-                                :value="entry?.endTime"
-                                :type="isSameDay(toDate(entry?.startTime), toDate(entry?.endTime)) ? 'time' : 'long'"
-                            />
-                        </template>
-                    </p>
 
                     <UDivider />
 

@@ -441,7 +441,9 @@
         "guest": "Guest | Guests",
         "response": "Response | Responses",
         "invited": "Invited",
-        "note": "Note"
+        "note": "Note",
+        "weekly_view": "Weekly view",
+        "today": "Today"
     },
     "components": {
         "partials": {
@@ -1034,7 +1036,8 @@
                 "update": {
                     "title": "Update Calendar"
                 },
-                "private": "Private Calendar"
+                "private": "Private Calendar",
+                "public": "Public Calendar"
             },
             "EntryCreateOrUpdateModal": {
                 "create": {

@@ -119,7 +119,7 @@ watch(
     () => {
         const endTime = state.endTime;
 
-        if (!isSameDay(state.startTime, state.endTime)) {
+        if (state.startTime && !isSameDay(state.startTime, state.endTime)) {
             endTime.setFullYear(state.startTime.getFullYear());
             endTime.setMonth(state.startTime.getMonth());
             endTime.setDate(state.startTime.getDate());

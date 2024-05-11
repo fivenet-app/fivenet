@@ -5,7 +5,6 @@ import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue'
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
 import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
@@ -13,7 +12,7 @@ import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
-import { addDays } from 'date-fns';
+import { addDays, isPast, isToday } from 'date-fns';
 import { useRouteQuery } from '@vueuse/router';
 
 useHead({
@@ -30,7 +29,7 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
-const { activeCalendarIds, calendars, entries } = storeToRefs(calendarStore);
+const { activeCalendarIds, weeklyView, calendars, entries } = storeToRefs(calendarStore);
 
 const schema = z.object({
     year: z.number(),
@@ -40,15 +39,12 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const date = ref(new Date());
-watch(date, () => {
-    query.year = date.value.getFullYear();
-    query.month = date.value.getMonth();
-});
+const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
 
+const date = ref<Date>(new Date());
 const query = reactive<Schema>({
     year: date.value.getFullYear(),
-    month: date.value.getMonth(),
+    month: date.value.getMonth() + 1,
     calendarIds: [],
 });
 
@@ -85,7 +81,11 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
     }
 }
 
-const { refresh, error } = useLazyAsyncData(
+const {
+    refresh,
+    pending: loading,
+    error,
+} = useLazyAsyncData(
     `calendar-entries-${query.year}-${query.month}-${query.calendarIds.join(':')}`,
     () =>
         calendarStore.listCalendarEntries({
@@ -112,23 +112,25 @@ function formatStartEndTime(entry: CalendarEntry): string {
 
 type CalEntry = {
     key: string;
-    customData: CalendarEntry & { color: string; time: string };
+    customData: CalendarEntry & { isPast: boolean; color: string; time: string };
     dates: DateRangeSource | DateRangeSource[];
 };
 
-const transformedCalendarEntries = computed(() =>
+const transformedCalendarEntries = computedAsync(async () =>
     entries.value.map((entry) => {
+        const endTime = entry.endTime ? toDate(entry.endTime) : undefined;
         return {
             key: entry.id,
             customData: {
                 ...entry,
+                isPast: endTime ? isPast(endTime) : false,
                 color: entry.calendar?.color ?? 'primary',
                 time: formatStartEndTime(entry),
             },
             dates: [
                 {
                     start: toDate(entry.startTime),
-                    end: entry.endTime ? toDate(entry.endTime) : undefined,
+                    end: endTime,
                     repeat: entry.recurring
                         ? {
                               every: [entry.recurring.count, entry.recurring.every],
@@ -141,23 +143,50 @@ const transformedCalendarEntries = computed(() =>
     }),
 );
 
-type GroupedCalendarEntries = { key: string; date: Date; entries: CalEntry[] }[];
+type GroupedCalendarEntries = {
+    key: string;
+    date: Date;
+    isToday: boolean;
+    entries: { past: CalEntry[]; upcoming: CalEntry[] };
+}[];
 
-const groupedCalendarEntries = computed(() => {
+const groupedCalendarEntries = computedAsync(async () => {
     const groups: GroupedCalendarEntries = [];
     transformedCalendarEntries.value?.forEach((entry) => {
         const date = toDate(entry.customData.startTime);
-        const idx = groups.findIndex((g) => g.key === toDate(entry.customData.startTime).toDateString());
+        let idx = groups.findIndex((g) => g.key === toDate(entry.customData.startTime).toDateString());
         if (idx === -1) {
-            groups.push({
+            idx = groups.push({
                 key: date.toDateString(),
                 date: date,
-                entries: [entry],
+                isToday: isToday(date),
+                entries: {
+                    past: [],
+                    upcoming: [],
+                },
             });
+            idx = idx - 1;
+        }
+
+        if (entry.customData.isPast) {
+            groups[idx].entries.past.push(entry);
         } else {
-            groups[idx].entries.push(entry);
+            groups[idx].entries.upcoming.push(entry);
         }
     });
+
+    if (!groups.find((g) => isToday(g.date))) {
+        const now = new Date();
+        groups.push({
+            key: now.toDateString(),
+            date: now,
+            isToday: true,
+            entries: {
+                past: [],
+                upcoming: [],
+            },
+        });
+    }
 
     return groups;
 });
@@ -190,6 +219,10 @@ if (entryIdQuery.value) {
     });
 }
 
+async function resetToToday(): Promise<void> {
+    calRef.value?.calRef?.focusDate(new Date());
+}
+
 const isOpen = ref(false);
 </script>
 
@@ -200,6 +233,11 @@ const isOpen = ref(false);
             grow
         >
             <UDashboardNavbar :title="$t('common.calendar')">
+                <template #center>
+                    <UButton icon="i-mdi-calendar-today" @click="resetToToday">
+                        {{ $t('common.today') }}
+                    </UButton>
+                </template>
                 <template #right>
                     <UButtonGroup
                         v-if="
@@ -242,7 +280,7 @@ const isOpen = ref(false);
                             />
                             <DataErrorBlock
                                 v-else-if="calendarsError"
-                                :message="$t('common.loading', [$t('common.calendar')])"
+                                :title="$t('common.not_found', [$t('common.calendar')])"
                                 :retry="calendarsRefresh"
                             />
 
@@ -284,10 +322,11 @@ const isOpen = ref(false);
 
             <DataErrorBlock v-if="error" :retry="refresh" />
 
-            <div v-else class="overflow-x-auto">
+            <div v-else class="flex flex-1 overflow-x-auto">
                 <MonthCalendarClient
-                    v-model="date"
+                    ref="calRef"
                     class="hidden md:flex md:flex-1"
+                    :view="weeklyView ? 'weekly' : 'monthly'"
                     :attributes="transformedCalendarEntries"
                     @selected="
                         slideover.open(EntryViewSlideover, {
@@ -297,19 +336,61 @@ const isOpen = ref(false);
                 />
 
                 <UContainer class="flex flex-1 flex-col md:hidden">
-                    <DataErrorBlock v-if="error" :message="$t('common.loading', [$t('common.entry', 2)])" :retry="refresh" />
-                    <DataNoDataBlock
-                        v-else-if="!groupedCalendarEntries || groupedCalendarEntries.length === 0"
-                        :type="`${$t('common.calendar')} ${$t('common.entry', 2)}`"
-                        icon="i-mdi-calendar"
-                    />
+                    <DataErrorBlock v-if="error" :title="$t('common.not_found', [$t('common.entry', 2)])" :retry="refresh" />
 
                     <template v-else>
                         <template v-for="entries in groupedCalendarEntries" :key="entries.key">
-                            <UDivider class="text-lg font-semibold">{{ $d(entries.date, 'date') }}</UDivider>
+                            <UDivider>
+                                <div class="inline-flex gap-1">
+                                    <span class="text-lg font-semibold">
+                                        {{ $d(entries.date, 'date') }}
+                                    </span>
+                                    <UBadge v-if="isToday(entries.date)" size="xs" color="amber" :label="$t('common.today')" />
+                                </div>
+                            </UDivider>
 
                             <ul role="list">
-                                <li v-for="attr in entries.entries" :key="attr.key">
+                                <li v-for="attr in entries.entries.past" :key="attr.key">
+                                    <ULink
+                                        class="inline-flex w-full items-center justify-between gap-1"
+                                        @click="
+                                            slideover.open(EntryViewSlideover, {
+                                                entryId: attr.customData.id,
+                                            })
+                                        "
+                                    >
+                                        <span class="inline-flex items-center gap-1">
+                                            <UBadge
+                                                :color="attr.customData.color"
+                                                :ui="{ rounded: 'rounded-full' }"
+                                                size="lg"
+                                            />
+
+                                            <template v-if="attr.customData.time">
+                                                {{ attr.customData.time }}
+                                            </template>
+                                            <span>-</span>
+
+                                            {{ attr.customData.title }}
+                                        </span>
+
+                                        <UButton :padded="false" variant="link" icon="i-mdi-eye" />
+                                    </ULink>
+                                </li>
+
+                                <li>
+                                    <UDivider
+                                        v-if="
+                                            entries.isToday &&
+                                            (entries.entries.past.length > 0 || entries.entries.upcoming.length > 0)
+                                        "
+                                        size="sm"
+                                        :ui="{ border: { base: 'border-red-300 dark:border-red-500' } }"
+                                        class="my-1"
+                                    />
+                                </li>
+
+                                <li v-for="attr in entries.entries.upcoming" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="
@@ -384,7 +465,7 @@ const isOpen = ref(false);
                     <DataPendingBlock v-if="calendarsLoading" :message="$t('common.loading', [$t('common.calendar')])" />
                     <DataErrorBlock
                         v-else-if="calendarsError"
-                        :message="$t('common.loading', [$t('common.calendar')])"
+                        :title="$t('common.not_found', [$t('common.calendar', 1)])"
                         :retry="calendarsRefresh"
                     />
 
@@ -414,6 +495,22 @@ const isOpen = ref(false);
                 <div class="flex-1" />
 
                 <UDivider class="sticky bottom-0" />
+
+                <div class="inline-flex items-center gap-2">
+                    <UToggle v-model="weeklyView" />
+                    <span>{{ $t('common.weekly_view') }}</span>
+                </div>
+
+                <UButton
+                    icon="i-mdi-refresh"
+                    variant="outline"
+                    :title="$t('common.refresh')"
+                    :disabled="loading"
+                    :loading="loading"
+                    @click="refresh()"
+                >
+                    {{ $t('common.refresh') }}
+                </UButton>
 
                 <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
                     {{ $t('components.calendar.FindCalendarsModal.title') }}

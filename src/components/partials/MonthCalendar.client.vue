@@ -1,33 +1,29 @@
 <script setup lang="ts">
 import { Calendar as VCalendar } from 'v-calendar';
 // @ts-ignore
-import type { DatePickerDate, DatePickerRangeObject } from 'v-calendar/dist/types/src/use/datePicker';
+import type { CalendarView } from 'v-calendar/dist/types/src/use/calendar.js';
 import 'v-calendar/dist/style.css';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
-import type { Page } from 'v-calendar/dist/types/src/utils/page.js';
+import MonthCalendarDay from './MonthCalendarDay.vue';
 
 defineOptions({
     inheritAttrs: false,
 });
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
-        modelValue: DatePickerDate | DatePickerRangeObject;
+        view?: CalendarView;
     }>(),
     {
-        modelValue: new Date(),
+        view: 'monthly',
     },
 );
 
 const emits = defineEmits<{
-    (e: 'update:model-value', value: Date): void;
     (e: 'selected', entry: CalendarEntry): void;
 }>();
 
-const date = computed({
-    get: () => props.modelValue,
-    set: (value) => emits('update:model-value', value),
-});
+const calRef = ref<InstanceType<typeof VCalendar> | null>(null);
 
 const attrs = {
     transparent: true,
@@ -43,49 +39,16 @@ const masks = {
     weekdays: 'WWW',
 };
 
-function updateDate(event: Page[]): void {
-    if (!event.length) {
-        return;
-    }
-
-    const page = event[0];
-    const newDate = new Date();
-    newDate.setFullYear(page.year);
-    newDate.setMonth(page.month - 1);
-    date.value = newDate;
-}
+defineExpose({
+    calRef,
+});
 </script>
 
 <template>
     <div class="custom-calendar" :class="$attrs.class">
-        <VCalendar
-            view="monthly"
-            :columns="1"
-            :rows="1"
-            :masks="masks"
-            v-bind="{ ...attrs, ...$attrs }"
-            :initial-page="{ year: date.getFullYear(), month: date.getMonth() + 1 }"
-            @did-move="updateDate($event)"
-        >
+        <VCalendar ref="calRef" :view="view" :columns="1" :rows="1" :masks="masks" v-bind="{ ...attrs, ...$attrs }">
             <template #day-content="{ day, attributes }">
-                <div class="z-10 flex h-full flex-col overflow-hidden">
-                    <span class="day-label text-sm text-gray-900 dark:text-white">{{ day.day }}</span>
-                    <div class="flex-grow overflow-x-auto overflow-y-auto">
-                        <button
-                            v-for="attr in attributes"
-                            :key="attr.key"
-                            class="vc-day-entry mb-1 mt-0 w-full rounded-sm p-1 text-left text-xs leading-tight"
-                            :class="`bg-${attr.customData.color}-500 hover:bg-${attr.customData.color}-400 text-white`"
-                            @click="$emit('selected', attr.customData)"
-                        >
-                            {{ attr.customData.title }}
-                            <template v-if="attr.customData.time">
-                                <br />
-                                {{ attr.customData.time }}
-                            </template>
-                        </button>
-                    </div>
-                </div>
+                <MonthCalendarDay :day="day" :attributes="attributes" @selected="$emit('selected', $event)" />
             </template>
         </VCalendar>
     </div>
@@ -146,6 +109,7 @@ function updateDate(event: Page[]): void {
     & .vc-weeks {
         padding-left: 0;
         padding-right: 0;
+        padding: 0;
     }
     & .vc-weekday {
         background-color: rgb(var(--color-primary-400));
@@ -153,22 +117,30 @@ function updateDate(event: Page[]): void {
         border-top: var(--weekday-border);
         padding: 5px 0;
     }
+    & .vc-weekday.vc-weekday-1,
+    & .vc-weekday.vc-weekday-7 {
+        background-color: rgb(var(--color-primary-600));
+    }
+
+    .vc-day:hover {
+        background-color: rgb(var(--color-gray-800));
+
+        &.weekday-1:hover,
+        &.weekday-7:hover {
+            background-color: rgb(var(--color-gray-700));
+        }
+    }
+
     & .vc-day {
         padding: 0 5px 3px 5px;
         text-align: left;
         height: var(--day-height);
         min-width: var(--day-width);
         background-color: rgb(var(--color-gray-900));
-        & :hover {
-            background-color: rgb(var(--color-gray-800));
-        }
 
         &.weekday-1,
         &.weekday-7 {
             background-color: rgb(var(--color-gray-800));
-            & :hover {
-                background-color: rgb(var(--color-gray-700));
-            }
         }
 
         &:not(.on-bottom) {
@@ -180,6 +152,11 @@ function updateDate(event: Page[]): void {
     }
     & .vc-day-dots {
         margin-bottom: 5px;
+    }
+}
+.custom-calendar:deep(.vc-container.vc-weekly) {
+    & .vc-day {
+        min-height: 85vh;
     }
 }
 </style>
