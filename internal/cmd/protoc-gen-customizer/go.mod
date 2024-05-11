@@ -1,10 +1,10 @@
 module github.com/fivenet-app/fivenet/internal/cmd/protoc-gen-customizer
 
-go 1.22.2
+go 1.22.3
 
 require (
 	github.com/lyft/protoc-gen-star/v2 v2.0.3
-	google.golang.org/protobuf v1.34.0
+	google.golang.org/protobuf v1.34.1
 )
 
 require (

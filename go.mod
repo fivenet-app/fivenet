@@ -1,11 +1,11 @@
 module github.com/fivenet-app/fivenet
 
-go 1.22.2
+go 1.22.3
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/Masterminds/sprig/v3 v3.2.3
-	github.com/XSAM/otelsql v0.30.0
+	github.com/XSAM/otelsql v0.31.0
 	github.com/alecthomas/kong v0.9.0
 	github.com/blevesearch/bleve/v2 v2.4.0
 	github.com/bwmarrin/discordgo v0.28.1
@@ -13,10 +13,10 @@ require (
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/gin-contrib/cors v1.7.2
-	github.com/gin-contrib/pprof v1.4.0
-	github.com/gin-contrib/sessions v1.0.0
-	github.com/gin-contrib/static v1.1.1
-	github.com/gin-contrib/zap v1.1.1
+	github.com/gin-contrib/pprof v1.5.0
+	github.com/gin-contrib/sessions v1.0.1
+	github.com/gin-contrib/static v1.1.2
+	github.com/gin-contrib/zap v1.1.3
 	github.com/gin-gonic/gin v1.10.0
 	github.com/go-jet/jet/v2 v2.11.1
 	github.com/go-sql-driver/mysql v1.8.1
@@ -34,7 +34,7 @@ require (
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.19.0
+	github.com/prometheus/client_golang v1.19.1
 	github.com/puzpuzpuz/xsync/v3 v3.1.0
 	github.com/spf13/viper v1.18.2
 	github.com/stretchr/testify v1.9.0
@@ -52,9 +52,9 @@ require (
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.23.0
 	golang.org/x/exp v0.0.0-20240416160154-fe59bbe5cc7f
-	golang.org/x/image v0.15.0
+	golang.org/x/image v0.16.0
 	golang.org/x/net v0.25.0
-	golang.org/x/oauth2 v0.19.0
+	golang.org/x/oauth2 v0.20.0
 	google.golang.org/grpc v1.63.2
 	google.golang.org/protobuf v1.34.1
 	gotest.tools/v3 v3.5.1
@@ -62,8 +62,7 @@ require (
 )
 
 require (
-	cloud.google.com/go/compute v1.24.0 // indirect
-	cloud.google.com/go/compute/metadata v0.2.3 // indirect
+	cloud.google.com/go/compute/metadata v0.3.0 // indirect
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
