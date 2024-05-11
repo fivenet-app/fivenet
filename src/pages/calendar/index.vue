@@ -348,7 +348,7 @@ const isOpen = ref(false);
 
             <DataErrorBlock v-if="error" :retry="refresh" />
 
-            <div v-else class="flex flex-1 overflow-x-auto">
+            <div v-else class="relative flex flex-1 overflow-x-auto">
                 <MonthCalendarClient
                     ref="calRef"
                     class="hidden md:flex md:flex-1"
@@ -448,6 +448,28 @@ const isOpen = ref(false);
                     </template>
                 </UContainer>
             </div>
+
+            <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
+                <div class="inline-flex items-center gap-2">
+                    <UToggle v-model="weeklyView" />
+                    <span class="text-sm">{{ $t('common.weekly_view') }}</span>
+                </div>
+
+                <UButton
+                    icon="i-mdi-refresh"
+                    variant="outline"
+                    :title="$t('common.refresh')"
+                    :disabled="loading || loadingState"
+                    :loading="loading || loadingState"
+                    @click="refresh()"
+                >
+                    {{ $t('common.refresh') }}
+                </UButton>
+
+                <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
+                    {{ $t('components.calendar.FindCalendarsModal.title') }}
+                </UButton>
+            </div>
         </UDashboardPanel>
 
         <UDashboardPanel v-model="isOpen" collapsible side="right" class="!hidden max-w-64 flex-1 xl:!flex">
@@ -524,7 +546,7 @@ const isOpen = ref(false);
 
                 <div class="inline-flex items-center gap-2">
                     <UToggle v-model="weeklyView" />
-                    <span>{{ $t('common.weekly_view') }}</span>
+                    <span class="text-sm">{{ $t('common.weekly_view') }}</span>
                 </div>
 
                 <UButton

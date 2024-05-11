@@ -95,11 +95,20 @@ defineExpose({
     --day-border: 1px solid rgb(var(--color-gray-700));
     --day-border-highlight: 1px solid rgb(var(--color-gray-600));
     --day-width: 110px;
-    --day-height: 140px;
+    --day-height: 115px;
     --weekday-border: 1px solid rgb(var(--color-primary-900));
 
     border-radius: 0;
     width: 100%;
+    height: 100%;
+
+    & .vc-pane-container,
+    & .vc-pane-layout,
+    & .vc-pane {
+        display: flex;
+        flex-direction: column;
+        flex: 1;
+    }
 
     & .vc-header {
         margin-top: 2px;
@@ -110,7 +119,16 @@ defineExpose({
         padding-left: 0;
         padding-right: 0;
         padding: 0;
+
+        display: flex;
+        flex-direction: column;
+        flex: 1;
     }
+
+    & .vc-week {
+        flex: 1;
+    }
+
     & .vc-weekday {
         background-color: rgb(var(--color-primary-400));
         border-bottom: var(--weekday-border);
@@ -134,9 +152,11 @@ defineExpose({
     & .vc-day {
         padding: 0 5px 3px 5px;
         text-align: left;
-        height: var(--day-height);
+        min-height: var(--day-height);
         min-width: var(--day-width);
         background-color: rgb(var(--color-gray-900));
+
+        height: 100%;
 
         &.weekday-1,
         &.weekday-7 {
@@ -156,7 +176,12 @@ defineExpose({
 }
 .custom-calendar:deep(.vc-container.vc-weekly) {
     & .vc-day {
-        min-height: 85vh;
+        &:not(.on-bottom) {
+            border-bottom: none;
+            &.weekday-1 {
+                border-bottom: none;
+            }
+        }
     }
 }
 </style>
