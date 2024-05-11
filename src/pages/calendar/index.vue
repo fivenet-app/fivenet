@@ -223,6 +223,28 @@ async function resetToToday(): Promise<void> {
     calRef.value?.calRef?.focusDate(new Date());
 }
 
+const loadingState = ref(false);
+watch(
+    () => loading.value,
+    () => {
+        if (loading.value) {
+            loadingState.value = true;
+        }
+    },
+);
+watchDebounced(
+    () => loading.value,
+    () => {
+        if (!loading.value) {
+            loadingState.value = false;
+        }
+    },
+    {
+        debounce: 750,
+        maxWait: 1250,
+    },
+);
+
 const isOpen = ref(false);
 </script>
 
@@ -505,8 +527,8 @@ const isOpen = ref(false);
                     icon="i-mdi-refresh"
                     variant="outline"
                     :title="$t('common.refresh')"
-                    :disabled="loading"
-                    :loading="loading"
+                    :disabled="loading || loadingState"
+                    :loading="loading || loadingState"
                     @click="refresh()"
                 >
                     {{ $t('common.refresh') }}
