@@ -261,6 +261,10 @@ const isOpen = ref(false);
                     </UButton>
                 </template>
                 <template #right>
+                    <UButton icon="i-mdi-calendar-today" class="lg:hidden" @click="resetToToday">
+                        {{ $t('common.today') }}
+                    </UButton>
+
                     <UButtonGroup
                         v-if="
                             can('CalendarService.CreateOrUpdateCalendarEntry') || can('CalendarService.CreateOrUpdateCalendar')
