@@ -72,14 +72,18 @@ export const useCalendarStore = defineStore('calendar', {
 
                 // Only "register" calendars in list when they are accessible by the user
                 if (!req.onlyPublic) {
-                    response.calendars.forEach((calendar) => {
-                        const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
-                        if (idx > -1) {
-                            this.calendars[idx] = calendar;
-                        } else {
-                            this.calendars.push(calendar);
-                        }
-                    });
+                    if (response.calendars.length > 0) {
+                        response.calendars.forEach((calendar) => {
+                            const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
+                            if (idx > -1) {
+                                this.calendars[idx] = calendar;
+                            } else {
+                                this.calendars.push(calendar);
+                            }
+                        });
+                    } else {
+                        this.calendars.length = 0;
+                    }
                 }
 
                 return response;
@@ -161,14 +165,18 @@ export const useCalendarStore = defineStore('calendar', {
                 const call = $grpc.getCalendarClient().listCalendarEntries(req);
                 const { response } = await call;
 
-                response.entries.forEach((entry) => {
-                    const idx = this.entries.findIndex((c) => c.id === entry!.id);
-                    if (idx > -1) {
-                        this.entries[idx] = entry;
-                    } else {
-                        this.entries.push(entry);
-                    }
-                });
+                if (response.entries.length > 0) {
+                    response.entries.forEach((entry) => {
+                        const idx = this.entries.findIndex((c) => c.id === entry!.id);
+                        if (idx > -1) {
+                            this.entries[idx] = entry;
+                        } else {
+                            this.entries.push(entry);
+                        }
+                    });
+                } else {
+                    this.entries.length = 0;
+                }
 
                 return response;
             } catch (e) {

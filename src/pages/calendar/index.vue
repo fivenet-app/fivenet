@@ -255,16 +255,7 @@ const isOpen = ref(false);
             grow
         >
             <UDashboardNavbar :title="$t('common.calendar')">
-                <template #center>
-                    <UButton icon="i-mdi-calendar-today" @click="resetToToday">
-                        {{ $t('common.today') }}
-                    </UButton>
-                </template>
                 <template #right>
-                    <UButton icon="i-mdi-calendar-today" class="lg:hidden" @click="resetToToday">
-                        {{ $t('common.today') }}
-                    </UButton>
-
                     <UButtonGroup
                         v-if="
                             can('CalendarService.CreateOrUpdateCalendarEntry') || can('CalendarService.CreateOrUpdateCalendar')
@@ -296,55 +287,63 @@ const isOpen = ref(false);
                 </template>
             </UDashboardNavbar>
 
-            <UContainer :ui="{ constrained: 'max-w-5xl' }" class="mt-2 w-full xl:hidden">
-                <UAccordion :items="[{ slot: 'calendar', label: $t('common.calendar'), icon: 'i-mdi-calendar' }]">
-                    <template #calendar>
-                        <div>
-                            <DataPendingBlock
-                                v-if="calendarsLoading"
-                                :message="$t('common.loading', [$t('common.calendar')])"
-                            />
-                            <DataErrorBlock
-                                v-else-if="calendarsError"
-                                :title="$t('common.not_found', [$t('common.calendar')])"
-                                :retry="calendarsRefresh"
-                            />
+            <UDashboardToolbar>
+                <template #default>
+                    <div class="flex flex-1 items-center justify-between">
+                        <UPopover :popper="{ placement: 'bottom-end', offsetDistance: 10 }">
+                            <UButton color="white" icon="i-mdi-calendar" trailing-icon="i-mdi-chevron-down">
+                                {{ $t('common.calendar') }}
+                            </UButton>
 
-                            <div v-else class="flex flex-col gap-4">
-                                <UButton icon="i-mdi-search" class="font-semibold" @click="modal.open(FindCalendarsModal, {})">
-                                    {{ $t('components.calendar.FindCalendarsModal.title') }}
-                                </UButton>
+                            <template #panel>
+                                <div class="p-4">
+                                    <DataPendingBlock
+                                        v-if="calendarsLoading"
+                                        :message="$t('common.loading', [$t('common.calendar')])"
+                                    />
+                                    <DataErrorBlock
+                                        v-else-if="calendarsError"
+                                        :title="$t('common.not_found', [$t('common.calendar')])"
+                                        :retry="calendarsRefresh"
+                                    />
 
-                                <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
-                                    <div
-                                        v-for="calendar in calendars"
-                                        :key="calendar.id"
-                                        class="inline-flex items-center gap-2"
-                                    >
-                                        <UCheckbox
-                                            :model-value="query.calendarIds.includes(calendar.id)"
-                                            class="truncate"
-                                            @change="calendarIdChange(calendar.id, $event)"
-                                        />
+                                    <div v-else class="flex flex-col gap-4">
+                                        <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-3">
+                                            <div
+                                                v-for="calendar in calendars"
+                                                :key="calendar.id"
+                                                class="inline-flex items-center gap-2"
+                                            >
+                                                <UCheckbox
+                                                    :model-value="query.calendarIds.includes(calendar.id)"
+                                                    class="truncate"
+                                                    @change="calendarIdChange(calendar.id, $event)"
+                                                />
 
-                                        <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+                                                <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
 
-                                        <UButton
-                                            :color="calendar.color"
-                                            size="sm"
-                                            variant="link"
-                                            :padded="false"
-                                            truncate
-                                            :label="calendar.name"
-                                            @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
-                                        />
+                                                <UButton
+                                                    :color="calendar.color"
+                                                    size="sm"
+                                                    variant="link"
+                                                    :padded="false"
+                                                    truncate
+                                                    :label="calendar.name"
+                                                    @click="slideover.open(CalendarViewSlideover, { calendarId: calendar.id })"
+                                                />
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
-                            </div>
-                        </div>
-                    </template>
-                </UAccordion>
-            </UContainer>
+                            </template>
+                        </UPopover>
+
+                        <UButton icon="i-mdi-calendar-today" @click="resetToToday">
+                            {{ $t('common.today') }}
+                        </UButton>
+                    </div>
+                </template>
+            </UDashboardToolbar>
 
             <DataErrorBlock v-if="error" :retry="refresh" />
 
