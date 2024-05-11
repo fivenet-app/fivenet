@@ -12,7 +12,7 @@ const { isOpen } = useModal();
 const notifications = useNotificatorStore();
 
 const authStore = useAuthStore();
-const { setAccessToken } = authStore;
+const { setAccessTokenExpiration } = authStore;
 
 const schema = z.object({
     currentPassword: z.string().min(6).max(70),
@@ -34,7 +34,7 @@ async function changePassword(values: Schema): Promise<void> {
         });
         const { response } = await call;
 
-        setAccessToken(response.token, toDate(response.expires) as null | Date);
+        setAccessTokenExpiration(toDate(response.expires));
 
         notifications.add({
             title: { key: 'notifications.auth.changed_password.title', parameters: {} },

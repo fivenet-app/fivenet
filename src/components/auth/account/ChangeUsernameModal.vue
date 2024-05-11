@@ -47,10 +47,8 @@ async function changeUsername(values: Schema): Promise<void> {
             type: 'success',
         });
 
-        useTimeoutFn(async () => {
-            await navigateTo({ name: 'auth-logout' });
-            clearAuthInfo();
-        }, 1500);
+        clearAuthInfo();
+        await navigateTo({ name: 'auth-logout' });
     } catch (e) {
         $grpc.handleError(e as RpcError);
         throw e;

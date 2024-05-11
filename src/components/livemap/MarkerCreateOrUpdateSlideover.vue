@@ -331,7 +331,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 class="size-5"
                                                 :style="{ fill: state.color }"
                                             />
-                                            <span class="truncate">{{ camelCaseToTitleCase(state.icon) }}</span>
+                                            <span class="truncate">{{
+                                                camelCaseToTitleCase(state.icon ?? $t('common.unknown'))
+                                            }}</span>
                                         </template>
                                         <template #option="{ option }">
                                             <component :is="option" class="size-5" :style="{ color: state.color }" />
