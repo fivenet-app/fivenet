@@ -33,6 +33,7 @@ const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
 const clipboardStore = useClipboardStore();
+
 const notifications = useNotificatorStore();
 
 const w = window;

@@ -17,9 +17,11 @@ const props = withDefaults(
         rsvpOpen?: boolean;
         disabled?: boolean;
         showRemove?: boolean;
+        canShare?: boolean;
     }>(),
     {
         showRemove: true,
+        canShare: false,
     },
 );
 
@@ -168,11 +170,11 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                     "
                 />
 
-                <UButton :icon="!openShare ? 'i-mdi-share' : 'i-mdi-close'" @click="openShare = !openShare" />
+                <UButton v-if="canShare" :icon="!openShare ? 'i-mdi-invite' : 'i-mdi-close'" @click="openShare = !openShare" />
             </UButtonGroup>
         </div>
 
-        <EntryShareForm v-if="openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
+        <EntryShareForm v-if="canShare && openShare" :entry-id="entryId" @close="openShare = false" @refresh="refresh()" />
 
         <UAccordion
             variant="ghost"

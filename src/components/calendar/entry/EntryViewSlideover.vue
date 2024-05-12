@@ -12,6 +12,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { isSameDay } from 'date-fns';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
+import { useNotificatorStore } from '~/store/notificator';
 
 const props = defineProps<{
     entryId: string;
@@ -22,6 +23,10 @@ const { isOpen } = useSlideover();
 
 const calendarStore = useCalendarStore();
 const { calendars } = storeToRefs(calendarStore);
+
+const notifications = useNotificatorStore();
+
+const w = window;
 
 const {
     data,
@@ -34,6 +39,23 @@ const entry = computed(() => data.value?.entry);
 const access = computed(() => data.value?.entry?.calendar?.access);
 
 const color = computed(() => entry.value?.calendar?.color ?? 'primary');
+
+function copyLinkToClipboard(): void {
+    copyToClipboardWrapper(`${w.location.href}?entry_id=${props.entryId}`);
+
+    notifications.add({
+        title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
+        description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
+        timeout: 3250,
+        type: 'info',
+    });
+}
+
+const canDo = computed(() => ({
+    share: checkCalendarAccess(access.value, entry.value?.creator, AccessLevel.SHARE),
+    edit: checkCalendarAccess(access.value, entry.value?.creator, AccessLevel.EDIT),
+    manage: checkCalendarAccess(access.value, entry.value?.creator, AccessLevel.MANAGE),
+}));
 </script>
 
 <template>
@@ -56,11 +78,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UButton
-                                v-if="
-                                    entry &&
-                                    can('CalendarService.CreateOrUpdateCalendarEntry') &&
-                                    checkCalendarAccess(access, entry?.creator, AccessLevel.EDIT)
-                                "
+                                v-if="entry && can('CalendarService.CreateOrUpdateCalendarEntry') && canDo.edit"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-pencil"
@@ -73,11 +91,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             />
 
                             <UButton
-                                v-if="
-                                    entry &&
-                                    can('CalendarService.DeleteCalendarEntry') &&
-                                    checkCalendarAccess(access, entry?.creator, AccessLevel.MANAGE)
-                                "
+                                v-if="entry && can('CalendarService.DeleteCalendarEntry') && canDo.manage"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"
@@ -89,7 +103,17 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             />
                         </h3>
 
-                        <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
+                        <div class="inline-flex gap-2">
+                            <UButton icon="i-mdi-share" class="-my-1" @click="copyLinkToClipboard()" />
+
+                            <UButton
+                                color="gray"
+                                variant="ghost"
+                                icon="i-mdi-window-close"
+                                class="-my-1"
+                                @click="isOpen = false"
+                            />
+                        </div>
                     </div>
                 </div>
             </template>
@@ -168,6 +192,7 @@ const color = computed(() => entry.value?.calendar?.color ?? 'primary');
                             :rsvp-open="entry.rsvpOpen"
                             :disabled="entry.closed"
                             :show-remove="!calendars.find((c) => c.id === entry?.calendarId)"
+                            :can-share="canDo.share"
                         />
 
                         <UDivider />
