@@ -12,7 +12,7 @@ import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
-import { addDays, isPast, isToday } from 'date-fns';
+import { addDays, isPast, isSameDay, isToday } from 'date-fns';
 import { useRouteQuery } from '@vueuse/router';
 
 useHead({
@@ -107,7 +107,21 @@ function formatStartEndTime(entry: CalendarEntry): string {
         return d(start, 'time');
     }
 
-    return d(start, 'time') + ' - ' + d(end, 'time');
+    return (
+        d(start, 'time') +
+        ' - ' +
+        d(
+            end,
+            isSameDay(start, end)
+                ? 'time'
+                : {
+                      month: '2-digit',
+                      day: '2-digit',
+                      hour: 'numeric',
+                      minute: 'numeric',
+                  },
+        )
+    );
 }
 
 type CalEntry = {
@@ -188,7 +202,7 @@ const groupedCalendarEntries = computedAsync(async () => {
         });
     }
 
-    return groups;
+    return groups.sort((a, b) => b.date.getTime() - a.date.getTime());
 });
 
 function calendarIdChange(calendarId: string, state: boolean): void {
@@ -360,17 +374,23 @@ const isOpen = ref(false);
                     "
                 />
 
-                <UContainer class="flex flex-1 flex-col md:hidden">
+                <UContainer class="flex flex-1 flex-col py-2 md:hidden">
                     <DataErrorBlock v-if="error" :title="$t('common.not_found', [$t('common.entry', 2)])" :retry="refresh" />
 
                     <template v-else>
                         <template v-for="entries in groupedCalendarEntries" :key="entries.key">
                             <UDivider>
-                                <div class="inline-flex gap-1">
+                                <div class="inline-flex items-center gap-1">
                                     <span class="text-lg font-semibold">
                                         {{ $d(entries.date, 'date') }}
                                     </span>
-                                    <UBadge v-if="isToday(entries.date)" size="xs" color="amber" :label="$t('common.today')" />
+                                    <UBadge
+                                        v-if="isToday(entries.date)"
+                                        id="today"
+                                        size="xs"
+                                        color="amber"
+                                        :label="$t('common.today')"
+                                    />
                                 </div>
                             </UDivider>
 

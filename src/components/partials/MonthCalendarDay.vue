@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { isSameDay } from 'date-fns';
 import type { Attribute } from 'v-calendar/dist/types/src/utils/attribute.js';
 import type { CalendarDay } from 'v-calendar/dist/types/src/utils/page.js';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
@@ -8,7 +9,7 @@ const props = defineProps<{
     attributes: Attribute[];
 }>();
 
-const emits = defineEmits<{
+defineEmits<{
     (e: 'selected', entry: CalendarEntry): void;
 }>();
 
@@ -35,7 +36,13 @@ const attributes = computed(() => ({
                 @click="$emit('selected', attr.customData)"
             >
                 {{ attr.customData.title }}
-                <template v-if="attr.customData.time">
+                <template
+                    v-if="
+                        attr.customData.time &&
+                        (isSameDay(day.date, toDate(attr.customData.startTime)) ||
+                            isSameDay(day.date, toDate(attr.customData.endTime)))
+                    "
+                >
                     <br />
                     {{ attr.customData.time }}
                 </template>
@@ -57,7 +64,13 @@ const attributes = computed(() => ({
                 @click="$emit('selected', attr.customData)"
             >
                 {{ attr.customData.title }}
-                <template v-if="attr.customData.time">
+                <template
+                    v-if="
+                        attr.customData.time &&
+                        (isSameDay(day.date, toDate(attr.customData.startTime)) ||
+                            isSameDay(day.date, toDate(attr.customData.endTime)))
+                    "
+                >
                     <br />
                     {{ attr.customData.time }}
                 </template>
