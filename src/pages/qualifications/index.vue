@@ -14,7 +14,7 @@ definePageMeta({
 
 const { t } = useI18n();
 
-const tabs = ref<{ key: string; slot: string; label: string; icon: string }[]>([
+const items: { key: string; slot: string; label: string; icon: string }[] = [
     {
         key: 'yours',
         slot: 'yours',
@@ -27,7 +27,25 @@ const tabs = ref<{ key: string; slot: string; label: string; icon: string }[]>([
         label: t('components.qualifications.all_qualifications'),
         icon: 'i-mdi-view-list',
     },
-]);
+];
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.label === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+    },
+});
 </script>
 
 <template>
@@ -46,7 +64,7 @@ const tabs = ref<{ key: string; slot: string; label: string; icon: string }[]>([
                 </template>
             </UDashboardNavbar>
 
-            <UTabs :items="tabs" :unmount="true" :ui="{ list: { rounded: '' } }">
+            <UTabs v-model="selectedTab" :items="items" :unmount="true" :ui="{ list: { rounded: '' } }">
                 <template #default="{ item, selected }">
                     <div class="relative flex items-center gap-2 truncate">
                         <UIcon :name="item.icon" class="size-4 shrink-0" />

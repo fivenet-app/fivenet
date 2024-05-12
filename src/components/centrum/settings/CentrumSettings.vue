@@ -8,6 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 
 const { $grpc } = useNuxtApp();
 
+const { t } = useI18n();
+
 const { isOpen } = useModal();
 
 const {
@@ -99,8 +101,39 @@ function setSettingsValues(): void {
 }
 
 watch(settings, () => setSettingsValues());
-
 setSettingsValues();
+
+const items = [
+    {
+        slot: 'settings',
+        label: t('common.settings'),
+        icon: 'i-mdi-settings',
+    },
+    {
+        slot: 'predefined',
+        label: `${t('common.predefined', 2)} ${t('common.status', 2)}`,
+        icon: 'i-mdi-selection',
+    },
+    { slot: 'timings', label: t('common.timings'), icon: 'i-mdi-access-time' },
+];
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.label === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+    },
+});
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -135,23 +168,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         <DataNoDataBlock v-else-if="settings === null" icon="i-mdi-tune" :type="$t('common.settings')" />
 
         <template v-else>
-            <UTabs
-                :items="[
-                    {
-                        slot: 'settings',
-                        label: $t('common.settings'),
-                        icon: 'i-mdi-settings',
-                    },
-                    {
-                        slot: 'predefined',
-                        label: `${$t('common.predefined', 2)} ${$t('common.status', 2)}`,
-                        icon: 'i-mdi-selection',
-                    },
-                    { slot: 'timings', label: $t('common.timings'), icon: 'i-mdi-access-time' },
-                ]"
-                class="w-full"
-                :ui="{ list: { rounded: '' } }"
-            >
+            <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                 <template #default="{ item, selected }">
                     <div class="relative flex items-center gap-2 truncate">
                         <UIcon :name="item.icon" class="size-4 shrink-0" />

@@ -15,6 +15,8 @@ import ColorPicker from '~/components/partials/ColorPicker.vue';
 
 const { $grpc } = useNuxtApp();
 
+const { t } = useI18n();
+
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
@@ -179,6 +181,33 @@ function setSettingsValues(): void {
 
 watch(jobProps, () => setSettingsValues());
 
+const items = [
+    {
+        slot: 'jobprops',
+        label: t('components.rector.job_props.job_properties'),
+        icon: 'i-mdi-settings',
+    },
+    { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord' },
+];
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.label === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+    },
+});
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -239,18 +268,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             />
 
             <template v-else>
-                <UTabs
-                    :items="[
-                        {
-                            slot: 'jobprops',
-                            label: $t('components.rector.job_props.job_properties'),
-                            icon: 'i-mdi-settings',
-                        },
-                        { slot: 'discord', label: $t('common.discord'), icon: 'i-simple-icons-discord' },
-                    ]"
-                    class="w-full"
-                    :ui="{ list: { rounded: '' } }"
-                >
+                <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
                             <UIcon :name="item.icon" class="size-4 shrink-0" />

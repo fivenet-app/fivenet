@@ -102,7 +102,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.dispatches')">
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/">
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/centrum">
                         {{ $t('common.back') }}
                     </UButton>
                 </template>

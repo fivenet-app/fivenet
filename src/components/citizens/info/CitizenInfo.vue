@@ -27,7 +27,7 @@ const { t } = useI18n();
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
 
-const tabs: { slot: string; label: string; icon: string; permission: Perms }[] = [
+const items: { slot: string; label: string; icon: string; permission: Perms }[] = [
     {
         slot: 'profile',
         label: t('common.profile'),
@@ -52,7 +52,7 @@ const tabs: { slot: string; label: string; icon: string; permission: Perms }[] =
         icon: 'i-mdi-bulletin-board',
         permission: 'CitizenStoreService.ListUserActivity' as Perms,
     },
-].filter((tab) => can(tab.permission));
+].filter((item) => can(item.permission));
 
 const {
     data: user,
@@ -94,6 +94,24 @@ function addToClipboard(): void {
     });
 }
 
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.label === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+    },
+});
+
 const isOpen = ref(false);
 </script>
 
@@ -131,6 +149,7 @@ const isOpen = ref(false);
                     :retry="refresh"
                 />
                 <DataNoDataBlock v-else-if="user === null" />
+
                 <div v-else>
                     <div class="mb-4 flex items-center gap-2 px-4">
                         <ProfilePictureImg
@@ -167,7 +186,7 @@ const isOpen = ref(false);
                         </UButton>
                     </div>
 
-                    <UTabs :items="tabs" class="w-full" :unmount="true">
+                    <UTabs v-model="selectedTab" :items="items" class="w-full" :unmount="true">
                         <template #default="{ item, selected }">
                             <div class="relative flex items-center gap-2 truncate">
                                 <UIcon :name="item.icon" class="size-4 shrink-0" />

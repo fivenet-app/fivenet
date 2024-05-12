@@ -449,7 +449,7 @@ const isOpen = ref(false);
             </div>
 
             <div class="flex justify-between border-t border-gray-200 px-3 py-3.5 xl:hidden dark:border-gray-700">
-                <div class="inline-flex items-center gap-2">
+                <div class="hidden items-center gap-2 md:inline-flex">
                     <UToggle v-model="weeklyView" />
                     <span class="text-sm">{{ $t('common.weekly_view') }}</span>
                 </div>

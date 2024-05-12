@@ -12,6 +12,5 @@ defineProps<{
             {{ $t('common.connect') }}
         </UButton>
         <input type="hidden" name="connect-only" value="true" />
-        <!--<input type="hidden" name="token" :value="accessToken" />-->
     </form>
 </template>

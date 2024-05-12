@@ -206,13 +206,7 @@ function setSettingsValues(): void {
 
 watch(config, () => setSettingsValues());
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
-    canSubmit.value = false;
-    await updateAppConfig(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
-
-const tabs = [
+const items = [
     { slot: 'auth', label: t('components.rector.app_config.auth.title'), icon: 'i-mdi-login' },
     { slot: 'perms', label: t('components.rector.app_config.perms.title'), icon: 'i-mdi-user-access-control' },
     { slot: 'website', label: t('components.rector.app_config.website.title'), icon: 'i-mdi-spider-web' },
@@ -220,6 +214,30 @@ const tabs = [
     { slot: 'userTracker', label: t('components.rector.app_config.user_tracker.title'), icon: 'i-mdi-track-changes' },
     { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord' },
 ];
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.findIndex((item) => item.label === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+    },
+});
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    canSubmit.value = false;
+    await updateAppConfig(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -268,7 +286,7 @@ const tabs = [
             <DataNoDataBlock v-else-if="config === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
-                <UTabs :items="tabs" class="w-full" :ui="{ list: { rounded: '' } }">
+                <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
                             <UIcon :name="item.icon" class="size-4 shrink-0" />

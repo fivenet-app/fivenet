@@ -172,7 +172,12 @@ func (o *OAuth2) Login(c *gin.Context) {
 		}
 	}
 
-	tokenVal := c.Query("token")
+	tokenVal, err := c.Cookie("fivenet_token")
+	if err != nil {
+		o.logger.Error("failed to parse token cookie", zap.Error(err))
+		o.handleRedirect(c, false, false, "invalid_request")
+		return
+	}
 	if tokenVal != "" {
 		sess.Set("token", tokenVal)
 	}
