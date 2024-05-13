@@ -3,6 +3,7 @@ package notifi
 import (
 	"context"
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/events"
@@ -14,13 +15,18 @@ const (
 
 	BaseSubject events.Subject = "notifi"
 
-	UserNotification events.Type = "user"
+	// User notifications topic
+	UserTopic events.Topic = "user"
+	// Job event topic
+	JobTopic events.Topic = "job"
+	// System event topic
+	SystemTopic events.Topic = "sys"
 )
 
 func (n *Notifi) registerEvents(ctx context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        StreamName,
-		Description: "User Notifications events",
+		Description: "User and System Notification events",
 		Retention:   jetstream.InterestPolicy,
 		Subjects:    []string{fmt.Sprintf("%s.>", BaseSubject)},
 		Discard:     jetstream.DiscardOld,
@@ -31,4 +37,16 @@ func (n *Notifi) registerEvents(ctx context.Context) error {
 	}
 
 	return nil
+}
+
+func SplitSubject(in string) (events.Subject, events.Topic, []string) {
+	parts := strings.Split(in, ".")
+
+	if len(parts) >= 3 {
+		return events.Subject(parts[0]), events.Topic(parts[1]), parts[2:]
+	} else if len(parts) == 2 {
+		return events.Subject(parts[0]), events.Topic(parts[1]), nil
+	}
+
+	return events.Subject(""), events.Topic(""), nil
 }

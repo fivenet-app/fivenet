@@ -42,21 +42,21 @@ const links = computed(() =>
             permission: 'CitizenStoreService.ListCitizens' as Perms,
         },
         {
-            label: t('common.vehicle'),
+            label: t('common.vehicle', 2),
             icon: 'i-mdi-car-outline',
             to: '/vehicles',
             tooltip: {
-                text: t('common.vehicle'),
+                text: t('common.vehicle', 2),
                 shortcuts: ['G', 'V'],
             },
             permission: 'DMVService.ListVehicles' as Perms,
         },
         {
-            label: t('common.document'),
+            label: t('common.document', 2),
             icon: 'i-mdi-file-document-box-multiple-outline',
             to: '/documents',
             tooltip: {
-                text: t('common.document'),
+                text: t('common.document', 2),
                 shortcuts: ['G', 'D'],
             },
             permission: 'DocStoreService.ListDocuments' as Perms,

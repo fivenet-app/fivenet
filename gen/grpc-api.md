@@ -488,10 +488,12 @@
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
     - [GetNotificationsResponse](#services-notificator-GetNotificationsResponse)
+    - [JobEvent](#services-notificator-JobEvent)
     - [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest)
     - [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse)
     - [StreamRequest](#services-notificator-StreamRequest)
     - [StreamResponse](#services-notificator-StreamResponse)
+    - [SystemEvent](#services-notificator-SystemEvent)
   
     - [NotificatorService](#services-notificator-NotificatorService)
   
@@ -7549,6 +7551,21 @@ Templates ==================================================================
 
 
 
+<a name="services-notificator-JobEvent"></a>
+
+### JobEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+
+
+
+
+
+
 <a name="services-notificator-MarkNotificationsRequest"></a>
 
 ### MarkNotificationsRequest
@@ -7602,7 +7619,18 @@ Templates ==================================================================
 | restart | [bool](#bool) | optional |  |
 | notification | [resources.notifications.Notification](#resources-notifications-Notification) |  |  |
 | refresh_token | [bool](#bool) |  |  |
-| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+| job_event | [JobEvent](#services-notificator-JobEvent) |  |  |
+| system_event | [SystemEvent](#services-notificator-SystemEvent) |  |  |
+
+
+
+
+
+
+<a name="services-notificator-SystemEvent"></a>
+
+### SystemEvent
+
 
 
 

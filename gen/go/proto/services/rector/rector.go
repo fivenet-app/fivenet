@@ -5,6 +5,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
@@ -29,6 +30,7 @@ type Server struct {
 	st       storage.IStorage
 	cfg      *config.Config
 	appCfg   appconfig.IConfig
+	js       *events.JSWrapper
 }
 
 type Params struct {
@@ -43,6 +45,7 @@ type Params struct {
 	Storage   storage.IStorage
 	Config    *config.Config
 	AppConfig appconfig.IConfig
+	JS        *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
@@ -56,6 +59,7 @@ func NewServer(p Params) *Server {
 		st:       p.Storage,
 		cfg:      p.Config,
 		appCfg:   p.AppConfig,
+		js:       p.JS,
 	}
 }
 

@@ -39,6 +39,7 @@ const config = {
     minHeight: props.minHeight,
     editorClassName: 'prose' + (theme.value.documents.editorTheme === 'dark' ? ' prose-neutral' : ' prose-gray'),
     theme: theme.value.documents.editorTheme,
+    showPlaceholder: false,
 
     defaultMode: props.splitScreen ? '3' : '1',
 

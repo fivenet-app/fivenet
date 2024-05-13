@@ -49,9 +49,18 @@ message StreamResponse {
   oneof data {
     resources.notifications.Notification notification = 3;
     bool refresh_token = 4;
-    resources.users.JobProps job_props = 5;
+    JobEvent job_event = 5;
+    SystemEvent system_event = 6;
   }
 }
+
+message JobEvent {
+  oneof data {
+    resources.users.JobProps job_props = 1;
+  }
+}
+
+message SystemEvent {}
 
 service NotificatorService {
   // @perm: Name=Any

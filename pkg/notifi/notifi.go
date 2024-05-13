@@ -64,7 +64,7 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 		return err
 	}
 
-	if _, err := n.js.PublishAsync(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserNotification, not.UserId), data); err != nil {
+	if _, err := n.js.PublishAsync(ctx, fmt.Sprintf("%s.%s.%d", BaseSubject, UserTopic, not.UserId), data); err != nil {
 		n.logger.Error("failed to publish notification message", zap.Error(err))
 		return err
 	}

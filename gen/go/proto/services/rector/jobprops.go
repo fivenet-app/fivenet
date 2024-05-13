@@ -3,18 +3,22 @@ package rector
 import (
 	"context"
 	"errors"
+	"fmt"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/notificator"
 	errorsrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"google.golang.org/protobuf/proto"
 )
 
 var (
@@ -81,7 +85,7 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	jobProps, err := s.GetJobProps(ctx, &GetJobPropsRequest{})
+	jobProps, err := s.getJobProps(ctx, userInfo.Job)
 	if err != nil {
 		return nil, err
 	}
@@ -92,8 +96,8 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 
 	if req.JobProps.LogoUrl != nil {
 		// Set "current" image's url so the system will delete it if still exists
-		if jobProps.JobProps != nil && jobProps.JobProps.LogoUrl != nil {
-			req.JobProps.LogoUrl.Url = jobProps.JobProps.LogoUrl.Url
+		if jobProps != nil && jobProps.LogoUrl != nil {
+			req.JobProps.LogoUrl.Url = jobProps.LogoUrl.Url
 		}
 
 		if len(req.JobProps.LogoUrl.Data) > 0 {
@@ -110,14 +114,14 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 			}
 		} else if req.JobProps.LogoUrl.Delete != nil && *req.JobProps.LogoUrl.Delete {
 			// Delete avatar from store
-			if jobProps.JobProps.LogoUrl != nil && jobProps.JobProps.LogoUrl.Url != nil {
-				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*jobProps.JobProps.LogoUrl.Url)); err != nil {
+			if jobProps.LogoUrl != nil && jobProps.LogoUrl.Url != nil {
+				if err := s.st.Delete(ctx, filestore.StripURLPrefix(*jobProps.LogoUrl.Url)); err != nil {
 					return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 				}
 			}
 		}
 	} else {
-		req.JobProps.LogoUrl = jobProps.JobProps.LogoUrl
+		req.JobProps.LogoUrl = jobProps.LogoUrl
 	}
 
 	stmt := tJobProps.
@@ -157,12 +161,33 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	jobProps, err = s.GetJobProps(ctx, &GetJobPropsRequest{})
+	newJobProps, err := s.getJobProps(ctx, userInfo.Job)
 	if err != nil {
 		return nil, err
 	}
 
+	if !proto.Equal(req.JobProps, jobProps) {
+		if _, err := s.js.PublishAsyncProto(ctx,
+			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
+			&notificator.JobEvent{
+				Data: &notificator.JobEvent_JobProps{
+					JobProps: &users.JobProps{
+						Job:                newJobProps.Job,
+						JobLabel:           newJobProps.JobLabel,
+						Theme:              newJobProps.Theme,
+						LivemapMarkerColor: newJobProps.LivemapMarkerColor,
+						QuickButtons:       newJobProps.QuickButtons,
+						RadioFrequency:     newJobProps.RadioFrequency,
+						Motd:               newJobProps.Motd,
+						LogoUrl:            newJobProps.LogoUrl,
+					},
+				},
+			}); err != nil {
+			return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+		}
+	}
+
 	return &SetJobPropsResponse{
-		JobProps: jobProps.JobProps,
+		JobProps: newJobProps,
 	}, nil
 }

@@ -108,14 +108,22 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
 
                             this.add(not);
-                            break;
+                            continue;
                         } else if (resp.data.oneofKind === 'refreshToken') {
                             console.info('Notificator: Refreshing token...');
                             await authStore.chooseCharacter(undefined);
-                            break;
-                        } else if (resp.data.oneofKind === 'jobProps') {
-                            authStore.setJobProps(resp.data.jobProps);
-                            break;
+                            continue;
+                        } else if (resp.data.oneofKind === 'jobEvent') {
+                            if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
+                                authStore.setJobProps(resp.data.jobEvent.data.jobProps);
+                            } else {
+                                console.warn(
+                                    'Notificator: Unknown job event data received - Kind: ',
+                                    resp.data.oneofKind,
+                                    resp.data,
+                                );
+                            }
+                            continue;
                         } else {
                             // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
