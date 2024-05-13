@@ -332,7 +332,12 @@ const isOpen = ref(false);
                 <template #default>
                     <div class="flex flex-1 items-center justify-between">
                         <UPopover :popper="{ placement: 'bottom-end', offsetDistance: 10 }">
-                            <UButton color="white" icon="i-mdi-calendar" trailing-icon="i-mdi-chevron-down">
+                            <UButton
+                                color="white"
+                                icon="i-mdi-calendar"
+                                trailing-icon="i-mdi-chevron-down"
+                                :loading="calendarsLoading"
+                            >
                                 {{ $t('common.calendar') }}
                             </UButton>
 
@@ -379,7 +384,7 @@ const isOpen = ref(false);
                             </template>
                         </UPopover>
 
-                        <UButton icon="i-mdi-calendar-today" @click="resetToToday">
+                        <UButton icon="i-mdi-calendar-today" :disabled="calendarsLoading" @click="resetToToday">
                             {{ $t('common.today') }}
                         </UButton>
                     </div>
@@ -398,6 +403,10 @@ const isOpen = ref(false);
                         slideover.open(EntryViewSlideover, {
                             entryId: $event.id,
                         })
+                    "
+                    @did-move="
+                        query.year = $event[0].year;
+                        query.month = $event[0].month;
                     "
                 />
 
