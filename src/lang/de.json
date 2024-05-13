@@ -1036,7 +1036,8 @@
                 "update": {
                     "title": "Kalender aktualisieren"
                 },
-                "private": "Privater Kalender"
+                "private": "Privater Kalender",
+                "public": "Öffentlicher Kalender"
             },
             "EntryCreateOrUpdateModal": {
                 "create": {
@@ -2078,8 +2079,8 @@
         "JobsService": {
             "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
             "ErrReasonRequired": "Ein Grund muss gegeben sein!",
-            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
-            "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!"
+            "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
+            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
