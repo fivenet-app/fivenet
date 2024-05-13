@@ -12,7 +12,7 @@ import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
-import { addDays, isPast, isSameDay, isToday } from 'date-fns';
+import { addDays, isAfter, isBefore, isPast, isSameDay, isToday } from 'date-fns';
 import { useRouteQuery } from '@vueuse/router';
 
 useHead({
@@ -40,6 +40,8 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
+
+const now = new Date();
 
 const date = ref<Date>(new Date());
 const query = reactive<Schema>({
@@ -126,35 +128,60 @@ function formatStartEndTime(entry: CalendarEntry): string {
 
 type CalEntry = {
     key: string;
-    customData: CalendarEntry & { isPast: boolean; color: string; time: string };
+    customData: CalendarEntry & {
+        color: string;
+        isPast: boolean;
+        multiDay: boolean;
+        ongoing: boolean;
+        time: string;
+        timeEnd?: string;
+    };
     dates: DateRangeSource | DateRangeSource[];
 };
 
 const transformedCalendarEntries = computedAsync(async () =>
-    entries.value.map((entry) => {
-        const endTime = entry.endTime ? toDate(entry.endTime) : undefined;
-        return {
-            key: entry.id,
-            customData: {
-                ...entry,
-                isPast: endTime ? isPast(endTime) : false,
-                color: entry.calendar?.color ?? 'primary',
-                time: formatStartEndTime(entry),
-            },
-            dates: [
-                {
-                    start: toDate(entry.startTime),
-                    end: endTime,
-                    repeat: entry.recurring
-                        ? {
-                              every: [entry.recurring.count, entry.recurring.every],
-                              until: addDays(toDate(entry.recurring?.until), 31),
-                          }
-                        : undefined,
+    entries.value
+        .map((entry) => {
+            const startTime = toDate(entry.startTime);
+            const endTime = entry.endTime ? toDate(entry.endTime) : undefined;
+            const past = endTime ? isPast(endTime) : isPast(startTime);
+
+            return {
+                key: `${startTime.toISOString()}-${entry.id}-${entry.calendarId}`,
+                customData: {
+                    ...entry,
+                    color: entry.calendar?.color ?? 'primary',
+                    isPast: past,
+                    multiDay: !!endTime && !isSameDay(startTime, endTime),
+                    ongoing: !!endTime && isAfter(now, startTime) && isBefore(now, endTime),
+                    time: formatStartEndTime(entry),
+                    timeEnd:
+                        endTime && !isSameDay(startTime, endTime)
+                            ? d(startTime, {
+                                  month: '2-digit',
+                                  day: '2-digit',
+                                  hour: 'numeric',
+                                  minute: 'numeric',
+                              }) +
+                              ' - ' +
+                              d(endTime, 'time')
+                            : undefined,
                 },
-            ] as DateRangeSource[],
-        };
-    }),
+                dates: [
+                    {
+                        start: startTime,
+                        end: endTime,
+                        repeat: entry.recurring
+                            ? {
+                                  every: [entry.recurring.count, entry.recurring.every],
+                                  until: addDays(toDate(entry.recurring?.until), 31),
+                              }
+                            : undefined,
+                    },
+                ] as DateRangeSource[],
+            };
+        })
+        .sort((a, b) => a.key.localeCompare(b.key) + b.customData.id.localeCompare(a.customData.id)),
 );
 
 type GroupedCalendarEntries = {
@@ -385,7 +412,7 @@ const isOpen = ref(false);
                                         {{ $d(entries.date, 'date') }}
                                     </span>
                                     <UBadge
-                                        v-if="isToday(entries.date)"
+                                        v-if="entries.isToday"
                                         id="today"
                                         size="xs"
                                         color="amber"
@@ -430,7 +457,7 @@ const isOpen = ref(false);
                                             (entries.entries.past.length > 0 || entries.entries.upcoming.length > 0)
                                         "
                                         size="sm"
-                                        :ui="{ border: { base: 'border-red-300 dark:border-red-500' } }"
+                                        :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
                                         class="my-1"
                                     />
                                 </li>
@@ -455,6 +482,12 @@ const isOpen = ref(false);
                                                 {{ attr.customData.time }}
                                             </template>
                                             <span>-</span>
+
+                                            <UIcon
+                                                v-if="attr.customData.ongoing"
+                                                name="i-mdi-timer-sand"
+                                                class="size-3 text-amber-800"
+                                            />
 
                                             {{ attr.customData.title }}
                                         </span>

@@ -31,27 +31,28 @@ const attributes = computed(() => ({
                 v-for="attr in attributes.past"
                 :key="attr.key"
                 truncate
-                class="vc-day-entry mb-1 mt-0 w-full rounded-sm p-1 text-left text-xs leading-tight"
+                class="vc-day-entry mb-1 mt-0 flex w-full flex-col !items-start justify-start rounded-sm p-1 text-left text-xs leading-tight"
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"
             >
-                {{ attr.customData.title }}
-                <template
-                    v-if="
-                        attr.customData.time &&
-                        (isSameDay(day.date, toDate(attr.customData.startTime)) ||
-                            isSameDay(day.date, toDate(attr.customData.endTime)))
-                    "
-                >
-                    <br />
-                    {{ attr.customData.time }}
-                </template>
+                <span class="inline-flex items-center gap-0.5">
+                    {{ attr.customData.title }}
+                </span>
+
+                <span v-if="attr.customData.time">
+                    <template v-if="attr.customData.timeEnd && isSameDay(day.date, toDate(attr.customData.endTime))">
+                        {{ attr.customData.timeEnd }}
+                    </template>
+                    <template v-else-if="isSameDay(day.date, toDate(attr.customData.startTime))">
+                        {{ attr.customData.time }}
+                    </template>
+                </span>
             </UButton>
 
             <UDivider
                 v-if="day.isToday && (attributes.past.length > 0 || attributes.upcoming.length > 0)"
                 size="sm"
-                :ui="{ border: { base: 'border-red-300 dark:border-red-500' } }"
+                :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
                 class="mb-1"
             />
 
@@ -59,21 +60,23 @@ const attributes = computed(() => ({
                 v-for="attr in attributes.upcoming"
                 :key="attr.key"
                 truncate
-                class="vc-day-entry mb-1 mt-0 w-full rounded-sm p-1 text-left text-xs leading-tight"
+                class="vc-day-entry mb-1 mt-0 flex w-full flex-col !items-start justify-start rounded-sm p-1 text-left text-xs leading-tight"
                 :color="attr.customData.color"
                 @click="$emit('selected', attr.customData)"
             >
-                {{ attr.customData.title }}
-                <template
-                    v-if="
-                        attr.customData.time &&
-                        (isSameDay(day.date, toDate(attr.customData.startTime)) ||
-                            isSameDay(day.date, toDate(attr.customData.endTime)))
-                    "
-                >
-                    <br />
-                    {{ attr.customData.time }}
-                </template>
+                <span class="inline-flex items-center gap-0.5">
+                    <UIcon v-if="attr.customData.ongoing" name="i-mdi-timer-sand" class="size-3 text-amber-800" />
+                    {{ attr.customData.title }}
+                </span>
+
+                <span v-if="attr.customData.time">
+                    <template v-if="attr.customData.timeEnd && isSameDay(day.date, toDate(attr.customData.endTime))">
+                        {{ attr.customData.timeEnd }}
+                    </template>
+                    <template v-else-if="isSameDay(day.date, toDate(attr.customData.startTime))">
+                        {{ attr.customData.time }}
+                    </template>
+                </span>
             </UButton>
         </div>
     </div>
