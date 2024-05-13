@@ -93,6 +93,8 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
             data.value.comments.unshift(response.comment);
         }
 
+        state.comment = '';
+
         emit('newComment');
     } catch (e) {
         $grpc.handleError(e as RpcError);

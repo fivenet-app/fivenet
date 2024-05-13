@@ -397,7 +397,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
 		// Allow users to set their own absence date regardless of types perms check
 		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") {
-			return nil, errorsjobs.ErrPropsWantedDenied
+			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
 		if req.Props.AbsenceBegin.Timestamp == nil {
@@ -424,7 +424,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	// Generate the update sets
 	if req.Props.Note != nil {
 		if !slices.Contains(types, "Note") {
-			return nil, errorsjobs.ErrPropsWantedDenied
+			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 
 		updateSets = append(updateSets, tJobsUserProps.Note.SET(jet.String(*req.Props.Note)))

@@ -2078,8 +2078,9 @@
         },
         "JobsService": {
             "ErrFailedQuery": "Failed to get job data!",
-            "ErrPropsWantedDenied": "You are not allowed to set a user wanted status!",
-            "ErrReasonRequired": "A reason must be provided!"
+            "ErrReasonRequired": "A reason must be provided!",
+            "ErrPropsAbsenceDenied": "You are not allowed to set your colleague's absence!",
+            "ErrPropsNoteDenied": "You are not allowed to set your colleague's note!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Failed to get qualifcation data!",

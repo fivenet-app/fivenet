@@ -2077,8 +2077,9 @@
         },
         "JobsService": {
             "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
-            "ErrPropsWantedDenied": "Sie haben keine Berechtigung den Bürger zur Fahndung auszuschreiben!",
-            "ErrReasonRequired": "Ein Grund muss gegeben sein!"
+            "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!",
+            "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!"
         },
         "QualificationsService": {
             "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
