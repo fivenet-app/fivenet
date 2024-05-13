@@ -57,8 +57,8 @@ dependencies:
     specifier: ^2.2.4
     version: 2.2.4
   jodit:
-    specifier: 4.0.18
-    version: 4.0.18
+    specifier: 4.2.17
+    version: 4.2.17
   jodit-vue:
     specifier: 3.1.0
     version: 3.1.0
@@ -7320,8 +7320,8 @@ packages:
       core-js: 3.37.0
     dev: false
 
-  /jodit@4.0.18:
-    resolution: {integrity: sha512-S2Eorn+7ZhIFEaPMDwoBpLhTwli/NP9FwSWY7AbsBvAy3nnltwczxRkcfXGCYyrdlqua1Mml3MPTuQtOT8SGBg==}
+  /jodit@4.2.17:
+    resolution: {integrity: sha512-I7ppyc906PXg4EGjRL+a6EQi6Yaw4Lp+7GJgyylVQS3Zg9gxZIX1j/QGQ57XThnQ5xtrDdMCLVTdKgeyz6qDNA==}
     dependencies:
       autobind-decorator: 2.4.0
     dev: false
