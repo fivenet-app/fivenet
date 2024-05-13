@@ -10,6 +10,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     templateId: string;
@@ -58,7 +59,7 @@ async function deleteTemplate(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },
             description: { key: 'notifications.templates.deleted.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         await navigateTo({ name: 'documents-templates' });

@@ -2,6 +2,7 @@
 import { isNUIAvailable, phoneCallNumber } from '~/composables/nui';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -34,7 +35,6 @@ async function doCall(): Promise<void> {
         return phoneCallNumber(props.number);
     } else {
         notifications.add({
-            type: 'info',
             title: {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.title',
                 parameters: {},
@@ -43,6 +43,7 @@ async function doCall(): Promise<void> {
                 key: 'notifications.components.partials.users.PhoneNumber.copied.content',
                 parameters: {},
             },
+            type: NotificationType.INFO,
         });
 
         return copyToClipboardWrapper(props.number);

@@ -9,19 +9,12 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
 
-message Notification {
-  uint64 id = 1 [jstype = JS_STRING];
-  resources.timestamp.Timestamp created_at = 2;
-  resources.timestamp.Timestamp read_at = 3;
-  int32 user_id = 4;
-  // @sanitize
-  resources.common.TranslateItem title = 5;
-  optional string type = 6 [(validate.rules).string.max_len = 128];
-  // @sanitize
-  resources.common.TranslateItem content = 7;
-  NotificationCategory category = 8 [(validate.rules).enum.defined_only = true];
-  optional Data data = 9;
-  optional bool starred = 10;
+enum NotificationType {
+  NOTIFICATION_TYPE_UNSPECIFIED = 0;
+  NOTIFICATION_TYPE_ERROR = 1;
+  NOTIFICATION_TYPE_WARNING = 2;
+  NOTIFICATION_TYPE_INFO = 3;
+  NOTIFICATION_TYPE_SUCCESS  = 4;
 }
 
 enum NotificationCategory {
@@ -29,6 +22,21 @@ enum NotificationCategory {
   NOTIFICATION_CATEGORY_GENERAL = 1;
   NOTIFICATION_CATEGORY_DOCUMENT = 2;
   NOTIFICATION_CATEGORY_CALENDAR = 3;
+}
+
+message Notification {
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  resources.timestamp.Timestamp read_at = 3;
+  int32 user_id = 4;
+  // @sanitize
+  resources.common.TranslateItem title = 5;
+  NotificationType type = 6 [(validate.rules).enum.defined_only = true];
+  // @sanitize
+  resources.common.TranslateItem content = 7;
+  NotificationCategory category = 8 [(validate.rules).enum.defined_only = true];
+  optional Data data = 9;
+  optional bool starred = 10;
 }
 
 message Data {

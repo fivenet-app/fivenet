@@ -25,6 +25,7 @@ import { setWaypointPLZ } from '~/composables/nui';
 import { useSettingsStore } from '~/store/settings';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 import DisponentsInfo from '../disponents/DisponentsInfo.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -57,7 +58,7 @@ async function updateDispatchStatus(dispatchId: string, status: StatusDispatch):
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
             description: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -70,7 +71,7 @@ async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Pr
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.no_dispatch_selected.title', parameters: {} },
             description: { key: 'notifications.centrum.sidebar.no_dispatch_selected.content', parameters: {} },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
         return;
     }
@@ -97,7 +98,7 @@ async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },
             description: { key: 'notifications.centrum.sidebar.unit_status_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -274,7 +275,7 @@ async function checkup(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.centrum.unitUpdated.checkup.title', parameters: {} },
         description: { key: 'notifications.centrum.unitUpdated.checkup.content', parameters: {} },
-        type: 'info',
+        type: NotificationType.INFO,
         timeout: 15000,
         callback: () => attentionDebouncedPlay(),
     });

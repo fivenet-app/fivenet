@@ -5,6 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
@@ -64,7 +65,7 @@ async function deleteRole(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
             description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emit('deleted');
@@ -193,7 +194,7 @@ async function updatePermissions(): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.role_updated.title', parameters: {} },
             description: { key: 'notifications.rector.role_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         changed.value = false;

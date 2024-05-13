@@ -6,6 +6,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     userId: number;
@@ -77,7 +78,7 @@ async function setAbsenceDate(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     value: string | number;
@@ -14,7 +15,7 @@ function addToClipboard(): void {
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 </script>

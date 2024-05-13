@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -39,7 +40,7 @@ async function createAccount(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.auth.account_created.title', parameters: {} },
             description: { key: 'notifications.auth.account_created.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         await navigateTo({ name: 'auth-login' });

@@ -12,6 +12,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     access: DocumentAccess;
@@ -93,7 +94,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.docstore.requests.created.title' },
             description: { key: 'notifications.docstore.requests.created.content' },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         refresh();

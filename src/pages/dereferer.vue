@@ -10,12 +10,20 @@ definePageMeta({
 });
 
 const route = useRoute();
+const router = useRouter();
 
 if (!route.query || !route.query.target) {
     await navigateTo('/');
 } else {
     const url = route.query.target as string;
-    useTimeoutFn(() => navigateTo(url, { external: true }), 2750);
+    useTimeoutFn(async () => {
+        if (isNUIAvailable()) {
+            openURLInWindow(url);
+            router.back();
+        } else {
+            await navigateTo(url, { external: true });
+        }
+    }, 3250);
 }
 
 const target = route.query.target as string;
@@ -34,6 +42,10 @@ const target = route.query.target as string;
                 </template>
 
                 <p>{{ $t('pages.dereferer.description') }}</p>
+
+                <div class="mt-4">
+                    <pre>{{ target }}</pre>
+                </div>
 
                 <template #footer>
                     <UButton

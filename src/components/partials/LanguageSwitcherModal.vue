@@ -2,6 +2,7 @@
 import { type LocaleObject } from 'vue-i18n-routing';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { locale, setLocale, locales } = useI18n();
 
@@ -47,7 +48,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
     notifications.add({
         title: { key: 'notifications.language_switched.title', parameters: {} },
         description: { key: 'notifications.language_switched.content', parameters: { name: lang.name! } },
-        type: 'success',
+        type: NotificationType.SUCCESS,
         timeout: 1750,
         callback: () => reloadNuxtApp({ persistState: false, force: true }),
     });

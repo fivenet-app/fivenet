@@ -24,6 +24,7 @@ import DocumentReferenceManager from '~/components/documents/DocumentReferenceMa
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
 import { checkDocAccess } from '~/components/documents/helpers';
 import DocEditor from '~/components/partials/DocEditor.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     documentId?: string;
@@ -334,8 +335,8 @@ function addAccessEntry(): void {
             description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
-            } as TranslateItem,
-            type: 'error',
+            },
+            type: NotificationType.ERROR,
         });
         return;
     }
@@ -480,7 +481,7 @@ async function createDocument(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.document_created.title', parameters: {} },
             description: { key: 'notifications.document_created.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
         clipboardStore.clear();
         documentStore.clear();
@@ -590,7 +591,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.document_updated.title', parameters: {} },
             description: { key: 'notifications.document_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
         clipboardStore.clear();
         documentStore.clear();

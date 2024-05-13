@@ -7,6 +7,7 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job } from '~~/gen/ts/resources/users/jobs';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -67,7 +68,7 @@ async function createRole(): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.role_created.title', parameters: {} },
             description: { key: 'notifications.rector.role_created.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         roles.value?.push(response.role!);

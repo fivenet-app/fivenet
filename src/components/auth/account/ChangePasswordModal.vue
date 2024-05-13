@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -39,7 +40,7 @@ async function changePassword(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.auth.changed_password.title', parameters: {} },
             description: { key: 'notifications.auth.changed_password.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         await navigateTo({ name: 'overview' });

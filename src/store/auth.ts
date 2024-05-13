@@ -3,6 +3,7 @@ import { parseQuery } from 'vue-router';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { Job, type JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
@@ -135,7 +136,7 @@ export const useAuthStore = defineStore('auth', {
                         key: 'notifications.auth.error_logout.content',
                         parameters: { msg: (e as RpcError).message },
                     },
-                    type: 'error',
+                    type: NotificationType.ERROR,
                 });
                 this.clearAuthInfo();
 
@@ -211,7 +212,7 @@ export const useAuthStore = defineStore('auth', {
                         key: 'notifications.superuser_menu.setsuperusermode.content',
                         parameters: { job: job?.label ?? this.activeChar?.jobLabel ?? 'N/A' },
                     },
-                    type: 'info',
+                    type: NotificationType.INFO,
                 });
 
                 await navigateTo({ name: 'overview' });

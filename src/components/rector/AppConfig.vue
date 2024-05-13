@@ -9,6 +9,7 @@ import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { useNotificatorStore } from '~/store/notificator';
 import { useCompletorStore } from '~/store/completor';
 import { toDuration } from '~/utils/duration';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { t } = useI18n();
 
@@ -148,7 +149,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.app_config.title', parameters: {} },
             description: { key: 'notifications.rector.app_config.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         if (response.config) {

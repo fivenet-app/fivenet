@@ -14,6 +14,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -127,7 +128,7 @@ ${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
     notifications.add({
         title: { key: 'notifications.rector.audit_log.title', parameters: {} },
         description: { key: 'notifications.rector.audit_log.content', parameters: {} },
-        type: 'info',
+        type: NotificationType.INFO,
     });
 
     return copyToClipboardWrapper(text);

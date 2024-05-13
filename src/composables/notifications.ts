@@ -1,9 +1,12 @@
 import { type TranslateItem } from '~/composables/i18n';
-import { Data, NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
+import { Data, NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-export type NotificationType = 'success' | 'info' | 'warning' | 'error';
-
-export const NotificationTypes: NotificationType[] = ['success', 'info', 'warning', 'error'];
+export const NotificationTypes: NotificationType[] = [
+    NotificationType.ERROR,
+    NotificationType.WARNING,
+    NotificationType.INFO,
+    NotificationType.SUCCESS,
+];
 
 export interface Notification {
     id?: string;

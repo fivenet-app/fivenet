@@ -7,6 +7,7 @@ import { Comment } from '~~/gen/ts/resources/documents/comment';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     comment: Comment;
@@ -68,7 +69,7 @@ async function deleteComment(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emit('deleted', props.comment);

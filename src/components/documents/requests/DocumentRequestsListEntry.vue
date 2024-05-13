@@ -4,6 +4,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { DocRequest } from '~~/gen/ts/resources/documents/requests';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     request: DocRequest;
@@ -39,7 +40,7 @@ async function updateDocumentReq(documentId: string, requestId: string, accepted
         notifications.add({
             title: { key: 'notifications.docstore.requests.updated.title' },
             description: { key: 'notifications.docstore.requests.updated.content' },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
     } catch (e) {
         $grpc.handleError(e as RpcError);
@@ -57,7 +58,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.docstore.requests.deleted.title' },
             description: { key: 'notifications.docstore.requests.deleted.content' },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emits('refreshRequests');

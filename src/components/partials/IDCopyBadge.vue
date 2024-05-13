@@ -2,6 +2,7 @@
 import type { ButtonVariant, ButtonSize } from '#ui/types';
 import { type TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const notifications = useNotificatorStore();
 
@@ -36,7 +37,7 @@ function copyDocumentIDToClipboard(): void {
             title: props.title,
             description: props.content,
             timeout: 3250,
-            type: 'info',
+            type: NotificationType.INFO,
         });
     }
 }

@@ -15,6 +15,7 @@ import type { ObjectSpecsValue } from '~/components/documents/templates/types';
 import type { Template } from '~~/gen/ts/resources/documents/templates';
 import SingleHint from '~/components/SingleHint.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     templateId?: string;
@@ -103,7 +104,7 @@ function addDocumentAccessEntry(): void {
         notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
             description: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
         return;
     }
@@ -190,7 +191,7 @@ function addContentDocumentAccessEntry(): void {
         notifications.add({
             title: { key: 'notifications.max_access_entry.title', parameters: {} },
             description: { key: 'notifications.max_access_entry.content', parameters: { max: maxAccessEntries.toString() } },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
         return;
     }
@@ -365,7 +366,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             notifications.add({
                 title: { key: 'notifications.templates.created.title', parameters: {} },
                 description: { key: 'notifications.templates.created.title', parameters: {} },
-                type: 'success',
+                type: NotificationType.SUCCESS,
             });
 
             await navigateTo({
@@ -382,7 +383,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             notifications.add({
                 title: { key: 'notifications.templates.updated.title', parameters: {} },
                 description: { key: 'notifications.templates.updated.content', parameters: {} },
-                type: 'success',
+                type: NotificationType.SUCCESS,
             });
         }
     } catch (e) {

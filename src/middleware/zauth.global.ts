@@ -1,6 +1,7 @@
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
     const authStore = useAuthStore();
@@ -78,7 +79,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                     key: 'notifications.auth.no_permission.content',
                     parameters: { path: to.name ? toTitleCase(to.name?.toString()) : to.path },
                 },
-                type: 'warning',
+                type: NotificationType.WARNING,
             });
 
             if (username.value !== null) {

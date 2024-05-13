@@ -13,7 +13,6 @@ import (
 	errorscalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
@@ -153,7 +152,6 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 		return err
 	}
 
-	nType := string(notifi.InfoType)
 	for _, newUser := range targetUsers {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 			UserId: newUser,
@@ -169,7 +167,7 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 				Parameters: map[string]string{"title": entry.Title},
 			},
 			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_CALENDAR,
-			Type:     &nType,
+			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Data: &notifications.Data{
 				Link: &notifications.Link{
 					To: fmt.Sprintf("/calendar?entry_id=%d", entry.Id),

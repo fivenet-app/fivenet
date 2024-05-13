@@ -153,7 +153,7 @@ const links = computed(() =>
 const footerLinks = [
     {
         label: t('common.help'),
-        icon: 'i-mdi-question-mark-circle',
+        icon: 'i-mdi-question-mark-circle-outline',
         click: () => (isHelpSlideoverOpen.value = true),
     },
     {

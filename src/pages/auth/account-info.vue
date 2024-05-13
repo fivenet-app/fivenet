@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import AccountInfo from '~/components/auth/account/AccountInfo.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({
     title: 'components.auth.AccountInfo.title',
@@ -23,7 +24,7 @@ if (query.oauth2Connect) {
         notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: {} },
             description: { key: 'notifications.auth.oauth2_connect.success.content', parameters: {} },
-            type: 'info',
+            type: NotificationType.INFO,
         });
     } else if (query.oauth2Connect === 'failed') {
         const reason = query.reason ?? 'N/A';
@@ -31,7 +32,7 @@ if (query.oauth2Connect) {
         notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: {} },
             description: { key: 'notifications.auth.oauth2_connect.failed.content', parameters: { msg: reason.toString() } },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
     }
 }

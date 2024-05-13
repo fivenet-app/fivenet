@@ -4,6 +4,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({
     title: 'components.auth.LoginForm.title',
@@ -36,7 +37,7 @@ onMounted(async () => {
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.success.title', parameters: {} },
             description: { key: 'notifications.auth.oauth2_login.success.content', parameters: {} },
-            type: 'info',
+            type: NotificationType.INFO,
         });
 
         await navigateTo({ name: 'auth-character-selector' });
@@ -47,7 +48,7 @@ onMounted(async () => {
         notifications.add({
             title: { key: 'notifications.auth.oauth2_login.failed.title', parameters: {} },
             description: { key: 'notifications.auth.oauth2_login.failed.content', parameters: { msg: reason.toString() } },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
     }
 });

@@ -1,8 +1,8 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
-import { type Notification, type NotificationType } from '~/composables/notifications';
+import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
-import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
+import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 
 // In seconds
@@ -72,7 +72,8 @@ export const useNotificatorStore = defineStore('notifications', {
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'notification') {
                             const n = resp.data.notification;
-                            const nType: NotificationType = (n.type as NotificationType) ?? 'info';
+                            const nType: NotificationType =
+                                n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
 
                             if (n.title === undefined || n.content === undefined) {
                                 continue;

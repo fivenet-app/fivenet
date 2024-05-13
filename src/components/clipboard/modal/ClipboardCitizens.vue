@@ -3,6 +3,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { ClipboardUser, useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();
@@ -65,7 +66,7 @@ async function remove(item: ClipboardUser, notify: boolean): Promise<void> {
             title: { key: 'notifications.clipboard.citizen_removed.title', parameters: {} },
             description: { key: 'notifications.clipboard.citizen_removed.content', parameters: {} },
             timeout: 3250,
-            type: 'info',
+            type: NotificationType.INFO,
         });
     }
 }
@@ -87,7 +88,7 @@ async function removeAll(): Promise<void> {
         title: { key: 'notifications.clipboard.citizens_removed.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizens_removed.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 

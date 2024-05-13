@@ -14,6 +14,7 @@ import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes
 import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { useLivemapStore } from '~/store/livemap';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     dispatchId: string;
@@ -41,7 +42,7 @@ async function selfAssign(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.centrum.unitUpdated.not_in_unit.title' },
             description: { key: 'notifications.centrum.unitUpdated.not_in_unit.content' },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
 
         return;

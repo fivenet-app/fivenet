@@ -45,7 +45,7 @@ const items = [
     {
         slot: 'accountInfo',
         label: t('components.auth.AccountInfo.title'),
-        icon: 'i-mdi-info',
+        icon: 'i-mdi-information-slab-circle',
     },
     {
         slot: 'oauth2Connections',

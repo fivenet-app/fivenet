@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -44,7 +45,7 @@ async function changeUsername(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.auth.change_username.title', parameters: {} },
             description: { key: 'notifications.auth.change_username.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         clearAuthInfo();

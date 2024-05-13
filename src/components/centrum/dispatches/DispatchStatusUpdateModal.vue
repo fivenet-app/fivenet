@@ -6,6 +6,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     dispatchId: string;
@@ -46,7 +47,7 @@ async function updateDispatchStatus(dispatchId: string, values: Schema): Promise
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.dispatch_status_updated.title', parameters: {} },
             description: { key: 'notifications.centrum.sidebar.dispatch_status_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

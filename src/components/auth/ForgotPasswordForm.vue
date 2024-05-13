@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { getErrorMessage } from '~/utils/errors';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const emits = defineEmits<{
     (e: 'toggle'): void;
@@ -23,7 +24,7 @@ async function forgotPassword(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.auth.ForgotPassword.title', parameters: {} },
             description: { key: 'notifications.auth.ForgotPassword.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emits('toggle');

@@ -5,6 +5,7 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -54,7 +55,7 @@ async function setProfilePicture(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

@@ -10,6 +10,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -97,7 +98,7 @@ function addToClipboard(user: User): void {
         title: { key: 'notifications.clipboard.citizen_add.title', parameters: {} },
         description: { key: 'notifications.clipboard.citizen_add.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 

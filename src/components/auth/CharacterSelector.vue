@@ -64,7 +64,7 @@ watch(chars, async () => {
         <UContainer v-if="chars?.find((c) => c.available === false)" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
             <UAlert
                 :ui="{ wrapper: 'relative overflow-hidden' }"
-                icon="i-mdi-information"
+                icon="i-mdi-information-slab-circle"
                 color="primary"
                 variant="subtle"
                 :title="$t('components.auth.CharacterSelectorCard.char_lock_alert.title')"

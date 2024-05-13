@@ -11,6 +11,7 @@ import type { User } from '~~/gen/ts/resources/users/users';
 import type { File } from '~~/gen/ts/resources/filestore/file';
 import { useAuthStore } from '~/store/auth';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -57,7 +58,7 @@ function copyLinkToClipboard(): void {
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 

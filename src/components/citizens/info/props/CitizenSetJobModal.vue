@@ -5,6 +5,7 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     user: User;
@@ -70,7 +71,7 @@ async function setJobProp(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

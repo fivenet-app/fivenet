@@ -13,6 +13,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { isSameDay } from 'date-fns';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     entryId: string;
@@ -47,7 +48,7 @@ function copyLinkToClipboard(): void {
         title: { key: 'notifications.clipboard.link_copied.title', parameters: {} },
         description: { key: 'notifications.clipboard.link_copied.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 

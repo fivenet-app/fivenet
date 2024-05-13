@@ -9,6 +9,7 @@ import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { conductTypesToBGColor } from './helpers';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     entry?: ConductEntry;
@@ -87,7 +88,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

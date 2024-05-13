@@ -40,9 +40,9 @@ export interface Notification {
      */
     title?: TranslateItem;
     /**
-     * @generated from protobuf field: optional string type = 6;
+     * @generated from protobuf field: resources.notifications.NotificationType type = 6;
      */
-    type?: string;
+    type: NotificationType;
     /**
      * @sanitize
      *
@@ -93,6 +93,31 @@ export interface Link {
     external?: boolean;
 }
 /**
+ * @generated from protobuf enum resources.notifications.NotificationType
+ */
+export enum NotificationType {
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_TYPE_ERROR = 1;
+     */
+    ERROR = 1,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_TYPE_WARNING = 2;
+     */
+    WARNING = 2,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_TYPE_INFO = 3;
+     */
+    INFO = 3,
+    /**
+     * @generated from protobuf enum value: NOTIFICATION_TYPE_SUCCESS = 4;
+     */
+    SUCCESS = 4
+}
+/**
  * @generated from protobuf enum resources.notifications.NotificationCategory
  */
 export enum NotificationCategory {
@@ -122,7 +147,7 @@ class Notification$Type extends MessageType<Notification> {
             { no: 3, name: "read_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 5, name: "title", kind: "message", T: () => TranslateItem },
-            { no: 6, name: "type", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } },
+            { no: 6, name: "type", kind: "enum", T: () => ["resources.notifications.NotificationType", NotificationType, "NOTIFICATION_TYPE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 7, name: "content", kind: "message", T: () => TranslateItem },
             { no: 8, name: "category", kind: "enum", T: () => ["resources.notifications.NotificationCategory", NotificationCategory, "NOTIFICATION_CATEGORY_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
             { no: 9, name: "data", kind: "message", T: () => Data },
@@ -133,6 +158,7 @@ class Notification$Type extends MessageType<Notification> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.userId = 0;
+        message.type = 0;
         message.category = 0;
         if (value !== undefined)
             reflectionMergePartial<Notification>(this, message, value);
@@ -158,8 +184,8 @@ class Notification$Type extends MessageType<Notification> {
                 case /* resources.common.TranslateItem title */ 5:
                     message.title = TranslateItem.internalBinaryRead(reader, reader.uint32(), options, message.title);
                     break;
-                case /* optional string type */ 6:
-                    message.type = reader.string();
+                case /* resources.notifications.NotificationType type */ 6:
+                    message.type = reader.int32();
                     break;
                 case /* resources.common.TranslateItem content */ 7:
                     message.content = TranslateItem.internalBinaryRead(reader, reader.uint32(), options, message.content);
@@ -200,9 +226,9 @@ class Notification$Type extends MessageType<Notification> {
         /* resources.common.TranslateItem title = 5; */
         if (message.title)
             TranslateItem.internalBinaryWrite(message.title, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional string type = 6; */
-        if (message.type !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.type);
+        /* resources.notifications.NotificationType type = 6; */
+        if (message.type !== 0)
+            writer.tag(6, WireType.Varint).int32(message.type);
         /* resources.common.TranslateItem content = 7; */
         if (message.content)
             TranslateItem.internalBinaryWrite(message.content, writer.tag(7, WireType.LengthDelimited).fork(), options).join();

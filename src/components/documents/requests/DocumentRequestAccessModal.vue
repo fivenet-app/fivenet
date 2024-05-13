@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     documentId: string;
@@ -55,7 +56,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.docstore.requests.created.title' },
             description: { key: 'notifications.docstore.requests.created.content' },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

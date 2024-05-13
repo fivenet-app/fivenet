@@ -58,7 +58,7 @@ export async function focusTablet(state: boolean): Promise<void> {
         return;
     }
 
-    return await fetchNUI('focusTablet', { state });
+    return await fetchNUI('focusTablet', { state: state });
 }
 
 export async function setWaypoint(x: number, y: number): Promise<void> {
@@ -66,7 +66,7 @@ export async function setWaypoint(x: number, y: number): Promise<void> {
         return;
     }
 
-    return fetchNUI('setWaypoint', { x, y });
+    return fetchNUI('setWaypoint', { x: x, y: y });
 }
 
 export async function phoneCallNumber(phoneNumber: string): Promise<void> {
@@ -74,7 +74,7 @@ export async function phoneCallNumber(phoneNumber: string): Promise<void> {
         return;
     }
 
-    return fetchNUI('phoneCallNumber', { phoneNumber });
+    return fetchNUI('phoneCallNumber', { phoneNumber: phoneNumber });
 }
 
 export async function copyToClipboard(text: string): Promise<void> {
@@ -82,7 +82,7 @@ export async function copyToClipboard(text: string): Promise<void> {
         return;
     }
 
-    return fetchNUI('copyToClipboard', { text });
+    return fetchNUI('copyToClipboard', { text: text });
 }
 
 export async function setRadioFrequency(frequency: string): Promise<void> {
@@ -90,7 +90,7 @@ export async function setRadioFrequency(frequency: string): Promise<void> {
         return;
     }
 
-    return fetchNUI('setRadioFrequency', { frequency });
+    return fetchNUI('setRadioFrequency', { frequency: frequency });
 }
 
 export async function setWaypointPLZ(plz: string): Promise<void> {
@@ -98,5 +98,13 @@ export async function setWaypointPLZ(plz: string): Promise<void> {
         return;
     }
 
-    return fetchNUI('setWaypointPLZ', { plz });
+    return fetchNUI('setWaypointPLZ', { plz: plz });
+}
+
+export async function openURLInWindow(url: string): Promise<void> {
+    if (!isNUIAvailable()) {
+        return;
+    }
+
+    return fetchNUI('openURLInWindow', { url: url });
 }

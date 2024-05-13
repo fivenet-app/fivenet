@@ -5,6 +5,7 @@ import { unitStatusToBGColor, unitStatuses } from '~/components/centrum/helpers'
 import { useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     unit: Unit;
@@ -52,7 +53,7 @@ async function updateUnitStatus(id: string, values: FormData): Promise<void> {
         notifications.add({
             title: { key: 'notifications.centrum.sidebar.unit_status_updated.title', parameters: {} },
             description: { key: 'notifications.centrum.sidebar.unit_status_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;

@@ -5,6 +5,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
 import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
@@ -319,7 +320,7 @@ export const useCentrumStore = defineStore('centrum', {
                 useNotificatorStore().add({
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: {} },
                     description: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
-                    type: 'info',
+                    type: NotificationType.INFO,
                 });
 
                 useSound().play({ name: 'centrum/message-incoming' });
@@ -451,7 +452,7 @@ export const useCentrumStore = defineStore('centrum', {
                             notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
-                                type: 'success',
+                                type: NotificationType.SUCCESS,
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
@@ -463,7 +464,7 @@ export const useCentrumStore = defineStore('centrum', {
                             notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
-                                type: 'warning',
+                                type: NotificationType.WARNING,
                             });
 
                             // User has been removed from the unit
@@ -500,7 +501,7 @@ export const useCentrumStore = defineStore('centrum', {
                             notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
-                                type: 'success',
+                                type: NotificationType.SUCCESS,
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
@@ -512,7 +513,7 @@ export const useCentrumStore = defineStore('centrum', {
                             notifications.add({
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
-                                type: 'warning',
+                                type: NotificationType.WARNING,
                             });
 
                             // User has been removed from the unit

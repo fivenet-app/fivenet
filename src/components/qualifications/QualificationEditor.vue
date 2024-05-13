@@ -20,6 +20,7 @@ import QualificationRequirementEntry from '~/components/qualifications/Qualifica
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import DocEditor from '~/components/partials/DocEditor.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     qualificationId?: string;
@@ -281,8 +282,8 @@ function addAccessEntry(): void {
             description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
-            } as TranslateItem,
-            type: 'error',
+            },
+            type: NotificationType.ERROR,
         });
         return;
     }

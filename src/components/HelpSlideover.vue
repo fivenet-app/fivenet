@@ -28,7 +28,7 @@ const links = computed(() =>
                   label: t('common.help'),
                   icon: 'i-mdi-book-open-blank-variant-outline',
                   trailingIcon: 'i-mdi-external-link',
-                  to: 'https://fivenet.app/docs',
+                  to: generateDerefedURL('https://fivenet.app/getting-started'),
                   external: true,
               }
             : undefined,

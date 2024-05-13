@@ -3,6 +3,7 @@ import { type RpcTransport } from '@protobuf-ts/runtime-rpc';
 import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AuthServiceClient } from '~~/gen/ts/services/auth/auth.client';
 import { CalendarServiceClient } from '~~/gen/ts/services/calendar/calendar.client';
 import { CentrumServiceClient } from '~~/gen/ts/services/centrum/centrum.client';
@@ -55,7 +56,7 @@ export class GRPCClients {
 
         const notification = {
             id: '',
-            type: 'error',
+            type: NotificationType.ERROR,
             title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
             description: { key: err.message ?? 'Unknown error', parameters: {} },
         } as Notification;
@@ -79,7 +80,7 @@ export class GRPCClients {
                 case 'unauthenticated':
                     useAuthStore().clearAuthInfo();
 
-                    notification.type = 'warning';
+                    notification.type = NotificationType.WARNING;
                     notification.title = { key: 'notifications.grpc_errors.unauthenticated.title', parameters: {} };
                     notification.description = { key: 'notifications.grpc_errors.unauthenticated.content', parameters: {} };
 

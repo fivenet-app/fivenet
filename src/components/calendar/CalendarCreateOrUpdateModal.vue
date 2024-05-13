@@ -13,6 +13,7 @@ import type { UserShort } from '~~/gen/ts/resources/users/users';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     calendarId?: string;
@@ -200,8 +201,8 @@ function addAccessEntry(): void {
             description: {
                 key: 'notifications.max_access_entry.content',
                 parameters: { max: maxAccessEntries.toString() },
-            } as TranslateItem,
-            type: 'error',
+            },
+            type: NotificationType.ERROR,
         });
         return;
     }

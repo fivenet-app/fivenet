@@ -9,6 +9,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -98,7 +99,7 @@ function addToClipboard(vehicle: Vehicle): void {
         title: { key: 'notifications.clipboard.vehicle_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.vehicle_added.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 

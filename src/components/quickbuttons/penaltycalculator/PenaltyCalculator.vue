@@ -7,6 +7,7 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { Law } from '~~/gen/ts/resources/laws/laws';
 import PenaltySummaryTable from '~/components/quickbuttons/penaltycalculator/PenaltySummaryTable.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const completorStore = useCompletorStore();
 const notifications = useNotificatorStore();
@@ -132,7 +133,7 @@ ${t('common.crime', state.value.selectedPenalties.length)}:
     notifications.add({
         title: { key: 'notifications.penaltycalculator.title', parameters: {} },
         description: { key: 'notifications.penaltycalculator.content', parameters: {} },
-        type: 'info',
+        type: NotificationType.INFO,
     });
 
     return copyToClipboardWrapper(text);

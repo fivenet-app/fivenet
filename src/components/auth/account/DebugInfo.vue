@@ -5,6 +5,7 @@ import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const clipboardStore = useClipboardStore();
 
@@ -30,7 +31,10 @@ async function sendTestNotifications(): Promise<void> {
     NotificationTypes.forEach((notificationType, index) => {
         notifications.add({
             title: { key: 'notifications.system.test_notification.title', parameters: { index: (index + 1).toString() } },
-            description: { key: 'notifications.system.test_notification.content', parameters: { type: notificationType } },
+            description: {
+                key: 'notifications.system.test_notification.content',
+                parameters: { type: NotificationType[notificationType] },
+            },
             type: notificationType,
             onClick: () => alert('Test was successful!'),
         });

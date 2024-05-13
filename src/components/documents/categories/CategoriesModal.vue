@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { Category } from '~~/gen/ts/resources/documents/category';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     category?: Category;
@@ -48,7 +49,7 @@ async function createCategory(values: FormData): Promise<void> {
         notifications.add({
             title: { key: 'notifications.category_created.title', parameters: {} },
             description: { key: 'notifications.category_created.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emit('update');
@@ -70,7 +71,7 @@ async function updateCategory(values: FormData): Promise<void> {
         notifications.add({
             title: { key: 'notifications.category_updated.title', parameters: {} },
             description: { key: 'notifications.category_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emit('update');
@@ -93,7 +94,7 @@ async function deleteCategory(): Promise<void> {
         notifications.add({
             title: { key: 'notifications.category_deleted.title', parameters: {} },
             description: { key: 'notifications.category_deleted.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emit('update');

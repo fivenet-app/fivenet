@@ -145,6 +145,7 @@
     - [Notification](#resources-notifications-Notification)
   
     - [NotificationCategory](#resources-notifications-NotificationCategory)
+    - [NotificationType](#resources-notifications-NotificationType)
   
 - [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
@@ -2616,7 +2617,7 @@
 | read_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | user_id | [int32](#int32) |  |  |
 | title | [resources.common.TranslateItem](#resources-common-TranslateItem) |  | @sanitize |
-| type | [string](#string) | optional |  |
+| type | [NotificationType](#resources-notifications-NotificationType) |  |  |
 | content | [resources.common.TranslateItem](#resources-common-TranslateItem) |  | @sanitize |
 | category | [NotificationCategory](#resources-notifications-NotificationCategory) |  |  |
 | data | [Data](#resources-notifications-Data) | optional |  |
@@ -2640,6 +2641,21 @@
 | NOTIFICATION_CATEGORY_GENERAL | 1 |  |
 | NOTIFICATION_CATEGORY_DOCUMENT | 2 |  |
 | NOTIFICATION_CATEGORY_CALENDAR | 3 |  |
+
+
+
+<a name="resources-notifications-NotificationType"></a>
+
+### NotificationType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| NOTIFICATION_TYPE_UNSPECIFIED | 0 |  |
+| NOTIFICATION_TYPE_ERROR | 1 |  |
+| NOTIFICATION_TYPE_WARNING | 2 |  |
+| NOTIFICATION_TYPE_INFO | 3 |  |
+| NOTIFICATION_TYPE_SUCCESS | 4 |  |
 
 
  

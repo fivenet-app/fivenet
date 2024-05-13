@@ -17,15 +17,6 @@ var (
 	tNots = table.FivenetNotifications
 )
 
-type Types string
-
-const (
-	SuccessType Types = "success"
-	InfoType    Types = "info"
-	WarningType Types = "warning"
-	ErrorType   Types = "error"
-)
-
 type INotifi interface {
 	NotifyUser(ctx context.Context, not *notifications.Notification) error
 }

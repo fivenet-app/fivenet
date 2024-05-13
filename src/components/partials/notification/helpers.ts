@@ -1,30 +1,29 @@
 import type { NotificationColor } from '#ui/types';
-import type { NotificationType } from '~/composables/notifications';
-import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
+import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 export function notificationTypeToIcon(t?: NotificationType): string {
     switch (t) {
-        case 'success':
+        case NotificationType.SUCCESS:
             return 'i-mdi-check-circle';
-        case 'warning':
+        case NotificationType.WARNING:
             return 'i-mdi-alert-circle';
-        case 'error':
+        case NotificationType.ERROR:
             return 'i-mdi-close-circle';
-        case 'info':
+        case NotificationType.INFO:
         default:
-            return 'i-mdi-information';
+            return 'i-mdi-information-slab-circle';
     }
 }
 
 export function notificationTypeToColor(t?: NotificationType): NotificationColor {
     switch (t) {
-        case 'success':
+        case NotificationType.SUCCESS:
             return 'green';
-        case 'warning':
+        case NotificationType.WARNING:
             return 'amber';
-        case 'error':
+        case NotificationType.ERROR:
             return 'red';
-        case 'info':
+        case NotificationType.INFO:
         default:
             return 'blue';
     }
@@ -36,8 +35,7 @@ export function notificationCategoryToIcon(category: NotificationCategory): stri
             return 'i-mdi-file-document-box-multiple-outline';
         case NotificationCategory.CALENDAR:
             return 'i-mdi-calendar-outline';
-
         default:
-            return '';
+            return 'i-mdi-information-slab-circle';
     }
 }

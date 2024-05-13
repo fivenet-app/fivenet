@@ -12,6 +12,7 @@ import { useSettingsStore } from '~/store/settings';
 import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { $grpc } = useNuxtApp();
 
@@ -130,7 +131,7 @@ async function setJobProps(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.job_props.title', parameters: {} },
             description: { key: 'notifications.rector.job_props.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         if (response.jobProps) {

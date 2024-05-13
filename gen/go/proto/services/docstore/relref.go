@@ -15,7 +15,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -685,7 +684,6 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 		return nil
 	}
 
-	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.TranslateItem{
@@ -695,7 +693,7 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 			Key:        "notifications.document_relation_mentioned.content",
 			Parameters: map[string]string{"title": doc.Title},
 		},
-		Type:     &nType,
+		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{

@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import type { CitizenAttributes, UserProps } from '~~/gen/ts/resources/users/users';
 import { useCompletorStore } from '~/store/completor';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     modelValue?: CitizenAttributes | undefined;
@@ -67,7 +68,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         attributes.value = response.props?.attributes;

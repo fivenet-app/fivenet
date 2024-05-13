@@ -16,7 +16,6 @@ import (
 	errorsdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -451,7 +450,6 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 		return nil
 	}
 
-	nType := string(notifi.InfoType)
 	not := &notifications.Notification{
 		UserId: targetUserId,
 		Title: &common.TranslateItem{
@@ -461,7 +459,7 @@ func (s *Server) notifyUserAboutRequest(ctx context.Context, doc *documents.Docu
 			Key:        "notifications.document_request_added.content",
 			Parameters: map[string]string{"title": doc.Title},
 		},
-		Type:     &nType,
+		Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 		Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_DOCUMENT,
 		Data: &notifications.Data{
 			Link: &notifications.Link{

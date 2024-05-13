@@ -4,6 +4,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{
@@ -62,7 +63,7 @@ async function createOrUpdateQualificationRequest(
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emits('refresh');

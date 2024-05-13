@@ -148,6 +148,17 @@ func (m *Notification) validate(all bool) error {
 		}
 	}
 
+	if _, ok := NotificationType_name[int32(m.GetType())]; !ok {
+		err := NotificationValidationError{
+			field:  "Type",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if all {
 		switch v := interface{}(m.GetContent()).(type) {
 		case interface{ ValidateAll() error }:
@@ -186,21 +197,6 @@ func (m *Notification) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
-	}
-
-	if m.Type != nil {
-
-		if utf8.RuneCountInString(m.GetType()) > 128 {
-			err := NotificationValidationError{
-				field:  "Type",
-				reason: "value length must be at most 128 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
 	}
 
 	if m.Data != nil {

@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { useLivemapStore } from '~/store/livemap';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const notifications = useNotificatorStore();
 
@@ -33,7 +34,7 @@ async function loadPostals(): Promise<void> {
         notifications.add({
             title: { key: 'notifications.livemap.failed_loading_postals.title', parameters: {} },
             description: { key: 'notifications.livemap.failed_loading_postals.content', parameters: {} },
-            type: 'error',
+            type: NotificationType.ERROR,
         });
         postalsLoaded.value = false;
     }

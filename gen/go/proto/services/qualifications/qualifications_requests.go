@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -264,7 +263,6 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 
 		// Only send notification when it wasn't already in the same status
 		if request.Status == nil || request.Status.Enum() != req.Request.Status.Enum() {
-			nType := string(notifi.InfoType)
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 				UserId: request.UserId,
 				Title: &common.TranslateItem{
@@ -275,7 +273,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
 				},
 				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
-				Type:     &nType,
+				Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 				Data: &notifications.Data{
 					Link: &notifications.Link{
 						To: fmt.Sprintf("/qualifications/%d", request.QualificationId),

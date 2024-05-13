@@ -53,7 +53,7 @@ const links = [
     {
         label: t('common.info'),
         to: { name: 'jobs-colleagues-id-info' },
-        icon: 'i-mdi-info',
+        icon: 'i-mdi-information-slab-circle',
         permission: 'JobsService.GetColleague' as Perms,
     },
     {

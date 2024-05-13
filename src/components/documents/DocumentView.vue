@@ -21,6 +21,7 @@ import { useAuthStore } from '~/store/auth';
 import DocumentRequestAccess from '~/components/documents/requests/DocumentRequestAccess.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     documentId: string;
@@ -74,7 +75,7 @@ async function deleteDocument(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.document_deleted.title', parameters: {} },
             description: { key: 'notifications.document_deleted.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         await navigateTo({ name: 'documents' });
@@ -97,13 +98,13 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
             notifications.add({
                 title: { key: `notifications.document_toggled.open.title`, parameters: {} },
                 description: { key: `notifications.document_toggled.open.content`, parameters: {} },
-                type: 'success',
+                type: NotificationType.SUCCESS,
             });
         } else {
             notifications.add({
                 title: { key: `notifications.document_toggled.closed.title`, parameters: {} },
                 description: { key: `notifications.document_toggled.closed.content`, parameters: {} },
-                type: 'success',
+                type: NotificationType.SUCCESS,
             });
         }
     } catch (e) {
@@ -121,7 +122,7 @@ async function changeDocumentOwner(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.document_take_ownership.title', parameters: {} },
             description: { key: 'notifications.document_take_ownership.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         await refresh();
@@ -140,7 +141,7 @@ function addToClipboard(): void {
         title: { key: 'notifications.clipboard.document_added.title', parameters: {} },
         description: { key: 'notifications.clipboard.document_added.content', parameters: {} },
         timeout: 3250,
-        type: 'info',
+        type: NotificationType.INFO,
     });
 }
 

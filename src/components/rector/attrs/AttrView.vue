@@ -7,6 +7,7 @@ import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/reso
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     roleId: string;
@@ -66,7 +67,7 @@ async function deleteRole(id: string): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
             description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         emit('deleted');
@@ -195,7 +196,7 @@ async function updatePermissions(): Promise<void> {
         notifications.add({
             title: { key: 'notifications.rector.role_updated.title', parameters: {} },
             description: { key: 'notifications.rector.role_updated.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         changed.value = false;

@@ -2,6 +2,7 @@
 import { useNotificatorStore } from '~/store/notificator';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import BMICalculator from '~/components/quickbuttons/bodycheckup/BMICalculator.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const notifications = useNotificatorStore();
 
@@ -58,7 +59,7 @@ async function copyToClipboard(): Promise<void> {
     notifications.add({
         title: { key: 'notifications.bodycheckup.title', parameters: {} },
         description: { key: 'notifications.bodycheckup.content', parameters: {} },
-        type: 'info',
+        type: NotificationType.INFO,
     });
 
     return copyToClipboardWrapper(text);

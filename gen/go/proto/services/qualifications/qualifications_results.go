@@ -14,7 +14,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -298,7 +297,6 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		// Only send notification when there is currently no score
 		if result.Score == nil {
-			nType := string(notifi.InfoType)
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 				UserId: result.UserId,
 				Title: &common.TranslateItem{
@@ -309,7 +307,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
 				},
 				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
-				Type:     &nType,
+				Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 				Data: &notifications.Data{
 					Link: &notifications.Link{
 						To: fmt.Sprintf("/qualifications/%d", result.QualificationId),

@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { useNotificatorStore } from '~/store/notificator';
 import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     user: User;
@@ -56,7 +57,7 @@ async function setTrafficPoints(values: Schema): Promise<void> {
         notifications.add({
             title: { key: 'notifications.action_successfull.title', parameters: {} },
             description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: 'success',
+            type: NotificationType.SUCCESS,
         });
 
         isOpen.value = false;
