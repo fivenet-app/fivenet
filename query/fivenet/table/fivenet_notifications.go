@@ -23,7 +23,7 @@ type fivenetNotificationsTable struct {
 	UserID    mysql.ColumnInteger
 	Job       mysql.ColumnString
 	Title     mysql.ColumnString
-	Type      mysql.ColumnString
+	Type      mysql.ColumnInteger
 	Content   mysql.ColumnString
 	Category  mysql.ColumnInteger
 	Data      mysql.ColumnString
@@ -74,7 +74,7 @@ func newFivenetNotificationsTableImpl(schemaName, tableName, alias string) fiven
 		UserIDColumn    = mysql.IntegerColumn("user_id")
 		JobColumn       = mysql.StringColumn("job")
 		TitleColumn     = mysql.StringColumn("title")
-		TypeColumn      = mysql.StringColumn("type")
+		TypeColumn      = mysql.IntegerColumn("type")
 		ContentColumn   = mysql.StringColumn("content")
 		CategoryColumn  = mysql.IntegerColumn("category")
 		DataColumn      = mysql.StringColumn("data")

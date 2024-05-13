@@ -18,7 +18,7 @@ type FivenetNotifications struct {
 	UserID    *int32     `json:"user_id"`
 	Job       *string    `json:"job"`
 	Title     string     `json:"title"`
-	Type      string     `json:"type"`
+	Type      int16      `json:"type"`
 	Content   *string    `json:"content"`
 	Category  int16      `json:"category"`
 	Data      *string    `json:"data"`

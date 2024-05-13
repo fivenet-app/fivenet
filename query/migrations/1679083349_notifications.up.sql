@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_notifications` (
   `user_id` int(11) DEFAULT NULL,
   `job` varchar(20) DEFAULT NULL,
   `title` varchar(255) NOT NULL,
-  `type` varchar(128) NOT NULL,
+  `type` smallint(2) NOT NULL,
   `content` longtext DEFAULT NULL,
   `category` smallint(2) NOT NULL,
   `data` longtext DEFAULT NULL,
