@@ -4,6 +4,7 @@ import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
+import { useCalendarStore } from './calendar';
 
 // In seconds
 const initialReconnectBackoffTime = 2;
@@ -105,6 +106,22 @@ export const useNotificatorStore = defineStore('notifications', {
 
                             if (n.category === NotificationCategory.CALENDAR) {
                                 useSound().play({ name: 'notification' });
+
+                                if (n.data?.calendar !== undefined) {
+                                    const calendarStore = useCalendarStore();
+
+                                    try {
+                                        if (n.data?.calendar.calendarId !== undefined) {
+                                            calendarStore.getCalendar({
+                                                calendarId: n.data?.calendar.calendarId,
+                                            });
+                                        } else if (n.data?.calendar.calendarEntryId !== undefined) {
+                                            calendarStore.getCalendarEntry({
+                                                entryId: n.data?.calendar.calendarEntryId,
+                                            });
+                                        }
+                                    } catch (e) {}
+                                }
                             }
 
                             this.add(not);

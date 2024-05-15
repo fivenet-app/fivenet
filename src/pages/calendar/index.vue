@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
-import { z } from 'zod';
 import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
@@ -12,7 +11,7 @@ import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
-import { addDays, isAfter, isBefore, isFuture, isPast, isSameDay, isToday } from 'date-fns';
+import { addDays, isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import { useRouteQuery } from '@vueuse/router';
 
 useHead({
@@ -29,24 +28,9 @@ const modal = useModal();
 const slideover = useSlideover();
 
 const calendarStore = useCalendarStore();
-const { activeCalendarIds, weeklyView, calendars, entries } = storeToRefs(calendarStore);
-
-const schema = z.object({
-    year: z.number(),
-    month: z.number(),
-    calendarIds: z.string().array().max(25),
-});
-
-type Schema = z.output<typeof schema>;
+const { activeCalendarIds, currentDate, weeklyView, calendars, entries } = storeToRefs(calendarStore);
 
 const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
-
-const date = ref<Date>(new Date());
-const query = reactive<Schema>({
-    year: date.value.getFullYear(),
-    month: date.value.getMonth() + 1,
-    calendarIds: [],
-});
 
 const page = ref(1);
 const offset = computed(() =>
@@ -58,7 +42,7 @@ const {
     pending: calendarsLoading,
     error: calendarsError,
     refresh: calendarsRefresh,
-} = useLazyAsyncData(`calendars-${query.year}-${query.month}`, () => listCalendars());
+} = useLazyAsyncData(`calendars-${currentDate.value.year}-${currentDate.value.month}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     try {
@@ -69,8 +53,8 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
             onlyPublic: false,
         });
 
-        if (query.calendarIds.length === 0) {
-            query.calendarIds = response.calendars.map((c) => c.id);
+        if (activeCalendarIds.value.length === 0) {
+            activeCalendarIds.value = response.calendars.map((c) => c.id);
         } else {
             refresh();
         }
@@ -86,18 +70,17 @@ const {
     pending: loading,
     error,
 } = useLazyAsyncData(
-    `calendar-entries-${query.year}-${query.month}-${query.calendarIds.join(':')}`,
+    `calendar-entries-${currentDate.value.year}-${currentDate.value.month}-${activeCalendarIds.value.join(':')}`,
     () =>
         calendarStore.listCalendarEntries({
-            year: query.year,
-            month: query.month,
-            calendarIds: query.calendarIds,
+            year: currentDate.value.year,
+            month: currentDate.value.month,
+            calendarIds: activeCalendarIds.value,
         }),
     { immediate: false },
 );
 
-watch(query, () => (activeCalendarIds.value = query.calendarIds));
-watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(currentDate, () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function formatStartEndTime(entry: CalendarEntry): string {
     const start = toDate(entry.startTime);
@@ -232,11 +215,11 @@ const groupedCalendarEntries = computedAsync(async () => {
 
 function calendarIdChange(calendarId: string, state: boolean): void {
     if (state) {
-        if (!query.calendarIds.includes(calendarId)) {
-            query.calendarIds.push(calendarId);
+        if (!activeCalendarIds.value.includes(calendarId)) {
+            activeCalendarIds.value.push(calendarId);
         }
     } else {
-        query.calendarIds = query.calendarIds.filter((cId) => cId !== calendarId);
+        activeCalendarIds.value = activeCalendarIds.value.filter((cId) => cId !== calendarId);
     }
 }
 
@@ -359,7 +342,7 @@ const isOpen = ref(false);
                                                 class="inline-flex items-center gap-2"
                                             >
                                                 <UCheckbox
-                                                    :model-value="query.calendarIds.includes(calendar.id)"
+                                                    :model-value="activeCalendarIds.includes(calendar.id)"
                                                     class="truncate"
                                                     @change="calendarIdChange(calendar.id, $event)"
                                                 />
@@ -403,8 +386,8 @@ const isOpen = ref(false);
                         })
                     "
                     @did-move="
-                        query.year = $event[0].year;
-                        query.month = $event[0].month;
+                        currentDate.year = $event[0].year;
+                        currentDate.month = $event[0].month;
                     "
                 />
 
@@ -579,7 +562,7 @@ const isOpen = ref(false);
                     <div v-else class="grid grid-cols-1 gap-2">
                         <div v-for="calendar in calendars" :key="calendar.id" class="inline-flex items-center gap-2">
                             <UCheckbox
-                                :model-value="query.calendarIds.includes(calendar.id)"
+                                :model-value="activeCalendarIds.includes(calendar.id)"
                                 class="truncate"
                                 @change="calendarIdChange(calendar.id, $event)"
                             />

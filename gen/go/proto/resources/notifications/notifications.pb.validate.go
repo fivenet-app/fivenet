@@ -400,6 +400,39 @@ func (m *Data) validate(all bool) error {
 
 	}
 
+	if m.Calendar != nil {
+
+		if all {
+			switch v := interface{}(m.GetCalendar()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DataValidationError{
+						field:  "Calendar",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DataValidationError{
+						field:  "Calendar",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCalendar()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DataValidationError{
+					field:  "Calendar",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return DataMultiError(errors)
 	}
@@ -584,3 +617,110 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = LinkValidationError{}
+
+// Validate checks the field values on CalendarData with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *CalendarData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CalendarData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in CalendarDataMultiError, or
+// nil if none found.
+func (m *CalendarData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CalendarData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.CalendarId != nil {
+		// no validation rules for CalendarId
+	}
+
+	if m.CalendarEntryId != nil {
+		// no validation rules for CalendarEntryId
+	}
+
+	if len(errors) > 0 {
+		return CalendarDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// CalendarDataMultiError is an error wrapping multiple validation errors
+// returned by CalendarData.ValidateAll() if the designated constraints aren't met.
+type CalendarDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CalendarDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CalendarDataMultiError) AllErrors() []error { return m }
+
+// CalendarDataValidationError is the validation error returned by
+// CalendarData.Validate if the designated constraints aren't met.
+type CalendarDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CalendarDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CalendarDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CalendarDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CalendarDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CalendarDataValidationError) ErrorName() string { return "CalendarDataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e CalendarDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCalendarData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CalendarDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CalendarDataValidationError{}

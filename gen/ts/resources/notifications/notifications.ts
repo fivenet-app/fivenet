@@ -74,6 +74,10 @@ export interface Data {
      * @generated from protobuf field: optional resources.users.UserShort caused_by = 2;
      */
     causedBy?: UserShort;
+    /**
+     * @generated from protobuf field: optional resources.notifications.CalendarData calendar = 3;
+     */
+    calendar?: CalendarData;
 }
 /**
  * @generated from protobuf message resources.notifications.Link
@@ -91,6 +95,19 @@ export interface Link {
      * @generated from protobuf field: optional bool external = 3;
      */
     external?: boolean;
+}
+/**
+ * @generated from protobuf message resources.notifications.CalendarData
+ */
+export interface CalendarData {
+    /**
+     * @generated from protobuf field: optional uint64 calendar_id = 1 [jstype = JS_STRING];
+     */
+    calendarId?: string;
+    /**
+     * @generated from protobuf field: optional uint64 calendar_entry_id = 2 [jstype = JS_STRING];
+     */
+    calendarEntryId?: string;
 }
 /**
  * @generated from protobuf enum resources.notifications.NotificationType
@@ -256,7 +273,8 @@ class Data$Type extends MessageType<Data> {
     constructor() {
         super("resources.notifications.Data", [
             { no: 1, name: "link", kind: "message", T: () => Link },
-            { no: 2, name: "caused_by", kind: "message", T: () => UserShort }
+            { no: 2, name: "caused_by", kind: "message", T: () => UserShort },
+            { no: 3, name: "calendar", kind: "message", T: () => CalendarData }
         ]);
     }
     create(value?: PartialMessage<Data>): Data {
@@ -276,6 +294,9 @@ class Data$Type extends MessageType<Data> {
                 case /* optional resources.users.UserShort caused_by */ 2:
                     message.causedBy = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.causedBy);
                     break;
+                case /* optional resources.notifications.CalendarData calendar */ 3:
+                    message.calendar = CalendarData.internalBinaryRead(reader, reader.uint32(), options, message.calendar);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -294,6 +315,9 @@ class Data$Type extends MessageType<Data> {
         /* optional resources.users.UserShort caused_by = 2; */
         if (message.causedBy)
             UserShort.internalBinaryWrite(message.causedBy, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.notifications.CalendarData calendar = 3; */
+        if (message.calendar)
+            CalendarData.internalBinaryWrite(message.calendar, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -365,3 +389,56 @@ class Link$Type extends MessageType<Link> {
  * @generated MessageType for protobuf message resources.notifications.Link
  */
 export const Link = new Link$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CalendarData$Type extends MessageType<CalendarData> {
+    constructor() {
+        super("resources.notifications.CalendarData", [
+            { no: 1, name: "calendar_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "calendar_entry_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<CalendarData>): CalendarData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CalendarData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CalendarData): CalendarData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional uint64 calendar_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.calendarId = reader.uint64().toString();
+                    break;
+                case /* optional uint64 calendar_entry_id = 2 [jstype = JS_STRING];*/ 2:
+                    message.calendarEntryId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CalendarData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional uint64 calendar_id = 1 [jstype = JS_STRING]; */
+        if (message.calendarId !== undefined)
+            writer.tag(1, WireType.Varint).uint64(message.calendarId);
+        /* optional uint64 calendar_entry_id = 2 [jstype = JS_STRING]; */
+        if (message.calendarEntryId !== undefined)
+            writer.tag(2, WireType.Varint).uint64(message.calendarEntryId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.notifications.CalendarData
+ */
+export const CalendarData = new CalendarData$Type();

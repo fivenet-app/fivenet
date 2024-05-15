@@ -42,10 +42,16 @@ message Notification {
 message Data {
   optional Link link = 1;
   optional resources.users.UserShort caused_by = 2;
+  optional CalendarData calendar = 3;
 }
 
 message Link {
   string to = 1;
   optional string title = 2;
   optional bool external = 3;
+}
+
+message CalendarData {
+  optional uint64 calendar_id = 1 [jstype = JS_STRING];
+  optional uint64 calendar_entry_id = 2 [jstype = JS_STRING];
 }

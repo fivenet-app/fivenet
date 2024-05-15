@@ -178,6 +178,9 @@ func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32,
 					Lastname:    sourceUser.Lastname,
 					PhoneNumber: sourceUser.PhoneNumber,
 				},
+				Calendar: &notifications.CalendarData{
+					CalendarEntryId: &entry.Id,
+				},
 			},
 		}); err != nil {
 			return errswrap.NewError(err, errorscalendar.ErrFailedQuery)

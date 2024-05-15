@@ -22,6 +22,10 @@ import { useAuthStore } from './auth';
 export interface CalendarState {
     activeCalendarIds: string[];
     weeklyView: boolean;
+    currentDate: {
+        year: number;
+        month: number;
+    };
     calendars: Calendar[];
     entries: CalendarEntry[];
 }
@@ -31,6 +35,10 @@ export const useCalendarStore = defineStore('calendar', {
         ({
             activeCalendarIds: [],
             weeklyView: false,
+            currentDate: {
+                year: new Date().getFullYear(),
+                month: new Date().getMonth() + 1,
+            },
             calendars: [],
             entries: [],
         }) as CalendarState,
@@ -158,8 +166,16 @@ export const useCalendarStore = defineStore('calendar', {
                 throw e;
             }
         },
-        async listCalendarEntries(req: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
+        async listCalendarEntries(req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
             const { $grpc } = useNuxtApp();
+
+            if (req === undefined) {
+                req = {
+                    calendarIds: this.activeCalendarIds,
+                    year: this.currentDate.year,
+                    month: this.currentDate.month,
+                };
+            }
 
             try {
                 const call = $grpc.getCalendarClient().listCalendarEntries(req);
