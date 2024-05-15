@@ -11,7 +11,9 @@ import { WireType } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
-import { JobProps } from "../../resources/users/jobs";
+import { SystemEvent } from "../../resources/notifications/events";
+import { JobEvent } from "../../resources/notifications/events";
+import { UserEvent } from "../../resources/notifications/events";
 import { Notification } from "../../resources/notifications/notifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { NotificationCategory } from "../../resources/notifications/notifications";
@@ -89,54 +91,26 @@ export interface StreamResponse {
      * @generated from protobuf oneof: data
      */
     data: {
-        oneofKind: "notification";
+        oneofKind: "userEvent";
         /**
-         * @generated from protobuf field: resources.notifications.Notification notification = 3;
+         * @generated from protobuf field: resources.notifications.UserEvent user_event = 3;
          */
-        notification: Notification;
-    } | {
-        oneofKind: "refreshToken";
-        /**
-         * @generated from protobuf field: bool refresh_token = 4;
-         */
-        refreshToken: boolean;
+        userEvent: UserEvent;
     } | {
         oneofKind: "jobEvent";
         /**
-         * @generated from protobuf field: services.notificator.JobEvent job_event = 5;
+         * @generated from protobuf field: resources.notifications.JobEvent job_event = 4;
          */
         jobEvent: JobEvent;
     } | {
         oneofKind: "systemEvent";
         /**
-         * @generated from protobuf field: services.notificator.SystemEvent system_event = 6;
+         * @generated from protobuf field: resources.notifications.SystemEvent system_event = 5;
          */
         systemEvent: SystemEvent;
     } | {
         oneofKind: undefined;
     };
-}
-/**
- * @generated from protobuf message services.notificator.JobEvent
- */
-export interface JobEvent {
-    /**
-     * @generated from protobuf oneof: data
-     */
-    data: {
-        oneofKind: "jobProps";
-        /**
-         * @generated from protobuf field: resources.users.JobProps job_props = 1;
-         */
-        jobProps: JobProps;
-    } | {
-        oneofKind: undefined;
-    };
-}
-/**
- * @generated from protobuf message services.notificator.SystemEvent
- */
-export interface SystemEvent {
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class GetNotificationsRequest$Type extends MessageType<GetNotificationsRequest> {
@@ -401,10 +375,9 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         super("services.notificator.StreamResponse", [
             { no: 1, name: "notification_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "restart", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "notification", kind: "message", oneof: "data", T: () => Notification },
-            { no: 4, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "job_event", kind: "message", oneof: "data", T: () => JobEvent },
-            { no: 6, name: "system_event", kind: "message", oneof: "data", T: () => SystemEvent }
+            { no: 3, name: "user_event", kind: "message", oneof: "data", T: () => UserEvent },
+            { no: 4, name: "job_event", kind: "message", oneof: "data", T: () => JobEvent },
+            { no: 5, name: "system_event", kind: "message", oneof: "data", T: () => SystemEvent }
         ]);
     }
     create(value?: PartialMessage<StreamResponse>): StreamResponse {
@@ -426,25 +399,19 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
                 case /* optional bool restart */ 2:
                     message.restart = reader.bool();
                     break;
-                case /* resources.notifications.Notification notification */ 3:
+                case /* resources.notifications.UserEvent user_event */ 3:
                     message.data = {
-                        oneofKind: "notification",
-                        notification: Notification.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notification)
+                        oneofKind: "userEvent",
+                        userEvent: UserEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).userEvent)
                     };
                     break;
-                case /* bool refresh_token */ 4:
-                    message.data = {
-                        oneofKind: "refreshToken",
-                        refreshToken: reader.bool()
-                    };
-                    break;
-                case /* services.notificator.JobEvent job_event */ 5:
+                case /* resources.notifications.JobEvent job_event */ 4:
                     message.data = {
                         oneofKind: "jobEvent",
                         jobEvent: JobEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobEvent)
                     };
                     break;
-                case /* services.notificator.SystemEvent system_event */ 6:
+                case /* resources.notifications.SystemEvent system_event */ 5:
                     message.data = {
                         oneofKind: "systemEvent",
                         systemEvent: SystemEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).systemEvent)
@@ -468,18 +435,15 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
         /* optional bool restart = 2; */
         if (message.restart !== undefined)
             writer.tag(2, WireType.Varint).bool(message.restart);
-        /* resources.notifications.Notification notification = 3; */
-        if (message.data.oneofKind === "notification")
-            Notification.internalBinaryWrite(message.data.notification, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* bool refresh_token = 4; */
-        if (message.data.oneofKind === "refreshToken")
-            writer.tag(4, WireType.Varint).bool(message.data.refreshToken);
-        /* services.notificator.JobEvent job_event = 5; */
+        /* resources.notifications.UserEvent user_event = 3; */
+        if (message.data.oneofKind === "userEvent")
+            UserEvent.internalBinaryWrite(message.data.userEvent, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.notifications.JobEvent job_event = 4; */
         if (message.data.oneofKind === "jobEvent")
-            JobEvent.internalBinaryWrite(message.data.jobEvent, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* services.notificator.SystemEvent system_event = 6; */
+            JobEvent.internalBinaryWrite(message.data.jobEvent, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.notifications.SystemEvent system_event = 5; */
         if (message.data.oneofKind === "systemEvent")
-            SystemEvent.internalBinaryWrite(message.data.systemEvent, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            SystemEvent.internalBinaryWrite(message.data.systemEvent, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -490,81 +454,6 @@ class StreamResponse$Type extends MessageType<StreamResponse> {
  * @generated MessageType for protobuf message services.notificator.StreamResponse
  */
 export const StreamResponse = new StreamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class JobEvent$Type extends MessageType<JobEvent> {
-    constructor() {
-        super("services.notificator.JobEvent", [
-            { no: 1, name: "job_props", kind: "message", oneof: "data", T: () => JobProps }
-        ]);
-    }
-    create(value?: PartialMessage<JobEvent>): JobEvent {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.data = { oneofKind: undefined };
-        if (value !== undefined)
-            reflectionMergePartial<JobEvent>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: JobEvent): JobEvent {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.users.JobProps job_props */ 1:
-                    message.data = {
-                        oneofKind: "jobProps",
-                        jobProps: JobProps.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).jobProps)
-                    };
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: JobEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.users.JobProps job_props = 1; */
-        if (message.data.oneofKind === "jobProps")
-            JobProps.internalBinaryWrite(message.data.jobProps, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.notificator.JobEvent
- */
-export const JobEvent = new JobEvent$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class SystemEvent$Type extends MessageType<SystemEvent> {
-    constructor() {
-        super("services.notificator.SystemEvent", []);
-    }
-    create(value?: PartialMessage<SystemEvent>): SystemEvent {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<SystemEvent>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SystemEvent): SystemEvent {
-        return target ?? this.create();
-    }
-    internalBinaryWrite(message: SystemEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.notificator.SystemEvent
- */
-export const SystemEvent = new SystemEvent$Type();
 /**
  * @generated ServiceType for protobuf service services.notificator.NotificatorService
  */

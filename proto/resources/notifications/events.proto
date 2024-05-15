@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package resources.notifications;
+
+import "resources/notifications/notifications.proto";
+import "resources/users/jobs.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
+
+message UserEvent {
+  oneof data {
+    resources.notifications.Notification notification = 3;
+    bool refresh_token = 4;
+  }
+}
+
+message JobEvent {
+  oneof data {
+    resources.users.JobProps job_props = 1;
+  }
+}
+
+message SystemEvent {}

@@ -24,6 +24,7 @@
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
 // source: resources/mailer/mail.proto
+// source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
 // source: resources/qualifications/exam.proto

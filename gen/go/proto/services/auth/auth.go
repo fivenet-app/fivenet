@@ -4,20 +4,24 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorsauth "github.com/fivenet-app/fivenet/gen/go/proto/services/auth/errors"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
@@ -52,6 +56,7 @@ type Server struct {
 	aud      audit.IAuditer
 	ui       userinfo.UserInfoRetriever
 	appCfg   appconfig.IConfig
+	js       *events.JSWrapper
 
 	domain          string
 	oauth2Providers []*config.OAuth2Provider
@@ -73,6 +78,7 @@ type Params struct {
 	UI        userinfo.UserInfoRetriever
 	Config    *config.Config
 	AppConfig appconfig.IConfig
+	JS        *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
@@ -207,10 +213,24 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
 	s.destroyTokenCookie(ctx)
 
+	sucess := true
+	if _, err := s.js.PublishAsyncProto(ctx,
+		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
+		&notifications.UserEvent{
+			Data: &notifications.UserEvent_RefreshToken{
+				RefreshToken: true,
+			},
+		}); err != nil {
+		sucess = false
+		s.logger.Error("failed to send logout notification to user")
+	}
+
 	return &LogoutResponse{
-		Success: true,
+		Success: sucess,
 	}, nil
 }
 

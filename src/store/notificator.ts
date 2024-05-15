@@ -71,65 +71,67 @@ export const useNotificatorStore = defineStore('notifications', {
                     this.notificationsCount = resp.notificationCount;
 
                     if (resp.data.oneofKind !== undefined) {
-                        if (resp.data.oneofKind === 'notification') {
-                            const n = resp.data.notification;
-                            const nType: NotificationType =
-                                n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
+                        if (resp.data.oneofKind === 'userEvent') {
+                            if (resp.data.userEvent.data.oneofKind === 'notification') {
+                                const n = resp.data.userEvent.data.notification;
+                                const nType: NotificationType =
+                                    n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;
 
-                            if (n.title === undefined || n.content === undefined) {
+                                if (n.title === undefined || n.content === undefined) {
+                                    continue;
+                                }
+
+                                const not: Notification = {
+                                    title: { key: n.title.key, parameters: n.title.parameters },
+                                    description: {
+                                        key: n.content.key,
+                                        parameters: n.content.parameters,
+                                    },
+                                    type: nType,
+                                    category: n.category,
+                                    data: n.data,
+                                };
+
+                                if (n.data?.link !== undefined) {
+                                    if (n.data.link.external === true) {
+                                        not.onClick = async () => navigateTo(n.data!.link!.to, { external: true });
+                                    } else {
+                                        // @ts-ignore route from a notification is a string
+                                        const route = useRouter().resolve(n.data!.link!.to);
+
+                                        not.onClick = async () => {
+                                            navigateTo(route);
+                                        };
+                                    }
+                                }
+
+                                if (n.category === NotificationCategory.CALENDAR) {
+                                    useSound().play({ name: 'notification' });
+
+                                    if (n.data?.calendar !== undefined) {
+                                        const calendarStore = useCalendarStore();
+
+                                        try {
+                                            if (n.data?.calendar.calendarId !== undefined) {
+                                                calendarStore.getCalendar({
+                                                    calendarId: n.data?.calendar.calendarId,
+                                                });
+                                            } else if (n.data?.calendar.calendarEntryId !== undefined) {
+                                                calendarStore.getCalendarEntry({
+                                                    entryId: n.data?.calendar.calendarEntryId,
+                                                });
+                                            }
+                                        } catch (e) {}
+                                    }
+                                }
+
+                                this.add(not);
+                                continue;
+                            } else if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
+                                console.info('Notificator: Refreshing token...');
+                                await authStore.chooseCharacter(undefined);
                                 continue;
                             }
-
-                            const not: Notification = {
-                                title: { key: n.title.key, parameters: n.title.parameters },
-                                description: {
-                                    key: n.content.key,
-                                    parameters: n.content.parameters,
-                                },
-                                type: nType,
-                                category: n.category,
-                                data: n.data,
-                            };
-
-                            if (n.data?.link !== undefined) {
-                                if (n.data.link.external === true) {
-                                    not.onClick = async () => navigateTo(n.data!.link!.to, { external: true });
-                                } else {
-                                    // @ts-ignore route from a notification is a string
-                                    const route = useRouter().resolve(n.data!.link!.to);
-
-                                    not.onClick = async () => {
-                                        navigateTo(route);
-                                    };
-                                }
-                            }
-
-                            if (n.category === NotificationCategory.CALENDAR) {
-                                useSound().play({ name: 'notification' });
-
-                                if (n.data?.calendar !== undefined) {
-                                    const calendarStore = useCalendarStore();
-
-                                    try {
-                                        if (n.data?.calendar.calendarId !== undefined) {
-                                            calendarStore.getCalendar({
-                                                calendarId: n.data?.calendar.calendarId,
-                                            });
-                                        } else if (n.data?.calendar.calendarEntryId !== undefined) {
-                                            calendarStore.getCalendarEntry({
-                                                entryId: n.data?.calendar.calendarEntryId,
-                                            });
-                                        }
-                                    } catch (e) {}
-                                }
-                            }
-
-                            this.add(not);
-                            continue;
-                        } else if (resp.data.oneofKind === 'refreshToken') {
-                            console.info('Notificator: Refreshing token...');
-                            await authStore.chooseCharacter(undefined);
-                            continue;
                         } else if (resp.data.oneofKind === 'jobEvent') {
                             if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
                                 authStore.setJobProps(resp.data.jobEvent.data.jobProps);
@@ -141,6 +143,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                 );
                             }
                             continue;
+                        } else if (resp.data.oneofKind === 'systemEvent') {
                         } else {
                             // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);

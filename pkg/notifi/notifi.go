@@ -58,7 +58,11 @@ func (n *Notifi) NotifyUser(ctx context.Context, not *notifications.Notification
 	}
 
 	not.Id = uint64(nId)
-	data, err := proto.Marshal(not)
+	data, err := proto.Marshal(&notifications.UserEvent{
+		Data: &notifications.UserEvent_Notification{
+			Notification: not,
+		},
+	})
 	if err != nil {
 		n.logger.Error("failed to proto marshal notification", zap.Error(err))
 		return err

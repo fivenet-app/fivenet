@@ -24,17 +24,17 @@ func TestMain(m *testing.M) {
 		fmt.Println("failed to setup mysql test server: %w", err)
 		return
 	}
+	defer servers.TestDBServer.Stop()
+
 	if err := servers.TestNATSServer.Setup(); err != nil {
 		fmt.Println("failed to setup nats test server: %w", err)
 		return
 	}
+	defer servers.TestNATSServer.Stop()
 
 	code := m.Run()
 
-	defer servers.TestDBServer.Stop()
-	defer servers.TestNATSServer.Stop()
-
-	defer os.Exit(code)
+	os.Exit(code)
 }
 
 func TestBasicCentrumFlow(t *testing.T) {

@@ -8,7 +8,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
+	notifications "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
@@ -336,7 +336,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 			_, topic, _ := notifi.SplitSubject(msg.Subject())
 			switch topic {
 			case notifi.UserTopic:
-				var dest notifications.Notification
+				var dest notifications.UserEvent
 				if err := proto.Unmarshal(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
@@ -344,8 +344,8 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				notsCount++
 				resp := &StreamResponse{
 					NotificationCount: notsCount,
-					Data: &StreamResponse_Notification{
-						Notification: &dest,
+					Data: &StreamResponse_UserEvent{
+						UserEvent: &dest,
 					},
 				}
 
@@ -354,7 +354,7 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 				}
 
 			case notifi.JobTopic:
-				var dest JobEvent
+				var dest notifications.JobEvent
 				if err := proto.Unmarshal(msg.Data(), &dest); err != nil {
 					return errswrap.NewError(err, ErrFailedStream)
 				}
@@ -402,7 +402,11 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 	// Either token should be renewed or new user info is not equal
 	if time.Until(claims.ExpiresAt.Time) <= auth.TokenRenewalTime || !currentUserInfo.Equal(newUserInfo) {
 		// Cause client to refresh token
-		return &StreamResponse_RefreshToken{RefreshToken: true}, true, nil
+		return &StreamResponse_UserEvent{UserEvent: &notifications.UserEvent{
+			Data: &notifications.UserEvent_RefreshToken{
+				RefreshToken: true,
+			},
+		}}, true, nil
 	}
 
 	return nil, false, nil

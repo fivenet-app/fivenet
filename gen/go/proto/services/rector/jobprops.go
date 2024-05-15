@@ -7,9 +7,9 @@ import (
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/filestore"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/notificator"
 	errorsrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector/errors"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
@@ -169,8 +169,8 @@ func (s *Server) SetJobProps(ctx context.Context, req *SetJobPropsRequest) (*Set
 	if !proto.Equal(req.JobProps, jobProps) {
 		if _, err := s.js.PublishAsyncProto(ctx,
 			fmt.Sprintf("%s.%s.%s", notifi.BaseSubject, notifi.JobTopic, userInfo.Job),
-			&notificator.JobEvent{
-				Data: &notificator.JobEvent_JobProps{
+			&notifications.JobEvent{
+				Data: &notifications.JobEvent_JobProps{
 					JobProps: &users.JobProps{
 						Job:                newJobProps.Job,
 						JobLabel:           newJobProps.JobLabel,

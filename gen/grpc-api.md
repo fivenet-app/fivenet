@@ -101,16 +101,6 @@
     - [File](#resources-filestore-File)
     - [FileInfo](#resources-filestore-FileInfo)
   
-- [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
-    - [ConductEntry](#resources-jobs-ConductEntry)
-  
-    - [ConductType](#resources-jobs-ConductType)
-  
-- [resources/jobs/timeclock.proto](#resources_jobs_timeclock-proto)
-    - [TimeclockEntry](#resources-jobs-TimeclockEntry)
-    - [TimeclockStats](#resources-jobs-TimeclockStats)
-    - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
-  
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
     - [ColleagueAbsenceDate](#resources-jobs-ColleagueAbsenceDate)
@@ -120,6 +110,16 @@
     - [JobsUserProps](#resources-jobs-JobsUserProps)
   
     - [JobsUserActivityType](#resources-jobs-JobsUserActivityType)
+  
+- [resources/jobs/conduct.proto](#resources_jobs_conduct-proto)
+    - [ConductEntry](#resources-jobs-ConductEntry)
+  
+    - [ConductType](#resources-jobs-ConductType)
+  
+- [resources/jobs/timeclock.proto](#resources_jobs_timeclock-proto)
+    - [TimeclockEntry](#resources-jobs-TimeclockEntry)
+    - [TimeclockStats](#resources-jobs-TimeclockStats)
+    - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
   
 - [resources/laws/laws.proto](#resources_laws_laws-proto)
     - [Law](#resources-laws-Law)
@@ -147,6 +147,11 @@
   
     - [NotificationCategory](#resources-notifications-NotificationCategory)
     - [NotificationType](#resources-notifications-NotificationType)
+  
+- [resources/notifications/events.proto](#resources_notifications_events-proto)
+    - [JobEvent](#resources-notifications-JobEvent)
+    - [SystemEvent](#resources-notifications-SystemEvent)
+    - [UserEvent](#resources-notifications-UserEvent)
   
 - [resources/permissions/permissions.proto](#resources_permissions_permissions-proto)
     - [AttributeValues](#resources-permissions-AttributeValues)
@@ -436,16 +441,6 @@
   
     - [DocStoreService](#services-docstore-DocStoreService)
   
-- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
-    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
-    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
-    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
-    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
-    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
-    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
-  
-    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
-  
 - [services/jobs/conduct.proto](#services_jobs_conduct-proto)
     - [CreateConductEntryRequest](#services-jobs-CreateConductEntryRequest)
     - [CreateConductEntryResponse](#services-jobs-CreateConductEntryResponse)
@@ -476,6 +471,16 @@
   
     - [JobsService](#services-jobs-JobsService)
   
+- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
+    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
+    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
+    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
+    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
+    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
+    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
+  
+    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
+  
 - [services/livemapper/livemap.proto](#services_livemapper_livemap-proto)
     - [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest)
     - [CreateOrUpdateMarkerResponse](#services-livemapper-CreateOrUpdateMarkerResponse)
@@ -492,12 +497,10 @@
 - [services/notificator/notificator.proto](#services_notificator_notificator-proto)
     - [GetNotificationsRequest](#services-notificator-GetNotificationsRequest)
     - [GetNotificationsResponse](#services-notificator-GetNotificationsResponse)
-    - [JobEvent](#services-notificator-JobEvent)
     - [MarkNotificationsRequest](#services-notificator-MarkNotificationsRequest)
     - [MarkNotificationsResponse](#services-notificator-MarkNotificationsResponse)
     - [StreamRequest](#services-notificator-StreamRequest)
     - [StreamResponse](#services-notificator-StreamResponse)
-    - [SystemEvent](#services-notificator-SystemEvent)
   
     - [NotificatorService](#services-notificator-NotificatorService)
   
@@ -2042,138 +2045,6 @@
 
 
 
-<a name="resources_jobs_conduct-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/conduct.proto
-
-
-
-<a name="resources-jobs-ConductEntry"></a>
-
-### ConductEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| job | [string](#string) |  |  |
-| type | [ConductType](#resources-jobs-ConductType) |  |  |
-| message | [string](#string) |  | @sanitize |
-| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| target_user_id | [int32](#int32) |  |  |
-| target_user | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;target_user&#34; |
-| creator_id | [int32](#int32) |  |  |
-| creator | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;creator&#34; |
-
-
-
-
-
- 
-
-
-<a name="resources-jobs-ConductType"></a>
-
-### ConductType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CONDUCT_TYPE_UNSPECIFIED | 0 |  |
-| CONDUCT_TYPE_NEUTRAL | 1 |  |
-| CONDUCT_TYPE_POSITIVE | 2 |  |
-| CONDUCT_TYPE_NEGATIVE | 3 |  |
-| CONDUCT_TYPE_WARNING | 4 |  |
-| CONDUCT_TYPE_SUSPENSION | 5 |  |
-| CONDUCT_TYPE_NOTE | 6 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/jobs/timeclock.proto
-
-
-
-<a name="resources-jobs-TimeclockEntry"></a>
-
-### TimeclockEntry
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| user_id | [int32](#int32) |  |  |
-| user | [Colleague](#resources-jobs-Colleague) | optional |  |
-| start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| spent_time | [float](#float) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-TimeclockStats"></a>
-
-### TimeclockStats
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| spent_time_sum | [float](#float) |  |  |
-| spent_time_avg | [float](#float) |  |  |
-| spent_time_max | [float](#float) |  |  |
-
-
-
-
-
-
-<a name="resources-jobs-TimeclockWeeklyStats"></a>
-
-### TimeclockWeeklyStats
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| year | [int32](#int32) |  |  |
-| calendar_week | [int32](#int32) |  |  |
-| sum | [float](#float) |  |  |
-| avg | [float](#float) |  |  |
-| max | [float](#float) |  |  |
-
-
-
-
-
- 
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_jobs_colleagues-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -2315,6 +2186,138 @@
 | JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE | 5 |  |
 | JOBS_USER_ACTIVITY_TYPE_NOTE | 6 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_jobs_conduct-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/conduct.proto
+
+
+
+<a name="resources-jobs-ConductEntry"></a>
+
+### ConductEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| job | [string](#string) |  |  |
+| type | [ConductType](#resources-jobs-ConductType) |  |  |
+| message | [string](#string) |  | @sanitize |
+| expires_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| target_user_id | [int32](#int32) |  |  |
+| target_user | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;target_user&#34; |
+| creator_id | [int32](#int32) |  |  |
+| creator | [Colleague](#resources-jobs-Colleague) | optional | @gotags: alias:&#34;creator&#34; |
+
+
+
+
+
+ 
+
+
+<a name="resources-jobs-ConductType"></a>
+
+### ConductType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CONDUCT_TYPE_UNSPECIFIED | 0 |  |
+| CONDUCT_TYPE_NEUTRAL | 1 |  |
+| CONDUCT_TYPE_POSITIVE | 2 |  |
+| CONDUCT_TYPE_NEGATIVE | 3 |  |
+| CONDUCT_TYPE_WARNING | 4 |  |
+| CONDUCT_TYPE_SUSPENSION | 5 |  |
+| CONDUCT_TYPE_NOTE | 6 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/jobs/timeclock.proto
+
+
+
+<a name="resources-jobs-TimeclockEntry"></a>
+
+### TimeclockEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| user_id | [int32](#int32) |  |  |
+| user | [Colleague](#resources-jobs-Colleague) | optional |  |
+| start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| spent_time | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-TimeclockStats"></a>
+
+### TimeclockStats
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| spent_time_sum | [float](#float) |  |  |
+| spent_time_avg | [float](#float) |  |  |
+| spent_time_max | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="resources-jobs-TimeclockWeeklyStats"></a>
+
+### TimeclockWeeklyStats
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| year | [int32](#int32) |  |  |
+| calendar_week | [int32](#int32) |  |  |
+| sum | [float](#float) |  |  |
+| avg | [float](#float) |  |  |
+| max | [float](#float) |  |  |
+
+
+
+
+
+ 
 
  
 
@@ -2683,6 +2686,63 @@
 | NOTIFICATION_TYPE_INFO | 3 |  |
 | NOTIFICATION_TYPE_SUCCESS | 4 |  |
 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_notifications_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/notifications/events.proto
+
+
+
+<a name="resources-notifications-JobEvent"></a>
+
+### JobEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
+
+
+
+
+
+
+<a name="resources-notifications-SystemEvent"></a>
+
+### SystemEvent
+
+
+
+
+
+
+
+<a name="resources-notifications-UserEvent"></a>
+
+### UserEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| notification | [Notification](#resources-notifications-Notification) |  |  |
+| refresh_token | [bool](#bool) |  |  |
+
+
+
+
+
+ 
 
  
 
@@ -6900,134 +6960,6 @@ Templates ==================================================================
 
 
 
-<a name="services_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/jobs/timeclock.proto
-
-
-
-<a name="services-jobs-GetTimeclockStatsRequest"></a>
-
-### GetTimeclockStatsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-GetTimeclockStatsResponse"></a>
-
-### GetTimeclockStatsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesRequest"></a>
-
-### ListInactiveEmployeesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| days | [int32](#int32) |  |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesResponse"></a>
-
-### ListInactiveEmployeesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockRequest"></a>
-
-### ListTimeclockRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| user_ids | [int32](#int32) | repeated | Search |
-| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| per_day | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockResponse"></a>
-
-### ListTimeclockResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-jobs-JobsTimeclockService"></a>
-
-### JobsTimeclockService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
-| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
-| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
-
- 
-
-
-
 <a name="services_jobs_conduct-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -7417,6 +7349,134 @@ Templates ==================================================================
 
 
 
+<a name="services_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/jobs/timeclock.proto
+
+
+
+<a name="services-jobs-GetTimeclockStatsRequest"></a>
+
+### GetTimeclockStatsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-GetTimeclockStatsResponse"></a>
+
+### GetTimeclockStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesRequest"></a>
+
+### ListInactiveEmployeesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| days | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesResponse"></a>
+
+### ListInactiveEmployeesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockRequest"></a>
+
+### ListTimeclockRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| user_ids | [int32](#int32) | repeated | Search |
+| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| per_day | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockResponse"></a>
+
+### ListTimeclockResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-jobs-JobsTimeclockService"></a>
+
+### JobsTimeclockService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
+| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
+| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
+
+ 
+
+
+
 <a name="services_livemapper_livemap-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -7614,21 +7674,6 @@ Templates ==================================================================
 
 
 
-<a name="services-notificator-JobEvent"></a>
-
-### JobEvent
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job_props | [resources.users.JobProps](#resources-users-JobProps) |  |  |
-
-
-
-
-
-
 <a name="services-notificator-MarkNotificationsRequest"></a>
 
 ### MarkNotificationsRequest
@@ -7680,20 +7725,9 @@ Templates ==================================================================
 | ----- | ---- | ----- | ----------- |
 | notification_count | [int32](#int32) |  |  |
 | restart | [bool](#bool) | optional |  |
-| notification | [resources.notifications.Notification](#resources-notifications-Notification) |  |  |
-| refresh_token | [bool](#bool) |  |  |
-| job_event | [JobEvent](#services-notificator-JobEvent) |  |  |
-| system_event | [SystemEvent](#services-notificator-SystemEvent) |  |  |
-
-
-
-
-
-
-<a name="services-notificator-SystemEvent"></a>
-
-### SystemEvent
-
+| user_event | [resources.notifications.UserEvent](#resources-notifications-UserEvent) |  |  |
+| job_event | [resources.notifications.JobEvent](#resources-notifications-JobEvent) |  |  |
+| system_event | [resources.notifications.SystemEvent](#resources-notifications-SystemEvent) |  |  |
 
 
 

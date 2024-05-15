@@ -3,8 +3,8 @@ syntax = "proto3";
 package services.notificator;
 
 import "resources/common/database/database.proto";
+import "resources/notifications/events.proto";
 import "resources/notifications/notifications.proto";
-import "resources/users/jobs.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/notificator;notificator";
@@ -47,20 +47,11 @@ message StreamResponse {
   optional bool restart = 2;
 
   oneof data {
-    resources.notifications.Notification notification = 3;
-    bool refresh_token = 4;
-    JobEvent job_event = 5;
-    SystemEvent system_event = 6;
+    resources.notifications.UserEvent user_event = 3;
+    resources.notifications.JobEvent job_event = 4;
+    resources.notifications.SystemEvent system_event = 5;
   }
 }
-
-message JobEvent {
-  oneof data {
-    resources.users.JobProps job_props = 1;
-  }
-}
-
-message SystemEvent {}
 
 service NotificatorService {
   // @perm: Name=Any
