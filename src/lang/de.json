@@ -14,7 +14,8 @@
                 "livemap": "Live-Positionen von Einsätzen und Kollegen.",
                 "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
                 "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
-                "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender."
+                "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
+                "mailer": "Posteingang für eine schnelle Kommunikation."
             }
         },
         "documents": {
@@ -444,7 +445,11 @@
         "note": "Notiz",
         "weekly_view": "Wöchentliche Ansicht",
         "today": "Heute",
-        "inbox": "Posteingang"
+        "inbox": "Posteingang",
+        "all": "Alle",
+        "unread": "Ungelesen",
+        "archive": "Archiv",
+        "paste": "Einfügen"
     },
     "components": {
         "partials": {
@@ -1054,6 +1059,17 @@
             "EntryShareModal": {
                 "title": "Kalender Eintrag teilen"
             }
+        },
+        "inbox": {
+            "mark_unread": "Als ungelesen markieren",
+            "mark_important": "Als wichtig markieren",
+            "star_thread": "Favorisieren",
+            "mute_thread": "Stummschalten",
+            "reply": "Antworten",
+            "reply_all": "Allen Antworten",
+            "forward": "Weiterleiten",
+            "send": "Absenden",
+            "reply_to": "{name} antworten"
         }
     },
     "notifications": {
