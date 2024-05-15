@@ -976,7 +976,7 @@
             "CharacterSelectorCard": {
                 "char_lock_alert": {
                     "title": "Char lock is active!",
-                    "description": "Only your last online character can be accessed."
+                    "description": "Only your last online character, that was active on the server, can be accessed."
                 },
                 "disabled_char": "Char lock is active!"
             }
