@@ -384,7 +384,9 @@ func (s *Server) checkUser(ctx context.Context, currentUserInfo userinfo.UserInf
 	}
 
 	if currentUserInfo.LastChar != nil && *newUserInfo.LastChar != currentUserInfo.UserId && s.appCfg.Get().Auth.LastCharLock {
-		return nil, true, errswrap.NewError(err, auth.ErrCharLock)
+		if !currentUserInfo.CanBeSuper && !currentUserInfo.SuperUser {
+			return nil, true, auth.ErrCharLock
+		}
 	}
 
 	token, err := auth.GetTokenFromGRPCContext(ctx)

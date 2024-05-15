@@ -92,7 +92,7 @@ func (g *GRPCAuth) GRPCAuthFunc(ctx context.Context, fullMethod string) (context
 	)
 
 	if userInfo.LastChar != nil && *userInfo.LastChar != userInfo.UserId && g.appCfg.Get().Auth.LastCharLock {
-		if !userInfo.SuperUser || !userInfo.CanBeSuper {
+		if !userInfo.CanBeSuper && !userInfo.SuperUser {
 			return nil, ErrCharLock
 
 		}
