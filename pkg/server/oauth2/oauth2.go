@@ -173,8 +173,8 @@ func (o *OAuth2) Login(c *gin.Context) {
 	}
 
 	tokenVal, err := c.Cookie("fivenet_token")
-	if err != nil {
-		o.logger.Error("failed to parse token cookie", zap.Error(err))
+	if err != nil && connectOnly {
+		o.logger.Error("failed to parse token cookie for connect only request", zap.Error(err))
 		o.handleRedirect(c, false, false, "invalid_request_token")
 		return
 	}
