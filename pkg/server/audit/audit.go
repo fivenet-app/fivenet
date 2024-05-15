@@ -28,8 +28,10 @@ var Module = fx.Module("audit",
 	),
 )
 
+type FilterFn func(in *model.FivenetAuditLog, data any)
+
 type IAuditer interface {
-	Log(in *model.FivenetAuditLog, data any)
+	Log(in *model.FivenetAuditLog, data any, callbacks ...FilterFn)
 }
 
 type AuditStorer struct {
@@ -97,9 +99,13 @@ func (a *AuditStorer) worker(ctx context.Context) {
 	}
 }
 
-func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any) {
+func (a *AuditStorer) Log(in *model.FivenetAuditLog, data any, callbacks ...FilterFn) {
 	if in == nil {
 		return
+	}
+
+	for _, fn := range callbacks {
+		fn(in, data)
 	}
 
 	in.Data = a.toJson(data)

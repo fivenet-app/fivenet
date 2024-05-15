@@ -73,10 +73,12 @@ async function markAllRead(): Promise<void> {
         all: true,
     });
 
-    const now = {
-        timestamp: undefined,
-    };
-    data.value?.notifications.forEach((v) => (v.readAt = now));
+    data.value?.notifications.forEach(
+        (v) =>
+            (v.readAt = {
+                timestamp: undefined,
+            }),
+    );
 }
 
 async function markRead(...ids: string[]): Promise<void> {

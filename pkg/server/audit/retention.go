@@ -100,7 +100,8 @@ func (r *Retention) Cleanup(ctx context.Context, before time.Time) error {
 		DELETE().
 		WHERE(tAudit.CreatedAt.LT_EQ(
 			jet.TimestampT(before),
-		))
+		)).
+		LIMIT(5000)
 
 	res, err := stmt.ExecContext(ctx, r.db)
 	if err != nil {

@@ -101,7 +101,7 @@ func init() {
 				{
 					Key:         permkeys.JobsServiceSetJobsUserPropsTypesPermField,
 					Type:        permissions.StringListAttributeType,
-					ValidValues: []string{"Note"},
+					ValidValues: []string{"AbsenceDate", "Note"},
 				},
 			},
 		},

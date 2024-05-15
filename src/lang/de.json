@@ -443,7 +443,8 @@
         "invited": "Eingeladen",
         "note": "Notiz",
         "weekly_view": "Wöchentliche Ansicht",
-        "today": "Heute"
+        "today": "Heute",
+        "inbox": "Posteingang"
     },
     "components": {
         "partials": {

@@ -50,7 +50,7 @@ export interface IJobsServiceClient {
      */
     listColleagueActivity(input: ListColleagueActivityRequest, options?: RpcOptions): UnaryCall<ListColleagueActivityRequest, ListColleagueActivityResponse>;
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
      *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */
@@ -114,7 +114,7 @@ export class JobsServiceClient implements IJobsServiceClient, ServiceInfo {
         return stackIntercept<ListColleagueActivityRequest, ListColleagueActivityResponse>("unary", this._transport, method, opt, input);
     }
     /**
-     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+     * @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
      *
      * @generated from protobuf rpc: SetJobsUserProps(services.jobs.SetJobsUserPropsRequest) returns (services.jobs.SetJobsUserPropsResponse);
      */

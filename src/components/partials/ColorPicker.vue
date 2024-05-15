@@ -8,7 +8,10 @@ const props = defineProps<{
     hideIcon?: boolean;
 }>();
 
-const emit = defineEmits(['update:model-value', 'close']);
+const emit = defineEmits<{
+    (e: 'update:model-value', value: string): void;
+    (e: 'close'): void;
+}>();
 
 defineOptions({
     inheritAttrs: false,

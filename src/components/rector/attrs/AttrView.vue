@@ -1,4 +1,6 @@
 <script lang="ts" setup>
+import { z } from 'zod';
+import type { FormSubmitEvent } from '#ui/types';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -242,6 +244,41 @@ watch(props, () => {
     }
 });
 
+async function copyRole(): Promise<void> {
+    copyToClipboardWrapper(
+        JSON.stringify({
+            role: role.value,
+            attrList: attrList.value,
+            attrStates: attrStates.value,
+        }),
+    );
+}
+
+const schema = z.object({
+    input: z.string(),
+});
+
+type Schema = z.output<typeof schema>;
+
+const state = reactive({
+    input: '',
+});
+
+type CopyRole = {
+    role: Role;
+    attrList: RoleAttribute[];
+};
+
+async function pasteRole(event: FormSubmitEvent<Schema>): Promise<void> {
+    const parsed = JSON.parse(event.data.input) as CopyRole;
+
+    role.value = parsed.role;
+    attrList.value.length = 0;
+    attrList.value.push(...parsed.attrList);
+
+    changed.value = true;
+}
+
 const accordionCategories = computed(() =>
     [...permCategories.value.entries()].map((category) => {
         return {
@@ -286,9 +323,40 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 <UDivider :label="$t('common.attributes', 2)" />
 
                 <div class="flex flex-col gap-4 py-2">
-                    <UButton block :disabled="!changed || !canSubmit" :loading="!canSubmit" @click="onSubmitThrottle">
-                        {{ $t('common.save', 1) }}
-                    </UButton>
+                    <div class="flex flex-row gap-1">
+                        <UButton
+                            class="flex-1"
+                            :disabled="!changed || !canSubmit"
+                            :loading="!canSubmit"
+                            @click="onSubmitThrottle"
+                        >
+                            {{ $t('common.save', 1) }}
+                        </UButton>
+
+                        <UPopover>
+                            <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">{{
+                                $t('common.paste')
+                            }}</UButton>
+
+                            <template #panel>
+                                <div class="p-4">
+                                    <UForm :state="state" @submit="pasteRole" class="flex flex-col gap-1">
+                                        <UFormGroup name="input">
+                                            <UInput v-model="state.input" type="text" name="input" />
+                                        </UFormGroup>
+
+                                        <UButton type="submit">
+                                            {{ $t('common.save') }}
+                                        </UButton>
+                                    </UForm>
+                                </div>
+                            </template>
+                        </UPopover>
+
+                        <UButton :disabled="changed" color="white" icon="i-mdi-clipboard-plus" @click="copyRole">{{
+                            $t('common.copy')
+                        }}</UButton>
+                    </div>
 
                     <UAccordion :items="accordionCategories" multiple :unmount="true">
                         <template #item="{ item: category }">

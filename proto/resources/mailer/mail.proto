@@ -1,0 +1,29 @@
+syntax = "proto3";
+
+package resources.mailer;
+
+import "resources/timestamp/timestamp.proto";
+import "resources/users/users.proto";
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/mailer;mailer";
+
+message Mail {
+  uint64 id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  bool unread = 5;
+  // @sanitize
+  string subject = 6 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 1024
+  }];
+  // @sanitize
+  string body = 9 [(validate.rules).string = {
+    min_len: 20,
+    max_bytes: 1750000 // 1.75 Megabytes
+  }];
+  optional int32 from_id = 11;
+  optional resources.users.UserShort from = 12; // @gotags: alias:"from"
+}

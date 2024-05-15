@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { addDays, format } from 'date-fns';
+import { addDays, format, isFuture } from 'date-fns';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
@@ -89,12 +89,12 @@ async function setAbsenceDate(values: Schema): Promise<void> {
 }
 
 function updateAbsenceDateField(): void {
-    if (props.userProps?.absenceBegin && toDate(props.userProps.absenceBegin).getTime() > new Date().getTime()) {
+    if (props.userProps?.absenceBegin && isFuture(toDate(props.userProps.absenceBegin))) {
         state.absenceBegin = toDate(props.userProps.absenceBegin);
     }
 
-    if (props.userProps?.absenceEnd && toDate(props.userProps.absenceEnd).getTime() > new Date().getTime()) {
-        state.absenceEnd = props.userProps.absenceEnd ? toDate(props.userProps.absenceEnd) : undefined;
+    if (props.userProps?.absenceEnd && isFuture(toDate(props.userProps.absenceEnd))) {
+        state.absenceEnd = toDate(props.userProps.absenceEnd);
     }
 }
 

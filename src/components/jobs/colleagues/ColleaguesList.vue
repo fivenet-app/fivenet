@@ -11,6 +11,7 @@ import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import { isFuture } from 'date-fns';
 
 const { $grpc } = useNuxtApp();
 
@@ -84,12 +85,6 @@ function updateAbsenceDates(value: { userId: number; absenceBegin?: Timestamp; a
         colleague.props.absenceEnd = value.absenceEnd;
     }
 }
-
-const today = new Date();
-today.setHours(0);
-today.setMinutes(0);
-today.setSeconds(0);
-today.setMilliseconds(0);
 
 const columns = [
     {
@@ -197,10 +192,7 @@ defineShortcuts({
             {{ colleague.jobGradeLabel }}<span v-if="colleague.jobGrade > 0"> ({{ colleague.jobGrade }})</span>
         </template>
         <template #absence-data="{ row: colleague }">
-            <dl
-                v-if="colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()"
-                class="font-normal"
-            >
+            <dl v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))" class="font-normal">
                 <dd class="truncate">
                     {{ $t('common.from') }}:
                     <GenericTime :value="colleague.props?.absenceBegin" type="date" />
@@ -227,6 +219,8 @@ defineShortcuts({
                 <UButton
                     v-if="
                         can('JobsService.SetJobsUserProps') &&
+                        (colleague.userId === activeChar!.userId ||
+                            attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate')) &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                     "
                     variant="link"

@@ -533,7 +533,17 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 		TargetUserID: &req.Props.UserId,
 		State:        int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.aud.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req, func(in *model.FivenetAuditLog, data any) {
+		r, ok := data.(*SetUserPropsRequest)
+		if !ok {
+			return
+		}
+		if r.Props == nil || r.Props.MugShot == nil {
+			return
+		}
+
+		r.Props.MugShot.Data = []byte("MUGSHOT DATA REMOVED")
+	})
 
 	if req.Reason == "" {
 		return nil, errorscitizenstore.ErrReasonRequired
@@ -898,12 +908,19 @@ func (s *Server) SetProfilePicture(ctx context.Context, req *SetProfilePictureRe
 
 	auditEntry := &model.FivenetAuditLog{
 		Service: CitizenStoreService_ServiceDesc.ServiceName,
-		Method:  "SetUserProps",
+		Method:  "SetProfilePicture",
 		UserID:  userInfo.UserId,
 		UserJob: userInfo.Job,
 		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
 	}
-	defer s.aud.Log(auditEntry, req)
+	defer s.aud.Log(auditEntry, req, func(in *model.FivenetAuditLog, data any) {
+		r, ok := data.(*SetProfilePictureRequest)
+		if !ok {
+			return
+		}
+
+		r.Avatar.Data = []byte("AVATAR DATA REMOVED")
+	})
 
 	avatarFile, err := s.getUserAvatar(ctx, userInfo.UserId)
 	if err != nil {

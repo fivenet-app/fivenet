@@ -82,7 +82,10 @@ async function deleteMarker(id: string): Promise<void> {
                 </UButton>
             </div>
 
-            <span class="font-semibold"> {{ $t('common.marker') }}: {{ marker.info?.name }} </span>
+            <p class="inline-flex items-center gap-1">
+                <span class="font-semibold"> {{ $t('common.marker') }}:</span>
+                <span>{{ marker.info?.name }}</span>
+            </p>
 
             <ul role="list">
                 <li>

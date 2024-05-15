@@ -123,10 +123,10 @@ onBeforeMount(() => {
                     </span>
                 </li>
                 <li class="flex items-center justify-between py-3 pl-3 pr-4 text-sm">
-                    <div class="flex flex-1 items-center">
-                        <span class="mr-1 font-medium">{{ $t('common.unit', 2) }}:</span>
+                    <div class="flex flex-1 items-center gap-1">
+                        <span class="font-medium">{{ $t('common.unit', 2) }}:</span>
                         <span v-if="dispatch.units.length === 0">{{ $t('common.member', 0) }}</span>
-                        <span v-else class="ml-2 grid flex-1 grid-cols-2 gap-1 truncate">
+                        <span v-else class="grid flex-1 grid-cols-2 gap-1 truncate">
                             <UnitInfoPopover
                                 v-for="unit in dispatch.units"
                                 :key="unit.unitId"

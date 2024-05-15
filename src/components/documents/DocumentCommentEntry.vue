@@ -109,9 +109,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
                     </div>
 
-                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center">
-                        <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
-                        {{ $t('common.deleted') }}
+                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5">
+                        <UIcon name="i-mdi-trash-can" class="size-5 shrink-0" />
+                        <span>{{ $t('common.deleted') }}</span>
                     </div>
 
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">

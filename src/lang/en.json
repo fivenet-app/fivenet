@@ -14,7 +14,8 @@
                 "livemap": "Live position of dispatches and your colleagues.",
                 "centrum": "Dispatch Center, for dispatching Dispatches.",
                 "qualifications": "Expand your knowledge by taking qualifications provided by your or other factions.",
-                "calendar": "Public, private and job events all in this nice calendar."
+                "calendar": "Public, private and job events all in this nice calendar.",
+                "mailer": "Mail"
             }
         },
         "documents": {
@@ -443,7 +444,12 @@
         "invited": "Invited",
         "note": "Note",
         "weekly_view": "Weekly view",
-        "today": "Today"
+        "today": "Today",
+        "inbox": "Inbox",
+        "all": "All",
+        "unread": "Unread",
+        "archive": "Archive",
+        "paste": "Paste"
     },
     "components": {
         "partials": {
@@ -1053,6 +1059,17 @@
             "EntryShareModal": {
                 "title": "Share Calendar Entry"
             }
+        },
+        "inbox": {
+            "mark_unread": "Mark as unread",
+            "mark_important": "Mark as important",
+            "star_thread": "Star thread",
+            "mute_thread": "Mute thread",
+            "reply": "Reply",
+            "reply_all": "Reply all",
+            "forward": "Foward",
+            "send": "Send",
+            "reply_to": "Reply to {name}"
         }
     },
     "notifications": {

@@ -9,25 +9,25 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const props = defineProps({
-    modelValue: {
-        type: [Date, Object] as PropType<DatePickerDate | DatePickerRangeObject | null>,
-        default: null,
+const props = withDefaults(
+    defineProps<{
+        modelValue: DatePickerDate | DatePickerRangeObject | null;
+        clearable?: boolean;
+    }>(),
+    {
+        modelValue: null,
+        clearable: false,
     },
-    clearable: {
-        type: Boolean,
-        default: false,
-    },
-});
+);
 
-const emit = defineEmits(['update:model-value', 'close']);
+const emit = defineEmits<{
+    (e: 'update:model-value', value: typeof props.modelValue): void;
+    (e: 'close'): void;
+}>();
 
 const date = computed({
     get: () => props.modelValue,
-    set: (value) => {
-        emit('update:model-value', value);
-        emit('close');
-    },
+    set: (value) => emit('update:model-value', value),
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

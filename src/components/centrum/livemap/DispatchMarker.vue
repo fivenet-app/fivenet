@@ -95,7 +95,7 @@ const zIndexOffset = computed(() => {
                     </UButton>
                 </div>
 
-                <p>
+                <p class="inline-flex items-center gap-1">
                     <span class="font-semibold">{{ $t('common.dispatch') }}:</span>
                     <UButton :label="`DSP-${dispatch.id}`" variant="link" :padded="false" @click="selected(dispatch.id)" />
                 </p>
@@ -144,7 +144,7 @@ const zIndexOffset = computed(() => {
                         <span v-if="dispatch.units.length === 0" class="italic">{{
                             $t('enums.centrum.StatusDispatch.UNASSIGNED')
                         }}</span>
-                        <span v-else class="mr-1 grid grid-cols-2 gap-1">
+                        <span v-else class="grid grid-cols-2 gap-1">
                             <UnitInfoPopover
                                 v-for="unit in dispatch.units"
                                 :key="unit.unitId"

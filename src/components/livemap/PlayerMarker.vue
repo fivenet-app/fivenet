@@ -140,7 +140,9 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                     </UButton>
                 </div>
 
-                <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
+                <p class="inline-flex items-center gap-1">
+                    <span class="font-semibold">{{ $t('common.employee', 2) }} {{ marker.user?.jobLabel }} </span>
+                </p>
 
                 <ul role="list">
                     <li>

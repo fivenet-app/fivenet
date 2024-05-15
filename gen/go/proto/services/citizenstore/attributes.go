@@ -5,6 +5,7 @@ import (
 	"errors"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	errorscitizenstore "github.com/fivenet-app/fivenet/gen/go/proto/services/citizenstore/errors"
 	permscompletor "github.com/fivenet-app/fivenet/gen/go/proto/services/completor/perms"
@@ -22,6 +23,15 @@ import (
 
 func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizenAttributesRequest) (*ManageCitizenAttributesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: CitizenStoreService_ServiceDesc.ServiceName,
+		Method:  "ManageCitizenAttributes",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
 
 	resp := &ManageCitizenAttributesResponse{
 		Attributes: []*users.CitizenAttribute{},
@@ -98,6 +108,8 @@ func (s *Server) ManageCitizenAttributes(ctx context.Context, req *ManageCitizen
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
 	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return resp, nil
 }

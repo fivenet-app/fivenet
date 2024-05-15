@@ -32,6 +32,17 @@ const links = computed(() =>
             },
         },
         {
+            label: t('common.inbox'),
+            icon: 'i-mdi-inbox-outline',
+            to: '/inbox',
+            badge: '4',
+            tooltip: {
+                text: t('common.inbox'),
+                shortcuts: ['G', 'I'],
+            },
+            permission: 'TODOService.TODOMethod' as Perms,
+        },
+        {
             label: t('common.citizen'),
             icon: 'i-mdi-account-multiple-outline',
             to: '/citizens',

@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package services.mailer;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/mailer;mailer";
+
+service MailerService {}

@@ -12,7 +12,7 @@ import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
-import { addDays, isAfter, isBefore, isPast, isSameDay, isToday } from 'date-fns';
+import { addDays, isAfter, isBefore, isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import { useRouteQuery } from '@vueuse/router';
 
 useHead({
@@ -40,8 +40,6 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const calRef = ref<InstanceType<typeof MonthCalendarClient> | null>(null);
-
-const now = new Date();
 
 const date = ref<Date>(new Date());
 const query = reactive<Schema>({
@@ -153,7 +151,7 @@ const transformedCalendarEntries = computedAsync(async () =>
                     color: entry.calendar?.color ?? 'primary',
                     isPast: past,
                     multiDay: !!endTime && !isSameDay(startTime, endTime),
-                    ongoing: !!endTime && isAfter(now, startTime) && isBefore(now, endTime),
+                    ongoing: !!endTime && isPast(startTime) && isFuture(endTime),
                     time: formatStartEndTime(entry),
                     timeEnd:
                         endTime && !isSameDay(startTime, endTime)
@@ -216,7 +214,7 @@ const groupedCalendarEntries = computedAsync(async () => {
         }
     });
 
-    if (!groups.find((g) => isToday(g.date))) {
+    if (!groups.find((g) => g.isToday)) {
         const now = new Date();
         groups.push({
             key: now.toDateString(),

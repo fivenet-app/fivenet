@@ -5,6 +5,7 @@ import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers'
 import { useAuthStore } from '~/store/auth';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import { isFuture } from 'date-fns';
 
 defineProps<{
     colleague: Colleague;
@@ -14,12 +15,6 @@ const modal = useModal();
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
-
-const today = new Date();
-today.setHours(0);
-today.setMinutes(0);
-today.setSeconds(0);
-today.setMilliseconds(0);
 </script>
 
 <template>
@@ -47,7 +42,7 @@ today.setMilliseconds(0);
                 </UBadge>
 
                 <UBadge
-                    v-if="colleague.props?.absenceEnd && toDate(colleague.props?.absenceEnd).getTime() >= today.getTime()"
+                    v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
                     class="inline-flex items-center gap-1 rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
                 >
                     <UIcon name="i-mdi-island" class="size-5" />
@@ -66,6 +61,7 @@ today.setMilliseconds(0);
             <UButton
                 v-if="
                     can('JobsService.SetJobsUserProps') &&
+                    (colleague.userId === activeChar!.userId || attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate')) &&
                     checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                 "
                 icon="i-mdi-island"

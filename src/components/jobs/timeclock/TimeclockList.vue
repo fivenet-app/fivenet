@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { format, addDays, subDays } from 'date-fns';
+import { format, addDays, subDays, isFuture } from 'date-fns';
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -22,10 +22,6 @@ const completorStore = useCompletorStore();
 
 const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All');
 
-const now = new Date();
-const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-const futureToday = addDays(today, 1);
-
 const schema = z.object({
     users: z.custom<Colleague>().array().max(5).optional(),
     from: z.date(),
@@ -38,7 +34,7 @@ type Schema = z.output<typeof schema>;
 const query = reactive<Schema>({
     users: [],
     from: new Date(),
-    to: subDays(now, 1),
+    to: subDays(new Date(), 1),
     perDay: true,
 });
 
@@ -267,7 +263,7 @@ const input = ref<{ input: HTMLInputElement }>();
                         <UButton
                             block
                             class="flex-1"
-                            :disabled="futureToday.getTime() <= futureDay.getTime()"
+                            :disabled="isFuture(futureDay)"
                             icon="i-mdi-chevron-left"
                             @click="dayForward()"
                         >

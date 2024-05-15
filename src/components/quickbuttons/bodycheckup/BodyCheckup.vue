@@ -187,8 +187,8 @@ function reset(): void {
                     class="mt-2"
                 />
                 <ol v-else>
-                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center">
-                        <span class="mr-1 w-4 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
+                    <li v-for="(pin, idx) in pins" :key="idx" class="my-2 inline-flex w-full items-center gap-1">
+                        <span class="w-4 text-base" :class="pin.selected ? 'underline' : ''"> {{ idx + 1 }}. </span>
 
                         <UInput
                             v-model="pin.description"

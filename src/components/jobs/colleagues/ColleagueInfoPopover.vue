@@ -4,6 +4,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { isFuture } from 'date-fns';
 
 withDefaults(
     defineProps<{
@@ -24,12 +25,6 @@ withDefaults(
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
-
-const today = new Date();
-today.setHours(0);
-today.setMinutes(0);
-today.setSeconds(0);
-today.setMilliseconds(0);
 </script>
 
 <template>
@@ -147,7 +142,7 @@ today.setMilliseconds(0);
 
                         <template v-if="!hideProps">
                             <div
-                                v-if="user.props?.absenceEnd && toDate(user.props?.absenceEnd).getTime() >= today.getTime()"
+                                v-if="user.props?.absenceEnd && isFuture(toDate(user.props?.absenceEnd))"
                                 class="text-sm font-normal"
                             >
                                 <span class="font-semibold">{{ $t('common.absent') }}:</span>

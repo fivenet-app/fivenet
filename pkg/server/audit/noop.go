@@ -7,6 +7,6 @@ import (
 type Noop struct {
 }
 
-func (a *Noop) Log(in *model.FivenetAuditLog, data any) {
+func (a *Noop) Log(in *model.FivenetAuditLog, data any, callbacks ...FilterFn) {
 	// Nothing
 }

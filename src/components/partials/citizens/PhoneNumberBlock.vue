@@ -52,7 +52,7 @@ async function doCall(): Promise<void> {
 </script>
 
 <template>
-    <div class="inline-flex items-center">
+    <div class="inline-flex items-center" :class="!padded && 'gap-1'">
         <span v-if="number === undefined">N/A</span>
         <template v-else>
             <UButton v-if="showIcon" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
@@ -60,8 +60,8 @@ async function doCall(): Promise<void> {
                 <span v-if="showLabel" class="truncate">{{ $t('common.call') }}</span>
             </UButton>
 
-            <span v-if="!hideNumber" :class="[streamerMode ? 'blur' : '', !padded && 'ml-1']">
-                <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx" class="mr-1">{{ part }}</span>
+            <span v-if="!hideNumber" class="inline-flex gap-1" :class="[streamerMode ? 'blur' : '']">
+                <span v-for="(part, idx) in (number ?? '').match(/.{1,3}/g)" :key="idx">{{ part }}</span>
             </span>
         </template>
     </div>

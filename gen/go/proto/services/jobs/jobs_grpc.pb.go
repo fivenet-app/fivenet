@@ -40,7 +40,7 @@ type JobsServiceClient interface {
 	GetColleague(ctx context.Context, in *GetColleagueRequest, opts ...grpc.CallOption) (*GetColleagueResponse, error)
 	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
 	ListColleagueActivity(ctx context.Context, in *ListColleagueActivityRequest, opts ...grpc.CallOption) (*ListColleagueActivityResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
 	SetJobsUserProps(ctx context.Context, in *SetJobsUserPropsRequest, opts ...grpc.CallOption) (*SetJobsUserPropsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(ctx context.Context, in *GetMOTDRequest, opts ...grpc.CallOption) (*GetMOTDResponse, error)
@@ -131,7 +131,7 @@ type JobsServiceServer interface {
 	GetColleague(context.Context, *GetColleagueRequest) (*GetColleagueResponse, error)
 	// @perm: Attrs=Types/StringList:[]string{"HIRED", "FIRED", "PROMOTED", "DEMOTED", "ABSENCE_DATE", "NOTE"}
 	ListColleagueActivity(context.Context, *ListColleagueActivityRequest) (*ListColleagueActivityResponse, error)
-	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"Note"}
+	// @perm: Attrs=Access/StringList:[]string{"Own", "Lower_Rank", "Same_Rank", "Any"}|Types/StringList:[]string{"AbsenceDate","Note"}
 	SetJobsUserProps(context.Context, *SetJobsUserPropsRequest) (*SetJobsUserPropsResponse, error)
 	// @perm: Name=Any
 	GetMOTD(context.Context, *GetMOTDRequest) (*GetMOTDResponse, error)
