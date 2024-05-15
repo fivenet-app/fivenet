@@ -48,5 +48,7 @@ services:
     network_mode: host
     restart: unless-stopped
 
+  # FiveNet Server, Worker and Discord containers would go here
+
 volumes:
   mysql:
