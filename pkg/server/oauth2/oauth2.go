@@ -167,7 +167,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 		connectOnly, err = strconv.ParseBool(connectOnlyVal)
 		if err != nil {
 			o.logger.Error("failed to parse connect only var", zap.Error(err))
-			o.handleRedirect(c, false, false, "invalid_request")
+			o.handleRedirect(c, false, false, "invalid_request_connect_only")
 			return
 		}
 	}
@@ -175,7 +175,7 @@ func (o *OAuth2) Login(c *gin.Context) {
 	tokenVal, err := c.Cookie("fivenet_token")
 	if err != nil {
 		o.logger.Error("failed to parse token cookie", zap.Error(err))
-		o.handleRedirect(c, false, false, "invalid_request")
+		o.handleRedirect(c, false, false, "invalid_request_token")
 		return
 	}
 	if tokenVal != "" {
@@ -232,7 +232,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	sess.Save()
 
 	if c.Request.FormValue("state") != state {
-		o.handleRedirect(c, connectOnly, false, "invalid_state")
+		o.handleRedirect(c, connectOnly, false, "invalid_state_404")
 		return
 	}
 
