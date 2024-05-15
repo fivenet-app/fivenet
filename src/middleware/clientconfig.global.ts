@@ -14,13 +14,13 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         const settings = useSettingsStore();
         if (nuiQuery.toLowerCase() !== 'false') {
             settings.setNuiDetails(true, nuiQuery);
-            console.info('Enabled NUI integration! Resource Name:', settings.nuiResourceName);
+            console.info('ClientCfg: Enabled NUI integration! Resource Name:', settings.nuiResourceName);
         } else {
             settings.setNuiDetails(false, undefined);
-            console.info('Disabled NUI integration!');
+            console.info('ClientCfg: Disabled NUI integration!');
         }
     } else {
-        console.debug('No NUI query param detected.');
+        console.debug('ClientCfg: No NUI query param detected.');
     }
 
     if (route.query?.refreshApp !== undefined) {

@@ -396,7 +396,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	absenceEnd := jet.DateExp(jet.NULL)
 	if req.Props.AbsenceBegin != nil && req.Props.AbsenceEnd != nil {
 		// Allow users to set their own absence date regardless of types perms check
-		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") {
+		if userInfo.UserId != targetUser.UserId && !slices.Contains(types, "AbsenceDate") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsAbsenceDenied
 		}
 
@@ -423,7 +423,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	}
 	// Generate the update sets
 	if req.Props.Note != nil {
-		if !slices.Contains(types, "Note") {
+		if !slices.Contains(types, "Note") && !userInfo.SuperUser {
 			return nil, errorsjobs.ErrPropsNoteDenied
 		}
 
