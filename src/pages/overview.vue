@@ -15,6 +15,13 @@ const { t } = useI18n();
 
 const items = [
     {
+        title: t('common.inbox'),
+        description: t('pages.overview.features.mailer'),
+        to: { name: 'inbox' },
+        permission: 'TODOService.TODOMethod',
+        icon: 'i-mdi-inbox-outline',
+    },
+    {
         title: `${t('common.citizen', 2)} ${t('common.search')}`,
         description: t('pages.overview.features.citizens'),
         to: { name: 'citizens' },
