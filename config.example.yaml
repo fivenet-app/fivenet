@@ -21,7 +21,7 @@ http:
     #- "http://localhost:3000" # Only for development
   sessions:
     cookieSecret: "your_generated_cookie_secret"
-    domain: "localhost"
+    domain: "fivenet.example.com"
 grpc:
   listen: ":9090"
 database:

@@ -1,6 +1,7 @@
 version: '3.5'
 
 services:
+  # GRPC Web to GRPC proxy
   envoy:
     container_name: envoy
     image: docker.io/envoyproxy/envoy:v1.30.1
@@ -15,6 +16,7 @@ services:
     network_mode: host
     restart: unless-stopped
 
+  # Used for testing only
   mysql:
     container_name: mysql
     image: docker.io/library/mysql:8.4.0
@@ -30,12 +32,13 @@ services:
       MYSQL_PASSWORD: ${MYSQL_PASSWORD:-changeme}
       MYSQL_DATABASE: ${MYSQL_DATABASE:-fivenet}
     volumes:
-       - mysql:/var/lib/mysql
+      - mysql:/var/lib/mysql
     ports:
       - "3306:3306"
     network_mode: host
     restart: unless-stopped
 
+  # Message Queue
   nats:
     container_name: nats
     image: docker.io/library/nats:2.10.7-alpine3.18
@@ -48,7 +51,43 @@ services:
     network_mode: host
     restart: unless-stopped
 
-  # FiveNet Server, Worker and Discord containers would go here
+  # FiveNet Server
+  #fivenet_server:
+  #  container_name: fivenet-server
+  #  image: ghcr.io/fivenet-app/fivenet:main
+  #  command:
+  #    - server
+  #    - --serve-frontend
+  #  ports:
+  #    - "7070:7070"
+  #    - "8080:8080"
+  #    - "9090:9090"
+  #  network_mode: host
+  #  restart: unless-stopped
+  #  volumes:
+  #    - ./config.yaml:/config/config.yaml
+  # FiveNet Worker
+  #fivenet_worker:
+  #  container_name: fivenet-worker
+  #  image: ghcr.io/fivenet-app/fivenet:main
+  #  command:
+  #    - worker
+  #  ports:
+  #    - "7070:7070"
+  #  restart: unless-stopped
+  #  volumes:
+  #    - ./config.yaml:/config/config.yaml
+  # FiveNet Discord
+  #fivenet_discord:
+  #  container_name: fivenet-discord
+  #  image: ghcr.io/fivenet-app/fivenet:main
+  #  command:
+  #    - discord
+  #  ports:
+  #    - "7070:7070"
+  #  restart: unless-stopped
+  #  volumes:
+  #    - ./config.yaml:/config/config.yaml
 
 volumes:
   mysql:

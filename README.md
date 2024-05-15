@@ -4,6 +4,8 @@
 
 # FiveNet
 
+[![Container Images on GHCR.io](https://img.shields.io/badge/Container%20Images%20on-GHCR.io-blue)](https://github.com/fivenet-app/fivenet/pkgs/container/fivenet) [![Helm Logo](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=Helm&labelColor=0F1689)](https://github.com/FiveNet-app/charts)
+
 ## Roadmap
 
 Things on the roadmap may or may not be implemented/changed/removed without warning.
