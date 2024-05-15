@@ -976,7 +976,7 @@
             "CharacterSelectorCard": {
                 "char_lock_alert": {
                     "title": "Charakter-Sperre ist aktiv!",
-                    "description": "Nur auf Ihren letzten Online-Charakter kann zugegriffen werden."
+                    "description": "Nur auf Ihren letzten Online-Charakter, der auf dem Server aktiv war, kann zugegriffen werden."
                 },
                 "disabled_char": "Charakter-Sperre ist aktiv!"
             }
