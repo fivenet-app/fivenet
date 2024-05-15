@@ -20,17 +20,23 @@ export interface UserEvent {
      * @generated from protobuf oneof: data
      */
     data: {
+        oneofKind: "logout";
+        /**
+         * @generated from protobuf field: bool logout = 1;
+         */
+        logout: boolean;
+    } | {
+        oneofKind: "refreshToken";
+        /**
+         * @generated from protobuf field: bool refresh_token = 2;
+         */
+        refreshToken: boolean;
+    } | {
         oneofKind: "notification";
         /**
          * @generated from protobuf field: resources.notifications.Notification notification = 3;
          */
         notification: Notification;
-    } | {
-        oneofKind: "refreshToken";
-        /**
-         * @generated from protobuf field: bool refresh_token = 4;
-         */
-        refreshToken: boolean;
     } | {
         oneofKind: undefined;
     };
@@ -61,8 +67,9 @@ export interface SystemEvent {
 class UserEvent$Type extends MessageType<UserEvent> {
     constructor() {
         super("resources.notifications.UserEvent", [
-            { no: 3, name: "notification", kind: "message", oneof: "data", T: () => Notification },
-            { no: 4, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ }
+            { no: 1, name: "logout", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "notification", kind: "message", oneof: "data", T: () => Notification }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -77,16 +84,22 @@ class UserEvent$Type extends MessageType<UserEvent> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
+                case /* bool logout */ 1:
+                    message.data = {
+                        oneofKind: "logout",
+                        logout: reader.bool()
+                    };
+                    break;
+                case /* bool refresh_token */ 2:
+                    message.data = {
+                        oneofKind: "refreshToken",
+                        refreshToken: reader.bool()
+                    };
+                    break;
                 case /* resources.notifications.Notification notification */ 3:
                     message.data = {
                         oneofKind: "notification",
                         notification: Notification.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notification)
-                    };
-                    break;
-                case /* bool refresh_token */ 4:
-                    message.data = {
-                        oneofKind: "refreshToken",
-                        refreshToken: reader.bool()
                     };
                     break;
                 default:
@@ -101,12 +114,15 @@ class UserEvent$Type extends MessageType<UserEvent> {
         return message;
     }
     internalBinaryWrite(message: UserEvent, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool logout = 1; */
+        if (message.data.oneofKind === "logout")
+            writer.tag(1, WireType.Varint).bool(message.data.logout);
+        /* bool refresh_token = 2; */
+        if (message.data.oneofKind === "refreshToken")
+            writer.tag(2, WireType.Varint).bool(message.data.refreshToken);
         /* resources.notifications.Notification notification = 3; */
         if (message.data.oneofKind === "notification")
             Notification.internalBinaryWrite(message.data.notification, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* bool refresh_token = 4; */
-        if (message.data.oneofKind === "refreshToken")
-            writer.tag(4, WireType.Varint).bool(message.data.refreshToken);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

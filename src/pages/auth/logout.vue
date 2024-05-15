@@ -19,19 +19,18 @@ const { username } = storeToRefs(authStore);
 
 onMounted(async () => {
     if (!username.value) {
-        navigateTo({ name: 'auth-login' });
-        return;
-    }
-
-    try {
-        await doLogout();
-    } finally {
-        useTimeoutFn(async () => {
-            const route = useRoute();
-            if (route.name === 'auth-logout') {
-                navigateTo({ name: 'index' });
-            }
-        }, 1500);
+        await navigateTo({ name: 'auth-login' });
+    } else {
+        try {
+            await doLogout();
+        } finally {
+            useTimeoutFn(async () => {
+                const route = useRoute();
+                if (route.name === 'auth-logout') {
+                    await navigateTo({ name: 'index' });
+                }
+            }, 1500);
+        }
     }
 });
 </script>

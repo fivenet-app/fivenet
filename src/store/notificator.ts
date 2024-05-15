@@ -72,7 +72,14 @@ export const useNotificatorStore = defineStore('notifications', {
 
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'userEvent') {
-                            if (resp.data.userEvent.data.oneofKind === 'notification') {
+                            if (resp.data.userEvent.data.oneofKind === 'logout') {
+                                if (authStore.loggingIn) {
+                                    continue;
+                                }
+
+                                console.info('Notificator: Received logout user event, redirecting to logout...');
+                                await navigateTo({ name: 'auth-logout' });
+                            } else if (resp.data.userEvent.data.oneofKind === 'notification') {
                                 const n = resp.data.userEvent.data.notification;
                                 const nType: NotificationType =
                                     n.type !== NotificationType.UNSPECIFIED ? n.type : NotificationType.INFO;

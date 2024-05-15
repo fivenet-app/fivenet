@@ -124,6 +124,8 @@ export const useAuthStore = defineStore('auth', {
         },
         async doLogout(): Promise<void> {
             const { $grpc } = useNuxtApp();
+            this.loggingIn = true;
+
             try {
                 await $grpc.getAuthClient().logout({});
                 this.clearAuthInfo();
@@ -141,6 +143,8 @@ export const useAuthStore = defineStore('auth', {
                 this.clearAuthInfo();
 
                 throw e;
+            } finally {
+                this.loginStop(null);
             }
         },
         async chooseCharacter(charId?: number, redirect?: boolean): Promise<void> {

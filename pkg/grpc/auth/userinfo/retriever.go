@@ -146,7 +146,7 @@ func (ui *UIRetriever) GetUserInfoWithoutAccountId(ctx context.Context, userId i
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, ui.db, dest); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, ErrAccountError)
 	}
 
 	// Check if user is superuser

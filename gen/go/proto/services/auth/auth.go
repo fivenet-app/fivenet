@@ -92,6 +92,7 @@ func NewServer(p Params) *Server {
 		aud:      p.Aud,
 		ui:       p.UI,
 		appCfg:   p.AppConfig,
+		js:       p.JS,
 
 		domain:          p.Config.HTTP.Sessions.Domain,
 		oauth2Providers: p.Config.OAuth2.Providers,
@@ -110,8 +111,15 @@ func (s *Server) AuthFuncOverride(ctx context.Context, fullMethod string) (conte
 	// Skip authentication for the anon accessible endpoints
 	if fullMethod == "/services.auth.AuthService/CreateAccount" ||
 		fullMethod == "/services.auth.AuthService/Login" ||
-		fullMethod == "/services.auth.AuthService/Logout" ||
 		fullMethod == "/services.auth.AuthService/ForgotPassword" {
+		return ctx, nil
+	}
+
+	if fullMethod == "/services.auth.AuthService/Logout" {
+		c, _ := s.auth.GRPCAuthFunc(ctx, fullMethod)
+		if c != nil {
+			return c, nil
+		}
 		return ctx, nil
 	}
 
@@ -213,20 +221,20 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
-	userInfo := auth.MustGetUserInfoFromContext(ctx)
-
+	sucess := true
 	s.destroyTokenCookie(ctx)
 
-	sucess := true
-	if _, err := s.js.PublishAsyncProto(ctx,
-		fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
-		&notifications.UserEvent{
-			Data: &notifications.UserEvent_RefreshToken{
-				RefreshToken: true,
-			},
-		}); err != nil {
-		sucess = false
-		s.logger.Error("failed to send logout notification to user")
+	if userInfo, ok := auth.GetUserInfoFromContext(ctx); ok && userInfo != nil && userInfo.UserId > 0 {
+		if _, err := s.js.PublishAsyncProto(ctx,
+			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
+			&notifications.UserEvent{
+				Data: &notifications.UserEvent_Logout{
+					Logout: true,
+				},
+			}); err != nil {
+			sucess = false
+			s.logger.Error("failed to send logout notification to user", zap.Error(err))
+		}
 	}
 
 	return &LogoutResponse{

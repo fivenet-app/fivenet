@@ -10,7 +10,7 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func (s *Server) setTokenCookie(ctx context.Context, token string) {
+func (s *Server) setTokenCookie(ctx context.Context, token string) error {
 	cookie := http.Cookie{
 		Name:     auth.CookieName,
 		Value:    token,
@@ -22,22 +22,23 @@ func (s *Server) setTokenCookie(ctx context.Context, token string) {
 		Secure:   true,
 	}
 	header := metadata.Pairs("set-cookie", cookie.String())
-	// send the header back to the gateway
-	grpc.SendHeader(ctx, header)
+	// Send the cookie back to the client
+	return grpc.SendHeader(ctx, header)
 }
 
-func (s *Server) destroyTokenCookie(ctx context.Context) {
+func (s *Server) destroyTokenCookie(ctx context.Context) error {
 	cookie := http.Cookie{
 		Name:     auth.CookieName,
 		Value:    "",
 		HttpOnly: true,
 		Expires:  time.Time{},
+		MaxAge:   -1,
 		Path:     "/",
 		Domain:   s.domain,
 		SameSite: http.SameSiteNoneMode,
 		Secure:   true,
 	}
 	header := metadata.Pairs("set-cookie", cookie.String())
-	// send the header back to the gateway
-	grpc.SendHeader(ctx, header)
+	// Send the cookie back to the client
+	return grpc.SendHeader(ctx, header)
 }
