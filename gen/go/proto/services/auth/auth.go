@@ -642,7 +642,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	isSuperUser := slices.Contains(s.superuserGroups, userGroup) || slices.Contains(s.superuserUsers, claims.Subject)
 
 	// If char lock is active, make sure that the user is choosing the correct char
-	if (account.Superuser == nil || !*account.Superuser) &&
+	if (!isSuperUser || (account.Superuser == nil || !*account.Superuser)) &&
 		s.appCfg.Get().Auth.LastCharLock && account.LastChar != nil &&
 		*account.LastChar != req.CharId {
 		return nil, errswrap.NewError(err, errorsauth.ErrCharLock)

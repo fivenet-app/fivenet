@@ -300,7 +300,14 @@ onBeforeMount(async () => {
                                 <span class="my-auto flex-1">{{ job.label }}</span>
 
                                 <USelectMenu
-                                    :options="job.grades"
+                                    :options="
+                                        job.grades.filter(
+                                            (g) =>
+                                                maxValues &&
+                                                maxValues.validValues.oneofKind === 'jobGradeList' &&
+                                                maxValues.validValues.jobGradeList.jobs[job.name] + 1 > g.grade,
+                                        )
+                                    "
                                     :search-attributes="['label']"
                                     by="grade"
                                     :placeholder="$t('common.rank')"
