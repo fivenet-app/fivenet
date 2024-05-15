@@ -4,7 +4,9 @@
 
 # FiveNet
 
-[![Container Images on GHCR.io](https://img.shields.io/badge/Container%20Images%20on-GHCR.io-blue)](https://github.com/fivenet-app/fivenet/pkgs/container/fivenet) [![Helm Logo](https://img.shields.io/badge/Helm-0F1689?style=for-the-badge&logo=Helm&labelColor=0F1689)](https://github.com/FiveNet-app/charts)
+[![Container Images on GHCR.io](https://img.shields.io/badge/Container%20Images%20on-GHCR.io-blue)](https://github.com/fivenet-app/fivenet/pkgs/container/fivenet) [![Helm Logo](https://img.shields.io/badge/Helm%20Chart%20-available?logo=Helm&labelColor=0F1689)](https://github.com/FiveNet-app/charts) [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?&logo=discord&logoColor=white)](https://discord.gg/sWvkHuVQA5) [![fivenet.app Website](https://img.shields.io/badge/Website-fivenet.app-purple)](https://fivenet.app)
+
+[![Go](https://img.shields.io/badge/Go-%2300ADD8.svg?&logo=go&logoColor=white)](https://go.dev/) [![Nuxt.js](https://img.shields.io/badge/Nuxt.js-00DC82?logo=nuxtdotjs&logoColor=fff)](https://nuxt.com/) [![Nuxt UI Pro](https://img.shields.io/badge/Made%20with-Nuxt%20UI%20Pro-00DC82?logo=nuxt.js&labelColor=020420)](https://ui.nuxt.com/pro) [![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=fff)](#) [![NATS.io](https://img.shields.io/badge/nats.io-gray.svg?logo=natsdotio)](https://nats.io/) [![Docker](https://img.shields.io/badge/Docker-2496ED?logo=docker&logoColor=fff)](https://www.docker.com/)
 
 ## Roadmap
 
@@ -13,13 +15,12 @@ For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1
 
 ## Features
 
-**Note** This list is incomplete.
-
 <details>
-  <summary>Show Complete Feature List</summary>
+  <summary>Show Feature List</summary>
 
 - [x] Authentication
     - [x] Separate "accounts" table that allows users to log in to the network
+    - [x] Last Char lock, prevent users from switching to chars other than the last one active on the server
 - [x] "Content Moderation" access for server admins
     - [x] Use a list of ESX user groups in the config
     - [x] Allow them to switch jobs on the fly to always the highest job rank
@@ -69,7 +70,7 @@ For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1
             - [x] Post Document Comments
             - [x] Edit Document Comments
 - [x] "Completor" Service
-    - [x] Use [Bleve search](https://blevesearch.com/)
+    - [x] Uses [Bleve search](https://blevesearch.com/)
 - [x] Breadcrumbs
     - [x] Use the closest thing to a page title (e.g., when viewing a user or editing a document) to build the breadcrumbs
 - [x] "Faction Leader Control Panel" aka "Rector Service"
@@ -86,9 +87,17 @@ For the roadmap [click here](https://github.com/users/galexrt/projects/2/views/1
 - [x] FiveM Integration plugin
     - [x] Livemap - Player position tracker plugin
 
+And more features, check out [Getting Started - FiveNet website](https://fivenet.app/getting-started).
+
 </details>
 
-## Helm Chart
+## Installation
+
+### Container Images
+
+Container images are available via [GHCR.io fivenet-app/fivenet image](https://github.com/orgs/fivenet-app/packages/container/package/fivenet).
+
+### Helm Chart
 
 Helm chart is available in the separate [GitHub fivenet-app/charts repository](https://github.com/fivenet-app/charts).
 
