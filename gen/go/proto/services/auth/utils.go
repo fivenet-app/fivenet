@@ -10,35 +10,42 @@ import (
 	"google.golang.org/grpc/metadata"
 )
 
-func (s *Server) setTokenCookie(ctx context.Context, token string) error {
-	cookie := http.Cookie{
-		Name:     auth.CookieName,
-		Value:    token,
-		HttpOnly: true,
+func (s *Server) getCookieBase(name string) http.Cookie {
+	return http.Cookie{
+		Name:     name,
+		Value:    "",
 		Expires:  time.Now().Add(auth.TokenExpireTime),
-		Path:     "/",
 		Domain:   s.domain,
-		SameSite: http.SameSiteNoneMode,
+		Path:     "/",
+		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteNoneMode,
 	}
-	header := metadata.Pairs("set-cookie", cookie.String())
+}
+
+func (s *Server) setTokenCookie(ctx context.Context, token string) error {
+	cookie := s.getCookieBase(auth.TokenCookieName)
+	cookie.Value = token
+
+	authedCookie := s.getCookieBase(auth.AuthedCookieName)
+	authedCookie.Value = "true"
+	authedCookie.HttpOnly = false
+
+	header := metadata.Pairs("set-cookie", cookie.String(), "set-cookie", authedCookie.String())
 	// Send the cookie back to the client
 	return grpc.SendHeader(ctx, header)
 }
 
 func (s *Server) destroyTokenCookie(ctx context.Context) error {
-	cookie := http.Cookie{
-		Name:     auth.CookieName,
-		Value:    "",
-		HttpOnly: true,
-		Expires:  time.Time{},
-		MaxAge:   -1,
-		Path:     "/",
-		Domain:   s.domain,
-		SameSite: http.SameSiteNoneMode,
-		Secure:   true,
-	}
-	header := metadata.Pairs("set-cookie", cookie.String())
+	cookie := s.getCookieBase(auth.TokenCookieName)
+	cookie.Expires = time.Time{}
+	cookie.MaxAge = -1
+
+	authedCookie := s.getCookieBase(auth.AuthedCookieName)
+	authedCookie.Value = "false"
+	authedCookie.HttpOnly = false
+
+	header := metadata.Pairs("set-cookie", cookie.String(), "set-cookie", authedCookie.String())
 	// Send the cookie back to the client
 	return grpc.SendHeader(ctx, header)
 }

@@ -11,7 +11,10 @@ import (
 	"github.com/grpc-ecosystem/go-grpc-middleware/v2/metadata"
 )
 
-const CookieName = "fivenet_token"
+const (
+	TokenCookieName  = "fivenet_token"
+	AuthedCookieName = "fivenet_authed"
+)
 
 func FromContext(ctx context.Context) (*userinfo.UserInfo, bool) {
 	c, ok := ctx.Value(userInfoCtxMarkerKey).(*userinfo.UserInfo)
@@ -28,7 +31,7 @@ func GetTokenFromGRPCContext(ctx context.Context) (string, error) {
 			return "", ErrNoToken
 		}
 		if idx := slices.IndexFunc(cookies, func(a *http.Cookie) bool {
-			return a.Name == CookieName
+			return a.Name == TokenCookieName
 		}); idx > -1 {
 			return cookies[idx].Value, nil
 		}

@@ -10,16 +10,21 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
 
-const links = [
-    {
-        label: t('common.home'),
-        to: '/',
-    },
+const links = computed(() => [
+    !username.value
+        ? {
+              label: t('common.home'),
+              to: '/',
+          }
+        : {
+              label: t('common.overview'),
+              to: '/overview',
+          },
     {
         label: t('common.about'),
         to: '/about',
     },
-];
+]);
 
 const modal = useModal();
 </script>

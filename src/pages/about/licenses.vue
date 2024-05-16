@@ -8,6 +8,7 @@ definePageMeta({
     title: 'common.licenses',
     layout: 'landing',
     requiresAuth: false,
+    redirectIfAuthed: false,
     showCookieOptions: true,
 });
 

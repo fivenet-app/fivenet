@@ -4,12 +4,10 @@ import (
 	"context"
 	"database/sql"
 	"errors"
-	"fmt"
 	"slices"
 	"strings"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/accounts"
-	"github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
@@ -21,7 +19,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
@@ -221,24 +218,10 @@ func (s *Server) Login(ctx context.Context, req *LoginRequest) (*LoginResponse, 
 }
 
 func (s *Server) Logout(ctx context.Context, req *LogoutRequest) (*LogoutResponse, error) {
-	sucess := true
 	s.destroyTokenCookie(ctx)
 
-	if userInfo, ok := auth.GetUserInfoFromContext(ctx); ok && userInfo != nil && userInfo.UserId > 0 {
-		if _, err := s.js.PublishAsyncProto(ctx,
-			fmt.Sprintf("%s.%s.%d", notifi.BaseSubject, notifi.UserTopic, userInfo.UserId),
-			&notifications.UserEvent{
-				Data: &notifications.UserEvent_Logout{
-					Logout: true,
-				},
-			}); err != nil {
-			sucess = false
-			s.logger.Error("failed to send logout notification to user", zap.Error(err))
-		}
-	}
-
 	return &LogoutResponse{
-		Success: sucess,
+		Success: true,
 	}, nil
 }
 
@@ -307,7 +290,8 @@ func (s *Server) ChangePassword(ctx context.Context, req *ChangePasswordRequest)
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
+		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangePassword)
 	}
@@ -376,7 +360,8 @@ func (s *Server) ChangeUsername(ctx context.Context, req *ChangeUsernameRequest)
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
 
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
+		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrChangeUsername)
 	}
@@ -486,7 +471,8 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 	}
 
 	// Load account to make sure it (still) exists
-	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	acc, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
+		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
 	}
@@ -652,7 +638,8 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Load account data for token creation
-	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)))
+	account, err := s.getAccountFromDB(ctx, tAccounts.ID.EQ(jet.Uint64(claims.AccID)).
+		AND(tAccounts.Username.EQ(jet.String(claims.Username))))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
 	}
@@ -754,6 +741,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 		Permissions: ps,
 		JobProps:    jProps,
 		Char:        char,
+		Username:    *account.Username,
 	}, nil
 }
 

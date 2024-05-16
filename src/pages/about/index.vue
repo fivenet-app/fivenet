@@ -10,6 +10,7 @@ definePageMeta({
     title: 'common.about',
     layout: 'landing',
     requiresAuth: false,
+    redirectIfAuthed: false,
     showCookieOptions: true,
 });
 

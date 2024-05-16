@@ -2162,6 +2162,8 @@ func (m *ChooseCharacterResponse) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for Username
+
 	if len(errors) > 0 {
 		return ChooseCharacterResponseMultiError(errors)
 	}

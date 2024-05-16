@@ -67,7 +67,7 @@ export function useBreadcrumbs() {
             .filter(({ meta }) => meta !== undefined)
             .map(({ path, meta }) => {
                 // title case string regex
-                let title = meta?.breadcrumbTitle ?? meta?.title;
+                let title = meta?.title;
                 if (!title) {
                     if (path === '/') {
                         title = 'Home';

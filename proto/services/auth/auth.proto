@@ -115,6 +115,7 @@ message ChooseCharacterResponse {
   repeated string permissions = 2;
   resources.users.JobProps job_props = 3;
   resources.users.User char = 4;
+  string username = 5;
 }
 
 message LogoutRequest {}

@@ -1,8 +1,6 @@
 <script lang="ts" setup>
-import { parseQuery } from 'vue-router';
 import type { Button } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
-import { useSettingsStore } from '~/store/settings';
 import '~/assets/css/herofull-pattern.css';
 
 useHead({
@@ -21,26 +19,6 @@ const appConfig = useAppConfig();
 
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
-
-const settingsStore = useSettingsStore();
-const { startpage } = storeToRefs(settingsStore);
-
-const route = useRoute('index');
-
-onBeforeMount(async () => {
-    if (username.value) {
-        const redirect = route.query.redirect ?? startpage.value ?? '/overview';
-        const path = redirect || '/overview';
-        const url = new URL('https://example.com' + path);
-
-        // @ts-ignore the route should be valid, as we test it against a valid URL list
-        await navigateTo({
-            path: url.pathname,
-            query: parseQuery(url.search),
-            hash: url.hash,
-        });
-    }
-});
 
 const appVersion = __APP_VERSION__.split('-')[0];
 

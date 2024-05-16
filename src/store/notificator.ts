@@ -72,13 +72,10 @@ export const useNotificatorStore = defineStore('notifications', {
 
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'userEvent') {
-                            if (resp.data.userEvent.data.oneofKind === 'logout') {
-                                if (authStore.loggingIn) {
-                                    continue;
-                                }
-
-                                console.info('Notificator: Received logout user event, redirecting to logout...');
-                                await navigateTo({ name: 'auth-logout' });
+                            if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
+                                console.info('Notificator: Refreshing token...');
+                                await authStore.chooseCharacter(undefined);
+                                continue;
                             } else if (resp.data.userEvent.data.oneofKind === 'notification') {
                                 const n = resp.data.userEvent.data.notification;
                                 const nType: NotificationType =
@@ -133,10 +130,6 @@ export const useNotificatorStore = defineStore('notifications', {
                                 }
 
                                 this.add(not);
-                                continue;
-                            } else if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
-                                console.info('Notificator: Refreshing token...');
-                                await authStore.chooseCharacter(undefined);
                                 continue;
                             }
                         } else if (resp.data.oneofKind === 'jobEvent') {

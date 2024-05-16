@@ -1,18 +1,34 @@
 import { parseQuery, type RouteLocationNormalized } from 'vue-router';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: RouteLocationNormalized) => {
+export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
     const authStore = useAuthStore();
     const { activeChar, username, lastCharID } = storeToRefs(authStore);
 
     // Default is that a page requires authentication, but if it doesn't exit quickly
     if (to.meta.requiresAuth === false) {
+        if ((to.meta.redirectIfAuthed === undefined || to.meta.redirectIfAuthed) && username.value !== null) {
+            const settingsStore = useSettingsStore();
+            const { startpage } = storeToRefs(settingsStore);
+
+            const redirect = from.query.redirect ?? startpage.value ?? '/overview';
+            const path = redirect || '/overview';
+            const url = new URL('https://example.com' + path);
+
+            // @ts-ignore the route should be valid, as we test it against a valid URL list
+            return navigateTo({
+                path: url.pathname,
+                query: parseQuery(url.search),
+                hash: url.hash,
+            });
+        }
         return true;
     }
 
-    // Auth token is not null and only needed
+    // Auth token is not null and only needed by route
     if (to.meta.authOnlyToken && username.value !== null) {
         return true;
     }
@@ -31,16 +47,16 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                     if (redirect !== undefined) {
                         const path = redirect || '/overview';
                         const url = new URL('https://example.com' + path);
-                        // @ts-ignore the route should be valid, as we test it against a valid URL list
-                        await navigateTo({
+                        // @ts-ignore the route should be valid, as we test it against a valid list of URLs
+                        return await navigateTo({
                             path: url.pathname,
                             query: parseQuery(url.search),
                             hash: url.hash,
                         });
                     } else {
-                        // @ts-ignore the route should be valid, as we test it against a valid URL list
+                        // @ts-ignore the route should be valid, as we test it against a valid list of URLs
                         const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
-                        await navigateTo(target);
+                        return await navigateTo(target);
                     }
                 } catch (e) {
                     setActiveChar(null);
@@ -58,7 +74,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
                 // Only update the redirect query param if it isn't set already
                 return navigateTo({
                     name: 'auth-character-selector',
-                    query: { redirect },
+                    query: { redirect: redirect },
                 });
             }
         }
@@ -94,6 +110,6 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, _: 
     return navigateTo({
         name: 'auth-login',
         // save the location we were at to come back later
-        query: { redirect },
+        query: { redirect: redirect },
     });
 });

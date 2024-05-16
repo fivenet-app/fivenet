@@ -10,7 +10,6 @@ definePageMeta({
     title: 'components.auth.AccountInfo.title',
     requiresAuth: true,
     authOnlyToken: true,
-
     showCookieOptions: true,
 });
 

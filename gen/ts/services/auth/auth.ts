@@ -197,6 +197,10 @@ export interface ChooseCharacterResponse {
      * @generated from protobuf field: resources.users.User char = 4;
      */
     char?: User;
+    /**
+     * @generated from protobuf field: string username = 5;
+     */
+    username: string;
 }
 /**
  * @generated from protobuf message services.auth.LogoutRequest
@@ -960,12 +964,14 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
             { no: 1, name: "expires", kind: "message", T: () => Timestamp },
             { no: 2, name: "permissions", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "job_props", kind: "message", T: () => JobProps },
-            { no: 4, name: "char", kind: "message", T: () => User }
+            { no: 4, name: "char", kind: "message", T: () => User },
+            { no: 5, name: "username", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ChooseCharacterResponse>): ChooseCharacterResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.permissions = [];
+        message.username = "";
         if (value !== undefined)
             reflectionMergePartial<ChooseCharacterResponse>(this, message, value);
         return message;
@@ -986,6 +992,9 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
                     break;
                 case /* resources.users.User char */ 4:
                     message.char = User.internalBinaryRead(reader, reader.uint32(), options, message.char);
+                    break;
+                case /* string username */ 5:
+                    message.username = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1011,6 +1020,9 @@ class ChooseCharacterResponse$Type extends MessageType<ChooseCharacterResponse> 
         /* resources.users.User char = 4; */
         if (message.char)
             User.internalBinaryWrite(message.char, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* string username = 5; */
+        if (message.username !== "")
+            writer.tag(5, WireType.LengthDelimited).string(message.username);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

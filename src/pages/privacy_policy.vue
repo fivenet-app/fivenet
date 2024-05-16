@@ -6,6 +6,7 @@ definePageMeta({
     title: 'common.privacy_policy',
     layout: 'landing',
     requiresAuth: false,
+    redirectIfAuthed: false,
     showCookieOptions: true,
 });
 

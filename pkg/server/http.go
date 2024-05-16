@@ -146,7 +146,7 @@ func NewEngine(p EngineParams) *gin.Engine {
 	sessStore.Options(sessions.Options{
 		Domain:   p.Config.HTTP.Sessions.Domain,
 		Path:     "/",
-		MaxAge:   int((24 * time.Hour).Seconds()),
+		MaxAge:   int((6 * time.Hour).Seconds()),
 		HttpOnly: true,
 		Secure:   true,
 	})

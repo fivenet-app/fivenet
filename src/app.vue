@@ -5,6 +5,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
 import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import CookieControl from '~/components/partials/CookieControl.vue';
+import { useAuthStore } from './store/auth';
 
 const { t, setLocale, locale, finalizePendingLocaleChange } = useI18n();
 
@@ -107,6 +108,24 @@ watch(updateAvailable, async () => {
         timeout: 20000,
     });
 });
+
+const authStore = useAuthStore();
+const { username } = storeToRefs(authStore);
+
+// Use fivenet_authed token for basic browser-wide is logged in/logged out "signal"
+const authedState = useCookie('fivenet_authed');
+useIntervalFn(async () => refreshCookie('fivenet_authed'), 1750);
+
+async function handleAuthedStateChange(): Promise<void> {
+    if (!!authedState.value && username.value === null) {
+        await authStore.chooseCharacter(undefined, true);
+    } else if (!authedState.value && username.value !== null) {
+        await navigateTo('/auth/logout');
+    }
+}
+
+watch(authedState, handleAuthedStateChange);
+handleAuthedStateChange();
 
 const router = useRouter();
 const route = router.currentRoute;

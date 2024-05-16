@@ -7,6 +7,8 @@ definePageMeta({
     title: 'pages.dereferer.title',
     layout: 'blank',
     requiresAuth: false,
+    redirectIfAuthed: false,
+    showCookieOptions: true,
 });
 
 const route = useRoute();

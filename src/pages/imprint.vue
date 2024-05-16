@@ -6,6 +6,7 @@ definePageMeta({
     title: 'common.imprint',
     layout: 'landing',
     requiresAuth: false,
+    redirectIfAuthed: false,
     showCookieOptions: true,
 });
 

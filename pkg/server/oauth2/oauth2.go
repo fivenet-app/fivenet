@@ -296,7 +296,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 		return
 	}
 
-	c.SetCookie(auth.CookieName, newToken, 6*24*60*60, "/", o.domain, false, true)
+	c.SetCookie(auth.TokenCookieName, newToken, 6*24*60*60, "/", o.domain, false, true)
 
 	c.Redirect(http.StatusTemporaryRedirect, fmt.Sprintf(LoginRedirBase+"?oauth2Login=success&u=%s&exp=%d",
 		url.QueryEscape(*account.Username),

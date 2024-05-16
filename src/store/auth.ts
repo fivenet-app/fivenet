@@ -1,6 +1,5 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { parseQuery } from 'vue-router';
-import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -154,16 +153,13 @@ export const useAuthStore = defineStore('auth', {
 
             const { $grpc } = useNuxtApp();
             try {
-                if (this.lastCharID !== charId) {
-                    useClipboardStore().clear();
-                }
-
                 const call = $grpc.getAuthClient().chooseCharacter({ charId: charId });
                 const { response } = await call;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');
                 }
 
+                this.username = response.username;
                 this.setActiveChar(response.char);
                 this.setAccessTokenExpiration(toDate(response.expires));
                 this.setPermissions(response.permissions);

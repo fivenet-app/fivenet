@@ -5,10 +5,10 @@ declare module '#app' {
     interface PageMeta {
         title?: string;
         requiresAuth?: boolean;
+        redirectIfAuthed?: boolean;
         permission?: Perms | Perms[];
         authOnlyToken?: boolean;
         showCookieOptions?: boolean;
-        breadcrumbTitle?: string;
     }
 }
 
@@ -16,10 +16,10 @@ declare module 'vue-router' {
     interface RouteMeta {
         title?: string;
         requiresAuth?: boolean;
+        redirectIfAuthed?: boolean;
         permission?: Perms | Perms[];
         authOnlyToken?: boolean;
         showCookieOptions?: boolean;
-        breadcrumbTitle?: string;
     }
 }
 

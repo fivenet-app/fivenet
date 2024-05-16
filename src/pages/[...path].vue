@@ -9,6 +9,7 @@ definePageMeta({
     title: 'pages.notfound.title',
     layout: 'landing',
     requiresAuth: false,
+    redirectIfAuthed: false,
     showCookieOptions: true,
 });
 

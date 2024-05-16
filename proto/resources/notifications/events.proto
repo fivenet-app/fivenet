@@ -9,9 +9,8 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notif
 
 message UserEvent {
   oneof data {
-    bool logout = 1;
-    bool refresh_token = 2;
-    resources.notifications.Notification notification = 3;
+    bool refresh_token = 1;
+    resources.notifications.Notification notification = 2;
   }
 }
 

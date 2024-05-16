@@ -58,18 +58,6 @@ func (m *UserEvent) validate(all bool) error {
 	var errors []error
 
 	switch v := m.Data.(type) {
-	case *UserEvent_Logout:
-		if v == nil {
-			err := UserEventValidationError{
-				field:  "Data",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for Logout
 	case *UserEvent_RefreshToken:
 		if v == nil {
 			err := UserEventValidationError{
