@@ -29,11 +29,12 @@
         "@nuxtjs/robots": "3.0.0",
         "@pinia/nuxt": "0.5.1",
         "@protobuf-ts/grpcweb-transport": "2.9.4",
-        "@unovis/ts": "^1.4.0",
-        "@unovis/vue": "^1.4.0",
+        "@unovis/ts": "^1.4.1",
+        "@unovis/vue": "^1.4.1",
         "@vue-leaflet/vue-leaflet": "0.10.1",
         "@zxcvbn-ts/core": "3.0.4",
         "date-fns": "^3.6.0",
+        "dexie": "^4.0.4",
         "emoji-blast": "^0.10.0",
         "google-protobuf": "3.21.2",
         "grpc-web": "1.5.0",
@@ -101,6 +102,6 @@
         "typescript": "5.4.5",
         "vue": "^3.4.27",
         "vue-i18n-routing": "^1.2.0",
-        "vue-tsc": "2.0.17"
+        "vue-tsc": "2.0.19"
     }
 }

@@ -23,7 +23,8 @@
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
-// source: resources/mailer/mail.proto
+// source: resources/messenger/message.proto
+// source: resources/messenger/thread.proto
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
@@ -46,7 +47,7 @@
 // source: services/jobs/jobs.proto
 // source: services/jobs/timeclock.proto
 // source: services/livemapper/livemap.proto
-// source: services/mailer/mailer.proto
+// source: services/messenger/messenger.proto
 // source: services/notificator/notificator.proto
 // source: services/qualifications/qualifications.proto
 // source: services/rector/config.proto

@@ -16,7 +16,7 @@ const { t } = useI18n();
 const items = [
     {
         title: t('common.inbox'),
-        description: t('pages.overview.features.mailer'),
+        description: t('pages.overview.features.messenger'),
         to: { name: 'inbox' },
         permission: 'TODOService.TODOMethod',
         icon: 'i-mdi-inbox-outline',

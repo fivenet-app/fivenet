@@ -1,4 +1,4 @@
-package mailer
+package messenger
 
 import (
 	"go.uber.org/fx"
@@ -6,7 +6,7 @@ import (
 )
 
 type Server struct {
-	MailerServiceServer
+	MessengerServiceServer
 }
 
 type Params struct {
@@ -18,5 +18,5 @@ func NewServer(p Params) *Server {
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {
-	RegisterMailerServiceServer(srv, s)
+	RegisterMessengerServiceServer(srv, s)
 }

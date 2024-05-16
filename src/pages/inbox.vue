@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import { sub } from 'date-fns';
-import InboxList from '~/components/mailer/InboxList.vue';
-import InboxMail from '~/components/mailer/InboxMail.vue';
-import type { Mail } from '~~/gen/ts/resources/mailer/mail';
+import InboxList from '~/components/messenger/InboxList.vue';
+import InboxThread from '~/components/messenger/InboxThread.vue';
+import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 
 useHead({
     title: 'common.inbox',
@@ -48,7 +48,7 @@ const dropdownItems = [
     ],
 ];
 
-const mails = ref<Mail[]>([
+const mails = ref<Thread[]>([
     {
         id: '1',
         from: {
@@ -372,7 +372,7 @@ const mails = ref<Mail[]>([
 ]);
 
 // Filter mails based on the selected tab
-const filteredMails = computed(() => {
+const filteredThreads = computed(() => {
     if (selectedTab.value === 1) {
         return mails.value.filter((mail) => !!mail.unread);
     }
@@ -380,23 +380,23 @@ const filteredMails = computed(() => {
     return mails.value;
 });
 
-const selectedMail = ref<Mail | undefined>();
+const selectedThread = ref<Thread | undefined>();
 
 const isMailPanelOpen = computed({
     get() {
-        return !!selectedMail.value;
+        return !!selectedThread.value;
     },
     set(value: boolean) {
         if (!value) {
-            selectedMail.value = undefined;
+            selectedThread.value = undefined;
         }
     },
 });
 
 // Reset selected mail if it's not in the filtered mails
-watch(filteredMails, () => {
-    if (!filteredMails.value.find((mail) => mail.id === selectedMail.value?.id)) {
-        selectedMail.value = undefined;
+watch(filteredThreads, () => {
+    if (!filteredThreads.value.find((mail) => mail.id === selectedThread.value?.id)) {
+        selectedThread.value = undefined;
     }
 });
 </script>
@@ -404,7 +404,7 @@ watch(filteredMails, () => {
 <template>
     <UDashboardPage>
         <UDashboardPanel id="inbox" :width="400" :resizable="{ min: 300, max: 500 }">
-            <UDashboardNavbar :title="$t('common.inbox')" :badge="filteredMails.length">
+            <UDashboardNavbar :title="$t('common.inbox')" :badge="filteredThreads.length">
                 <template #right>
                     <UTabs
                         v-model="selectedTab"
@@ -414,11 +414,11 @@ watch(filteredMails, () => {
                 </template>
             </UDashboardNavbar>
 
-            <InboxList v-model="selectedMail" :mails="filteredMails" />
+            <InboxList v-model="selectedThread" :threads="filteredThreads" />
         </UDashboardPanel>
 
         <UDashboardPanel v-model="isMailPanelOpen" id="inboxmaillist" collapsible grow side="right">
-            <template v-if="selectedMail">
+            <template v-if="selectedThread">
                 <UDashboardNavbar>
                     <template #toggle>
                         <UDashboardNavbarToggle icon="i-mdi-x" />
@@ -449,7 +449,7 @@ watch(filteredMails, () => {
                     </template>
                 </UDashboardNavbar>
 
-                <InboxMail :mail="selectedMail" />
+                <InboxThread :thread="selectedThread" />
             </template>
             <div v-else class="hidden flex-1 items-center justify-center lg:flex">
                 <UIcon name="i-mdi-inbox" class="h-32 w-32 text-gray-400 dark:text-gray-500" />

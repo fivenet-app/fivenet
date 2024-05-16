@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import { format, isToday } from 'date-fns';
-import type { Mail } from '~~/gen/ts/resources/mailer/mail';
+import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 import ProfilePictureImg from '../partials/citizens/ProfilePictureImg.vue';
 
 withDefaults(
     defineProps<{
-        mail: Mail;
+        thread: Thread;
         selected?: boolean;
     }>(),
     {
@@ -19,26 +19,26 @@ withDefaults(
         <div class="flex justify-between">
             <div class="flex items-center gap-4">
                 <ProfilePictureImg
-                    :src="mail.from?.avatar?.url"
-                    :name="`${mail.from?.firstname} ${mail.from?.lastname}`"
+                    :src="thread.from?.avatar?.url"
+                    :name="`${thread.from?.firstname} ${thread.from?.lastname}`"
                     size="lg"
                 />
 
                 <div class="min-w-0">
                     <p class="font-semibold text-gray-900 dark:text-white">
-                        {{ mail.from?.firstname }} {{ mail.from?.lastname }}
+                        {{ thread.from?.firstname }} {{ thread.from?.lastname }}
                     </p>
                     <p class="font-medium text-gray-500 dark:text-gray-400">
-                        {{ mail.subject }}
+                        {{ thread.subject }}
                     </p>
                 </div>
             </div>
 
             <p class="font-medium text-gray-900 dark:text-white">
                 {{
-                    isToday(toDate(mail.createdAt))
-                        ? format(toDate(mail.createdAt), 'HH:mm')
-                        : format(toDate(mail.createdAt), 'dd MMM')
+                    isToday(toDate(thread.createdAt))
+                        ? format(toDate(thread.createdAt), 'HH:mm')
+                        : format(toDate(thread.createdAt), 'dd MMM')
                 }}
             </p>
         </div>
@@ -47,7 +47,7 @@ withDefaults(
 
         <div class="flex-1">
             <p class="text-lg">
-                {{ mail.body }}
+                {{ thread.body }}
             </p>
         </div>
 
@@ -59,7 +59,7 @@ withDefaults(
                 required
                 size="xl"
                 :rows="5"
-                :placeholder="$t('components.inbox.reply_to', { name: `${mail.from?.firstname} ${mail.from?.lastname}` })"
+                :placeholder="$t('components.inbox.reply_to', { name: `${thread.from?.firstname} ${thread.from?.lastname}` })"
             >
                 <UButton
                     type="submit"

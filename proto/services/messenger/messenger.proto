@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package services.messenger;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/messenger;messenger";
+
+service MessengerService {}

@@ -259,8 +259,12 @@
   
     - [RsvpResponses](#resources-calendar-RsvpResponses)
   
-- [resources/mailer/mail.proto](#resources_mailer_mail-proto)
-    - [Mail](#resources-mailer-Mail)
+- [resources/messenger/message.proto](#resources_messenger_message-proto)
+    - [Message](#resources-messenger-Message)
+    - [MessageData](#resources-messenger-MessageData)
+  
+- [resources/messenger/thread.proto](#resources_messenger_thread-proto)
+    - [Thread](#resources-messenger-Thread)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -621,8 +625,8 @@
   
     - [CalendarService](#services-calendar-CalendarService)
   
-- [services/mailer/mailer.proto](#services_mailer_mailer-proto)
-    - [MailerService](#services-mailer-MailerService)
+- [services/messenger/messenger.proto](#services_messenger_messenger-proto)
+    - [MessengerService](#services-messenger-MessengerService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -4382,16 +4386,65 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources_mailer_mail-proto"></a>
+<a name="resources_messenger_message-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## resources/mailer/mail.proto
+## resources/messenger/message.proto
 
 
 
-<a name="resources-mailer-Mail"></a>
+<a name="resources-messenger-Message"></a>
 
-### Mail
+### Message
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  |  |
+| thread_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| message | [string](#string) |  | @sanitize: method=StripTags |
+| data | [MessageData](#resources-messenger-MessageData) | optional |  |
+| creator_id | [int32](#int32) | optional |  |
+| creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
+
+
+
+
+
+
+<a name="resources-messenger-MessageData"></a>
+
+### MessageData
+
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_thread-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/thread.proto
+
+
+
+<a name="resources-messenger-Thread"></a>
+
+### Thread
 
 
 
@@ -4401,8 +4454,8 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| title | [string](#string) |  | @sanitize |
 | unread | [bool](#bool) |  |  |
-| subject | [string](#string) |  | @sanitize |
 | body | [string](#string) |  | @sanitize |
 | from_id | [int32](#int32) | optional |  |
 | from | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;from&#34; |
@@ -9317,10 +9370,10 @@ Results ====================================================================
 
 
 
-<a name="services_mailer_mailer-proto"></a>
+<a name="services_messenger_messenger-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
-## services/mailer/mailer.proto
+## services/messenger/messenger.proto
 
 
  
@@ -9330,9 +9383,9 @@ Results ====================================================================
  
 
 
-<a name="services-mailer-MailerService"></a>
+<a name="services-messenger-MessengerService"></a>
 
-### MailerService
+### MessengerService
 
 
 | Method Name | Request Type | Response Type | Description |
