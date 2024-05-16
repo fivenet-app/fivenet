@@ -95,7 +95,7 @@ defineShortcuts({
                     }}</span>
                 </div>
                 <p :class="[thread.unread && 'font-semibold']">
-                    {{ thread.subject }}
+                    {{ thread.title }}
                 </p>
                 <p class="line-clamp-1 text-gray-400 dark:text-gray-500">
                     {{ thread.body }}

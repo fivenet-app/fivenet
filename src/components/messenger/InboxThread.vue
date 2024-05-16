@@ -29,7 +29,7 @@ withDefaults(
                         {{ thread.from?.firstname }} {{ thread.from?.lastname }}
                     </p>
                     <p class="font-medium text-gray-500 dark:text-gray-400">
-                        {{ thread.subject }}
+                        {{ thread.title }}
                     </p>
                 </div>
             </div>
