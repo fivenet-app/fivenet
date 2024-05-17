@@ -397,13 +397,15 @@ func (m *ThreadUserState) validate(all bool) error {
 
 	// no validation rules for UserId
 
-	// no validation rules for Unread
-
 	// no validation rules for Important
 
 	// no validation rules for Favorite
 
 	// no validation rules for Muted
+
+	if m.LastRead != nil {
+		// no validation rules for LastRead
+	}
 
 	if len(errors) > 0 {
 		return ThreadUserStateMultiError(errors)

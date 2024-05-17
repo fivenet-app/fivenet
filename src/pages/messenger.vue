@@ -5,10 +5,10 @@ import MessengerThread from '~/components/messenger/MessengerThread.vue';
 import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 
 useHead({
-    title: 'common.inbox',
+    title: 'common.messenger',
 });
 definePageMeta({
-    title: 'common.inbox',
+    title: 'common.messenger',
     requiresAuth: true,
     permission: 'TODOService.TODOMethod',
 });
@@ -28,21 +28,21 @@ const selectedTab = ref(0);
 const dropdownItems = [
     [
         {
-            label: t('components.inbox.mark_unread'),
+            label: t('components.messenger.mark_unread'),
             icon: 'i-mdi-check-circle-outline',
         },
         {
-            label: t('components.inbox.mark_important'),
+            label: t('components.messenger.mark_important'),
             icon: 'i-mdi-alert-circle-outline',
         },
     ],
     [
         {
-            label: t('components.inbox.star_thread'),
+            label: t('components.messenger.star_thread'),
             icon: 'i-mdi-star-circle-outline',
         },
         {
-            label: t('components.inbox.mute_thread'),
+            label: t('components.messenger.mute_thread'),
             icon: 'i-mdi-pause-circle-outline',
         },
     ],
@@ -404,7 +404,7 @@ watch(filteredThreads, () => {
 <template>
     <UDashboardPage>
         <UDashboardPanel id="inbox" :width="450" :resizable="{ min: 300, max: 600 }">
-            <UDashboardNavbar :title="$t('common.inbox')" :badge="filteredThreads.length">
+            <UDashboardNavbar :title="$t('common.messenger')" :badge="filteredThreads.length">
                 <template #right>
                     <UTabs
                         v-model="selectedTab"
@@ -433,11 +433,11 @@ watch(filteredThreads, () => {
                     </template>
 
                     <template #right>
-                        <UTooltip :text="$t('components.inbox.reply')">
+                        <UTooltip :text="$t('components.messenger.reply')">
                             <UButton icon="i-mdi-reply" color="gray" variant="ghost" />
                         </UTooltip>
 
-                        <UTooltip :text="$t('components.inbox.forward')">
+                        <UTooltip :text="$t('components.messenger.forward')">
                             <UButton icon="i-mdi-forward" color="gray" variant="ghost" />
                         </UTooltip>
 

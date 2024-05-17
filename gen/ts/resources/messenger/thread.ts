@@ -78,9 +78,9 @@ export interface ThreadUserState {
      */
     userId: number;
     /**
-     * @generated from protobuf field: bool unread = 3;
+     * @generated from protobuf field: optional uint64 last_read = 3 [jstype = JS_STRING];
      */
-    unread: boolean;
+    lastRead?: string;
     /**
      * @generated from protobuf field: bool important = 4;
      */
@@ -219,7 +219,7 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         super("resources.messenger.ThreadUserState", [
             { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "last_read", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 4, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 6, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
@@ -229,7 +229,6 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.threadId = "0";
         message.userId = 0;
-        message.unread = false;
         message.important = false;
         message.favorite = false;
         message.muted = false;
@@ -248,8 +247,8 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
                     break;
-                case /* bool unread */ 3:
-                    message.unread = reader.bool();
+                case /* optional uint64 last_read = 3 [jstype = JS_STRING];*/ 3:
+                    message.lastRead = reader.uint64().toString();
                     break;
                 case /* bool important */ 4:
                     message.important = reader.bool();
@@ -278,9 +277,9 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
-        /* bool unread = 3; */
-        if (message.unread !== false)
-            writer.tag(3, WireType.Varint).bool(message.unread);
+        /* optional uint64 last_read = 3 [jstype = JS_STRING]; */
+        if (message.lastRead !== undefined)
+            writer.tag(3, WireType.Varint).uint64(message.lastRead);
         /* bool important = 4; */
         if (message.important !== false)
             writer.tag(4, WireType.Varint).bool(message.important);

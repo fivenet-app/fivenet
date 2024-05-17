@@ -32,12 +32,12 @@ const links = computed(() =>
             },
         },
         {
-            label: t('common.inbox'),
+            label: t('common.messenger'),
             icon: 'i-mdi-inbox-outline',
             to: '/messenger',
             badge: '4',
             tooltip: {
-                text: t('common.inbox'),
+                text: t('common.messenger'),
                 shortcuts: ['G', 'I'],
             },
             permission: 'TODOService.TODOMethod' as Perms,

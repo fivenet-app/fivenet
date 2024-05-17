@@ -74,18 +74,18 @@ defineShortcuts({
             <div
                 class="cursor-pointer border-l-2 p-4 text-sm"
                 :class="[
-                    thread.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
+                    !thread.userState?.lastRead ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
                     selectedThread && selectedThread.id === thread.id
                         ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
                         : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
                 ]"
                 @click="selectedThread = thread"
             >
-                <div class="flex items-center justify-between" :class="[thread.unread && 'font-semibold']">
+                <div class="flex items-center justify-between" :class="[thread.userState?.lastRead && 'font-semibold']">
                     <div class="flex items-center gap-3">
                         {{ thread.creator?.firstname }} {{ thread.creator?.lastname }}
 
-                        <UChip v-if="thread.unread" />
+                        <UChip v-if="!thread.userState?.lastRead" />
                     </div>
 
                     <span>{{
@@ -94,11 +94,11 @@ defineShortcuts({
                             : format(toDate(thread.createdAt), 'dd MMM')
                     }}</span>
                 </div>
-                <p :class="[thread.unread && 'font-semibold']">
+                <p :class="[thread.userState?.lastRead && 'font-semibold']">
                     {{ thread.title }}
                 </p>
                 <p class="line-clamp-1 text-gray-400 dark:text-gray-500">
-                    {{ thread.body }}
+                    {{ thread.lastMessage?.message }}
                 </p>
             </div>
 

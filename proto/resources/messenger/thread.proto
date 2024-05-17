@@ -31,7 +31,7 @@ message Thread {
 message ThreadUserState {
   uint64 thread_id = 1 [jstype = JS_STRING];
   int32 user_id = 2;
-  bool unread = 3;
+  optional uint64 last_read = 3 [jstype = JS_STRING];
   bool important = 4;
   bool favorite = 5;
   bool muted = 6;

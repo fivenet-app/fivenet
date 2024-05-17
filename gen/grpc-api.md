@@ -4441,7 +4441,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 <a name="resources-messenger-MessageData"></a>
 
 ### MessageData
-
+TODO allow links to internal
 
 
 
@@ -4499,7 +4499,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | ----- | ---- | ----- | ----------- |
 | thread_id | [uint64](#uint64) |  |  |
 | user_id | [int32](#int32) |  |  |
-| unread | [bool](#bool) |  |  |
+| last_read | [uint64](#uint64) | optional |  |
 | important | [bool](#bool) |  |  |
 | favorite | [bool](#bool) |  |  |
 | muted | [bool](#bool) |  |  |

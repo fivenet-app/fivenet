@@ -445,7 +445,7 @@
         "note": "Note",
         "weekly_view": "Weekly view",
         "today": "Today",
-        "inbox": "Inbox",
+        "messenger": "Messenger",
         "all": "All",
         "unread": "Unread",
         "archive": "Archive",
@@ -1060,7 +1060,7 @@
                 "title": "Share Calendar Entry"
             }
         },
-        "inbox": {
+        "messenger": {
             "mark_unread": "Mark as unread",
             "mark_important": "Mark as important",
             "star_thread": "Star thread",

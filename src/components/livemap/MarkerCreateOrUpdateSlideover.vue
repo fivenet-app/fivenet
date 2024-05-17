@@ -44,7 +44,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive({
+const state = reactive<Schema>({
     name: props.marker?.info?.name ?? '',
     description: props.marker?.info?.description,
     expiresAt: props.marker?.expiresAt ? toDate(props.marker?.expiresAt) : defaultExpiresAt.value,

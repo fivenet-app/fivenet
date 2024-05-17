@@ -35,7 +35,7 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
-const state = reactive({
+const state = reactive<Schema>({
     reason: '',
     job: jobs.value.find((j) => j.name === props.user.job),
     grade: jobs.value.find((j) => j.name === props.user.job)?.grades.find((g) => g.grade === props.user.jobGrade),
