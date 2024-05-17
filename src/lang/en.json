@@ -445,11 +445,11 @@
         "note": "Note",
         "weekly_view": "Weekly view",
         "today": "Today",
-        "messenger": "Messenger",
         "all": "All",
         "unread": "Unread",
         "archive": "Archive",
-        "paste": "Paste"
+        "paste": "Paste",
+        "messenger": "Messenger"
     },
     "components": {
         "partials": {
