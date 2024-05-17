@@ -87,10 +87,10 @@ func (m *Thread) validate(all bool) error {
 		}
 	}
 
-	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 256 {
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 255 {
 		err := ThreadValidationError{
 			field:  "Title",
-			reason: "value length must be between 3 and 256 runes, inclusive",
+			reason: "value length must be between 3 and 255 runes, inclusive",
 		}
 		if !all {
 			return err
@@ -128,6 +128,8 @@ func (m *Thread) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for CreatorJob
 
 	if all {
 		switch v := interface{}(m.GetAccess()).(type) {

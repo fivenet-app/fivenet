@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -180,9 +181,12 @@ func (g *GroupSync) syncGroups() ([]*discordgo.MessageEmbed, error) {
 
 	var dest []*GroupSyncUser
 	if err := stmt.QueryContext(g.ctx, g.db, &dest); err != nil {
-		return logs, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return logs, err
+		}
 	}
 
+	errs := multierr.Combine()
 	for _, user := range dest {
 		// Get group config based on users group
 		groupCfg, ok := g.groupsToSync[user.Group]
@@ -223,7 +227,13 @@ func (g *GroupSync) syncGroups() ([]*discordgo.MessageEmbed, error) {
 		logs = append(logs, ls...)
 	}
 
-	return g.cleanupUserGroupMembers(logs, dest)
+	var err error
+	logs, err = g.cleanupUserGroupMembers(logs, dest)
+	if err != nil {
+		errs = multierr.Append(errs, err)
+	}
+
+	return logs, errs
 }
 
 func (g *GroupSync) checkIfUserHasCharInJob(identifier string, job string) (bool, error) {
@@ -290,9 +300,12 @@ func (g *GroupSync) setUserGroups(member *discordgo.Member, group string) ([]*di
 }
 
 func (g *GroupSync) cleanupUserGroupMembers(logs []*discordgo.MessageEmbed, users []*GroupSyncUser) ([]*discordgo.MessageEmbed, error) {
+	errs := multierr.Combine()
+
 	guild, err := g.discord.State.Guild(g.guild.ID)
 	if err != nil {
-		return logs, err
+		errs = multierr.Append(errs, err)
+		return logs, errs
 	}
 
 outer:
@@ -320,7 +333,8 @@ outer:
 			}
 
 			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-				return logs, fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err))
+				continue
 			}
 
 			// Add log about user being removed from synced role

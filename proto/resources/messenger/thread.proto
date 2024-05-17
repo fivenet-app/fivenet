@@ -18,14 +18,15 @@ message Thread {
   // @sanitize
   string title = 5 [(validate.rules).string = {
     min_len: 3,
-    max_len: 256
+    max_len: 255
   }];
   bool closed = 6;
   optional resources.messenger.Message last_message = 7;
   ThreadUserState user_state = 8;
-  optional int32 creator_id = 9;
-  optional resources.users.UserShort creator = 10; // @gotags: alias:"creator"
-  resources.messenger.ThreadAccess access = 11;
+  string creator_job = 9;
+  optional int32 creator_id = 10;
+  optional resources.users.UserShort creator = 11; // @gotags: alias:"creator"
+  resources.messenger.ThreadAccess access = 12;
 }
 
 message ThreadUserState {

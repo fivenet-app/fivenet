@@ -53,15 +53,19 @@ export interface Thread {
      */
     userState?: ThreadUserState;
     /**
-     * @generated from protobuf field: optional int32 creator_id = 9;
+     * @generated from protobuf field: string creator_job = 9;
+     */
+    creatorJob: string;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 10;
      */
     creatorId?: number;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
+     * @generated from protobuf field: optional resources.users.UserShort creator = 11;
      */
     creator?: UserShort; // @gotags: alias:"creator"
     /**
-     * @generated from protobuf field: resources.messenger.ThreadAccess access = 11;
+     * @generated from protobuf field: resources.messenger.ThreadAccess access = 12;
      */
     access?: ThreadAccess;
 }
@@ -102,13 +106,14 @@ class Thread$Type extends MessageType<Thread> {
             { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "256" } } } },
+            { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
             { no: 6, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "last_message", kind: "message", T: () => Message },
             { no: 8, name: "user_state", kind: "message", T: () => ThreadUserState },
-            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 10, name: "creator", kind: "message", T: () => UserShort },
-            { no: 11, name: "access", kind: "message", T: () => ThreadAccess }
+            { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 10, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 11, name: "creator", kind: "message", T: () => UserShort },
+            { no: 12, name: "access", kind: "message", T: () => ThreadAccess }
         ]);
     }
     create(value?: PartialMessage<Thread>): Thread {
@@ -116,6 +121,7 @@ class Thread$Type extends MessageType<Thread> {
         message.id = "0";
         message.title = "";
         message.closed = false;
+        message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Thread>(this, message, value);
         return message;
@@ -149,13 +155,16 @@ class Thread$Type extends MessageType<Thread> {
                 case /* resources.messenger.ThreadUserState user_state */ 8:
                     message.userState = ThreadUserState.internalBinaryRead(reader, reader.uint32(), options, message.userState);
                     break;
-                case /* optional int32 creator_id */ 9:
+                case /* string creator_job */ 9:
+                    message.creatorJob = reader.string();
+                    break;
+                case /* optional int32 creator_id */ 10:
                     message.creatorId = reader.int32();
                     break;
-                case /* optional resources.users.UserShort creator */ 10:
+                case /* optional resources.users.UserShort creator */ 11:
                     message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
                     break;
-                case /* resources.messenger.ThreadAccess access */ 11:
+                case /* resources.messenger.ThreadAccess access */ 12:
                     message.access = ThreadAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
@@ -194,15 +203,18 @@ class Thread$Type extends MessageType<Thread> {
         /* resources.messenger.ThreadUserState user_state = 8; */
         if (message.userState)
             ThreadUserState.internalBinaryWrite(message.userState, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
-        /* optional int32 creator_id = 9; */
+        /* string creator_job = 9; */
+        if (message.creatorJob !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.creatorJob);
+        /* optional int32 creator_id = 10; */
         if (message.creatorId !== undefined)
-            writer.tag(9, WireType.Varint).int32(message.creatorId);
-        /* optional resources.users.UserShort creator = 10; */
+            writer.tag(10, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 11; */
         if (message.creator)
-            UserShort.internalBinaryWrite(message.creator, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
-        /* resources.messenger.ThreadAccess access = 11; */
+            UserShort.internalBinaryWrite(message.creator, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+        /* resources.messenger.ThreadAccess access = 12; */
         if (message.access)
-            ThreadAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
+            ThreadAccess.internalBinaryWrite(message.access, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

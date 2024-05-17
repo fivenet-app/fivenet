@@ -26,6 +26,7 @@
 // source: resources/messenger/access.proto
 // source: resources/messenger/message.proto
 // source: resources/messenger/thread.proto
+// source: resources/messenger/user.proto
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto

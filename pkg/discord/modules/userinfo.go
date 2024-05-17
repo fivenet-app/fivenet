@@ -15,6 +15,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -137,6 +138,7 @@ func (g *UserInfo) syncUserInfo(logs []*discordgo.MessageEmbed) ([]*discordgo.Me
 		}
 	}
 
+	errs := multierr.Combine()
 	for _, user := range dest {
 		member, err := g.discord.GuildMember(g.guild.ID, user.ExternalID)
 		if err != nil {
@@ -178,7 +180,11 @@ func (g *UserInfo) syncUserInfo(logs []*discordgo.MessageEmbed) ([]*discordgo.Me
 		}
 	}
 
-	return logs, g.cleanupUserJobRoles(g.guild, dest)
+	if err := g.cleanupUserJobRoles(g.guild, dest); err != nil {
+		errs = multierr.Append(errs, err)
+	}
+
+	return logs, errs
 }
 
 func (g *UserInfo) setUserNickname(member *discordgo.Member, firstname string, lastname string) error {
@@ -464,6 +470,8 @@ func (g *UserInfo) findGradeRoleByID(id string) (*discordgo.Role, bool) {
 }
 
 func (g *UserInfo) cleanupUserJobRoles(guild *discordgo.Guild, users []*UserRoleMapping) error {
+	errs := multierr.Combine()
+
 outerLoop:
 	for i := 0; i < len(guild.Members); i++ {
 		member := guild.Members[i]
@@ -508,7 +516,8 @@ outerLoop:
 			g.logger.Debug("removing job grade role from member", zap.String("discord_role_name", role.Name), zap.String("discord_role_id", role.ID),
 				zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 			if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, role.ID); err != nil {
-				return fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to remove member from role %s (%s): %w", role.Name, role.ID, err))
+				continue
 			}
 		}
 
@@ -518,7 +527,8 @@ outerLoop:
 				g.logger.Debug("removing employee role from member", zap.String("discord_role_name", g.employeeRole.Name), zap.String("discord_role_id", g.employeeRole.ID),
 					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 				if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.employeeRole.ID); err != nil {
-					return fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err)
+					errs = multierr.Append(errs, fmt.Errorf("failed to remove member from employee job role %s (%s): %w", g.employeeRole.Name, g.employeeRole.ID, err))
+					continue
 				}
 			}
 
@@ -534,13 +544,15 @@ outerLoop:
 					g.logger.Debug("adding unemployed role to member", zap.String("discord_role_name", g.unemployedRole.Name), zap.String("discord_role_id", g.unemployedRole.ID),
 						zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, g.unemployedRole.ID); err != nil {
-						return fmt.Errorf("failed to add member to unemployed role %s: %w", g.unemployedRole.ID, err)
+						errs = multierr.Append(errs, fmt.Errorf("failed to add member to unemployed role %s: %w", g.unemployedRole.ID, err))
+						continue
 					}
 
 				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 					if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
 						fmt.Sprintf("no longer an employee of %s job", g.job)); err != nil {
-						return fmt.Errorf("failed to kick unemployed member %s from guild: %w", member.User.ID, err)
+						errs = multierr.Append(errs, fmt.Errorf("failed to kick unemployed member %s from guild: %w", member.User.ID, err))
+						continue
 					}
 				}
 			}
@@ -550,13 +562,14 @@ outerLoop:
 				g.logger.Debug("removing jobs absence role from unemployed member", zap.String("discord_role_name", g.jobsAbsenceRole.Name), zap.String("discord_role_id", g.jobsAbsenceRole.ID),
 					zap.String("discord_user_id", member.User.ID), zap.String("discord_nickname", member.Nick))
 				if err := g.discord.GuildMemberRoleRemove(g.guild.ID, member.User.ID, g.jobsAbsenceRole.ID); err != nil {
-					return fmt.Errorf("failed to remove member from jobs absence role %s (%s): %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, err)
+					errs = multierr.Append(errs, fmt.Errorf("failed to remove member from jobs absence role %s (%s): %w", g.jobsAbsenceRole.Name, g.jobsAbsenceRole.ID, err))
+					continue
 				}
 			}
 		}
 	}
 
-	return nil
+	return errs
 }
 
 func (g *UserInfo) lookupUsersByDiscordI(externalId string) ([]*UserRoleMapping, error) {

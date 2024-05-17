@@ -1069,7 +1069,8 @@
             "reply_all": "Reply all",
             "forward": "Foward",
             "send": "Send",
-            "reply_to": "Reply to {name}"
+            "reply_to": "Reply to {name}",
+            "create_thread": "Create Thread"
         }
     },
     "notifications": {

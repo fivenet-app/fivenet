@@ -6,12 +6,18 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/fx"
 	"google.golang.org/grpc"
 )
 
 var (
-// TODO
+	tThreads           = table.FivenetMsgsThreads
+	tThreadsUserState  = table.FivenetMsgsThreadsUserState
+	tThreadsJobAccess  = table.FivenetMsgsThreadsJobAccess
+	tThreadsUserAccess = table.FivenetMsgsThreadsUserAccess
+
+	tMessages = table.FivenetMsgsMessages
 )
 
 type Server struct {

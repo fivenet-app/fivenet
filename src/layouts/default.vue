@@ -40,7 +40,7 @@ const links = computed(() =>
                 text: t('common.messenger'),
                 shortcuts: ['G', 'I'],
             },
-            permission: 'TODOService.TODOMethod' as Perms,
+            permission: 'MessengerService.ListThreads' as Perms,
         },
         {
             label: t('common.citizen'),
