@@ -445,11 +445,11 @@
         "note": "Notiz",
         "weekly_view": "Wöchentliche Ansicht",
         "today": "Heute",
-        "inbox": "Posteingang",
         "all": "Alle",
         "unread": "Ungelesen",
         "archive": "Archiv",
-        "paste": "Einfügen"
+        "paste": "Einfügen",
+        "messenger": "Chat-Messenger für eine schnelle Kommunikation."
     },
     "components": {
         "partials": {
@@ -1060,7 +1060,7 @@
                 "title": "Kalender Eintrag teilen"
             }
         },
-        "inbox": {
+        "messenger": {
             "mark_unread": "Als ungelesen markieren",
             "mark_important": "Als wichtig markieren",
             "star_thread": "Favorisieren",
