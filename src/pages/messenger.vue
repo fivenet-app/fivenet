@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { sub } from 'date-fns';
-import InboxList from '~/components/messenger/InboxList.vue';
-import InboxThread from '~/components/messenger/InboxThread.vue';
+import MessengerList from '~/components/messenger/MessengerList.vue';
+import MessengerThread from '~/components/messenger/MessengerThread.vue';
 import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 
 useHead({
@@ -414,7 +414,7 @@ watch(filteredThreads, () => {
                 </template>
             </UDashboardNavbar>
 
-            <InboxList v-model="selectedThread" :threads="filteredThreads" />
+            <MessengerList v-model="selectedThread" :threads="filteredThreads" />
         </UDashboardPanel>
 
         <UDashboardPanel v-model="isMailPanelOpen" id="inboxmaillist" collapsible grow side="right">
@@ -449,7 +449,7 @@ watch(filteredThreads, () => {
                     </template>
                 </UDashboardNavbar>
 
-                <InboxThread :thread="selectedThread" />
+                <MessengerThread :thread="selectedThread" />
             </template>
             <div v-else class="hidden flex-1 items-center justify-center lg:flex">
                 <UIcon name="i-mdi-inbox" class="h-32 w-32 text-gray-400 dark:text-gray-500" />

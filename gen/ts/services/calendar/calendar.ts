@@ -16,6 +16,7 @@ import { CalendarEntryRSVP } from "../../resources/calendar/calendar";
 import { CalendarEntry } from "../../resources/calendar/calendar";
 import { Calendar } from "../../resources/calendar/calendar";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { AccessLevel } from "../../resources/calendar/access";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Calendar
@@ -36,6 +37,10 @@ export interface ListCalendarsRequest {
      * @generated from protobuf field: optional resources.calendar.AccessLevel min_access_level = 3;
      */
     minAccessLevel?: AccessLevel;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp after = 4;
+     */
+    after?: Timestamp;
 }
 /**
  * @generated from protobuf message services.calendar.ListCalendarsResponse
@@ -122,6 +127,10 @@ export interface ListCalendarEntriesRequest {
      * @generated from protobuf field: optional bool show_hidden = 4;
      */
     showHidden?: boolean;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp after = 5;
+     */
+    after?: Timestamp;
 }
 /**
  * @generated from protobuf message services.calendar.ListCalendarEntriesResponse
@@ -306,7 +315,8 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         super("services.calendar.ListCalendarsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "only_public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] }
+            { no: 3, name: "min_access_level", kind: "enum", opt: true, T: () => ["resources.calendar.AccessLevel", AccessLevel, "ACCESS_LEVEL_"] },
+            { no: 4, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ListCalendarsRequest>): ListCalendarsRequest {
@@ -330,6 +340,9 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
                 case /* optional resources.calendar.AccessLevel min_access_level */ 3:
                     message.minAccessLevel = reader.int32();
                     break;
+                case /* optional resources.timestamp.Timestamp after */ 4:
+                    message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -351,6 +364,9 @@ class ListCalendarsRequest$Type extends MessageType<ListCalendarsRequest> {
         /* optional resources.calendar.AccessLevel min_access_level = 3; */
         if (message.minAccessLevel !== undefined)
             writer.tag(3, WireType.Varint).int32(message.minAccessLevel);
+        /* optional resources.timestamp.Timestamp after = 4; */
+        if (message.after)
+            Timestamp.internalBinaryWrite(message.after, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -679,7 +695,8 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
             { no: 1, name: "year", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 2023 } } } },
             { no: 2, name: "month", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { lte: 12, gte: 1 } } } },
             { no: 3, name: "calendar_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "show_hidden", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 4, name: "show_hidden", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<ListCalendarEntriesRequest>): ListCalendarEntriesRequest {
@@ -712,6 +729,9 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
                 case /* optional bool show_hidden */ 4:
                     message.showHidden = reader.bool();
                     break;
+                case /* optional resources.timestamp.Timestamp after */ 5:
+                    message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -740,6 +760,9 @@ class ListCalendarEntriesRequest$Type extends MessageType<ListCalendarEntriesReq
         /* optional bool show_hidden = 4; */
         if (message.showHidden !== undefined)
             writer.tag(4, WireType.Varint).bool(message.showHidden);
+        /* optional resources.timestamp.Timestamp after = 5; */
+        if (message.after)
+            Timestamp.internalBinaryWrite(message.after, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

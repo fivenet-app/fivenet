@@ -64,6 +64,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		),
 	)
 
+	if req.After != nil {
+		condition = condition.AND(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
+	}
+
 	condition = condition.AND(tCalendarEntry.StartTime.GT_EQ(jet.DateTime(int(req.Year), time.Month(req.Month), 1, 0, 0, 0))).
 		AND(tCalendarEntry.StartTime.LT(jet.DateTime(int(req.Year), time.Month(req.Month+1), 1, 0, 0, 0)))
 
@@ -145,6 +149,10 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		GROUP_BY(tCalendarEntry.ID).
 		WHERE(condition).
 		LIMIT(100)
+
+	if req.After != nil {
+		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
+	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

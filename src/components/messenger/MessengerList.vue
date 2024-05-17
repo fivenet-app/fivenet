@@ -83,7 +83,7 @@ defineShortcuts({
             >
                 <div class="flex items-center justify-between" :class="[thread.unread && 'font-semibold']">
                     <div class="flex items-center gap-3">
-                        {{ thread.from?.firstname }} {{ thread.from?.lastname }}
+                        {{ thread.creator?.firstname }} {{ thread.creator?.lastname }}
 
                         <UChip v-if="thread.unread" />
                     </div>

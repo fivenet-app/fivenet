@@ -107,6 +107,39 @@ func (m *ListCalendarsRequest) validate(all bool) error {
 		// no validation rules for MinAccessLevel
 	}
 
+	if m.After != nil {
+
+		if all {
+			switch v := interface{}(m.GetAfter()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCalendarsRequestValidationError{
+						field:  "After",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCalendarsRequestValidationError{
+						field:  "After",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAfter()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCalendarsRequestValidationError{
+					field:  "After",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return ListCalendarsRequestMultiError(errors)
 	}
@@ -1114,6 +1147,39 @@ func (m *ListCalendarEntriesRequest) validate(all bool) error {
 
 	if m.ShowHidden != nil {
 		// no validation rules for ShowHidden
+	}
+
+	if m.After != nil {
+
+		if all {
+			switch v := interface{}(m.GetAfter()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListCalendarEntriesRequestValidationError{
+						field:  "After",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListCalendarEntriesRequestValidationError{
+						field:  "After",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetAfter()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListCalendarEntriesRequestValidationError{
+					field:  "After",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

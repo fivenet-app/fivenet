@@ -23,6 +23,7 @@
 // source: resources/laws/laws.proto
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
+// source: resources/messenger/access.proto
 // source: resources/messenger/message.proto
 // source: resources/messenger/thread.proto
 // source: resources/notifications/events.proto
@@ -119,6 +120,10 @@ export type Perms =
 	| 'LivemapperService.CreateOrUpdateMarker'
 	| 'LivemapperService.DeleteMarker'
 	| 'LivemapperService.Stream'
+	| 'MessengerService.CreateOrUpdateThread'
+	| 'MessengerService.DeleteThread'
+	| 'MessengerService.ListThreads'
+	| 'MessengerService.PostMessage'
 	| 'QualificationsService.CreateOrUpdateQualificationResult'
 	| 'QualificationsService.CreateQualification'
 	| 'QualificationsService.DeleteQualification'

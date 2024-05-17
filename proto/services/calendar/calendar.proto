@@ -5,6 +5,7 @@ package services.calendar;
 import "resources/common/database/database.proto";
 import "resources/calendar/access.proto";
 import "resources/calendar/calendar.proto";
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar;calendar";
@@ -15,6 +16,7 @@ message ListCalendarsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   bool only_public = 2;
   optional resources.calendar.AccessLevel min_access_level = 3;
+  optional resources.timestamp.Timestamp after = 4;
 }
 
 message ListCalendarsResponse {
@@ -54,6 +56,7 @@ message ListCalendarEntriesRequest {
   }];
   repeated uint64 calendar_ids = 3 [jstype = JS_STRING];
   optional bool show_hidden = 4;
+  optional resources.timestamp.Timestamp after = 5;
 }
 
 message ListCalendarEntriesResponse {

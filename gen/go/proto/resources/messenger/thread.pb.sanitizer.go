@@ -9,8 +9,6 @@ import (
 
 func (m *Thread) Sanitize() error {
 
-	m.Body = htmlsanitizer.Sanitize(m.Body)
-
 	m.Title = htmlsanitizer.Sanitize(m.Title)
 
 	return nil

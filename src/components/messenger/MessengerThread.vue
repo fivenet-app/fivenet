@@ -19,14 +19,14 @@ withDefaults(
         <div class="flex justify-between">
             <div class="flex items-center gap-4">
                 <ProfilePictureImg
-                    :src="thread.from?.avatar?.url"
-                    :name="`${thread.from?.firstname} ${thread.from?.lastname}`"
+                    :src="thread.creator?.avatar?.url"
+                    :name="`${thread.creator?.firstname} ${thread.creator?.lastname}`"
                     size="lg"
                 />
 
                 <div class="min-w-0">
                     <p class="font-semibold text-gray-900 dark:text-white">
-                        {{ thread.from?.firstname }} {{ thread.from?.lastname }}
+                        {{ thread.creator?.firstname }} {{ thread.creator?.lastname }}
                     </p>
                     <p class="font-medium text-gray-500 dark:text-gray-400">
                         {{ thread.title }}
@@ -59,7 +59,9 @@ withDefaults(
                 required
                 size="xl"
                 :rows="5"
-                :placeholder="$t('components.inbox.reply_to', { name: `${thread.from?.firstname} ${thread.from?.lastname}` })"
+                :placeholder="
+                    $t('components.inbox.reply_to', { name: `${thread.creator?.firstname} ${thread.creator?.lastname}` })
+                "
             >
                 <UButton
                     type="submit"

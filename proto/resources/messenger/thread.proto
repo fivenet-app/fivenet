@@ -2,6 +2,8 @@ syntax = "proto3";
 
 package resources.messenger;
 
+import "resources/messenger/access.proto";
+import "resources/messenger/message.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -18,12 +20,19 @@ message Thread {
     min_len: 3,
     max_len: 256
   }];
-  bool unread = 6;
-  // @sanitize
-  string body = 9 [(validate.rules).string = {
-    min_len: 20,
-    max_bytes: 1750000 // 1.75 Megabytes
-  }];
-  optional int32 from_id = 11;
-  optional resources.users.UserShort from = 12; // @gotags: alias:"from"
+  bool closed = 6;
+  optional resources.messenger.Message last_message = 7;
+  ThreadUserState user_state = 8;
+  optional int32 creator_id = 9;
+  optional resources.users.UserShort creator = 10; // @gotags: alias:"creator"
+  resources.messenger.ThreadAccess access = 11;
+}
+
+message ThreadUserState {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
+  bool unread = 3;
+  bool important = 4;
+  bool favorite = 5;
+  bool muted = 6;
 }

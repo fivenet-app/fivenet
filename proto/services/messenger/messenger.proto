@@ -2,6 +2,77 @@ syntax = "proto3";
 
 package services.messenger;
 
+import "resources/common/database/database.proto";
+import "resources/messenger/message.proto";
+import "resources/messenger/thread.proto";
+import "resources/timestamp/timestamp.proto";
+import "validate/validate.proto";
+
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/messenger;messenger";
 
-service MessengerService {}
+message ListThreadsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.timestamp.Timestamp after = 2;
+}
+
+message ListThreadsResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.messenger.Thread threads = 2;
+}
+
+message CreateOrUpdateThreadRequest {
+  resources.messenger.Thread thread = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateThreadResponse {
+  resources.messenger.Thread thread = 1;
+}
+
+message DeleteThreadRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+}
+
+message DeleteThreadResponse {}
+
+// Messages
+
+message GetThreadMessagesRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  uint64 thread_id = 2 [jstype = JS_STRING];
+  resources.timestamp.Timestamp start = 3;
+}
+
+message GetThreadMessagesResponse {
+  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
+  repeated resources.messenger.Message messages = 2;
+}
+
+message PostMessageRequest {
+  resources.messenger.Message message = 1 [(validate.rules).message.required = true];
+}
+
+message PostMessageResponse {
+  resources.messenger.Message message = 1 [(validate.rules).message.required = true];
+}
+
+message DeleteMessageRequest {
+  uint64 message_id = 1 [jstype = JS_STRING];
+}
+
+message DeleteMessageResponse {}
+
+service MessengerService {
+  // @perm
+  rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
+  // @perm
+  rpc CreateOrUpdateThread(CreateOrUpdateThreadRequest) returns (CreateOrUpdateThreadResponse);
+  // @perm
+  rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
+
+  // @perm: Name=ListThreads
+  rpc GetThreadMessages(GetThreadMessagesRequest) returns (GetThreadMessagesResponse);
+  // @perm
+  rpc PostMessage(PostMessageRequest) returns (PostMessageResponse);
+  // @perm: Name=SuperUser
+  rpc DeleteMessage(DeleteMessageRequest) returns (DeleteMessageResponse);
+}

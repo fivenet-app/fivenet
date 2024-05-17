@@ -10,7 +10,9 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { ThreadAccess } from "./access";
 import { UserShort } from "../users/users";
+import { Message } from "./message";
 import { Timestamp } from "../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.messenger.Thread
@@ -39,23 +41,58 @@ export interface Thread {
      */
     title: string;
     /**
-     * @generated from protobuf field: bool unread = 6;
+     * @generated from protobuf field: bool closed = 6;
+     */
+    closed: boolean;
+    /**
+     * @generated from protobuf field: optional resources.messenger.Message last_message = 7;
+     */
+    lastMessage?: Message;
+    /**
+     * @generated from protobuf field: resources.messenger.ThreadUserState user_state = 8;
+     */
+    userState?: ThreadUserState;
+    /**
+     * @generated from protobuf field: optional int32 creator_id = 9;
+     */
+    creatorId?: number;
+    /**
+     * @generated from protobuf field: optional resources.users.UserShort creator = 10;
+     */
+    creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @generated from protobuf field: resources.messenger.ThreadAccess access = 11;
+     */
+    access?: ThreadAccess;
+}
+/**
+ * @generated from protobuf message resources.messenger.ThreadUserState
+ */
+export interface ThreadUserState {
+    /**
+     * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
+     */
+    threadId: string;
+    /**
+     * @generated from protobuf field: int32 user_id = 2;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: bool unread = 3;
      */
     unread: boolean;
     /**
-     * @sanitize
-     *
-     * @generated from protobuf field: string body = 9;
+     * @generated from protobuf field: bool important = 4;
      */
-    body: string;
+    important: boolean;
     /**
-     * @generated from protobuf field: optional int32 from_id = 11;
+     * @generated from protobuf field: bool favorite = 5;
      */
-    fromId?: number;
+    favorite: boolean;
     /**
-     * @generated from protobuf field: optional resources.users.UserShort from = 12;
+     * @generated from protobuf field: bool muted = 6;
      */
-    from?: UserShort; // @gotags: alias:"from"
+    muted: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Thread$Type extends MessageType<Thread> {
@@ -66,18 +103,19 @@ class Thread$Type extends MessageType<Thread> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "256" } } } },
-            { no: 6, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 9, name: "body", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "20", maxBytes: "1750000" } } } },
-            { no: 11, name: "from_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "from", kind: "message", T: () => UserShort }
+            { no: 6, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "last_message", kind: "message", T: () => Message },
+            { no: 8, name: "user_state", kind: "message", T: () => ThreadUserState },
+            { no: 9, name: "creator_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 10, name: "creator", kind: "message", T: () => UserShort },
+            { no: 11, name: "access", kind: "message", T: () => ThreadAccess }
         ]);
     }
     create(value?: PartialMessage<Thread>): Thread {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.title = "";
-        message.unread = false;
-        message.body = "";
+        message.closed = false;
         if (value !== undefined)
             reflectionMergePartial<Thread>(this, message, value);
         return message;
@@ -102,17 +140,23 @@ class Thread$Type extends MessageType<Thread> {
                 case /* string title */ 5:
                     message.title = reader.string();
                     break;
-                case /* bool unread */ 6:
-                    message.unread = reader.bool();
+                case /* bool closed */ 6:
+                    message.closed = reader.bool();
                     break;
-                case /* string body */ 9:
-                    message.body = reader.string();
+                case /* optional resources.messenger.Message last_message */ 7:
+                    message.lastMessage = Message.internalBinaryRead(reader, reader.uint32(), options, message.lastMessage);
                     break;
-                case /* optional int32 from_id */ 11:
-                    message.fromId = reader.int32();
+                case /* resources.messenger.ThreadUserState user_state */ 8:
+                    message.userState = ThreadUserState.internalBinaryRead(reader, reader.uint32(), options, message.userState);
                     break;
-                case /* optional resources.users.UserShort from */ 12:
-                    message.from = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.from);
+                case /* optional int32 creator_id */ 9:
+                    message.creatorId = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort creator */ 10:
+                    message.creator = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.creator);
+                    break;
+                case /* resources.messenger.ThreadAccess access */ 11:
+                    message.access = ThreadAccess.internalBinaryRead(reader, reader.uint32(), options, message.access);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -141,18 +185,24 @@ class Thread$Type extends MessageType<Thread> {
         /* string title = 5; */
         if (message.title !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.title);
-        /* bool unread = 6; */
-        if (message.unread !== false)
-            writer.tag(6, WireType.Varint).bool(message.unread);
-        /* string body = 9; */
-        if (message.body !== "")
-            writer.tag(9, WireType.LengthDelimited).string(message.body);
-        /* optional int32 from_id = 11; */
-        if (message.fromId !== undefined)
-            writer.tag(11, WireType.Varint).int32(message.fromId);
-        /* optional resources.users.UserShort from = 12; */
-        if (message.from)
-            UserShort.internalBinaryWrite(message.from, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* bool closed = 6; */
+        if (message.closed !== false)
+            writer.tag(6, WireType.Varint).bool(message.closed);
+        /* optional resources.messenger.Message last_message = 7; */
+        if (message.lastMessage)
+            Message.internalBinaryWrite(message.lastMessage, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.messenger.ThreadUserState user_state = 8; */
+        if (message.userState)
+            ThreadUserState.internalBinaryWrite(message.userState, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* optional int32 creator_id = 9; */
+        if (message.creatorId !== undefined)
+            writer.tag(9, WireType.Varint).int32(message.creatorId);
+        /* optional resources.users.UserShort creator = 10; */
+        if (message.creator)
+            UserShort.internalBinaryWrite(message.creator, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* resources.messenger.ThreadAccess access = 11; */
+        if (message.access)
+            ThreadAccess.internalBinaryWrite(message.access, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -163,3 +213,90 @@ class Thread$Type extends MessageType<Thread> {
  * @generated MessageType for protobuf message resources.messenger.Thread
  */
 export const Thread = new Thread$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ThreadUserState$Type extends MessageType<ThreadUserState> {
+    constructor() {
+        super("resources.messenger.ThreadUserState", [
+            { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 3, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ThreadUserState>): ThreadUserState {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.threadId = "0";
+        message.userId = 0;
+        message.unread = false;
+        message.important = false;
+        message.favorite = false;
+        message.muted = false;
+        if (value !== undefined)
+            reflectionMergePartial<ThreadUserState>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ThreadUserState): ThreadUserState {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.threadId = reader.uint64().toString();
+                    break;
+                case /* int32 user_id */ 2:
+                    message.userId = reader.int32();
+                    break;
+                case /* bool unread */ 3:
+                    message.unread = reader.bool();
+                    break;
+                case /* bool important */ 4:
+                    message.important = reader.bool();
+                    break;
+                case /* bool favorite */ 5:
+                    message.favorite = reader.bool();
+                    break;
+                case /* bool muted */ 6:
+                    message.muted = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ThreadUserState, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 thread_id = 1 [jstype = JS_STRING]; */
+        if (message.threadId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.threadId);
+        /* int32 user_id = 2; */
+        if (message.userId !== 0)
+            writer.tag(2, WireType.Varint).int32(message.userId);
+        /* bool unread = 3; */
+        if (message.unread !== false)
+            writer.tag(3, WireType.Varint).bool(message.unread);
+        /* bool important = 4; */
+        if (message.important !== false)
+            writer.tag(4, WireType.Varint).bool(message.important);
+        /* bool favorite = 5; */
+        if (message.favorite !== false)
+            writer.tag(5, WireType.Varint).bool(message.favorite);
+        /* bool muted = 6; */
+        if (message.muted !== false)
+            writer.tag(6, WireType.Varint).bool(message.muted);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.messenger.ThreadUserState
+ */
+export const ThreadUserState = new ThreadUserState$Type();

@@ -34,7 +34,7 @@ const links = computed(() =>
         {
             label: t('common.inbox'),
             icon: 'i-mdi-inbox-outline',
-            to: '/inbox',
+            to: '/messenger',
             badge: '4',
             tooltip: {
                 text: t('common.inbox'),

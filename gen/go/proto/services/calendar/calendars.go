@@ -67,6 +67,10 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 		)
 	}
 
+	if req.After != nil {
+		condition = condition.AND(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
+	}
+
 	countStmt := tCalendar.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tCalendar.ID)).AS("datacount.totalcount"),
@@ -157,6 +161,10 @@ func (s *Server) ListCalendars(ctx context.Context, req *ListCalendarsRequest) (
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
+
+	if req.After != nil {
+		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
+	}
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Calendars); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

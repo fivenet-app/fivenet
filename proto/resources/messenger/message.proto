@@ -24,4 +24,6 @@ message Message {
   optional resources.users.UserShort creator = 9; // @gotags: alias:"creator"
 }
 
-message MessageData {}
+message MessageData {
+  // TODO allow links to internal
+}

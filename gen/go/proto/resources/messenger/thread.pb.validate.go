@@ -98,28 +98,64 @@ func (m *Thread) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Unread
+	// no validation rules for Closed
 
-	if utf8.RuneCountInString(m.GetBody()) < 20 {
-		err := ThreadValidationError{
-			field:  "Body",
-			reason: "value length must be at least 20 runes",
+	if all {
+		switch v := interface{}(m.GetUserState()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ThreadValidationError{
+					field:  "UserState",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ThreadValidationError{
+					field:  "UserState",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetUserState()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ThreadValidationError{
+				field:  "UserState",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
 
-	if len(m.GetBody()) > 1750000 {
-		err := ThreadValidationError{
-			field:  "Body",
-			reason: "value length must be at most 1750000 bytes",
+	if all {
+		switch v := interface{}(m.GetAccess()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ThreadValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ThreadValidationError{
+					field:  "Access",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
 		}
-		if !all {
-			return err
+	} else if v, ok := interface{}(m.GetAccess()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ThreadValidationError{
+				field:  "Access",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
 		}
-		errors = append(errors, err)
 	}
 
 	if m.UpdatedAt != nil {
@@ -188,18 +224,14 @@ func (m *Thread) validate(all bool) error {
 
 	}
 
-	if m.FromId != nil {
-		// no validation rules for FromId
-	}
-
-	if m.From != nil {
+	if m.LastMessage != nil {
 
 		if all {
-			switch v := interface{}(m.GetFrom()).(type) {
+			switch v := interface{}(m.GetLastMessage()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ThreadValidationError{
-						field:  "From",
+						field:  "LastMessage",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -207,16 +239,53 @@ func (m *Thread) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ThreadValidationError{
-						field:  "From",
+						field:  "LastMessage",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetFrom()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetLastMessage()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ThreadValidationError{
-					field:  "From",
+					field:  "LastMessage",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.CreatorId != nil {
+		// no validation rules for CreatorId
+	}
+
+	if m.Creator != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ThreadValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ThreadValidationError{
+						field:  "Creator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ThreadValidationError{
+					field:  "Creator",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -301,3 +370,115 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ThreadValidationError{}
+
+// Validate checks the field values on ThreadUserState with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ThreadUserState) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ThreadUserState with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ThreadUserStateMultiError, or nil if none found.
+func (m *ThreadUserState) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ThreadUserState) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ThreadId
+
+	// no validation rules for UserId
+
+	// no validation rules for Unread
+
+	// no validation rules for Important
+
+	// no validation rules for Favorite
+
+	// no validation rules for Muted
+
+	if len(errors) > 0 {
+		return ThreadUserStateMultiError(errors)
+	}
+
+	return nil
+}
+
+// ThreadUserStateMultiError is an error wrapping multiple validation errors
+// returned by ThreadUserState.ValidateAll() if the designated constraints
+// aren't met.
+type ThreadUserStateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ThreadUserStateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ThreadUserStateMultiError) AllErrors() []error { return m }
+
+// ThreadUserStateValidationError is the validation error returned by
+// ThreadUserState.Validate if the designated constraints aren't met.
+type ThreadUserStateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ThreadUserStateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ThreadUserStateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ThreadUserStateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ThreadUserStateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ThreadUserStateValidationError) ErrorName() string { return "ThreadUserStateValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ThreadUserStateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sThreadUserState.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ThreadUserStateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ThreadUserStateValidationError{}
