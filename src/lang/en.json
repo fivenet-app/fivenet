@@ -603,7 +603,8 @@
                             "description": "Users with one of these roles are not going to get groups synced (only affects the group sync and not the user info sync.)",
                             "field": "Ignored Role ID"
                         }
-                    }
+                    },
+                    "dry_run": "Dry run mode"
                 },
                 "citizen_attributes": {
                     "title": "Citizen Attributes"

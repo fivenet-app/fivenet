@@ -152,14 +152,17 @@ func (s *Server) listQualificationsQuery(where jet.BoolExpression, onlyColumns j
 		)
 }
 
-func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
+func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, selectContent bool) jet.SelectStatement {
 	wheres := []jet.BoolExpression{jet.Bool(true)}
 	if !userInfo.SuperUser {
 		wheres = append(wheres,
 			jet.AND(
 				tQuali.DeletedAt.IS_NULL(),
 				jet.OR(
-					tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					jet.AND(
+						tQuali.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tQuali.CreatorJob.EQ(jet.String(userInfo.Job)),
+					),
 					jet.AND(
 						tQJobAccess.Access.IS_NOT_NULL(),
 						tQJobAccess.Access.GT(jet.Int32(int32(qualifications.AccessLevel_ACCESS_LEVEL_BLOCKED))),
@@ -168,6 +171,18 @@ func (s *Server) getQualificationQuery(where jet.BoolExpression, onlyColumns jet
 			),
 		)
 	}
+
+	// Select id of last result
+	wheres = append(wheres, tQualiResults.ID.IS_NULL().OR(
+		tQualiResults.ID.EQ(
+			jet.RawInt("SELECT MAX(`qualificationresult`.`id`) FROM `fivenet_qualifications_results` AS `qualificationresult` WHERE (qualificationresult.qualification_id = #qualificationId AND qualificationresult.deleted_at IS NULL AND qualificationresult.user_id = #userid)",
+				jet.RawArgs{
+					"#qualificationId": qualificationId,
+					"#userid":          userInfo.UserId,
+				},
+			),
+		),
+	))
 
 	if where != nil {
 		wheres = append(wheres, where)
@@ -381,7 +396,7 @@ func (s *Server) checkIfUserHasAccessToQualiIDs(ctx context.Context, userInfo *u
 func (s *Server) getQualification(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo, selectContent bool) (*qualifications.Qualification, error) {
 	var quali qualifications.Qualification
 
-	stmt := s.getQualificationQuery(condition, nil, userInfo, selectContent)
+	stmt := s.getQualificationQuery(qualificationId, condition, nil, userInfo, selectContent)
 
 	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
@@ -411,7 +426,7 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	}
 	quali.Request = request
 
-	result, err := s.getQualificationResult(ctx, 0, userInfo)
+	result, err := s.getQualificationResult(ctx, qualificationId, 0, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

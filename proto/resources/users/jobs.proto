@@ -43,16 +43,18 @@ message QuickButtons {
 }
 
 message DiscordSyncSettings {
-  bool user_info_sync = 1;
-  UserInfoSyncSettings user_info_sync_settings = 2;
+  bool dry_run = 1;
 
-  bool status_log = 3;
-  StatusLogSettings status_log_settings = 4;
+  bool user_info_sync = 2;
+  UserInfoSyncSettings user_info_sync_settings = 3;
 
-  bool jobs_absence = 5;
-  JobsAbsenceSettings jobs_absence_settings = 6;
+  bool status_log = 4;
+  StatusLogSettings status_log_settings = 5;
 
-  GroupSyncSettings group_sync_settings = 7;
+  bool jobs_absence = 6;
+  JobsAbsenceSettings jobs_absence_settings = 7;
+
+  GroupSyncSettings group_sync_settings = 8;
 }
 
 enum UserInfoSyncUnemployedMode {
@@ -69,6 +71,8 @@ message UserInfoSyncSettings {
   bool unemployed_enabled = 4;
   UserInfoSyncUnemployedMode unemployed_mode = 5 [(validate.rules).enum.defined_only = true];
   string unemployed_role_name = 6 [(validate.rules).string.max_len = 48];
+
+  // TODO
 }
 
 message StatusLogSettings {

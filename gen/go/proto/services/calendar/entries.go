@@ -323,6 +323,14 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	}
 
+	newUsers := []int32{}
+	if len(req.UserIds) > 0 {
+		newUsers, err = s.shareCalendarEntry(ctx, tx, req.Entry.Id, req.UserIds)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+	}
+
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
@@ -331,6 +339,12 @@ func (s *Server) CreateOrUpdateCalendarEntry(ctx context.Context, req *CreateOrU
 	entry, err := s.getEntry(ctx, userInfo, tCalendarEntry.AS("calendar_entry").ID.EQ(jet.Uint64(req.Entry.Id)))
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+	}
+
+	if len(newUsers) > 0 {
+		if err := s.sendShareNotifications(ctx, userInfo.UserId, entry, newUsers); err != nil {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
 	}
 
 	return &CreateOrUpdateCalendarEntryResponse{

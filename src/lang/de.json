@@ -603,7 +603,8 @@
                             "description": "Bei Benutzern mit einer dieser Rollen werden keine Gruppen synchronisiert (dies betrifft nur die Gruppensynchronisierung und nicht die Synchronisierung der Benutzerinfos).",
                             "field": "Ignorierte Rollen ID"
                         }
-                    }
+                    },
+                    "dry_run": "Trockenlaufmodus"
                 },
                 "citizen_attributes": {
                     "title": "Bürger-Attribute"

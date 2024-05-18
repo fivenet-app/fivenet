@@ -3729,6 +3729,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| dry_run | [bool](#bool) |  |  |
 | user_info_sync | [bool](#bool) |  |  |
 | user_info_sync_settings | [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings) |  |  |
 | status_log | [bool](#bool) |  |  |
@@ -9145,6 +9146,7 @@ Results ====================================================================
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | entry | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) |  |  |
+| user_ids | [int32](#int32) | repeated |  |
 
 
 

@@ -52,6 +52,7 @@ func (x *JobProps) Default(job string) {
 	// Discord Sync Settings
 	if x.DiscordSyncSettings == nil {
 		x.DiscordSyncSettings = &DiscordSyncSettings{
+			DryRun:       false,
 			UserInfoSync: false,
 		}
 	}

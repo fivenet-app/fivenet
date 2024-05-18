@@ -203,8 +203,10 @@ func (s *Server) getUserAttributes(ctx context.Context, userInfo *userinfo.UserI
 			tJobCitizenAttributes.Job.IN(jobsExp...),
 		))
 
-	list := &users.CitizenAttributes{}
-	if err := stmt.QueryContext(ctx, s.db, list); err != nil {
+	list := &users.CitizenAttributes{
+		List: []*users.CitizenAttribute{},
+	}
+	if err := stmt.QueryContext(ctx, s.db, &list.List); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		}

@@ -798,6 +798,8 @@ func (m *DiscordSyncSettings) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for DryRun
+
 	// no validation rules for UserInfoSync
 
 	if all {

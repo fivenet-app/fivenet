@@ -36,6 +36,7 @@ const schema = z.object({
     radioFrequency: z.string(),
     discordGuildId: z.string(),
     discordSyncSettings: z.object({
+        dryRun: z.boolean(),
         userInfoSync: z.boolean(),
         userInfoSyncSettings: z.object({
             employeeRoleEnabled: z.boolean(),
@@ -71,6 +72,7 @@ const state = reactive<Schema>({
     radioFrequency: '',
     discordGuildId: '',
     discordSyncSettings: {
+        dryRun: true,
         userInfoSync: false,
         userInfoSyncSettings: {
             employeeRoleEnabled: false,
@@ -117,7 +119,7 @@ async function setJobProps(values: Schema): Promise<void> {
     jobProps.value.livemapMarkerColor = values.livemapMarkerColor;
     jobProps.value.quickButtons = values.quickButtons;
     jobProps.value.radioFrequency = values.radioFrequency;
-    jobProps.value.discordGuildId = values.discordGuildId;
+    jobProps.value.discordGuildId = values.discordGuildId.trim().length === 0 ? values.discordGuildId : undefined;
     jobProps.value.discordSyncSettings = values.discordSyncSettings;
     if (values.logoUrl) {
         jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
@@ -328,16 +330,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <div class="flex flex-col gap-2">
                                         <div class="space-y-4">
                                             <div class="flex items-center">
-                                                <UToggle v-model="state.quickButtons.penaltyCalculator">
-                                                    <span
-                                                        :class="[
-                                                            state.quickButtons.penaltyCalculator
-                                                                ? 'translate-x-5'
-                                                                : 'translate-x-0',
-                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </UToggle>
+                                                <UToggle v-model="state.quickButtons.penaltyCalculator" />
                                                 <span class="ml-3 text-sm font-medium">{{
                                                     $t('components.penaltycalculator.title')
                                                 }}</span>
@@ -345,14 +338,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </div>
                                         <div class="space-y-4">
                                             <div class="flex items-center">
-                                                <UToggle v-model="state.quickButtons.bodyCheckup">
-                                                    <span
-                                                        :class="[
-                                                            state.quickButtons.bodyCheckup ? 'translate-x-5' : 'translate-x-0',
-                                                            'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                                        ]"
-                                                    />
-                                                </UToggle>
+                                                <UToggle v-model="state.quickButtons.bodyCheckup" />
                                                 <span class="ml-3 text-sm font-medium">{{
                                                     $t('components.bodycheckup.title')
                                                 }}</span>
@@ -437,19 +423,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
 
                                 <UFormGroup
+                                    name="dryRun"
+                                    :label="$t('components.rector.job_props.discord_sync_settings.dry_run')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UToggle v-model="state.discordSyncSettings.dryRun" />
+                                </UFormGroup>
+
+                                <UFormGroup
                                     name="statusLog"
                                     :label="$t('components.rector.job_props.discord_sync_settings.status_log')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UToggle v-model="state.discordSyncSettings.statusLog">
-                                        <span
-                                            :class="[
-                                                state.discordSyncSettings.statusLog ? 'translate-x-5' : 'translate-x-0',
-                                                'pointer-events-none inline-block size-5 rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out',
-                                            ]"
-                                        />
-                                    </UToggle>
+                                    <UToggle v-model="state.discordSyncSettings.statusLog" />
                                 </UFormGroup>
 
                                 <UFormGroup

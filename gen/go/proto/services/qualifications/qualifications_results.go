@@ -259,17 +259,12 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)
+		result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
 		req.Result.UserId = result.UserId
-
-		quali, err := s.getQualification(ctx, req.Result.QualificationId, nil, userInfo, false)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
 
 		stmt := tQualiResults.
 			UPDATE(
@@ -295,31 +290,40 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		// Only send notification when there is currently no score
-		if result.Score == nil {
-			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
-				UserId: result.UserId,
-				Title: &common.TranslateItem{
-					Key: "notifications.qualifications.result_updated.title",
-				},
-				Content: &common.TranslateItem{
-					Key:        "notifications.qualifications.result_updated.content",
-					Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
-				},
-				Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
-				Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
-				Data: &notifications.Data{
-					Link: &notifications.Link{
-						To: fmt.Sprintf("/qualifications/%d", result.QualificationId),
-					},
-				},
-			}); err != nil {
-				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-			}
-		}
-		// TODO send a notification to the user
-
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+	}
+
+	quali, err := s.getQualification(ctx, req.Result.QualificationId, nil, userInfo, false)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	result, err := s.getQualificationResult(ctx, quali.Id, req.Result.Id, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	// Only send notification when there is currently no score
+	if result.Score == nil {
+		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
+			UserId: result.UserId,
+			Title: &common.TranslateItem{
+				Key: "notifications.qualifications.result_updated.title",
+			},
+			Content: &common.TranslateItem{
+				Key:        "notifications.qualifications.result_updated.content",
+				Parameters: map[string]string{"abbreviation": quali.Abbreviation, "title": quali.Title},
+			},
+			Category: notifications.NotificationCategory_NOTIFICATION_CATEGORY_GENERAL,
+			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
+			Data: &notifications.Data{
+				Link: &notifications.Link{
+					To: fmt.Sprintf("/qualifications/%d", result.QualificationId),
+				},
+			},
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
 	}
 
 	// If the result is successful, complete the request status
@@ -334,17 +338,12 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		}
 	}
 
-	result, err := s.getQualificationResult(ctx, req.Result.Id, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-
 	return &CreateOrUpdateQualificationResultResponse{
 		Result: result,
 	}, nil
 }
 
-func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
+func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
 	tUser := tUser.AS("user")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
@@ -353,6 +352,9 @@ func (s *Server) getQualificationResult(ctx context.Context, resultId uint64, us
 		condition = condition.AND(tQualiResults.ID.EQ(jet.Uint64(resultId)))
 	} else {
 		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
+	}
+	if qualificationId > 0 {
+		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Uint64(qualificationId)))
 	}
 
 	stmt := tQualiResults.
@@ -431,12 +433,12 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	re, err := s.getQualificationResult(ctx, req.ResultId, userInfo)
+	result, err := s.getQualificationResult(ctx, 0, req.ResultId, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	check, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
+	check, err := s.checkIfUserHasAccessToQuali(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -452,7 +454,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 			jet.CURRENT_TIMESTAMP(),
 		).
 		WHERE(
-			tQualiResults.ID.EQ(jet.Uint64(re.Id)),
+			tQualiResults.ID.EQ(jet.Uint64(result.Id)),
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {

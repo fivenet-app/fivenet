@@ -73,6 +73,7 @@ message GetCalendarEntryResponse {
 
 message CreateOrUpdateCalendarEntryRequest {
   resources.calendar.CalendarEntry entry = 1 [(validate.rules).message.required = true];
+  repeated int32 user_ids = 2;
 }
 
 message CreateOrUpdateCalendarEntryResponse {

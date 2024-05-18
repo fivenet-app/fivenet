@@ -209,6 +209,7 @@ export const useCalendarStore = defineStore('calendar', {
             try {
                 const call = $grpc.getCalendarClient().createOrUpdateCalendarEntry({
                     entry: entry,
+                    userIds: users?.map((u) => u.userId) ?? [],
                 });
                 const { response } = await call;
 
@@ -219,14 +220,6 @@ export const useCalendarStore = defineStore('calendar', {
                     } else {
                         this.entries.push(response.entry);
                     }
-                }
-
-                if (users && users.length > 0) {
-                    const call = $grpc.getCalendarClient().shareCalendarEntry({
-                        entryId: entry.id,
-                        userIds: users.map((u) => u.userId),
-                    });
-                    await call;
                 }
 
                 return response;

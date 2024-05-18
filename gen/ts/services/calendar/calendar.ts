@@ -167,6 +167,10 @@ export interface CreateOrUpdateCalendarEntryRequest {
      * @generated from protobuf field: resources.calendar.CalendarEntry entry = 1;
      */
     entry?: CalendarEntry;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 2;
+     */
+    userIds: number[];
 }
 /**
  * @generated from protobuf message services.calendar.CreateOrUpdateCalendarEntryResponse
@@ -917,11 +921,13 @@ export const GetCalendarEntryResponse = new GetCalendarEntryResponse$Type();
 class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdateCalendarEntryRequest> {
     constructor() {
         super("services.calendar.CreateOrUpdateCalendarEntryRequest", [
-            { no: 1, name: "entry", kind: "message", T: () => CalendarEntry, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "entry", kind: "message", T: () => CalendarEntry, options: { "validate.rules": { message: { required: true } } } },
+            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<CreateOrUpdateCalendarEntryRequest>): CreateOrUpdateCalendarEntryRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<CreateOrUpdateCalendarEntryRequest>(this, message, value);
         return message;
@@ -933,6 +939,13 @@ class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdate
             switch (fieldNo) {
                 case /* resources.calendar.CalendarEntry entry */ 1:
                     message.entry = CalendarEntry.internalBinaryRead(reader, reader.uint32(), options, message.entry);
+                    break;
+                case /* repeated int32 user_ids */ 2:
+                    if (wireType === WireType.LengthDelimited)
+                        for (let e = reader.int32() + reader.pos; reader.pos < e;)
+                            message.userIds.push(reader.int32());
+                    else
+                        message.userIds.push(reader.int32());
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -949,6 +962,13 @@ class CreateOrUpdateCalendarEntryRequest$Type extends MessageType<CreateOrUpdate
         /* resources.calendar.CalendarEntry entry = 1; */
         if (message.entry)
             CalendarEntry.internalBinaryWrite(message.entry, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 user_ids = 2; */
+        if (message.userIds.length) {
+            writer.tag(2, WireType.LengthDelimited).fork();
+            for (let i = 0; i < message.userIds.length; i++)
+                writer.int32(message.userIds[i]);
+            writer.join();
+        }
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

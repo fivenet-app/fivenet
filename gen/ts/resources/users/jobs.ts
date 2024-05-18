@@ -117,31 +117,35 @@ export interface QuickButtons {
  */
 export interface DiscordSyncSettings {
     /**
-     * @generated from protobuf field: bool user_info_sync = 1;
+     * @generated from protobuf field: bool dry_run = 1;
+     */
+    dryRun: boolean;
+    /**
+     * @generated from protobuf field: bool user_info_sync = 2;
      */
     userInfoSync: boolean;
     /**
-     * @generated from protobuf field: resources.users.UserInfoSyncSettings user_info_sync_settings = 2;
+     * @generated from protobuf field: resources.users.UserInfoSyncSettings user_info_sync_settings = 3;
      */
     userInfoSyncSettings?: UserInfoSyncSettings;
     /**
-     * @generated from protobuf field: bool status_log = 3;
+     * @generated from protobuf field: bool status_log = 4;
      */
     statusLog: boolean;
     /**
-     * @generated from protobuf field: resources.users.StatusLogSettings status_log_settings = 4;
+     * @generated from protobuf field: resources.users.StatusLogSettings status_log_settings = 5;
      */
     statusLogSettings?: StatusLogSettings;
     /**
-     * @generated from protobuf field: bool jobs_absence = 5;
+     * @generated from protobuf field: bool jobs_absence = 6;
      */
     jobsAbsence: boolean;
     /**
-     * @generated from protobuf field: resources.users.JobsAbsenceSettings jobs_absence_settings = 6;
+     * @generated from protobuf field: resources.users.JobsAbsenceSettings jobs_absence_settings = 7;
      */
     jobsAbsenceSettings?: JobsAbsenceSettings;
     /**
-     * @generated from protobuf field: resources.users.GroupSyncSettings group_sync_settings = 7;
+     * @generated from protobuf field: resources.users.GroupSyncSettings group_sync_settings = 8;
      */
     groupSyncSettings?: GroupSyncSettings;
 }
@@ -533,17 +537,19 @@ export const QuickButtons = new QuickButtons$Type();
 class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
     constructor() {
         super("resources.users.DiscordSyncSettings", [
-            { no: 1, name: "user_info_sync", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "user_info_sync_settings", kind: "message", T: () => UserInfoSyncSettings },
-            { no: 3, name: "status_log", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "status_log_settings", kind: "message", T: () => StatusLogSettings },
-            { no: 5, name: "jobs_absence", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings },
-            { no: 7, name: "group_sync_settings", kind: "message", T: () => GroupSyncSettings }
+            { no: 1, name: "dry_run", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 2, name: "user_info_sync", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "user_info_sync_settings", kind: "message", T: () => UserInfoSyncSettings },
+            { no: 4, name: "status_log", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "status_log_settings", kind: "message", T: () => StatusLogSettings },
+            { no: 6, name: "jobs_absence", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings },
+            { no: 8, name: "group_sync_settings", kind: "message", T: () => GroupSyncSettings }
         ]);
     }
     create(value?: PartialMessage<DiscordSyncSettings>): DiscordSyncSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.dryRun = false;
         message.userInfoSync = false;
         message.statusLog = false;
         message.jobsAbsence = false;
@@ -556,25 +562,28 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool user_info_sync */ 1:
+                case /* bool dry_run */ 1:
+                    message.dryRun = reader.bool();
+                    break;
+                case /* bool user_info_sync */ 2:
                     message.userInfoSync = reader.bool();
                     break;
-                case /* resources.users.UserInfoSyncSettings user_info_sync_settings */ 2:
+                case /* resources.users.UserInfoSyncSettings user_info_sync_settings */ 3:
                     message.userInfoSyncSettings = UserInfoSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.userInfoSyncSettings);
                     break;
-                case /* bool status_log */ 3:
+                case /* bool status_log */ 4:
                     message.statusLog = reader.bool();
                     break;
-                case /* resources.users.StatusLogSettings status_log_settings */ 4:
+                case /* resources.users.StatusLogSettings status_log_settings */ 5:
                     message.statusLogSettings = StatusLogSettings.internalBinaryRead(reader, reader.uint32(), options, message.statusLogSettings);
                     break;
-                case /* bool jobs_absence */ 5:
+                case /* bool jobs_absence */ 6:
                     message.jobsAbsence = reader.bool();
                     break;
-                case /* resources.users.JobsAbsenceSettings jobs_absence_settings */ 6:
+                case /* resources.users.JobsAbsenceSettings jobs_absence_settings */ 7:
                     message.jobsAbsenceSettings = JobsAbsenceSettings.internalBinaryRead(reader, reader.uint32(), options, message.jobsAbsenceSettings);
                     break;
-                case /* resources.users.GroupSyncSettings group_sync_settings */ 7:
+                case /* resources.users.GroupSyncSettings group_sync_settings */ 8:
                     message.groupSyncSettings = GroupSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.groupSyncSettings);
                     break;
                 default:
@@ -589,27 +598,30 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
         return message;
     }
     internalBinaryWrite(message: DiscordSyncSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool user_info_sync = 1; */
+        /* bool dry_run = 1; */
+        if (message.dryRun !== false)
+            writer.tag(1, WireType.Varint).bool(message.dryRun);
+        /* bool user_info_sync = 2; */
         if (message.userInfoSync !== false)
-            writer.tag(1, WireType.Varint).bool(message.userInfoSync);
-        /* resources.users.UserInfoSyncSettings user_info_sync_settings = 2; */
+            writer.tag(2, WireType.Varint).bool(message.userInfoSync);
+        /* resources.users.UserInfoSyncSettings user_info_sync_settings = 3; */
         if (message.userInfoSyncSettings)
-            UserInfoSyncSettings.internalBinaryWrite(message.userInfoSyncSettings, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* bool status_log = 3; */
+            UserInfoSyncSettings.internalBinaryWrite(message.userInfoSyncSettings, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* bool status_log = 4; */
         if (message.statusLog !== false)
-            writer.tag(3, WireType.Varint).bool(message.statusLog);
-        /* resources.users.StatusLogSettings status_log_settings = 4; */
+            writer.tag(4, WireType.Varint).bool(message.statusLog);
+        /* resources.users.StatusLogSettings status_log_settings = 5; */
         if (message.statusLogSettings)
-            StatusLogSettings.internalBinaryWrite(message.statusLogSettings, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* bool jobs_absence = 5; */
+            StatusLogSettings.internalBinaryWrite(message.statusLogSettings, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool jobs_absence = 6; */
         if (message.jobsAbsence !== false)
-            writer.tag(5, WireType.Varint).bool(message.jobsAbsence);
-        /* resources.users.JobsAbsenceSettings jobs_absence_settings = 6; */
+            writer.tag(6, WireType.Varint).bool(message.jobsAbsence);
+        /* resources.users.JobsAbsenceSettings jobs_absence_settings = 7; */
         if (message.jobsAbsenceSettings)
-            JobsAbsenceSettings.internalBinaryWrite(message.jobsAbsenceSettings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.GroupSyncSettings group_sync_settings = 7; */
+            JobsAbsenceSettings.internalBinaryWrite(message.jobsAbsenceSettings, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.GroupSyncSettings group_sync_settings = 8; */
         if (message.groupSyncSettings)
-            GroupSyncSettings.internalBinaryWrite(message.groupSyncSettings, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            GroupSyncSettings.internalBinaryWrite(message.groupSyncSettings, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

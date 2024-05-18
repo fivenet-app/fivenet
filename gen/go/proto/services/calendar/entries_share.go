@@ -2,6 +2,7 @@ package calendar
 
 import (
 	"context"
+	"errors"
 	"fmt"
 	"slices"
 
@@ -18,6 +19,7 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 )
 
 func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntryRequest) (*ShareCalendarEntryResponse, error) {
@@ -36,13 +38,16 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
+	if entry == nil {
+		return nil, errorscalendar.ErrNoPerms
+	}
 
 	check, err := s.checkIfUserHasAccessToCalendar(ctx, entry.CalendarId, userInfo, calendar.AccessLevel_ACCESS_LEVEL_SHARE, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 	if !check {
-		return nil, errswrap.NewError(err, errorscalendar.ErrNoPerms)
+		return nil, errorscalendar.ErrNoPerms
 	}
 
 	if entry.Closed {
@@ -56,36 +61,6 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 		return resp, nil
 	}
 
-	userIds := make([]jet.Expression, len(req.UserIds))
-	for i := 0; i < len(req.UserIds); i++ {
-		userIds[i] = jet.Int32(req.UserIds[i])
-	}
-
-	stmt := tCalendarRSVP.
-		SELECT(
-			tCalendarRSVP.UserID,
-		).
-		FROM(tCalendarRSVP).
-		WHERE(jet.AND(
-			tCalendarRSVP.EntryID.EQ(jet.Uint64(req.EntryId)),
-			tCalendarRSVP.UserID.IN(userIds...),
-		))
-
-	var rsvps []*calendar.CalendarEntryRSVP
-	if err := stmt.QueryContext(ctx, s.db, &rsvps); err != nil {
-		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-	}
-
-	newUsers := []int32{}
-	if len(rsvps) == 0 {
-		newUsers = append(newUsers, req.UserIds...)
-	}
-	for _, rsvp := range rsvps {
-		if !slices.Contains(req.UserIds, rsvp.UserId) {
-			newUsers = append(newUsers, rsvp.UserId)
-		}
-	}
-
 	// Begin transaction
 	tx, err := s.db.BeginTx(ctx, nil)
 	if err != nil {
@@ -94,26 +69,9 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 	// Defer a rollback in case anything fails
 	defer tx.Rollback()
 
-	tCalendarRSVP := table.FivenetCalendarRsvp
-	insertStmt := tCalendarRSVP.
-		INSERT(
-			tCalendarRSVP.EntryID,
-			tCalendarRSVP.UserID,
-			tCalendarRSVP.Response,
-		)
-
-	for i := 0; i < len(req.UserIds); i++ {
-		insertStmt = insertStmt.VALUES(
-			req.EntryId,
-			req.UserIds[i],
-			calendar.RsvpResponses_RSVP_RESPONSES_INVITED,
-		)
-	}
-
-	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
-		if !dbutils.IsDuplicateError(err) {
-			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
-		}
+	newUsers, err := s.shareCalendarEntry(ctx, tx, req.EntryId, req.UserIds)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 	}
 
 	// Commit the transaction
@@ -130,6 +88,64 @@ func (s *Server) ShareCalendarEntry(ctx context.Context, req *ShareCalendarEntry
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
 	return resp, nil
+}
+
+func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint64, inUserIds []int32) ([]int32, error) {
+	userIds := make([]jet.Expression, len(inUserIds))
+	for i := 0; i < len(inUserIds); i++ {
+		userIds[i] = jet.Int32(inUserIds[i])
+	}
+
+	stmt := tCalendarRSVP.
+		SELECT(
+			tCalendarRSVP.UserID,
+		).
+		FROM(tCalendarRSVP).
+		WHERE(jet.AND(
+			tCalendarRSVP.EntryID.EQ(jet.Uint64(entryId)),
+			tCalendarRSVP.UserID.IN(userIds...),
+		))
+
+	var rsvps []*calendar.CalendarEntryRSVP
+	if err := stmt.QueryContext(ctx, tx, &rsvps); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+	}
+
+	newUsers := []int32{}
+	if len(rsvps) == 0 {
+		newUsers = append(newUsers, inUserIds...)
+	}
+	for _, rsvp := range rsvps {
+		if !slices.Contains(inUserIds, rsvp.UserId) {
+			newUsers = append(newUsers, rsvp.UserId)
+		}
+	}
+
+	tCalendarRSVP := table.FivenetCalendarRsvp
+	insertStmt := tCalendarRSVP.
+		INSERT(
+			tCalendarRSVP.EntryID,
+			tCalendarRSVP.UserID,
+			tCalendarRSVP.Response,
+		)
+
+	for i := 0; i < len(userIds); i++ {
+		insertStmt = insertStmt.VALUES(
+			entryId,
+			userIds[i],
+			calendar.RsvpResponses_RSVP_RESPONSES_INVITED,
+		)
+	}
+
+	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
+		if !dbutils.IsDuplicateError(err) {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
+		}
+	}
+
+	return newUsers, nil
 }
 
 func (s *Server) sendShareNotifications(ctx context.Context, sourceUserId int32, entry *calendar.CalendarEntry, targetUsers []int32) error {
