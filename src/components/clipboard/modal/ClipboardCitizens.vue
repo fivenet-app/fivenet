@@ -5,15 +5,6 @@ import { useNotificatorStore } from '~/store/notificator';
 import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const clipboardStore = useClipboardStore();
-const notifications = useNotificatorStore();
-
-const { users, activeStack } = storeToRefs(clipboardStore);
-
-const emit = defineEmits<{
-    (e: 'statisfied', payload: boolean): void;
-}>();
-
 const props = withDefaults(
     defineProps<{
         submit?: boolean;
@@ -21,11 +12,21 @@ const props = withDefaults(
         specs?: ObjectSpecs;
     }>(),
     {
-        submit: false,
+        submit: undefined,
         showSelect: true,
         specs: undefined,
     },
 );
+
+const emits = defineEmits<{
+    (e: 'statisfied', payload: boolean): void;
+    (e: 'close'): void;
+}>();
+
+const clipboardStore = useClipboardStore();
+const notifications = useNotificatorStore();
+
+const { users, activeStack } = storeToRefs(clipboardStore);
 
 const selected = ref<ClipboardUser[]>([]);
 
@@ -43,14 +44,14 @@ async function select(item: ClipboardUser): Promise<void> {
     const selectedLength = selected.value.length;
     if (props.specs !== undefined) {
         if (props.specs.min !== undefined && selectedLength >= props.specs.min) {
-            emit('statisfied', true);
+            emits('statisfied', true);
         } else if (props.specs.max !== undefined && selectedLength === props.specs.max) {
-            emit('statisfied', true);
+            emits('statisfied', true);
         } else {
-            emit('statisfied', false);
+            emits('statisfied', false);
         }
     } else {
-        emit('statisfied', true);
+        emits('statisfied', true);
     }
 }
 
@@ -79,9 +80,9 @@ async function removeAll(): Promise<void> {
     }
 
     if (props.specs !== undefined) {
-        emit('statisfied', false);
+        emits('statisfied', false);
     } else {
-        emit('statisfied', true);
+        emits('statisfied', true);
     }
 
     notifications.add({
@@ -106,10 +107,20 @@ watch(props, async (newVal) => {
 
 <template>
     <h3 class="py-1 font-medium">{{ $t('common.citizen', 2) }}</h3>
+
     <DataNoDataBlock
         v-if="users?.length === 0"
         icon="i-mdi-account-multiple"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.citizen', 2)])"
+        :focus="
+            submit === undefined
+                ? async () => {
+                      navigateTo({ name: 'citizens' });
+                      $emit('close');
+                  }
+                : undefined
+        "
+        padding="p-2"
     />
     <table v-else class="min-w-full divide-y divide-gray-700">
         <thead>
@@ -132,25 +143,27 @@ watch(props, async (newVal) => {
         <tbody class="divide-y divide-gray-800">
             <tr v-for="item in users" :key="item.userId">
                 <td v-if="showSelect" class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
-                    <template v-if="specs && specs.max === 1">
-                        <UButton block :color="selected.includes(item) ? 'gray' : 'primary'" @click="select(item)">
-                            {{
-                                !selected.includes(item)
-                                    ? $t('common.select', 1).toUpperCase()
-                                    : $t('common.select', 2).toUpperCase()
-                            }}
-                        </UButton>
-                    </template>
-                    <template v-else>
-                        <UCheckbox
-                            :key="item.userId"
-                            v-model="selected"
-                            name="selected"
-                            :checked="selected.includes(item)"
-                            :value="item"
-                            @click="select(item)"
-                        />
-                    </template>
+                    <UButton
+                        v-if="specs && specs.max === 1"
+                        block
+                        :color="selected.includes(item) ? 'gray' : 'primary'"
+                        @click="select(item)"
+                    >
+                        {{
+                            !selected.includes(item)
+                                ? $t('common.select', 1).toUpperCase()
+                                : $t('common.select', 2).toUpperCase()
+                        }}
+                    </UButton>
+                    <UCheckbox
+                        v-else
+                        :key="item.userId"
+                        v-model="selected"
+                        name="selected"
+                        :checked="selected.includes(item)"
+                        :value="item"
+                        @click="select(item)"
+                    />
                 </td>
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     {{ item.firstname }} {{ item.lastname }}

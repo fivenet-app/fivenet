@@ -23,9 +23,9 @@ const clipboardStore = useClipboardStore();
             </template>
 
             <div>
-                <ClipboardCitizens />
-                <ClipboardVehicles />
-                <ClipboardDocuments />
+                <ClipboardCitizens @close="isOpen = false" />
+                <ClipboardVehicles @close="isOpen = false" />
+                <ClipboardDocuments @close="isOpen = false" />
             </div>
 
             <template #footer>
