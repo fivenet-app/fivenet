@@ -1070,7 +1070,8 @@
             "reply_all": "Allen Antworten",
             "forward": "Weiterleiten",
             "send": "Absenden",
-            "reply_to": "{name} antworten"
+            "reply_to": "{name} antworten",
+            "create_thread": "Thread erstellen"
         }
     },
     "notifications": {
