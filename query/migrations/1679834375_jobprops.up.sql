@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_job_props` (
   `discord_guild_id` varchar(128) DEFAULT NULL,
   `discord_last_sync` datetime(3) DEFAULT NULL,
   `discord_sync_settings` longtext DEFAULT NULL,
+  `discord_sync_diff` longtext DEFAULT NULL,
   `motd` text DEFAULT NULL,
   `logo_url` varchar(128) DEFAULT NULL,
   `settings` longtext DEFAULT NULL,

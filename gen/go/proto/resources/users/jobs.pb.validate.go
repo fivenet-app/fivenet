@@ -546,6 +546,39 @@ func (m *JobProps) validate(all bool) error {
 
 	}
 
+	if m.DiscordSyncDiff != nil {
+
+		if all {
+			switch v := interface{}(m.GetDiscordSyncDiff()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, JobPropsValidationError{
+						field:  "DiscordSyncDiff",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, JobPropsValidationError{
+						field:  "DiscordSyncDiff",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDiscordSyncDiff()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return JobPropsValidationError{
+					field:  "DiscordSyncDiff",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Motd != nil {
 
 		if utf8.RuneCountInString(m.GetMotd()) > 1024 {
@@ -1002,6 +1035,110 @@ var _ interface {
 	ErrorName() string
 } = DiscordSyncSettingsValidationError{}
 
+// Validate checks the field values on DiscordSyncDiff with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DiscordSyncDiff) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DiscordSyncDiff with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DiscordSyncDiffMultiError, or nil if none found.
+func (m *DiscordSyncDiff) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DiscordSyncDiff) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Old
+
+	// no validation rules for New
+
+	if len(errors) > 0 {
+		return DiscordSyncDiffMultiError(errors)
+	}
+
+	return nil
+}
+
+// DiscordSyncDiffMultiError is an error wrapping multiple validation errors
+// returned by DiscordSyncDiff.ValidateAll() if the designated constraints
+// aren't met.
+type DiscordSyncDiffMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DiscordSyncDiffMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DiscordSyncDiffMultiError) AllErrors() []error { return m }
+
+// DiscordSyncDiffValidationError is the validation error returned by
+// DiscordSyncDiff.Validate if the designated constraints aren't met.
+type DiscordSyncDiffValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DiscordSyncDiffValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DiscordSyncDiffValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DiscordSyncDiffValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DiscordSyncDiffValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DiscordSyncDiffValidationError) ErrorName() string { return "DiscordSyncDiffValidationError" }
+
+// Error satisfies the builtin error interface
+func (e DiscordSyncDiffValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDiscordSyncDiff.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DiscordSyncDiffValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DiscordSyncDiffValidationError{}
+
 // Validate checks the field values on UserInfoSyncSettings with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -1026,10 +1163,10 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 
 	// no validation rules for EmployeeRoleEnabled
 
-	if utf8.RuneCountInString(m.GetEmployeeRoleFormat()) > 48 {
+	if utf8.RuneCountInString(m.GetEmployeeRoleFormat()) > 64 {
 		err := UserInfoSyncSettingsValidationError{
 			field:  "EmployeeRoleFormat",
-			reason: "value length must be at most 48 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
@@ -1037,10 +1174,10 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetGradeRoleFormat()) > 48 {
+	if utf8.RuneCountInString(m.GetGradeRoleFormat()) > 64 {
 		err := UserInfoSyncSettingsValidationError{
 			field:  "GradeRoleFormat",
-			reason: "value length must be at most 48 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
@@ -1061,15 +1198,51 @@ func (m *UserInfoSyncSettings) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetUnemployedRoleName()) > 48 {
+	if utf8.RuneCountInString(m.GetUnemployedRoleName()) > 64 {
 		err := UserInfoSyncSettingsValidationError{
 			field:  "UnemployedRoleName",
-			reason: "value length must be at most 48 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	// no validation rules for SyncNicknames
+
+	for idx, item := range m.GetGroupMapping() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, UserInfoSyncSettingsValidationError{
+						field:  fmt.Sprintf("GroupMapping[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, UserInfoSyncSettingsValidationError{
+						field:  fmt.Sprintf("GroupMapping[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return UserInfoSyncSettingsValidationError{
+					field:  fmt.Sprintf("GroupMapping[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -1151,6 +1324,138 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UserInfoSyncSettingsValidationError{}
+
+// Validate checks the field values on GroupMapping with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GroupMapping) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GroupMapping with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GroupMappingMultiError, or
+// nil if none found.
+func (m *GroupMapping) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GroupMapping) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if utf8.RuneCountInString(m.GetName()) > 64 {
+		err := GroupMappingValidationError{
+			field:  "Name",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetFromGrade() <= 0 {
+		err := GroupMappingValidationError{
+			field:  "FromGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.GetToGrade() <= 0 {
+		err := GroupMappingValidationError{
+			field:  "ToGrade",
+			reason: "value must be greater than 0",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if len(errors) > 0 {
+		return GroupMappingMultiError(errors)
+	}
+
+	return nil
+}
+
+// GroupMappingMultiError is an error wrapping multiple validation errors
+// returned by GroupMapping.ValidateAll() if the designated constraints aren't met.
+type GroupMappingMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GroupMappingMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GroupMappingMultiError) AllErrors() []error { return m }
+
+// GroupMappingValidationError is the validation error returned by
+// GroupMapping.Validate if the designated constraints aren't met.
+type GroupMappingValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GroupMappingValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GroupMappingValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GroupMappingValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GroupMappingValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GroupMappingValidationError) ErrorName() string { return "GroupMappingValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GroupMappingValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGroupMapping.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GroupMappingValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GroupMappingValidationError{}
 
 // Validate checks the field values on StatusLogSettings with the rules defined
 // in the proto definition for this message. If any rules are violated, the
@@ -1278,10 +1583,10 @@ func (m *JobsAbsenceSettings) validate(all bool) error {
 
 	var errors []error
 
-	if utf8.RuneCountInString(m.GetAbsenceRole()) > 48 {
+	if utf8.RuneCountInString(m.GetAbsenceRole()) > 64 {
 		err := JobsAbsenceSettingsValidationError{
 			field:  "AbsenceRole",
-			reason: "value length must be at most 48 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err

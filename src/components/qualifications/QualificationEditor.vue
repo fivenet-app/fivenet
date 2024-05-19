@@ -51,7 +51,10 @@ const schema = z.object({
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.string().min(20).max(750000),
     closed: z.boolean(),
-    discordSettings: z.custom<QualificationDiscordSettings>(),
+    discordSettings: z.object({
+        syncEnabled: z.boolean(),
+        roleName: z.string().max(64).optional(),
+    }),
 });
 
 type Schema = z.output<typeof schema>;

@@ -449,7 +449,8 @@
         "unread": "Unread",
         "archive": "Archive",
         "paste": "Paste",
-        "messenger": "Messenger"
+        "messenger": "Messenger",
+        "diff": "Diff"
     },
     "components": {
         "partials": {
@@ -585,7 +586,15 @@
                         "grade_role_format": "Grade Role format (%grade% will be replaced by the grade number, %grade_label% will be replaced by the grade's label)",
                         "unemployed_enabled": "Manage the unemployed role",
                         "unemployed_mode": "Mode for handling unemployed users",
-                        "unemployed_role_name": "Unemployed Role Name"
+                        "unemployed_role_name": "Unemployed Role Name",
+                        "sync_nicknames" : "Sync Nicknames",
+                        "group_mapping": {
+                            "title": "Group role mapping",
+                            "description": "Map one or more grades to a \"group\" role.",
+                            "name": "Role name",
+                            "from_grade": "From Grade",
+                            "to_grade": "To Grade"
+                        }
                     },
                     "status_log": "Status Log",
                     "status_log_settings": {

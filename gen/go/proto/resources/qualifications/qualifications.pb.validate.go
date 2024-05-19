@@ -1446,10 +1446,10 @@ func (m *QualificationDiscordSettings) validate(all bool) error {
 
 	if m.RoleName != nil {
 
-		if utf8.RuneCountInString(m.GetRoleName()) > 50 {
+		if utf8.RuneCountInString(m.GetRoleName()) > 64 {
 			err := QualificationDiscordSettingsValidationError{
 				field:  "RoleName",
-				reason: "value length must be at most 50 runes",
+				reason: "value length must be at most 64 runes",
 			}
 			if !all {
 				return err

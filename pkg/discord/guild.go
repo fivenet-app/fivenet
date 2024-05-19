@@ -5,65 +5,60 @@ import (
 	"errors"
 	"fmt"
 	"sync"
-	"sync/atomic"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/modules"
+	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v3"
 )
 
-type Guild struct {
-	Job string `alias:"job"`
-	ID  string `alias:"id"`
+const discordLogsEmbedChunkSize = 5
 
-	mutex sync.Mutex
-	ready atomic.Bool
+type Guild struct {
+	mutex  sync.Mutex
+	ctx    context.Context
+	cancel context.CancelFunc
+
+	job string
+	id  string
 
 	logger  *zap.Logger
 	bot     *Bot
 	guild   *discordgo.Guild
-	modules map[string]modules.Module
+	modules []string
 }
 
-func NewGuild(b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
-	ms := map[string]modules.Module{}
+func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
+	ctx, cancel := context.WithCancel(ctx)
 
-	base := modules.NewBaseModule(b.ctx, b.logger.Named("module").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
-		b.db, b.discord, guild, job, b.cfg, b.enricher)
-
-	gModules := []string{}
-	if b.cfg.UserInfoSync.Enabled {
-		gModules = append(gModules, "userinfo")
-	}
+	modules := []string{}
 	if b.cfg.GroupSync.Enabled {
-		gModules = append(gModules, "groupsync")
+		modules = append(modules, "groupsync")
 	}
-
-	var err error
-	for _, name := range gModules {
-		ms[name], err = modules.GetModule(name, base)
-		if err != nil {
-			return nil, err
-		}
+	if b.cfg.UserInfoSync.Enabled {
+		modules = append(modules, "userinfo")
 	}
 
 	return &Guild{
-		Job: job,
-		ID:  guild.ID,
+		mutex:  sync.Mutex{},
+		ctx:    ctx,
+		cancel: cancel,
 
-		mutex: sync.Mutex{},
-		ready: atomic.Bool{},
+		job: job,
+		id:  guild.ID,
 
 		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
 		bot:     b,
 		guild:   guild,
-		modules: ms,
+		modules: modules,
 	}, nil
 }
 
@@ -74,15 +69,6 @@ func (g *Guild) setup() error {
 		return fmt.Errorf("failed to retrieve guild info from discord api. %w", err)
 	}
 
-	// Make sure that the guild roles are cached in state
-	if len(g.guild.Roles) == 0 {
-		if _, err := g.bot.discord.GuildRoles(g.guild.ID); err != nil {
-			return fmt.Errorf("failed to retrieve roles for guild during setup. %w", err)
-		}
-	}
-
-	g.ready.Store(true)
-
 	return nil
 }
 
@@ -92,22 +78,17 @@ func (g *Guild) Run() error {
 
 	start := time.Now()
 
-	if !g.ready.Load() {
-		g.logger.Debug("discord guild is not ready yet, running setup")
-
-		if err := g.setup(); err != nil {
-			return err
-		}
-	}
-
 	if g.guild.Unavailable {
 		g.logger.Warn("discord guild is unavailable, skipping sync run")
 		return nil
 	}
 
-	settings, err := g.getSyncSettings(g.bot.ctx, g.Job)
+	settings, planDiff, err := g.getSyncSettings(g.ctx, g.job)
 	if err != nil {
 		return err
+	}
+	if planDiff == nil {
+		planDiff = &users.DiscordSyncDiff{}
 	}
 
 	errs := multierr.Combine()
@@ -117,16 +98,48 @@ func (g *Guild) Run() error {
 		}
 	}
 
-	logs := []*discordgo.MessageEmbed{}
-	for key, module := range g.modules {
-		g.logger.Debug("running discord guild module", zap.String("dc_module", key))
+	base := modules.NewBaseModule(g.logger.Named("module").With(zap.String("job", g.job), zap.String("discord_guild_id", g.guild.ID)),
+		g.bot.db, g.bot.discord, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher, settings)
 
-		mLogs, err := module.Run(settings)
+	plan := types.Plan{
+		DryRun: settings.DryRun,
+		Users:  types.Users{},
+	}
+	logs := []*discordgo.MessageEmbed{}
+	for _, module := range g.modules {
+		g.logger.Debug("running discord guild module", zap.String("dc_module", module))
+
+		m, err := modules.GetModule(module, base)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
+			continue
+		}
+
+		p, mLogs, err := m.Plan(g.ctx)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
+			continue
+		}
+
+		plan.Merge(p)
+		logs = append(logs, mLogs...)
+	}
+
+	out, err := yaml.Marshal(plan)
+	if err != nil {
+		errs = multierr.Append(errs, err)
+	}
+	if planDiff.New != string(out) {
+		planDiff.Old = planDiff.New
+		planDiff.New = string(out)
+	}
+
+	if !plan.DryRun {
+		pLogs, err := plan.Apply(g.ctx, g.bot.discord, g.guild.ID)
+		logs = append(logs, pLogs...)
 		if err != nil {
 			errs = multierr.Append(errs, err)
 		}
-
-		logs = append(logs, mLogs...)
 	}
 
 	if settings.IsStatusLogEnabled() {
@@ -139,15 +152,18 @@ func (g *Guild) Run() error {
 		}
 	}
 
+	if err := g.setLastSyncInterval(g.ctx, g.job, planDiff); err != nil {
+		g.logger.Error("error setting job props last sync time", zap.Error(err))
+		errs = multierr.Append(errs, err)
+	}
+
 	g.logger.Info("completed sync run")
 
 	return errs
 }
 
-func (g *Guild) Stop() error {
-	g.ready.Store(false)
-
-	return nil
+func (g *Guild) Stop() {
+	g.cancel()
 }
 
 func (g *Guild) sendStartStatusLog(channelId string) error {
@@ -155,20 +171,20 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 	if err != nil {
 		return err
 	}
+	_ = channel
 
-	if _, err := g.bot.discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
-		Type:   discordgo.EmbedTypeRich,
-		Title:  "Starting sync...",
-		Author: embeds.EmbedAuthor,
-		Color:  embeds.ColorInfo,
-	}); err != nil {
-		return err
-	}
+	/*
+		if _, err := g.bot.discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
+			Type:   discordgo.EmbedTypeRich,
+			Title:  "Starting sync...",
+			Author: embeds.EmbedAuthor,
+			Color:  embeds.ColorInfo,
+		}); err != nil {
+			return err
+		}*/
 
 	return nil
 }
-
-const discordLogsEmbedChunkSize = 5
 
 func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) error {
 	if len(logs) == 0 {
@@ -179,19 +195,21 @@ func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) 
 	if err != nil {
 		return err
 	}
+	_ = channel
 
-	// Split logs embeds into chunks
-	for i := 0; i < len(logs); i += discordLogsEmbedChunkSize {
-		end := i + discordLogsEmbedChunkSize
+	/*
+		// Split logs embeds into chunks
+		for i := 0; i < len(logs); i += discordLogsEmbedChunkSize {
+			end := i + discordLogsEmbedChunkSize
 
-		if end > len(logs) {
-			end = len(logs)
-		}
+			if end > len(logs) {
+				end = len(logs)
+			}
 
-		if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs[i:end]); err != nil {
-			return err
-		}
-	}
+			if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs[i:end]); err != nil {
+				return err
+			}
+		}*/
 
 	return nil
 }
@@ -228,10 +246,11 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 	return nil
 }
 
-func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, error) {
+func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, *users.DiscordSyncDiff, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.DiscordSyncSettings,
+			tJobProps.DiscordSyncDiff,
 		).
 		FROM(tJobProps).
 		WHERE(
@@ -242,12 +261,34 @@ func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.Discord
 	var dest users.JobProps
 	if err := stmt.QueryContext(ctx, g.bot.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
+			return nil, nil, err
 		}
 	}
 
 	// Make sure the defaults are set
 	dest.Default(job)
 
-	return dest.DiscordSyncSettings, nil
+	return dest.DiscordSyncSettings, dest.DiscordSyncDiff, nil
+}
+
+func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *users.DiscordSyncDiff) error {
+	tJobProps := table.FivenetJobProps
+	stmt := tJobProps.
+		UPDATE(
+			tJobProps.DiscordLastSync,
+			tJobProps.DiscordSyncDiff,
+		).
+		SET(
+			jet.CURRENT_TIMESTAMP(),
+			pDiff,
+		).
+		WHERE(
+			tJobProps.Job.EQ(jet.String(job)),
+		)
+
+	if _, err := stmt.ExecContext(ctx, g.bot.db); err != nil {
+		return err
+	}
+
+	return nil
 }

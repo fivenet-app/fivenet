@@ -8,6 +8,8 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/zap"
@@ -25,7 +27,7 @@ var Modules = map[string]NewModuleFunc{}
 type NewModuleFunc func(*BaseModule) (Module, error)
 
 type Module interface {
-	Run(settings *users.DiscordSyncSettings) ([]*discordgo.MessageEmbed, error)
+	Plan(ctx context.Context) (*types.Plan, []*discordgo.MessageEmbed, error)
 }
 
 func GetModule(name string, base *BaseModule) (Module, error) {
@@ -41,27 +43,29 @@ func GetModule(name string, base *BaseModule) (Module, error) {
 }
 
 type BaseModule struct {
-	ctx     context.Context
-	logger  *zap.Logger
-	db      *sql.DB
-	discord *discordgo.Session
-	guild   *discordgo.Guild
-	job     string
-	cfg     *config.Discord
-
+	logger   *zap.Logger
+	db       *sql.DB
+	discord  *discordgo.Session
+	guild    *discordgo.Guild
+	job      string
+	cfg      *config.Discord
+	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.Enricher
+
+	settings *users.DiscordSyncSettings
 }
 
-func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *discordgo.Session, guild *discordgo.Guild, job string, cfg *config.Discord, enricher *mstlystcdata.Enricher) *BaseModule {
+func NewBaseModule(logger *zap.Logger, db *sql.DB, discord *discordgo.Session, guild *discordgo.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *users.DiscordSyncSettings) *BaseModule {
 	return &BaseModule{
-		ctx:     ctx,
-		logger:  logger,
-		db:      db,
-		discord: discord,
-		guild:   guild,
-		job:     job,
-		cfg:     cfg,
-
+		logger:   logger,
+		db:       db,
+		discord:  discord,
+		guild:    guild,
+		job:      job,
+		cfg:      cfg,
+		appCfg:   appCfg,
 		enricher: enricher,
+
+		settings: settings,
 	}
 }

@@ -214,7 +214,9 @@
     - [Timestamp](#resources-timestamp-Timestamp)
   
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
+    - [DiscordSyncDiff](#resources-users-DiscordSyncDiff)
     - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
+    - [GroupMapping](#resources-users-GroupMapping)
     - [GroupSyncSettings](#resources-users-GroupSyncSettings)
     - [Job](#resources-users-Job)
     - [JobGrade](#resources-users-JobGrade)
@@ -3721,6 +3723,22 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
+<a name="resources-users-DiscordSyncDiff"></a>
+
+### DiscordSyncDiff
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| old | [string](#string) |  |  |
+| new | [string](#string) |  |  |
+
+
+
+
+
+
 <a name="resources-users-DiscordSyncSettings"></a>
 
 ### DiscordSyncSettings
@@ -3737,6 +3755,23 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | jobs_absence | [bool](#bool) |  |  |
 | jobs_absence_settings | [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings) |  |  |
 | group_sync_settings | [GroupSyncSettings](#resources-users-GroupSyncSettings) |  |  |
+
+
+
+
+
+
+<a name="resources-users-GroupMapping"></a>
+
+### GroupMapping
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| from_grade | [int32](#int32) |  |  |
+| to_grade | [int32](#int32) |  |  |
 
 
 
@@ -3809,6 +3844,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | discord_guild_id | [uint64](#uint64) | optional |  |
 | discord_last_sync | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | discord_sync_settings | [DiscordSyncSettings](#resources-users-DiscordSyncSettings) |  |  |
+| discord_sync_diff | [DiscordSyncDiff](#resources-users-DiscordSyncDiff) | optional |  |
 | motd | [string](#string) | optional |  |
 | logo_url | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | settings | [JobSettings](#resources-users-JobSettings) |  |  |
@@ -3888,6 +3924,8 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | unemployed_enabled | [bool](#bool) |  |  |
 | unemployed_mode | [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode) |  |  |
 | unemployed_role_name | [string](#string) |  |  |
+| sync_nicknames | [bool](#bool) |  |  |
+| group_mapping | [GroupMapping](#resources-users-GroupMapping) | repeated |  |
 
 
 

@@ -2,6 +2,7 @@
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { vMaska } from 'maska';
+import { CodeDiff } from 'v-code-diff';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -40,11 +41,20 @@ const schema = z.object({
         userInfoSync: z.boolean(),
         userInfoSyncSettings: z.object({
             employeeRoleEnabled: z.boolean(),
-            employeeRoleFormat: z.string(),
-            gradeRoleFormat: z.string(),
+            employeeRoleFormat: z.string().max(64),
+            gradeRoleFormat: z.string().max(64),
             unemployedEnabled: z.boolean(),
             unemployedMode: z.nativeEnum(UserInfoSyncUnemployedMode),
-            unemployedRoleName: z.string(),
+            unemployedRoleName: z.string().max(64),
+            syncNicknames: z.boolean(),
+            groupMapping: z
+                .object({
+                    name: z.string().max(64),
+                    fromGrade: z.number(),
+                    toGrade: z.number(),
+                })
+                .array()
+                .max(25),
         }),
         statusLog: z.boolean(),
         statusLogSettings: z.object({
@@ -81,6 +91,8 @@ const state = reactive<Schema>({
             unemployedEnabled: false,
             unemployedMode: UserInfoSyncUnemployedMode.GIVE_ROLE,
             unemployedRoleName: '',
+            syncNicknames: true,
+            groupMapping: [],
         },
         statusLog: false,
         statusLogSettings: {
@@ -119,7 +131,7 @@ async function setJobProps(values: Schema): Promise<void> {
     jobProps.value.livemapMarkerColor = values.livemapMarkerColor;
     jobProps.value.quickButtons = values.quickButtons;
     jobProps.value.radioFrequency = values.radioFrequency;
-    jobProps.value.discordGuildId = values.discordGuildId.trim().length === 0 ? values.discordGuildId : undefined;
+    jobProps.value.discordGuildId = values.discordGuildId.trim().length > 0 ? values.discordGuildId : undefined;
     jobProps.value.discordSyncSettings = values.discordSyncSettings;
     if (values.logoUrl) {
         jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
@@ -659,6 +671,165 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
+                                        name="syncNicknames"
+                                        :label="
+                                            $t(
+                                                'components.rector.job_props.discord_sync_settings.user_info_sync_settings.sync_nicknames',
+                                            )
+                                        "
+                                        class="grid grid-cols-2 items-center gap-2"
+                                        :ui="{ container: '' }"
+                                    >
+                                        <UToggle v-model="state.discordSyncSettings.userInfoSyncSettings.syncNicknames" />
+                                    </UFormGroup>
+
+                                    <UFormGroup
+                                        name="discordSyncSettings.userInfoSyncSettings.groupMapping"
+                                        :label="
+                                            $t(
+                                                'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.title',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.description',
+                                            )
+                                        "
+                                        class="grid grid-cols-2 items-center gap-2"
+                                        :ui="{ container: '' }"
+                                    >
+                                        <div class="flex flex-col gap-1">
+                                            <div
+                                                v-for="(_, idx) in state.discordSyncSettings.userInfoSyncSettings.groupMapping"
+                                                :key="idx"
+                                                class="flex items-center gap-1"
+                                            >
+                                                <div class="flex flex-col gap-1">
+                                                    <UFormGroup
+                                                        :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.name`"
+                                                        :label="
+                                                            $t(
+                                                                'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.name',
+                                                            )
+                                                        "
+                                                        class="flex-1"
+                                                    >
+                                                        <UInput
+                                                            v-model="
+                                                                state.discordSyncSettings.userInfoSyncSettings.groupMapping[idx]
+                                                                    .name
+                                                            "
+                                                            :name="`userInfoSyncSettings.${idx}.name`"
+                                                            type="text"
+                                                            class="w-full"
+                                                            :disabled="!state.discordSyncSettings.userInfoSync"
+                                                            :placeholder="
+                                                                $t(
+                                                                    'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.name',
+                                                                )
+                                                            "
+                                                            maxlength="24"
+                                                            @focusin="focusTablet(true)"
+                                                            @focusout="focusTablet(false)"
+                                                        />
+                                                    </UFormGroup>
+
+                                                    <div class="flex flex-row gap-1">
+                                                        <UFormGroup
+                                                            :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.fromGrade`"
+                                                            :label="
+                                                                $t(
+                                                                    'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.from_grade',
+                                                                )
+                                                            "
+                                                            class="flex-1"
+                                                        >
+                                                            <UInput
+                                                                v-model="
+                                                                    state.discordSyncSettings.userInfoSyncSettings.groupMapping[
+                                                                        idx
+                                                                    ].fromGrade
+                                                                "
+                                                                :name="`userInfoSyncSettings.${idx}.fromGrade`"
+                                                                type="number"
+                                                                class="w-full"
+                                                                :disabled="!state.discordSyncSettings.userInfoSync"
+                                                                :placeholder="
+                                                                    $t(
+                                                                        'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.from_grade',
+                                                                    )
+                                                                "
+                                                                maxlength="24"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+                                                        </UFormGroup>
+                                                        <UFormGroup
+                                                            :name="`discordSyncSettings.userInfoSyncSettings.groupMapping.${idx}.toGrade`"
+                                                            :label="
+                                                                $t(
+                                                                    'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.to_grade',
+                                                                )
+                                                            "
+                                                            class="flex-1"
+                                                        >
+                                                            <UInput
+                                                                v-model="
+                                                                    state.discordSyncSettings.userInfoSyncSettings.groupMapping[
+                                                                        idx
+                                                                    ].toGrade
+                                                                "
+                                                                :name="`userInfoSyncSettings.${idx}.toGrade`"
+                                                                type="number"
+                                                                class="w-full"
+                                                                :disabled="!state.discordSyncSettings.userInfoSync"
+                                                                :placeholder="
+                                                                    $t(
+                                                                        'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.to_grade',
+                                                                    )
+                                                                "
+                                                                maxlength="24"
+                                                                @focusin="focusTablet(true)"
+                                                                @focusout="focusTablet(false)"
+                                                            />
+                                                        </UFormGroup>
+                                                    </div>
+                                                </div>
+
+                                                <UButton
+                                                    :ui="{ rounded: 'rounded-full' }"
+                                                    :disabled="!canSubmit"
+                                                    icon="i-mdi-close"
+                                                    @click="
+                                                        state.discordSyncSettings?.userInfoSyncSettings.groupMapping.splice(
+                                                            idx,
+                                                            1,
+                                                        )
+                                                    "
+                                                />
+                                            </div>
+                                        </div>
+
+                                        <UButton
+                                            :ui="{ rounded: 'rounded-full' }"
+                                            :disabled="!canSubmit"
+                                            :class="
+                                                state.discordSyncSettings?.userInfoSyncSettings.groupMapping.length
+                                                    ? 'mt-2'
+                                                    : ''
+                                            "
+                                            icon="i-mdi-plus"
+                                            @click="
+                                                state.discordSyncSettings?.userInfoSyncSettings.groupMapping.push({
+                                                    name: '',
+                                                    fromGrade: 1,
+                                                    toGrade: 1,
+                                                })
+                                            "
+                                        />
+                                    </UFormGroup>
+
+                                    <UFormGroup
                                         name="userInfoSync"
                                         :label="
                                             $t(
@@ -713,6 +884,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </UDashboardSection>
 
+                            <UDashboardSection v-if="jobProps.discordSyncDiff">
+                                <UAccordion
+                                    :items="[{ label: $t('common.diff'), slot: 'diff', icon: 'i-mdi-difference-left' }]"
+                                >
+                                    <template #diff>
+                                        <div>
+                                            <CodeDiff
+                                                theme="dark"
+                                                :old-string="jobProps.discordSyncDiff?.old ?? ''"
+                                                :new-string="jobProps.discordSyncDiff?.new ?? ''"
+                                                output-format="side-by-side"
+                                                hide-stat
+                                                hide-header
+                                                trim
+                                            />
+                                        </div>
+                                    </template>
+                                </UAccordion>
+                            </UDashboardSection>
+
                             <UDashboardSection
                                 v-if="jobProps.discordSyncSettings?.groupSyncSettings"
                                 :title="$t('components.rector.job_props.discord_sync_settings.group_sync_settings.title')"
@@ -741,13 +932,15 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :key="idx"
                                             class="flex items-center gap-1"
                                         >
-                                            <UFormGroup :name="`citizenAttributes.list.${idx}.name`" class="flex-1">
+                                            <UFormGroup
+                                                :name="`discordSyncSettings.groupSyncSettings.ignoredRoleIds.${idx}.name`"
+                                                class="flex-1"
+                                            >
                                                 <UInput
                                                     v-model="state.discordSyncSettings.groupSyncSettings.ignoredRoleIds[idx]"
                                                     :name="`groupSyncSettingsIgnoredIds.${idx}`"
                                                     type="text"
                                                     class="w-full"
-                                                    :disabled="!state.discordSyncSettings.userInfoSync"
                                                     :placeholder="
                                                         $t(
                                                             'components.rector.job_props.discord_sync_settings.group_sync_settings.ignored_role_ids.field',

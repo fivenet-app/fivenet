@@ -3,6 +3,7 @@ package discord
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"slices"
 	"sync"
@@ -17,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
 	"github.com/puzpuzpuz/xsync/v3"
@@ -68,7 +70,8 @@ var (
 type BotParams struct {
 	fx.In
 
-	LC fx.Lifecycle
+	LC         fx.Lifecycle
+	Shutdowner fx.Shutdowner
 
 	Logger    *zap.Logger
 	TP        *tracesdk.TracerProvider
@@ -137,7 +140,15 @@ func NewBot(p BotParams) (*Bot, error) {
 		}
 
 		go func() {
-			b.Sync()
+			b.logger.Info("sleeping 5 seconds before running first discord sync")
+			time.Sleep(5 * time.Second)
+
+			if err := b.sync(); err != nil {
+				b.logger.Error("error from discord bot sync loop", zap.Error(err))
+				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
+				}
+			}
 		}()
 
 		return nil
@@ -164,8 +175,10 @@ func (b *Bot) start(ctx context.Context) error {
 		ready.Store(true)
 	})
 
-	b.discord.AddHandler(func(s *discordgo.Session, i *discordgo.GuildCreate) {
-		b.logger.Info("discord server joined", zap.String("discord_guild_id", i.ID))
+	b.discord.AddHandler(func(s *discordgo.Session, g *discordgo.GuildCreate) {
+		b.logger.Info("discord server joined", zap.String("discord_guild_id", g.ID))
+
+		b.discord.RequestGuildMembers(g.ID, "", 0, "", false)
 	})
 
 	if err := b.discord.Open(); err != nil {
@@ -180,6 +193,10 @@ func (b *Bot) start(ctx context.Context) error {
 
 	for {
 		if b.discord.State.Ready.Version > 0 && ready.Load() {
+			if err := b.refreshBotUserGuilds(); err != nil {
+				return fmt.Errorf("failed to refresh bot user guilds. %w", err)
+			}
+
 			return b.setBotPresence()
 		}
 
@@ -219,7 +236,7 @@ func (b *Bot) setBotPresence() error {
 	return nil
 }
 
-func (b *Bot) refreshBotGuilds() error {
+func (b *Bot) refreshBotUserGuilds() error {
 	usr, err := b.discord.User("@me")
 	if err != nil {
 		return fmt.Errorf("error obtaining account details: %w", err)
@@ -229,57 +246,41 @@ func (b *Bot) refreshBotGuilds() error {
 	return nil
 }
 
-func (b *Bot) Sync() error {
-	b.logger.Info("sleeping 5 seconds before running first discord sync")
-	time.Sleep(5 * time.Second)
-
-	func() {
-		ctx, span := b.tracer.Start(b.ctx, "discord_bot")
-		defer span.End()
-
-		if err := b.runSync(ctx); err != nil {
-			b.logger.Error("failed to sync roles", zap.Error(err))
-		}
-	}()
-
+func (b *Bot) sync() error {
 	for {
-		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
+		b.logger.Info("running discord sync")
+		func() {
+			ctx, span := b.tracer.Start(b.ctx, "discord_bot")
+			defer span.End()
 
+			if err := b.runSync(ctx); err != nil {
+				b.logger.Error("failed to sync discord", zap.Error(err))
+			}
+		}()
+
+		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
 		select {
 		case <-b.ctx.Done():
 			return nil
 
 		case <-time.After(syncInterval):
-			b.logger.Info("running discord sync")
-			func() {
-				ctx, span := b.tracer.Start(b.ctx, "discord_bot")
-				defer span.End()
-
-				if err := b.runSync(ctx); err != nil {
-					b.logger.Error("failed to sync discord", zap.Error(err))
-				}
-			}()
 		}
 	}
 }
 
 // getGuilds Each guild is effectively associated with a Job via the JobProps
 func (b *Bot) getGuilds(ctx context.Context) error {
-	if err := b.refreshBotGuilds(); err != nil {
-		return err
-	}
-
-	guildsDB, err := b.getJobGuildsFromDB(ctx)
+	jobGuilds, err := b.getJobGuildsFromDB(ctx)
 	if err != nil {
 		return err
 	}
 
-	if len(guildsDB) == 0 {
+	if len(jobGuilds) == 0 {
 		b.logger.Debug("no job discord guild connections found")
 		return nil
 	}
 
-	for job, guildID := range guildsDB {
+	for job, guildID := range jobGuilds {
 		var found *discordgo.Guild
 		if !slices.ContainsFunc(b.discord.State.Ready.Guilds, func(in *discordgo.Guild) bool {
 			if in.ID == guildID {
@@ -291,29 +292,28 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 			// Make sure to stop any active stuff with the previously active guild
 			g, ok := b.activeGuilds.Load(guildID)
 			if ok {
-				err := g.Stop()
+				g.Stop()
+
 				b.activeGuilds.Delete(guildID)
-				if err != nil {
-					return err
-				}
 			}
 
 			continue
 		}
 
 		if found == nil {
-			return fmt.Errorf("didn't find bot being in guild %s (job: %s)", guildID, job)
+			b.logger.Error("didn't find bot being in guild", zap.String("discord_guild_id", guildID), zap.String("job", job))
+			continue
 		}
 
 		if _, ok := b.activeGuilds.Load(guildID); ok {
 			continue
 		}
 
-		g, err := NewGuild(b, found, job)
+		g, err := NewGuild(b.ctx, b, found, job)
 		if err != nil {
 			return err
 		}
-		b.activeGuilds.Store(g.ID, g)
+		b.activeGuilds.Store(g.id, g)
 	}
 
 	return nil
@@ -322,17 +322,23 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error) {
 	stmt := tJobProps.
 		SELECT(
-			tJobProps.Job.AS("guild.job"),
-			tJobProps.DiscordGuildID.AS("guild.id"),
+			tJobProps.Job.AS("job"),
+			tJobProps.DiscordGuildID.AS("id"),
 		).
 		FROM(tJobProps).
 		WHERE(jet.AND(
 			tJobProps.DiscordGuildID.IS_NOT_NULL(),
+			tJobProps.Job.EQ(jet.String("ambulance")),
 		))
 
-	var dest []*Guild
+	var dest []*struct {
+		Job string `alias:"job"`
+		ID  string `alias:"id"`
+	}
 	if err := stmt.QueryContext(ctx, b.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	guilds := map[string]string{}
@@ -345,7 +351,7 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 
 func (b *Bot) runSync(ctx context.Context) error {
 	if err := b.getGuilds(ctx); err != nil {
-		return err
+		return fmt.Errorf("failed to get guilds. %w", err)
 	}
 
 	totalCount := float64(0)
@@ -376,20 +382,15 @@ func (b *Bot) runSync(ctx context.Context) error {
 			b.wg.Add(1)
 			go func(g *Guild) {
 				defer b.wg.Done()
-				logger := b.logger.With(zap.String("job", g.Job), zap.String("discord_guild_id", g.ID))
+				logger := b.logger.With(zap.String("job", g.job), zap.String("discord_guild_id", g.id))
 
 				if err := g.Run(); err != nil {
 					logger.Error("error during sync", zap.Error(err))
 					errs = multierr.Append(errs, err)
 
-					metricLastSync.WithLabelValues(g.Job, "failed").SetToCurrentTime()
+					metricLastSync.WithLabelValues(g.job, "failed").SetToCurrentTime()
 				} else {
-					metricLastSync.WithLabelValues(g.Job, "success").SetToCurrentTime()
-				}
-
-				if err := b.setLastSyncInterval(ctx, g.Job); err != nil {
-					logger.Error("error setting job props last sync time", zap.Error(err))
-					errs = multierr.Append(errs, err)
+					metricLastSync.WithLabelValues(g.job, "success").SetToCurrentTime()
 				}
 			}(guild)
 		}
@@ -408,41 +409,18 @@ func (b *Bot) runSync(ctx context.Context) error {
 }
 
 func (b *Bot) stop() error {
-	var e error
+	errs := multierr.Combine()
 	b.activeGuilds.Range(func(key string, guild *Guild) bool {
-		if err := guild.Stop(); err != nil {
-			e = err
-			return false
-		}
+		guild.Stop()
 
 		return true
 	})
 
 	b.activeGuilds.Clear()
 
-	if e != nil {
-		return e
+	if errs != nil {
+		return errs
 	}
 
 	return b.discord.Close()
-}
-
-func (b *Bot) setLastSyncInterval(ctx context.Context, job string) error {
-	tJobProps := table.FivenetJobProps
-	stmt := tJobProps.
-		UPDATE(
-			tJobProps.DiscordLastSync,
-		).
-		SET(
-			tJobProps.DiscordLastSync.SET(jet.CURRENT_TIMESTAMP()),
-		).
-		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
-		)
-
-	if _, err := stmt.ExecContext(ctx, b.db); err != nil {
-		return err
-	}
-
-	return nil
 }

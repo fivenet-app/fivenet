@@ -107,7 +107,7 @@ message QualificationRequirement {
 
 message QualificationDiscordSettings {
   bool sync_enabled = 1;
-  optional string role_name = 2 [(validate.rules).string.max_len = 50];
+  optional string role_name = 2 [(validate.rules).string.max_len = 64];
 }
 
 enum ResultStatus {

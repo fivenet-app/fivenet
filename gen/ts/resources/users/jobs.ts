@@ -87,15 +87,19 @@ export interface JobProps {
      */
     discordSyncSettings?: DiscordSyncSettings;
     /**
-     * @generated from protobuf field: optional string motd = 10;
+     * @generated from protobuf field: optional resources.users.DiscordSyncDiff discord_sync_diff = 10;
+     */
+    discordSyncDiff?: DiscordSyncDiff;
+    /**
+     * @generated from protobuf field: optional string motd = 11;
      */
     motd?: string;
     /**
-     * @generated from protobuf field: optional resources.filestore.File logo_url = 11;
+     * @generated from protobuf field: optional resources.filestore.File logo_url = 12;
      */
     logoUrl?: File;
     /**
-     * @generated from protobuf field: resources.users.JobSettings settings = 12;
+     * @generated from protobuf field: resources.users.JobSettings settings = 13;
      */
     settings?: JobSettings;
 }
@@ -150,6 +154,19 @@ export interface DiscordSyncSettings {
     groupSyncSettings?: GroupSyncSettings;
 }
 /**
+ * @generated from protobuf message resources.users.DiscordSyncDiff
+ */
+export interface DiscordSyncDiff {
+    /**
+     * @generated from protobuf field: string old = 1;
+     */
+    old: string;
+    /**
+     * @generated from protobuf field: string new = 2;
+     */
+    new: string;
+}
+/**
  * @generated from protobuf message resources.users.UserInfoSyncSettings
  */
 export interface UserInfoSyncSettings {
@@ -177,6 +194,31 @@ export interface UserInfoSyncSettings {
      * @generated from protobuf field: string unemployed_role_name = 6;
      */
     unemployedRoleName: string;
+    /**
+     * @generated from protobuf field: bool sync_nicknames = 7;
+     */
+    syncNicknames: boolean;
+    /**
+     * @generated from protobuf field: repeated resources.users.GroupMapping group_mapping = 8;
+     */
+    groupMapping: GroupMapping[];
+}
+/**
+ * @generated from protobuf message resources.users.GroupMapping
+ */
+export interface GroupMapping {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: int32 from_grade = 2;
+     */
+    fromGrade: number;
+    /**
+     * @generated from protobuf field: int32 to_grade = 3;
+     */
+    toGrade: number;
 }
 /**
  * @generated from protobuf message resources.users.StatusLogSettings
@@ -365,9 +407,10 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 7, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
             { no: 8, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
-            { no: 10, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
-            { no: 11, name: "logo_url", kind: "message", T: () => File },
-            { no: 12, name: "settings", kind: "message", T: () => JobSettings }
+            { no: 10, name: "discord_sync_diff", kind: "message", T: () => DiscordSyncDiff },
+            { no: 11, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 12, name: "logo_url", kind: "message", T: () => File },
+            { no: 13, name: "settings", kind: "message", T: () => JobSettings }
         ]);
     }
     create(value?: PartialMessage<JobProps>): JobProps {
@@ -411,13 +454,16 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* resources.users.DiscordSyncSettings discord_sync_settings */ 9:
                     message.discordSyncSettings = DiscordSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncSettings);
                     break;
-                case /* optional string motd */ 10:
+                case /* optional resources.users.DiscordSyncDiff discord_sync_diff */ 10:
+                    message.discordSyncDiff = DiscordSyncDiff.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncDiff);
+                    break;
+                case /* optional string motd */ 11:
                     message.motd = reader.string();
                     break;
-                case /* optional resources.filestore.File logo_url */ 11:
+                case /* optional resources.filestore.File logo_url */ 12:
                     message.logoUrl = File.internalBinaryRead(reader, reader.uint32(), options, message.logoUrl);
                     break;
-                case /* resources.users.JobSettings settings */ 12:
+                case /* resources.users.JobSettings settings */ 13:
                     message.settings = JobSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
                 default:
@@ -459,15 +505,18 @@ class JobProps$Type extends MessageType<JobProps> {
         /* resources.users.DiscordSyncSettings discord_sync_settings = 9; */
         if (message.discordSyncSettings)
             DiscordSyncSettings.internalBinaryWrite(message.discordSyncSettings, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional string motd = 10; */
+        /* optional resources.users.DiscordSyncDiff discord_sync_diff = 10; */
+        if (message.discordSyncDiff)
+            DiscordSyncDiff.internalBinaryWrite(message.discordSyncDiff, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional string motd = 11; */
         if (message.motd !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.motd);
-        /* optional resources.filestore.File logo_url = 11; */
+            writer.tag(11, WireType.LengthDelimited).string(message.motd);
+        /* optional resources.filestore.File logo_url = 12; */
         if (message.logoUrl)
-            File.internalBinaryWrite(message.logoUrl, writer.tag(11, WireType.LengthDelimited).fork(), options).join();
-        /* resources.users.JobSettings settings = 12; */
+            File.internalBinaryWrite(message.logoUrl, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* resources.users.JobSettings settings = 13; */
         if (message.settings)
-            JobSettings.internalBinaryWrite(message.settings, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+            JobSettings.internalBinaryWrite(message.settings, writer.tag(13, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -633,15 +682,72 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
  */
 export const DiscordSyncSettings = new DiscordSyncSettings$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class DiscordSyncDiff$Type extends MessageType<DiscordSyncDiff> {
+    constructor() {
+        super("resources.users.DiscordSyncDiff", [
+            { no: 1, name: "old", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DiscordSyncDiff>): DiscordSyncDiff {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.old = "";
+        message.new = "";
+        if (value !== undefined)
+            reflectionMergePartial<DiscordSyncDiff>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiscordSyncDiff): DiscordSyncDiff {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string old */ 1:
+                    message.old = reader.string();
+                    break;
+                case /* string new */ 2:
+                    message.new = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DiscordSyncDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string old = 1; */
+        if (message.old !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.old);
+        /* string new = 2; */
+        if (message.new !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.new);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.DiscordSyncDiff
+ */
+export const DiscordSyncDiff = new DiscordSyncDiff$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
     constructor() {
         super("resources.users.UserInfoSyncSettings", [
             { no: 1, name: "employee_role_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "employee_role_format", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
-            { no: 3, name: "grade_role_format", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
+            { no: 2, name: "employee_role_format", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 3, name: "grade_role_format", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 4, name: "unemployed_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 5, name: "unemployed_mode", kind: "enum", T: () => ["resources.users.UserInfoSyncUnemployedMode", UserInfoSyncUnemployedMode, "USER_INFO_SYNC_UNEMPLOYED_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 6, name: "unemployed_role_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
+            { no: 6, name: "unemployed_role_name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 7, name: "sync_nicknames", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 8, name: "group_mapping", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => GroupMapping }
         ]);
     }
     create(value?: PartialMessage<UserInfoSyncSettings>): UserInfoSyncSettings {
@@ -652,6 +758,8 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
         message.unemployedEnabled = false;
         message.unemployedMode = 0;
         message.unemployedRoleName = "";
+        message.syncNicknames = false;
+        message.groupMapping = [];
         if (value !== undefined)
             reflectionMergePartial<UserInfoSyncSettings>(this, message, value);
         return message;
@@ -678,6 +786,12 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
                     break;
                 case /* string unemployed_role_name */ 6:
                     message.unemployedRoleName = reader.string();
+                    break;
+                case /* bool sync_nicknames */ 7:
+                    message.syncNicknames = reader.bool();
+                    break;
+                case /* repeated resources.users.GroupMapping group_mapping */ 8:
+                    message.groupMapping.push(GroupMapping.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -709,6 +823,12 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
         /* string unemployed_role_name = 6; */
         if (message.unemployedRoleName !== "")
             writer.tag(6, WireType.LengthDelimited).string(message.unemployedRoleName);
+        /* bool sync_nicknames = 7; */
+        if (message.syncNicknames !== false)
+            writer.tag(7, WireType.Varint).bool(message.syncNicknames);
+        /* repeated resources.users.GroupMapping group_mapping = 8; */
+        for (let i = 0; i < message.groupMapping.length; i++)
+            GroupMapping.internalBinaryWrite(message.groupMapping[i], writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -719,6 +839,69 @@ class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
  * @generated MessageType for protobuf message resources.users.UserInfoSyncSettings
  */
 export const UserInfoSyncSettings = new UserInfoSyncSettings$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GroupMapping$Type extends MessageType<GroupMapping> {
+    constructor() {
+        super("resources.users.GroupMapping", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "from_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
+            { no: 3, name: "to_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+        ]);
+    }
+    create(value?: PartialMessage<GroupMapping>): GroupMapping {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.fromGrade = 0;
+        message.toGrade = 0;
+        if (value !== undefined)
+            reflectionMergePartial<GroupMapping>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GroupMapping): GroupMapping {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* int32 from_grade */ 2:
+                    message.fromGrade = reader.int32();
+                    break;
+                case /* int32 to_grade */ 3:
+                    message.toGrade = reader.int32();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GroupMapping, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* int32 from_grade = 2; */
+        if (message.fromGrade !== 0)
+            writer.tag(2, WireType.Varint).int32(message.fromGrade);
+        /* int32 to_grade = 3; */
+        if (message.toGrade !== 0)
+            writer.tag(3, WireType.Varint).int32(message.toGrade);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.GroupMapping
+ */
+export const GroupMapping = new GroupMapping$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class StatusLogSettings$Type extends MessageType<StatusLogSettings> {
     constructor() {
@@ -770,7 +953,7 @@ export const StatusLogSettings = new StatusLogSettings$Type();
 class JobsAbsenceSettings$Type extends MessageType<JobsAbsenceSettings> {
     constructor() {
         super("resources.users.JobsAbsenceSettings", [
-            { no: 1, name: "absence_role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } }
+            { no: 1, name: "absence_role", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<JobsAbsenceSettings>): JobsAbsenceSettings {

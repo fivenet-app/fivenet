@@ -1042,7 +1042,7 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
     constructor() {
         super("resources.qualifications.QualificationDiscordSettings", [
             { no: 1, name: "sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } }
+            { no: 2, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationDiscordSettings>): QualificationDiscordSettings {

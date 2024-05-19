@@ -62,6 +62,8 @@ func (x *JobProps) Default(job string) {
 			EmployeeRoleEnabled: true,
 			UnemployedEnabled:   false,
 			UnemployedMode:      UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE,
+			SyncNicknames:       true,
+			GroupMapping:        []*GroupMapping{},
 		}
 	}
 
@@ -184,6 +186,27 @@ func (x *JobSettings) Scan(value any) error {
 
 // Value marshals the value into driver.Valuer.
 func (x *JobSettings) Value() (driver.Value, error) {
+	if x == nil {
+		return nil, nil
+	}
+
+	out, err := protoutils.Marshal(x)
+	return string(out), err
+}
+
+// Scan implements driver.Valuer for protobuf DiscordSyncDiff.
+func (x *DiscordSyncDiff) Scan(value any) error {
+	switch t := value.(type) {
+	case string:
+		return protojson.Unmarshal([]byte(t), x)
+	case []byte:
+		return protojson.Unmarshal(t, x)
+	}
+	return nil
+}
+
+// Value marshals the value into driver.Valuer.
+func (x *DiscordSyncDiff) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}

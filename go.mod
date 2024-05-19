@@ -57,6 +57,7 @@ require (
 	golang.org/x/oauth2 v0.20.0
 	google.golang.org/grpc v1.64.0
 	google.golang.org/protobuf v1.34.1
+	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.1
 	willnorris.com/go/imageproxy v0.11.2
 )
@@ -138,6 +139,7 @@ require (
 	github.com/jackc/pgtype v1.14.3 // indirect
 	github.com/klauspost/compress v1.17.7 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.7 // indirect
+	github.com/kylelemons/godebug v1.1.0 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
 	github.com/mattn/go-isatty v0.0.20 // indirect
@@ -198,7 +200,6 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240415180920-8c6c420018be // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
-	gopkg.in/yaml.v3 v3.0.1 // indirect
 	willnorris.com/go/gifresize v1.0.0 // indirect
 )
 
