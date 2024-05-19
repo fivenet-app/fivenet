@@ -75,7 +75,7 @@ export interface JobProps {
      */
     radioFrequency?: string;
     /**
-     * @generated from protobuf field: optional uint64 discord_guild_id = 7 [jstype = JS_STRING];
+     * @generated from protobuf field: optional string discord_guild_id = 7;
      */
     discordGuildId?: string;
     /**
@@ -404,7 +404,7 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 4, name: "livemap_marker_color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
             { no: 5, name: "quick_buttons", kind: "message", T: () => QuickButtons },
             { no: 6, name: "radio_frequency", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "24" } } } },
-            { no: 7, name: "discord_guild_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 7, name: "discord_guild_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
             { no: 10, name: "discord_sync_diff", kind: "message", T: () => DiscordSyncDiff },
@@ -445,8 +445,8 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* optional string radio_frequency */ 6:
                     message.radioFrequency = reader.string();
                     break;
-                case /* optional uint64 discord_guild_id = 7 [jstype = JS_STRING];*/ 7:
-                    message.discordGuildId = reader.uint64().toString();
+                case /* optional string discord_guild_id */ 7:
+                    message.discordGuildId = reader.string();
                     break;
                 case /* optional resources.timestamp.Timestamp discord_last_sync */ 8:
                     message.discordLastSync = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.discordLastSync);
@@ -496,9 +496,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* optional string radio_frequency = 6; */
         if (message.radioFrequency !== undefined)
             writer.tag(6, WireType.LengthDelimited).string(message.radioFrequency);
-        /* optional uint64 discord_guild_id = 7 [jstype = JS_STRING]; */
+        /* optional string discord_guild_id = 7; */
         if (message.discordGuildId !== undefined)
-            writer.tag(7, WireType.Varint).uint64(message.discordGuildId);
+            writer.tag(7, WireType.LengthDelimited).string(message.discordGuildId);
         /* optional resources.timestamp.Timestamp discord_last_sync = 8; */
         if (message.discordLastSync)
             Timestamp.internalBinaryWrite(message.discordLastSync, writer.tag(8, WireType.LengthDelimited).fork(), options).join();

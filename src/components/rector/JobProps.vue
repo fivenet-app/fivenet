@@ -34,8 +34,8 @@ const schema = z.object({
         penaltyCalculator: z.boolean(),
         bodyCheckup: z.boolean(),
     }),
-    radioFrequency: z.string(),
-    discordGuildId: z.string(),
+    radioFrequency: z.string().max(24),
+    discordGuildId: z.string().max(48),
     discordSyncSettings: z.object({
         dryRun: z.boolean(),
         userInfoSync: z.boolean(),
@@ -58,14 +58,14 @@ const schema = z.object({
         }),
         statusLog: z.boolean(),
         statusLogSettings: z.object({
-            channelId: z.string(),
+            channelId: z.string().max(64),
         }),
         jobsAbsence: z.boolean(),
         jobsAbsenceSettings: z.object({
-            absenceRole: z.string(),
+            absenceRole: z.string().max(64),
         }),
         groupSyncSettings: z.object({
-            ignoredRoleIds: z.string().array().max(20),
+            ignoredRoleIds: z.string().max(64).array().max(20),
         }),
     }),
     logoUrl: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images, true).optional(),
@@ -326,7 +326,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('common.radio_frequency')"
                                         :label="$t('common.radio_frequency')"
-                                        maxlength="24"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -461,14 +460,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UInput
                                         v-model="state.discordSyncSettings.statusLogSettings!.channelId"
                                         type="text"
-                                        name="statusLogSettingsChannelId"
+                                        name="discordSyncSettings.statusLogSettings.channelId"
                                         :disabled="!state.discordSyncSettings.statusLog"
                                         :placeholder="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.status_log_settings.channel_id',
                                             )
                                         "
-                                        maxlength="48"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -508,7 +506,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format',
                                                 )
                                             "
-                                            maxlength="48"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
@@ -559,7 +556,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format',
                                                 )
                                             "
-                                            maxlength="48"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
@@ -664,7 +660,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
                                                 )
                                             "
-                                            maxlength="48"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         />
@@ -728,7 +723,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.name',
                                                                 )
                                                             "
-                                                            maxlength="24"
                                                             @focusin="focusTablet(true)"
                                                             @focusout="focusTablet(false)"
                                                         />
@@ -750,7 +744,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                         idx
                                                                     ].fromGrade
                                                                 "
-                                                                :name="`userInfoSyncSettings.${idx}.fromGrade`"
+                                                                :name="`discordSyncSettings.userInfoSyncSettings.${idx}.fromGrade`"
                                                                 type="number"
                                                                 class="w-full"
                                                                 :disabled="!state.discordSyncSettings.userInfoSync"
@@ -759,7 +753,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                         'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.from_grade',
                                                                     )
                                                                 "
-                                                                maxlength="24"
                                                                 @focusin="focusTablet(true)"
                                                                 @focusout="focusTablet(false)"
                                                             />
@@ -788,7 +781,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                         'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.to_grade',
                                                                     )
                                                                 "
-                                                                maxlength="24"
                                                                 @focusin="focusTablet(true)"
                                                                 @focusout="focusTablet(false)"
                                                             />
@@ -875,7 +867,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         'components.rector.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
                                                     )
                                                 "
-                                                maxlength="48"
                                                 @focusin="focusTablet(true)"
                                                 @focusout="focusTablet(false)"
                                             />
@@ -946,7 +937,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                             'components.rector.job_props.discord_sync_settings.group_sync_settings.ignored_role_ids.field',
                                                         )
                                                     "
-                                                    maxlength="24"
                                                     @focusin="focusTablet(true)"
                                                     @focusout="focusTablet(false)"
                                                 />

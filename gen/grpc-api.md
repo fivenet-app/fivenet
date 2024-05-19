@@ -3841,7 +3841,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | livemap_marker_color | [string](#string) |  |  |
 | quick_buttons | [QuickButtons](#resources-users-QuickButtons) |  |  |
 | radio_frequency | [string](#string) | optional |  |
-| discord_guild_id | [uint64](#uint64) | optional |  |
+| discord_guild_id | [string](#string) | optional |  |
 | discord_last_sync | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | discord_sync_settings | [DiscordSyncSettings](#resources-users-DiscordSyncSettings) |  |  |
 | discord_sync_diff | [DiscordSyncDiff](#resources-users-DiscordSyncDiff) | optional |  |

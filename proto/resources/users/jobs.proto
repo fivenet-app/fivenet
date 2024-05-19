@@ -29,7 +29,7 @@ message JobProps {
   }];
   QuickButtons quick_buttons = 5;
   optional string radio_frequency = 6 [(validate.rules).string.max_len = 24];
-  optional uint64 discord_guild_id = 7 [jstype = JS_STRING];
+  optional string discord_guild_id = 7;
   optional resources.timestamp.Timestamp discord_last_sync = 8;
   DiscordSyncSettings discord_sync_settings = 9;
   optional DiscordSyncDiff discord_sync_diff = 10;
