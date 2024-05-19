@@ -94,7 +94,9 @@ func (s *Server) GetMOTD(ctx context.Context, req *GetMOTDRequest) (*GetMOTDResp
 			tJobProps.Motd.AS("getmotdresponse.motd"),
 		).
 		FROM(tJobProps).
-		WHERE(tJobProps.Job.EQ(jet.String(userInfo.Job))).
+		WHERE(
+			tJobProps.Job.EQ(jet.String(userInfo.Job)),
+		).
 		LIMIT(1)
 
 	resp := &GetMOTDResponse{}

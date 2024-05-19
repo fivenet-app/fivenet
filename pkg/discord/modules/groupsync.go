@@ -18,13 +18,13 @@ import (
 	"go.uber.org/zap"
 )
 
-const DefaultGroupSyncRoleColor = "#9B59B6"
+const defaultGroupSyncRoleColor = "#9B59B6"
 
 type GroupSync struct {
 	*BaseModule
 }
 
-type GroupSyncUser struct {
+type groupSyncUser struct {
 	ExternalID string `alias:"external_id"`
 	Group      string `alias:"group"`
 	License    string `alias:"license"`
@@ -67,7 +67,7 @@ func (g *GroupSync) planRoles() []*types.Role {
 
 	i := 0
 	for _, dcRole := range dcRoles {
-		color := DefaultGroupSyncRoleColor
+		color := defaultGroupSyncRoleColor
 		if dcRole.Color != "" {
 			color = dcRole.Color
 		}
@@ -120,7 +120,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 			tUsers.Group.IN(serverGroups...),
 		))
 
-	var dest []*GroupSyncUser
+	var dest []*groupSyncUser
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return users, logs, err

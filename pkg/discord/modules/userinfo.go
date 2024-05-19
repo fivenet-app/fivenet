@@ -29,7 +29,7 @@ type UserInfo struct {
 	nicknameRegex *regexp.Regexp
 }
 
-type UserRoleMapping struct {
+type userRoleMapping struct {
 	AccountID    uint64               `alias:"account_id"`
 	ExternalID   string               `alias:"external_id"`
 	JobGrade     int32                `alias:"job_grade"`
@@ -206,7 +206,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 		)).
 		ORDER_BY(tUsers.ID.ASC())
 
-	var dest []*UserRoleMapping
+	var dest []*userRoleMapping
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return users, logs, err
