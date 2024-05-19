@@ -449,7 +449,8 @@
         "unread": "Ungelesen",
         "archive": "Archiv",
         "paste": "Einfügen",
-        "messenger": "Messenger"
+        "messenger": "Messenger",
+        "diff": "Unterschiede"
     },
     "components": {
         "partials": {
@@ -585,7 +586,15 @@
                         "grade_role_format": "Rang-Rollen-Format (%grade% wird durch die Rang-Nummer, %grade_label% durch das Rang-Label ersetzt)",
                         "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
                         "unemployed_mode": "Modus für das Behandeln von Arbeitslosen",
-                        "unemployed_role_name": "Arbeitslosen Rolle"
+                        "unemployed_role_name": "Arbeitslosen Rolle",
+                        "sync_nicknames": "Nicknames synchronisieren",
+                        "group_mapping": {
+                            "title": "Zuordnung von Gruppenrollen",
+                            "description": "Gruppieren von einer oder mehreren Rängen in einer \"Gruppen\"-Rolle.",
+                            "name": "Rollen-Name",
+                            "from_grade": "Von Rang",
+                            "to_grade": "Bis Rang"
+                        }
                     },
                     "status_log": "Statusprotokoll",
                     "status_log_settings": {
