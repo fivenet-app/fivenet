@@ -176,6 +176,7 @@ function setSettingsValues(): void {
         state.discordGuildId = jobProps.value.discordGuildId;
     }
     if (jobProps.value.discordSyncSettings) {
+        state.discordSyncSettings.dryRun = jobProps.value.discordSyncSettings.dryRun;
         state.discordSyncSettings.statusLog = jobProps.value.discordSyncSettings.statusLog;
         if (jobProps.value.discordSyncSettings.statusLogSettings) {
             state.discordSyncSettings.statusLogSettings = jobProps.value.discordSyncSettings.statusLogSettings;
