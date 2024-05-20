@@ -483,7 +483,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -515,7 +514,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -586,7 +584,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -671,7 +668,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         multiple
                                         :options="jobs ?? []"
                                         value-attribute="name"
-                                        by="name"
                                         :searchable-placeholder="$t('common.search_field')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
