@@ -184,17 +184,15 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 	if err != nil {
 		return err
 	}
-	_ = channel
 
-	/*
-		if _, err := g.bot.discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
-			Type:   discordgo.EmbedTypeRich,
-			Title:  "Starting sync...",
-			Author: embeds.EmbedAuthor,
-			Color:  embeds.ColorInfo,
-		}); err != nil {
-			return err
-		}*/
+	if _, err := g.bot.discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
+		Type:   discordgo.EmbedTypeRich,
+		Title:  "Starting sync...",
+		Author: embeds.EmbedAuthor,
+		Color:  embeds.ColorInfo,
+	}); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -208,21 +206,19 @@ func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) 
 	if err != nil {
 		return err
 	}
-	_ = channel
 
-	/*
-		// Split logs embeds into chunks
-		for i := 0; i < len(logs); i += discordLogsEmbedChunkSize {
-			end := i + discordLogsEmbedChunkSize
+	// Split logs embeds into chunks
+	for i := 0; i < len(logs); i += discordLogsEmbedChunkSize {
+		end := i + discordLogsEmbedChunkSize
 
-			if end > len(logs) {
-				end = len(logs)
-			}
+		if end > len(logs) {
+			end = len(logs)
+		}
 
-			if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs[i:end]); err != nil {
-				return err
-			}
-		}*/
+		if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs[i:end]); err != nil {
+			return err
+		}
+	}
 
 	return nil
 }
