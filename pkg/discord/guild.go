@@ -190,6 +190,7 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 		Title:  "Starting sync...",
 		Author: embeds.EmbedAuthor,
 		Color:  embeds.ColorInfo,
+		Footer: embeds.EmbedFooter,
 	}); err != nil {
 		return err
 	}
@@ -246,6 +247,7 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 		Description: fmt.Sprintf("Completed in %s.", duration),
 		Author:      embeds.EmbedAuthor,
 		Color:       embeds.ColorSuccess,
+		Footer:      embeds.EmbedFooter,
 	})
 
 	if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs); err != nil {

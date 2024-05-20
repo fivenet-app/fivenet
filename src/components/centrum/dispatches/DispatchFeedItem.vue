@@ -35,14 +35,14 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-new-box" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEW') }}
 
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -50,10 +50,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -61,7 +61,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-account-alert" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNASSIGNED') }}
 
@@ -69,7 +69,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -77,10 +77,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -88,7 +88,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-account-plus" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ASSIGNED') }}
 
@@ -96,7 +96,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -104,10 +104,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -115,7 +115,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-account-remove" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_UNASSIGNED') }}
 
@@ -123,7 +123,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -131,10 +131,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -142,7 +142,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-account-check" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_ACCEPTED') }}
 
@@ -150,7 +150,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -158,10 +158,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -169,7 +169,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-account-cancel" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNIT_DECLINED') }}
 
@@ -177,7 +177,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -185,10 +185,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -196,7 +196,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-car" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.EN_ROUTE') }}
 
@@ -204,7 +204,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -212,10 +212,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -223,14 +223,14 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-map-marker" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ON_SCENE') }}
                     <DispatchStatusInfoPopover v-if="showId" :status="item" />
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -238,10 +238,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -249,7 +249,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-help" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.NEED_ASSISTANCE') }}
 
@@ -257,7 +257,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -265,10 +265,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -276,7 +276,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-check" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.COMPLETED') }}
 
@@ -284,7 +284,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -292,10 +292,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -303,7 +303,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-cancel" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.CANCELLED') }}
 
@@ -311,7 +311,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -319,10 +319,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -330,7 +330,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-archive" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.ARCHIVED') }}
 
@@ -338,7 +338,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -346,10 +346,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
@@ -357,7 +357,7 @@ const { goto } = useLivemapStore();
             <div class="relative flex size-5 flex-none items-center justify-center rounded-lg bg-gray-300">
                 <UIcon name="i-mdi-new-box" class="text-primary-500 size-5" />
             </div>
-            <p class="inline-flex flex-auto flex-row justify-between py-0.5 text-xs leading-5 text-gray-200">
+            <p class="inline-flex flex-auto flex-row justify-between text-xs leading-5 text-gray-200">
                 <span class="inline-flex items-center gap-1">
                     {{ $t('components.centrum.dispatches.feed.item.UNSPECIFIED') }}
 
@@ -365,7 +365,7 @@ const { goto } = useLivemapStore();
                     <UnitInfoPopover v-if="item.unit && item.unitId" :unit="item.unit" :initials-only="true" :badge="true" />
                 </span>
 
-                <span class="inline-flex items-center">
+                <span class="inline-flex items-center text-xs">
                     <UButton
                         v-if="item.x !== undefined && item.y !== undefined"
                         variant="link"
@@ -373,10 +373,10 @@ const { goto } = useLivemapStore();
                         icon="i-mdi-map-marker"
                         @click="goto({ x: item.x, y: item.y })"
                     />
-                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" />
+                    <CitizenInfoPopover v-if="item.user" :user="item.user" :trailing="false" text-class="text-xs" />
                 </span>
             </p>
-            <span class="flex-none py-0.5 text-xs leading-5 text-gray-200">
+            <span class="flex-none text-xs leading-5 text-gray-200">
                 <GenericTime :value="item.createdAt" :type="'compact'" />
             </span>
         </template>
