@@ -87,9 +87,9 @@ export interface JobProps {
      */
     discordSyncSettings?: DiscordSyncSettings;
     /**
-     * @generated from protobuf field: optional resources.users.DiscordSyncDiff discord_sync_diff = 10;
+     * @generated from protobuf field: optional resources.users.DiscordSyncChanges discord_sync_changes = 10;
      */
-    discordSyncDiff?: DiscordSyncDiff;
+    discordSyncChanges?: DiscordSyncChanges;
     /**
      * @generated from protobuf field: optional string motd = 11;
      */
@@ -154,17 +154,26 @@ export interface DiscordSyncSettings {
     groupSyncSettings?: GroupSyncSettings;
 }
 /**
- * @generated from protobuf message resources.users.DiscordSyncDiff
+ * @generated from protobuf message resources.users.DiscordSyncChanges
  */
-export interface DiscordSyncDiff {
+export interface DiscordSyncChanges {
     /**
-     * @generated from protobuf field: string old = 1;
+     * @generated from protobuf field: repeated resources.users.DiscordSyncChange changes = 1;
      */
-    old: string;
+    changes: DiscordSyncChange[];
+}
+/**
+ * @generated from protobuf message resources.users.DiscordSyncChange
+ */
+export interface DiscordSyncChange {
     /**
-     * @generated from protobuf field: string new = 2;
+     * @generated from protobuf field: resources.timestamp.Timestamp time = 1;
      */
-    new: string;
+    time?: Timestamp;
+    /**
+     * @generated from protobuf field: string plan = 2;
+     */
+    plan: string;
 }
 /**
  * @generated from protobuf message resources.users.UserInfoSyncSettings
@@ -407,7 +416,7 @@ class JobProps$Type extends MessageType<JobProps> {
             { no: 7, name: "discord_guild_id", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 8, name: "discord_last_sync", kind: "message", T: () => Timestamp },
             { no: 9, name: "discord_sync_settings", kind: "message", T: () => DiscordSyncSettings },
-            { no: 10, name: "discord_sync_diff", kind: "message", T: () => DiscordSyncDiff },
+            { no: 10, name: "discord_sync_changes", kind: "message", T: () => DiscordSyncChanges },
             { no: 11, name: "motd", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
             { no: 12, name: "logo_url", kind: "message", T: () => File },
             { no: 13, name: "settings", kind: "message", T: () => JobSettings }
@@ -454,8 +463,8 @@ class JobProps$Type extends MessageType<JobProps> {
                 case /* resources.users.DiscordSyncSettings discord_sync_settings */ 9:
                     message.discordSyncSettings = DiscordSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncSettings);
                     break;
-                case /* optional resources.users.DiscordSyncDiff discord_sync_diff */ 10:
-                    message.discordSyncDiff = DiscordSyncDiff.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncDiff);
+                case /* optional resources.users.DiscordSyncChanges discord_sync_changes */ 10:
+                    message.discordSyncChanges = DiscordSyncChanges.internalBinaryRead(reader, reader.uint32(), options, message.discordSyncChanges);
                     break;
                 case /* optional string motd */ 11:
                     message.motd = reader.string();
@@ -505,9 +514,9 @@ class JobProps$Type extends MessageType<JobProps> {
         /* resources.users.DiscordSyncSettings discord_sync_settings = 9; */
         if (message.discordSyncSettings)
             DiscordSyncSettings.internalBinaryWrite(message.discordSyncSettings, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.users.DiscordSyncDiff discord_sync_diff = 10; */
-        if (message.discordSyncDiff)
-            DiscordSyncDiff.internalBinaryWrite(message.discordSyncDiff, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.users.DiscordSyncChanges discord_sync_changes = 10; */
+        if (message.discordSyncChanges)
+            DiscordSyncChanges.internalBinaryWrite(message.discordSyncChanges, writer.tag(10, WireType.LengthDelimited).fork(), options).join();
         /* optional string motd = 11; */
         if (message.motd !== undefined)
             writer.tag(11, WireType.LengthDelimited).string(message.motd);
@@ -682,31 +691,26 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
  */
 export const DiscordSyncSettings = new DiscordSyncSettings$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class DiscordSyncDiff$Type extends MessageType<DiscordSyncDiff> {
+class DiscordSyncChanges$Type extends MessageType<DiscordSyncChanges> {
     constructor() {
-        super("resources.users.DiscordSyncDiff", [
-            { no: 1, name: "old", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "new", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        super("resources.users.DiscordSyncChanges", [
+            { no: 1, name: "changes", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DiscordSyncChange }
         ]);
     }
-    create(value?: PartialMessage<DiscordSyncDiff>): DiscordSyncDiff {
+    create(value?: PartialMessage<DiscordSyncChanges>): DiscordSyncChanges {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.old = "";
-        message.new = "";
+        message.changes = [];
         if (value !== undefined)
-            reflectionMergePartial<DiscordSyncDiff>(this, message, value);
+            reflectionMergePartial<DiscordSyncChanges>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiscordSyncDiff): DiscordSyncDiff {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiscordSyncChanges): DiscordSyncChanges {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string old */ 1:
-                    message.old = reader.string();
-                    break;
-                case /* string new */ 2:
-                    message.new = reader.string();
+                case /* repeated resources.users.DiscordSyncChange changes */ 1:
+                    message.changes.push(DiscordSyncChange.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -719,13 +723,10 @@ class DiscordSyncDiff$Type extends MessageType<DiscordSyncDiff> {
         }
         return message;
     }
-    internalBinaryWrite(message: DiscordSyncDiff, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string old = 1; */
-        if (message.old !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.old);
-        /* string new = 2; */
-        if (message.new !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.new);
+    internalBinaryWrite(message: DiscordSyncChanges, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* repeated resources.users.DiscordSyncChange changes = 1; */
+        for (let i = 0; i < message.changes.length; i++)
+            DiscordSyncChange.internalBinaryWrite(message.changes[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -733,9 +734,63 @@ class DiscordSyncDiff$Type extends MessageType<DiscordSyncDiff> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.users.DiscordSyncDiff
+ * @generated MessageType for protobuf message resources.users.DiscordSyncChanges
  */
-export const DiscordSyncDiff = new DiscordSyncDiff$Type();
+export const DiscordSyncChanges = new DiscordSyncChanges$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DiscordSyncChange$Type extends MessageType<DiscordSyncChange> {
+    constructor() {
+        super("resources.users.DiscordSyncChange", [
+            { no: 1, name: "time", kind: "message", T: () => Timestamp },
+            { no: 2, name: "plan", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DiscordSyncChange>): DiscordSyncChange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.plan = "";
+        if (value !== undefined)
+            reflectionMergePartial<DiscordSyncChange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiscordSyncChange): DiscordSyncChange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp time */ 1:
+                    message.time = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.time);
+                    break;
+                case /* string plan */ 2:
+                    message.plan = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DiscordSyncChange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp time = 1; */
+        if (message.time)
+            Timestamp.internalBinaryWrite(message.time, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* string plan = 2; */
+        if (message.plan !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.plan);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.users.DiscordSyncChange
+ */
+export const DiscordSyncChange = new DiscordSyncChange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class UserInfoSyncSettings$Type extends MessageType<UserInfoSyncSettings> {
     constructor() {

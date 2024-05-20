@@ -41,7 +41,7 @@ func NewGroupSync(base *BaseModule) (Module, error) {
 	}, nil
 }
 
-func (g *GroupSync) Plan(ctx context.Context) (*types.Plan, []*discordgo.MessageEmbed, error) {
+func (g *GroupSync) Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error) {
 	roles := g.planRoles()
 
 	users, logs, err := g.planUsers(ctx, roles)
@@ -49,7 +49,7 @@ func (g *GroupSync) Plan(ctx context.Context) (*types.Plan, []*discordgo.Message
 		return nil, logs, err
 	}
 
-	return &types.Plan{
+	return &types.State{
 		Roles: roles,
 		Users: users,
 	}, logs, nil
@@ -163,9 +163,10 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 		}
 
 		users.Add(&types.User{
-			ID:            user.ExternalID,
-			Roles:         []*types.Role{roles[idx]},
-			ForceNotFound: true,
+			ID: user.ExternalID,
+			Roles: &types.UserRoles{
+				Sum: []*types.Role{roles[idx]},
+			},
 		})
 	}
 

@@ -51,7 +51,7 @@ func (s *Server) getJobProps(ctx context.Context, job string) (*users.JobProps, 
 			tJobProps.DiscordGuildID,
 			tJobProps.DiscordLastSync,
 			tJobProps.DiscordSyncSettings,
-			tJobProps.DiscordSyncDiff,
+			tJobProps.DiscordSyncChanges,
 			tJobProps.LogoURL,
 		).
 		FROM(tJobProps).

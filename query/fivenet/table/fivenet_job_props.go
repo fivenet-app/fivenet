@@ -26,7 +26,7 @@ type fivenetJobPropsTable struct {
 	DiscordGuildID      mysql.ColumnString
 	DiscordLastSync     mysql.ColumnTimestamp
 	DiscordSyncSettings mysql.ColumnString
-	DiscordSyncDiff     mysql.ColumnString
+	DiscordSyncChanges  mysql.ColumnString
 	Motd                mysql.ColumnString
 	LogoURL             mysql.ColumnString
 	Settings            mysql.ColumnString
@@ -79,12 +79,12 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		DiscordGuildIDColumn      = mysql.StringColumn("discord_guild_id")
 		DiscordLastSyncColumn     = mysql.TimestampColumn("discord_last_sync")
 		DiscordSyncSettingsColumn = mysql.StringColumn("discord_sync_settings")
-		DiscordSyncDiffColumn     = mysql.StringColumn("discord_sync_diff")
+		DiscordSyncChangesColumn  = mysql.StringColumn("discord_sync_changes")
 		MotdColumn                = mysql.StringColumn("motd")
 		LogoURLColumn             = mysql.StringColumn("logo_url")
 		SettingsColumn            = mysql.StringColumn("settings")
-		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncDiffColumn, MotdColumn, LogoURLColumn, SettingsColumn}
-		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncDiffColumn, MotdColumn, LogoURLColumn, SettingsColumn}
+		allColumns                = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoURLColumn, SettingsColumn}
+		mutableColumns            = mysql.ColumnList{JobColumn, UpdatedAtColumn, ThemeColumn, LivemapMarkerColorColumn, QuickButtonsColumn, RadioFrequencyColumn, DiscordGuildIDColumn, DiscordLastSyncColumn, DiscordSyncSettingsColumn, DiscordSyncChangesColumn, MotdColumn, LogoURLColumn, SettingsColumn}
 	)
 
 	return fivenetJobPropsTable{
@@ -100,7 +100,7 @@ func newFivenetJobPropsTableImpl(schemaName, tableName, alias string) fivenetJob
 		DiscordGuildID:      DiscordGuildIDColumn,
 		DiscordLastSync:     DiscordLastSyncColumn,
 		DiscordSyncSettings: DiscordSyncSettingsColumn,
-		DiscordSyncDiff:     DiscordSyncDiffColumn,
+		DiscordSyncChanges:  DiscordSyncChangesColumn,
 		Motd:                MotdColumn,
 		LogoURL:             LogoURLColumn,
 		Settings:            SettingsColumn,

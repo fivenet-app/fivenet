@@ -214,7 +214,8 @@
     - [Timestamp](#resources-timestamp-Timestamp)
   
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
-    - [DiscordSyncDiff](#resources-users-DiscordSyncDiff)
+    - [DiscordSyncChange](#resources-users-DiscordSyncChange)
+    - [DiscordSyncChanges](#resources-users-DiscordSyncChanges)
     - [DiscordSyncSettings](#resources-users-DiscordSyncSettings)
     - [GroupMapping](#resources-users-GroupMapping)
     - [GroupSyncSettings](#resources-users-GroupSyncSettings)
@@ -3723,16 +3724,31 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
 
-<a name="resources-users-DiscordSyncDiff"></a>
+<a name="resources-users-DiscordSyncChange"></a>
 
-### DiscordSyncDiff
+### DiscordSyncChange
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| old | [string](#string) |  |  |
-| new | [string](#string) |  |  |
+| time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| plan | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-DiscordSyncChanges"></a>
+
+### DiscordSyncChanges
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| changes | [DiscordSyncChange](#resources-users-DiscordSyncChange) | repeated |  |
 
 
 
@@ -3844,7 +3860,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | discord_guild_id | [string](#string) | optional |  |
 | discord_last_sync | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | discord_sync_settings | [DiscordSyncSettings](#resources-users-DiscordSyncSettings) |  |  |
-| discord_sync_diff | [DiscordSyncDiff](#resources-users-DiscordSyncDiff) | optional |  |
+| discord_sync_changes | [DiscordSyncChanges](#resources-users-DiscordSyncChanges) | optional |  |
 | motd | [string](#string) | optional |  |
 | logo_url | [resources.filestore.File](#resources-filestore-File) | optional |  |
 | settings | [JobSettings](#resources-users-JobSettings) |  |  |

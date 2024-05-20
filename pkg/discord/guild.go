@@ -1,6 +1,7 @@
 package discord
 
 import (
+	"bytes"
 	"context"
 	"errors"
 	"fmt"
@@ -8,6 +9,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/modules"
@@ -88,7 +90,7 @@ func (g *Guild) Run() error {
 		return err
 	}
 	if planDiff == nil {
-		planDiff = &users.DiscordSyncDiff{}
+		planDiff = &users.DiscordSyncChanges{}
 	}
 
 	errs := multierr.Combine()
@@ -101,9 +103,9 @@ func (g *Guild) Run() error {
 	base := modules.NewBaseModule(g.logger.Named("module").With(zap.String("job", g.job), zap.String("discord_guild_id", g.guild.ID)),
 		g.bot.db, g.bot.discord, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher, settings)
 
-	plan := types.Plan{
-		DryRun: settings.DryRun,
-		Users:  types.Users{},
+	state := &types.State{
+		GuildID: g.guild.ID,
+		Users:   types.Users{},
 	}
 	logs := []*discordgo.MessageEmbed{}
 	for _, module := range g.modules {
@@ -115,27 +117,38 @@ func (g *Guild) Run() error {
 			continue
 		}
 
-		p, mLogs, err := m.Plan(g.ctx)
+		s, mLogs, err := m.Plan(g.ctx)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
 			continue
 		}
 
-		plan.Merge(p)
+		state.Merge(s)
 		logs = append(logs, mLogs...)
 	}
 
-	out, err := yaml.Marshal(plan)
+	plan, ls, err := state.Calculate(g.ctx, g.bot.discord)
 	if err != nil {
 		errs = multierr.Append(errs, err)
+		return errs
 	}
-	if planDiff.New != string(out) {
-		planDiff.Old = planDiff.New
-		planDiff.New = string(out)
-	}
+	logs = append(logs, ls...)
 
-	if !plan.DryRun {
-		pLogs, err := plan.Apply(g.ctx, g.bot.discord, g.guild.ID)
+	// Encode plan as yaml for our "change list"
+	b := bytes.Buffer{}
+	yamlEncoder := yaml.NewEncoder(&b)
+	yamlEncoder.SetIndent(2)
+	if err := yamlEncoder.Encode(plan); err != nil {
+		errs = multierr.Append(errs, err)
+	}
+	planDiff.Add(&users.DiscordSyncChange{
+		Time: timestamp.Now(),
+		Plan: b.String(),
+	})
+
+	if !settings.DryRun {
+		plan.DryRun = false
+		pLogs, err := plan.Apply(g.ctx, g.bot.discord)
 		logs = append(logs, pLogs...)
 		if err != nil {
 			errs = multierr.Append(errs, err)
@@ -246,11 +259,11 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 	return nil
 }
 
-func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, *users.DiscordSyncDiff, error) {
+func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, *users.DiscordSyncChanges, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.DiscordSyncSettings,
-			tJobProps.DiscordSyncDiff,
+			tJobProps.DiscordSyncChanges,
 		).
 		FROM(tJobProps).
 		WHERE(
@@ -268,15 +281,15 @@ func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.Discord
 	// Make sure the defaults are set
 	dest.Default(job)
 
-	return dest.DiscordSyncSettings, dest.DiscordSyncDiff, nil
+	return dest.DiscordSyncSettings, dest.DiscordSyncChanges, nil
 }
 
-func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *users.DiscordSyncDiff) error {
+func (g *Guild) setLastSyncInterval(ctx context.Context, job string, pDiff *users.DiscordSyncChanges) error {
 	tJobProps := table.FivenetJobProps
 	stmt := tJobProps.
 		UPDATE(
 			tJobProps.DiscordLastSync,
-			tJobProps.DiscordSyncDiff,
+			tJobProps.DiscordSyncChanges,
 		).
 		SET(
 			jet.CURRENT_TIMESTAMP(),

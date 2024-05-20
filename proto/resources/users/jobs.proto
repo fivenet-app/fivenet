@@ -32,7 +32,7 @@ message JobProps {
   optional string discord_guild_id = 7;
   optional resources.timestamp.Timestamp discord_last_sync = 8;
   DiscordSyncSettings discord_sync_settings = 9;
-  optional DiscordSyncDiff discord_sync_diff = 10;
+  optional DiscordSyncChanges discord_sync_changes = 10;
   optional string motd = 11 [(validate.rules).string.max_len = 1024];
   optional resources.filestore.File logo_url = 12;
   JobSettings settings = 13;
@@ -58,9 +58,13 @@ message DiscordSyncSettings {
   GroupSyncSettings group_sync_settings = 8;
 }
 
-message DiscordSyncDiff {
-  string old = 1;
-  string new = 2;
+message DiscordSyncChanges {
+  repeated DiscordSyncChange changes = 1;
+}
+
+message DiscordSyncChange {
+  resources.timestamp.Timestamp time = 1;
+  string plan = 2;
 }
 
 enum UserInfoSyncUnemployedMode {

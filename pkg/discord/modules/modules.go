@@ -27,7 +27,7 @@ var Modules = map[string]NewModuleFunc{}
 type NewModuleFunc func(*BaseModule) (Module, error)
 
 type Module interface {
-	Plan(ctx context.Context) (*types.Plan, []*discordgo.MessageEmbed, error)
+	Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error)
 }
 
 func GetModule(name string, base *BaseModule) (Module, error) {

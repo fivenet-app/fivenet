@@ -21,7 +21,7 @@ type FivenetJobProps struct {
 	DiscordGuildID      *string    `json:"discord_guild_id"`
 	DiscordLastSync     *time.Time `json:"discord_last_sync"`
 	DiscordSyncSettings *string    `json:"discord_sync_settings"`
-	DiscordSyncDiff     *string    `json:"discord_sync_diff"`
+	DiscordSyncChanges  *string    `json:"discord_sync_changes"`
 	Motd                *string    `json:"motd"`
 	LogoURL             *string    `json:"logo_url"`
 	Settings            *string    `json:"settings"`

@@ -546,14 +546,14 @@ func (m *JobProps) validate(all bool) error {
 
 	}
 
-	if m.DiscordSyncDiff != nil {
+	if m.DiscordSyncChanges != nil {
 
 		if all {
-			switch v := interface{}(m.GetDiscordSyncDiff()).(type) {
+			switch v := interface{}(m.GetDiscordSyncChanges()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, JobPropsValidationError{
-						field:  "DiscordSyncDiff",
+						field:  "DiscordSyncChanges",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -561,16 +561,16 @@ func (m *JobProps) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, JobPropsValidationError{
-						field:  "DiscordSyncDiff",
+						field:  "DiscordSyncChanges",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetDiscordSyncDiff()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetDiscordSyncChanges()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return JobPropsValidationError{
-					field:  "DiscordSyncDiff",
+					field:  "DiscordSyncChanges",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
@@ -1035,46 +1035,76 @@ var _ interface {
 	ErrorName() string
 } = DiscordSyncSettingsValidationError{}
 
-// Validate checks the field values on DiscordSyncDiff with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *DiscordSyncDiff) Validate() error {
+// Validate checks the field values on DiscordSyncChanges with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DiscordSyncChanges) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on DiscordSyncDiff with the rules
+// ValidateAll checks the field values on DiscordSyncChanges with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// DiscordSyncDiffMultiError, or nil if none found.
-func (m *DiscordSyncDiff) ValidateAll() error {
+// DiscordSyncChangesMultiError, or nil if none found.
+func (m *DiscordSyncChanges) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *DiscordSyncDiff) validate(all bool) error {
+func (m *DiscordSyncChanges) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
-	// no validation rules for Old
+	for idx, item := range m.GetChanges() {
+		_, _ = idx, item
 
-	// no validation rules for New
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DiscordSyncChangesValidationError{
+						field:  fmt.Sprintf("Changes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DiscordSyncChangesValidationError{
+						field:  fmt.Sprintf("Changes[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DiscordSyncChangesValidationError{
+					field:  fmt.Sprintf("Changes[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
 
 	if len(errors) > 0 {
-		return DiscordSyncDiffMultiError(errors)
+		return DiscordSyncChangesMultiError(errors)
 	}
 
 	return nil
 }
 
-// DiscordSyncDiffMultiError is an error wrapping multiple validation errors
-// returned by DiscordSyncDiff.ValidateAll() if the designated constraints
+// DiscordSyncChangesMultiError is an error wrapping multiple validation errors
+// returned by DiscordSyncChanges.ValidateAll() if the designated constraints
 // aren't met.
-type DiscordSyncDiffMultiError []error
+type DiscordSyncChangesMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m DiscordSyncDiffMultiError) Error() string {
+func (m DiscordSyncChangesMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1083,11 +1113,11 @@ func (m DiscordSyncDiffMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m DiscordSyncDiffMultiError) AllErrors() []error { return m }
+func (m DiscordSyncChangesMultiError) AllErrors() []error { return m }
 
-// DiscordSyncDiffValidationError is the validation error returned by
-// DiscordSyncDiff.Validate if the designated constraints aren't met.
-type DiscordSyncDiffValidationError struct {
+// DiscordSyncChangesValidationError is the validation error returned by
+// DiscordSyncChanges.Validate if the designated constraints aren't met.
+type DiscordSyncChangesValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1095,22 +1125,24 @@ type DiscordSyncDiffValidationError struct {
 }
 
 // Field function returns field value.
-func (e DiscordSyncDiffValidationError) Field() string { return e.field }
+func (e DiscordSyncChangesValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e DiscordSyncDiffValidationError) Reason() string { return e.reason }
+func (e DiscordSyncChangesValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e DiscordSyncDiffValidationError) Cause() error { return e.cause }
+func (e DiscordSyncChangesValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e DiscordSyncDiffValidationError) Key() bool { return e.key }
+func (e DiscordSyncChangesValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e DiscordSyncDiffValidationError) ErrorName() string { return "DiscordSyncDiffValidationError" }
+func (e DiscordSyncChangesValidationError) ErrorName() string {
+	return "DiscordSyncChangesValidationError"
+}
 
 // Error satisfies the builtin error interface
-func (e DiscordSyncDiffValidationError) Error() string {
+func (e DiscordSyncChangesValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1122,14 +1154,14 @@ func (e DiscordSyncDiffValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sDiscordSyncDiff.%s: %s%s",
+		"invalid %sDiscordSyncChanges.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = DiscordSyncDiffValidationError{}
+var _ error = DiscordSyncChangesValidationError{}
 
 var _ interface {
 	Field() string
@@ -1137,7 +1169,140 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = DiscordSyncDiffValidationError{}
+} = DiscordSyncChangesValidationError{}
+
+// Validate checks the field values on DiscordSyncChange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *DiscordSyncChange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DiscordSyncChange with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DiscordSyncChangeMultiError, or nil if none found.
+func (m *DiscordSyncChange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DiscordSyncChange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetTime()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, DiscordSyncChangeValidationError{
+					field:  "Time",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, DiscordSyncChangeValidationError{
+					field:  "Time",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetTime()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return DiscordSyncChangeValidationError{
+				field:  "Time",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	// no validation rules for Plan
+
+	if len(errors) > 0 {
+		return DiscordSyncChangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// DiscordSyncChangeMultiError is an error wrapping multiple validation errors
+// returned by DiscordSyncChange.ValidateAll() if the designated constraints
+// aren't met.
+type DiscordSyncChangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DiscordSyncChangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DiscordSyncChangeMultiError) AllErrors() []error { return m }
+
+// DiscordSyncChangeValidationError is the validation error returned by
+// DiscordSyncChange.Validate if the designated constraints aren't met.
+type DiscordSyncChangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DiscordSyncChangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DiscordSyncChangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DiscordSyncChangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DiscordSyncChangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DiscordSyncChangeValidationError) ErrorName() string {
+	return "DiscordSyncChangeValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DiscordSyncChangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDiscordSyncChange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DiscordSyncChangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DiscordSyncChangeValidationError{}
 
 // Validate checks the field values on UserInfoSyncSettings with the rules
 // defined in the proto definition for this message. If any rules are

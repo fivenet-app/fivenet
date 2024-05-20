@@ -2,6 +2,7 @@ package users
 
 import (
 	"database/sql/driver"
+	"slices"
 
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"google.golang.org/protobuf/encoding/protojson"
@@ -194,8 +195,8 @@ func (x *JobSettings) Value() (driver.Value, error) {
 	return string(out), err
 }
 
-// Scan implements driver.Valuer for protobuf DiscordSyncDiff.
-func (x *DiscordSyncDiff) Scan(value any) error {
+// Scan implements driver.Valuer for protobuf DiscordSyncChanges.
+func (x *DiscordSyncChanges) Scan(value any) error {
 	switch t := value.(type) {
 	case string:
 		return protojson.Unmarshal([]byte(t), x)
@@ -206,11 +207,27 @@ func (x *DiscordSyncDiff) Scan(value any) error {
 }
 
 // Value marshals the value into driver.Valuer.
-func (x *DiscordSyncDiff) Value() (driver.Value, error) {
+func (x *DiscordSyncChanges) Value() (driver.Value, error) {
 	if x == nil {
 		return nil, nil
 	}
 
 	out, err := protoutils.Marshal(x)
 	return string(out), err
+}
+
+func (x *DiscordSyncChanges) Add(change *DiscordSyncChange) {
+	if len(x.Changes) > 0 {
+		lastChange := x.Changes[len(x.Changes)-1]
+
+		if lastChange.Plan == change.Plan {
+			return
+		}
+	}
+
+	x.Changes = append(x.Changes, change)
+
+	if len(x.Changes) > 12 {
+		x.Changes = slices.Delete(x.Changes, 0, 1)
+	}
 }

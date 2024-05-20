@@ -10,7 +10,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
+import { DiscordSyncChange, JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -191,6 +191,10 @@ function setSettingsValues(): void {
         if (jobProps.value.discordSyncSettings.groupSyncSettings) {
             state.discordSyncSettings.groupSyncSettings = jobProps.value.discordSyncSettings.groupSyncSettings;
         }
+
+        selectedChange.value = jobProps.value.discordSyncChanges?.changes.at(
+            jobProps.value.discordSyncChanges?.changes.length - 1,
+        );
     }
 }
 
@@ -222,6 +226,8 @@ const selectedTab = computed({
         router.replace({ query: { tab: items[value].slot }, hash: '#' });
     },
 });
+
+const selectedChange = ref<DiscordSyncChange | undefined>();
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -875,22 +881,38 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </template>
                             </UDashboardSection>
 
-                            <UDashboardSection v-if="jobProps.discordSyncDiff">
+                            <UDashboardSection v-if="jobProps.discordSyncChanges">
                                 <UAccordion
                                     :items="[{ label: $t('common.diff'), slot: 'diff', icon: 'i-mdi-difference-left' }]"
                                 >
                                     <template #diff>
-                                        <div>
-                                            <CodeDiff
-                                                theme="dark"
-                                                :old-string="jobProps.discordSyncDiff?.old ?? ''"
-                                                :new-string="jobProps.discordSyncDiff?.new ?? ''"
-                                                output-format="side-by-side"
-                                                hide-stat
-                                                hide-header
-                                                trim
-                                            />
-                                        </div>
+                                        <USelectMenu
+                                            v-model="selectedChange"
+                                            :options="jobProps.discordSyncChanges.changes"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        >
+                                            <template #label>
+                                                <span class="truncate">{{ $d(toDate(selectedChange?.time), 'short') }}</span>
+                                            </template>
+
+                                            <template #option="{ option }">
+                                                <span class="truncate">{{ $d(toDate(option.time), 'short') }}</span>
+                                            </template>
+                                        </USelectMenu>
+
+                                        <CodeDiff
+                                            class="codediff"
+                                            theme="dark"
+                                            :old-string="jobProps.discordSyncChanges.changes[0].plan ?? ''"
+                                            :new-string="selectedChange?.plan ?? ''"
+                                            :filename="$d(toDate(jobProps.discordSyncChanges.changes[0]?.time), 'short')"
+                                            :new-filename="$d(toDate(selectedChange?.time), 'short')"
+                                            output-format="side-by-side"
+                                            hide-stat
+                                            trim
+                                        />
                                     </template>
                                 </UAccordion>
                             </UDashboardSection>
@@ -971,3 +993,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UForm>
     </template>
 </template>
+
+<style scoped>
+.codediff:deep(.diff-commandbar) {
+    display: none;
+}
+</style>

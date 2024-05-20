@@ -27,6 +27,7 @@ type UserInfo struct {
 	*BaseModule
 
 	nicknameRegex *regexp.Regexp
+	ignoredJobs   []string
 }
 
 type userRoleMapping struct {
@@ -53,10 +54,11 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 	return &UserInfo{
 		BaseModule:    base,
 		nicknameRegex: nicknameRegex,
+		ignoredJobs:   base.appCfg.Get().Discord.IgnoredJobs,
 	}, nil
 }
 
-func (g *UserInfo) Plan(ctx context.Context) (*types.Plan, []*discordgo.MessageEmbed, error) {
+func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error) {
 	job := g.enricher.GetJobByName(g.job)
 	if job == nil {
 		g.logger.Error("unknown job for discord guild, skipping")
@@ -68,34 +70,30 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.Plan, []*discordgo.MessageE
 		return nil, nil, err
 	}
 
-	handlers := []types.NotPartOfFactionHandler{}
+	handlers := []types.UserProcessorHandler{}
 	for _, role := range roles {
 		if role.Module == userInfoRoleModuleUnemployed {
-			handlers = append(handlers, func(ctx context.Context, session *discordgo.Session, guildId string, member *discordgo.Member) ([]*discordgo.MessageEmbed, error) {
-				if g.settings.DryRun {
-					return nil, nil
+			handlers = append(handlers, func(ctx context.Context, guildId string, member *discordgo.Member, user *types.User) (*types.User, []*discordgo.MessageEmbed, error) {
+				if user.Job == g.job {
+					return user, nil, nil
+				}
+
+				if slices.Contains(g.ignoredJobs, user.Job) {
+					user.Job = g.job
+					return user, nil, nil
 				}
 
 				switch g.settings.UserInfoSyncSettings.UnemployedMode {
 				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
-					// Skip if user is already part of unemployed role
-					if slices.Contains(member.Roles, role.ID) {
-						break
-					}
-
-					if err := g.discord.GuildMemberRoleAdd(g.guild.ID, member.User.ID, role.ID, discordgo.WithContext(ctx)); err != nil {
-						return nil, fmt.Errorf("failed to add member to unemployed role %s: %w", role.ID, err)
-					}
+					user.Roles.Sum = append(user.Roles.Sum, role)
 
 				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
-					if err := g.discord.GuildMemberDeleteWithReason(g.guild.ID, member.User.ID,
-						fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job),
-						discordgo.WithContext(ctx)); err != nil {
-						return nil, fmt.Errorf("failed to kick unemployed member %s from guild: %w", member.User.ID, err)
-					}
+					kick := true
+					user.Kick = &kick
+					user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
 				}
 
-				return nil, nil
+				return user, nil, nil
 			})
 			break
 		}
@@ -106,10 +104,11 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.Plan, []*discordgo.MessageE
 		return nil, logs, err
 	}
 
-	return &types.Plan{
-		Roles:                    roles,
-		Users:                    users,
-		NotPartOfFactionHandlers: handlers,
+	return &types.State{
+		Roles: roles,
+		Users: users,
+
+		UserProcessors: handlers,
 	}, logs, err
 }
 
@@ -128,6 +127,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		roles = append(roles, &types.Role{
 			Name:   strings.ReplaceAll(g.settings.UserInfoSyncSettings.EmployeeRoleFormat, "%s", job.Label),
 			Module: userInfoRoleModuleEmployee,
+			Job:    g.job,
 		})
 	}
 
@@ -135,6 +135,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		roles = append(roles, &types.Role{
 			Name:   g.settings.UserInfoSyncSettings.UnemployedRoleName,
 			Module: userInfoRoleModuleUnemployed,
+			Job:    g.job,
 		})
 	}
 
@@ -142,6 +143,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		roles = append(roles, &types.Role{
 			Name:   g.settings.JobsAbsenceSettings.AbsenceRole,
 			Module: userInfoRoleModuleAbsence,
+			Job:    g.job,
 		})
 	}
 
@@ -158,6 +160,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		roles = append(roles, &types.Role{
 			Name:   name,
 			Module: fmt.Sprintf(userInfoRoleModuleJobGradePrefix+"%d", grade.Grade),
+			Job:    g.job,
 		})
 
 		jobRoles[grade.Grade] = nil
@@ -167,6 +170,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		roles = append(roles, &types.Role{
 			Name:   mapping.Name,
 			Module: fmt.Sprintf(userInfoRoleModuleGroupMappingPrefix+"%d", i),
+			Job:    g.job,
 		})
 	}
 
@@ -176,42 +180,6 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.Users, []*discordgo.MessageEmbed, error) {
 	users := types.Users{}
 	logs := []*discordgo.MessageEmbed{}
-
-	stmt := tOauth2Accs.
-		SELECT(
-			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
-			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
-			tUsers.JobGrade.AS("userrolemapping.job_grade"),
-			tUsers.Firstname.AS("userrolemapping.firstname"),
-			tUsers.Lastname.AS("userrolemapping.lastname"),
-			tUsers.Job.AS("userrolemapping.job"),
-			tJobsUserProps.AbsenceBegin.AS("userrolemapping.absence_begin"),
-			tJobsUserProps.AbsenceEnd.AS("userrolemapping.absence_end"),
-		).
-		FROM(
-			tOauth2Accs.
-				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tOauth2Accs.AccountID),
-				).
-				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
-				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUsers.ID),
-				),
-		).
-		WHERE(jet.AND(
-			tOauth2Accs.Provider.EQ(jet.String("discord")),
-			tUsers.Job.EQ(jet.String(g.job)),
-		)).
-		ORDER_BY(tUsers.ID.ASC())
-
-	var dest []*userRoleMapping
-	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return users, logs, err
-		}
-	}
 
 	var employeeRole *types.Role
 	var absenceRole *types.Role
@@ -245,8 +213,60 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 		}
 	}
 
+	jobs := []jet.Expression{jet.String(g.job)}
+	for _, job := range g.ignoredJobs {
+		jobs = append(jobs, jet.String(job))
+	}
+
+	stmt := tOauth2Accs.
+		SELECT(
+			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
+			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
+			tUsers.JobGrade.AS("userrolemapping.job_grade"),
+			tUsers.Firstname.AS("userrolemapping.firstname"),
+			tUsers.Lastname.AS("userrolemapping.lastname"),
+			tUsers.Job.AS("userrolemapping.job"),
+			tJobsUserProps.AbsenceBegin.AS("userrolemapping.absence_begin"),
+			tJobsUserProps.AbsenceEnd.AS("userrolemapping.absence_end"),
+		).
+		FROM(
+			tOauth2Accs.
+				INNER_JOIN(tAccs,
+					tAccs.ID.EQ(tOauth2Accs.AccountID),
+				).
+				INNER_JOIN(tUsers,
+					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
+				).
+				LEFT_JOIN(tJobsUserProps,
+					tJobsUserProps.UserID.EQ(tUsers.ID),
+				),
+		).
+		WHERE(jet.AND(
+			tOauth2Accs.Provider.EQ(jet.String("discord")),
+			tUsers.Job.IN(jobs...),
+		)).
+		ORDER_BY(tUsers.ID.ASC())
+
+	var dest []*userRoleMapping
+	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return users, logs, err
+		}
+	}
+
 	errs := multierr.Combine()
 	for _, u := range dest {
+		user := &types.User{
+			ID:    u.ExternalID,
+			Roles: &types.UserRoles{},
+			Job:   u.Job,
+		}
+
+		if u.Job != g.job {
+			users.Add(user)
+			continue
+		}
+
 		member, err := g.discord.GuildMember(g.guild.ID, u.ExternalID)
 		if err != nil {
 			if restErr, ok := err.(*discordgo.RESTError); ok {
@@ -268,10 +288,6 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 			continue
 		}
 
-		user := &types.User{
-			ID: u.ExternalID,
-		}
-
 		if g.settings.UserInfoSyncSettings.SyncNicknames {
 			name := g.getUserNickname(member, u.Firstname, u.Lastname)
 			if name != "" {
@@ -279,14 +295,14 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 			}
 		}
 
-		user.Roles, err = g.getUserRoles(gradeRoles, u.Job, u.JobGrade)
+		user.Roles.Sum, err = g.getUserRoles(gradeRoles, u.Job, u.JobGrade)
 		if err != nil {
 			g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", u.ExternalID), zap.Error(err))
 			continue
 		}
 
 		for idx, mapping := range g.settings.UserInfoSyncSettings.GroupMapping {
-			if mapping.FromGrade < u.JobGrade || mapping.ToGrade > u.JobGrade {
+			if u.JobGrade < mapping.FromGrade || u.JobGrade > mapping.ToGrade {
 				continue
 			}
 
@@ -295,17 +311,17 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 				return nil, logs, fmt.Errorf("failed to find role for group mapping %s", mapping.Name)
 			}
 
-			user.Roles = append(user.Roles, role)
+			user.Roles.Sum = append(user.Roles.Sum, role)
 		}
 
 		if g.settings.UserInfoSyncSettings.EmployeeRoleEnabled &&
 			employeeRole != nil {
-			user.Roles = append(user.Roles, employeeRole)
+			user.Roles.Sum = append(user.Roles.Sum, employeeRole)
 		}
 
 		if g.settings.JobsAbsence && absenceRole != nil &&
 			g.isUserAbsent(u.AbsenceBegin, u.AbsenceEnd) {
-			user.Roles = append(user.Roles, absenceRole)
+			user.Roles.Sum = append(user.Roles.Sum, absenceRole)
 		}
 
 		users.Add(user)
@@ -352,8 +368,8 @@ func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, l
 	return fullName
 }
 
-func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade int32) ([]*types.Role, error) {
-	userRoles := []*types.Role{}
+func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade int32) (types.Roles, error) {
+	userRoles := types.Roles{}
 
 	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
 	// "ambulance" job Discord, and an user is currently in the ignored, e.g., "army", jobs.
@@ -374,4 +390,39 @@ func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade i
 func (g *UserInfo) isUserAbsent(beginDate *timestamp.Timestamp, endDate *timestamp.Timestamp) bool {
 	// Either the user has no dates set or the absence is over (due to dates we have to think end date + 24 hours)
 	return !((beginDate == nil || endDate == nil) || (time.Since(beginDate.AsTime()) < 0*time.Hour || time.Since(endDate.AsTime()) > 24*time.Hour))
+}
+
+func (g *UserInfo) lookupUsersByDiscordID(ctx context.Context, externalId string) ([]*userRoleMapping, error) {
+	stmt := tOauth2Accs.
+		SELECT(
+			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
+			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
+			tUsers.JobGrade.AS("userrolemapping.job_grade"),
+			tUsers.Firstname.AS("userrolemapping.firstname"),
+			tUsers.Lastname.AS("userrolemapping.lastname"),
+			tUsers.Job.AS("userrolemapping.job"),
+		).
+		FROM(
+			tOauth2Accs.
+				INNER_JOIN(tAccs,
+					tAccs.ID.EQ(tOauth2Accs.AccountID),
+				).
+				INNER_JOIN(tUsers,
+					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
+				),
+		).
+		WHERE(jet.AND(
+			tOauth2Accs.Provider.EQ(jet.String("discord")),
+			tOauth2Accs.ExternalID.EQ(jet.String(externalId)),
+		)).
+		ORDER_BY(tUsers.ID.ASC())
+
+	var dest []*userRoleMapping
+	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return dest, nil
 }
