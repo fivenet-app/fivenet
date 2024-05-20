@@ -24,7 +24,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-screen max-w-xl' }">
+    <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
         <UCard
             class="flex flex-1 flex-col"
             :ui="{
