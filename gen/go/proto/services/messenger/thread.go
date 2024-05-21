@@ -241,6 +241,29 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *useri
 	return &thread, nil
 }
 
+func (s *Server) GetThread(ctx context.Context, req *GetThreadRequest) (*GetThreadResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	check, err := s.checkIfUserHasAccessToThread(ctx, req.ThreadId, userInfo, messenger.AccessLevel_ACCESS_LEVEL_ADMIN)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+	}
+	if !check && !userInfo.SuperUser {
+		if !userInfo.SuperUser {
+			return nil, errorsmessenger.ErrFailedQuery
+		}
+	}
+
+	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+	}
+
+	return &GetThreadResponse{
+		Thread: thread,
+	}, nil
+}
+
 func (s *Server) CreateOrUpdateThread(ctx context.Context, req *CreateOrUpdateThreadRequest) (*CreateOrUpdateThreadResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.messenger.thread.id", int64(req.Thread.Id)))
 
@@ -322,7 +345,8 @@ func (s *Server) CreateOrUpdateThread(ctx context.Context, req *CreateOrUpdateTh
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	if err := s.handleThreadAccessChanges(ctx, tx, messenger.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Thread.Id, req.Thread.Access); err != nil {
+	accessToDelete, err := s.handleThreadAccessChanges(ctx, tx, messenger.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UPDATE, req.Thread.Id, req.Thread.Access)
+	if err != nil {
 		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
 	}
 
@@ -334,6 +358,35 @@ func (s *Server) CreateOrUpdateThread(ctx context.Context, req *CreateOrUpdateTh
 	thread, err := s.getThread(ctx, req.Thread.Id, userInfo, true)
 	if err != nil {
 		return nil, errorsmessenger.ErrFailedQuery
+	}
+
+	if accessToDelete != nil && len(accessToDelete.Users) > 0 {
+		userIds := []int32{}
+		for _, ua := range accessToDelete.Users {
+			userIds = append(userIds, ua.UserId)
+		}
+
+		s.sendUpdate(ctx, &messenger.MessengerEvent{
+			Data: &messenger.MessengerEvent_ThreadDelete{
+				ThreadDelete: thread.Id,
+			},
+		}, userIds)
+	}
+
+	if len(thread.Access.Users) > 0 {
+		userIds := []int32{userInfo.UserId}
+		if thread != nil && thread.CreatorId != nil {
+			userIds = append(userIds, *thread.CreatorId)
+		}
+		for _, ua := range thread.Access.Users {
+			userIds = append(userIds, ua.UserId)
+		}
+
+		s.sendUpdate(ctx, &messenger.MessengerEvent{
+			Data: &messenger.MessengerEvent_ThreadUpdate{
+				ThreadUpdate: thread,
+			},
+		}, userIds)
 	}
 
 	return &CreateOrUpdateThreadResponse{
@@ -365,6 +418,11 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 		}
 	}
 
+	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	if err != nil {
+		return nil, errorsmessenger.ErrFailedQuery
+	}
+
 	stmt := tThreads.
 		DELETE().
 		WHERE(tThreads.ID.EQ(jet.Uint64(req.ThreadId))).
@@ -372,6 +430,22 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+	}
+
+	if thread != nil && thread.Access != nil && len(thread.Access.Users) > 0 {
+		userIds := []int32{userInfo.UserId}
+		if thread.CreatorId != nil {
+			userIds = append(userIds, *thread.CreatorId)
+		}
+		for _, ua := range thread.Access.Users {
+			userIds = append(userIds, ua.UserId)
+		}
+
+		s.sendUpdate(ctx, &messenger.MessengerEvent{
+			Data: &messenger.MessengerEvent_ThreadDelete{
+				ThreadDelete: req.ThreadId,
+			},
+		}, userIds)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

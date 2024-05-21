@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { JobProps } from "../users/jobs";
+import { MessengerEvent } from "../messenger/events";
 import { Notification } from "./notifications";
 /**
  * @generated from protobuf message resources.notifications.UserEvent
@@ -28,9 +29,19 @@ export interface UserEvent {
     } | {
         oneofKind: "notification";
         /**
+         * Notifications
+         *
          * @generated from protobuf field: resources.notifications.Notification notification = 2;
          */
         notification: Notification;
+    } | {
+        oneofKind: "messenger";
+        /**
+         * Messenger
+         *
+         * @generated from protobuf field: resources.messenger.MessengerEvent messenger = 3;
+         */
+        messenger: MessengerEvent;
     } | {
         oneofKind: undefined;
     };
@@ -62,7 +73,8 @@ class UserEvent$Type extends MessageType<UserEvent> {
     constructor() {
         super("resources.notifications.UserEvent", [
             { no: 1, name: "refresh_token", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification }
+            { no: 2, name: "notification", kind: "message", oneof: "data", T: () => Notification },
+            { no: 3, name: "messenger", kind: "message", oneof: "data", T: () => MessengerEvent }
         ]);
     }
     create(value?: PartialMessage<UserEvent>): UserEvent {
@@ -89,6 +101,12 @@ class UserEvent$Type extends MessageType<UserEvent> {
                         notification: Notification.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).notification)
                     };
                     break;
+                case /* resources.messenger.MessengerEvent messenger */ 3:
+                    message.data = {
+                        oneofKind: "messenger",
+                        messenger: MessengerEvent.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).messenger)
+                    };
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -107,6 +125,9 @@ class UserEvent$Type extends MessageType<UserEvent> {
         /* resources.notifications.Notification notification = 2; */
         if (message.data.oneofKind === "notification")
             Notification.internalBinaryWrite(message.data.notification, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.messenger.MessengerEvent messenger = 3; */
+        if (message.data.oneofKind === "messenger")
+            MessengerEvent.internalBinaryWrite(message.data.messenger, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 
 const (
 	MessengerService_ListThreads_FullMethodName          = "/services.messenger.MessengerService/ListThreads"
+	MessengerService_GetThread_FullMethodName            = "/services.messenger.MessengerService/GetThread"
 	MessengerService_CreateOrUpdateThread_FullMethodName = "/services.messenger.MessengerService/CreateOrUpdateThread"
 	MessengerService_DeleteThread_FullMethodName         = "/services.messenger.MessengerService/DeleteThread"
 	MessengerService_SetThreadUserState_FullMethodName   = "/services.messenger.MessengerService/SetThreadUserState"
@@ -34,6 +35,8 @@ const (
 type MessengerServiceClient interface {
 	// @perm
 	ListThreads(ctx context.Context, in *ListThreadsRequest, opts ...grpc.CallOption) (*ListThreadsResponse, error)
+	// @perm: Name=ListThreads
+	GetThread(ctx context.Context, in *GetThreadRequest, opts ...grpc.CallOption) (*GetThreadResponse, error)
 	// @perm
 	CreateOrUpdateThread(ctx context.Context, in *CreateOrUpdateThreadRequest, opts ...grpc.CallOption) (*CreateOrUpdateThreadResponse, error)
 	// @perm
@@ -59,6 +62,15 @@ func NewMessengerServiceClient(cc grpc.ClientConnInterface) MessengerServiceClie
 func (c *messengerServiceClient) ListThreads(ctx context.Context, in *ListThreadsRequest, opts ...grpc.CallOption) (*ListThreadsResponse, error) {
 	out := new(ListThreadsResponse)
 	err := c.cc.Invoke(ctx, MessengerService_ListThreads_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messengerServiceClient) GetThread(ctx context.Context, in *GetThreadRequest, opts ...grpc.CallOption) (*GetThreadResponse, error) {
+	out := new(GetThreadResponse)
+	err := c.cc.Invoke(ctx, MessengerService_GetThread_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -125,6 +137,8 @@ func (c *messengerServiceClient) DeleteMessage(ctx context.Context, in *DeleteMe
 type MessengerServiceServer interface {
 	// @perm
 	ListThreads(context.Context, *ListThreadsRequest) (*ListThreadsResponse, error)
+	// @perm: Name=ListThreads
+	GetThread(context.Context, *GetThreadRequest) (*GetThreadResponse, error)
 	// @perm
 	CreateOrUpdateThread(context.Context, *CreateOrUpdateThreadRequest) (*CreateOrUpdateThreadResponse, error)
 	// @perm
@@ -146,6 +160,9 @@ type UnimplementedMessengerServiceServer struct {
 
 func (UnimplementedMessengerServiceServer) ListThreads(context.Context, *ListThreadsRequest) (*ListThreadsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListThreads not implemented")
+}
+func (UnimplementedMessengerServiceServer) GetThread(context.Context, *GetThreadRequest) (*GetThreadResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetThread not implemented")
 }
 func (UnimplementedMessengerServiceServer) CreateOrUpdateThread(context.Context, *CreateOrUpdateThreadRequest) (*CreateOrUpdateThreadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateThread not implemented")
@@ -192,6 +209,24 @@ func _MessengerService_ListThreads_Handler(srv interface{}, ctx context.Context,
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(MessengerServiceServer).ListThreads(ctx, req.(*ListThreadsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _MessengerService_GetThread_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetThreadRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessengerServiceServer).GetThread(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MessengerService_GetThread_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessengerServiceServer).GetThread(ctx, req.(*GetThreadRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -314,6 +349,10 @@ var MessengerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListThreads",
 			Handler:    _MessengerService_ListThreads_Handler,
+		},
+		{
+			MethodName: "GetThread",
+			Handler:    _MessengerService_GetThread_Handler,
 		},
 		{
 			MethodName: "CreateOrUpdateThread",

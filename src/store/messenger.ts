@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie';
+import type { MessengerEvent } from '~~/gen/ts/resources/messenger/events';
 import type { Message } from '~~/gen/ts/resources/messenger/message';
 import type { Thread, ThreadUserState } from '~~/gen/ts/resources/messenger/thread';
 import type {
@@ -22,7 +23,49 @@ export class MessengerDexie extends Dexie {
         });
     }
 
+    async handleEvent(event: MessengerEvent): Promise<void> {
+        if (event.data.oneofKind === 'threadUpdate') {
+            await this.threads.put(event.data.threadUpdate);
+        } else if (event.data.oneofKind === 'threadDelete') {
+            await this.threads.delete(event.data.threadDelete);
+        } else if (event.data.oneofKind === 'messageUpdate') {
+            const msg = this.messages.get(event.data.messageUpdate.id);
+            if (!msg) {
+                await this.messages.put(event.data.messageUpdate);
+
+                await this.setThreadUserState({
+                    threadId: event.data.messageUpdate.threadId,
+                    unread: true,
+                });
+
+                useSound().play({ name: 'notification' });
+            }
+        } else if (event.data.oneofKind === 'messageDelete') {
+            await this.messages.delete(event.data.messageDelete);
+        }
+    }
+
     // Thread
+    async getThread(threadId: string): Promise<Thread | undefined> {
+        try {
+            const call = getGRPCMessengerClient().getThread({
+                threadId: threadId,
+            });
+            const { response } = await call;
+
+            if (response.thread) {
+                await this.threads.put(response.thread);
+            } else {
+                await this.threads.delete(threadId);
+            }
+
+            return response.thread;
+        } catch (e) {
+            handleGRPCError(e);
+            throw e;
+        }
+    }
+
     async createOrUpdateThread(req: CreateOrUpdateThreadRequest): Promise<CreateOrUpdateThreadResponse> {
         try {
             const call = getGRPCMessengerClient().createOrUpdateThread(req);

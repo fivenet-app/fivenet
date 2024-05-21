@@ -57,3 +57,35 @@ func (s *Server) SetThreadUserState(ctx context.Context, req *SetThreadUserState
 
 	return &SetThreadUserStateResponse{}, nil
 }
+
+func (s *Server) setUnreadState(ctx context.Context, threadId uint64, userIds []int32) error {
+	if len(userIds) == 0 {
+		return nil
+	}
+
+	tThreadsUserState := table.FivenetMsgsThreadsUserState
+	stmt := tThreadsUserState.
+		INSERT(
+			tThreadsUserState.ThreadID,
+			tThreadsUserState.UserID,
+			tThreadsUserState.Unread,
+		)
+
+	for _, userId := range userIds {
+		stmt = stmt.VALUES(
+			threadId,
+			userId,
+			true,
+		)
+	}
+
+	stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+		tThreadsUserState.Unread.SET(jet.RawBool("VALUES(`unread`)")),
+	)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
+}

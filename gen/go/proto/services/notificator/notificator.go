@@ -341,7 +341,10 @@ func (s *Server) Stream(req *StreamRequest, srv NotificatorService_StreamServer)
 					return errswrap.NewError(err, ErrFailedStream)
 				}
 
-				notsCount++
+				switch dest.Data.(type) {
+				case *notifications.UserEvent_Notification:
+					notsCount++
+				}
 				resp := &StreamResponse{
 					NotificationCount: notsCount,
 					Data: &StreamResponse_UserEvent{

@@ -12,6 +12,7 @@ var PermsRemap = map[string]string{
 
 	// Service: MessengerService
 	"MessengerService/DeleteMessage":      "SuperUser",
+	"MessengerService/GetThread":          "MessengerService/ListThreads",
 	"MessengerService/GetThreadMessages":  "MessengerService/ListThreads",
 	"MessengerService/SetThreadUserState": "MessengerService/ListThreads",
 }

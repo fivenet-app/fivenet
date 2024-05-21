@@ -24,6 +24,7 @@
 // source: resources/livemap/livemap.proto
 // source: resources/livemap/tracker.proto
 // source: resources/messenger/access.proto
+// source: resources/messenger/events.proto
 // source: resources/messenger/message.proto
 // source: resources/messenger/thread.proto
 // source: resources/messenger/user.proto

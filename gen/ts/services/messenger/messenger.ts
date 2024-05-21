@@ -44,6 +44,24 @@ export interface ListThreadsResponse {
     threads: Thread[];
 }
 /**
+ * @generated from protobuf message services.messenger.GetThreadRequest
+ */
+export interface GetThreadRequest {
+    /**
+     * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
+     */
+    threadId: string;
+}
+/**
+ * @generated from protobuf message services.messenger.GetThreadResponse
+ */
+export interface GetThreadResponse {
+    /**
+     * @generated from protobuf field: resources.messenger.Thread thread = 1;
+     */
+    thread?: Thread;
+}
+/**
  * @generated from protobuf message services.messenger.CreateOrUpdateThreadRequest
  */
 export interface CreateOrUpdateThreadRequest {
@@ -256,6 +274,99 @@ class ListThreadsResponse$Type extends MessageType<ListThreadsResponse> {
  * @generated MessageType for protobuf message services.messenger.ListThreadsResponse
  */
 export const ListThreadsResponse = new ListThreadsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetThreadRequest$Type extends MessageType<GetThreadRequest> {
+    constructor() {
+        super("services.messenger.GetThreadRequest", [
+            { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<GetThreadRequest>): GetThreadRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.threadId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<GetThreadRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetThreadRequest): GetThreadRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.threadId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetThreadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 thread_id = 1 [jstype = JS_STRING]; */
+        if (message.threadId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.threadId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.messenger.GetThreadRequest
+ */
+export const GetThreadRequest = new GetThreadRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class GetThreadResponse$Type extends MessageType<GetThreadResponse> {
+    constructor() {
+        super("services.messenger.GetThreadResponse", [
+            { no: 1, name: "thread", kind: "message", T: () => Thread }
+        ]);
+    }
+    create(value?: PartialMessage<GetThreadResponse>): GetThreadResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<GetThreadResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetThreadResponse): GetThreadResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.messenger.Thread thread */ 1:
+                    message.thread = Thread.internalBinaryRead(reader, reader.uint32(), options, message.thread);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: GetThreadResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.messenger.Thread thread = 1; */
+        if (message.thread)
+            Thread.internalBinaryWrite(message.thread, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.messenger.GetThreadResponse
+ */
+export const GetThreadResponse = new GetThreadResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class CreateOrUpdateThreadRequest$Type extends MessageType<CreateOrUpdateThreadRequest> {
     constructor() {
@@ -769,6 +880,7 @@ export const DeleteMessageResponse = new DeleteMessageResponse$Type();
  */
 export const MessengerService = new ServiceType("services.messenger.MessengerService", [
     { name: "ListThreads", options: {}, I: ListThreadsRequest, O: ListThreadsResponse },
+    { name: "GetThread", options: {}, I: GetThreadRequest, O: GetThreadResponse },
     { name: "CreateOrUpdateThread", options: {}, I: CreateOrUpdateThreadRequest, O: CreateOrUpdateThreadResponse },
     { name: "DeleteThread", options: {}, I: DeleteThreadRequest, O: DeleteThreadResponse },
     { name: "SetThreadUserState", options: {}, I: SetThreadUserStateRequest, O: SetThreadUserStateResponse },

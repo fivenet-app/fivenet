@@ -2,8 +2,10 @@
 import MessengerList from '~/components/messenger/MessengerList.vue';
 import MessengerThread from '~/components/messenger/MessengerThread.vue';
 import ThreadCreateOrUpdateModal from '~/components/messenger/ThreadCreateOrUpdateModal.vue';
+import { canAccessThread } from '~/components/messenger/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { messengerStore } from '~/store/messenger';
+import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
 import type { Thread, ThreadUserState } from '~~/gen/ts/resources/messenger/thread';
 
 useHead({
@@ -29,38 +31,46 @@ const tabItems = [
 ];
 const selectedTab = ref(0);
 
-const dropdownItems = computed(() => [
+const dropdownItems = computed(() =>
     [
-        {
-            label: t('common.edit'),
-            icon: 'i-mdi-pencil-outline',
-            click: () => {
-                if (!selectedThread.value) {
-                    return;
-                }
+        [
+            can('MessengerService.CreateOrUpdateThread') &&
+            canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.MANAGE)
+                ? {
+                      label: t('common.edit'),
+                      icon: 'i-mdi-pencil-outline',
+                      click: () => {
+                          if (!selectedThread.value) {
+                              return;
+                          }
 
-                modal.open(ThreadCreateOrUpdateModal, {
-                    thread: selectedThread.value,
-                });
-            },
-        },
-    ],
-    [
-        {
-            label: t('common.delete'),
-            icon: 'i-mdi-trash-can-outline',
-            click: async () => {
-                if (!selectedThread.value) {
-                    return;
-                }
+                          modal.open(ThreadCreateOrUpdateModal, {
+                              thread: selectedThread.value,
+                          });
+                      },
+                  }
+                : undefined,
+        ],
+        [
+            can('MessengerService.DeleteThread') &&
+            canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.ADMIN)
+                ? {
+                      label: t('common.delete'),
+                      icon: 'i-mdi-trash-can-outline',
+                      click: async () => {
+                          if (!selectedThread.value) {
+                              return;
+                          }
 
-                modal.open(ConfirmModal, {
-                    confirm: async () => messengerStore.deleteThread({ threadId: selectedThread.value!.id }), // TODO
-                });
-            },
-        },
-    ],
-]);
+                          modal.open(ConfirmModal, {
+                              confirm: async () => messengerStore.deleteThread({ threadId: selectedThread.value!.id }), // TODO
+                          });
+                      },
+                  }
+                : undefined,
+        ],
+    ].flatMap((items) => (items.length !== 0 ? [items] : [])),
+);
 
 onBeforeMount(async () => {
     const count = await messengerStore.threads.count();
@@ -131,6 +141,7 @@ watch(filteredThreads, () => {
                 <template #right>
                     <UButtonGroup class="inline-flex">
                         <UButton
+                            v-if="can('MessengerService.CreateOrUpdateThread')"
                             color="gray"
                             trailing-icon="i-mdi-plus"
                             @click="() => modal.open(ThreadCreateOrUpdateModal, {})"
@@ -222,7 +233,7 @@ watch(filteredThreads, () => {
                     </template>
                 </UDashboardNavbar>
 
-                <MessengerThread :thread="selectedThread" />
+                <MessengerThread :thread-id="selectedThread.id" />
             </template>
             <div v-else class="hidden flex-1 items-center justify-center lg:flex">
                 <UIcon name="i-mdi-inbox" class="h-32 w-32 text-gray-400 dark:text-gray-500" />

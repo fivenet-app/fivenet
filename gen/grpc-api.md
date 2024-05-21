@@ -281,6 +281,9 @@
 - [resources/messenger/user.proto](#resources_messenger_user-proto)
     - [UserStatus](#resources-messenger-UserStatus)
   
+- [resources/messenger/events.proto](#resources_messenger_events-proto)
+    - [MessengerEvent](#resources-messenger-MessengerEvent)
+  
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
     - [ChangePasswordResponse](#services-auth-ChangePasswordResponse)
@@ -649,6 +652,8 @@
     - [DeleteThreadResponse](#services-messenger-DeleteThreadResponse)
     - [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest)
     - [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse)
+    - [GetThreadRequest](#services-messenger-GetThreadRequest)
+    - [GetThreadResponse](#services-messenger-GetThreadResponse)
     - [ListThreadsRequest](#services-messenger-ListThreadsRequest)
     - [ListThreadsResponse](#services-messenger-ListThreadsResponse)
     - [PostMessageRequest](#services-messenger-PostMessageRequest)
@@ -2770,7 +2775,8 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | refresh_token | [bool](#bool) |  |  |
-| notification | [Notification](#resources-notifications-Notification) |  |  |
+| notification | [Notification](#resources-notifications-Notification) |  | Notifications |
+| messenger | [resources.messenger.MessengerEvent](#resources-messenger-MessengerEvent) |  | Messenger |
 
 
 
@@ -4702,6 +4708,40 @@ TODO allow links to internal
 | user_id | [int32](#int32) |  |  |
 | last_seen | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | status | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_messenger_events-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/messenger/events.proto
+
+
+
+<a name="resources-messenger-MessengerEvent"></a>
+
+### MessengerEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_update | [Thread](#resources-messenger-Thread) |  |  |
+| thread_delete | [uint64](#uint64) |  |  |
+| message_update | [Message](#resources-messenger-Message) |  |  |
+| message_delete | [uint64](#uint64) |  |  |
 
 
 
@@ -9735,6 +9775,36 @@ Results ====================================================================
 
 
 
+<a name="services-messenger-GetThreadRequest"></a>
+
+### GetThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-GetThreadResponse"></a>
+
+### GetThreadResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread | [resources.messenger.Thread](#resources-messenger-Thread) |  |  |
+
+
+
+
+
+
 <a name="services-messenger-ListThreadsRequest"></a>
 
 ### ListThreadsRequest
@@ -9836,6 +9906,7 @@ Results ====================================================================
 | Method Name | Request Type | Response Type | Description |
 | ----------- | ------------ | ------------- | ------------|
 | ListThreads | [ListThreadsRequest](#services-messenger-ListThreadsRequest) | [ListThreadsResponse](#services-messenger-ListThreadsResponse) | @perm |
+| GetThread | [GetThreadRequest](#services-messenger-GetThreadRequest) | [GetThreadResponse](#services-messenger-GetThreadResponse) | @perm: Name=ListThreads |
 | CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse) | @perm |
 | DeleteThread | [DeleteThreadRequest](#services-messenger-DeleteThreadRequest) | [DeleteThreadResponse](#services-messenger-DeleteThreadResponse) | @perm |
 | SetThreadUserState | [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse) | @perm: Name=ListThreads |

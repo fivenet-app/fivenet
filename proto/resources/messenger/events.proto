@@ -1,0 +1,17 @@
+syntax = "proto3";
+
+package resources.messenger;
+
+import "resources/messenger/message.proto";
+import "resources/messenger/thread.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/messenger;messenger";
+
+message MessengerEvent {
+  oneof data {
+    Thread thread_update = 1;
+    uint64 thread_delete = 2 [jstype = JS_STRING];
+    Message message_update = 3;
+    uint64 message_delete = 4 [jstype = JS_STRING];
+  }
+}

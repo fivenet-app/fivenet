@@ -1,16 +1,17 @@
 <script setup lang="ts">
-import { format, isToday } from 'date-fns';
+import { isToday } from 'date-fns';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { messengerStore } from '~/store/messenger';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
+import { canAccessThread } from './helpers';
+import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
 
 const props = withDefaults(
     defineProps<{
-        thread: Thread;
+        threadId: string;
         selected?: boolean;
     }>(),
     {
@@ -28,10 +29,16 @@ const state = reactive<Schema>({
     message: '',
 });
 
+const {
+    data: thread,
+    pending: loading,
+    error,
+} = useLazyAsyncData(`messenger-thread:${props.threadId}`, async () => messengerStore.getThread(props.threadId));
+
 onBeforeMount(async () => {
     const count = await messengerStore.threads.count();
     const call = getGRPCMessengerClient().getThreadMessages({
-        threadId: props.thread.id,
+        threadId: props.threadId,
         after: count > 0 ? undefined : toTimestamp(),
     });
     const { response } = await call;
@@ -40,21 +47,22 @@ onBeforeMount(async () => {
 });
 
 watchDebounced(
-    () => props.thread,
+    () => props.threadId,
     async () =>
         messengerStore.setThreadUserState({
-            threadId: props.thread.id,
+            threadId: props.threadId,
             unread: false,
         }),
 );
 
 const messages = useDexieLiveQueryWithDeps(
-    () => props.thread.id,
+    () => props.threadId,
     () =>
         messengerStore.messages
             .where('threadId')
-            .equals(props.thread.id)
-            .toArray()
+            .equals(props.threadId)
+            .limit(2500)
+            .sortBy('id')
             .then((messages) => ({ messages, loaded: true })),
     {
         initialValue: { messages: [], loaded: false },
@@ -68,52 +76,71 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         .postMessage({
             message: {
                 id: '0',
-                threadId: props.thread.id,
+                threadId: props.threadId,
                 message: event.data.message,
                 data: {},
             },
         })
+        .then(() => (state.message = ''))
         .finally(() => useTimeoutFn(() => (canSubmit.value = true), 1000));
 }, 1000);
 </script>
 
 <template>
     <UDashboardPanelContent>
-        <div class="flex justify-between">
-            <div class="flex items-center gap-4">
-                <div class="min-w-0">
+        <USkeleton v-if="!thread && loading" class="h-12 w-full" />
+        <div v-else-if="thread" class="flex w-full">
+            <div class="flex w-full flex-col gap-2">
+                <div class="flex flex-1 items-center justify-between gap-1">
                     <p class="font-semibold text-gray-900 dark:text-white">
                         {{ thread.title }}
                     </p>
-                    <p class="mt-2 font-medium text-gray-500 dark:text-gray-400">
-                        <UAvatarGroup size="sm" :max="10">
-                            <ProfilePictureImg
-                                :src="thread.creator?.avatar?.url"
-                                :name="`${thread.creator?.firstname} ${thread.creator?.lastname}`"
-                            />
 
-                            <ProfilePictureImg
-                                v-for="user in thread.access?.users"
-                                :src="user.user?.avatar?.url"
-                                :name="`${user.user?.firstname} ${user.user?.lastname}`"
-                            />
-                        </UAvatarGroup>
+                    <p class="font-medium text-gray-900 dark:text-white">
+                        {{
+                            isToday(toDate(thread.createdAt))
+                                ? $d(toDate(thread.createdAt), 'time')
+                                : $d(toDate(thread.createdAt), 'date')
+                        }}
                     </p>
                 </div>
-            </div>
 
-            <p class="font-medium text-gray-900 dark:text-white">
-                {{
-                    isToday(toDate(thread.createdAt))
-                        ? $d(toDate(thread.createdAt), 'time')
-                        : $d(toDate(thread.createdAt), 'date')
-                }}
-            </p>
+                <div class="min-w-0">
+                    <div class="font-medium text-gray-500 dark:text-gray-400">
+                        <UPopover>
+                            <UButton block variant="link" :padded="false">
+                                <UAvatarGroup size="sm" :max="5">
+                                    <ProfilePictureImg
+                                        :src="thread.creator?.avatar?.url"
+                                        :name="`${thread.creator?.firstname} ${thread.creator?.lastname}`"
+                                    />
+
+                                    <ProfilePictureImg
+                                        v-for="user in thread.access?.users"
+                                        :src="user.user?.avatar?.url"
+                                        :name="`${user.user?.firstname} ${user.user?.lastname}`"
+                                    />
+                                </UAvatarGroup>
+                            </UButton>
+
+                            <template #panel>
+                                <div class="p-4 text-gray-900 dark:text-white">
+                                    <ul role="list">
+                                        <li v-for="ua in thread.access?.users">
+                                            <CitizenInfoPopover :user="ua.user" show-avatar-in-name />
+                                        </li>
+                                    </ul>
+                                </div>
+                            </template>
+                        </UPopover>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <UDivider class="my-4" />
+        <UDivider class="my-2" />
 
-        <div class="flex-1 flex-col-reverse">
+        <div class="relative flex-1 overflow-x-auto">
             <template v-if="!messages.loaded">
                 <div class="space-y-2">
                     <USkeleton class="h-6 w-full" />
@@ -121,7 +148,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
             </template>
             <template v-else>
-                <div v-for="message in messages.messages" :key="message.id">
+                <div
+                    v-for="message in messages.messages.sort(
+                        (a, b) => toDate(a.createdAt).getTime() - toDate(b.createdAt).getTime(),
+                    )"
+                    :key="message.id"
+                >
                     <div class="flex justify-between">
                         <CitizenInfoPopover :user="message.creator" show-avatar-in-name />
 
@@ -135,9 +167,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             </template>
         </div>
 
-        <UDivider class="my-4" />
+        <UDivider class="my-2" />
 
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+        <UForm
+            v-if="thread && canAccessThread(thread.access, thread.creator, AccessLevel.MESSAGE)"
+            :schema="schema"
+            :state="state"
+            @submit="onSubmitThrottle"
+        >
             <UFormGroup name="message">
                 <UTextarea
                     v-model="state.message"

@@ -190,6 +190,31 @@ func (s *Server) PostMessage(ctx context.Context, req *PostMessageRequest) (*Pos
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 
+	thread, err := s.getThread(ctx, message.ThreadId, userInfo, true)
+	if err != nil {
+		return nil, errorsmessenger.ErrFailedQuery
+	}
+
+	if thread != nil && thread.Access != nil && len(thread.Access.Users) > 0 {
+		userIds := []int32{userInfo.UserId}
+		if thread.CreatorId != nil {
+			userIds = append(userIds, *thread.CreatorId)
+		}
+		for _, ua := range thread.Access.Users {
+			userIds = append(userIds, ua.UserId)
+		}
+
+		s.sendUpdate(ctx, &messenger.MessengerEvent{
+			Data: &messenger.MessengerEvent_MessageUpdate{
+				MessageUpdate: message,
+			},
+		}, userIds)
+
+		if err := s.setUnreadState(ctx, message.ThreadId, userIds); err != nil {
+			return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+		}
+	}
+
 	return &PostMessageResponse{
 		Message: message,
 	}, nil
@@ -229,6 +254,24 @@ func (s *Server) DeleteMessage(ctx context.Context, req *DeleteMessageRequest) (
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+	}
+
+	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	if err != nil {
+		return nil, errorsmessenger.ErrFailedQuery
+	}
+
+	if thread != nil && thread.Access != nil && len(thread.Access.Users) > 0 {
+		userIds := []int32{userInfo.UserId}
+		for _, ua := range thread.Access.Users {
+			userIds = append(userIds, ua.UserId)
+		}
+
+		s.sendUpdate(ctx, &messenger.MessengerEvent{
+			Data: &messenger.MessengerEvent_MessageDelete{
+				MessageDelete: req.MessageId,
+			},
+		}, userIds)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

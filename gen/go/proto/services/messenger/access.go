@@ -83,7 +83,7 @@ func (s *Server) getThreadAccess(ctx context.Context, threadId uint64) (*messeng
 	}, nil
 }
 
-func (s *Server) handleThreadAccessChanges(ctx context.Context, tx qrm.DB, mode messenger.AccessLevelUpdateMode, threadId uint64, access *messenger.ThreadAccess) error {
+func (s *Server) handleThreadAccessChanges(ctx context.Context, tx qrm.DB, mode messenger.AccessLevelUpdateMode, threadId uint64, access *messenger.ThreadAccess) (*messenger.ThreadAccess, error) {
 	switch mode {
 	case messenger.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
 		fallthrough
@@ -91,35 +91,37 @@ func (s *Server) handleThreadAccessChanges(ctx context.Context, tx qrm.DB, mode 
 		// Get existing job and user accesses from database
 		current, err := s.getThreadAccess(ctx, threadId)
 		if err != nil {
-			return err
+			return nil, err
 		}
 
 		toCreate, toUpdate, toDelete := s.compareThreadAccess(current, access)
 
 		if err := s.createThreadAccess(ctx, tx, threadId, toCreate); err != nil {
-			return err
+			return nil, err
 		}
 
 		if err := s.updateThreadAccess(ctx, tx, threadId, toUpdate); err != nil {
-			return err
+			return nil, err
 		}
 
 		if err := s.deleteThreadAccess(ctx, tx, threadId, toDelete); err != nil {
-			return err
+			return nil, err
 		}
+
+		return toDelete, nil
 
 	case messenger.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_DELETE:
 		if err := s.deleteThreadAccess(ctx, tx, threadId, access); err != nil {
-			return err
+			return nil, err
 		}
 
 	case messenger.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_CLEAR:
 		if err := s.clearThreadAccess(ctx, tx, threadId); err != nil {
-			return err
+			return nil, err
 		}
 	}
 
-	return nil
+	return nil, nil
 }
 
 func (s *Server) compareThreadAccess(current, in *messenger.ThreadAccess) (toCreate *messenger.ThreadAccess, toUpdate *messenger.ThreadAccess, toDelete *messenger.ThreadAccess) {

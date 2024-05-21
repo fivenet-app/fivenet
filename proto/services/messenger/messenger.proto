@@ -20,6 +20,14 @@ message ListThreadsResponse {
   repeated resources.messenger.Thread threads = 2;
 }
 
+message GetThreadRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+}
+
+message GetThreadResponse {
+  resources.messenger.Thread thread = 1;
+}
+
 message CreateOrUpdateThreadRequest {
   resources.messenger.Thread thread = 1 [(validate.rules).message.required = true];
 }
@@ -69,6 +77,8 @@ message DeleteMessageResponse {}
 service MessengerService {
   // @perm
   rpc ListThreads(ListThreadsRequest) returns (ListThreadsResponse);
+  // @perm: Name=ListThreads
+  rpc GetThread(GetThreadRequest) returns (GetThreadResponse);
   // @perm
   rpc CreateOrUpdateThread(CreateOrUpdateThreadRequest) returns (CreateOrUpdateThreadResponse);
   // @perm

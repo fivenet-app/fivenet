@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.notifications;
 
 import "resources/notifications/notifications.proto";
+import "resources/messenger/events.proto";
 import "resources/users/jobs.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notifications;notifications";
@@ -10,7 +11,10 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/notif
 message UserEvent {
   oneof data {
     bool refresh_token = 1;
+    // Notifications
     resources.notifications.Notification notification = 2;
+    // Messenger
+    resources.messenger.MessengerEvent messenger = 3;
   }
 }
 
