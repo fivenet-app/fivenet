@@ -1976,6 +1976,25 @@
                 "key": "Löschen von Kalendereinträgen",
                 "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
             }
+        },
+        "MessengerService": {
+            "category": "Konversationen",
+            "CreateOrUpdateThread": {
+                "key": "Erstellen und Aktualisieren",
+                "description": "Updating threads requires manage or higher access to a thread."
+            },
+            "DeleteThread": {
+                "key": "Delete threads",
+                "description": "Requires admin access to the thread."
+            },
+            "ListThreads": {
+                "key": "List threads",
+                "description": "Minimum permission to see the messenger."
+            },
+            "PostMessage": {
+                "key": "Post messages",
+                "description": "Allow users to post messages to threads they have access to."
+            }
         }
     },
     "errors": {
