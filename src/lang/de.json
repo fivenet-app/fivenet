@@ -1981,19 +1981,19 @@
             "category": "Konversationen",
             "CreateOrUpdateThread": {
                 "key": "Erstellen und Aktualisieren",
-                "description": "Updating threads requires manage or higher access to a thread."
+                "description": "Aktualisieren von Konversationen benötigt Verwaltung oder höher Zugriff auf die Konversation."
             },
             "DeleteThread": {
-                "key": "Delete threads",
-                "description": "Requires admin access to the thread."
+                "key": "Konversationen löschen",
+                "description": "Benötigt Admin Zugriff auf die Konversation."
             },
             "ListThreads": {
-                "key": "List threads",
-                "description": "Minimum permission to see the messenger."
+                "key": "Konversationen auflisten/sehen",
+                "description": "Minimum Berechtigung um die Konversationen sehen zu können."
             },
             "PostMessage": {
-                "key": "Post messages",
-                "description": "Allow users to post messages to threads they have access to."
+                "key": "Nachrichten schreiben",
+                "description": "Erlauben das User Nachrichten schreiben können zu Konversationen auf die Sie Zugriff haben."
             }
         }
     },
