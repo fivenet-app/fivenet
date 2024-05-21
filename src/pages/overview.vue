@@ -19,7 +19,7 @@ const items = [
         description: t('pages.overview.features.messenger'),
         to: { name: 'messenger' },
         permission: 'TODOService.TODOMethod',
-        icon: 'i-mdi-inbox-outline',
+        icon: 'i-mdi-conversation-outline',
     },
     {
         title: `${t('common.citizen', 2)} ${t('common.search')}`,

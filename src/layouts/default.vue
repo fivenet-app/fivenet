@@ -31,7 +31,7 @@ const links = computed(() =>
         },
         {
             label: t('common.messenger'),
-            icon: 'i-mdi-inbox-outline',
+            icon: 'i-mdi-conversation-outline',
             to: '/messenger',
             badge: '4',
             tooltip: {

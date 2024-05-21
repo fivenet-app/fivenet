@@ -6,7 +6,7 @@ import { canAccessThread } from '~/components/messenger/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { messengerStore } from '~/store/messenger';
 import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
-import type { Thread, ThreadUserState } from '~~/gen/ts/resources/messenger/thread';
+import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 
 useHead({
     title: 'common.messenger',
@@ -50,7 +50,7 @@ const dropdownItems = computed(() =>
                       },
                   }
                 : undefined,
-        ],
+        ].flatMap((item) => (item !== undefined ? [item] : [])),
         [
             can('MessengerService.DeleteThread') &&
             canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.ADMIN)
@@ -68,8 +68,8 @@ const dropdownItems = computed(() =>
                       },
                   }
                 : undefined,
-        ],
-    ].flatMap((items) => (items.length !== 0 ? [items] : [])),
+        ].flatMap((item) => (item !== undefined ? [item] : [])),
+    ].flatMap((items) => (items.length > 0 ? [items] : [])),
 );
 
 onBeforeMount(async () => {
@@ -165,7 +165,7 @@ watch(filteredThreads, () => {
                     <template #left>
                         <UTooltip :text="$t('components.messenger.mark_unread')">
                             <UButton
-                                icon="i-mdi-check-circle-outline"
+                                :icon="!threadUserState?.unread ? 'i-mdi-check-circle-outline' : 'i-mdi-check-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
@@ -180,7 +180,7 @@ watch(filteredThreads, () => {
 
                         <UTooltip :text="$t('components.messenger.mark_important')">
                             <UButton
-                                icon="i-mdi-alert-circle-outline"
+                                :icon="!threadUserState?.important ? 'i-mdi-alert-circle-outline' : 'i-mdi-alert-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
@@ -197,7 +197,7 @@ watch(filteredThreads, () => {
                     <template #right>
                         <UTooltip :text="$t('components.messenger.star_thread')">
                             <UButton
-                                icon="i-mdi-star-circle-outline"
+                                :icon="!threadUserState?.favorite ? 'i-mdi-star-circle-outline' : 'i-mdi-star-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
@@ -212,7 +212,7 @@ watch(filteredThreads, () => {
 
                         <UTooltip :text="$t('components.messenger.mute_thread')">
                             <UButton
-                                icon="i-mdi-pause-circle-outline"
+                                :icon="!threadUserState?.muted ? 'i-mdi-pause-circle-outline' : 'i-mdi-pause-circle'"
                                 color="gray"
                                 variant="ghost"
                                 @click="
@@ -236,7 +236,7 @@ watch(filteredThreads, () => {
                 <MessengerThread :thread-id="selectedThread.id" />
             </template>
             <div v-else class="hidden flex-1 items-center justify-center lg:flex">
-                <UIcon name="i-mdi-inbox" class="h-32 w-32 text-gray-400 dark:text-gray-500" />
+                <UIcon name="i-mdi-conversation" class="h-32 w-32 text-gray-400 dark:text-gray-500" />
             </div>
         </UDashboardPanel>
     </UDashboardPage>
