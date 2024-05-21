@@ -1076,11 +1076,18 @@
             "star_thread": "Favorisieren",
             "mute_thread": "Stummschalten",
             "reply": "Antworten",
-            "reply_all": "Allen Antworten",
-            "forward": "Weiterleiten",
             "send": "Absenden",
-            "reply_to": "{name} antworten",
-            "create_thread": "Thread erstellen"
+            "create_thread": "Thread erstellen",
+            "prev_thread": "Vorherige Konversation",
+            "next_thread": "Nächste Konversation",
+            "ThreadCreateOrUpdateModal": {
+                "create": {
+                    "title": "Neue Konversation erstellen"
+                },
+                "update": {
+                    "title": "Konversation aktualisieren"
+                }
+            }
         }
     },
     "notifications": {
@@ -2308,6 +2315,16 @@
                 "GENERAL": "Allgemein",
                 "DOCUMENT": "Dokumente",
                 "CALENDAR": "Kalender"
+            }
+        },
+        "messenger": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "MESSAGE": "Schreiben",
+                "MANAGE": "Verwalten",
+                "ADMIN": "Admin"
             }
         }
     },
