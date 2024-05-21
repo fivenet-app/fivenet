@@ -1976,6 +1976,25 @@
                 "key": "Delete Calendar Entries",
                 "description": "Delete entries from calendars (requires manage access.)"
             }
+        },
+        "MessengerService": {
+            "category": "Messenger",
+            "CreateOrUpdateThread": {
+                "key": "Create or update threads",
+                "description": "Updating threads requires manage or higher access to a thread."
+            },
+            "DeleteThread": {
+                "key": "Delete threads",
+                "description": "Requires admin access to the thread."
+            },
+            "ListThreads": {
+                "key": "List threads",
+                "description": "Minimum permission to see the messenger."
+            },
+            "PostMessage": {
+                "key": "Post messages",
+                "description": "Allow users to post messages to threads they have access to."
+            }
         }
     },
     "errors": {

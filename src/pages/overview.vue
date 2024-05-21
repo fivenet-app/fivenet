@@ -18,7 +18,7 @@ const items = [
         title: t('common.messenger'),
         description: t('pages.overview.features.messenger'),
         to: { name: 'messenger' },
-        permission: 'TODOService.TODOMethod',
+        permission: 'MessengerService.ListThreads',
         icon: 'i-mdi-conversation-outline',
     },
     {
