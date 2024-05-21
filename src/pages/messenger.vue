@@ -49,7 +49,19 @@ const dropdownItems = computed(() =>
                           });
                       },
                   }
-                : undefined,
+                : {
+                      label: t('common.leave'),
+                      icon: 'i-mdi-pencil-outline',
+                      click: () => {
+                          if (!selectedThread.value) {
+                              return;
+                          }
+
+                          modal.open(ConfirmModal, {
+                              confirm: async () => messengerStore.leaveThread(selectedThread.value!.id),
+                          });
+                      },
+                  },
         ].flatMap((item) => (item !== undefined ? [item] : [])),
         [
             can('MessengerService.DeleteThread') &&
@@ -63,7 +75,7 @@ const dropdownItems = computed(() =>
                           }
 
                           modal.open(ConfirmModal, {
-                              confirm: async () => messengerStore.deleteThread({ threadId: selectedThread.value!.id }), // TODO
+                              confirm: async () => messengerStore.deleteThread({ threadId: selectedThread.value!.id }),
                           });
                       },
                   }

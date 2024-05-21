@@ -654,6 +654,8 @@
     - [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse)
     - [GetThreadRequest](#services-messenger-GetThreadRequest)
     - [GetThreadResponse](#services-messenger-GetThreadResponse)
+    - [LeaveThreadRequest](#services-messenger-LeaveThreadRequest)
+    - [LeaveThreadResponse](#services-messenger-LeaveThreadResponse)
     - [ListThreadsRequest](#services-messenger-ListThreadsRequest)
     - [ListThreadsResponse](#services-messenger-ListThreadsResponse)
     - [PostMessageRequest](#services-messenger-PostMessageRequest)
@@ -9805,6 +9807,31 @@ Results ====================================================================
 
 
 
+<a name="services-messenger-LeaveThreadRequest"></a>
+
+### LeaveThreadRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-LeaveThreadResponse"></a>
+
+### LeaveThreadResponse
+
+
+
+
+
+
+
 <a name="services-messenger-ListThreadsRequest"></a>
 
 ### ListThreadsRequest
@@ -9910,6 +9937,7 @@ Results ====================================================================
 | CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse) | @perm |
 | DeleteThread | [DeleteThreadRequest](#services-messenger-DeleteThreadRequest) | [DeleteThreadResponse](#services-messenger-DeleteThreadResponse) | @perm |
 | SetThreadUserState | [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse) | @perm: Name=ListThreads |
+| LeaveThread | [LeaveThreadRequest](#services-messenger-LeaveThreadRequest) | [LeaveThreadResponse](#services-messenger-LeaveThreadResponse) | @perm: Name=ListThreads |
 | GetThreadMessages | [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse) | @perm: Name=ListThreads |
 | PostMessage | [PostMessageRequest](#services-messenger-PostMessageRequest) | [PostMessageResponse](#services-messenger-PostMessageResponse) | @perm |
 | DeleteMessage | [DeleteMessageRequest](#services-messenger-DeleteMessageRequest) | [DeleteMessageResponse](#services-messenger-DeleteMessageResponse) | @perm: Name=SuperUser |

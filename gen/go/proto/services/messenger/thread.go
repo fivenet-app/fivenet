@@ -3,6 +3,7 @@ package messenger
 import (
 	"context"
 	"errors"
+	"slices"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/messenger"
@@ -451,4 +452,81 @@ func (s *Server) DeleteThread(ctx context.Context, req *DeleteThreadRequest) (*D
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
 
 	return &DeleteThreadResponse{}, nil
+}
+
+func (s *Server) LeaveThread(ctx context.Context, req *LeaveThreadRequest) (*LeaveThreadResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.messenger.thread.id", int64(req.ThreadId)))
+
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: MessengerService_ServiceDesc.ServiceName,
+		Method:  "DeleteThread",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
+	resp := &LeaveThreadResponse{}
+
+	check, err := s.checkIfUserHasAccessToThread(ctx, req.ThreadId, userInfo, messenger.AccessLevel_ACCESS_LEVEL_VIEW)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+	}
+	if !check && !userInfo.SuperUser {
+		return resp, nil
+	}
+
+	thread, err := s.getThread(ctx, req.ThreadId, userInfo, true)
+	if err != nil {
+		return nil, errorsmessenger.ErrFailedQuery
+	}
+
+	if thread == nil {
+		return resp, nil
+	}
+
+	if thread.Access != nil && len(thread.Access.Users) > 0 {
+		idx := slices.IndexFunc(thread.Access.Users, func(ua *messenger.ThreadUserAccess) bool {
+			return ua.UserId == userInfo.UserId
+		})
+		if idx == -1 {
+			return resp, nil
+		}
+
+		if err := s.deleteThreadAccess(ctx, s.db, thread.Id, &messenger.ThreadAccess{
+			Users: []*messenger.ThreadUserAccess{
+				thread.Access.Users[idx],
+			},
+		}); err != nil {
+			return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+		}
+
+		thread.Access.Users = slices.Delete(thread.Access.Users, idx, 1)
+	}
+
+	if thread.Access != nil && len(thread.Access.Users) > 0 {
+		userIds := []int32{userInfo.UserId}
+		if thread.CreatorId != nil {
+			userIds = append(userIds, *thread.CreatorId)
+		}
+		for _, ua := range thread.Access.Users {
+			userIds = append(userIds, ua.UserId)
+		}
+
+		s.sendUpdate(ctx, &messenger.MessengerEvent{
+			Data: &messenger.MessengerEvent_ThreadUpdate{
+				ThreadUpdate: thread,
+			},
+		}, userIds)
+
+		if err := s.setUnreadState(ctx, thread.Id, userIds); err != nil {
+			return nil, errswrap.NewError(err, errorsmessenger.ErrFailedQuery)
+		}
+	}
+
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+
+	return resp, nil
 }

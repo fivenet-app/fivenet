@@ -107,6 +107,20 @@ export interface SetThreadUserStateRequest {
  */
 export interface SetThreadUserStateResponse {
 }
+/**
+ * @generated from protobuf message services.messenger.LeaveThreadRequest
+ */
+export interface LeaveThreadRequest {
+    /**
+     * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
+     */
+    threadId: string;
+}
+/**
+ * @generated from protobuf message services.messenger.LeaveThreadResponse
+ */
+export interface LeaveThreadResponse {
+}
 // Messages
 
 /**
@@ -603,6 +617,78 @@ class SetThreadUserStateResponse$Type extends MessageType<SetThreadUserStateResp
  */
 export const SetThreadUserStateResponse = new SetThreadUserStateResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class LeaveThreadRequest$Type extends MessageType<LeaveThreadRequest> {
+    constructor() {
+        super("services.messenger.LeaveThreadRequest", [
+            { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<LeaveThreadRequest>): LeaveThreadRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.threadId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<LeaveThreadRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LeaveThreadRequest): LeaveThreadRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.threadId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: LeaveThreadRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 thread_id = 1 [jstype = JS_STRING]; */
+        if (message.threadId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.threadId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.messenger.LeaveThreadRequest
+ */
+export const LeaveThreadRequest = new LeaveThreadRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class LeaveThreadResponse$Type extends MessageType<LeaveThreadResponse> {
+    constructor() {
+        super("services.messenger.LeaveThreadResponse", []);
+    }
+    create(value?: PartialMessage<LeaveThreadResponse>): LeaveThreadResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<LeaveThreadResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: LeaveThreadResponse): LeaveThreadResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: LeaveThreadResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.messenger.LeaveThreadResponse
+ */
+export const LeaveThreadResponse = new LeaveThreadResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest> {
     constructor() {
         super("services.messenger.GetThreadMessagesRequest", [
@@ -884,6 +970,7 @@ export const MessengerService = new ServiceType("services.messenger.MessengerSer
     { name: "CreateOrUpdateThread", options: {}, I: CreateOrUpdateThreadRequest, O: CreateOrUpdateThreadResponse },
     { name: "DeleteThread", options: {}, I: DeleteThreadRequest, O: DeleteThreadResponse },
     { name: "SetThreadUserState", options: {}, I: SetThreadUserStateRequest, O: SetThreadUserStateResponse },
+    { name: "LeaveThread", options: {}, I: LeaveThreadRequest, O: LeaveThreadResponse },
     { name: "GetThreadMessages", options: {}, I: GetThreadMessagesRequest, O: GetThreadMessagesResponse },
     { name: "PostMessage", options: {}, I: PostMessageRequest, O: PostMessageResponse },
     { name: "DeleteMessage", options: {}, I: DeleteMessageRequest, O: DeleteMessageResponse }

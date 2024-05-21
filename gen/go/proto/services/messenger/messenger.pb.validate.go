@@ -1344,6 +1344,212 @@ var _ interface {
 	ErrorName() string
 } = SetThreadUserStateResponseValidationError{}
 
+// Validate checks the field values on LeaveThreadRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *LeaveThreadRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LeaveThreadRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LeaveThreadRequestMultiError, or nil if none found.
+func (m *LeaveThreadRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LeaveThreadRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for ThreadId
+
+	if len(errors) > 0 {
+		return LeaveThreadRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// LeaveThreadRequestMultiError is an error wrapping multiple validation errors
+// returned by LeaveThreadRequest.ValidateAll() if the designated constraints
+// aren't met.
+type LeaveThreadRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LeaveThreadRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LeaveThreadRequestMultiError) AllErrors() []error { return m }
+
+// LeaveThreadRequestValidationError is the validation error returned by
+// LeaveThreadRequest.Validate if the designated constraints aren't met.
+type LeaveThreadRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LeaveThreadRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LeaveThreadRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LeaveThreadRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LeaveThreadRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LeaveThreadRequestValidationError) ErrorName() string {
+	return "LeaveThreadRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e LeaveThreadRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLeaveThreadRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LeaveThreadRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LeaveThreadRequestValidationError{}
+
+// Validate checks the field values on LeaveThreadResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *LeaveThreadResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on LeaveThreadResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// LeaveThreadResponseMultiError, or nil if none found.
+func (m *LeaveThreadResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *LeaveThreadResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return LeaveThreadResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// LeaveThreadResponseMultiError is an error wrapping multiple validation
+// errors returned by LeaveThreadResponse.ValidateAll() if the designated
+// constraints aren't met.
+type LeaveThreadResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m LeaveThreadResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m LeaveThreadResponseMultiError) AllErrors() []error { return m }
+
+// LeaveThreadResponseValidationError is the validation error returned by
+// LeaveThreadResponse.Validate if the designated constraints aren't met.
+type LeaveThreadResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e LeaveThreadResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e LeaveThreadResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e LeaveThreadResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e LeaveThreadResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e LeaveThreadResponseValidationError) ErrorName() string {
+	return "LeaveThreadResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e LeaveThreadResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sLeaveThreadResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = LeaveThreadResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = LeaveThreadResponseValidationError{}
+
 // Validate checks the field values on GetThreadMessagesRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

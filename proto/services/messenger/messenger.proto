@@ -48,6 +48,12 @@ message SetThreadUserStateRequest {
 
 message SetThreadUserStateResponse {}
 
+message LeaveThreadRequest {
+  uint64 thread_id = 1 [jstype = JS_STRING];
+}
+
+message LeaveThreadResponse {}
+
 // Messages
 
 message GetThreadMessagesRequest {
@@ -85,6 +91,8 @@ service MessengerService {
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
   // @perm: Name=ListThreads
   rpc SetThreadUserState(SetThreadUserStateRequest) returns (SetThreadUserStateResponse);
+  // @perm: Name=ListThreads
+  rpc LeaveThread(LeaveThreadRequest) returns (LeaveThreadResponse);
 
   // @perm: Name=ListThreads
   rpc GetThreadMessages(GetThreadMessagesRequest) returns (GetThreadMessagesResponse);

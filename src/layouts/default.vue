@@ -10,6 +10,7 @@ import UserDropdown from '~/components/UserDropdown.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import DashboardSidebarLinks from '~/components/partials/dashboard/DashboardSidebarLinks.vue';
+import { messengerStore } from '~/store/messenger';
 
 const authStore = useAuthStore();
 const { activeChar, jobProps } = storeToRefs(authStore);
@@ -17,6 +18,10 @@ const { activeChar, jobProps } = storeToRefs(authStore);
 const { t } = useI18n();
 
 const { isHelpSlideoverOpen } = useDashboard();
+
+const unreadThreadCount = useDexieLiveQuery(() => messengerStore.threads.filter((t) => !!t.userState?.unread).count(), {
+    initialValue: 0,
+});
 
 const links = computed(() =>
     [
@@ -33,7 +38,7 @@ const links = computed(() =>
             label: t('common.messenger'),
             icon: 'i-mdi-conversation-outline',
             to: '/messenger',
-            badge: '4',
+            badge: unreadThreadCount.value > 0 ? unreadThreadCount.value.toString() : undefined,
             tooltip: {
                 text: t('common.messenger'),
                 shortcuts: ['G', 'I'],

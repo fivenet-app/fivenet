@@ -7,6 +7,7 @@ import type {
     CreateOrUpdateThreadResponse,
     DeleteThreadRequest,
     DeleteThreadResponse,
+    LeaveThreadResponse,
     PostMessageRequest,
     PostMessageResponse,
 } from '~~/gen/ts/services/messenger/messenger';
@@ -88,6 +89,22 @@ export class MessengerDexie extends Dexie {
             const { response } = await call;
 
             await this.threads.delete(req.threadId);
+
+            return response;
+        } catch (e) {
+            handleGRPCError(e);
+            throw e;
+        }
+    }
+
+    async leaveThread(threadId: string): Promise<LeaveThreadResponse> {
+        try {
+            const call = getGRPCMessengerClient().leaveThread({
+                threadId: threadId,
+            });
+            const { response } = await call;
+
+            await this.threads.delete(threadId);
 
             return response;
         } catch (e) {
