@@ -4,7 +4,7 @@ import MessengerThread from '~/components/messenger/MessengerThread.vue';
 import ThreadCreateOrUpdateModal from '~/components/messenger/ThreadCreateOrUpdateModal.vue';
 import { canAccessThread } from '~/components/messenger/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { messengerStore } from '~/store/messenger';
+import { messengerDB, useMessengerStore } from '~/store/messenger';
 import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
 import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 
@@ -20,6 +20,8 @@ definePageMeta({
 const { t } = useI18n();
 
 const modal = useModal();
+
+const messengerStore = useMessengerStore();
 
 const tabItems = [
     {
@@ -85,7 +87,7 @@ const dropdownItems = computed(() =>
 );
 
 onBeforeMount(async () => {
-    const count = await messengerStore.threads.count();
+    const count = await messengerDB.threads.count();
     const call = getGRPCMessengerClient().listThreads({
         pagination: {
             offset: 0,
@@ -94,10 +96,10 @@ onBeforeMount(async () => {
     });
     const { response } = await call;
 
-    messengerStore.threads.bulkPut(response.threads);
+    messengerDB.threads.bulkPut(response.threads);
 });
 
-const threads = useDexieLiveQuery(() => messengerStore.threads.toArray().then((threads) => ({ threads, loaded: true })), {
+const threads = useDexieLiveQuery(() => messengerDB.threads.toArray().then((threads) => ({ threads, loaded: true })), {
     initialValue: { threads: [], loaded: false },
 });
 
@@ -169,7 +171,7 @@ watch(filteredThreads, () => {
             <template v-if="selectedThread">
                 <UDashboardNavbar>
                     <template #toggle>
-                        <UDashboardNavbarToggle icon="i-mdi-x" />
+                        <UDashboardNavbarToggle icon="i-mdi-close" />
 
                         <UDivider orientation="vertical" class="mx-1.5 lg:hidden" />
                     </template>

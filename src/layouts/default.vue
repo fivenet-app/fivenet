@@ -10,7 +10,7 @@ import UserDropdown from '~/components/UserDropdown.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import DashboardSidebarLinks from '~/components/partials/dashboard/DashboardSidebarLinks.vue';
-import { messengerStore } from '~/store/messenger';
+import { messengerDB } from '~/store/messenger';
 
 const authStore = useAuthStore();
 const { activeChar, jobProps } = storeToRefs(authStore);
@@ -19,7 +19,7 @@ const { t } = useI18n();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
-const unreadThreadCount = useDexieLiveQuery(() => messengerStore.threads.filter((t) => !!t.userState?.unread).count(), {
+const unreadThreadCount = useDexieLiveQuery(() => messengerDB.threads.filter((t) => !!t.userState?.unread).count(), {
     initialValue: 0,
 });
 

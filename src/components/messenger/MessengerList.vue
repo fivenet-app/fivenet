@@ -89,7 +89,7 @@ defineShortcuts({
                     @click="selectedThread = thread"
                 >
                     <div class="flex items-center justify-between" :class="[thread.userState?.unread && 'font-semibold']">
-                        <div class="flex items-center gap-3">
+                        <div class="flex items-center gap-3 font-semibold">
                             {{ thread.title }}
 
                             <UChip v-if="thread.userState?.unread" />

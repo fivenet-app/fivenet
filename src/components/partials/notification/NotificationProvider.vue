@@ -13,7 +13,6 @@ const { notifications } = storeToRefs(notificatorStore);
 const { startStream, stopStream } = notificatorStore;
 
 async function toggleStream(): Promise<void> {
-    console.log('toggleStream', username.value, activeChar.value);
     // Only stream notifications when a user is logged in and has a character selected
     if (username.value !== null && activeChar.value !== null) {
         return startStream();

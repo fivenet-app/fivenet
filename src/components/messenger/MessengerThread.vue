@@ -3,7 +3,7 @@ import { isToday } from 'date-fns';
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
-import { messengerStore } from '~/store/messenger';
+import { messengerDB, useMessengerStore } from '~/store/messenger';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import { canAccessThread } from './helpers';
@@ -18,6 +18,8 @@ const props = withDefaults(
         selected: false,
     },
 );
+
+const messengerStore = useMessengerStore();
 
 const schema = z.object({
     message: z.string().min(1).max(2048),
@@ -36,14 +38,14 @@ const {
 } = useLazyAsyncData(`messenger-thread:${props.threadId}`, async () => messengerStore.getThread(props.threadId));
 
 onBeforeMount(async () => {
-    const count = await messengerStore.threads.count();
+    const count = await messengerDB.threads.count();
     const call = getGRPCMessengerClient().getThreadMessages({
         threadId: props.threadId,
         after: count > 0 ? undefined : toTimestamp(),
     });
     const { response } = await call;
 
-    await messengerStore.messages.bulkPut(response.messages);
+    await messengerDB.messages.bulkPut(response.messages);
 });
 
 watchDebounced(
@@ -58,7 +60,7 @@ watchDebounced(
 const messages = useDexieLiveQueryWithDeps(
     () => props.threadId,
     () =>
-        messengerStore.messages
+        messengerDB.messages
             .where('threadId')
             .equals(props.threadId)
             .limit(2500)
@@ -111,14 +113,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <UButton block variant="link" :padded="false">
                                 <UAvatarGroup size="sm" :max="5">
                                     <ProfilePictureImg
+                                        v-if="thread.creator"
                                         :src="thread.creator?.avatar?.url"
                                         :name="`${thread.creator?.firstname} ${thread.creator?.lastname}`"
+                                        disable-blur-toggle
                                     />
 
                                     <ProfilePictureImg
                                         v-for="user in thread.access?.users"
                                         :src="user.user?.avatar?.url"
                                         :name="`${user.user?.firstname} ${user.user?.lastname}`"
+                                        disable-blur-toggle
                                     />
                                 </UAvatarGroup>
                             </UButton>
@@ -126,6 +131,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <template #panel>
                                 <div class="p-4 text-gray-900 dark:text-white">
                                     <ul role="list">
+                                        <li v-if="thread.creator">
+                                            <CitizenInfoPopover :user="thread.creator" show-avatar-in-name />
+                                        </li>
                                         <li v-for="ua in thread.access?.users">
                                             <CitizenInfoPopover :user="ua.user" show-avatar-in-name />
                                         </li>

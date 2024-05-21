@@ -10,6 +10,7 @@ const props = withDefaults(
         size?: AvatarSize;
         noBlur?: boolean;
         enablePopup?: boolean;
+        disableBlurToggle?: boolean;
     }>(),
     {
         src: undefined,
@@ -18,6 +19,7 @@ const props = withDefaults(
         size: 'lg',
         noBlur: undefined,
         enablePopup: false,
+        disableBlurToggle: false,
     },
 );
 
@@ -27,6 +29,10 @@ const { streamerMode } = storeToRefs(settings);
 const visible = ref(props.noBlur || !streamerMode.value);
 
 function toggleBlur(): void {
+    if (props.disableBlurToggle) {
+        return;
+    }
+
     if ((streamerMode.value && props.noBlur === undefined) || props.noBlur === false) {
         visible.value = !visible.value;
     }

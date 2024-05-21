@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { messengerStore } from '~/store/messenger';
+import { useMessengerStore } from '~/store/messenger';
 import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
@@ -14,6 +14,8 @@ const props = defineProps<{
 const { isOpen } = useModal();
 
 const completorStore = useCompletorStore();
+
+const messengerStore = useMessengerStore();
 
 const schema = z.object({
     title: z.string().min(3).max(255),

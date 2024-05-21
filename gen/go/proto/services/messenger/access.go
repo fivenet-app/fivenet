@@ -52,7 +52,7 @@ func (s *Server) getThreadAccess(ctx context.Context, threadId uint64) (*messeng
 			tUsers.Lastname,
 			tUsers.Dateofbirth,
 			tUsers.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
+			tUserProps.Avatar.AS("usershort.avatar"),
 		).
 		FROM(
 			tThreadsUserAccess.

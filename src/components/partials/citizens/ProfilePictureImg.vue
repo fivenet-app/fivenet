@@ -10,6 +10,7 @@ withDefaults(
         enablePopup?: boolean;
         noBlur?: boolean;
         alt?: string;
+        disableBlurToggle?: boolean;
     }>(),
     {
         url: undefined,
@@ -17,6 +18,7 @@ withDefaults(
         enablePopup: false,
         noBlur: undefined,
         alt: undefined,
+        disableBlurToggle: false,
     },
 );
 </script>
@@ -29,5 +31,6 @@ withDefaults(
         :alt="alt ?? $t('common.avatar')"
         :enable-popup="enablePopup"
         :no-blur="noBlur || src === undefined"
+        :disable-blur-toggle="disableBlurToggle"
     />
 </template>

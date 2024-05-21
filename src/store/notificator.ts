@@ -5,7 +5,7 @@ import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 import { useCalendarStore } from './calendar';
-import { messengerStore } from './messenger';
+import { useMessengerStore } from './messenger';
 
 // In seconds
 const initialReconnectBackoffTime = 2;
@@ -132,7 +132,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                 continue;
                             } else if (resp.data.userEvent.data.oneofKind === 'messenger') {
                                 if (can('MessengerService.ListThreads')) {
-                                    messengerStore.handleEvent(resp.data.userEvent.data.messenger);
+                                    useMessengerStore().handleEvent(resp.data.userEvent.data.messenger);
                                 }
                             }
                         } else if (resp.data.oneofKind === 'jobEvent') {
