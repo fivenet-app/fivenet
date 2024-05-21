@@ -1077,7 +1077,7 @@
             "mute_thread": "Stummschalten",
             "reply": "Antworten",
             "send": "Absenden",
-            "create_thread": "Thread erstellen",
+            "create_thread": "Konversation erstellen",
             "prev_thread": "Vorherige Konversation",
             "next_thread": "Nächste Konversation",
             "ThreadCreateOrUpdateModal": {
