@@ -113,7 +113,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
-                        <UInput v-model="state.title" type="text" name="title" />
+                        <UInput
+                            v-model="state.title"
+                            type="text"
+                            name="title"
+                            @focusin="focusTablet(true)"
+                            @focusout="focusTablet(false)"
+                        />
                     </UFormGroup>
 
                     <UFormGroup name="users" class="flex-1" required>
