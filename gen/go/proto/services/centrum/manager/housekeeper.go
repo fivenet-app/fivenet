@@ -381,10 +381,10 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 			continue
 		}
 
-		// Remove "completed" dispatches and status being older than 15 minutes
-		if centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
-			time.Since(dsp.Status.CreatedAt.AsTime()) > 15*time.Minute {
-			s.logger.Debug("dispatch deleted from kv", zap.Uint64("dispatch_id", dsp.Id))
+		// Remove nil status and "completed" dispatches with their status being older than 15 minutes
+		if dsp.Status == nil || (centrumutils.IsStatusDispatchComplete(dsp.Status.Status) &&
+			time.Since(dsp.Status.CreatedAt.AsTime()) > 15*time.Minute) {
+			s.logger.Debug("old dispatch deleted from kv", zap.Uint64("dispatch_id", dsp.Id))
 			if err := s.DeleteDispatch(ctx, dsp.Job, dsp.Id, false); err != nil {
 				errs = multierr.Append(errs, err)
 				continue
