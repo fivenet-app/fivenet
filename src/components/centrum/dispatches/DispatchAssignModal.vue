@@ -15,8 +15,6 @@ const props = defineProps<{
 
 const dispatch = computed(() => dispatches.value.get(props.dispatchId)!);
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const schema = z.object({
@@ -43,7 +41,7 @@ async function assignDispatch(): Promise<void> {
             }
         });
 
-        const call = $grpc.getCentrumClient().assignDispatch({
+        const call = getGRPCCentrumClient().assignDispatch({
             dispatchId: props.dispatchId,
             toAdd,
             toRemove,
@@ -54,7 +52,7 @@ async function assignDispatch(): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

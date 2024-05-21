@@ -30,14 +30,13 @@ export const useCompletorStore = defineStore('completor', {
             return this.jobs;
         },
         async completeJobs(req: CompleteJobsRequest): Promise<Job[]> {
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCompletorClient().completeJobs(req);
+                const call = getGRPCCompletorClient().completeJobs(req);
                 const { response } = await call;
 
                 return response.jobs;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -53,14 +52,13 @@ export const useCompletorStore = defineStore('completor', {
                 return [];
             }
 
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCompletorClient().completeCitizens(req);
+                const call = getGRPCCompletorClient().completeCitizens(req);
                 const { response } = await call;
 
                 return response.users;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -77,14 +75,13 @@ export const useCompletorStore = defineStore('completor', {
                 req.pagination = { offset: 0 };
             }
 
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getJobsClient().listColleagues(req);
+                const call = getGRPCJobsClient().listColleagues(req);
                 const { response } = await call;
 
                 return response.colleagues;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -95,46 +92,43 @@ export const useCompletorStore = defineStore('completor', {
                 return [];
             }
 
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCompletorClient().completeDocumentCategories({
+                const call = getGRPCCompletorClient().completeDocumentCategories({
                     search: search,
                 });
                 const { response } = await call;
 
                 return response.categories;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
 
         // Laws
         async listLawBooks(): Promise<LawBook[]> {
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCompletorClient().listLawBooks({});
+                const call = getGRPCCompletorClient().listLawBooks({});
                 const { response } = await call;
 
                 return response.books;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
 
         // Citizens Attributes
         async completeCitizensAttributes(search: string): Promise<CitizenAttribute[]> {
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCompletorClient().completeCitizenAttributes({
+                const call = getGRPCCompletorClient().completeCitizenAttributes({
                     search: search,
                 });
                 const { response } = await call;
 
                 return response.attributes;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },

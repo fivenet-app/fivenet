@@ -15,8 +15,6 @@ import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useSettingsStore } from '~/store/settings';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const completorStore = useCompletorStore();
@@ -94,12 +92,12 @@ async function listDocuments(): Promise<ListDocumentsResponse> {
     }
 
     try {
-        const call = $grpc.getDocStoreClient().listDocuments(req);
+        const call = getGRPCDocStoreClient().listDocuments(req);
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -181,7 +179,7 @@ defineShortcuts({
                                                 categoriesLoading = false;
                                                 return categories;
                                             } catch (e) {
-                                                $grpc.handleError(e as RpcError);
+                                                handleGRPCError(e as RpcError);
                                                 throw e;
                                             } finally {
                                                 categoriesLoading = false;

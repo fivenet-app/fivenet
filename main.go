@@ -45,6 +45,7 @@ import (
 	pbdocstore "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore"
 	pbjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs"
 	pblivemapper "github.com/fivenet-app/fivenet/gen/go/proto/services/livemapper"
+	pbmessenger "github.com/fivenet-app/fivenet/gen/go/proto/services/messenger"
 	pbnotificator "github.com/fivenet-app/fivenet/gen/go/proto/services/notificator"
 	pbqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications"
 	pbrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector"
@@ -191,6 +192,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			grpc.AsService(pbdocstore.NewServer),
 			grpc.AsService(pbjobs.NewServer),
 			grpc.AsService(pblivemapper.NewServer),
+			grpc.AsService(pbmessenger.NewServer),
 			grpc.AsService(pbnotificator.NewServer),
 			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbrector.NewServer),

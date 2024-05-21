@@ -6,8 +6,6 @@ import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
@@ -37,7 +35,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
         }
 
         // Make sure all selected dispatches are still existing and not in a "completed"
-        const call = $grpc.getCentrumClient().takeDispatch({
+        const call = getGRPCCentrumClient().takeDispatch({
             dispatchIds,
             resp,
         });
@@ -47,7 +45,7 @@ async function takeDispatches(resp: TakeDispatchResp): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

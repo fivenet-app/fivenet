@@ -6,8 +6,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const { isOpen } = useModal();
@@ -21,12 +19,12 @@ const {
 
 async function getCentrumSettings(): Promise<Settings> {
     try {
-        const call = $grpc.getCentrumClient().getSettings({});
+        const call = getGRPCCentrumClient().getSettings({});
         const { response } = await call;
 
         return response.settings!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -64,7 +62,7 @@ const state = reactive<Schema>({
 
 async function updateSettings(values: Schema): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().updateSettings({
+        const call = getGRPCCentrumClient().updateSettings({
             settings: {
                 job: '',
                 enabled: values.enabled,
@@ -83,7 +81,7 @@ async function updateSettings(values: Schema): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

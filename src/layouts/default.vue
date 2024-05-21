@@ -16,8 +16,6 @@ const { activeChar, jobProps } = storeToRefs(authStore);
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const { isHelpSlideoverOpen } = useDashboard();
 
 const links = computed(() =>
@@ -280,7 +278,7 @@ const groups = computed(() => [
             switch (searchType) {
                 case '#': {
                     try {
-                        const call = $grpc.getDocStoreClient().listDocuments({
+                        const call = getGRPCDocStoreClient().listDocuments({
                             pagination: {
                                 offset: 0,
                                 pageSize: 10,
@@ -300,7 +298,7 @@ const groups = computed(() => [
                             to: `/documents/${d.id}`,
                         }));
                     } catch (e) {
-                        $grpc.handleError(e as RpcError);
+                        handleGRPCError(e as RpcError);
                         throw e;
                     }
                 }
@@ -308,7 +306,7 @@ const groups = computed(() => [
                 case '@':
                 default: {
                     try {
-                        const call = $grpc.getCitizenStoreClient().listCitizens({
+                        const call = getGRPCCitizenStoreClient().listCitizens({
                             pagination: {
                                 offset: 0,
                                 pageSize: 10,
@@ -324,7 +322,7 @@ const groups = computed(() => [
                             to: `/citizens/${u.userId}`,
                         }));
                     } catch (e) {
-                        $grpc.handleError(e as RpcError);
+                        handleGRPCError(e as RpcError);
                         throw e;
                     }
                 }

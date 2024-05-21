@@ -10,8 +10,6 @@ defineProps<{
     userId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const authStore = useAuthStore();
@@ -19,12 +17,12 @@ const { activeChar } = storeToRefs(authStore);
 
 const { data: colleagueSelf } = useLazyAsyncData('jobs-selfcolleague', async () => {
     try {
-        const call = $grpc.getJobsClient().getSelf({});
+        const call = getGRPCJobsClient().getSelf({});
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 });

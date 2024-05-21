@@ -6,8 +6,6 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 
-const { $grpc } = useNuxtApp();
-
 const props = defineProps<{
     userId: number;
 }>();
@@ -24,7 +22,7 @@ const {
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
-        const call = $grpc.getCitizenStoreClient().listUserActivity({
+        const call = getGRPCCitizenStoreClient().listUserActivity({
             pagination: {
                 offset: offset.value,
             },
@@ -34,7 +32,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

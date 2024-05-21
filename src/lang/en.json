@@ -1076,11 +1076,18 @@
             "star_thread": "Star thread",
             "mute_thread": "Mute thread",
             "reply": "Reply",
-            "reply_all": "Reply all",
-            "forward": "Foward",
             "send": "Send",
-            "reply_to": "Reply to {name}",
-            "create_thread": "Create Thread"
+            "create_thread": "Create Thread",
+            "prev_thread": "Previous thread",
+            "next_thread": "Next thread",
+            "ThreadCreateOrUpdateModal": {
+                "create": {
+                    "title": "Create Messenger Thread"
+                },
+                "update": {
+                    "title": "Update Messenger Thread"
+                }
+            }
         }
     },
     "notifications": {
@@ -2308,6 +2315,16 @@
                 "GENERAL": "General",
                 "DOCUMENT": "Documents",
                 "CALENDAR": "Calendar"
+            }
+        },
+        "messenger": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unspecified",
+                "BLOCKED": "Blocked",
+                "VIEW": "View",
+                "MESSAGE": "Message",
+                "MANAGE": "Manage",
+                "ADMIN": "Admin"
             }
         }
     },

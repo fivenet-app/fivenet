@@ -18,8 +18,6 @@ const emit = defineEmits<{
     (e: 'update:law', update: { id: string; law: Law }): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 async function deleteLawBook(id: string): Promise<void> {
     const i = parseInt(id);
     if (i < 0) {
@@ -28,12 +26,12 @@ async function deleteLawBook(id: string): Promise<void> {
     }
 
     try {
-        const call = $grpc.getRectorLawsClient().deleteLawBook({ id });
+        const call = getGRPCRectorLawsClient().deleteLawBook({ id });
         await call;
 
         emit('deleted', id);
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -54,7 +52,7 @@ async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
     const i = parseInt(id);
 
     try {
-        const call = $grpc.getRectorLawsClient().createOrUpdateLawBook({
+        const call = getGRPCRectorLawsClient().createOrUpdateLawBook({
             lawBook: {
                 id: i < 0 ? '0' : id,
                 name: values.name,
@@ -70,7 +68,7 @@ async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
 
         return response.lawBook!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

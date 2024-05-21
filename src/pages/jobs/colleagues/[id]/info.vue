@@ -30,8 +30,6 @@ const emits = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -60,7 +58,7 @@ async function setJobsUserNote(values: Schema): Promise<void | SetJobsUserPropsR
     }
 
     try {
-        const call = $grpc.getJobsClient().setJobsUserProps({
+        const call = getGRPCJobsClient().setJobsUserProps({
             reason: values.reason,
             props: {
                 userId: props.colleague.userId,
@@ -72,7 +70,7 @@ async function setJobsUserNote(values: Schema): Promise<void | SetJobsUserPropsR
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

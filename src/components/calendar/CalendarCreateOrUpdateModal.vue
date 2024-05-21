@@ -19,8 +19,6 @@ const props = defineProps<{
     calendarId?: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -122,7 +120,7 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCal
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

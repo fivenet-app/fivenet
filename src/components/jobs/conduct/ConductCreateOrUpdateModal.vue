@@ -23,8 +23,6 @@ const emit = defineEmits<{
 
 const { isOpen } = useModal();
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -74,12 +72,12 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
         };
 
         if (id === undefined) {
-            const call = $grpc.getJobsConductClient().createConductEntry(req);
+            const call = getGRPCJobsConductClient().createConductEntry(req);
             const { response } = await call;
 
             emit('created', response.entry!);
         } else {
-            const call = $grpc.getJobsConductClient().updateConductEntry(req);
+            const call = getGRPCJobsConductClient().updateConductEntry(req);
             const { response } = await call;
 
             emit('updated', response.entry!);
@@ -93,7 +91,7 @@ async function conductCreateOrUpdateEntry(values: Schema, id?: string): Promise<
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

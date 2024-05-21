@@ -41,9 +41,9 @@ export interface Thread {
      */
     title: string;
     /**
-     * @generated from protobuf field: bool closed = 6;
+     * @generated from protobuf field: bool archived = 6;
      */
-    closed: boolean;
+    archived: boolean;
     /**
      * @generated from protobuf field: optional resources.messenger.Message last_message = 7;
      */
@@ -82,19 +82,23 @@ export interface ThreadUserState {
      */
     userId: number;
     /**
-     * @generated from protobuf field: optional uint64 last_read = 3 [jstype = JS_STRING];
+     * @generated from protobuf field: bool unread = 3;
      */
-    lastRead?: string;
+    unread: boolean;
     /**
-     * @generated from protobuf field: bool important = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp last_read = 4;
+     */
+    lastRead?: Timestamp;
+    /**
+     * @generated from protobuf field: bool important = 5;
      */
     important: boolean;
     /**
-     * @generated from protobuf field: bool favorite = 5;
+     * @generated from protobuf field: bool favorite = 6;
      */
     favorite: boolean;
     /**
-     * @generated from protobuf field: bool muted = 6;
+     * @generated from protobuf field: bool muted = 7;
      */
     muted: boolean;
 }
@@ -107,7 +111,7 @@ class Thread$Type extends MessageType<Thread> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "255" } } } },
-            { no: 6, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "archived", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "last_message", kind: "message", T: () => Message },
             { no: 8, name: "user_state", kind: "message", T: () => ThreadUserState },
             { no: 9, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
@@ -120,7 +124,7 @@ class Thread$Type extends MessageType<Thread> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.title = "";
-        message.closed = false;
+        message.archived = false;
         message.creatorJob = "";
         if (value !== undefined)
             reflectionMergePartial<Thread>(this, message, value);
@@ -146,8 +150,8 @@ class Thread$Type extends MessageType<Thread> {
                 case /* string title */ 5:
                     message.title = reader.string();
                     break;
-                case /* bool closed */ 6:
-                    message.closed = reader.bool();
+                case /* bool archived */ 6:
+                    message.archived = reader.bool();
                     break;
                 case /* optional resources.messenger.Message last_message */ 7:
                     message.lastMessage = Message.internalBinaryRead(reader, reader.uint32(), options, message.lastMessage);
@@ -194,9 +198,9 @@ class Thread$Type extends MessageType<Thread> {
         /* string title = 5; */
         if (message.title !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.title);
-        /* bool closed = 6; */
-        if (message.closed !== false)
-            writer.tag(6, WireType.Varint).bool(message.closed);
+        /* bool archived = 6; */
+        if (message.archived !== false)
+            writer.tag(6, WireType.Varint).bool(message.archived);
         /* optional resources.messenger.Message last_message = 7; */
         if (message.lastMessage)
             Message.internalBinaryWrite(message.lastMessage, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
@@ -231,16 +235,18 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         super("resources.messenger.ThreadUserState", [
             { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "last_read", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 5, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 6, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "unread", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 4, name: "last_read", kind: "message", T: () => Timestamp },
+            { no: 5, name: "important", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 6, name: "favorite", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "muted", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ThreadUserState>): ThreadUserState {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.threadId = "0";
         message.userId = 0;
+        message.unread = false;
         message.important = false;
         message.favorite = false;
         message.muted = false;
@@ -259,16 +265,19 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
                     break;
-                case /* optional uint64 last_read = 3 [jstype = JS_STRING];*/ 3:
-                    message.lastRead = reader.uint64().toString();
+                case /* bool unread */ 3:
+                    message.unread = reader.bool();
                     break;
-                case /* bool important */ 4:
+                case /* optional resources.timestamp.Timestamp last_read */ 4:
+                    message.lastRead = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastRead);
+                    break;
+                case /* bool important */ 5:
                     message.important = reader.bool();
                     break;
-                case /* bool favorite */ 5:
+                case /* bool favorite */ 6:
                     message.favorite = reader.bool();
                     break;
-                case /* bool muted */ 6:
+                case /* bool muted */ 7:
                     message.muted = reader.bool();
                     break;
                 default:
@@ -289,18 +298,21 @@ class ThreadUserState$Type extends MessageType<ThreadUserState> {
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
-        /* optional uint64 last_read = 3 [jstype = JS_STRING]; */
-        if (message.lastRead !== undefined)
-            writer.tag(3, WireType.Varint).uint64(message.lastRead);
-        /* bool important = 4; */
+        /* bool unread = 3; */
+        if (message.unread !== false)
+            writer.tag(3, WireType.Varint).bool(message.unread);
+        /* optional resources.timestamp.Timestamp last_read = 4; */
+        if (message.lastRead)
+            Timestamp.internalBinaryWrite(message.lastRead, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* bool important = 5; */
         if (message.important !== false)
-            writer.tag(4, WireType.Varint).bool(message.important);
-        /* bool favorite = 5; */
+            writer.tag(5, WireType.Varint).bool(message.important);
+        /* bool favorite = 6; */
         if (message.favorite !== false)
-            writer.tag(5, WireType.Varint).bool(message.favorite);
-        /* bool muted = 6; */
+            writer.tag(6, WireType.Varint).bool(message.favorite);
+        /* bool muted = 7; */
         if (message.muted !== false)
-            writer.tag(6, WireType.Varint).bool(message.muted);
+            writer.tag(7, WireType.Varint).bool(message.muted);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

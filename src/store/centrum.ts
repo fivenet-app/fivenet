@@ -352,14 +352,13 @@ export const useCentrumStore = defineStore('centrum', {
 
             const authStore = useAuthStore();
             const notifications = useNotificatorStore();
-            const { $grpc } = useNuxtApp();
 
             this.abort = new AbortController();
             this.error = undefined;
             this.reconnecting = false;
 
             try {
-                const call = $grpc.getCentrumClient().stream(
+                const call = getGRPCCentrumClient().stream(
                     {},
                     {
                         abort: this.abort.signal,

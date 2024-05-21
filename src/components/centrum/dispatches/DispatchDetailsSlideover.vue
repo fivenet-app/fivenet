@@ -21,8 +21,6 @@ const props = defineProps<{
     dispatch?: Dispatch;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const { isOpen } = useSlideover();
@@ -49,23 +47,23 @@ async function selfAssign(id: string): Promise<void> {
     }
 
     try {
-        const call = $grpc.getCentrumClient().takeDispatch({
+        const call = getGRPCCentrumClient().takeDispatch({
             dispatchIds: [id],
             resp: TakeDispatchResp.ACCEPTED,
         });
         await call;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteDispatch(id: string): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().deleteDispatch({ id });
+        const call = getGRPCCentrumClient().deleteDispatch({ id });
         await call;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

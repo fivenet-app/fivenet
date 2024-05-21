@@ -9,8 +9,6 @@ import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { isOpen } = useModal();
 
-const { $grpc } = useNuxtApp();
-
 const calendarStore = useCalendarStore();
 
 const page = ref(1);
@@ -35,7 +33,7 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
 
 async function subscribeToCalendar(calendarId: string, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
     try {
-        const call = $grpc.getCalendarClient().subscribeToCalendar({
+        const call = getGRPCCalendarClient().subscribeToCalendar({
             delete: !subscribe,
             sub: {
                 calendarId: calendarId,

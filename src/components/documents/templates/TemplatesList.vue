@@ -14,18 +14,16 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const { $grpc } = useNuxtApp();
-
 const { data: templates, pending: loading, refresh, error } = useLazyAsyncData(`documents-templates`, () => listTemplates());
 
 async function listTemplates(): Promise<TemplateShort[]> {
     try {
-        const call = $grpc.getDocStoreClient().listTemplates({});
+        const call = getGRPCDocStoreClient().listTemplates({});
         const { response } = await call;
 
         return response.templates;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

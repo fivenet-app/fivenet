@@ -13,8 +13,6 @@ const emit = defineEmits<{
     (e: 'update:trafficInfractionPoints', value: number): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -44,7 +42,7 @@ async function setTrafficPoints(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.getCitizenStoreClient().setUserProps({
+        const call = getGRPCCitizenStoreClient().setUserProps({
             props: userProps,
             reason: values.reason,
         });
@@ -62,7 +60,7 @@ async function setTrafficPoints(values: Schema): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

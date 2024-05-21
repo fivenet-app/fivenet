@@ -17,8 +17,6 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const {
@@ -30,14 +28,14 @@ const {
 
 async function getDocumentReferences(): Promise<DocumentReference[]> {
     try {
-        const call = $grpc.getDocStoreClient().getDocumentReferences({
+        const call = getGRPCDocStoreClient().getDocumentReferences({
             documentId: props.documentId,
         });
         const { response } = await call;
 
         return response.references;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -55,12 +55,10 @@ export const useNotificatorStore = defineStore('notifications', {
             this.reconnecting = false;
             const authStore = useAuthStore();
 
-            const { $grpc } = useNuxtApp();
-
             try {
                 this.abort = new AbortController();
 
-                const call = $grpc.getNotificatorClient().stream(
+                const call = getGRPCNotificatorClient().stream(
                     {},
                     {
                         abort: this.abort.signal,
@@ -163,7 +161,7 @@ export const useNotificatorStore = defineStore('notifications', {
                     console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
 
                     if (error.message.includes('ErrCharLock')) {
-                        $grpc.handleError(error);
+                        handleGRPCError(error);
                     } else {
                         this.restartStream();
                     }
@@ -205,12 +203,10 @@ export const useNotificatorStore = defineStore('notifications', {
 
         // Notification Actions
         async markNotifications(req: MarkNotificationsRequest): Promise<void> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                await $grpc.getNotificatorClient().markNotifications(req);
+                await getGRPCNotificatorClient().markNotifications(req);
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
 

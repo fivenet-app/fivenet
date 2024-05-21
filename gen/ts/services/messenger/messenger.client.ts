@@ -10,6 +10,8 @@ import type { PostMessageResponse } from "./messenger";
 import type { PostMessageRequest } from "./messenger";
 import type { GetThreadMessagesResponse } from "./messenger";
 import type { GetThreadMessagesRequest } from "./messenger";
+import type { SetThreadUserStateResponse } from "./messenger";
+import type { SetThreadUserStateRequest } from "./messenger";
 import type { DeleteThreadResponse } from "./messenger";
 import type { DeleteThreadRequest } from "./messenger";
 import type { CreateOrUpdateThreadResponse } from "./messenger";
@@ -41,6 +43,12 @@ export interface IMessengerServiceClient {
      * @generated from protobuf rpc: DeleteThread(services.messenger.DeleteThreadRequest) returns (services.messenger.DeleteThreadResponse);
      */
     deleteThread(input: DeleteThreadRequest, options?: RpcOptions): UnaryCall<DeleteThreadRequest, DeleteThreadResponse>;
+    /**
+     * @perm: Name=ListThreads
+     *
+     * @generated from protobuf rpc: SetThreadUserState(services.messenger.SetThreadUserStateRequest) returns (services.messenger.SetThreadUserStateResponse);
+     */
+    setThreadUserState(input: SetThreadUserStateRequest, options?: RpcOptions): UnaryCall<SetThreadUserStateRequest, SetThreadUserStateResponse>;
     /**
      * @perm: Name=ListThreads
      *
@@ -99,10 +107,19 @@ export class MessengerServiceClient implements IMessengerServiceClient, ServiceI
     /**
      * @perm: Name=ListThreads
      *
+     * @generated from protobuf rpc: SetThreadUserState(services.messenger.SetThreadUserStateRequest) returns (services.messenger.SetThreadUserStateResponse);
+     */
+    setThreadUserState(input: SetThreadUserStateRequest, options?: RpcOptions): UnaryCall<SetThreadUserStateRequest, SetThreadUserStateResponse> {
+        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        return stackIntercept<SetThreadUserStateRequest, SetThreadUserStateResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=ListThreads
+     *
      * @generated from protobuf rpc: GetThreadMessages(services.messenger.GetThreadMessagesRequest) returns (services.messenger.GetThreadMessagesResponse);
      */
     getThreadMessages(input: GetThreadMessagesRequest, options?: RpcOptions): UnaryCall<GetThreadMessagesRequest, GetThreadMessagesResponse> {
-        const method = this.methods[3], opt = this._transport.mergeOptions(options);
+        const method = this.methods[4], opt = this._transport.mergeOptions(options);
         return stackIntercept<GetThreadMessagesRequest, GetThreadMessagesResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -111,7 +128,7 @@ export class MessengerServiceClient implements IMessengerServiceClient, ServiceI
      * @generated from protobuf rpc: PostMessage(services.messenger.PostMessageRequest) returns (services.messenger.PostMessageResponse);
      */
     postMessage(input: PostMessageRequest, options?: RpcOptions): UnaryCall<PostMessageRequest, PostMessageResponse> {
-        const method = this.methods[4], opt = this._transport.mergeOptions(options);
+        const method = this.methods[5], opt = this._transport.mergeOptions(options);
         return stackIntercept<PostMessageRequest, PostMessageResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -120,7 +137,7 @@ export class MessengerServiceClient implements IMessengerServiceClient, ServiceI
      * @generated from protobuf rpc: DeleteMessage(services.messenger.DeleteMessageRequest) returns (services.messenger.DeleteMessageResponse);
      */
     deleteMessage(input: DeleteMessageRequest, options?: RpcOptions): UnaryCall<DeleteMessageRequest, DeleteMessageResponse> {
-        const method = this.methods[5], opt = this._transport.mergeOptions(options);
+        const method = this.methods[6], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteMessageRequest, DeleteMessageResponse>("unary", this._transport, method, opt, input);
     }
 }

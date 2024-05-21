@@ -51,10 +51,8 @@ export const useCalendarStore = defineStore('calendar', {
     actions: {
         // Calendars
         async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().getCalendar(req);
+                const call = getGRPCCalendarClient().getCalendar(req);
                 const { response } = await call;
 
                 if (response.calendar) {
@@ -72,10 +70,8 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
         async listCalendars(req: ListCalendarsRequest): Promise<ListCalendarsResponse> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().listCalendars(req);
+                const call = getGRPCCalendarClient().listCalendars(req);
                 const { response } = await call;
 
                 // Only "register" calendars in list when they are accessible by the user
@@ -96,15 +92,13 @@ export const useCalendarStore = defineStore('calendar', {
 
                 return response;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
         async createOrUpdateCalendar(calendar: Calendar): Promise<CreateOrUpdateCalendarResponse> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().createOrUpdateCalendar({
+                const call = getGRPCCalendarClient().createOrUpdateCalendar({
                     calendar: calendar,
                 });
                 const { response } = await call;
@@ -126,10 +120,8 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
         async deleteCalendar(id: string): Promise<void> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().deleteCalendar({
+                const call = getGRPCCalendarClient().deleteCalendar({
                     calendarId: id,
                 });
                 await call;
@@ -139,17 +131,15 @@ export const useCalendarStore = defineStore('calendar', {
                     this.calendars.splice(idx, 1);
                 }
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
 
         // Entries
         async getCalendarEntry(req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().getCalendarEntry(req);
+                const call = getGRPCCalendarClient().getCalendarEntry(req);
                 const { response } = await call;
 
                 if (response.entry) {
@@ -167,8 +157,6 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
         async listCalendarEntries(req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
-            const { $grpc } = useNuxtApp();
-
             if (req === undefined) {
                 req = {
                     calendarIds: this.activeCalendarIds,
@@ -178,7 +166,7 @@ export const useCalendarStore = defineStore('calendar', {
             }
 
             try {
-                const call = $grpc.getCalendarClient().listCalendarEntries(req);
+                const call = getGRPCCalendarClient().listCalendarEntries(req);
                 const { response } = await call;
 
                 if (response.entries.length > 0) {
@@ -196,7 +184,7 @@ export const useCalendarStore = defineStore('calendar', {
 
                 return response;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
@@ -204,10 +192,8 @@ export const useCalendarStore = defineStore('calendar', {
             entry: CalendarEntry,
             users?: UserShort[],
         ): Promise<CreateOrUpdateCalendarEntryResponse> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().createOrUpdateCalendarEntry({
+                const call = getGRPCCalendarClient().createOrUpdateCalendarEntry({
                     entry: entry,
                     userIds: users?.map((u) => u.userId) ?? [],
                 });
@@ -229,10 +215,8 @@ export const useCalendarStore = defineStore('calendar', {
         },
 
         async deleteCalendarEntry(entryId: string): Promise<void> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().deleteCalendarEntry({
+                const call = getGRPCCalendarClient().deleteCalendarEntry({
                     entryId: entryId,
                 });
                 await call;
@@ -242,29 +226,26 @@ export const useCalendarStore = defineStore('calendar', {
                     this.entries.splice(idx, 1);
                 }
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
 
         // RSVP
         async listCalendarEntryRSVP(req: ListCalendarEntryRSVPRequest): Promise<ListCalendarEntryRSVPResponse> {
-            const { $grpc } = useNuxtApp();
-
             try {
-                const call = $grpc.getCalendarClient().listCalendarEntryRSVP(req);
+                const call = getGRPCCalendarClient().listCalendarEntryRSVP(req);
                 const { response } = await call;
 
                 return response;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
         async rsvpCalendarEntry(req: RSVPCalendarEntryRequest): Promise<RSVPCalendarEntryResponse> {
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getCalendarClient().rSVPCalendarEntry(req);
+                const call = getGRPCCalendarClient().rSVPCalendarEntry(req);
                 const { response } = await call;
 
                 // Retrieve calendar entry if a "should be visible" response and it is not in our list yet
@@ -279,7 +260,7 @@ export const useCalendarStore = defineStore('calendar', {
 
                 return response;
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },

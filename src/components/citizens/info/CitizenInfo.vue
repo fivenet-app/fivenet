@@ -21,8 +21,6 @@ const props = defineProps<{
     userId: number;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const clipboardStore = useClipboardStore();
@@ -64,7 +62,7 @@ const {
 
 async function getUser(userId: number): Promise<User> {
     try {
-        const call = $grpc.getCitizenStoreClient().getUser({ userId });
+        const call = getGRPCCitizenStoreClient().getUser({ userId });
         const { response } = await call;
 
         if (response.user?.props === undefined) {
@@ -75,7 +73,7 @@ async function getUser(userId: number): Promise<User> {
 
         return response.user!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

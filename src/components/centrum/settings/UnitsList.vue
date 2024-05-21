@@ -6,8 +6,6 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import UnitAttributes from '../partials/UnitAttributes.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const modal = useModal();
@@ -16,26 +14,26 @@ const { data: units, pending: loading, refresh, error } = useLazyAsyncData('cent
 
 async function listUnits(): Promise<ListUnitsResponse> {
     try {
-        const call = $grpc.getCentrumClient().listUnits({
+        const call = getGRPCCentrumClient().listUnits({
             status: [],
         });
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteUnit(id: string): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().deleteUnit({
+        const call = getGRPCCentrumClient().deleteUnit({
             unitId: id,
         });
         await call;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

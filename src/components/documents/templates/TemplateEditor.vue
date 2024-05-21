@@ -21,8 +21,6 @@ const props = defineProps<{
     templateId?: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 
 const notifications = useNotificatorStore();
@@ -360,7 +358,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
 
     try {
         if (templateId === undefined) {
-            const call = $grpc.getDocStoreClient().createTemplate(req);
+            const call = getGRPCDocStoreClient().createTemplate(req);
             const { response } = await call;
 
             notifications.add({
@@ -374,7 +372,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
                 params: { id: response.id },
             });
         } else {
-            const call = $grpc.getDocStoreClient().updateTemplate(req);
+            const call = getGRPCDocStoreClient().updateTemplate(req);
             const { response } = await call;
             if (response.template) {
                 setValuesFromTemplate(response.template);
@@ -387,7 +385,7 @@ async function createOrUpdateTemplate(values: Schema, templateId?: string): Prom
             });
         }
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -479,7 +477,7 @@ function setValuesFromTemplate(tpl: Template): void {
 onMounted(async () => {
     if (props.templateId) {
         try {
-            const call = $grpc.getDocStoreClient().getTemplate({
+            const call = getGRPCDocStoreClient().getTemplate({
                 templateId: props.templateId,
                 render: false,
             });
@@ -492,7 +490,7 @@ onMounted(async () => {
 
             setValuesFromTemplate(tpl);
         } catch (e) {
-            $grpc.handleError(e as RpcError);
+            handleGRPCError(e as RpcError);
         }
     } else {
         state.weight = 0;
@@ -635,7 +633,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                     categoriesLoading = false;
                                     return categories;
                                 } catch (e) {
-                                    $grpc.handleError(e as RpcError);
+                                    handleGRPCError(e as RpcError);
                                     throw e;
                                 } finally {
                                     categoriesLoading = false;

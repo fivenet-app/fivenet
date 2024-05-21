@@ -20,8 +20,6 @@ const props = withDefaults(
     },
 );
 
-const { $grpc } = useNuxtApp();
-
 const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
@@ -64,7 +62,7 @@ async function listColleagueActivity(
     activityTypes: JobsUserActivityType[],
 ): Promise<ListColleagueActivityResponse> {
     try {
-        const call = $grpc.getJobsClient().listColleagueActivity({
+        const call = getGRPCJobsClient().listColleagueActivity({
             pagination: { offset: offset.value },
             userIds: userIds,
             activityTypes: activityTypes,
@@ -73,7 +71,7 @@ async function listColleagueActivity(
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

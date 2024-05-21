@@ -12,6 +12,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Message } from "../../resources/messenger/message";
+import { ThreadUserState } from "../../resources/messenger/thread";
 import { Thread } from "../../resources/messenger/thread";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
@@ -74,6 +75,20 @@ export interface DeleteThreadRequest {
  */
 export interface DeleteThreadResponse {
 }
+/**
+ * @generated from protobuf message services.messenger.SetThreadUserStateRequest
+ */
+export interface SetThreadUserStateRequest {
+    /**
+     * @generated from protobuf field: resources.messenger.ThreadUserState state = 1;
+     */
+    state?: ThreadUserState;
+}
+/**
+ * @generated from protobuf message services.messenger.SetThreadUserStateResponse
+ */
+export interface SetThreadUserStateResponse {
+}
 // Messages
 
 /**
@@ -81,28 +96,20 @@ export interface DeleteThreadResponse {
  */
 export interface GetThreadMessagesRequest {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
-     */
-    pagination?: PaginationRequest;
-    /**
-     * @generated from protobuf field: uint64 thread_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
      */
     threadId: string;
     /**
-     * @generated from protobuf field: resources.timestamp.Timestamp start = 3;
+     * @generated from protobuf field: resources.timestamp.Timestamp after = 2;
      */
-    start?: Timestamp;
+    after?: Timestamp;
 }
 /**
  * @generated from protobuf message services.messenger.GetThreadMessagesResponse
  */
 export interface GetThreadMessagesResponse {
     /**
-     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
-     */
-    pagination?: PaginationResponse;
-    /**
-     * @generated from protobuf field: repeated resources.messenger.Message messages = 2;
+     * @generated from protobuf field: repeated resources.messenger.Message messages = 1;
      */
     messages: Message[];
 }
@@ -129,7 +136,11 @@ export interface PostMessageResponse {
  */
 export interface DeleteMessageRequest {
     /**
-     * @generated from protobuf field: uint64 message_id = 1 [jstype = JS_STRING];
+     * @generated from protobuf field: uint64 thread_id = 1 [jstype = JS_STRING];
+     */
+    threadId: string;
+    /**
+     * @generated from protobuf field: uint64 message_id = 2 [jstype = JS_STRING];
      */
     messageId: string;
 }
@@ -410,12 +421,82 @@ class DeleteThreadResponse$Type extends MessageType<DeleteThreadResponse> {
  */
 export const DeleteThreadResponse = new DeleteThreadResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class SetThreadUserStateRequest$Type extends MessageType<SetThreadUserStateRequest> {
+    constructor() {
+        super("services.messenger.SetThreadUserStateRequest", [
+            { no: 1, name: "state", kind: "message", T: () => ThreadUserState, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<SetThreadUserStateRequest>): SetThreadUserStateRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetThreadUserStateRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetThreadUserStateRequest): SetThreadUserStateRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.messenger.ThreadUserState state */ 1:
+                    message.state = ThreadUserState.internalBinaryRead(reader, reader.uint32(), options, message.state);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: SetThreadUserStateRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.messenger.ThreadUserState state = 1; */
+        if (message.state)
+            ThreadUserState.internalBinaryWrite(message.state, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.messenger.SetThreadUserStateRequest
+ */
+export const SetThreadUserStateRequest = new SetThreadUserStateRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class SetThreadUserStateResponse$Type extends MessageType<SetThreadUserStateResponse> {
+    constructor() {
+        super("services.messenger.SetThreadUserStateResponse", []);
+    }
+    create(value?: PartialMessage<SetThreadUserStateResponse>): SetThreadUserStateResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<SetThreadUserStateResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: SetThreadUserStateResponse): SetThreadUserStateResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: SetThreadUserStateResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.messenger.SetThreadUserStateResponse
+ */
+export const SetThreadUserStateResponse = new SetThreadUserStateResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest> {
     constructor() {
         super("services.messenger.GetThreadMessagesRequest", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "start", kind: "message", T: () => Timestamp }
+            { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "after", kind: "message", T: () => Timestamp }
         ]);
     }
     create(value?: PartialMessage<GetThreadMessagesRequest>): GetThreadMessagesRequest {
@@ -430,14 +511,11 @@ class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationRequest pagination */ 1:
-                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* uint64 thread_id = 2 [jstype = JS_STRING];*/ 2:
+                case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
                     message.threadId = reader.uint64().toString();
                     break;
-                case /* resources.timestamp.Timestamp start */ 3:
-                    message.start = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.start);
+                case /* resources.timestamp.Timestamp after */ 2:
+                    message.after = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.after);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -451,15 +529,12 @@ class GetThreadMessagesRequest$Type extends MessageType<GetThreadMessagesRequest
         return message;
     }
     internalBinaryWrite(message: GetThreadMessagesRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationRequest pagination = 1; */
-        if (message.pagination)
-            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 thread_id = 2 [jstype = JS_STRING]; */
+        /* uint64 thread_id = 1 [jstype = JS_STRING]; */
         if (message.threadId !== "0")
-            writer.tag(2, WireType.Varint).uint64(message.threadId);
-        /* resources.timestamp.Timestamp start = 3; */
-        if (message.start)
-            Timestamp.internalBinaryWrite(message.start, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            writer.tag(1, WireType.Varint).uint64(message.threadId);
+        /* resources.timestamp.Timestamp after = 2; */
+        if (message.after)
+            Timestamp.internalBinaryWrite(message.after, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -474,8 +549,7 @@ export const GetThreadMessagesRequest = new GetThreadMessagesRequest$Type();
 class GetThreadMessagesResponse$Type extends MessageType<GetThreadMessagesResponse> {
     constructor() {
         super("services.messenger.GetThreadMessagesResponse", [
-            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "messages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Message }
+            { no: 1, name: "messages", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => Message }
         ]);
     }
     create(value?: PartialMessage<GetThreadMessagesResponse>): GetThreadMessagesResponse {
@@ -490,10 +564,7 @@ class GetThreadMessagesResponse$Type extends MessageType<GetThreadMessagesRespon
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.common.database.PaginationResponse pagination */ 1:
-                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
-                    break;
-                case /* repeated resources.messenger.Message messages */ 2:
+                case /* repeated resources.messenger.Message messages */ 1:
                     message.messages.push(Message.internalBinaryRead(reader, reader.uint32(), options));
                     break;
                 default:
@@ -508,12 +579,9 @@ class GetThreadMessagesResponse$Type extends MessageType<GetThreadMessagesRespon
         return message;
     }
     internalBinaryWrite(message: GetThreadMessagesResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.common.database.PaginationResponse pagination = 1; */
-        if (message.pagination)
-            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.messenger.Message messages = 2; */
+        /* repeated resources.messenger.Message messages = 1; */
         for (let i = 0; i < message.messages.length; i++)
-            Message.internalBinaryWrite(message.messages[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+            Message.internalBinaryWrite(message.messages[i], writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -574,7 +642,7 @@ export const PostMessageRequest = new PostMessageRequest$Type();
 class PostMessageResponse$Type extends MessageType<PostMessageResponse> {
     constructor() {
         super("services.messenger.PostMessageResponse", [
-            { no: 1, name: "message", kind: "message", T: () => Message, options: { "validate.rules": { message: { required: true } } } }
+            { no: 1, name: "message", kind: "message", T: () => Message }
         ]);
     }
     create(value?: PartialMessage<PostMessageResponse>): PostMessageResponse {
@@ -620,11 +688,13 @@ export const PostMessageResponse = new PostMessageResponse$Type();
 class DeleteMessageRequest$Type extends MessageType<DeleteMessageRequest> {
     constructor() {
         super("services.messenger.DeleteMessageRequest", [
-            { no: 1, name: "message_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "thread_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "message_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<DeleteMessageRequest>): DeleteMessageRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.threadId = "0";
         message.messageId = "0";
         if (value !== undefined)
             reflectionMergePartial<DeleteMessageRequest>(this, message, value);
@@ -635,7 +705,10 @@ class DeleteMessageRequest$Type extends MessageType<DeleteMessageRequest> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* uint64 message_id = 1 [jstype = JS_STRING];*/ 1:
+                case /* uint64 thread_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.threadId = reader.uint64().toString();
+                    break;
+                case /* uint64 message_id = 2 [jstype = JS_STRING];*/ 2:
                     message.messageId = reader.uint64().toString();
                     break;
                 default:
@@ -650,9 +723,12 @@ class DeleteMessageRequest$Type extends MessageType<DeleteMessageRequest> {
         return message;
     }
     internalBinaryWrite(message: DeleteMessageRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 message_id = 1 [jstype = JS_STRING]; */
+        /* uint64 thread_id = 1 [jstype = JS_STRING]; */
+        if (message.threadId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.threadId);
+        /* uint64 message_id = 2 [jstype = JS_STRING]; */
         if (message.messageId !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.messageId);
+            writer.tag(2, WireType.Varint).uint64(message.messageId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -695,6 +771,7 @@ export const MessengerService = new ServiceType("services.messenger.MessengerSer
     { name: "ListThreads", options: {}, I: ListThreadsRequest, O: ListThreadsResponse },
     { name: "CreateOrUpdateThread", options: {}, I: CreateOrUpdateThreadRequest, O: CreateOrUpdateThreadResponse },
     { name: "DeleteThread", options: {}, I: DeleteThreadRequest, O: DeleteThreadResponse },
+    { name: "SetThreadUserState", options: {}, I: SetThreadUserStateRequest, O: SetThreadUserStateResponse },
     { name: "GetThreadMessages", options: {}, I: GetThreadMessagesRequest, O: GetThreadMessagesResponse },
     { name: "PostMessage", options: {}, I: PostMessageRequest, O: PostMessageResponse },
     { name: "DeleteMessage", options: {}, I: DeleteMessageRequest, O: DeleteMessageResponse }

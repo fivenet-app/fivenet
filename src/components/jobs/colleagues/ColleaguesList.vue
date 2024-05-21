@@ -13,8 +13,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 import { isFuture } from 'date-fns';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const authStore = useAuthStore();
@@ -48,7 +46,7 @@ const {
 
 async function listColleagues(): Promise<ListColleaguesResponse> {
     try {
-        const call = $grpc.getJobsClient().listColleagues({
+        const call = getGRPCJobsClient().listColleagues({
             pagination: {
                 offset: offset.value,
             },
@@ -59,7 +57,7 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

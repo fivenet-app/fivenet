@@ -13,8 +13,6 @@ const props = defineProps<{
     location?: Coordinate;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const centrumStore = useCentrumStore();
@@ -42,7 +40,7 @@ interface FormData {
 
 async function updateUnitStatus(id: string, values: FormData): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().updateUnitStatus({
+        const call = getGRPCCentrumClient().updateUnitStatus({
             unitId: id,
             status: values.status,
             code: values.code,
@@ -58,7 +56,7 @@ async function updateUnitStatus(id: string, values: FormData): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

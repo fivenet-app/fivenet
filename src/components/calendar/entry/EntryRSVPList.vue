@@ -29,8 +29,6 @@ const emits = defineEmits<{
     (e: 'update:modelValue', entry: CalendarEntryRSVP | undefined): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const authStore = useAuthStore();
@@ -61,7 +59,7 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -96,7 +94,7 @@ async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean):
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

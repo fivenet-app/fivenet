@@ -85,9 +85,8 @@ export const useAuthStore = defineStore('auth', {
             this.setActiveChar(null);
             this.setPermissions([]);
 
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getAuthClient().login({ username, password });
+                const call = getGRPCAuthClient().login({ username, password });
                 const { response } = await call;
 
                 this.loginStop(null);
@@ -117,19 +116,18 @@ export const useAuthStore = defineStore('auth', {
             } catch (e) {
                 this.loginStop((e as RpcError).message);
                 this.setAccessTokenExpiration(null);
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
         async doLogout(): Promise<void> {
-            const { $grpc } = useNuxtApp();
             this.loggingIn = true;
 
             try {
-                await $grpc.getAuthClient().logout({});
+                await getGRPCAuthClient().logout({});
                 this.clearAuthInfo();
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
 
                 useNotificatorStore().add({
                     title: { key: 'notifications.auth.error_logout.title', parameters: {} },
@@ -151,9 +149,8 @@ export const useAuthStore = defineStore('auth', {
                 charId = this.lastCharID;
             }
 
-            const { $grpc } = useNuxtApp();
             try {
-                const call = $grpc.getAuthClient().chooseCharacter({ charId: charId });
+                const call = getGRPCAuthClient().chooseCharacter({ charId: charId });
                 const { response } = await call;
                 if (!response.char) {
                     throw new Error('Server Error! No character in choose character response.');
@@ -178,12 +175,11 @@ export const useAuthStore = defineStore('auth', {
                     });
                 }
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },
         async setSuperUserMode(superuser: boolean, job?: Job): Promise<void> {
-            const { $grpc } = useNuxtApp();
             try {
                 const req = {
                     superuser: superuser,
@@ -193,7 +189,7 @@ export const useAuthStore = defineStore('auth', {
                     req.job = job!.name;
                 }
 
-                const call = $grpc.getAuthClient().setSuperUserMode(req);
+                const call = getGRPCAuthClient().setSuperUserMode(req);
                 const { response } = await call;
 
                 if (superuser) {
@@ -217,7 +213,7 @@ export const useAuthStore = defineStore('auth', {
 
                 await navigateTo({ name: 'overview' });
             } catch (e) {
-                $grpc.handleError(e as RpcError);
+                handleGRPCError(e as RpcError);
                 throw e;
             }
         },

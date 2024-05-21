@@ -19,8 +19,6 @@ const props = defineProps<{
     doc: DocumentShort;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -63,7 +61,7 @@ const {
 
 async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsResponse> {
     try {
-        const call = $grpc.getDocStoreClient().listDocumentReqs({
+        const call = getGRPCDocStoreClient().listDocumentReqs({
             pagination: {
                 offset: offset.value,
             },
@@ -73,7 +71,7 @@ async function listDocumnetReqs(documentId: string): Promise<ListDocumentReqsRes
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -84,7 +82,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.getDocStoreClient().createDocumentReq({
+        const call = getGRPCDocStoreClient().createDocumentReq({
             documentId: props.doc.id,
             reason: values.reason,
             requestType: values.requestType,
@@ -99,7 +97,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
 
         refresh();
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

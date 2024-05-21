@@ -92,6 +92,38 @@ func (s *Server) SetQualificationAccess(ctx context.Context, req *SetQualificati
 	return &SetQualificationAccessResponse{}, nil
 }
 
+func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uint64) (*qualifications.QualificationAccess, error) {
+	tQJobAccess := table.FivenetQualificationsJobAccess.AS("qualificationjobaccess")
+	jobStmt := tQJobAccess.
+		SELECT(
+			tQJobAccess.ID,
+			tQJobAccess.QualificationID,
+			tQJobAccess.Job,
+			tQJobAccess.MinimumGrade,
+			tQJobAccess.Access,
+		).
+		FROM(
+			tQJobAccess,
+		).
+		WHERE(
+			tQJobAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
+		).
+		ORDER_BY(
+			tQJobAccess.ID.ASC(),
+		)
+
+	var jobAccess []*qualifications.QualificationJobAccess
+	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return &qualifications.QualificationAccess{
+		Jobs: jobAccess,
+	}, nil
+}
+
 func (s *Server) handleQualificationAccessChanges(ctx context.Context, tx qrm.DB, mode qualifications.AccessLevelUpdateMode, qualificationId uint64, access *qualifications.QualificationAccess) error {
 
 	switch mode {
@@ -195,38 +227,6 @@ func (s *Server) compareQualificationAccess(current, in *qualifications.Qualific
 	}
 
 	return
-}
-
-func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uint64) (*qualifications.QualificationAccess, error) {
-	tQJobAccess := table.FivenetQualificationsJobAccess.AS("qualificationjobaccess")
-	jobStmt := tQJobAccess.
-		SELECT(
-			tQJobAccess.ID,
-			tQJobAccess.QualificationID,
-			tQJobAccess.Job,
-			tQJobAccess.MinimumGrade,
-			tQJobAccess.Access,
-		).
-		FROM(
-			tQJobAccess,
-		).
-		WHERE(
-			tQJobAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
-		).
-		ORDER_BY(
-			tQJobAccess.ID.ASC(),
-		)
-
-	var jobAccess []*qualifications.QualificationJobAccess
-	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return &qualifications.QualificationAccess{
-		Jobs: jobAccess,
-	}, nil
 }
 
 func (s *Server) createQualificationAccess(ctx context.Context, tx qrm.DB, qualificationId uint64, access *qualifications.QualificationAccess) error {

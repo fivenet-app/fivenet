@@ -6,8 +6,6 @@ import CharacterSelectorCard from '~/components/auth/CharacterSelectorCard.vue';
 import { useAuthStore } from '~/store/auth';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 
 const { chooseCharacter } = authStore;
@@ -16,12 +14,12 @@ const { data: chars, pending: loading, refresh, error } = useLazyAsyncData('char
 
 async function fetchCharacters(): Promise<Character[]> {
     try {
-        const call = $grpc.getAuthClient().getCharacters({});
+        const call = getGRPCAuthClient().getCharacters({});
         const { response } = await call;
 
         return response.chars;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

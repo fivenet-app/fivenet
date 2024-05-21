@@ -7,8 +7,6 @@ const emit = defineEmits<{
     (e: 'left'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 const centrumStore = useCentrumStore();
@@ -16,7 +14,7 @@ const { ownUnitId, getSortedUnits } = storeToRefs(centrumStore);
 
 async function joinOrLeaveUnit(unitId?: string): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().joinUnit({
+        const call = getGRPCCentrumClient().joinUnit({
             unitId,
         });
         const { response } = await call;
@@ -29,7 +27,7 @@ async function joinOrLeaveUnit(unitId?: string): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

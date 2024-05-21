@@ -14,8 +14,6 @@ const emits = defineEmits<{
     (e: 'update:law', update: { id: string; law: Law }): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const schema = z.object({
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(3).max(500), z.string().length(0).optional()]),
@@ -42,21 +40,21 @@ async function deleteLaw(id: string): Promise<void> {
     }
 
     try {
-        const call = $grpc.getRectorLawsClient().deleteLaw({
+        const call = getGRPCRectorLawsClient().deleteLaw({
             id,
         });
         await call;
 
         emits('deleted', id);
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<void> {
     try {
-        const call = $grpc.getRectorLawsClient().createOrUpdateLaw({
+        const call = getGRPCRectorLawsClient().createOrUpdateLaw({
             law: {
                 id: parseInt(id) < 0 ? '0' : id,
                 lawbookId: lawBookId,
@@ -73,7 +71,7 @@ async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<v
 
         editing.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

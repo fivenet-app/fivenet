@@ -30,8 +30,6 @@ const props = defineProps<{
     documentId?: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -111,7 +109,7 @@ onMounted(async () => {
         templateId.value = route.query.templateId as string;
 
         try {
-            const call = $grpc.getDocStoreClient().getTemplate({
+            const call = getGRPCDocStoreClient().getTemplate({
                 templateId: templateId.value as string,
                 data,
                 render: true,
@@ -161,7 +159,7 @@ onMounted(async () => {
                 });
             }
         } catch (e) {
-            $grpc.handleError(e as RpcError);
+            handleGRPCError(e as RpcError);
             console.error('Documents: Editor - Template Error', e);
 
             await navigateTo({ name: 'documents' });
@@ -171,7 +169,7 @@ onMounted(async () => {
     } else if (props.documentId) {
         try {
             const req = { documentId: props.documentId };
-            const call = $grpc.getDocStoreClient().getDocument(req);
+            const call = getGRPCDocStoreClient().getDocument(req);
             const { response } = await call;
 
             const document = response.document;
@@ -185,9 +183,9 @@ onMounted(async () => {
                 state.closed = document.closed;
                 state.public = document.public;
 
-                const refs = await $grpc.getDocStoreClient().getDocumentReferences(req);
+                const refs = await getGRPCDocStoreClient().getDocumentReferences(req);
                 currentReferences.value = refs.response.references;
-                const rels = await $grpc.getDocStoreClient().getDocumentRelations(req);
+                const rels = await getGRPCDocStoreClient().getDocumentRelations(req);
                 currentRelations.value = rels.response.relations;
             }
 
@@ -219,7 +217,7 @@ onMounted(async () => {
                 });
             }
         } catch (e) {
-            $grpc.handleError(e as RpcError);
+            handleGRPCError(e as RpcError);
 
             await navigateTo({ name: 'documents' });
 
@@ -451,7 +449,7 @@ async function createDocument(values: Schema): Promise<void> {
 
     // Try to submit to server
     try {
-        const call = $grpc.getDocStoreClient().createDocument(req);
+        const call = getGRPCDocStoreClient().createDocument(req);
         const { response } = await call;
 
         const promises: Promise<any>[] = [];
@@ -459,7 +457,7 @@ async function createDocument(values: Schema): Promise<void> {
             referenceManagerData.value.forEach((ref) => {
                 ref.sourceDocumentId = response.documentId;
 
-                const prom = $grpc.getDocStoreClient().addDocumentReference({
+                const prom = getGRPCDocStoreClient().addDocumentReference({
                     reference: ref,
                 });
                 promises.push(prom.response);
@@ -470,7 +468,7 @@ async function createDocument(values: Schema): Promise<void> {
             relationManagerData.value.forEach((rel) => {
                 rel.documentId = response.documentId;
 
-                const prom = $grpc.getDocStoreClient().addDocumentRelation({
+                const prom = getGRPCDocStoreClient().addDocumentRelation({
                     relation: rel,
                 });
                 promises.push(prom.response);
@@ -491,7 +489,7 @@ async function createDocument(values: Schema): Promise<void> {
             params: { id: response.documentId },
         });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -545,7 +543,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
     req.access = reqAccess;
 
     try {
-        const call = $grpc.getDocStoreClient().updateDocument(req);
+        const call = getGRPCDocStoreClient().updateDocument(req);
         const { response } = await call;
 
         if (canDo.value.references) {
@@ -554,7 +552,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
                 if (!referenceManagerData.value.has(ref.id!)) referencesToRemove.push(ref.id!);
             });
             referencesToRemove.forEach((id) => {
-                $grpc.getDocStoreClient().removeDocumentReference({ id });
+                getGRPCDocStoreClient().removeDocumentReference({ id });
             });
             referenceManagerData.value.forEach((ref) => {
                 if (currentReferences.value.find((r) => r.id === ref.id!)) {
@@ -562,7 +560,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
                 }
                 ref.sourceDocumentId = response.documentId;
 
-                $grpc.getDocStoreClient().addDocumentReference({
+                getGRPCDocStoreClient().addDocumentReference({
                     reference: ref,
                 });
             });
@@ -574,7 +572,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
                 if (!relationManagerData.value.has(rel.id!)) relationsToRemove.push(rel.id!);
             });
             relationsToRemove.forEach((id) => {
-                $grpc.getDocStoreClient().removeDocumentRelation({ id });
+                getGRPCDocStoreClient().removeDocumentRelation({ id });
             });
             relationManagerData.value.forEach((rel) => {
                 if (currentRelations.value.find((r) => r.id === rel.id!)) {
@@ -582,7 +580,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
                 }
                 rel.documentId = response.documentId;
 
-                $grpc.getDocStoreClient().addDocumentRelation({
+                getGRPCDocStoreClient().addDocumentRelation({
                     relation: rel,
                 });
             });
@@ -601,7 +599,7 @@ async function updateDocument(id: string, values: Schema): Promise<void> {
             params: { id: response.documentId },
         });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -696,7 +694,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             categoriesLoading = false;
                                             return categories;
                                         } catch (e) {
-                                            $grpc.handleError(e as RpcError);
+                                            handleGRPCError(e as RpcError);
                                             throw e;
                                         } finally {
                                             categoriesLoading = false;

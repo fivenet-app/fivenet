@@ -6,8 +6,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const props = defineProps<{
@@ -26,7 +24,7 @@ const {
 
 async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
     try {
-        const call = $grpc.getDocStoreClient().listUserDocuments({
+        const call = getGRPCDocStoreClient().listUserDocuments({
             pagination: {
                 offset: offset.value,
             },
@@ -37,7 +35,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

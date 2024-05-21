@@ -20,13 +20,11 @@ const emits = defineEmits<{
     (e: 'remove'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const qualificationsLoading = ref(false);
 async function listQualifications(search?: string): Promise<Qualification[]> {
     qualificationsLoading.value = true;
     try {
-        const call = $grpc.getQualificationsClient().listQualifications({
+        const call = getGRPCQualificationsClient().listQualifications({
             pagination: {
                 offset: 0,
             },
@@ -37,7 +35,7 @@ async function listQualifications(search?: string): Promise<Qualification[]> {
         qualificationsLoading.value = false;
         return response.qualifications;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     } finally {
         qualificationsLoading.value = false;

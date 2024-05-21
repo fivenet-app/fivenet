@@ -101,6 +101,76 @@ func (s *Server) SetDocumentAccess(ctx context.Context, req *SetDocumentAccessRe
 	return &SetDocumentAccessResponse{}, nil
 }
 
+func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*documents.DocumentAccess, error) {
+	tDJobAccess := table.FivenetDocumentsJobAccess.AS("documentjobaccess")
+	jobStmt := tDJobAccess.
+		SELECT(
+			tDJobAccess.ID,
+			tDJobAccess.DocumentID,
+			tDJobAccess.Job,
+			tDJobAccess.MinimumGrade,
+			tDJobAccess.Access,
+		).
+		FROM(
+			tDJobAccess,
+		).
+		WHERE(
+			tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
+		).
+		ORDER_BY(
+			tDJobAccess.ID.ASC(),
+		)
+
+	var jobAccess []*documents.DocumentJobAccess
+	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	tUsers := tUsers.AS("usershort")
+	tDUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
+	userStmt := tDUserAccess.
+		SELECT(
+			tDUserAccess.ID,
+			tDUserAccess.DocumentID,
+			tDUserAccess.UserID,
+			tDUserAccess.Access,
+			tUsers.ID,
+			tUsers.Identifier,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+		).
+		FROM(
+			tDUserAccess.
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tDUserAccess.UserID),
+				),
+		).
+		WHERE(
+			tDUserAccess.DocumentID.EQ(jet.Uint64(documentId)),
+		).
+		ORDER_BY(
+			tDUserAccess.ID.ASC(),
+		)
+
+	var userAccess []*documents.DocumentUserAccess
+	if err := userStmt.QueryContext(ctx, s.db, &userAccess); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return &documents.DocumentAccess{
+		Jobs:  jobAccess,
+		Users: userAccess,
+	}, nil
+}
+
 func (s *Server) handleDocumentAccessChanges(ctx context.Context, tx qrm.DB, mode documents.AccessLevelUpdateMode, documentId uint64, access *documents.DocumentAccess) error {
 	// Get existing job and user accesses from database
 	current, err := s.getDocumentAccess(ctx, documentId)
@@ -263,76 +333,6 @@ func (s *Server) compareDocumentAccess(current, in *documents.DocumentAccess) (t
 	}
 
 	return
-}
-
-func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*documents.DocumentAccess, error) {
-	tDJobAccess := table.FivenetDocumentsJobAccess.AS("documentjobaccess")
-	jobStmt := tDJobAccess.
-		SELECT(
-			tDJobAccess.ID,
-			tDJobAccess.DocumentID,
-			tDJobAccess.Job,
-			tDJobAccess.MinimumGrade,
-			tDJobAccess.Access,
-		).
-		FROM(
-			tDJobAccess,
-		).
-		WHERE(
-			tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
-		).
-		ORDER_BY(
-			tDJobAccess.ID.ASC(),
-		)
-
-	var jobAccess []*documents.DocumentJobAccess
-	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	tUsers := tUsers.AS("usershort")
-	tDUserAccess := table.FivenetDocumentsUserAccess.AS("documentuseraccess")
-	userStmt := tDUserAccess.
-		SELECT(
-			tDUserAccess.ID,
-			tDUserAccess.DocumentID,
-			tDUserAccess.UserID,
-			tDUserAccess.Access,
-			tUsers.ID,
-			tUsers.Identifier,
-			tUsers.Job,
-			tUsers.JobGrade,
-			tUsers.Firstname,
-			tUsers.Lastname,
-			tUsers.Dateofbirth,
-			tUsers.PhoneNumber,
-		).
-		FROM(
-			tDUserAccess.
-				LEFT_JOIN(tUsers,
-					tUsers.ID.EQ(tDUserAccess.UserID),
-				),
-		).
-		WHERE(
-			tDUserAccess.DocumentID.EQ(jet.Uint64(documentId)),
-		).
-		ORDER_BY(
-			tDUserAccess.ID.ASC(),
-		)
-
-	var userAccess []*documents.DocumentUserAccess
-	if err := userStmt.QueryContext(ctx, s.db, &userAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return &documents.DocumentAccess{
-		Jobs:  jobAccess,
-		Users: userAccess,
-	}, nil
 }
 
 func (s *Server) createDocumentAccess(ctx context.Context, tx qrm.DB, documentId uint64, access *documents.DocumentAccess) error {

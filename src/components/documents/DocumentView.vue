@@ -29,8 +29,6 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const clipboardStore = useClipboardStore();
 
 const notifications = useNotificatorStore();
@@ -52,7 +50,7 @@ const {
 
 async function getDocument(id: string): Promise<Document> {
     try {
-        const call = $grpc.getDocStoreClient().getDocument({
+        const call = getGRPCDocStoreClient().getDocument({
             documentId: id,
         });
         const { response } = await call;
@@ -61,14 +59,14 @@ async function getDocument(id: string): Promise<Document> {
 
         return response.document!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteDocument(id: string): Promise<void> {
     try {
-        await $grpc.getDocStoreClient().deleteDocument({
+        await getGRPCDocStoreClient().deleteDocument({
             documentId: id,
         });
 
@@ -80,14 +78,14 @@ async function deleteDocument(id: string): Promise<void> {
 
         await navigateTo({ name: 'documents' });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function toggleDocument(id: string, closed: boolean): Promise<void> {
     try {
-        await $grpc.getDocStoreClient().toggleDocument({
+        await getGRPCDocStoreClient().toggleDocument({
             documentId: id,
             closed,
         });
@@ -108,14 +106,14 @@ async function toggleDocument(id: string, closed: boolean): Promise<void> {
             });
         }
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function changeDocumentOwner(id: string): Promise<void> {
     try {
-        await $grpc.getDocStoreClient().changeDocumentOwner({
+        await getGRPCDocStoreClient().changeDocumentOwner({
             documentId: id,
         });
 
@@ -127,7 +125,7 @@ async function changeDocumentOwner(id: string): Promise<void> {
 
         await refresh();
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -5,8 +5,6 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -36,7 +34,7 @@ const state = reactive<Schema>({
 
 async function changeUsername(values: Schema): Promise<void> {
     try {
-        const call = $grpc.getAuthClient().changeUsername({
+        const call = getGRPCAuthClient().changeUsername({
             current: values.currentUsername,
             new: values.newUsername,
         });
@@ -51,7 +49,7 @@ async function changeUsername(values: Schema): Promise<void> {
         clearAuthInfo();
         await navigateTo({ name: 'auth-logout' });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

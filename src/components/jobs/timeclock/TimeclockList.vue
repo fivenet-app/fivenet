@@ -14,8 +14,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const completorStore = useCompletorStore();
@@ -82,12 +80,12 @@ async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
             };
         }
 
-        const call = $grpc.getJobsTimeclockClient().listTimeclock(req);
+        const call = getGRPCJobsTimeclockClient().listTimeclock(req);
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -21,8 +21,6 @@ const emit = defineEmits<{
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const notifications = useNotificatorStore();
@@ -45,7 +43,7 @@ const attrStates = ref<Map<string, AttributeValues | undefined>>(new Map());
 
 async function getRole(id: string): Promise<Role> {
     try {
-        const call = $grpc.getRectorClient().getRole({
+        const call = getGRPCRectorClient().getRole({
             id,
             filtered: false,
         });
@@ -57,14 +55,14 @@ async function getRole(id: string): Promise<Role> {
 
         return response.role;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteRole(id: string): Promise<void> {
     try {
-        await $grpc.getRectorClient().deleteRole({ id });
+        await getGRPCRectorClient().deleteRole({ id });
 
         notifications.add({
             title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
@@ -74,14 +72,14 @@ async function deleteRole(id: string): Promise<void> {
 
         emit('deleted');
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function getPermissions(roleId: string): Promise<void> {
     try {
-        const call = $grpc.getRectorClient().getPermissions({
+        const call = getGRPCRectorClient().getPermissions({
             roleId,
             filtered: false,
         });
@@ -92,7 +90,7 @@ async function getPermissions(roleId: string): Promise<void> {
 
         genPermissionCategories();
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -189,7 +187,7 @@ async function updatePermissions(): Promise<void> {
     }
 
     try {
-        await $grpc.getRectorClient().updateRoleLimits({
+        await getGRPCRectorClient().updateRoleLimits({
             roleId: props.roleId,
             perms: perms,
             attrs: attrs,
@@ -204,7 +202,7 @@ async function updatePermissions(): Promise<void> {
         changed.value = false;
         refresh();
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -27,7 +27,7 @@ import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 import DisponentsInfo from '../disponents/DisponentsInfo.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
+
 
 const modal = useModal();
 
@@ -52,7 +52,7 @@ const selectedDispatch = ref<string | undefined>();
 
 async function updateDispatchStatus(dispatchId: string, status: StatusDispatch): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().updateDispatchStatus({ dispatchId, status });
+        const call = getGRPCCentrumClient().updateDispatchStatus({ dispatchId, status });
         await call;
 
         notifications.add({
@@ -61,7 +61,7 @@ async function updateDispatchStatus(dispatchId: string, status: StatusDispatch):
             type: NotificationType.SUCCESS,
         });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -89,7 +89,7 @@ async function updateDspStatus(dispatchId?: string, status?: StatusDispatch): Pr
 
 async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().updateUnitStatus({
+        const call = getGRPCCentrumClient().updateUnitStatus({
             unitId: id,
             status,
         });
@@ -101,7 +101,7 @@ async function updateUnitStatus(id: string, status: StatusUnit): Promise<void> {
             type: NotificationType.SUCCESS,
         });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

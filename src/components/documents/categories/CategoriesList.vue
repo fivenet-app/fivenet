@@ -7,20 +7,18 @@ import { type CardElements } from '~/utils/types';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import CategoriesModal from '~/components/documents/categories/CategoriesModal.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
 const items = ref<CardElements>([]);
 
 async function listCategories(): Promise<Category[]> {
     try {
-        const call = $grpc.getDocStoreClient().listCategories({});
+        const call = getGRPCDocStoreClient().listCategories({});
         const { response } = await call;
 
         return response.category;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

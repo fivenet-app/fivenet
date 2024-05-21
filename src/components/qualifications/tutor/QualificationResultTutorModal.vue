@@ -17,8 +17,6 @@ const emits = defineEmits<{
 
 const { isOpen } = useModal();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 const availableStatus = [
@@ -47,7 +45,7 @@ async function createOrUpdateQualificationRequest(
     values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
-        const call = $grpc.getQualificationsClient().createOrUpdateQualificationResult({
+        const call = getGRPCQualificationsClient().createOrUpdateQualificationResult({
             result: {
                 id: '0',
                 qualificationId: qualificationId,
@@ -72,7 +70,7 @@ async function createOrUpdateQualificationRequest(
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

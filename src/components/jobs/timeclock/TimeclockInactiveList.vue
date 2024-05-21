@@ -12,8 +12,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -41,7 +39,7 @@ const {
 
 async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
     try {
-        const call = $grpc.getJobsTimeclockClient().listInactiveEmployees({
+        const call = getGRPCJobsTimeclockClient().listInactiveEmployees({
             pagination: {
                 offset: offset.value,
             },
@@ -52,7 +50,7 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

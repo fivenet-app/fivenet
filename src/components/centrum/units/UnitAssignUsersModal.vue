@@ -9,8 +9,6 @@ const props = defineProps<{
     unit: Unit;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const completorStore = useCompletorStore();
@@ -41,7 +39,7 @@ async function assignUnit(): Promise<void> {
             }
         });
 
-        const call = $grpc.getCentrumClient().assignUnit({
+        const call = getGRPCCentrumClient().assignUnit({
             unitId: props.unit.id,
             toAdd,
             toRemove,
@@ -50,7 +48,7 @@ async function assignUnit(): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -7,8 +7,6 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
@@ -45,7 +43,7 @@ async function setProfilePicture(values: Schema): Promise<void> {
     }
 
     try {
-        const call = $grpc.getCitizenStoreClient().setProfilePicture(req);
+        const call = getGRPCCitizenStoreClient().setProfilePicture(req);
         const { response } = await call;
 
         if (activeChar.value) {
@@ -60,7 +58,7 @@ async function setProfilePicture(values: Schema): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

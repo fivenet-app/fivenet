@@ -14,8 +14,6 @@ defineEmits<{
     (e: 'clicked'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const notificator = useNotificatorStore();
@@ -50,7 +48,7 @@ const {
 
 async function getNotifications(): Promise<GetNotificationsResponse> {
     try {
-        const call = $grpc.getNotificatorClient().getNotifications({
+        const call = getGRPCNotificatorClient().getNotifications({
             pagination: {
                 offset: offset.value,
             },
@@ -62,7 +60,7 @@ async function getNotifications(): Promise<GetNotificationsResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

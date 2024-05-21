@@ -13,6 +13,37 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 )
 
+func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([]*documents.TemplateJobAccess, error) {
+	tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
+	jobStmt := tDTemplatesJobAccess.
+		SELECT(
+			tDTemplatesJobAccess.ID,
+			tDTemplatesJobAccess.CreatedAt,
+			tDTemplatesJobAccess.TemplateID,
+			tDTemplatesJobAccess.Job,
+			tDTemplatesJobAccess.MinimumGrade,
+			tDTemplatesJobAccess.Access,
+		).
+		FROM(
+			tDTemplatesJobAccess,
+		).
+		WHERE(
+			tDTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
+		).
+		ORDER_BY(
+			tDTemplatesJobAccess.ID.ASC(),
+		)
+
+	var jobAccess []*documents.TemplateJobAccess
+	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
+	}
+
+	return jobAccess, nil
+}
+
 func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, templateId uint64, job string, access []*documents.TemplateJobAccess) error {
 	// Get existing job and user accesses from database
 	current, err := s.getTemplateJobAccess(ctx, templateId)
@@ -58,37 +89,6 @@ func (s *Server) handleTemplateAccessChanges(ctx context.Context, tx qrm.DB, tem
 	}
 
 	return nil
-}
-
-func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([]*documents.TemplateJobAccess, error) {
-	tDTemplatesJobAccess := table.FivenetDocumentsTemplatesJobAccess.AS("templatejobaccess")
-	jobStmt := tDTemplatesJobAccess.
-		SELECT(
-			tDTemplatesJobAccess.ID,
-			tDTemplatesJobAccess.CreatedAt,
-			tDTemplatesJobAccess.TemplateID,
-			tDTemplatesJobAccess.Job,
-			tDTemplatesJobAccess.MinimumGrade,
-			tDTemplatesJobAccess.Access,
-		).
-		FROM(
-			tDTemplatesJobAccess,
-		).
-		WHERE(
-			tDTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
-		).
-		ORDER_BY(
-			tDTemplatesJobAccess.ID.ASC(),
-		)
-
-	var jobAccess []*documents.TemplateJobAccess
-	if err := jobStmt.QueryContext(ctx, s.db, &jobAccess); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return jobAccess, nil
 }
 
 func (s *Server) compareTemplateJobAccess(current, in []*documents.TemplateJobAccess) (toCreate []*documents.TemplateJobAccess, toUpdate []*documents.TemplateJobAccess, toDelete []*documents.TemplateJobAccess) {

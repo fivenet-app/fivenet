@@ -10,8 +10,6 @@ import RoleView from '~/components/rector/roles/RoleView.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const notifications = useNotificatorStore();
@@ -26,12 +24,12 @@ const { data: roles, pending: loading, refresh, error } = useLazyAsyncData('rect
 
 async function getRoles(): Promise<Role[]> {
     try {
-        const call = $grpc.getRectorClient().getRoles({});
+        const call = getGRPCRectorClient().getRoles({});
         const { response } = await call;
 
         return response.roles;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -59,7 +57,7 @@ async function createRole(): Promise<void> {
     }
 
     try {
-        const call = $grpc.getRectorClient().createRole({
+        const call = getGRPCRectorClient().createRole({
             job: activeChar.value!.job,
             grade: state.jobGrade.grade,
         });
@@ -79,7 +77,7 @@ async function createRole(): Promise<void> {
 
         selectedRole.value = response.role;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

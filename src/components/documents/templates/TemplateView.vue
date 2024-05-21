@@ -16,8 +16,6 @@ const props = defineProps<{
     templateId: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const notifications = useNotificatorStore();
@@ -35,7 +33,7 @@ const {
 
 async function getTemplate(): Promise<Template | undefined> {
     try {
-        const call = $grpc.getDocStoreClient().getTemplate({
+        const call = getGRPCDocStoreClient().getTemplate({
             templateId: props.templateId,
             render: false,
         });
@@ -47,14 +45,14 @@ async function getTemplate(): Promise<Template | undefined> {
 
         return response.template!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteTemplate(id: string): Promise<void> {
     try {
-        await $grpc.getDocStoreClient().deleteTemplate({ id });
+        await getGRPCDocStoreClient().deleteTemplate({ id });
 
         notifications.add({
             title: { key: 'notifications.templates.deleted.title', parameters: {} },
@@ -64,7 +62,7 @@ async function deleteTemplate(id: string): Promise<void> {
 
         await navigateTo({ name: 'documents-templates' });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

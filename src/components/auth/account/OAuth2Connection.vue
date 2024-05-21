@@ -3,8 +3,6 @@ import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
-const { $grpc } = useNuxtApp();
-
 defineProps<{
     provider: OAuth2Provider;
     account?: OAuth2Account;
@@ -16,13 +14,13 @@ const emit = defineEmits<{
 
 async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<void> {
     try {
-        await $grpc.getAuthClient().deleteOAuth2Connection({
+        await getGRPCAuthClient().deleteOAuth2Connection({
             provider: provider.name,
         });
 
         emit('disconnected', provider.name);
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

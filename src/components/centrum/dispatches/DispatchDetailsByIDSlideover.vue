@@ -7,8 +7,6 @@ const props = defineProps<{
     dispatchId: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);
 
@@ -26,12 +24,12 @@ async function getDispatch(id: string): Promise<GetDispatchResponse> {
     }
 
     try {
-        const call = $grpc.getCentrumClient().getDispatch({ id });
+        const call = getGRPCCentrumClient().getDispatch({ id });
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         isOpen.value = false;
         throw e;
     }

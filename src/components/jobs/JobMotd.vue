@@ -3,18 +3,16 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { $grpc } = useNuxtApp();
-
 const { data, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
     try {
-        const call = $grpc.getJobsClient().getMOTD({});
+        const call = getGRPCJobsClient().getMOTD({});
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -39,14 +37,14 @@ watch(data, () => {
 
 async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
     try {
-        const call = $grpc.getJobsClient().setMOTD({
+        const call = getGRPCJobsClient().setMOTD({
             motd: values.motd,
         });
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

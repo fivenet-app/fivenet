@@ -20,8 +20,6 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const completorStore = useCompletorStore();
 
 const modal = useModal();
@@ -72,7 +70,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
     const userIds = props.userId ? [props.userId] : query.user ? [query.user.userId] : [];
     try {
-        const call = $grpc.getJobsConductClient().listConductEntries({
+        const call = getGRPCJobsConductClient().listConductEntries({
             pagination: {
                 offset: offset.value,
             },
@@ -85,19 +83,19 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteConductEntry(id: string): Promise<void> {
     try {
-        const call = $grpc.getJobsConductClient().deleteConductEntry({ id });
+        const call = getGRPCJobsConductClient().deleteConductEntry({ id });
         await call;
 
         refresh();
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

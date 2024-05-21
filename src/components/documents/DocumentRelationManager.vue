@@ -19,8 +19,6 @@ defineEmits<{
     (e: 'update:modelValue', payload: Map<string, DocumentRelation>): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const authStore = useAuthStore();
@@ -63,7 +61,7 @@ watchDebounced(queryCitizens, async () => await refresh(), {
 
 async function listCitizens(): Promise<User[]> {
     try {
-        const call = $grpc.getCitizenStoreClient().listCitizens({
+        const call = getGRPCCitizenStoreClient().listCitizens({
             pagination: {
                 offset: 0,
                 pageSize: 8,
@@ -76,7 +74,7 @@ async function listCitizens(): Promise<User[]> {
             (user) => !Array.from(props.modelValue.values()).find((r) => r.targetUserId === user.userId),
         );
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

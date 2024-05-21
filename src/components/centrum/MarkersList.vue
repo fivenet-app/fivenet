@@ -7,22 +7,20 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const livemapStore = useLivemapStore();
 const { deleteMarkerMarker, goto } = livemapStore;
 const { markersMarkers } = storeToRefs(livemapStore);
 
 async function deleteMarker(id: string): Promise<void> {
     try {
-        const call = $grpc.getLivemapperClient().deleteMarker({
+        const call = getGRPCLivemapperClient().deleteMarker({
             id,
         });
         await call;
 
         deleteMarkerMarker(id);
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

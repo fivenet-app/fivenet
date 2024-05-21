@@ -3,7 +3,6 @@ import { type Coordinate } from '~/composables/livemap';
 import { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { type UserShort } from '~~/gen/ts/resources/users/users';
-import { LivemapperServiceClient } from '~~/gen/ts/services/livemapper/livemap.client';
 import { useSettingsStore } from './settings';
 
 // In seconds
@@ -67,10 +66,9 @@ export const useLivemapStore = defineStore('livemap', {
             this.abort = new AbortController();
             this.error = undefined;
             this.reconnecting = false;
-            const { $grpc } = useNuxtApp();
 
             try {
-                const call = new LivemapperServiceClient($grpc.getTransport()).stream(
+                const call = getGRPCLivemapperClient().stream(
                     {},
                     {
                         abort: this.abort.signal,

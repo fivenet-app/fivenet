@@ -8,7 +8,7 @@ CREATE TABLE
         `updated_at` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
         `deleted_at` datetime(3) DEFAULT NULL,
         `title` varchar(255) NOT NULL,
-        `closed` tinyint(1) DEFAULT 0,
+        `archived` tinyint(1) DEFAULT 0,
         `creator_job` varchar(50) NOT NULL,
         `creator_id` int(11) NULL DEFAULT NULL,
         PRIMARY KEY (`id`),
@@ -21,7 +21,8 @@ CREATE TABLE
     IF NOT EXISTS `fivenet_msgs_threads_user_state` (
         `thread_id` bigint(20) unsigned NOT NULL,
         `user_id` int(11) NOT NULL,
-        `last_read` bigint(20) unsigned DEFAULT NULL,
+        `last_read` datetime(3) DEFAULT NULL ON UPDATE CURRENT_TIMESTAMP(3),
+        `unread` tinyint(1) DEFAULT 0,
         `important` tinyint(1) DEFAULT 0,
         `favorite` tinyint(1) DEFAULT 0,
         `muted` tinyint(1) DEFAULT 0,

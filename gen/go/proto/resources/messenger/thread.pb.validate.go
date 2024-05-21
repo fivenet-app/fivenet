@@ -98,7 +98,7 @@ func (m *Thread) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Closed
+	// no validation rules for Archived
 
 	if all {
 		switch v := interface{}(m.GetUserState()).(type) {
@@ -399,6 +399,8 @@ func (m *ThreadUserState) validate(all bool) error {
 
 	// no validation rules for UserId
 
+	// no validation rules for Unread
+
 	// no validation rules for Important
 
 	// no validation rules for Favorite
@@ -406,7 +408,36 @@ func (m *ThreadUserState) validate(all bool) error {
 	// no validation rules for Muted
 
 	if m.LastRead != nil {
-		// no validation rules for LastRead
+
+		if all {
+			switch v := interface{}(m.GetLastRead()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ThreadUserStateValidationError{
+						field:  "LastRead",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ThreadUserStateValidationError{
+						field:  "LastRead",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetLastRead()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ThreadUserStateValidationError{
+					field:  "LastRead",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

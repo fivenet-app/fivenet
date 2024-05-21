@@ -30,8 +30,6 @@ const emits = defineEmits<{
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const page = ref(1);
@@ -51,7 +49,7 @@ async function listQualificationsRequests(
     status?: RequestStatus[],
 ): Promise<ListQualificationRequestsResponse> {
     try {
-        const call = $grpc.getQualificationsClient().listQualificationRequests({
+        const call = getGRPCQualificationsClient().listQualificationRequests({
             pagination: {
                 offset: offset.value,
             },
@@ -62,7 +60,7 @@ async function listQualificationsRequests(
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -71,7 +69,7 @@ watch(offset, async () => refresh());
 
 async function deleteQualificationRequest(qualificationId: string, userId: number): Promise<DeleteQualificationReqResponse> {
     try {
-        const call = $grpc.getQualificationsClient().deleteQualificationReq({
+        const call = getGRPCQualificationsClient().deleteQualificationReq({
             qualificationId,
             userId,
         });
@@ -81,7 +79,7 @@ async function deleteQualificationRequest(qualificationId: string, userId: numbe
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

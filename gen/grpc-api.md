@@ -653,6 +653,8 @@
     - [ListThreadsResponse](#services-messenger-ListThreadsResponse)
     - [PostMessageRequest](#services-messenger-PostMessageRequest)
     - [PostMessageResponse](#services-messenger-PostMessageResponse)
+    - [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest)
+    - [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse)
   
     - [MessengerService](#services-messenger-MessengerService)
   
@@ -4639,7 +4641,7 @@ TODO allow links to internal
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  | @sanitize |
-| closed | [bool](#bool) |  |  |
+| archived | [bool](#bool) |  |  |
 | last_message | [Message](#resources-messenger-Message) | optional |  |
 | user_state | [ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
 | creator_job | [string](#string) |  |  |
@@ -4662,7 +4664,8 @@ TODO allow links to internal
 | ----- | ---- | ----- | ----------- |
 | thread_id | [uint64](#uint64) |  |  |
 | user_id | [int32](#int32) |  |  |
-| last_read | [uint64](#uint64) | optional |  |
+| unread | [bool](#bool) |  |  |
+| last_read | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | important | [bool](#bool) |  |  |
 | favorite | [bool](#bool) |  |  |
 | muted | [bool](#bool) |  |  |
@@ -9658,6 +9661,7 @@ Results ====================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| thread_id | [uint64](#uint64) |  |  |
 | message_id | [uint64](#uint64) |  |  |
 
 
@@ -9708,9 +9712,8 @@ Results ====================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | thread_id | [uint64](#uint64) |  |  |
-| start | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| after | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 
 
 
@@ -9725,7 +9728,6 @@ Results ====================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
 | messages | [resources.messenger.Message](#resources-messenger-Message) | repeated |  |
 
 
@@ -9794,6 +9796,31 @@ Results ====================================================================
 
 
 
+
+<a name="services-messenger-SetThreadUserStateRequest"></a>
+
+### SetThreadUserStateRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [resources.messenger.ThreadUserState](#resources-messenger-ThreadUserState) |  |  |
+
+
+
+
+
+
+<a name="services-messenger-SetThreadUserStateResponse"></a>
+
+### SetThreadUserStateResponse
+
+
+
+
+
+
  
 
  
@@ -9811,6 +9838,7 @@ Results ====================================================================
 | ListThreads | [ListThreadsRequest](#services-messenger-ListThreadsRequest) | [ListThreadsResponse](#services-messenger-ListThreadsResponse) | @perm |
 | CreateOrUpdateThread | [CreateOrUpdateThreadRequest](#services-messenger-CreateOrUpdateThreadRequest) | [CreateOrUpdateThreadResponse](#services-messenger-CreateOrUpdateThreadResponse) | @perm |
 | DeleteThread | [DeleteThreadRequest](#services-messenger-DeleteThreadRequest) | [DeleteThreadResponse](#services-messenger-DeleteThreadResponse) | @perm |
+| SetThreadUserState | [SetThreadUserStateRequest](#services-messenger-SetThreadUserStateRequest) | [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse) | @perm: Name=ListThreads |
 | GetThreadMessages | [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse) | @perm: Name=ListThreads |
 | PostMessage | [PostMessageRequest](#services-messenger-PostMessageRequest) | [PostMessageResponse](#services-messenger-PostMessageResponse) | @perm |
 | DeleteMessage | [DeleteMessageRequest](#services-messenger-DeleteMessageRequest) | [DeleteMessageResponse](#services-messenger-DeleteMessageResponse) | @perm: Name=SuperUser |

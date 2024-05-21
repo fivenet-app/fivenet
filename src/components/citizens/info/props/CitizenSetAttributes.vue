@@ -17,8 +17,6 @@ const emits = defineEmits<{
 
 const attributes = useVModel(props, 'modelValue', emits);
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 const completorStore = useCompletorStore();
@@ -59,7 +57,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.getCitizenStoreClient().setUserProps({
+        const call = getGRPCCitizenStoreClient().setUserProps({
             props: userProps,
             reason: values.reason,
         });
@@ -74,7 +72,7 @@ async function setJobProp(userId: number, values: Schema): Promise<void> {
         attributes.value = response.props?.attributes;
         state.reason = '';
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

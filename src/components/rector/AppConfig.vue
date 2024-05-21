@@ -13,8 +13,6 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const settingsStore = useSettingsStore();
 const { streamerMode } = storeToRefs(settingsStore);
 
@@ -24,12 +22,12 @@ const { data: config, pending: loading, refresh, error } = useLazyAsyncData(`rec
 
 async function getAppConfig(): Promise<GetAppConfigResponse> {
     try {
-        const call = $grpc.getRectorConfigClient().getAppConfig({});
+        const call = getGRPCRectorConfigClient().getAppConfig({});
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -142,7 +140,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
     };
 
     try {
-        const { response } = await $grpc.getRectorConfigClient().updateAppConfig({
+        const { response } = await getGRPCRectorConfigClient().updateAppConfig({
             config: config.value?.config,
         });
 
@@ -158,7 +156,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
             refresh();
         }
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

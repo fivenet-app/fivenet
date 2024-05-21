@@ -166,7 +166,9 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+		}
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)

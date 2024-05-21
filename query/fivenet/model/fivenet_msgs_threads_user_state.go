@@ -7,11 +7,16 @@
 
 package model
 
+import (
+	"time"
+)
+
 type FivenetMsgsThreadsUserState struct {
-	ThreadID  uint64  `sql:"primary_key" json:"thread_id"`
-	UserID    int32   `sql:"primary_key" json:"user_id"`
-	LastRead  *uint64 `json:"last_read"`
-	Important *bool   `json:"important"`
-	Favorite  *bool   `json:"favorite"`
-	Muted     *bool   `json:"muted"`
+	ThreadID  uint64     `sql:"primary_key" json:"thread_id"`
+	UserID    int32      `sql:"primary_key" json:"user_id"`
+	LastRead  *time.Time `json:"last_read"`
+	Unread    *bool      `json:"unread"`
+	Important *bool      `json:"important"`
+	Favorite  *bool      `json:"favorite"`
+	Muted     *bool      `json:"muted"`
 }

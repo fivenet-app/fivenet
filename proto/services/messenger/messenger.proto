@@ -34,17 +34,21 @@ message DeleteThreadRequest {
 
 message DeleteThreadResponse {}
 
+message SetThreadUserStateRequest {
+  resources.messenger.ThreadUserState state = 1 [(validate.rules).message.required = true];
+}
+
+message SetThreadUserStateResponse {}
+
 // Messages
 
 message GetThreadMessagesRequest {
-  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  uint64 thread_id = 2 [jstype = JS_STRING];
-  resources.timestamp.Timestamp start = 3;
+  uint64 thread_id = 1 [jstype = JS_STRING];
+  resources.timestamp.Timestamp after = 2;
 }
 
 message GetThreadMessagesResponse {
-  resources.common.database.PaginationResponse pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.messenger.Message messages = 2;
+  repeated resources.messenger.Message messages = 1;
 }
 
 message PostMessageRequest {
@@ -52,11 +56,12 @@ message PostMessageRequest {
 }
 
 message PostMessageResponse {
-  resources.messenger.Message message = 1 [(validate.rules).message.required = true];
+  resources.messenger.Message message = 1;
 }
 
 message DeleteMessageRequest {
-  uint64 message_id = 1 [jstype = JS_STRING];
+  uint64 thread_id = 1 [jstype = JS_STRING];
+  uint64 message_id = 2 [jstype = JS_STRING];
 }
 
 message DeleteMessageResponse {}
@@ -68,6 +73,8 @@ service MessengerService {
   rpc CreateOrUpdateThread(CreateOrUpdateThreadRequest) returns (CreateOrUpdateThreadResponse);
   // @perm
   rpc DeleteThread(DeleteThreadRequest) returns (DeleteThreadResponse);
+  // @perm: Name=ListThreads
+  rpc SetThreadUserState(SetThreadUserStateRequest) returns (SetThreadUserStateResponse);
 
   // @perm: Name=ListThreads
   rpc GetThreadMessages(GetThreadMessagesRequest) returns (GetThreadMessagesResponse);

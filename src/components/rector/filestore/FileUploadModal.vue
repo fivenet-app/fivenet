@@ -8,8 +8,6 @@ const emits = defineEmits<{
     (e: 'uploaded', file: FileInfo): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const appConfig = useAppConfig();
@@ -36,7 +34,7 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse> {
     file.data = new Uint8Array(await values.file[0].arrayBuffer());
 
     try {
-        const { response } = await $grpc.getRectorFilestoreClient().uploadFile({
+        const { response } = await getGRPCRectorFilestoreClient().uploadFile({
             prefix: values.category,
             name: values.name,
             file: file,
@@ -50,7 +48,7 @@ async function uploadFile(values: Schema): Promise<UploadFileResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

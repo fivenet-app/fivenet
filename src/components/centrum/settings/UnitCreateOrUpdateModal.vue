@@ -13,8 +13,6 @@ const emit = defineEmits<{
     (e: 'updated', unit: Unit): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
@@ -42,7 +40,7 @@ const selectedAttributes = ref<string[]>([]);
 
 async function createOrUpdateUnit(values: Schema): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().createOrUpdateUnit({
+        const call = getGRPCCentrumClient().createOrUpdateUnit({
             unit: {
                 id: props.unit?.id ?? '0',
                 job: '',
@@ -67,7 +65,7 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

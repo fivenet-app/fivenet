@@ -26,8 +26,6 @@ const props = defineProps<{
     qualificationId?: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 const authStore = useAuthStore();
@@ -92,7 +90,7 @@ const qualiRequirements = ref<QualificationRequirement[]>([]);
 onMounted(async () => {
     if (props.qualificationId) {
         try {
-            const call = $grpc.getQualificationsClient().getQualification({
+            const call = getGRPCQualificationsClient().getQualification({
                 qualificationId: props.qualificationId,
             });
             const { response } = await call;
@@ -133,7 +131,7 @@ onMounted(async () => {
                 });
             }
         } catch (e) {
-            $grpc.handleError(e as RpcError);
+            handleGRPCError(e as RpcError);
 
             await navigateTo({ name: 'qualifications' });
 
@@ -196,7 +194,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
     });
 
     try {
-        const call = $grpc.getQualificationsClient().createQualification(req);
+        const call = getGRPCQualificationsClient().createQualification(req);
         const { response } = await call;
 
         await navigateTo({
@@ -206,7 +204,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -252,7 +250,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
     });
 
     try {
-        const call = $grpc.getQualificationsClient().updateQualification(req);
+        const call = getGRPCQualificationsClient().updateQualification(req);
 
         const { response } = await call;
 
@@ -263,7 +261,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -19,8 +19,6 @@ definePageMeta({
     permission: 'CentrumService.TakeControl',
 });
 
-const { $grpc } = useNuxtApp();
-
 const livemapStore = useLivemapStore();
 const { showLocationMarker } = storeToRefs(livemapStore);
 
@@ -60,12 +58,12 @@ async function listDispatches(): Promise<ListDispatchesResponse> {
             }
         }
 
-        const call = $grpc.getCentrumClient().listDispatches(req);
+        const call = getGRPCCentrumClient().listDispatches(req);
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

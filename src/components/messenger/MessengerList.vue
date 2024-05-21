@@ -6,6 +6,7 @@ const props = withDefaults(
     defineProps<{
         modelValue?: Thread;
         threads: Thread[];
+        loaded: boolean;
     }>(),
     {
         threads: () => [],
@@ -62,47 +63,63 @@ defineShortcuts({
 
 <template>
     <UDashboardPanelContent class="p-0">
-        <div
-            v-for="(thread, index) in threads"
-            :key="index"
-            :ref="
-                (el) => {
-                    threadRefs.set(thread.id, el as Element);
-                }
-            "
-        >
-            <div
-                class="cursor-pointer border-l-2 p-4 text-sm"
-                :class="[
-                    !thread.userState?.lastRead ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
-                    selectedThread && selectedThread.id === thread.id
-                        ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
-                        : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
-                ]"
-                @click="selectedThread = thread"
-            >
-                <div class="flex items-center justify-between" :class="[thread.userState?.lastRead && 'font-semibold']">
-                    <div class="flex items-center gap-3">
-                        {{ thread.creator?.firstname }} {{ thread.creator?.lastname }}
-
-                        <UChip v-if="!thread.userState?.lastRead" />
-                    </div>
-
-                    <span>{{
-                        isToday(toDate(thread.createdAt))
-                            ? format(toDate(thread.createdAt), 'HH:mm')
-                            : format(toDate(thread.createdAt), 'dd MMM')
-                    }}</span>
-                </div>
-                <p :class="[thread.userState?.lastRead && 'font-semibold']">
-                    {{ thread.title }}
-                </p>
-                <p class="line-clamp-1 text-gray-400 dark:text-gray-500">
-                    {{ thread.lastMessage?.message }}
-                </p>
-            </div>
-
-            <UDivider />
+        <div v-if="!loaded" class="space-y-2">
+            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
+            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
+            <USkeleton :ui="{ rounded: '' }" class="h-[73px] w-full" />
         </div>
+        <template v-else>
+            <div
+                v-for="(thread, index) in threads"
+                :key="index"
+                :ref="
+                    (el) => {
+                        threadRefs.set(thread.id, el as Element);
+                    }
+                "
+            >
+                <div
+                    class="cursor-pointer border-l-2 p-4 text-sm"
+                    :class="[
+                        thread.userState?.unread ? 'text-gray-900 dark:text-white' : 'text-gray-600 dark:text-gray-300',
+                        selectedThread && selectedThread.id === thread.id
+                            ? 'border-primary-500 dark:border-primary-400 bg-primary-100 dark:bg-primary-900/25'
+                            : 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+                    ]"
+                    @click="selectedThread = thread"
+                >
+                    <div class="flex items-center justify-between" :class="[thread.userState?.unread && 'font-semibold']">
+                        <div class="flex items-center gap-3">
+                            {{ thread.title }}
+
+                            <UChip v-if="thread.userState?.unread" />
+                        </div>
+
+                        <span>{{
+                            isToday(toDate(thread.createdAt))
+                                ? format(toDate(thread.createdAt), 'HH:mm')
+                                : format(toDate(thread.createdAt), 'dd MMM')
+                        }}</span>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <p>{{ thread.creator?.firstname }} {{ thread.creator?.lastname }}</p>
+
+                        <div class="inline-flex gap-1">
+                            <UIcon
+                                v-if="thread.userState?.important"
+                                name="i-mdi-exclamation-thick"
+                                class="size-5 text-red-500"
+                            />
+                            <UIcon v-if="thread.userState?.favorite" name="i-mdi-star" class="size-5 text-yellow-500" />
+                        </div>
+                    </div>
+                    <p class="line-clamp-1 text-gray-400 dark:text-gray-500">
+                        {{ thread.lastMessage?.message }}
+                    </p>
+                </div>
+
+                <UDivider />
+            </div>
+        </template>
     </UDashboardPanelContent>
 </template>

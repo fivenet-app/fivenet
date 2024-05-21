@@ -18,8 +18,6 @@ const emits = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 const livemapStore = useLivemapStore();
@@ -104,7 +102,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
             };
         }
 
-        const call = $grpc.getLivemapperClient().createOrUpdateMarker({
+        const call = getGRPCLivemapperClient().createOrUpdateMarker({
             marker,
         });
         const { response } = await call;
@@ -116,7 +114,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
         emits('close');
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

@@ -5,8 +5,6 @@ import PasswordStrengthMeter from '~/components/auth/PasswordStrengthMeter.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 const accountError = ref('');
@@ -31,7 +29,7 @@ const state = reactive<Schema>({
 
 async function createAccount(values: Schema): Promise<void> {
     try {
-        await $grpc.getAuthClient().createAccount({
+        await getGRPCAuthClient().createAccount({
             regToken: values.registrationToken.toString(),
             username: values.username,
             password: values.password,
@@ -46,7 +44,7 @@ async function createAccount(values: Schema): Promise<void> {
         await navigateTo({ name: 'auth-login' });
     } catch (e) {
         accountError.value = (e as RpcError).message;
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

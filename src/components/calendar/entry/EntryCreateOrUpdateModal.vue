@@ -20,8 +20,6 @@ const props = defineProps<{
     entryId?: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const calendarStore = useCalendarStore();
@@ -88,7 +86,7 @@ async function createOrUpdateCalendarEntry(values: Schema): Promise<CreateOrUpda
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -183,7 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.calendar"
                                 :disabled="!!entryId"
                                 :searchable="
-                                    async (query) =>
+                                    async (_) =>
                                         (
                                             await calendarStore.listCalendars({
                                                 pagination: { offset: 0 },

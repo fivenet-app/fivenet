@@ -16,13 +16,11 @@ const emits = defineEmits<{
     (e: 'refreshRequests'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 async function updateDocumentReq(documentId: string, requestId: string, accepted: boolean): Promise<void> {
     try {
-        const call = $grpc.getDocStoreClient().updateDocumentReq({
+        const call = getGRPCDocStoreClient().updateDocumentReq({
             documentId,
             requestId,
             accepted,
@@ -43,14 +41,14 @@ async function updateDocumentReq(documentId: string, requestId: string, accepted
             type: NotificationType.SUCCESS,
         });
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteDocumentReq(id: string): Promise<void> {
     try {
-        const call = $grpc.getDocStoreClient().deleteDocumentReq({
+        const call = getGRPCDocStoreClient().deleteDocumentReq({
             requestId: id,
         });
         await call;
@@ -63,7 +61,7 @@ async function deleteDocumentReq(id: string): Promise<void> {
 
         emits('refreshRequests');
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

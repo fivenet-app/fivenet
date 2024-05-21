@@ -8,8 +8,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
@@ -24,21 +22,21 @@ const { data, pending: loading, refresh, error } = useLazyAsyncData('chars', () 
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
-        const { response } = $grpc.getRectorFilestoreClient().listFiles({
+        const { response } = getGRPCRectorFilestoreClient().listFiles({
             pagination: { offset: offset.value },
             path: prefix,
         });
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteFile(path: string): Promise<DeleteFileResponse> {
     try {
-        const { response } = $grpc.getRectorFilestoreClient().deleteFile({
+        const { response } = getGRPCRectorFilestoreClient().deleteFile({
             path,
         });
 
@@ -49,7 +47,7 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

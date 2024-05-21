@@ -16,8 +16,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const { d, t } = useI18n();
 
 const completorStore = useCompletorStore();
@@ -84,12 +82,12 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
     }
 
     try {
-        const call = $grpc.getRectorClient().viewAuditLog(req);
+        const call = getGRPCRectorClient().viewAuditLog(req);
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

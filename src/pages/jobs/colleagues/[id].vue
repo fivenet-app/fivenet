@@ -22,8 +22,6 @@ definePageMeta({
     },
 });
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const route = useRoute('jobs-colleagues-id-info');
@@ -37,14 +35,14 @@ const {
 
 async function getColleague(userId: number): Promise<GetColleagueResponse> {
     try {
-        const call = $grpc.getJobsClient().getColleague({
+        const call = getGRPCJobsClient().getColleague({
             userId,
         });
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

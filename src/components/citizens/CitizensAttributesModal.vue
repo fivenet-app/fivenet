@@ -5,8 +5,6 @@ import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizen
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { useCompletorStore } from '~/store/completor';
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const completorStore = useCompletorStore();
@@ -28,7 +26,7 @@ const { data: attributes } = useLazyAsyncData('citizenstore-attributes', () => c
 
 async function manageCitizenAttributes(values: Schema): Promise<ManageCitizenAttributesResponse> {
     try {
-        const { response } = await $grpc.getCitizenStoreClient().manageCitizenAttributes({
+        const { response } = await getGRPCCitizenStoreClient().manageCitizenAttributes({
             attributes: values,
         });
 
@@ -38,7 +36,7 @@ async function manageCitizenAttributes(values: Schema): Promise<ManageCitizenAtt
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

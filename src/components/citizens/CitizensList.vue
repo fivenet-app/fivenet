@@ -12,8 +12,6 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import Pagination from '~/components/partials/Pagination.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const schema = z.object({
@@ -65,12 +63,12 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             req.dateofbirth = query.value.dateofbirth;
         }
 
-        const call = $grpc.getCitizenStoreClient().listCitizens(req);
+        const call = getGRPCCitizenStoreClient().listCitizens(req);
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

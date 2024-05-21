@@ -10,8 +10,6 @@ const props = defineProps<{
     templateId: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const authStore = useAuthStore();
@@ -32,7 +30,7 @@ async function getTemplate(): Promise<Template> {
         data.activeChar = activeChar.value!;
         console.debug('Documents: Editor - Clipboard Template Data', data);
 
-        const call = $grpc.getDocStoreClient().getTemplate({
+        const call = getGRPCDocStoreClient().getTemplate({
             templateId: props.templateId,
             data,
             render: true,
@@ -41,7 +39,7 @@ async function getTemplate(): Promise<Template> {
 
         return response.template!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

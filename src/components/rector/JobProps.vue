@@ -15,8 +15,6 @@ import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const settingsStore = useSettingsStore();
@@ -111,12 +109,12 @@ const state = reactive<Schema>({
 
 async function getJobProps(): Promise<JobProps> {
     try {
-        const call = $grpc.getRectorClient().getJobProps({});
+        const call = getGRPCRectorClient().getJobProps({});
         const { response } = await call;
 
         return response.jobProps!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -138,7 +136,7 @@ async function setJobProps(values: Schema): Promise<void> {
     }
 
     try {
-        const { response } = await $grpc.getRectorClient().setJobProps({
+        const { response } = await getGRPCRectorClient().setJobProps({
             jobProps: jobProps.value,
         });
 
@@ -153,7 +151,7 @@ async function setJobProps(values: Schema): Promise<void> {
             authStore.setJobProps(jobProps.value);
         }
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

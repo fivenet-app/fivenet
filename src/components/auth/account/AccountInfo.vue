@@ -10,8 +10,6 @@ import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
 import { useSettingsStore } from '~/store/settings';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const modal = useModal();
@@ -23,11 +21,11 @@ const { data: account, pending: loading, refresh, error } = useLazyAsyncData(`ac
 
 async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
-        const call = $grpc.getAuthClient().getAccountInfo({});
+        const call = getGRPCAuthClient().getAccountInfo({});
 
         return call.response!;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

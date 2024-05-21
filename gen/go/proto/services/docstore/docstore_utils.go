@@ -24,10 +24,8 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 			jet.AND(
 				tDocument.DeletedAt.IS_NULL(),
 				jet.OR(
-					jet.OR(
-						tDocument.Public.IS_TRUE(),
-						tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					),
+					tDocument.Public.IS_TRUE(),
+					tDocument.CreatorID.EQ(jet.Int32(userInfo.UserId)),
 					jet.OR(
 						jet.AND(
 							tDUserAccess.Access.IS_NOT_NULL(),
@@ -132,11 +130,9 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 
 	return q.
 		FROM(tables).
-		WHERE(
-			jet.AND(
-				wheres...,
-			),
-		).
+		WHERE(jet.AND(
+			wheres...,
+		)).
 		ORDER_BY(
 			tDocument.CreatedAt.DESC(),
 			tDocument.UpdatedAt.DESC(),

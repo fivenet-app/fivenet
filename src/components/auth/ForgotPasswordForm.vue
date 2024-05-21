@@ -10,13 +10,11 @@ const emits = defineEmits<{
     (e: 'toggle'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 async function forgotPassword(values: Schema): Promise<void> {
     try {
-        await $grpc.getAuthClient().forgotPassword({
+        await getGRPCAuthClient().forgotPassword({
             regToken: values.registrationToken.toString(),
             new: values.password,
         });
@@ -30,7 +28,7 @@ async function forgotPassword(values: Schema): Promise<void> {
         emits('toggle');
     } catch (e) {
         accountError.value = (e as RpcError).message;
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

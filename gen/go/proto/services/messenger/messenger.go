@@ -3,6 +3,7 @@ package messenger
 import (
 	"database/sql"
 
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/server/audit"
@@ -12,12 +13,17 @@ import (
 )
 
 var (
-	tThreads           = table.FivenetMsgsThreads
-	tThreadsUserState  = table.FivenetMsgsThreadsUserState
+	tUsers   = table.Users.AS("usershort")
+	tCreator = table.Users.AS("creator")
+
+	tUserProps = table.FivenetUserProps
+
+	tThreads           = table.FivenetMsgsThreads.AS("thread")
+	tThreadsUserState  = table.FivenetMsgsThreadsUserState.AS("threaduserstate")
 	tThreadsJobAccess  = table.FivenetMsgsThreadsJobAccess
 	tThreadsUserAccess = table.FivenetMsgsThreadsUserAccess
 
-	tMessages = table.FivenetMsgsMessages
+	tMessages = table.FivenetMsgsMessages.AS("message")
 )
 
 type Server struct {
@@ -27,6 +33,7 @@ type Server struct {
 	p        perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
+	js       *events.JSWrapper
 }
 
 type Params struct {
@@ -36,10 +43,17 @@ type Params struct {
 	P        perms.Permissions
 	Enricher *mstlystcdata.UserAwareEnricher
 	Aud      audit.IAuditer
+	JS       *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
-	return &Server{}
+	return &Server{
+		db:       p.DB,
+		p:        p.P,
+		enricher: p.Enricher,
+		aud:      p.Aud,
+		js:       p.JS,
+	}
 }
 
 func (s *Server) RegisterServer(srv *grpc.Server) {

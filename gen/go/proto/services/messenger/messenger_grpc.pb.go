@@ -22,6 +22,7 @@ const (
 	MessengerService_ListThreads_FullMethodName          = "/services.messenger.MessengerService/ListThreads"
 	MessengerService_CreateOrUpdateThread_FullMethodName = "/services.messenger.MessengerService/CreateOrUpdateThread"
 	MessengerService_DeleteThread_FullMethodName         = "/services.messenger.MessengerService/DeleteThread"
+	MessengerService_SetThreadUserState_FullMethodName   = "/services.messenger.MessengerService/SetThreadUserState"
 	MessengerService_GetThreadMessages_FullMethodName    = "/services.messenger.MessengerService/GetThreadMessages"
 	MessengerService_PostMessage_FullMethodName          = "/services.messenger.MessengerService/PostMessage"
 	MessengerService_DeleteMessage_FullMethodName        = "/services.messenger.MessengerService/DeleteMessage"
@@ -37,6 +38,8 @@ type MessengerServiceClient interface {
 	CreateOrUpdateThread(ctx context.Context, in *CreateOrUpdateThreadRequest, opts ...grpc.CallOption) (*CreateOrUpdateThreadResponse, error)
 	// @perm
 	DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error)
+	// @perm: Name=ListThreads
+	SetThreadUserState(ctx context.Context, in *SetThreadUserStateRequest, opts ...grpc.CallOption) (*SetThreadUserStateResponse, error)
 	// @perm: Name=ListThreads
 	GetThreadMessages(ctx context.Context, in *GetThreadMessagesRequest, opts ...grpc.CallOption) (*GetThreadMessagesResponse, error)
 	// @perm
@@ -74,6 +77,15 @@ func (c *messengerServiceClient) CreateOrUpdateThread(ctx context.Context, in *C
 func (c *messengerServiceClient) DeleteThread(ctx context.Context, in *DeleteThreadRequest, opts ...grpc.CallOption) (*DeleteThreadResponse, error) {
 	out := new(DeleteThreadResponse)
 	err := c.cc.Invoke(ctx, MessengerService_DeleteThread_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *messengerServiceClient) SetThreadUserState(ctx context.Context, in *SetThreadUserStateRequest, opts ...grpc.CallOption) (*SetThreadUserStateResponse, error) {
+	out := new(SetThreadUserStateResponse)
+	err := c.cc.Invoke(ctx, MessengerService_SetThreadUserState_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -118,6 +130,8 @@ type MessengerServiceServer interface {
 	// @perm
 	DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error)
 	// @perm: Name=ListThreads
+	SetThreadUserState(context.Context, *SetThreadUserStateRequest) (*SetThreadUserStateResponse, error)
+	// @perm: Name=ListThreads
 	GetThreadMessages(context.Context, *GetThreadMessagesRequest) (*GetThreadMessagesResponse, error)
 	// @perm
 	PostMessage(context.Context, *PostMessageRequest) (*PostMessageResponse, error)
@@ -138,6 +152,9 @@ func (UnimplementedMessengerServiceServer) CreateOrUpdateThread(context.Context,
 }
 func (UnimplementedMessengerServiceServer) DeleteThread(context.Context, *DeleteThreadRequest) (*DeleteThreadResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteThread not implemented")
+}
+func (UnimplementedMessengerServiceServer) SetThreadUserState(context.Context, *SetThreadUserStateRequest) (*SetThreadUserStateResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SetThreadUserState not implemented")
 }
 func (UnimplementedMessengerServiceServer) GetThreadMessages(context.Context, *GetThreadMessagesRequest) (*GetThreadMessagesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetThreadMessages not implemented")
@@ -215,6 +232,24 @@ func _MessengerService_DeleteThread_Handler(srv interface{}, ctx context.Context
 	return interceptor(ctx, in, info, handler)
 }
 
+func _MessengerService_SetThreadUserState_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(SetThreadUserStateRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(MessengerServiceServer).SetThreadUserState(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: MessengerService_SetThreadUserState_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(MessengerServiceServer).SetThreadUserState(ctx, req.(*SetThreadUserStateRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _MessengerService_GetThreadMessages_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(GetThreadMessagesRequest)
 	if err := dec(in); err != nil {
@@ -287,6 +322,10 @@ var MessengerService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteThread",
 			Handler:    _MessengerService_DeleteThread_Handler,
+		},
+		{
+			MethodName: "SetThreadUserState",
+			Handler:    _MessengerService_SetThreadUserState_Handler,
 		},
 		{
 			MethodName: "GetThreadMessages",

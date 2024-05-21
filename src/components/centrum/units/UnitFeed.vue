@@ -6,15 +6,13 @@ const props = defineProps<{
     unitId: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const offset = ref(0);
 
 const { data, refresh } = useLazyAsyncData(`centrum-unit-${props.unitId}-activity-${offset.value}`, () => listUnitActivity());
 
 async function listUnitActivity(): Promise<ListUnitActivityResponse> {
     try {
-        const call = $grpc.getCentrumClient().listUnitActivity({
+        const call = getGRPCCentrumClient().listUnitActivity({
             pagination: {
                 offset: offset.value,
             },
@@ -24,7 +22,7 @@ async function listUnitActivity(): Promise<ListUnitActivityResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

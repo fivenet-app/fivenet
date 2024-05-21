@@ -19,7 +19,8 @@ type fivenetMsgsThreadsUserStateTable struct {
 	// Columns
 	ThreadID  mysql.ColumnInteger
 	UserID    mysql.ColumnInteger
-	LastRead  mysql.ColumnInteger
+	LastRead  mysql.ColumnTimestamp
+	Unread    mysql.ColumnBool
 	Important mysql.ColumnBool
 	Favorite  mysql.ColumnBool
 	Muted     mysql.ColumnBool
@@ -65,12 +66,13 @@ func newFivenetMsgsThreadsUserStateTableImpl(schemaName, tableName, alias string
 	var (
 		ThreadIDColumn  = mysql.IntegerColumn("thread_id")
 		UserIDColumn    = mysql.IntegerColumn("user_id")
-		LastReadColumn  = mysql.IntegerColumn("last_read")
+		LastReadColumn  = mysql.TimestampColumn("last_read")
+		UnreadColumn    = mysql.BoolColumn("unread")
 		ImportantColumn = mysql.BoolColumn("important")
 		FavoriteColumn  = mysql.BoolColumn("favorite")
 		MutedColumn     = mysql.BoolColumn("muted")
-		allColumns      = mysql.ColumnList{ThreadIDColumn, UserIDColumn, LastReadColumn, ImportantColumn, FavoriteColumn, MutedColumn}
-		mutableColumns  = mysql.ColumnList{LastReadColumn, ImportantColumn, FavoriteColumn, MutedColumn}
+		allColumns      = mysql.ColumnList{ThreadIDColumn, UserIDColumn, LastReadColumn, UnreadColumn, ImportantColumn, FavoriteColumn, MutedColumn}
+		mutableColumns  = mysql.ColumnList{LastReadColumn, UnreadColumn, ImportantColumn, FavoriteColumn, MutedColumn}
 	)
 
 	return fivenetMsgsThreadsUserStateTable{
@@ -80,6 +82,7 @@ func newFivenetMsgsThreadsUserStateTableImpl(schemaName, tableName, alias string
 		ThreadID:  ThreadIDColumn,
 		UserID:    UserIDColumn,
 		LastRead:  LastReadColumn,
+		Unread:    UnreadColumn,
 		Important: ImportantColumn,
 		Favorite:  FavoriteColumn,
 		Muted:     MutedColumn,

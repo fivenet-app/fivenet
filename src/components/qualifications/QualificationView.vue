@@ -26,8 +26,6 @@ const props = defineProps<{
 
 const { t } = useI18n();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const {
@@ -39,28 +37,28 @@ const {
 
 async function getQualification(qualificationId: string): Promise<GetQualificationResponse> {
     try {
-        const call = $grpc.getQualificationsClient().getQualification({
+        const call = getGRPCQualificationsClient().getQualification({
             qualificationId,
         });
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteQualification(qualificationId: string): Promise<DeleteQualificationResponse> {
     try {
-        const call = $grpc.getQualificationsClient().deleteQualification({
+        const call = getGRPCQualificationsClient().deleteQualification({
             qualificationId,
         });
         const { response } = await call;
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

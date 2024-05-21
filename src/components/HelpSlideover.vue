@@ -48,7 +48,8 @@ const categories = computed(() => [
     {
         title: t('commandpalette.categories.navigation'),
         items: [
-            { shortcuts: ['G', 'H'], name: t('common.goto_item', [t('common.home')]) },
+            { shortcuts: ['G', 'H'], name: t('common.goto_item', [t('common.overview')]) },
+            { shortcuts: ['G', 'I'], name: t('common.goto_item', [t('common.messenger')]) },
             { shortcuts: ['G', 'C'], name: t('common.goto_item', [t('common.citizen', 2)]) },
             { shortcuts: ['G', 'V'], name: t('common.goto_item', [t('common.vehicle', 2)]) },
             { shortcuts: ['G', 'D'], name: t('common.goto_item', [t('common.document', 2)]) },
@@ -58,6 +59,13 @@ const categories = computed(() => [
             { shortcuts: ['G', 'M'], name: t('common.goto_item', [t('common.livemap')]) },
             { shortcuts: ['G', 'W'], name: t('common.goto_item', [t('common.dispatch_center')]) },
             { shortcuts: ['G', 'P'], name: t('common.goto_item', [t('common.control_panel')]) },
+        ],
+    },
+    {
+        title: t('common.messenger'),
+        items: [
+            { shortcuts: ['↑'], name: t('components.messenger.prev_thread') },
+            { shortcuts: ['↓'], name: t('components.messenger.next_thread') },
         ],
     },
     {

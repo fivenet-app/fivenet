@@ -11,8 +11,9 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: MessengerService
-	"MessengerService/DeleteMessage":     "SuperUser",
-	"MessengerService/GetThreadMessages": "MessengerService/ListThreads",
+	"MessengerService/DeleteMessage":      "SuperUser",
+	"MessengerService/GetThreadMessages":  "MessengerService/ListThreads",
+	"MessengerService/SetThreadUserState": "MessengerService/ListThreads",
 }
 
 func (s *Server) GetPermsRemap() map[string]string {

@@ -18,8 +18,6 @@ const emit = defineEmits<{
     (e: 'deleted', comment: Comment): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const modal = useModal();
 
 const authStore = useAuthStore();
@@ -48,21 +46,21 @@ async function editComment(documentId: string, commentId: string, values: Schema
     };
 
     try {
-        const { response } = await $grpc.getDocStoreClient().editComment({ comment });
+        const { response } = await getGRPCDocStoreClient().editComment({ comment });
 
         editing.value = false;
         resetForm();
 
         emit('update:comment', response.comment!);
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
 
 async function deleteComment(id: string): Promise<void> {
     try {
-        await $grpc.getDocStoreClient().deleteComment({
+        await getGRPCDocStoreClient().deleteComment({
             commentId: id,
         });
 
@@ -74,7 +72,7 @@ async function deleteComment(id: string): Promise<void> {
 
         emit('deleted', props.comment);
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

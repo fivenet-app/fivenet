@@ -10,8 +10,6 @@ const props = defineProps<{
     documentId: string;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useModal();
 
 const notifications = useNotificatorStore();
@@ -38,7 +36,7 @@ const state = reactive<Schema>({
 
 async function createDocumentRequest(values: Schema): Promise<void> {
     try {
-        const call = $grpc.getDocStoreClient().createDocumentReq({
+        const call = getGRPCDocStoreClient().createDocumentReq({
             documentId: props.documentId,
             requestType: DocActivityType.REQUESTED_ACCESS,
             reason: values.reason,
@@ -61,7 +59,7 @@ async function createDocumentRequest(values: Schema): Promise<void> {
 
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

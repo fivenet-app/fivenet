@@ -27,8 +27,6 @@ const emit = defineEmits<{
     (e: 'deletedComment'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
@@ -43,7 +41,7 @@ const {
 
 async function getComments(): Promise<GetCommentsResponse> {
     try {
-        const call = $grpc.getDocStoreClient().getComments({
+        const call = getGRPCDocStoreClient().getComments({
             pagination: {
                 offset: offset.value,
                 pageSize: 5,
@@ -58,7 +56,7 @@ async function getComments(): Promise<GetCommentsResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -86,7 +84,7 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
     };
 
     try {
-        const call = $grpc.getDocStoreClient().postComment({ comment });
+        const call = getGRPCDocStoreClient().postComment({ comment });
         const { response } = await call;
 
         if (response.comment) {
@@ -97,7 +95,7 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
 
         emit('newComment');
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

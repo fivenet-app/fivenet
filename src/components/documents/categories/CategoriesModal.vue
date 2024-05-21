@@ -13,8 +13,6 @@ const emit = defineEmits<{
     (e: 'update'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const notifications = useNotificatorStore();
 
 const { isOpen } = useModal();
@@ -38,7 +36,7 @@ interface FormData {
 
 async function createCategory(values: FormData): Promise<void> {
     try {
-        await $grpc.getDocStoreClient().createCategory({
+        await getGRPCDocStoreClient().createCategory({
             category: {
                 id: '0',
                 name: values.name,
@@ -54,7 +52,7 @@ async function createCategory(values: FormData): Promise<void> {
 
         emit('update');
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -64,7 +62,7 @@ async function updateCategory(values: FormData): Promise<void> {
     props.category!.description = values.description;
 
     try {
-        await $grpc.getDocStoreClient().updateCategory({
+        await getGRPCDocStoreClient().updateCategory({
             category: props.category!,
         });
 
@@ -76,7 +74,7 @@ async function updateCategory(values: FormData): Promise<void> {
 
         emit('update');
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -87,7 +85,7 @@ async function deleteCategory(): Promise<void> {
     }
 
     try {
-        await $grpc.getDocStoreClient().deleteCategory({
+        await getGRPCDocStoreClient().deleteCategory({
             ids: [props.category.id!],
         });
 
@@ -99,7 +97,7 @@ async function deleteCategory(): Promise<void> {
 
         emit('update');
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

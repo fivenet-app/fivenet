@@ -13,8 +13,6 @@ const emit = defineEmits<{
     (e: 'close'): void;
 }>();
 
-const { $grpc } = useNuxtApp();
-
 const { isOpen } = useSlideover();
 
 const livemapStore = useLivemapStore();
@@ -36,7 +34,7 @@ const state = reactive<Schema>({
 
 async function createDispatch(values: Schema): Promise<void> {
     try {
-        const call = $grpc.getCentrumClient().createDispatch({
+        const call = getGRPCCentrumClient().createDispatch({
             dispatch: {
                 id: '0',
                 job: '',
@@ -56,7 +54,7 @@ async function createDispatch(values: Schema): Promise<void> {
         emit('close');
         isOpen.value = false;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }

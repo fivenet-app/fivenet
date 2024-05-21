@@ -11,8 +11,6 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const { $grpc } = useNuxtApp();
-
 const { t } = useI18n();
 
 const props = withDefaults(
@@ -52,7 +50,7 @@ const { data, pending: loading, refresh, error } = useLazyAsyncData(`vehicles-${
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
-        const call = $grpc.getDMVClient().listVehicles({
+        const call = getGRPCDMVClient().listVehicles({
             pagination: {
                 offset: offset.value,
             },
@@ -73,7 +71,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
 
         return response;
     } catch (e) {
-        $grpc.handleError(e as RpcError);
+        handleGRPCError(e as RpcError);
         throw e;
     }
 }
@@ -181,7 +179,7 @@ defineShortcuts({
                         :search="
                             async (query: string): Promise<UserShort[]> => {
                                 usersLoading = true;
-                                const { response } = await $grpc.getCompletorClient().completeCitizens({
+                                const { response } = await getGRPCCompletorClient().completeCitizens({
                                     search: query,
                                 });
                                 usersLoading = false;

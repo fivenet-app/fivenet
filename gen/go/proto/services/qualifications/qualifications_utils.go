@@ -417,7 +417,7 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	quali.Requirements = reqs
 
 	if quali.Creator != nil {
-		s.enricher.EnrichJobInfo(quali.Creator)
+		s.enricher.EnrichJobInfoSafe(userInfo, quali.Creator)
 	}
 
 	request, err := s.getQualificationRequest(ctx, qualificationId, userInfo.UserId, userInfo)
