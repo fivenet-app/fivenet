@@ -302,7 +302,7 @@ const accordionItems = computed(() =>
                     <div
                         v-if="qualification.content"
                         v-html="qualification.content"
-                        class="prose prose-invert min-w-full px-4 py-2"
+                        class="prose dark:prose-invert min-w-full px-4 py-2"
                     ></div>
                     <p v-else>
                         {{ $t('components.qualifications.content_unavailable') }}

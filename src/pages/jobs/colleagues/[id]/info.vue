@@ -157,7 +157,7 @@ watch(editing, () => {
                             <div class="flex flex-1 flex-col gap-2">
                                 <template v-if="!editing">
                                     <div class="w-full flex-1">
-                                        <p class="prose prose-invert whitespace-pre-wrap text-base-800 dark:text-base-300">
+                                        <p class="prose dark:prose-invert whitespace-pre-wrap text-base-800 dark:text-base-300">
                                             {{ colleague?.props?.note ?? $t('common.na') }}
                                         </p>
                                     </div>

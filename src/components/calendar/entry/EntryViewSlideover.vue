@@ -201,7 +201,7 @@ const canDo = computed(() => ({
 
                     <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                         <!-- eslint-disable vue/no-v-html -->
-                        <div class="prose prose-invert min-w-full px-4 py-2" v-html="entry.content"></div>
+                        <div class="prose dark:prose-invert min-w-full px-4 py-2" v-html="entry.content"></div>
                     </div>
                 </template>
             </div>

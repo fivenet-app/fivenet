@@ -438,7 +438,7 @@ defineShortcuts({
                 </h2>
                 <div class="contentView mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
                     <!-- eslint-disable vue/no-v-html -->
-                    <div ref="contentRef" class="prose prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
+                    <div ref="contentRef" class="prose dark:prose-invert min-w-full px-4 py-2" v-html="doc.content"></div>
                 </div>
             </div>
 
