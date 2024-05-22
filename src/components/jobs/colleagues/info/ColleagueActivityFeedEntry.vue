@@ -24,6 +24,7 @@ withDefaults(
                 :inline="true"
             />
         </div>
+
         <div class="flex-1 space-y-1">
             <div class="flex items-center justify-between">
                 <h3 class="text-sm font-medium">
@@ -55,6 +56,7 @@ withDefaults(
                     <GenericTime :value="activity.createdAt" type="long" />
                 </p>
             </div>
+
             <div class="flex items-center justify-between">
                 <p class="flex flex-col gap-1 text-sm">
                     <template v-if="activity.reason">

@@ -3,7 +3,7 @@ import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
-const { data, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
+const { data, pending: loading, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());
 
 async function getMOTD(): Promise<GetMOTDResponse> {
     try {
@@ -68,9 +68,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UForm v-if="data !== null" :schema="schema" :state="state" class="w-full flex-col" @submit="onSubmitThrottle">
+    <UForm :schema="schema" :state="state" class="w-full flex-col" @submit="onSubmitThrottle">
         <div class="flex items-center">
-            <h4 v-if="data.motd.length > 0 || canEdit" class="flex-1 text-base font-semibold leading-6">
+            <h4 v-if="data && (data.motd.length > 0 || canEdit)" class="flex-1 text-base font-semibold leading-6">
                 {{ $t('common.motd') }}
             </h4>
 
@@ -85,7 +85,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <div class="flex">
             <template v-if="!editing">
-                <div class="w-full flex-1">
+                <USkeleton v-if="loading" class="h-7 w-full" />
+                <div v-else class="w-full flex-1">
                     <p class="prose prose-invert line-clamp-5 whitespace-pre-wrap">
                         {{ state.motd }}
                     </p>

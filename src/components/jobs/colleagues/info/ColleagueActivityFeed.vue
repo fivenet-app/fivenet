@@ -2,7 +2,6 @@
 import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 import { JobsUserActivityType, type Colleague } from '~~/gen/ts/resources/jobs/colleagues';
@@ -158,12 +157,8 @@ watchDebounced(query, async () => refresh(), {
         </UForm>
     </UDashboardToolbar>
 
-    <DataPendingBlock
-        v-if="loading"
-        :message="$t('common.loading', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
-    />
     <DataErrorBlock
-        v-else-if="error"
+        v-if="error"
         :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
         :retry="refresh"
     />
@@ -173,9 +168,37 @@ watchDebounced(query, async () => refresh(), {
         :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
     />
 
-    <div v-else class="relative overflow-x-auto">
+    <div v-else-if="loading || data?.activity" class="relative overflow-x-auto">
         <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-            <li v-for="activity in data?.activity" :key="activity.id" class="px-2 py-4">
+            <li v-if="loading" v-for="_ in 10" class="px-2 py-4">
+                <div class="flex space-x-3">
+                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
+                        <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
+                    </div>
+
+                    <div class="flex-1 space-y-1">
+                        <div class="flex items-center justify-between">
+                            <h3 class="text-sm font-medium">
+                                <USkeleton class="h-5 w-[350px]" />
+                            </h3>
+
+                            <p>
+                                <USkeleton class="h-5 w-[175px]" />
+                            </p>
+                        </div>
+
+                        <div class="flex items-center justify-between">
+                            <p class="flex flex-col gap-1 text-sm">
+                                <USkeleton class="h-8 w-[200px]" />
+                            </p>
+                            <p class="inline-flex items-center gap-1 text-sm">
+                                <USkeleton class="h-5 w-[175px]" />
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            <li v-else v-for="activity in data?.activity" :key="activity.id" class="px-2 py-4">
                 <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
             </li>
         </ul>

@@ -7,6 +7,7 @@ const { d, n, t } = useI18n();
 
 const props = defineProps<{
     stats: TimeclockWeeklyStats[];
+    loading?: boolean;
 }>();
 
 type DataRecord = TimeclockWeeklyStats & {
@@ -60,7 +61,8 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
                 <p class="mb-1 text-sm font-medium text-gray-500 dark:text-gray-400">
                     {{ $t('components.jobs.timeclock.Stats.sum') }}
                 </p>
-                <p class="text-3xl font-semibold text-gray-900 dark:text-white">
+                <USkeleton v-if="loading" class="h-9 w-[275px]" />
+                <p v-else class="text-3xl font-semibold text-gray-900 dark:text-white">
                     {{ fromSecondsToFormattedDuration(Math.ceil(total * 60 * 60), { seconds: false }) }}
                 </p>
             </div>

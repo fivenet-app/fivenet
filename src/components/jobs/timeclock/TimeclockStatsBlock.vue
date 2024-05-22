@@ -102,12 +102,8 @@ watchDebounced(
                     <UCard v-for="stat in statsData" :key="stat.name">
                         <p class="text-sm font-medium leading-6">{{ $t(stat.name) }}</p>
                         <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
-                            <template v-if="failed">
-                                <UIcon name="i-mdi-alert-circle" class="size-5" />
-                            </template>
-                            <template v-else-if="stat.value === undefined">
-                                <UIcon name="i-mdi-loading" class="size-5 animate-spin" />
-                            </template>
+                            <UIcon v-if="failed" name="i-mdi-alert-circle" class="size-5" />
+                            <USkeleton v-else-if="stat.value === undefined" class="h-8 w-[175px]" />
                             <template v-else>
                                 {{
                                     fromSecondsToFormattedDuration(stat.value, {
@@ -128,7 +124,7 @@ watchDebounced(
 
                 <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
                 <DataNoDataBlock v-else-if="weekly === undefined" />
-                <TimeclockStatsChart v-else :stats="weekly" />
+                <TimeclockStatsChart v-else :stats="weekly" :loading="loading" />
             </div>
         </div>
     </UCard>
