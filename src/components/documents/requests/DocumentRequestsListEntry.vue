@@ -76,7 +76,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
 </script>
 
 <template>
-    <li :key="request.id" class="hover:bg-neutral/5 flex justify-between gap-x-6 py-5 transition-colors">
+    <li :key="request.id" class="hover:bg-neutral/5 flex justify-between gap-x-4 py-4 transition-colors">
         <div class="flex min-w-0 gap-x-2 px-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-base font-semibold leading-6 text-gray-100" :title="`${$t('common.id')}: ${request.id}`">
@@ -97,7 +97,7 @@ const onSubmitThrottle = useThrottleFn(async (accepted: boolean) => {
             </div>
         </div>
         <div class="flex shrink-0 items-center gap-x-6 px-2">
-            <div class="hidden text-sm sm:flex sm:flex-col sm:items-end">
+            <div class="hidden gap-1 text-sm sm:flex sm:flex-col sm:items-end">
                 <div class="inline-flex gap-1">
                     {{ $t('common.creator') }}
                     <CitizenInfoPopover :user="request.creator" text-class="underline" />

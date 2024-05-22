@@ -2,7 +2,6 @@
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type CardElements } from '~/utils/types';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import CategoriesModal from '~/components/documents/categories/CategoriesModal.vue';
@@ -60,22 +59,33 @@ const modal = useModal();
         </template>
     </UDashboardNavbar>
 
-    <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.category', 2)])" />
-    <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.category', 2)])" :retry="refresh" />
-    <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
+    <UDashboardPanelContent>
+        <div v-if="loading" class="flex justify-center">
+            <UPageGrid>
+                <UPageCard v-for="_ in 6">
+                    <template #title>
+                        <USkeleton class="h-6 w-[275px]" />
+                    </template>
+                    <template #description>
+                        <USkeleton class="h-11 w-[350px]" />
+                    </template>
+                </UPageCard>
+            </UPageGrid>
+        </div>
+        <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.category', 2)])" :retry="refresh" />
+        <DataNoDataBlock v-else-if="categories && categories.length === 0" icon="i-mdi-tag" :type="$t('common.category', 2)" />
 
-    <div v-else class="flex justify-center">
-        <CardsList
-            :items="items"
-            :show-icon="true"
-            class="m-2"
-            @selected="
-                categories &&
-                    modal.open(CategoriesModal, {
-                        category: categories[$event],
-                        onUpdate: refresh,
-                    })
-            "
-        />
-    </div>
+        <div v-else class="flex justify-center">
+            <CardsList
+                :items="items"
+                @selected="
+                    categories &&
+                        modal.open(CategoriesModal, {
+                            category: categories[$event],
+                            onUpdate: refresh,
+                        })
+                "
+            />
+        </div>
+    </UDashboardPanelContent>
 </template>

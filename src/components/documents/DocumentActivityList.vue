@@ -51,11 +51,9 @@ watch(offset, async () => refresh());
             :message="$t('common.not_found', [$t('common.activity')])"
         />
 
-        <template v-else>
-            <div class="mb-1 divide-y divide-gray-100 dark:divide-gray-800">
-                <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
-            </div>
-        </template>
+        <div v-else class="mb-1 divide-y divide-gray-100 dark:divide-gray-800">
+            <DocumentActivityListEntry v-for="item in data.activity" :key="item.id" :entry="item" />
+        </div>
 
         <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
     </div>

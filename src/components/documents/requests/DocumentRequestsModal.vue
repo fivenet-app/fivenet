@@ -8,7 +8,6 @@ import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { checkDocAccess } from '~/components/documents/helpers';
 import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
@@ -175,7 +174,38 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <div>
-                        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.request', 2)])" />
+                        <ul v-if="loading" role="list" class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500">
+                            <li v-for="_ in 2" class="flex justify-between gap-x-4 py-4">
+                                <div class="flex min-w-0 gap-x-2 px-2">
+                                    <div class="min-w-0 flex-auto">
+                                        <p class="text-base font-semibold leading-6 text-gray-100">
+                                            <USkeleton class="h-8 w-[325px]" />
+                                        </p>
+                                        <p class="mt-1 flex gap-1 text-sm leading-5">
+                                            <USkeleton class="h-6 w-[350px]" />
+                                        </p>
+                                        <p class="mt-1 flex gap-1 text-sm leading-5">
+                                            <USkeleton class="h-6 w-[175px]" />
+                                        </p>
+                                    </div>
+                                </div>
+                                <div class="flex shrink-0 items-center gap-x-6 px-2">
+                                    <div class="hidden gap-1 text-sm sm:flex sm:flex-col sm:items-end">
+                                        <div class="inline-flex gap-1">
+                                            <USkeleton class="h-8 w-[250px]" />
+                                        </div>
+                                        <div>
+                                            <USkeleton class="h-8 w-[200px]" />
+                                        </div>
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <USkeleton class="h-8 w-[63px]" />
+
+                                        <USkeleton class="h-8 w-[63px]" />
+                                    </div>
+                                </div>
+                            </li>
+                        </ul>
                         <DataErrorBlock
                             v-else-if="error"
                             :title="$t('common.unable_to_load', [$t('common.request', 2)])"
@@ -187,18 +217,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :message="$t('common.not_found', [$t('common.request', 2)])"
                         />
 
-                        <template v-else>
-                            <ul role="list" class="mb-6 divide-y divide-gray-100 rounded-md">
-                                <DocumentRequestsListEntry
-                                    v-for="request in requests.requests"
-                                    :key="request.id"
-                                    :request="request"
-                                    :can-update="canUpdate"
-                                    :can-delete="canDelete"
-                                    @refresh-requests="refresh()"
-                                />
-                            </ul>
-                        </template>
+                        <ul v-else role="list" class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500">
+                            <DocumentRequestsListEntry
+                                v-for="request in requests.requests"
+                                :key="request.id"
+                                :request="request"
+                                :can-update="canUpdate"
+                                :can-delete="canDelete"
+                                @refresh-requests="refresh()"
+                            />
+                        </ul>
                     </div>
                 </div>
 

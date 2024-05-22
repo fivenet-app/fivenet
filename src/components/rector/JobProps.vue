@@ -5,7 +5,6 @@ import { vMaska } from 'maska';
 import { CodeDiff } from 'v-code-diff';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -272,12 +271,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
             </UDashboardNavbar>
 
-            <DataPendingBlock
-                v-if="loading"
-                :message="$t('common.loading', [$t('components.rector.job_props.job_properties')])"
-            />
             <DataErrorBlock
-                v-else-if="error"
+                v-if="error"
                 :title="$t('common.unable_to_load', [$t('components.rector.job_props.job_properties')])"
                 :retry="refresh"
             />
@@ -287,7 +282,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :type="$t('components.rector.job_props.job_properties')"
             />
 
-            <template v-else>
+            <template v-else-if="loading || jobProps">
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
@@ -303,7 +298,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #jobprops>
-                        <UDashboardPanelContent class="pb-24">
+                        <div v-if="loading" class="space-y-1 px-4">
+                            <USkeleton v-for="_ in 5" class="h-20 w-full" />
+                        </div>
+
+                        <UDashboardPanelContent v-else class="pb-24">
                             <UDashboardSection
                                 :title="$t('components.rector.job_props.job_properties')"
                                 :description="$t('components.rector.job_props.your_job_properties')"
@@ -403,7 +402,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </template>
 
                     <template #discord>
-                        <UDashboardPanelContent v-if="jobProps.discordSyncSettings" class="pb-24">
+                        <div v-if="loading" class="space-y-1 px-4">
+                            <USkeleton v-for="_ in 10" class="h-20 w-full" />
+                        </div>
+
+                        <UDashboardPanelContent v-else-if="jobProps.discordSyncSettings" class="pb-24">
                             <UDashboardSection
                                 :title="$t('components.rector.job_props.discord_sync_settings.title')"
                                 :description="$t('components.rector.job_props.discord_sync_settings.subtitle')"

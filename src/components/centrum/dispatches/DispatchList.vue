@@ -36,7 +36,7 @@ const slideover = useSlideover();
 const { goto } = useLivemapStore();
 
 const centrumStore = useCentrumStore();
-const { getSortedDispatches, settings } = storeToRefs(centrumStore);
+const { getSortedDispatches, settings, abort, reconnecting } = storeToRefs(centrumStore);
 
 type GroupedDispatches = { date: Date; key: string; dispatches: Dispatch[] }[];
 
@@ -123,7 +123,11 @@ const columns = [
         </div>
 
         <div class="flex-1">
-            <template v-for="(group, idx) in grouped" :key="group.key">
+            <div v-if="abort === undefined && !reconnecting" class="space-y-1">
+                <USkeleton v-for="_ in 5" class="h-9 w-full" />
+            </div>
+
+            <template v-else v-for="(group, idx) in grouped" :key="group.key">
                 <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
                 <UTable
                     :columns="columns"

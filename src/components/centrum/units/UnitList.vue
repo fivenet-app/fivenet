@@ -5,7 +5,7 @@ import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { statusOrder, type GroupedUnits } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
-const { getSortedUnits } = storeToRefs(centrumStore);
+const { getSortedUnits, abort, reconnecting } = storeToRefs(centrumStore);
 
 const grouped = computedAsync(async () => {
     const groups: GroupedUnits = [];
@@ -57,7 +57,14 @@ const grouped = computedAsync(async () => {
             </h2>
         </div>
         <div class="@container flex-1">
-            <template v-for="group in grouped" :key="group.key">
+            <div
+                v-if="abort === undefined && !reconnecting"
+                class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2"
+            >
+                <USkeleton v-for="_ in 8" class="h-9 w-full" />
+            </div>
+
+            <template v-else v-for="group in grouped" :key="group.key">
                 <p class="-mb-1.5 text-sm">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                 </p>

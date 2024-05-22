@@ -84,11 +84,11 @@ const items = [
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('common.overview')" />
 
-            <div class="pb-2">
-                <CardsList class="m-2" :items="items" />
+            <UDashboardPanelContent>
+                <CardsList :items="items" />
 
-                <FiveNetHints class="mx-2 mt-4" />
-            </div>
+                <FiveNetHints class="mt-4" />
+            </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>
 </template>

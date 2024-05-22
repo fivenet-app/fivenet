@@ -4,7 +4,6 @@ import type { FormSubmitEvent } from '#ui/types';
 import { useSettingsStore } from '~/store/settings';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 import { useNotificatorStore } from '~/store/notificator';
 import { useCompletorStore } from '~/store/completor';
@@ -276,7 +275,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
             </UDashboardNavbar>
 
-            <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.setting', 2)])" />
+            <div v-if="loading" class="space-y-1 px-4">
+                <USkeleton class="mb-6 h-11 w-full" />
+                <USkeleton v-for="_ in 5" class="h-20 w-full" />
+            </div>
             <DataErrorBlock
                 v-else-if="error"
                 :title="$t('common.unable_to_load', [$t('common.setting', 2)])"

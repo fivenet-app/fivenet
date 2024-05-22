@@ -38,9 +38,9 @@ async function selected(t: TemplateShort): Promise<void> {
                 </template>
             </UDashboardNavbar>
 
-            <div class="inline-block min-w-full px-1 py-2 align-middle">
-                <TemplatesList class="m-2" @selected="selected($event)" />
-            </div>
+            <UDashboardPanelContent>
+                <TemplatesList @selected="selected($event)" />
+            </UDashboardPanelContent>
         </UDashboardPanel>
     </UDashboardPage>
 </template>
