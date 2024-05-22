@@ -45,13 +45,14 @@ const columns = [
     <UButton
         v-if="selectedLaws.length === 0"
         disabled
-        class="relative block w-full rounded-lg border border-dashed border-gray-300 p-12 text-center hover:border-gray-400"
+        class="relative block w-full rounded-lg border border-dashed p-4 text-center"
     >
         <UIcon name="i-mdi-calculator" class="mx-auto size-12" />
         <span class="mt-2 block text-sm font-semibold">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
         </span>
     </UButton>
+
     <UTable v-else :columns="columns" :rows="selectedLaws" class="max-w-full divide-y divide-base-600">
         <template #law-data="{ row: law }">
             <p class="whitespace-pre-line text-gray-900 dark:text-gray-300">

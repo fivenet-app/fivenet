@@ -79,7 +79,7 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
                 />
 
                 <template v-else>
-                    <ul role="list" class="m-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800">
+                    <ul role="list" class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800">
                         <li
                             v-for="calendar in data?.calendars"
                             :key="calendar.id"

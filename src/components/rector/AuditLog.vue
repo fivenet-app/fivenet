@@ -287,7 +287,7 @@ const columns = [
             <template #actions-data="{ row }">
                 <UButton
                     variant="link"
-                    icon="i-mdi-clipboard-plus"
+                    icon="i-mdi-content-copy"
                     :title="$t('components.clipboard.clipboard_button.add')"
                     @click="addToClipboard(row)"
                 />

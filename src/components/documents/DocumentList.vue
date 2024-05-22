@@ -297,7 +297,7 @@ defineShortcuts({
     <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
         <ul
             role="list"
-            class="m-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
+            class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
             :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
         >
             <li v-if="loading" v-for="_ in 7" class="flex-initial">

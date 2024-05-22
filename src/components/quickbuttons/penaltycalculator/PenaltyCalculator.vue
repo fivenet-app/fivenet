@@ -267,10 +267,10 @@ const columns = [
 
         <UButtonGroup class="mt-2 inline-flex w-full">
             <UButtonGroup class="inline-flex w-full">
-                <UButton class="flex-1" @click="copyToClipboard()">
+                <UButton icon="i-mdi-content-copy" class="flex-1" @click="copyToClipboard()">
                     {{ $t('common.copy') }}
                 </UButton>
-                <UButton color="red" @click="reset()">
+                <UButton trailing-icon="i-mdi-clear-outline" color="red" @click="reset()">
                     {{ $t('common.reset') }}
                 </UButton>
             </UButtonGroup>

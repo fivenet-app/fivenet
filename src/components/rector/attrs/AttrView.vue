@@ -351,7 +351,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             </template>
                         </UPopover>
 
-                        <UButton :disabled="changed" color="white" icon="i-mdi-clipboard-plus" @click="copyRole">{{
+                        <UButton icon="i-mdi-content-copy" :disabled="changed" color="white" @click="copyRole">{{
                             $t('common.copy')
                         }}</UButton>
                     </div>
