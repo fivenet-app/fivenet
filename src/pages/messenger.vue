@@ -6,7 +6,6 @@ import { canAccessThread } from '~/components/messenger/helpers';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { messengerDB, useMessengerStore } from '~/store/messenger';
 import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
-import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 
 useHead({
     title: 'common.messenger',
@@ -22,6 +21,7 @@ const { t } = useI18n();
 const modal = useModal();
 
 const messengerStore = useMessengerStore();
+const { selectedThread } = storeToRefs(messengerStore);
 
 const tabItems = [
     {
@@ -112,7 +112,6 @@ const filteredThreads = computed(() => {
     return threads.value.threads;
 });
 
-const selectedThread = ref<Thread | undefined>();
 const threadUserState = computed(() => selectedThread.value?.userState);
 
 const isMessengerPanelOpen = computed({
@@ -130,6 +129,18 @@ const isMessengerPanelOpen = computed({
 watch(filteredThreads, () => {
     if (!filteredThreads.value.find((thread) => thread.id === selectedThread.value?.id)) {
         selectedThread.value = undefined;
+    }
+});
+
+// Set thread as query param for persistence between reloads
+const router = useRouter();
+
+watch(selectedThread, () => {
+    if (!selectedThread.value) {
+        router.replace({ query: {} });
+    } else {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { thread: selectedThread.value.id }, hash: '#' });
     }
 });
 </script>

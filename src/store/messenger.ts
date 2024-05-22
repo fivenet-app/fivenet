@@ -14,7 +14,7 @@ import type {
 import { useAuthStore } from './auth';
 
 export interface MessengerState {
-    selectedThread?: Thread;
+    selectedThread: Thread | undefined;
 }
 
 export const useMessengerStore = defineStore('messenger', {

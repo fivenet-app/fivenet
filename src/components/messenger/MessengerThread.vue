@@ -8,6 +8,7 @@ import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import { canAccessThread } from './helpers';
 import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
+import type { Message } from '~~/gen/ts/resources/messenger/message';
 
 const props = withDefaults(
     defineProps<{
@@ -70,6 +71,28 @@ const messages = useDexieLiveQueryWithDeps(
         initialValue: { messages: [], loaded: false },
     },
 );
+
+const groupedMessages = computed(() => {
+    return messages.value.messages
+        .sort((a, b) => toDate(a.createdAt).getTime() - toDate(b.createdAt).getTime())
+        .reduce((acc: { [key: string]: Message[] }, msg) => {
+            const k = toDate(msg.createdAt).toDateString();
+
+            acc[k] = acc[k] || [];
+            if (acc[k].length > 0 && acc[k][acc[k].length - 1].creatorId === msg.creatorId) {
+                msg.creator = undefined;
+            }
+            acc[k].push(msg);
+
+            return acc;
+        }, {});
+});
+
+const messageRef = ref<Element | undefined>();
+watchDebounced(messages, () => messageRef.value?.scrollIntoView({ behavior: 'smooth' }), {
+    debounce: 100,
+    maxWait: 350,
+});
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -148,7 +171,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
         <UDivider class="my-2" />
 
-        <div class="relative flex-1 overflow-x-auto">
+        <div class="relative -mx-4 flex-1 overflow-x-auto">
             <template v-if="!messages.loaded">
                 <div class="space-y-2">
                     <USkeleton class="h-6 w-full" />
@@ -156,22 +179,40 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
             </template>
             <template v-else>
-                <div
-                    v-for="message in messages.messages.sort(
-                        (a, b) => toDate(a.createdAt).getTime() - toDate(b.createdAt).getTime(),
-                    )"
-                    :key="message.id"
-                >
-                    <div class="flex justify-between">
-                        <CitizenInfoPopover :user="message.creator" show-avatar-in-name />
+                <template v-for="msgs in groupedMessages">
+                    <UDivider class="text-xs">
+                        <GenericTime :value="msgs[0]?.createdAt" :type="'date'" />
+                    </UDivider>
 
-                        <GenericTime :value="message.createdAt" :type="isToday(toDate(message.createdAt)) ? 'time' : 'long'" />
+                    <div
+                        v-for="message in msgs"
+                        :key="message.id"
+                        class="hover:border-primary-500 hover:dark:border-primary-400 border-l-2 border-white p-0.5 px-2 hover:bg-base-800 dark:border-gray-900"
+                    >
+                        <div v-if="message.creator" class="flex justify-between text-xs">
+                            <CitizenInfoPopover :user="message.creator" show-avatar-in-name />
+
+                            <GenericTime :value="message.createdAt" type="time" />
+                        </div>
+
+                        <div class="flex justify-between text-xs">
+                            <p
+                                :ref="
+                                    (el) => {
+                                        if (messages.messages.length) {
+                                            messageRef = el as Element;
+                                        }
+                                    }
+                                "
+                                class="text-lg"
+                            >
+                                {{ message.message }}
+                            </p>
+
+                            <GenericTime :value="message.createdAt" type="time" />
+                        </div>
                     </div>
-
-                    <p class="text-lg">
-                        {{ message.message }}
-                    </p>
-                </div>
+                </template>
             </template>
         </div>
 
