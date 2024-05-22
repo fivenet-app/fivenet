@@ -133,6 +133,7 @@ watch(filteredThreads, () => {
 });
 
 // Set thread as query param for persistence between reloads
+const route = useRoute();
 const router = useRouter();
 
 watch(selectedThread, () => {
@@ -142,6 +143,13 @@ watch(selectedThread, () => {
         // Hash is specified here to prevent the page from scrolling to the top
         router.replace({ query: { thread: selectedThread.value.id }, hash: '#' });
     }
+});
+onMounted(async () => {
+    if (!route.query.thread) {
+        return;
+    }
+
+    selectedThread.value = await messengerStore.getThread(route.query.thread as string);
 });
 </script>
 

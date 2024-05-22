@@ -204,7 +204,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         }
                                     }
                                 "
-                                class="text-lg"
+                                class="prose dark:prose-invert"
                             >
                                 {{ message.message }}
                             </p>

@@ -49,7 +49,6 @@ export const useMessengerStore = defineStore('messenger', {
                             },
                             true,
                         );
-                        const thread = await messengerDB.threads.get(event.data.messageUpdate.threadId);
                     }
                 }
             } else if (event.data.oneofKind === 'messageDelete') {
@@ -60,7 +59,14 @@ export const useMessengerStore = defineStore('messenger', {
         },
 
         // Thread
-        async getThread(threadId: string): Promise<Thread | undefined> {
+        async getThread(threadId: string, local?: boolean): Promise<Thread | undefined> {
+            if (local) {
+                const thread = await messengerDB.threads.get(threadId);
+                if (thread) {
+                    return thread;
+                }
+            }
+
             try {
                 const call = getGRPCMessengerClient().getThread({
                     threadId: threadId,
