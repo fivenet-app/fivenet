@@ -95,13 +95,15 @@ watchDebounced(
 
         <div class="flex flex-col gap-4 lg:flex-row">
             <div class="flex-none">
-                <h3 class="mb-2 ml-0.5 text-lg font-bold">
+                <h3 class="mb-2 ml-0.5 text-lg font-bold text-gray-900 dark:text-white">
                     {{ $t('components.jobs.timeclock.Stats.7_days') }}
                 </h3>
                 <div class="grid grid-cols-1 gap-2">
                     <UCard v-for="stat in statsData" :key="stat.name">
-                        <p class="text-sm font-medium leading-6">{{ $t(stat.name) }}</p>
-                        <p class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight">
+                        <p class="text-sm font-medium leading-6 text-gray-500 dark:text-gray-400">{{ $t(stat.name) }}</p>
+                        <p
+                            class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
+                        >
                             <UIcon v-if="failed" name="i-mdi-alert-circle" class="size-5" />
                             <USkeleton v-else-if="stat.value === undefined" class="h-8 w-[175px]" />
                             <template v-else>
@@ -118,7 +120,7 @@ watchDebounced(
             </div>
 
             <div class="flex-1">
-                <h3 class="mb-2 text-lg font-bold">
+                <h3 class="mb-2 text-lg font-bold text-gray-900 dark:text-white">
                     {{ $t('components.jobs.timeclock.Stats.weekly') }}
                 </h3>
 
