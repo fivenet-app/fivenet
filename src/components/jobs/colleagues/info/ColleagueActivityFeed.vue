@@ -161,14 +161,16 @@ watchDebounced(query, async () => refresh(), {
         v-if="error"
         :title="$t('common.not_found', [`${$t('common.colleague', 1)} ${$t('common.activity')}`])"
         :retry="refresh"
+        class="flex-1"
     />
     <DataNoDataBlock
         v-else-if="data?.activity.length === 0"
         icon="i-mdi-bulletin-board"
         :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
+        class="flex-1"
     />
 
-    <div v-else-if="loading || data?.activity" class="relative overflow-x-auto">
+    <div v-else-if="loading || data?.activity" class="relative flex-1 overflow-x-auto">
         <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
             <li v-if="loading" v-for="_ in 10" class="px-2 py-4">
                 <div class="flex space-x-3">

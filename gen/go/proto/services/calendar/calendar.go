@@ -4,6 +4,7 @@ import (
 	"database/sql"
 
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/notifi"
 	"github.com/fivenet-app/fivenet/pkg/perms"
@@ -41,6 +42,7 @@ type Server struct {
 	st       storage.IStorage
 	appCfg   appconfig.IConfig
 	notif    notifi.INotifi
+	js       *events.JSWrapper
 }
 
 type Params struct {
@@ -53,6 +55,7 @@ type Params struct {
 	Storage   storage.IStorage
 	AppConfig appconfig.IConfig
 	Notif     notifi.INotifi
+	JS        *events.JSWrapper
 }
 
 func NewServer(p Params) *Server {
@@ -64,6 +67,7 @@ func NewServer(p Params) *Server {
 		st:       p.Storage,
 		appCfg:   p.AppConfig,
 		notif:    p.Notif,
+		js:       p.JS,
 	}
 }
 

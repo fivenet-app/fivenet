@@ -285,6 +285,7 @@ defineShortcuts({
         :columns="columns"
         :rows="data?.users"
         :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+        class="flex-1"
     >
         <template #name-data="{ row: citizen }">
             <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
@@ -307,7 +308,8 @@ defineShortcuts({
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.sex') }} - {{ $t('common.job') }}</dt>
                 <dd class="mt-1 truncate">
-                    {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }} - {{ citizen.jobLabel.value ?? $t('common.na') }}
+                    {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }} -
+                    {{ citizen.jobLabel.value ?? $t('common.na') }}
                 </dd>
             </dl>
         </template>

@@ -289,54 +289,54 @@ const input = ref<{ input: HTMLInputElement }>();
     </UDashboardToolbar>
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
-    <template v-else>
-        <UTable
-            :loading="loading"
-            :columns="columns"
-            :rows="grouped"
-            :empty-state="{
-                icon: 'i-mdi-timeline-clock',
-                label: $t('common.not_found', [$t('common.entry', 2)]),
-            }"
-        >
-            <template #date-data="{ row: entry }">
-                <div class="inline-flex items-center text-gray-900 dark:text-white">
-                    {{ $d(entry.date, 'date') }}
-                </div>
-            </template>
+    <UTable
+        v-else
+        :loading="loading"
+        :columns="columns"
+        :rows="grouped"
+        :empty-state="{
+            icon: 'i-mdi-timeline-clock',
+            label: $t('common.not_found', [$t('common.entry', 2)]),
+        }"
+        class="flex-1"
+    >
+        <template #date-data="{ row: entry }">
+            <div class="inline-flex items-center text-gray-900 dark:text-white">
+                {{ $d(entry.date, 'date') }}
+            </div>
+        </template>
 
-            <template #name-data="{ row: entry }">
-                <div class="inline-flex items-center gap-1">
-                    <ProfilePictureImg
-                        :src="entry.entry.user?.avatar?.url"
-                        :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
-                        size="sm"
-                    />
+        <template #name-data="{ row: entry }">
+            <div class="inline-flex items-center gap-1">
+                <ProfilePictureImg
+                    :src="entry.entry.user?.avatar?.url"
+                    :name="`${entry.entry.user?.firstname} ${entry.entry.user?.lastname}`"
+                    size="sm"
+                />
 
-                    <ColleagueInfoPopover :user="entry.entry.user" />
-                </div>
-            </template>
+                <ColleagueInfoPopover :user="entry.entry.user" />
+            </div>
+        </template>
 
-            <template #time-data="{ row: entry }">
-                <div class="text-right">
-                    {{
-                        entry.entry.spentTime > 0
-                            ? fromSecondsToFormattedDuration(
-                                  parseFloat(((Math.round(entry.entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                  { seconds: false },
-                              )
-                            : ''
-                    }}
+        <template #time-data="{ row: entry }">
+            <div class="text-right">
+                {{
+                    entry.entry.spentTime > 0
+                        ? fromSecondsToFormattedDuration(
+                              parseFloat(((Math.round(entry.entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                              { seconds: false },
+                          )
+                        : ''
+                }}
 
-                    <UBadge v-if="entry.entry.startTime !== undefined" color="green">
-                        {{ $t('common.active') }}
-                    </UBadge>
-                </div>
-            </template>
-        </UTable>
+                <UBadge v-if="entry.entry.startTime !== undefined" color="green">
+                    {{ $t('common.active') }}
+                </UBadge>
+            </div>
+        </template>
+    </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-    </template>
+    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 
     <UAccordion v-if="data && data.stats" :items="[{ slot: 'stats', label: $t('common.stats') }]" class="px-3 py-0.5">
         <template #stats>

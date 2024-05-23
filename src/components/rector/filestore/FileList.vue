@@ -137,40 +137,34 @@ const columns = [
             :retry="refresh"
         />
 
-        <template v-else>
-            <UTable
-                :loading="loading"
-                :columns="columns"
-                :rows="data?.files"
-                :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
-            >
-                <template #actions-data="{ row: file }">
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-eye"
-                        :external="true"
-                        target="_blank"
-                        :to="`/api/filestore/${file.name}`"
-                    />
-                    <UButton
-                        variant="link"
-                        icon="i-mdi-trash-can"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteFile(file.name),
-                            })
-                        "
-                    />
-                </template>
-                <template #fileSize-data="{ row: file }">
-                    {{ formatBytes(file.size) }}
-                </template>
-                <template #updatedAt-data="{ row: file }">
-                    <GenericTime :value="toDate(file.lastModified)" />
-                </template>
-            </UTable>
+        <UTable
+            v-else
+            :loading="loading"
+            :columns="columns"
+            :rows="data?.files"
+            :empty-state="{ icon: 'i-mdi-file-multiple', label: $t('common.not_found', [$t('common.file', 2)]) }"
+            class="flex-1"
+        >
+            <template #actions-data="{ row: file }">
+                <UButton variant="link" icon="i-mdi-eye" :external="true" target="_blank" :to="`/api/filestore/${file.name}`" />
+                <UButton
+                    variant="link"
+                    icon="i-mdi-trash-can"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteFile(file.name),
+                        })
+                    "
+                />
+            </template>
+            <template #fileSize-data="{ row: file }">
+                {{ formatBytes(file.size) }}
+            </template>
+            <template #updatedAt-data="{ row: file }">
+                <GenericTime :value="toDate(file.lastModified)" />
+            </template>
+        </UTable>
 
-            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" infinite />
-        </template>
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" infinite />
     </template>
 </template>

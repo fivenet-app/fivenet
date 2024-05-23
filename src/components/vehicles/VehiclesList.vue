@@ -216,6 +216,7 @@ defineShortcuts({
         :columns="columns"
         :rows="data?.vehicles"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
+        class="flex-1"
     >
         <template #plate-data="{ row: vehicle }">
             <LicensePlate :plate="vehicle.plate" class="mr-2" />

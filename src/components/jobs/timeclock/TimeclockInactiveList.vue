@@ -131,6 +131,7 @@ const columns = [
         :columns="columns"
         :rows="data?.colleagues"
         :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+        class="flex-1"
     >
         <template #name-data="{ row: colleague }">
             <div class="inline-flex items-center">

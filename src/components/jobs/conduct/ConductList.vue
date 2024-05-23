@@ -289,6 +289,7 @@ defineShortcuts({
         :columns="columns"
         :rows="data?.entries"
         :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
+        class="flex-1"
     >
         <template #createdAt-data="{ row: conduct }">
             <GenericTime :value="conduct.createdAt" />

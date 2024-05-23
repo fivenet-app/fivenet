@@ -74,35 +74,35 @@ const columns = [
         :title="$t('common.unable_to_load', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`])"
         :retry="refresh"
     />
-    <template v-else>
-        <UTable
-            :loading="loading"
-            :columns="columns"
-            :rows="data?.relations"
-            :empty-state="{
-                icon: 'i-mdi-file-multiple',
-                label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
-            }"
-        >
-            <template #document-data="{ row: relation }">
-                <DocumentInfoPopover :document="relation.document" />
-            </template>
-            <template #closed-data="{ row: relation }">
-                <OpenClosedBadge :closed="relation.document?.closed" variant="subtle" />
-            </template>
-            <template #relation-data="{ row: relation }">
-                <span class="font-medium">
-                    {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
-                </span>
-            </template>
-            <template #date-data="{ row: relation }">
-                <GenericTime :value="relation.createdAt" />
-            </template>
-            <template #creator-data="{ row: relation }">
-                <CitizenInfoPopover :user="relation.sourceUser" />
-            </template>
-        </UTable>
+    <UTable
+        v-else
+        :loading="loading"
+        :columns="columns"
+        :rows="data?.relations"
+        :empty-state="{
+            icon: 'i-mdi-file-multiple',
+            label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
+        }"
+        class="flex-1"
+    >
+        <template #document-data="{ row: relation }">
+            <DocumentInfoPopover :document="relation.document" />
+        </template>
+        <template #closed-data="{ row: relation }">
+            <OpenClosedBadge :closed="relation.document?.closed" variant="subtle" />
+        </template>
+        <template #relation-data="{ row: relation }">
+            <span class="font-medium">
+                {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
+            </span>
+        </template>
+        <template #date-data="{ row: relation }">
+            <GenericTime :value="relation.createdAt" />
+        </template>
+        <template #creator-data="{ row: relation }">
+            <CitizenInfoPopover :user="relation.sourceUser" />
+        </template>
+    </UTable>
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-    </template>
+    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>
