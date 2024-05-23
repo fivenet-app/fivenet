@@ -301,6 +301,7 @@ func (s *Server) getComment(ctx context.Context, id uint64, userInfo *userinfo.U
 			tCreator.JobGrade,
 			tCreator.Firstname,
 			tCreator.Lastname,
+			tCreator.Dateofbirth,
 			tUserProps.Avatar.AS("creator.avatar"),
 		).
 		FROM(
@@ -409,7 +410,7 @@ func (s *Server) notifyUsersNewComment(ctx context.Context, documentId uint64, s
 		return err
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo, false)
 	if err != nil {
 		return err
 	}

@@ -4,8 +4,6 @@ import { type TranslateItem } from '~/composables/i18n';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
-const notifications = useNotificatorStore();
-
 const props = withDefaults(
     defineProps<{
         id: string | number | string;
@@ -28,6 +26,8 @@ const props = withDefaults(
         size: 'sm',
     },
 );
+
+const notifications = useNotificatorStore();
 
 function copyDocumentIDToClipboard(): void {
     copyToClipboardWrapper(props.prefix ? props.prefix + '-' + props.id : props.id.toString());

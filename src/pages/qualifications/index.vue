@@ -34,7 +34,7 @@ const router = useRouter();
 
 const selectedTab = computed({
     get() {
-        const index = items.findIndex((item) => item.label === route.query.tab);
+        const index = items.findIndex((item) => item.slot === route.query.tab);
         if (index === -1) {
             return 0;
         }

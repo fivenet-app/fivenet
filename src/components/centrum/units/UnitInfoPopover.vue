@@ -24,7 +24,7 @@ withDefaults(
     <template v-if="!unit">
         <span class="inline-flex items-center">
             <slot name="before" />
-            <span>N/A</span>
+            <span>{{ $t('common.na') }}</span>
         </span>
     </template>
     <UPopover v-else>

@@ -676,7 +676,7 @@ func (s *Server) notifyMentionedUser(ctx context.Context, documentId uint64, sou
 		return nil
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(documentId)), userInfo, false)
 	if err != nil {
 		return err
 	}

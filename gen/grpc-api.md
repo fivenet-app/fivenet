@@ -5775,6 +5775,7 @@ TODO allow links to internal
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  |  |
+| info_only | [bool](#bool) | optional |  |
 
 
 
@@ -6738,6 +6739,7 @@ Access =====================================================================
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | document_id | [uint64](#uint64) |  |  |
+| info_only | [bool](#bool) | optional |  |
 
 
 
@@ -7464,6 +7466,7 @@ Templates ==================================================================
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  |  |
+| info_only | [bool](#bool) | optional |  |
 
 
 

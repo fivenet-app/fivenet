@@ -119,7 +119,7 @@ ${JSON.stringify(JSON.parse(logEntry.data!), undefined, 2)}
 \`\`\`
 `;
     } else {
-        text += `Data: N/A
+        text += `Data: ${t('common.na')}
 `;
     }
 
@@ -303,7 +303,7 @@ const columns = [
                 {{ EventType[row.state] }}
             </template>
             <template #data-data="{ row }">
-                <span v-if="!row.data">N/A</span>
+                <span v-if="!row.data">{{ $t('common.na') }}</span>
                 <span v-else>
                     <VueJsonPretty
                         :data="JSON.parse(row.data!) as JSONDataType"

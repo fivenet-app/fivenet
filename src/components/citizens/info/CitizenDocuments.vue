@@ -1,7 +1,9 @@
 <script lang="ts" setup>
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
@@ -82,51 +84,22 @@ const columns = [
                 label: $t('common.not_found', [`${$t('common.citizen', 1)} ${$t('common.document', 2)}`]),
             }"
         >
-            <template #document-data="{ row }">
-                <UButton
-                    variant="link"
-                    :to="{
-                        name: 'documents-id',
-                        params: {
-                            id: row.documentId,
-                        },
-                    }"
-                >
-                    <UBadge v-if="row.document?.category">
-                        {{ row.document.category.name }}
-                    </UBadge>
-
-                    <div class="line-clamp-2 w-full whitespace-normal break-words hover:line-clamp-4">
-                        {{ row.document?.title ?? $t('common.na') }}
-                    </div>
-                </UButton>
+            <template #document-data="{ row: relation }">
+                <DocumentInfoPopover :document="relation.document" />
             </template>
-            <template #closed-data="{ row }">
-                <div class="inline-flex gap-1">
-                    <template v-if="row.document?.closed">
-                        <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
-                        <span class="text-sm font-medium text-error-400">
-                            {{ $t('common.close', 2) }}
-                        </span>
-                    </template>
-                    <template v-else>
-                        <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-400" />
-                        <span class="text-sm font-medium text-success-400">
-                            {{ $t('common.open', 2) }}
-                        </span>
-                    </template>
-                </div>
+            <template #closed-data="{ row: relation }">
+                <OpenClosedBadge :closed="relation.document?.closed" variant="subtle" />
             </template>
-            <template #relation-data="{ row }">
+            <template #relation-data="{ row: relation }">
                 <span class="font-medium">
-                    {{ $t(`enums.docstore.DocRelation.${DocRelation[row.relation]}`) }}
+                    {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                 </span>
             </template>
-            <template #date-data="{ row }">
-                <GenericTime :value="row.createdAt" />
+            <template #date-data="{ row: relation }">
+                <GenericTime :value="relation.createdAt" />
             </template>
-            <template #creator-data="{ row }">
-                <CitizenInfoPopover :user="row.sourceUser" />
+            <template #creator-data="{ row: relation }">
+                <CitizenInfoPopover :user="relation.sourceUser" />
             </template>
         </UTable>
 

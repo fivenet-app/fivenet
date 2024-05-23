@@ -5,11 +5,12 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import { useAuthStore } from '~/store/auth';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { isFuture } from 'date-fns';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
-        user: Colleague | undefined;
-        noPopover?: boolean;
+        userId?: number | undefined;
+        user?: Colleague | undefined;
         textClass?: unknown;
         showAvatar?: boolean;
         trailing?: boolean;
@@ -25,44 +26,72 @@ withDefaults(
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
+
+const { popover } = useAppConfig();
+
+const {
+    data,
+    refresh,
+    pending: loading,
+    error,
+} = useLazyAsyncData(
+    `colleague-info-${props.userId ?? props.user?.userId}`,
+    () => getCitizen(props.userId ?? props.user?.userId ?? 0),
+    { immediate: false },
+);
+
+async function getCitizen(id: number): Promise<Colleague> {
+    try {
+        const call = getGRPCJobsClient().getColleague({
+            userId: id,
+            infoOnly: true,
+        });
+        const { response } = await call;
+
+        return response.colleague!;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
+const user = computed(() => data.value || props.user);
+
+const opened = ref(false);
+watchOnce(opened, async () => {
+    if (!props.user) {
+        refresh();
+    } else {
+        useTimeoutFn(async () => refresh(), popover.waitTime);
+    }
+});
 </script>
 
 <template>
-    <template v-if="!user">
+    <template v-if="!user && !userId">
         <span class="inline-flex items-center">
             <slot name="before" />
-            <span>N/A</span>
-            <slot name="after" />
-        </span>
-    </template>
-    <template v-else-if="noPopover">
-        <span class="inline-flex items-center">
-            <slot name="before" />
-            <UButton
-                variant="link"
-                :padded="false"
-                :to="{
-                    name: activeChar?.job === user.job ? 'jobs-colleagues-id' : 'citizens-id',
-                    params: { id: user.userId ?? 0 },
-                }"
-            >
-                {{ user.firstname }} {{ user.lastname }}
-            </UButton>
-            <span v-if="user.phoneNumber">
-                <PhoneNumberBlock v-if="user.phoneNumber" :number="user.phoneNumber" :hide-number="true" :show-label="false" />
-            </span>
+            <span>{{ $t('common.na') }}</span>
             <slot name="after" />
         </span>
     </template>
     <UPopover v-else>
         <UButton
+            v-bind="$attrs"
             variant="link"
             :padded="false"
-            class="inline-flex items-center"
+            class="inline-flex items-center gap-1 p-px"
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
+            @click="opened = true"
         >
             <slot name="before" />
-            <span class="truncate" :class="textClass"> {{ user.firstname }} {{ user.lastname }} </span>
+            <template #leading v-if="showAvatar">
+                <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
+                <ProfilePictureImg v-else :src="user?.avatar?.url" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
+            </template>
+
+            <USkeleton v-if="!user && loading" class="h-8 w-[125px]" />
+            <span v-else class="truncate" :class="textClass"> {{ user?.firstname }} {{ user?.lastname }} </span>
             <slot name="after" />
         </UButton>
 
@@ -70,12 +99,12 @@ const { activeChar } = storeToRefs(authStore);
             <div class="flex flex-col gap-2 p-4">
                 <UButtonGroup class="inline-flex w-full">
                     <UButton
-                        v-if="can('JobsService.GetColleague') && activeChar?.job === user.job"
+                        v-if="can('JobsService.GetColleague') && activeChar?.job === user?.job"
                         variant="link"
                         icon="i-mdi-account"
                         :to="{
                             name: 'jobs-colleagues-id',
-                            params: { id: user.userId ?? 0 },
+                            params: { id: user?.userId ?? 0 },
                         }"
                     >
                         {{ $t('common.profile') }}
@@ -86,21 +115,34 @@ const { activeChar } = storeToRefs(authStore);
                         icon="i-mdi-account"
                         :to="{
                             name: 'citizens-id',
-                            params: { id: user.userId ?? 0 },
+                            params: { id: user?.userId ?? 0 },
                         }"
                     >
                         {{ $t('common.profile') }}
                     </UButton>
 
                     <PhoneNumberBlock
-                        v-if="user.phoneNumber"
-                        :number="user.phoneNumber"
+                        v-if="user?.phoneNumber"
+                        :number="user?.phoneNumber"
                         :hide-number="true"
                         :show-label="true"
                     />
                 </UButtonGroup>
 
-                <div class="inline-flex flex-row gap-2 text-gray-900 dark:text-white">
+                <div v-if="error">
+                    <DataErrorBlock :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
+                </div>
+
+                <div v-else-if="loading && !user" class="flex flex-col gap-2 text-gray-900 dark:text-white">
+                    <USkeleton class="h-8 w-[250px]" />
+
+                    <div class="flex flex-row items-center gap-2">
+                        <USkeleton class="h-7 w-[60px]" />
+                        <USkeleton class="h-6 w-[215px]" />
+                    </div>
+                </div>
+
+                <div v-else-if="user" class="inline-flex flex-row gap-2 text-gray-900 dark:text-white">
                     <div v-if="showAvatar === undefined || showAvatar">
                         <ProfilePictureImg :src="user.avatar?.url" :name="`${user.firstname} ${user.lastname}`" />
                     </div>

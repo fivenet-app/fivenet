@@ -76,6 +76,7 @@ message ListDocumentsResponse {
 
 message GetDocumentRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
+  optional bool info_only = 2;
 }
 
 message GetDocumentResponse {

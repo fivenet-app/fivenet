@@ -139,7 +139,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		)
 }
 
-func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo) jet.SelectStatement {
+func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, withContent bool) jet.SelectStatement {
 	var wheres []jet.BoolExpression
 	if !userInfo.SuperUser {
 		wheres = []jet.BoolExpression{
@@ -189,8 +189,6 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			tDCategory.Job,
 			tDocument.Title,
 			tDocument.ContentType,
-			tDocument.Data,
-			tDocument.Content,
 			tDocument.CreatorID,
 			tDocument.TemplateID,
 			tCreator.ID,
@@ -205,6 +203,13 @@ func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.Proj
 			tDocument.Closed,
 			tDocument.Public,
 			tDocument.TemplateID,
+		}
+
+		if withContent {
+			columns = append(columns,
+				tDocument.Data,
+				tDocument.Content,
+			)
 		}
 
 		if userInfo.SuperUser {

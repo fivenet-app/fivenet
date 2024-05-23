@@ -428,6 +428,10 @@ func (m *GetUserRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.InfoOnly != nil {
+		// no validation rules for InfoOnly
+	}
+
 	if len(errors) > 0 {
 		return GetUserRequestMultiError(errors)
 	}

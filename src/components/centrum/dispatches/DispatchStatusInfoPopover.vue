@@ -13,7 +13,7 @@ const modal = useModal();
     <template v-if="!status">
         <span class="inline-flex items-center">
             <slot name="before" />
-            <span>N/A</span>
+            <span>{{ $t('common.na') }}</span>
             <slot name="after" />
         </span>
     </template>

@@ -4,6 +4,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { UserActivity } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { CitizenAttributes } from '~~/gen/ts/resources/users/users';
+import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 
 const props = defineProps<{
     activity: UserActivity;
@@ -27,22 +28,18 @@ const props = defineProps<{
                             {{ $t('components.citizens.CitizenInfoActivityFeedEntry.document_relation.removed') }}
                         </template>
 
-                        <UButton
-                            variant="link"
-                            :padded="false"
-                            :to="{
-                                name: 'documents-id',
-                                params: { id: activity.newValue !== '' ? activity.newValue : activity.oldValue },
-                            }"
-                        >
-                            {{ $t('common.document', 1) }}
-                            <IDCopyBadge
-                                :id="activity.newValue !== '' ? activity.newValue : activity.oldValue"
-                                prefix="DOC"
-                                size="xs"
-                            />
-                        </UButton>
+                        <DocumentInfoPopover :document-id="activity.newValue !== '' ? activity.newValue : activity.oldValue">
+                            <template #title>
+                                {{ $t('common.document', 1) }}
+                                <IDCopyBadge
+                                    :id="activity.newValue !== '' ? activity.newValue : activity.oldValue"
+                                    prefix="DOC"
+                                    size="xs"
+                                />
+                            </template>
+                        </DocumentInfoPopover>
                     </h3>
+
                     <p class="text-sm">
                         <GenericTime :value="activity.createdAt" type="long" />
                     </p>

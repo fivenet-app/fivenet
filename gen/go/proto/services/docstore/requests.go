@@ -146,7 +146,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -278,7 +278,7 @@ func (s *Server) UpdateDocumentReq(ctx context.Context, req *UpdateDocumentReqRe
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}

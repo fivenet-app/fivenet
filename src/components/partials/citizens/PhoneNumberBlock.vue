@@ -53,7 +53,7 @@ async function doCall(): Promise<void> {
 
 <template>
     <div class="inline-flex items-center" :class="!padded && 'gap-1'">
-        <span v-if="number === undefined">N/A</span>
+        <span v-if="number === undefined">{{ $t('common.na') }}</span>
         <template v-else>
             <UButton v-if="showIcon" variant="link" icon="i-mdi-phone" :padded="padded" @click="doCall">
                 <span class="sr-only">{{ $t('common.call') }}</span>

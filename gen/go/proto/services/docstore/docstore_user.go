@@ -156,6 +156,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDCreator.JobGrade,
 			tDCreator.Firstname,
 			tDCreator.Lastname,
+			tDCreator.Dateofbirth,
 			tDocRel.SourceUserID,
 			tASource.ID,
 			tASource.Identifier,
@@ -163,6 +164,7 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tASource.JobGrade,
 			tASource.Firstname,
 			tASource.Lastname,
+			tASource.Dateofbirth,
 			tDocRel.Relation,
 			tDocRel.TargetUserID,
 		).

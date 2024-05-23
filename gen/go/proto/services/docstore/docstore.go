@@ -205,9 +205,12 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		return nil, errorsdocstore.ErrDocViewDenied
 	}
 
+	infoOnly := req.InfoOnly != nil && *req.InfoOnly
+	withContent := req.InfoOnly == nil || !*req.InfoOnly
+
 	resp := &GetDocumentResponse{}
 	resp.Document, err = s.getDocument(ctx,
-		tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+		tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, withContent)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -220,21 +223,23 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 		s.enricher.EnrichJobInfoSafe(userInfo, resp.Document.Creator)
 	}
 
-	docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
-		DocumentId: resp.Document.Id,
-	})
-	if err != nil {
-		if st, ok := status.FromError(err); !ok {
-			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-		} else {
-			// Ignore permission denied as we are simply getting the document
-			if st.Code() != codes.PermissionDenied {
+	if !infoOnly {
+		docAccess, err := s.GetDocumentAccess(ctx, &GetDocumentAccessRequest{
+			DocumentId: resp.Document.Id,
+		})
+		if err != nil {
+			if st, ok := status.FromError(err); !ok {
 				return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+			} else {
+				// Ignore permission denied as we are simply getting the document
+				if st.Code() != codes.PermissionDenied {
+					return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+				}
 			}
 		}
-	}
-	if docAccess != nil {
-		resp.Access = docAccess.Access
+		if docAccess != nil {
+			resp.Access = docAccess.Access
+		}
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
@@ -242,10 +247,10 @@ func (s *Server) GetDocument(ctx context.Context, req *GetDocumentRequest) (*Get
 	return resp, nil
 }
 
-func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*documents.Document, error) {
+func (s *Server) getDocument(ctx context.Context, condition jet.BoolExpression, userInfo *userinfo.UserInfo, withContent bool) (*documents.Document, error) {
 	var doc documents.Document
 
-	stmt := s.getDocumentQuery(condition, nil, userInfo).
+	stmt := s.getDocumentQuery(condition, nil, userInfo, withContent).
 		LIMIT(1)
 
 	if err := stmt.QueryContext(ctx, s.db, &doc); err != nil {
@@ -391,7 +396,7 @@ func (s *Server) UpdateDocument(ctx context.Context, req *UpdateDocumentRequest)
 
 	doc, err := s.getDocument(ctx,
 		tDocument.ID.EQ(jet.Uint64(req.DocumentId)),
-		userInfo)
+		userInfo, true)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -531,7 +536,7 @@ func (s *Server) DeleteDocument(ctx context.Context, req *DeleteDocumentRequest)
 		}
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -607,7 +612,7 @@ func (s *Server) ToggleDocument(ctx context.Context, req *ToggleDocumentRequest)
 		}
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
@@ -681,7 +686,7 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 		return nil, errorsdocstore.ErrDocOwnerFailed
 	}
 
-	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo)
+	doc, err := s.getDocument(ctx, tDocument.ID.EQ(jet.Uint64(req.DocumentId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}

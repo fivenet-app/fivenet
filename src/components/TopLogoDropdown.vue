@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useNotificatorStore } from '~/store/notificator';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 const { isNotificationsSlideoverOpen } = useDashboard();
 
@@ -26,7 +27,7 @@ watch(getNotificationsCount, () => {
 <template>
     <UDropdown v-slot="{ open }" class="w-full" :ui="{ width: 'w-full' }" :popper="{ strategy: 'absolute' }">
         <UButton color="gray" variant="ghost" :class="[open && 'bg-gray-50 dark:bg-gray-800']" class="w-full">
-            <img src="/images/logo-200x200.png" class="size-4" />
+            <FiveNetLogo class="size-4" />
 
             <span class="truncate font-semibold text-gray-900 dark:text-white">FiveNet</span>
         </UButton>

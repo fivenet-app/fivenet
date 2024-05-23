@@ -341,7 +341,7 @@ defineShortcuts({
                     </div>
                 </div>
             </li>
-            <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :doc="doc" />
+            <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
         </ul>
     </div>
 

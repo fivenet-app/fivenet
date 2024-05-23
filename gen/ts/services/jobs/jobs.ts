@@ -77,6 +77,10 @@ export interface GetColleagueRequest {
      * @generated from protobuf field: int32 user_id = 1;
      */
     userId: number;
+    /**
+     * @generated from protobuf field: optional bool info_only = 2;
+     */
+    infoOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.GetColleagueResponse
@@ -374,7 +378,8 @@ export const GetSelfResponse = new GetSelfResponse$Type();
 class GetColleagueRequest$Type extends MessageType<GetColleagueRequest> {
     constructor() {
         super("services.jobs.GetColleagueRequest", [
-            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ }
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 2, name: "info_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetColleagueRequest>): GetColleagueRequest {
@@ -392,6 +397,9 @@ class GetColleagueRequest$Type extends MessageType<GetColleagueRequest> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
+                case /* optional bool info_only */ 2:
+                    message.infoOnly = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -407,6 +415,9 @@ class GetColleagueRequest$Type extends MessageType<GetColleagueRequest> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
+        /* optional bool info_only = 2; */
+        if (message.infoOnly !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.infoOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -31,6 +31,7 @@ message GetSelfResponse {
 
 message GetColleagueRequest {
   int32 user_id = 1;
+  optional bool info_only = 2;
 }
 
 message GetColleagueResponse {

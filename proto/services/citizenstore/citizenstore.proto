@@ -27,6 +27,7 @@ message ListCitizensResponse {
 
 message GetUserRequest {
   int32 user_id = 1 [(validate.rules).int32.gt = 0];
+  optional bool info_only = 2;
 }
 
 message GetUserResponse {

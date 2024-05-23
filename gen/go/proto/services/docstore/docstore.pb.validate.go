@@ -1770,6 +1770,10 @@ func (m *GetDocumentRequest) validate(all bool) error {
 
 	// no validation rules for DocumentId
 
+	if m.InfoOnly != nil {
+		// no validation rules for InfoOnly
+	}
+
 	if len(errors) > 0 {
 		return GetDocumentRequestMultiError(errors)
 	}

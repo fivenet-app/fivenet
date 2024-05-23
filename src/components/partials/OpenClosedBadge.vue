@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 defineProps<{
-    closed: boolean;
+    closed: boolean | undefined;
 }>();
 </script>
 

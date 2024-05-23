@@ -194,6 +194,10 @@ export interface GetDocumentRequest {
      * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
      */
     documentId: string;
+    /**
+     * @generated from protobuf field: optional bool info_only = 2;
+     */
+    infoOnly?: boolean;
 }
 /**
  * @generated from protobuf message services.docstore.GetDocumentResponse
@@ -1464,7 +1468,8 @@ export const ListDocumentsResponse = new ListDocumentsResponse$Type();
 class GetDocumentRequest$Type extends MessageType<GetDocumentRequest> {
     constructor() {
         super("services.docstore.GetDocumentRequest", [
-            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "info_only", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetDocumentRequest>): GetDocumentRequest {
@@ -1482,6 +1487,9 @@ class GetDocumentRequest$Type extends MessageType<GetDocumentRequest> {
                 case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
                     message.documentId = reader.uint64().toString();
                     break;
+                case /* optional bool info_only */ 2:
+                    message.infoOnly = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1497,6 +1505,9 @@ class GetDocumentRequest$Type extends MessageType<GetDocumentRequest> {
         /* uint64 document_id = 1 [jstype = JS_STRING]; */
         if (message.documentId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* optional bool info_only = 2; */
+        if (message.infoOnly !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.infoOnly);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

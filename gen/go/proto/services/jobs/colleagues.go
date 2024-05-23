@@ -220,22 +220,29 @@ func (s *Server) GetColleague(ctx context.Context, req *GetColleagueRequest) (*G
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	if !s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
+	infoOnly := req.InfoOnly != nil && *req.InfoOnly
+
+	check := s.checkIfHasAccessToColleague(access, userInfo, &users.UserShort{
 		UserId:   targetUser.UserId,
 		Job:      targetUser.Job,
 		JobGrade: targetUser.JobGrade,
-	}) {
-		return nil, errorsjobs.ErrFailedQuery
+	})
+	if !check {
+		if userInfo.Job != targetUser.Job || !infoOnly {
+			return nil, errorsjobs.ErrFailedQuery
+		}
 	}
 
 	// Field Permission Check
-	typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-	}
 	var types perms.StringList
-	if typesAttr != nil {
-		types = typesAttr.([]string)
+	if !infoOnly {
+		typesAttr, err := s.ps.Attr(userInfo, permsjobs.JobsServicePerm, permsjobs.JobsServiceGetColleaguePerm, permsjobs.JobsServiceGetColleagueTypesPermField)
+		if err != nil {
+			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+		}
+		if typesAttr != nil {
+			types = typesAttr.([]string)
+		}
 	}
 	if userInfo.SuperUser {
 		types = []string{"Note"}

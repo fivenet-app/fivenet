@@ -273,6 +273,8 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 		s.customDB.Columns.User.GetVisum(tUser.Alias()),
 	}
 
+	infoOnly := req.InfoOnly != nil && *req.InfoOnly
+
 	// Field Permission Check
 	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
@@ -371,7 +373,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	}
 
 	// Check if user can see licenses and fetch them
-	if slices.Contains(fields, "Licenses") {
+	if !infoOnly && slices.Contains(fields, "Licenses") {
 		stmt := tUser.
 			SELECT(
 				tUserLicenses.Type.AS("license.type"),

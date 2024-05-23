@@ -618,6 +618,10 @@ func (m *GetColleagueRequest) validate(all bool) error {
 
 	// no validation rules for UserId
 
+	if m.InfoOnly != nil {
+		// no validation rules for InfoOnly
+	}
+
 	if len(errors) > 0 {
 		return GetColleagueRequestMultiError(errors)
 	}

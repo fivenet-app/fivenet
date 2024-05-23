@@ -79,4 +79,7 @@ export default defineAppConfig({
             images: ['image/jpeg', 'image/jpg', 'image/png'],
         },
     },
+    popover: {
+        waitTime: 1000,
+    },
 });
