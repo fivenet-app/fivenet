@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.qualifications;
 
 import "google/protobuf/duration.proto";
+import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -16,8 +17,9 @@ message Exam {
   optional resources.timestamp.Timestamp updated_at = 3;
   optional resources.timestamp.Timestamp deleted_at = 4;
   uint64 qualification_id = 5 [jstype = JS_STRING];
-  ExamSettings settings = 6 [(validate.rules).message.required = true];
-  ExamQuestions questions = 7 [(validate.rules).message.required = true];
+  optional resources.qualifications.QualificationShort qualification = 6;
+  ExamSettings settings = 7 [(validate.rules).message.required = true];
+  ExamQuestions questions = 8 [(validate.rules).message.required = true];
 }
 
 message ExamSettings {

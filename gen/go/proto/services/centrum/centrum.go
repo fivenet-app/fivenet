@@ -20,7 +20,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/tracker"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
@@ -187,7 +186,7 @@ func (s *Server) handleAppConfigUpdate(ctx context.Context, cfg *appconfig.Cfg) 
 
 func (s *Server) watchForChanges(msg jetstream.Msg) {
 	remoteCtx, _ := events.GetJetstreamMsgContext(msg)
-	_, span := otel.GetTracerProvider().Tracer("centrum").Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
+	_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
 	defer span.End()
 
 	startTime := time.Now()

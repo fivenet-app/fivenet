@@ -8,7 +8,6 @@ import (
 
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 )
@@ -65,7 +64,7 @@ func (c *Config) handleMessageFunc(ctx context.Context) jetstream.MessageHandler
 		if err != nil {
 			c.logger.Error("failed to get js msg context", zap.Error(err))
 		}
-		_, span := otel.GetTracerProvider().Tracer("centrum").Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
+		_, span := c.tracer.Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
 		defer span.End()
 
 		if err := msg.Ack(); err != nil {

@@ -11,6 +11,7 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../google/protobuf/duration";
+import { QualificationShort } from "./qualifications";
 import { Timestamp } from "../timestamp/timestamp";
 // Exam / Questions
 
@@ -39,11 +40,15 @@ export interface Exam {
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamSettings settings = 6;
+     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 6;
+     */
+    qualification?: QualificationShort;
+    /**
+     * @generated from protobuf field: resources.qualifications.ExamSettings settings = 7;
      */
     settings?: ExamSettings;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamQuestions questions = 7;
+     * @generated from protobuf field: resources.qualifications.ExamQuestions questions = 8;
      */
     questions?: ExamQuestions;
 }
@@ -266,8 +271,9 @@ class Exam$Type extends MessageType<Exam> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
             { no: 5, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 6, name: "settings", kind: "message", T: () => ExamSettings, options: { "validate.rules": { message: { required: true } } } },
-            { no: 7, name: "questions", kind: "message", T: () => ExamQuestions, options: { "validate.rules": { message: { required: true } } } }
+            { no: 6, name: "qualification", kind: "message", T: () => QualificationShort },
+            { no: 7, name: "settings", kind: "message", T: () => ExamSettings, options: { "validate.rules": { message: { required: true } } } },
+            { no: 8, name: "questions", kind: "message", T: () => ExamQuestions, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
     create(value?: PartialMessage<Exam>): Exam {
@@ -298,10 +304,13 @@ class Exam$Type extends MessageType<Exam> {
                 case /* uint64 qualification_id = 5 [jstype = JS_STRING];*/ 5:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* resources.qualifications.ExamSettings settings */ 6:
+                case /* optional resources.qualifications.QualificationShort qualification */ 6:
+                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                    break;
+                case /* resources.qualifications.ExamSettings settings */ 7:
                     message.settings = ExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
                     break;
-                case /* resources.qualifications.ExamQuestions questions */ 7:
+                case /* resources.qualifications.ExamQuestions questions */ 8:
                     message.questions = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.questions);
                     break;
                 default:
@@ -331,12 +340,15 @@ class Exam$Type extends MessageType<Exam> {
         /* uint64 qualification_id = 5 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(5, WireType.Varint).uint64(message.qualificationId);
-        /* resources.qualifications.ExamSettings settings = 6; */
+        /* optional resources.qualifications.QualificationShort qualification = 6; */
+        if (message.qualification)
+            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamSettings settings = 7; */
         if (message.settings)
-            ExamSettings.internalBinaryWrite(message.settings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamQuestions questions = 7; */
+            ExamSettings.internalBinaryWrite(message.settings, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamQuestions questions = 8; */
         if (message.questions)
-            ExamQuestions.internalBinaryWrite(message.questions, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
+            ExamQuestions.internalBinaryWrite(message.questions, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

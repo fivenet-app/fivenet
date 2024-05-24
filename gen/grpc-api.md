@@ -3267,6 +3267,7 @@
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | qualification_id | [uint64](#uint64) |  |  |
+| qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
 | settings | [ExamSettings](#resources-qualifications-ExamSettings) |  |  |
 | questions | [ExamQuestions](#resources-qualifications-ExamQuestions) |  |  |
 

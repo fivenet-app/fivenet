@@ -435,6 +435,43 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	return &quali, nil
 }
 
+func (s *Server) getQualificationShort(ctx context.Context, qualificationId uint64, condition jet.BoolExpression, userInfo *userinfo.UserInfo) (*qualifications.QualificationShort, error) {
+	var quali qualifications.Qualification
+
+	stmt := s.getQualificationQuery(qualificationId, condition, nil, userInfo, false)
+
+	if err := stmt.QueryContext(ctx, s.db, &quali); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
+	if quali.Id == 0 {
+		return nil, nil
+	}
+
+	if quali.Creator != nil {
+		s.enricher.EnrichJobInfoSafe(userInfo, quali.Creator)
+	}
+
+	return &qualifications.QualificationShort{
+		Id:           quali.Id,
+		CreatedAt:    quali.CreatedAt,
+		UpdatedAt:    quali.UpdatedAt,
+		DeletedAt:    quali.DeletedAt,
+		Job:          quali.Job,
+		Weight:       quali.Weight,
+		Closed:       quali.Closed,
+		Abbreviation: quali.Abbreviation,
+		Title:        quali.Title,
+		Description:  quali.Description,
+		CreatorId:    quali.CreatorId,
+		Creator:      quali.Creator,
+		Requirements: quali.Requirements,
+		Result:       quali.Result,
+	}, nil
+}
+
 func (s *Server) checkRequirementsMetForQualification(ctx context.Context, qualificationId uint64, userId int32) (bool, error) {
 	stmt := tQReqs.
 		SELECT(

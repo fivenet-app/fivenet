@@ -1,7 +1,30 @@
 <script lang="ts" setup>
-defineProps<{
+import type { GetExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
+
+const props = defineProps<{
     qualificationId: string;
 }>();
+
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualification-${props.qualificationId}`, () => getQualification(props.qualificationId));
+
+async function getQualification(qualificationId: string): Promise<GetExamResponse> {
+    try {
+        const call = getGRPCQualificationsClient().getExam({
+            qualificationId: qualificationId,
+        });
+        const { response } = await call;
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
 
 // TODO
 </script>
@@ -15,5 +38,9 @@ defineProps<{
         </template>
     </UDashboardNavbar>
 
-    <!-- TODO -->
+    <UCard>
+        {{ data?.exam }}
+
+        <!-- TODO -->
+    </UCard>
 </template>

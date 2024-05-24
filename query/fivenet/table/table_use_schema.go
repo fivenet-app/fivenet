@@ -59,6 +59,8 @@ func UseSchema(schema string) {
 	FivenetOauth2Accounts = FivenetOauth2Accounts.FromSchema(schema)
 	FivenetPermissions = FivenetPermissions.FromSchema(schema)
 	FivenetQualifications = FivenetQualifications.FromSchema(schema)
+	FivenetQualificationsExam = FivenetQualificationsExam.FromSchema(schema)
+	FivenetQualificationsExamResponses = FivenetQualificationsExamResponses.FromSchema(schema)
 	FivenetQualificationsJobAccess = FivenetQualificationsJobAccess.FromSchema(schema)
 	FivenetQualificationsRequests = FivenetQualificationsRequests.FromSchema(schema)
 	FivenetQualificationsRequirements = FivenetQualificationsRequirements.FromSchema(schema)

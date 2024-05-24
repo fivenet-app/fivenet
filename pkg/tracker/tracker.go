@@ -10,7 +10,7 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/puzpuzpuz/xsync/v3"
-	"go.opentelemetry.io/otel"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -37,6 +37,7 @@ type Tracker struct {
 	ITracker
 
 	logger *zap.Logger
+	tracer trace.Tracer
 	js     *events.JSWrapper
 
 	jsCons jetstream.ConsumeContext
@@ -53,6 +54,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
+	TP     *tracesdk.TracerProvider
 	JS     *events.JSWrapper
 }
 
@@ -61,6 +63,7 @@ func New(p Params) (ITracker, error) {
 
 	t := &Tracker{
 		logger: p.Logger.Named("tracker"),
+		tracer: p.TP.Tracer("tracker"),
 		js:     p.JS,
 
 		usersByJob: xsync.NewMapOf[string, *xsync.MapOf[int32, *livemap.UserMarker]](),
@@ -137,7 +140,7 @@ func New(p Params) (ITracker, error) {
 
 func (s *Tracker) watchForChanges(msg jetstream.Msg) {
 	remoteCtx, _ := events.GetJetstreamMsgContext(msg)
-	_, span := otel.GetTracerProvider().Tracer("tracker").Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
+	_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(context.Background(), remoteCtx), msg.Subject())
 	defer span.End()
 
 	if err := msg.Ack(); err != nil {

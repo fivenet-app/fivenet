@@ -13,6 +13,8 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
+	tracesdk "go.opentelemetry.io/otel/sdk/trace"
+	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 )
@@ -45,6 +47,7 @@ type Config struct {
 	logger *zap.Logger
 	db     *sql.DB
 	js     *events.JSWrapper
+	tracer trace.Tracer
 
 	jsCons jetstream.ConsumeContext
 
@@ -59,6 +62,7 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
+	TP     *tracesdk.TracerProvider
 	JS     *events.JSWrapper
 	DB     *sql.DB
 }
@@ -67,6 +71,7 @@ func New(p Params) (IConfig, error) {
 	cfg := &Config{
 		logger: p.Logger,
 		db:     p.DB,
+		tracer: p.TP.Tracer("appconfig"),
 		js:     p.JS,
 
 		cfg: atomic.Pointer[Cfg]{},

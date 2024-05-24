@@ -8,7 +8,6 @@ import (
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/nats-io/nats.go/jetstream"
-	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
@@ -46,7 +45,7 @@ func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) 
 func (s *Manager) watchTopicGeneralFunc(ctx context.Context) jetstream.MessageHandler {
 	return func(msg jetstream.Msg) {
 		remoteCtx, _ := events.GetJetstreamMsgContext(msg)
-		_, span := otel.GetTracerProvider().Tracer("centrum-manager").Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
+		_, span := s.tracer.Start(trace.ContextWithRemoteSpanContext(ctx, remoteCtx), msg.Subject())
 		defer span.End()
 
 		if err := msg.Ack(); err != nil {
