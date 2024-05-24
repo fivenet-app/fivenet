@@ -95,7 +95,6 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
-			tUser.Identifier,
 			tUser.Job,
 			tUser.JobGrade,
 			tUser.Firstname,
@@ -146,7 +145,6 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 func (s *Server) getColleague(ctx context.Context, job string, userId int32, withColumns []jet.Projection) (*jobs.Colleague, error) {
 	tUser := tUser.AS("colleague")
 	columns := []jet.Projection{
-		tUser.Identifier,
 		tUser.Firstname,
 		tUser.Lastname,
 		tUser.Job,
@@ -760,7 +758,6 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tJobsUserActivity.Reason,
 			tJobsUserActivity.Data,
 			tTargetUser.ID,
-			tTargetUser.Identifier,
 			tTargetUser.Job,
 			tTargetUser.JobGrade,
 			tTargetUser.Firstname,
@@ -773,7 +770,6 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			tTargetJobsUserProps.AbsenceBegin,
 			tTargetJobsUserProps.AbsenceEnd,
 			tSourceUser.ID,
-			tSourceUser.Identifier,
 			tSourceUser.Job,
 			tSourceUser.JobGrade,
 			tSourceUser.Firstname,

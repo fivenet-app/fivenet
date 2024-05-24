@@ -16,7 +16,6 @@ func (s *Manager) ResolveUserById(ctx context.Context, u int32) (*users.User, er
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Sex,
@@ -71,7 +70,6 @@ func (s *Manager) resolveUserShortsByIds(ctx context.Context, u ...int32) ([]*us
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Sex,

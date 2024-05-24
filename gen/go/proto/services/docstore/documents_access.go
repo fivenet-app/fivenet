@@ -137,7 +137,6 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 			tDUserAccess.UserID,
 			tDUserAccess.Access,
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,

@@ -550,7 +550,6 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Job,

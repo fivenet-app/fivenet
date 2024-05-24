@@ -98,7 +98,6 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
 	selectors := dbutils.Columns{
-		tUser.Identifier,
 		tUser.Firstname,
 		tUser.Lastname,
 		tUser.Job,
@@ -261,7 +260,6 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	defer s.aud.Log(auditEntry, req)
 
 	selectors := dbutils.Columns{
-		tUser.Identifier,
 		tUser.Firstname,
 		tUser.Lastname,
 		tUser.Job,
@@ -473,13 +471,11 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 			tUserActivity.NewValue,
 			tUserActivity.Reason,
 			tUTarget.ID,
-			tUTarget.Identifier,
 			tUTarget.Job,
 			tUTarget.JobGrade,
 			tUTarget.Firstname,
 			tUTarget.Lastname,
 			tUSource.ID,
-			tUSource.Identifier,
 			tUSource.Job,
 			tUSource.JobGrade,
 			tUSource.Firstname,

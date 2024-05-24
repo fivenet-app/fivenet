@@ -114,7 +114,6 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 			tTimeClock.EndTime,
 			tTimeClock.SpentTime,
 			tUser.ID,
-			tUser.Identifier,
 			tUser.Job,
 			tUser.JobGrade,
 			tUser.Firstname,
@@ -276,7 +275,6 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 		SELECT(
 			tTimeClock.UserID,
 			tUser.ID,
-			tUser.Identifier,
 			tUser.Job,
 			tUser.JobGrade,
 			tUser.Firstname,

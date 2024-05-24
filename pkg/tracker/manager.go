@@ -183,7 +183,6 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tUsers.ID.AS("usermarker.userid"),
 			tUsers.ID.AS("user.id"),
 			tUsers.ID.AS("markerInfo.id"),
-			tUsers.Identifier,
 			tLocs.Job.AS("user.job"),
 			tUsers.JobGrade,
 			tUsers.Firstname,

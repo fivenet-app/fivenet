@@ -42,7 +42,6 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.Ca
 			tCUserAccess.UserID,
 			tCUserAccess.Access,
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,

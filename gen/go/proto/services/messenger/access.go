@@ -45,7 +45,6 @@ func (s *Server) getThreadAccess(ctx context.Context, threadId uint64) (*messeng
 			tThreadsUserAccess.UserID,
 			tThreadsUserAccess.Access,
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,

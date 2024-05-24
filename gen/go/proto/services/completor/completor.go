@@ -107,7 +107,6 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 
 	columns := jet.ProjectionList{
 		tUsers.ID,
-		tUsers.Identifier,
 		tUsers.Firstname,
 		tUsers.Lastname,
 		tUsers.Dateofbirth,

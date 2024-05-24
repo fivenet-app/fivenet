@@ -123,7 +123,6 @@ func (s *Server) ListDocumentActivity(ctx context.Context, req *ListDocumentActi
 			tDocActivity.Reason,
 			tDocActivity.Data,
 			tCreator.ID,
-			tCreator.Identifier,
 			tCreator.Job,
 			tCreator.JobGrade,
 			tCreator.Firstname,

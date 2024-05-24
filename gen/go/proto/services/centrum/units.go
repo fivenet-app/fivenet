@@ -303,7 +303,6 @@ func (s *Server) ListUnitActivity(ctx context.Context, req *ListUnitActivityRequ
 			tUnitStatus.Y,
 			tUnitStatus.Postal,
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Firstname,
 			tUsers.Lastname,
 			tUsers.Job,

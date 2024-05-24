@@ -419,7 +419,6 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID,
-			tUsers.Identifier,
 			tUsers.Job,
 			tUsers.JobGrade,
 			tUsers.Firstname,
