@@ -51,7 +51,7 @@ async function listQualificationsResults(
             pagination: {
                 offset: offset.value,
             },
-            qualificationId,
+            qualificationId: qualificationId,
             status: status ?? [],
         });
         const { response } = await call;

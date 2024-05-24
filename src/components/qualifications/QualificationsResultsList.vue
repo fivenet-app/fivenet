@@ -42,7 +42,7 @@ async function listQualificationsResults(
             pagination: {
                 offset: offset.value,
             },
-            qualificationId,
+            qualificationId: qualificationId,
             userId,
             status: status ?? [],
         });

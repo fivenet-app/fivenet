@@ -1,5 +1,7 @@
 # migrations
 
+Uses [golang-migrate/migrate](https://github.com/golang-migrate/migrate) to run migrations if needed.
+
 Migration file naming:
 
 ```console
@@ -9,7 +11,9 @@ Migration file naming:
 {timestamp}_{title}.down.sql
 ```
 
-(For more information, see https://github.com/golang-migrate/migrate/blob/master/MIGRATIONS.md)
+(Timestamp is generated using `date +%s` command)
+
+For more information about the migration library, see https://github.com/golang-migrate/migrate/blob/master/MIGRATIONS.md
 
 ## Create ready-to-edit Migration files
 

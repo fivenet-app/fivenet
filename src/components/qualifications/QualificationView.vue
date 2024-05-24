@@ -38,7 +38,7 @@ const {
 async function getQualification(qualificationId: string): Promise<GetQualificationResponse> {
     try {
         const call = getGRPCQualificationsClient().getQualification({
-            qualificationId,
+            qualificationId: qualificationId,
         });
         const { response } = await call;
 
@@ -52,7 +52,7 @@ async function getQualification(qualificationId: string): Promise<GetQualificati
 async function deleteQualification(qualificationId: string): Promise<DeleteQualificationResponse> {
     try {
         const call = getGRPCQualificationsClient().deleteQualification({
-            qualificationId,
+            qualificationId: qualificationId,
         });
         const { response } = await call;
 
@@ -161,6 +161,19 @@ const accordionItems = computed(() =>
                         }"
                         icon="i-mdi-pencil"
                     >
+                        {{ $t('common.edit') }}
+                    </UButton>
+
+                    <!-- TODO Enable when the exam logic is ready -->
+                    <UButton
+                        v-if="false && can('QualificationsService.UpdateQualification') && canDo.edit"
+                        :to="{
+                            name: 'qualifications-id-exam-edit',
+                            params: { id: qualification.id },
+                        }"
+                        icon="i-mdi-pencil"
+                    >
+                        {{ $t('common.exam', 1) }}
                         {{ $t('common.edit') }}
                     </UButton>
 

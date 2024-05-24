@@ -53,7 +53,7 @@ async function listQualificationsRequests(
             pagination: {
                 offset: offset.value,
             },
-            qualificationId,
+            qualificationId: qualificationId,
             status: status ?? [],
         });
         const { response } = await call;
@@ -70,7 +70,7 @@ watch(offset, async () => refresh());
 async function deleteQualificationRequest(qualificationId: string, userId: number): Promise<DeleteQualificationReqResponse> {
     try {
         const call = getGRPCQualificationsClient().deleteQualificationReq({
-            qualificationId,
+            qualificationId: qualificationId,
             userId,
         });
         const { response } = await call;

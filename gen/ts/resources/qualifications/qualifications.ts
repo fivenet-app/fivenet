@@ -478,7 +478,15 @@ export enum RequestStatus {
     /**
      * @generated from protobuf enum value: REQUEST_STATUS_COMPLETED = 4;
      */
-    COMPLETED = 4
+    COMPLETED = 4,
+    /**
+     * @generated from protobuf enum value: REQUEST_STATUS_EXAM_PENDING = 5;
+     */
+    EXAM_PENDING = 5,
+    /**
+     * @generated from protobuf enum value: REQUEST_STATUS_EXAM_COMPLETED = 6;
+     */
+    EXAM_COMPLETED = 6
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {

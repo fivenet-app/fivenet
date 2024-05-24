@@ -121,7 +121,13 @@
         "qualifications": {
             "title": "Qualifications",
             "single": {
-                "title": "Qualification"
+                "title": "Qualification",
+                "exam": {
+                    "title": "Qualification Exam",
+                    "edit": {
+                        "title": "Edit Qualification Exam"
+                    }
+                }
             },
             "edit": {
                 "title": "Edit Qualification"
@@ -450,7 +456,8 @@
         "archive": "Archive",
         "paste": "Paste",
         "messenger": "Messenger",
-        "diff": "Diff"
+        "diff": "Diff",
+        "exam": "Exam | Exams"
     },
     "components": {
         "partials": {

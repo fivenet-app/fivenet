@@ -35,22 +35,21 @@ var (
 	_ = sort.Sort
 )
 
-// Validate checks the field values on QualificationExam with the rules defined
-// in the proto definition for this message. If any rules are violated, the
-// first error encountered is returned, or nil if there are no violations.
-func (m *QualificationExam) Validate() error {
+// Validate checks the field values on Exam with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Exam) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on QualificationExam with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// QualificationExamMultiError, or nil if none found.
-func (m *QualificationExam) ValidateAll() error {
+// ValidateAll checks the field values on Exam with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in ExamMultiError, or nil if none found.
+func (m *Exam) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *QualificationExam) validate(all bool) error {
+func (m *Exam) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -61,8 +60,48 @@ func (m *QualificationExam) validate(all bool) error {
 
 	// no validation rules for QualificationId
 
+	if m.GetSettings() == nil {
+		err := ExamValidationError{
+			field:  "Settings",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetSettings()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ExamValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ExamValidationError{
+					field:  "Settings",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetSettings()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ExamValidationError{
+				field:  "Settings",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if m.GetQuestions() == nil {
-		err := QualificationExamValidationError{
+		err := ExamValidationError{
 			field:  "Questions",
 			reason: "value is required",
 		}
@@ -76,7 +115,7 @@ func (m *QualificationExam) validate(all bool) error {
 		switch v := interface{}(m.GetQuestions()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, QualificationExamValidationError{
+				errors = append(errors, ExamValidationError{
 					field:  "Questions",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -84,7 +123,7 @@ func (m *QualificationExam) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, QualificationExamValidationError{
+				errors = append(errors, ExamValidationError{
 					field:  "Questions",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -93,7 +132,7 @@ func (m *QualificationExam) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetQuestions()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return QualificationExamValidationError{
+			return ExamValidationError{
 				field:  "Questions",
 				reason: "embedded message failed validation",
 				cause:  err,
@@ -107,7 +146,7 @@ func (m *QualificationExam) validate(all bool) error {
 			switch v := interface{}(m.GetCreatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationExamValidationError{
+					errors = append(errors, ExamValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -115,7 +154,7 @@ func (m *QualificationExam) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationExamValidationError{
+					errors = append(errors, ExamValidationError{
 						field:  "CreatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -124,7 +163,7 @@ func (m *QualificationExam) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return QualificationExamValidationError{
+				return ExamValidationError{
 					field:  "CreatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -140,7 +179,7 @@ func (m *QualificationExam) validate(all bool) error {
 			switch v := interface{}(m.GetUpdatedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationExamValidationError{
+					errors = append(errors, ExamValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -148,7 +187,7 @@ func (m *QualificationExam) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationExamValidationError{
+					errors = append(errors, ExamValidationError{
 						field:  "UpdatedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -157,7 +196,7 @@ func (m *QualificationExam) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return QualificationExamValidationError{
+				return ExamValidationError{
 					field:  "UpdatedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -167,20 +206,52 @@ func (m *QualificationExam) validate(all bool) error {
 
 	}
 
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
-		return QualificationExamMultiError(errors)
+		return ExamMultiError(errors)
 	}
 
 	return nil
 }
 
-// QualificationExamMultiError is an error wrapping multiple validation errors
-// returned by QualificationExam.ValidateAll() if the designated constraints
-// aren't met.
-type QualificationExamMultiError []error
+// ExamMultiError is an error wrapping multiple validation errors returned by
+// Exam.ValidateAll() if the designated constraints aren't met.
+type ExamMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m QualificationExamMultiError) Error() string {
+func (m ExamMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -189,11 +260,11 @@ func (m QualificationExamMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m QualificationExamMultiError) AllErrors() []error { return m }
+func (m ExamMultiError) AllErrors() []error { return m }
 
-// QualificationExamValidationError is the validation error returned by
-// QualificationExam.Validate if the designated constraints aren't met.
-type QualificationExamValidationError struct {
+// ExamValidationError is the validation error returned by Exam.Validate if the
+// designated constraints aren't met.
+type ExamValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -201,24 +272,22 @@ type QualificationExamValidationError struct {
 }
 
 // Field function returns field value.
-func (e QualificationExamValidationError) Field() string { return e.field }
+func (e ExamValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e QualificationExamValidationError) Reason() string { return e.reason }
+func (e ExamValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e QualificationExamValidationError) Cause() error { return e.cause }
+func (e ExamValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e QualificationExamValidationError) Key() bool { return e.key }
+func (e ExamValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e QualificationExamValidationError) ErrorName() string {
-	return "QualificationExamValidationError"
-}
+func (e ExamValidationError) ErrorName() string { return "ExamValidationError" }
 
 // Error satisfies the builtin error interface
-func (e QualificationExamValidationError) Error() string {
+func (e ExamValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -230,14 +299,14 @@ func (e QualificationExamValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sQualificationExam.%s: %s%s",
+		"invalid %sExam.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = QualificationExamValidationError{}
+var _ error = ExamValidationError{}
 
 var _ interface {
 	Field() string
@@ -245,7 +314,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = QualificationExamValidationError{}
+} = ExamValidationError{}
 
 // Validate checks the field values on ExamSettings with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -410,6 +479,17 @@ func (m *ExamQuestions) validate(all bool) error {
 
 	var errors []error
 
+	if len(m.GetData()) > 50 {
+		err := ExamQuestionsValidationError{
+			field:  "Data",
+			reason: "value must contain no more than 50 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	for idx, item := range m.GetData() {
 		_, _ = idx, item
 
@@ -543,6 +623,19 @@ func (m *ExamQuestion) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
+
+	if l := utf8.RuneCountInString(m.GetTitle()); l < 3 || l > 512 {
+		err := ExamQuestionValidationError{
+			field:  "Title",
+			reason: "value length must be between 3 and 512 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	switch v := m.Data.(type) {
 	case *ExamQuestion_Separator:
@@ -682,6 +775,21 @@ func (m *ExamQuestion) validate(all bool) error {
 
 	default:
 		_ = v // ensures v is used
+	}
+
+	if m.Description != nil {
+
+		if utf8.RuneCountInString(m.GetDescription()) > 1024 {
+			err := ExamQuestionValidationError{
+				field:  "Description",
+				reason: "value length must be at most 1024 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {
@@ -967,22 +1075,22 @@ var _ interface {
 	ErrorName() string
 } = ExamQuestionTextValidationError{}
 
-// Validate checks the field values on ExamQuestionChoices with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ExamQuestionMultipleChoice with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ExamQuestionChoices) Validate() error {
+func (m *ExamQuestionMultipleChoice) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ExamQuestionChoices with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ExamQuestionMultipleChoice with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ExamQuestionChoicesMultiError, or nil if none found.
-func (m *ExamQuestionChoices) ValidateAll() error {
+// ExamQuestionMultipleChoiceMultiError, or nil if none found.
+func (m *ExamQuestionMultipleChoice) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ExamQuestionChoices) validate(all bool) error {
+func (m *ExamQuestionMultipleChoice) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -992,7 +1100,7 @@ func (m *ExamQuestionChoices) validate(all bool) error {
 	// no validation rules for Multi
 
 	if len(m.GetChoices()) > 10 {
-		err := ExamQuestionChoicesValidationError{
+		err := ExamQuestionMultipleChoiceValidationError{
 			field:  "Choices",
 			reason: "value must contain no more than 10 item(s)",
 		}
@@ -1007,19 +1115,19 @@ func (m *ExamQuestionChoices) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return ExamQuestionChoicesMultiError(errors)
+		return ExamQuestionMultipleChoiceMultiError(errors)
 	}
 
 	return nil
 }
 
-// ExamQuestionChoicesMultiError is an error wrapping multiple validation
-// errors returned by ExamQuestionChoices.ValidateAll() if the designated
-// constraints aren't met.
-type ExamQuestionChoicesMultiError []error
+// ExamQuestionMultipleChoiceMultiError is an error wrapping multiple
+// validation errors returned by ExamQuestionMultipleChoice.ValidateAll() if
+// the designated constraints aren't met.
+type ExamQuestionMultipleChoiceMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ExamQuestionChoicesMultiError) Error() string {
+func (m ExamQuestionMultipleChoiceMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1028,11 +1136,11 @@ func (m ExamQuestionChoicesMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ExamQuestionChoicesMultiError) AllErrors() []error { return m }
+func (m ExamQuestionMultipleChoiceMultiError) AllErrors() []error { return m }
 
-// ExamQuestionChoicesValidationError is the validation error returned by
-// ExamQuestionChoices.Validate if the designated constraints aren't met.
-type ExamQuestionChoicesValidationError struct {
+// ExamQuestionMultipleChoiceValidationError is the validation error returned
+// by ExamQuestionMultipleChoice.Validate if the designated constraints aren't met.
+type ExamQuestionMultipleChoiceValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1040,24 +1148,24 @@ type ExamQuestionChoicesValidationError struct {
 }
 
 // Field function returns field value.
-func (e ExamQuestionChoicesValidationError) Field() string { return e.field }
+func (e ExamQuestionMultipleChoiceValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ExamQuestionChoicesValidationError) Reason() string { return e.reason }
+func (e ExamQuestionMultipleChoiceValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ExamQuestionChoicesValidationError) Cause() error { return e.cause }
+func (e ExamQuestionMultipleChoiceValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ExamQuestionChoicesValidationError) Key() bool { return e.key }
+func (e ExamQuestionMultipleChoiceValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ExamQuestionChoicesValidationError) ErrorName() string {
-	return "ExamQuestionChoicesValidationError"
+func (e ExamQuestionMultipleChoiceValidationError) ErrorName() string {
+	return "ExamQuestionMultipleChoiceValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ExamQuestionChoicesValidationError) Error() string {
+func (e ExamQuestionMultipleChoiceValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1069,14 +1177,14 @@ func (e ExamQuestionChoicesValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sExamQuestionChoices.%s: %s%s",
+		"invalid %sExamQuestionMultipleChoice.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ExamQuestionChoicesValidationError{}
+var _ error = ExamQuestionMultipleChoiceValidationError{}
 
 var _ interface {
 	Field() string
@@ -1084,24 +1192,24 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ExamQuestionChoicesValidationError{}
+} = ExamQuestionMultipleChoiceValidationError{}
 
-// Validate checks the field values on QualificationExamResponse with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *QualificationExamResponse) Validate() error {
+// Validate checks the field values on ExamUserResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ExamUserResponse) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on QualificationExamResponse with the
-// rules defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ExamUserResponse with the rules
+// defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// QualificationExamResponseMultiError, or nil if none found.
-func (m *QualificationExamResponse) ValidateAll() error {
+// ExamUserResponseMultiError, or nil if none found.
+func (m *ExamUserResponse) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *QualificationExamResponse) validate(all bool) error {
+func (m *ExamUserResponse) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -1116,7 +1224,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 		switch v := interface{}(m.GetResponses()).(type) {
 		case interface{ ValidateAll() error }:
 			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, QualificationExamResponseValidationError{
+				errors = append(errors, ExamUserResponseValidationError{
 					field:  "Responses",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1124,7 +1232,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 			}
 		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				errors = append(errors, QualificationExamResponseValidationError{
+				errors = append(errors, ExamUserResponseValidationError{
 					field:  "Responses",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1133,12 +1241,47 @@ func (m *QualificationExamResponse) validate(all bool) error {
 		}
 	} else if v, ok := interface{}(m.GetResponses()).(interface{ Validate() error }); ok {
 		if err := v.Validate(); err != nil {
-			return QualificationExamResponseValidationError{
+			return ExamUserResponseValidationError{
 				field:  "Responses",
 				reason: "embedded message failed validation",
 				cause:  err,
 			}
 		}
+	}
+
+	// no validation rules for Closed
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamUserResponseValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamUserResponseValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamUserResponseValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.StartedAt != nil {
@@ -1147,7 +1290,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetStartedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationExamResponseValidationError{
+					errors = append(errors, ExamUserResponseValidationError{
 						field:  "StartedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1155,7 +1298,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationExamResponseValidationError{
+					errors = append(errors, ExamUserResponseValidationError{
 						field:  "StartedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1164,7 +1307,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetStartedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return QualificationExamResponseValidationError{
+				return ExamUserResponseValidationError{
 					field:  "StartedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1180,7 +1323,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 			switch v := interface{}(m.GetEndedAt()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationExamResponseValidationError{
+					errors = append(errors, ExamUserResponseValidationError{
 						field:  "EndedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1188,7 +1331,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 				}
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationExamResponseValidationError{
+					errors = append(errors, ExamUserResponseValidationError{
 						field:  "EndedAt",
 						reason: "embedded message failed validation",
 						cause:  err,
@@ -1197,7 +1340,7 @@ func (m *QualificationExamResponse) validate(all bool) error {
 			}
 		} else if v, ok := interface{}(m.GetEndedAt()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
-				return QualificationExamResponseValidationError{
+				return ExamUserResponseValidationError{
 					field:  "EndedAt",
 					reason: "embedded message failed validation",
 					cause:  err,
@@ -1208,19 +1351,19 @@ func (m *QualificationExamResponse) validate(all bool) error {
 	}
 
 	if len(errors) > 0 {
-		return QualificationExamResponseMultiError(errors)
+		return ExamUserResponseMultiError(errors)
 	}
 
 	return nil
 }
 
-// QualificationExamResponseMultiError is an error wrapping multiple validation
-// errors returned by QualificationExamResponse.ValidateAll() if the
-// designated constraints aren't met.
-type QualificationExamResponseMultiError []error
+// ExamUserResponseMultiError is an error wrapping multiple validation errors
+// returned by ExamUserResponse.ValidateAll() if the designated constraints
+// aren't met.
+type ExamUserResponseMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m QualificationExamResponseMultiError) Error() string {
+func (m ExamUserResponseMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1229,11 +1372,11 @@ func (m QualificationExamResponseMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m QualificationExamResponseMultiError) AllErrors() []error { return m }
+func (m ExamUserResponseMultiError) AllErrors() []error { return m }
 
-// QualificationExamResponseValidationError is the validation error returned by
-// QualificationExamResponse.Validate if the designated constraints aren't met.
-type QualificationExamResponseValidationError struct {
+// ExamUserResponseValidationError is the validation error returned by
+// ExamUserResponse.Validate if the designated constraints aren't met.
+type ExamUserResponseValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1241,24 +1384,22 @@ type QualificationExamResponseValidationError struct {
 }
 
 // Field function returns field value.
-func (e QualificationExamResponseValidationError) Field() string { return e.field }
+func (e ExamUserResponseValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e QualificationExamResponseValidationError) Reason() string { return e.reason }
+func (e ExamUserResponseValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e QualificationExamResponseValidationError) Cause() error { return e.cause }
+func (e ExamUserResponseValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e QualificationExamResponseValidationError) Key() bool { return e.key }
+func (e ExamUserResponseValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e QualificationExamResponseValidationError) ErrorName() string {
-	return "QualificationExamResponseValidationError"
-}
+func (e ExamUserResponseValidationError) ErrorName() string { return "ExamUserResponseValidationError" }
 
 // Error satisfies the builtin error interface
-func (e QualificationExamResponseValidationError) Error() string {
+func (e ExamUserResponseValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1270,14 +1411,14 @@ func (e QualificationExamResponseValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sQualificationExamResponse.%s: %s%s",
+		"invalid %sExamUserResponse.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = QualificationExamResponseValidationError{}
+var _ error = ExamUserResponseValidationError{}
 
 var _ interface {
 	Field() string
@@ -1285,7 +1426,7 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = QualificationExamResponseValidationError{}
+} = ExamUserResponseValidationError{}
 
 // Validate checks the field values on ExamResponses with the rules defined in
 // the proto definition for this message. If any rules are violated, the first
@@ -1308,6 +1449,17 @@ func (m *ExamResponses) validate(all bool) error {
 	}
 
 	var errors []error
+
+	if len(m.GetData()) > 50 {
+		err := ExamResponsesValidationError{
+			field:  "Data",
+			reason: "value must contain no more than 50 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	for idx, item := range m.GetData() {
 		_, _ = idx, item
@@ -1442,6 +1594,8 @@ func (m *ExamResponse) validate(all bool) error {
 	}
 
 	var errors []error
+
+	// no validation rules for Id
 
 	switch v := m.Data.(type) {
 	case *ExamResponse_Separator:
@@ -1786,7 +1940,16 @@ func (m *ExamResponseText) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Text
+	if len(m.GetText()) > 500000 {
+		err := ExamResponseTextValidationError{
+			field:  "Text",
+			reason: "value length must be at most 500000 bytes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return ExamResponseTextMultiError(errors)
@@ -1866,42 +2029,53 @@ var _ interface {
 	ErrorName() string
 } = ExamResponseTextValidationError{}
 
-// Validate checks the field values on ExamResponseChoices with the rules
-// defined in the proto definition for this message. If any rules are
+// Validate checks the field values on ExamResponseMultipleChoice with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
-func (m *ExamResponseChoices) Validate() error {
+func (m *ExamResponseMultipleChoice) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on ExamResponseChoices with the rules
-// defined in the proto definition for this message. If any rules are
+// ValidateAll checks the field values on ExamResponseMultipleChoice with the
+// rules defined in the proto definition for this message. If any rules are
 // violated, the result is a list of violation errors wrapped in
-// ExamResponseChoicesMultiError, or nil if none found.
-func (m *ExamResponseChoices) ValidateAll() error {
+// ExamResponseMultipleChoiceMultiError, or nil if none found.
+func (m *ExamResponseMultipleChoice) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *ExamResponseChoices) validate(all bool) error {
+func (m *ExamResponseMultipleChoice) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
 
 	var errors []error
 
+	if len(m.GetChoices()) > 10 {
+		err := ExamResponseMultipleChoiceValidationError{
+			field:  "Choices",
+			reason: "value must contain no more than 10 item(s)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
-		return ExamResponseChoicesMultiError(errors)
+		return ExamResponseMultipleChoiceMultiError(errors)
 	}
 
 	return nil
 }
 
-// ExamResponseChoicesMultiError is an error wrapping multiple validation
-// errors returned by ExamResponseChoices.ValidateAll() if the designated
-// constraints aren't met.
-type ExamResponseChoicesMultiError []error
+// ExamResponseMultipleChoiceMultiError is an error wrapping multiple
+// validation errors returned by ExamResponseMultipleChoice.ValidateAll() if
+// the designated constraints aren't met.
+type ExamResponseMultipleChoiceMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m ExamResponseChoicesMultiError) Error() string {
+func (m ExamResponseMultipleChoiceMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -1910,11 +2084,11 @@ func (m ExamResponseChoicesMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m ExamResponseChoicesMultiError) AllErrors() []error { return m }
+func (m ExamResponseMultipleChoiceMultiError) AllErrors() []error { return m }
 
-// ExamResponseChoicesValidationError is the validation error returned by
-// ExamResponseChoices.Validate if the designated constraints aren't met.
-type ExamResponseChoicesValidationError struct {
+// ExamResponseMultipleChoiceValidationError is the validation error returned
+// by ExamResponseMultipleChoice.Validate if the designated constraints aren't met.
+type ExamResponseMultipleChoiceValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -1922,24 +2096,24 @@ type ExamResponseChoicesValidationError struct {
 }
 
 // Field function returns field value.
-func (e ExamResponseChoicesValidationError) Field() string { return e.field }
+func (e ExamResponseMultipleChoiceValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e ExamResponseChoicesValidationError) Reason() string { return e.reason }
+func (e ExamResponseMultipleChoiceValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e ExamResponseChoicesValidationError) Cause() error { return e.cause }
+func (e ExamResponseMultipleChoiceValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e ExamResponseChoicesValidationError) Key() bool { return e.key }
+func (e ExamResponseMultipleChoiceValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e ExamResponseChoicesValidationError) ErrorName() string {
-	return "ExamResponseChoicesValidationError"
+func (e ExamResponseMultipleChoiceValidationError) ErrorName() string {
+	return "ExamResponseMultipleChoiceValidationError"
 }
 
 // Error satisfies the builtin error interface
-func (e ExamResponseChoicesValidationError) Error() string {
+func (e ExamResponseMultipleChoiceValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -1951,14 +2125,14 @@ func (e ExamResponseChoicesValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sExamResponseChoices.%s: %s%s",
+		"invalid %sExamResponseMultipleChoice.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = ExamResponseChoicesValidationError{}
+var _ error = ExamResponseMultipleChoiceValidationError{}
 
 var _ interface {
 	Field() string
@@ -1966,4 +2140,4 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = ExamResponseChoicesValidationError{}
+} = ExamResponseMultipleChoiceValidationError{}

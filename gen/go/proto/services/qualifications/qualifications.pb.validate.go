@@ -3418,3 +3418,1002 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteQualificationResultResponseValidationError{}
+
+// Validate checks the field values on GetExamRequest with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *GetExamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetExamRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in GetExamRequestMultiError,
+// or nil if none found.
+func (m *GetExamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetExamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QualificationId
+
+	if len(errors) > 0 {
+		return GetExamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetExamRequestMultiError is an error wrapping multiple validation errors
+// returned by GetExamRequest.ValidateAll() if the designated constraints
+// aren't met.
+type GetExamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetExamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetExamRequestMultiError) AllErrors() []error { return m }
+
+// GetExamRequestValidationError is the validation error returned by
+// GetExamRequest.Validate if the designated constraints aren't met.
+type GetExamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetExamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetExamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetExamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetExamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetExamRequestValidationError) ErrorName() string { return "GetExamRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetExamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetExamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetExamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetExamRequestValidationError{}
+
+// Validate checks the field values on GetExamResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *GetExamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetExamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetExamResponseMultiError, or nil if none found.
+func (m *GetExamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetExamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetExam()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, GetExamResponseValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, GetExamResponseValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExam()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return GetExamResponseValidationError{
+				field:  "Exam",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return GetExamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetExamResponseMultiError is an error wrapping multiple validation errors
+// returned by GetExamResponse.ValidateAll() if the designated constraints
+// aren't met.
+type GetExamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetExamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetExamResponseMultiError) AllErrors() []error { return m }
+
+// GetExamResponseValidationError is the validation error returned by
+// GetExamResponse.Validate if the designated constraints aren't met.
+type GetExamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetExamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetExamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetExamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetExamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetExamResponseValidationError) ErrorName() string { return "GetExamResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e GetExamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetExamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetExamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetExamResponseValidationError{}
+
+// Validate checks the field values on CreateOrUpdateExamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateExamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateExamRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateExamRequestMultiError, or nil if none found.
+func (m *CreateOrUpdateExamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateExamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetExam() == nil {
+		err := CreateOrUpdateExamRequestValidationError{
+			field:  "Exam",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetExam()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateExamRequestValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateExamRequestValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExam()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateExamRequestValidationError{
+				field:  "Exam",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateExamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateExamRequestMultiError is an error wrapping multiple validation
+// errors returned by CreateOrUpdateExamRequest.ValidateAll() if the
+// designated constraints aren't met.
+type CreateOrUpdateExamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateExamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateExamRequestMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateExamRequestValidationError is the validation error returned by
+// CreateOrUpdateExamRequest.Validate if the designated constraints aren't met.
+type CreateOrUpdateExamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateExamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateExamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateExamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateExamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateExamRequestValidationError) ErrorName() string {
+	return "CreateOrUpdateExamRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateExamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateExamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateExamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateExamRequestValidationError{}
+
+// Validate checks the field values on CreateOrUpdateExamResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CreateOrUpdateExamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CreateOrUpdateExamResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CreateOrUpdateExamResponseMultiError, or nil if none found.
+func (m *CreateOrUpdateExamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CreateOrUpdateExamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetExam()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CreateOrUpdateExamResponseValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CreateOrUpdateExamResponseValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExam()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CreateOrUpdateExamResponseValidationError{
+				field:  "Exam",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CreateOrUpdateExamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// CreateOrUpdateExamResponseMultiError is an error wrapping multiple
+// validation errors returned by CreateOrUpdateExamResponse.ValidateAll() if
+// the designated constraints aren't met.
+type CreateOrUpdateExamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CreateOrUpdateExamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CreateOrUpdateExamResponseMultiError) AllErrors() []error { return m }
+
+// CreateOrUpdateExamResponseValidationError is the validation error returned
+// by CreateOrUpdateExamResponse.Validate if the designated constraints aren't met.
+type CreateOrUpdateExamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CreateOrUpdateExamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CreateOrUpdateExamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CreateOrUpdateExamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CreateOrUpdateExamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CreateOrUpdateExamResponseValidationError) ErrorName() string {
+	return "CreateOrUpdateExamResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CreateOrUpdateExamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCreateOrUpdateExamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CreateOrUpdateExamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CreateOrUpdateExamResponseValidationError{}
+
+// Validate checks the field values on TakeExamRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TakeExamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TakeExamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TakeExamRequestMultiError, or nil if none found.
+func (m *TakeExamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TakeExamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QualificationId
+
+	if len(errors) > 0 {
+		return TakeExamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// TakeExamRequestMultiError is an error wrapping multiple validation errors
+// returned by TakeExamRequest.ValidateAll() if the designated constraints
+// aren't met.
+type TakeExamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TakeExamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TakeExamRequestMultiError) AllErrors() []error { return m }
+
+// TakeExamRequestValidationError is the validation error returned by
+// TakeExamRequest.Validate if the designated constraints aren't met.
+type TakeExamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TakeExamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TakeExamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TakeExamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TakeExamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TakeExamRequestValidationError) ErrorName() string { return "TakeExamRequestValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TakeExamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTakeExamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TakeExamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TakeExamRequestValidationError{}
+
+// Validate checks the field values on TakeExamResponse with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TakeExamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TakeExamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TakeExamResponseMultiError, or nil if none found.
+func (m *TakeExamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TakeExamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetExam()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TakeExamResponseValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TakeExamResponseValidationError{
+					field:  "Exam",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetExam()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TakeExamResponseValidationError{
+				field:  "Exam",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return TakeExamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// TakeExamResponseMultiError is an error wrapping multiple validation errors
+// returned by TakeExamResponse.ValidateAll() if the designated constraints
+// aren't met.
+type TakeExamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TakeExamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TakeExamResponseMultiError) AllErrors() []error { return m }
+
+// TakeExamResponseValidationError is the validation error returned by
+// TakeExamResponse.Validate if the designated constraints aren't met.
+type TakeExamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TakeExamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TakeExamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TakeExamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TakeExamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TakeExamResponseValidationError) ErrorName() string { return "TakeExamResponseValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TakeExamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTakeExamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TakeExamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TakeExamResponseValidationError{}
+
+// Validate checks the field values on SubmitExamRequest with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *SubmitExamRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubmitExamRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubmitExamRequestMultiError, or nil if none found.
+func (m *SubmitExamRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubmitExamRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for QualificationId
+
+	if all {
+		switch v := interface{}(m.GetResponses()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubmitExamRequestValidationError{
+					field:  "Responses",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubmitExamRequestValidationError{
+					field:  "Responses",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetResponses()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubmitExamRequestValidationError{
+				field:  "Responses",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SubmitExamRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubmitExamRequestMultiError is an error wrapping multiple validation errors
+// returned by SubmitExamRequest.ValidateAll() if the designated constraints
+// aren't met.
+type SubmitExamRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubmitExamRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubmitExamRequestMultiError) AllErrors() []error { return m }
+
+// SubmitExamRequestValidationError is the validation error returned by
+// SubmitExamRequest.Validate if the designated constraints aren't met.
+type SubmitExamRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubmitExamRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubmitExamRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubmitExamRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubmitExamRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubmitExamRequestValidationError) ErrorName() string {
+	return "SubmitExamRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SubmitExamRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubmitExamRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubmitExamRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubmitExamRequestValidationError{}
+
+// Validate checks the field values on SubmitExamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *SubmitExamResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on SubmitExamResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// SubmitExamResponseMultiError, or nil if none found.
+func (m *SubmitExamResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *SubmitExamResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDuration()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, SubmitExamResponseValidationError{
+					field:  "Duration",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, SubmitExamResponseValidationError{
+					field:  "Duration",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDuration()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return SubmitExamResponseValidationError{
+				field:  "Duration",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return SubmitExamResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// SubmitExamResponseMultiError is an error wrapping multiple validation errors
+// returned by SubmitExamResponse.ValidateAll() if the designated constraints
+// aren't met.
+type SubmitExamResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m SubmitExamResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m SubmitExamResponseMultiError) AllErrors() []error { return m }
+
+// SubmitExamResponseValidationError is the validation error returned by
+// SubmitExamResponse.Validate if the designated constraints aren't met.
+type SubmitExamResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e SubmitExamResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e SubmitExamResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e SubmitExamResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e SubmitExamResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e SubmitExamResponseValidationError) ErrorName() string {
+	return "SubmitExamResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e SubmitExamResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sSubmitExamResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = SubmitExamResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = SubmitExamResponseValidationError{}

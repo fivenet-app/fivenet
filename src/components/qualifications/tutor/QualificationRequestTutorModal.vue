@@ -50,7 +50,7 @@ async function createOrUpdateQualificationRequest(
     try {
         const call = getGRPCQualificationsClient().createOrUpdateQualificationRequest({
             request: {
-                qualificationId,
+                qualificationId: qualificationId,
                 userId: userId,
                 status: values.status,
                 approverComment: values.approverComment,

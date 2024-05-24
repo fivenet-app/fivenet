@@ -2,7 +2,9 @@ syntax = "proto3";
 
 package services.qualifications;
 
+import "google/protobuf/duration.proto";
 import "resources/common/database/database.proto";
+import "resources/qualifications/exam.proto";
 import "resources/qualifications/qualifications.proto";
 import "validate/validate.proto";
 
@@ -50,6 +52,7 @@ message DeleteQualificationRequest {
 message DeleteQualificationResponse {}
 
 // Access =====================================================================
+
 message GetQualificationAccessRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
 }
@@ -67,6 +70,7 @@ message SetQualificationAccessRequest {
 message SetQualificationAccessResponse {}
 
 // Requests ===================================================================
+
 message ListQualificationRequestsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
@@ -96,6 +100,7 @@ message DeleteQualificationReqRequest {
 message DeleteQualificationReqResponse {}
 
 // Results ====================================================================
+
 message ListQualificationsResultsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   // Search params
@@ -123,6 +128,41 @@ message DeleteQualificationResultRequest {
 
 message DeleteQualificationResultResponse {}
 
+// Exam =======================================================================
+
+message GetExamRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+}
+
+message GetExamResponse {
+  resources.qualifications.Exam exam = 1;
+}
+
+message CreateOrUpdateExamRequest {
+  resources.qualifications.Exam exam = 1 [(validate.rules).message.required = true];
+}
+
+message CreateOrUpdateExamResponse {
+  resources.qualifications.Exam exam = 1;
+}
+
+message TakeExamRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+}
+
+message TakeExamResponse {
+  resources.qualifications.Exam exam = 1;
+}
+
+message SubmitExamRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  resources.qualifications.ExamResponses responses = 2;
+}
+
+message SubmitExamResponse {
+  google.protobuf.Duration duration = 1;
+}
+
 service QualificationsService {
   // @perm
   rpc ListQualifications(ListQualificationsRequest) returns (ListQualificationsResponse);
@@ -148,4 +188,13 @@ service QualificationsService {
   rpc CreateOrUpdateQualificationResult(CreateOrUpdateQualificationResultRequest) returns (CreateOrUpdateQualificationResultResponse);
   // @perm
   rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse);
+
+  // @perm: Name=GetQualification
+  rpc GetExam(GetExamRequest) returns (GetExamResponse);
+  // @perm: Name=UpdateQualification
+  rpc CreateOrUpdateExam(CreateOrUpdateExamRequest) returns (CreateOrUpdateExamResponse);
+  // @perm: Name=GetQualification
+  rpc TakeExam(TakeExamRequest) returns (TakeExamResponse);
+  // @perm: Name=GetQualification
+  rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
 }

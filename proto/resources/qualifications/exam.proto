@@ -10,13 +10,14 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/quali
 
 // Exam / Questions
 
-message QualificationExam {
+message Exam {
   uint64 id = 1 [jstype = JS_STRING];
-  uint64 qualification_id = 2 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp created_at = 3;
-  optional resources.timestamp.Timestamp updated_at = 4;
-
-  ExamQuestions questions = 6 [(validate.rules).message.required = true];
+  optional resources.timestamp.Timestamp created_at = 2;
+  optional resources.timestamp.Timestamp updated_at = 3;
+  optional resources.timestamp.Timestamp deleted_at = 4;
+  uint64 qualification_id = 5 [jstype = JS_STRING];
+  ExamSettings settings = 6 [(validate.rules).message.required = true];
+  ExamQuestions questions = 7 [(validate.rules).message.required = true];
 }
 
 message ExamSettings {
@@ -28,15 +29,22 @@ message ExamSettings {
 }
 
 message ExamQuestions {
-  repeated ExamQuestion data = 1;
+  repeated ExamQuestion data = 1 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamQuestion {
+  uint64 id = 1 [jstype = JS_STRING];
+  string title = 2 [(validate.rules).string = {
+    min_len: 3,
+    max_len: 512
+  }];
+  optional string description = 3 [(validate.rules).string.max_len = 1024];
+
   oneof data {
-    bool separator = 1;
-    ExamQuestionYesNo yesno  = 2;
-    ExamQuestionText free_text = 3;
-    ExamQuestionChoices multiple_choice = 4;
+    bool separator = 4;
+    ExamQuestionYesNo yesno  = 5;
+    ExamQuestionText free_text = 6;
+    ExamQuestionMultipleChoice multiple_choice = 7;
   }
 }
 
@@ -47,7 +55,7 @@ message ExamQuestionText {
   int32 max_length = 2;
 }
 
-message ExamQuestionChoices {
+message ExamQuestionMultipleChoice {
   bool multi = 1;
   optional int32 limit = 2;
   repeated string choices = 3 [(validate.rules).repeated.max_items = 10];
@@ -55,24 +63,28 @@ message ExamQuestionChoices {
 
 // Response / Answers
 
-message QualificationExamResponse {
+message ExamUserResponse {
   uint64 id = 1 [jstype = JS_STRING];
   uint64 qualification_id = 2 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp started_at = 3;
-  optional resources.timestamp.Timestamp ended_at = 4;
+  optional resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp started_at = 4;
+  optional resources.timestamp.Timestamp ended_at = 5;
   ExamResponses responses = 6;
+  bool closed = 7;
 }
 
 message ExamResponses {
-  repeated ExamResponse data = 1;
+  repeated ExamResponse data = 1 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamResponse {
+  uint64 id = 1 [jstype = JS_STRING];
+
   oneof data {
-    bool separator = 1;
-    ExamResponseYesNo yesno  = 2;
-    ExamResponseText free_text = 3;
-    ExamResponseChoices multiple_choice = 4;
+    bool separator = 2;
+    ExamResponseYesNo yesno  = 3;
+    ExamResponseText free_text = 4;
+    ExamResponseMultipleChoice multiple_choice = 5;
   }
 }
 
@@ -81,9 +93,9 @@ message ExamResponseYesNo {
 }
 
 message ExamResponseText {
-  string text = 1;
+  string text = 1 [(validate.rules).string.max_bytes = 500000]; // 0.5 Megabyte
 }
 
-message ExamResponseChoices {
-  repeated string choices = 1;
+message ExamResponseMultipleChoice {
+  repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
 }

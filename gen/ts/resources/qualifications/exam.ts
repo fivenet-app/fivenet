@@ -15,27 +15,35 @@ import { Timestamp } from "../timestamp/timestamp";
 // Exam / Questions
 
 /**
- * @generated from protobuf message resources.qualifications.QualificationExam
+ * @generated from protobuf message resources.qualifications.Exam
  */
-export interface QualificationExam {
+export interface Exam {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
     id: string;
     /**
-     * @generated from protobuf field: uint64 qualification_id = 2 [jstype = JS_STRING];
-     */
-    qualificationId: string;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
      */
     createdAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp updated_at = 3;
      */
     updatedAt?: Timestamp;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamQuestions questions = 6;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 4;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 5 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: resources.qualifications.ExamSettings settings = 6;
+     */
+    settings?: ExamSettings;
+    /**
+     * @generated from protobuf field: resources.qualifications.ExamQuestions questions = 7;
      */
     questions?: ExamQuestions;
 }
@@ -62,32 +70,44 @@ export interface ExamQuestions {
  */
 export interface ExamQuestion {
     /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
+     * @generated from protobuf field: string title = 2;
+     */
+    title: string;
+    /**
+     * @generated from protobuf field: optional string description = 3;
+     */
+    description?: string;
+    /**
      * @generated from protobuf oneof: data
      */
     data: {
         oneofKind: "separator";
         /**
-         * @generated from protobuf field: bool separator = 1;
+         * @generated from protobuf field: bool separator = 4;
          */
         separator: boolean;
     } | {
         oneofKind: "yesno";
         /**
-         * @generated from protobuf field: resources.qualifications.ExamQuestionYesNo yesno = 2;
+         * @generated from protobuf field: resources.qualifications.ExamQuestionYesNo yesno = 5;
          */
         yesno: ExamQuestionYesNo;
     } | {
         oneofKind: "freeText";
         /**
-         * @generated from protobuf field: resources.qualifications.ExamQuestionText free_text = 3;
+         * @generated from protobuf field: resources.qualifications.ExamQuestionText free_text = 6;
          */
         freeText: ExamQuestionText;
     } | {
         oneofKind: "multipleChoice";
         /**
-         * @generated from protobuf field: resources.qualifications.ExamQuestionChoices multiple_choice = 4;
+         * @generated from protobuf field: resources.qualifications.ExamQuestionMultipleChoice multiple_choice = 7;
          */
-        multipleChoice: ExamQuestionChoices;
+        multipleChoice: ExamQuestionMultipleChoice;
     } | {
         oneofKind: undefined;
     };
@@ -111,9 +131,9 @@ export interface ExamQuestionText {
     maxLength: number;
 }
 /**
- * @generated from protobuf message resources.qualifications.ExamQuestionChoices
+ * @generated from protobuf message resources.qualifications.ExamQuestionMultipleChoice
  */
-export interface ExamQuestionChoices {
+export interface ExamQuestionMultipleChoice {
     /**
      * @generated from protobuf field: bool multi = 1;
      */
@@ -130,9 +150,9 @@ export interface ExamQuestionChoices {
 // Response / Answers
 
 /**
- * @generated from protobuf message resources.qualifications.QualificationExamResponse
+ * @generated from protobuf message resources.qualifications.ExamUserResponse
  */
-export interface QualificationExamResponse {
+export interface ExamUserResponse {
     /**
      * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
      */
@@ -142,17 +162,25 @@ export interface QualificationExamResponse {
      */
     qualificationId: string;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp started_at = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 3;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp started_at = 4;
      */
     startedAt?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp ended_at = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp ended_at = 5;
      */
     endedAt?: Timestamp;
     /**
      * @generated from protobuf field: resources.qualifications.ExamResponses responses = 6;
      */
     responses?: ExamResponses;
+    /**
+     * @generated from protobuf field: bool closed = 7;
+     */
+    closed: boolean;
 }
 /**
  * @generated from protobuf message resources.qualifications.ExamResponses
@@ -168,32 +196,36 @@ export interface ExamResponses {
  */
 export interface ExamResponse {
     /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string;
+    /**
      * @generated from protobuf oneof: data
      */
     data: {
         oneofKind: "separator";
         /**
-         * @generated from protobuf field: bool separator = 1;
+         * @generated from protobuf field: bool separator = 2;
          */
         separator: boolean;
     } | {
         oneofKind: "yesno";
         /**
-         * @generated from protobuf field: resources.qualifications.ExamResponseYesNo yesno = 2;
+         * @generated from protobuf field: resources.qualifications.ExamResponseYesNo yesno = 3;
          */
         yesno: ExamResponseYesNo;
     } | {
         oneofKind: "freeText";
         /**
-         * @generated from protobuf field: resources.qualifications.ExamResponseText free_text = 3;
+         * @generated from protobuf field: resources.qualifications.ExamResponseText free_text = 4;
          */
         freeText: ExamResponseText;
     } | {
         oneofKind: "multipleChoice";
         /**
-         * @generated from protobuf field: resources.qualifications.ExamResponseChoices multiple_choice = 4;
+         * @generated from protobuf field: resources.qualifications.ExamResponseMultipleChoice multiple_choice = 5;
          */
-        multipleChoice: ExamResponseChoices;
+        multipleChoice: ExamResponseMultipleChoice;
     } | {
         oneofKind: undefined;
     };
@@ -214,37 +246,39 @@ export interface ExamResponseText {
     /**
      * @generated from protobuf field: string text = 1;
      */
-    text: string;
+    text: string; // 0.5 Megabyte
 }
 /**
- * @generated from protobuf message resources.qualifications.ExamResponseChoices
+ * @generated from protobuf message resources.qualifications.ExamResponseMultipleChoice
  */
-export interface ExamResponseChoices {
+export interface ExamResponseMultipleChoice {
     /**
      * @generated from protobuf field: repeated string choices = 1;
      */
     choices: string[];
 }
 // @generated message type with reflection information, may provide speed optimized methods
-class QualificationExam$Type extends MessageType<QualificationExam> {
+class Exam$Type extends MessageType<Exam> {
     constructor() {
-        super("resources.qualifications.QualificationExam", [
+        super("resources.qualifications.Exam", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "updated_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "questions", kind: "message", T: () => ExamQuestions, options: { "validate.rules": { message: { required: true } } } }
+            { no: 2, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 6, name: "settings", kind: "message", T: () => ExamSettings, options: { "validate.rules": { message: { required: true } } } },
+            { no: 7, name: "questions", kind: "message", T: () => ExamQuestions, options: { "validate.rules": { message: { required: true } } } }
         ]);
     }
-    create(value?: PartialMessage<QualificationExam>): QualificationExam {
+    create(value?: PartialMessage<Exam>): Exam {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.qualificationId = "0";
         if (value !== undefined)
-            reflectionMergePartial<QualificationExam>(this, message, value);
+            reflectionMergePartial<Exam>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationExam): QualificationExam {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Exam): Exam {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -252,16 +286,22 @@ class QualificationExam$Type extends MessageType<QualificationExam> {
                 case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
                     message.id = reader.uint64().toString();
                     break;
-                case /* uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
-                    message.qualificationId = reader.uint64().toString();
-                    break;
-                case /* optional resources.timestamp.Timestamp created_at */ 3:
+                case /* optional resources.timestamp.Timestamp created_at */ 2:
                     message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
                     break;
-                case /* optional resources.timestamp.Timestamp updated_at */ 4:
+                case /* optional resources.timestamp.Timestamp updated_at */ 3:
                     message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
                     break;
-                case /* resources.qualifications.ExamQuestions questions */ 6:
+                case /* optional resources.timestamp.Timestamp deleted_at */ 4:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* uint64 qualification_id = 5 [jstype = JS_STRING];*/ 5:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* resources.qualifications.ExamSettings settings */ 6:
+                    message.settings = ExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.settings);
+                    break;
+                case /* resources.qualifications.ExamQuestions questions */ 7:
                     message.questions = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.questions);
                     break;
                 default:
@@ -275,22 +315,28 @@ class QualificationExam$Type extends MessageType<QualificationExam> {
         }
         return message;
     }
-    internalBinaryWrite(message: QualificationExam, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: Exam, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1 [jstype = JS_STRING]; */
         if (message.id !== "0")
             writer.tag(1, WireType.Varint).uint64(message.id);
-        /* uint64 qualification_id = 2 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
-        /* optional resources.timestamp.Timestamp created_at = 3; */
+        /* optional resources.timestamp.Timestamp created_at = 2; */
         if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp updated_at = 4; */
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp updated_at = 3; */
         if (message.updatedAt)
-            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamQuestions questions = 6; */
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 4; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 5 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(5, WireType.Varint).uint64(message.qualificationId);
+        /* resources.qualifications.ExamSettings settings = 6; */
+        if (message.settings)
+            ExamSettings.internalBinaryWrite(message.settings, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamQuestions questions = 7; */
         if (message.questions)
-            ExamQuestions.internalBinaryWrite(message.questions, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            ExamQuestions.internalBinaryWrite(message.questions, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -298,9 +344,9 @@ class QualificationExam$Type extends MessageType<QualificationExam> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.qualifications.QualificationExam
+ * @generated MessageType for protobuf message resources.qualifications.Exam
  */
-export const QualificationExam = new QualificationExam$Type();
+export const Exam = new Exam$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ExamSettings$Type extends MessageType<ExamSettings> {
     constructor() {
@@ -351,7 +397,7 @@ export const ExamSettings = new ExamSettings$Type();
 class ExamQuestions$Type extends MessageType<ExamQuestions> {
     constructor() {
         super("resources.qualifications.ExamQuestions", [
-            { no: 1, name: "data", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamQuestion }
+            { no: 1, name: "data", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamQuestion, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamQuestions>): ExamQuestions {
@@ -398,14 +444,19 @@ export const ExamQuestions = new ExamQuestions$Type();
 class ExamQuestion$Type extends MessageType<ExamQuestion> {
     constructor() {
         super("resources.qualifications.ExamQuestion", [
-            { no: 1, name: "separator", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "yesno", kind: "message", oneof: "data", T: () => ExamQuestionYesNo },
-            { no: 3, name: "free_text", kind: "message", oneof: "data", T: () => ExamQuestionText },
-            { no: 4, name: "multiple_choice", kind: "message", oneof: "data", T: () => ExamQuestionChoices }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "title", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "512" } } } },
+            { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "1024" } } } },
+            { no: 4, name: "separator", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "yesno", kind: "message", oneof: "data", T: () => ExamQuestionYesNo },
+            { no: 6, name: "free_text", kind: "message", oneof: "data", T: () => ExamQuestionText },
+            { no: 7, name: "multiple_choice", kind: "message", oneof: "data", T: () => ExamQuestionMultipleChoice }
         ]);
     }
     create(value?: PartialMessage<ExamQuestion>): ExamQuestion {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
+        message.title = "";
         message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<ExamQuestion>(this, message, value);
@@ -416,28 +467,37 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool separator */ 1:
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* string title */ 2:
+                    message.title = reader.string();
+                    break;
+                case /* optional string description */ 3:
+                    message.description = reader.string();
+                    break;
+                case /* bool separator */ 4:
                     message.data = {
                         oneofKind: "separator",
                         separator: reader.bool()
                     };
                     break;
-                case /* resources.qualifications.ExamQuestionYesNo yesno */ 2:
+                case /* resources.qualifications.ExamQuestionYesNo yesno */ 5:
                     message.data = {
                         oneofKind: "yesno",
                         yesno: ExamQuestionYesNo.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).yesno)
                     };
                     break;
-                case /* resources.qualifications.ExamQuestionText free_text */ 3:
+                case /* resources.qualifications.ExamQuestionText free_text */ 6:
                     message.data = {
                         oneofKind: "freeText",
                         freeText: ExamQuestionText.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).freeText)
                     };
                     break;
-                case /* resources.qualifications.ExamQuestionChoices multiple_choice */ 4:
+                case /* resources.qualifications.ExamQuestionMultipleChoice multiple_choice */ 7:
                     message.data = {
                         oneofKind: "multipleChoice",
-                        multipleChoice: ExamQuestionChoices.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).multipleChoice)
+                        multipleChoice: ExamQuestionMultipleChoice.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).multipleChoice)
                     };
                     break;
                 default:
@@ -452,18 +512,27 @@ class ExamQuestion$Type extends MessageType<ExamQuestion> {
         return message;
     }
     internalBinaryWrite(message: ExamQuestion, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool separator = 1; */
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* string title = 2; */
+        if (message.title !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.title);
+        /* optional string description = 3; */
+        if (message.description !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.description);
+        /* bool separator = 4; */
         if (message.data.oneofKind === "separator")
-            writer.tag(1, WireType.Varint).bool(message.data.separator);
-        /* resources.qualifications.ExamQuestionYesNo yesno = 2; */
+            writer.tag(4, WireType.Varint).bool(message.data.separator);
+        /* resources.qualifications.ExamQuestionYesNo yesno = 5; */
         if (message.data.oneofKind === "yesno")
-            ExamQuestionYesNo.internalBinaryWrite(message.data.yesno, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamQuestionText free_text = 3; */
+            ExamQuestionYesNo.internalBinaryWrite(message.data.yesno, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamQuestionText free_text = 6; */
         if (message.data.oneofKind === "freeText")
-            ExamQuestionText.internalBinaryWrite(message.data.freeText, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamQuestionChoices multiple_choice = 4; */
+            ExamQuestionText.internalBinaryWrite(message.data.freeText, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamQuestionMultipleChoice multiple_choice = 7; */
         if (message.data.oneofKind === "multipleChoice")
-            ExamQuestionChoices.internalBinaryWrite(message.data.multipleChoice, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            ExamQuestionMultipleChoice.internalBinaryWrite(message.data.multipleChoice, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -555,23 +624,23 @@ class ExamQuestionText$Type extends MessageType<ExamQuestionText> {
  */
 export const ExamQuestionText = new ExamQuestionText$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ExamQuestionChoices$Type extends MessageType<ExamQuestionChoices> {
+class ExamQuestionMultipleChoice$Type extends MessageType<ExamQuestionMultipleChoice> {
     constructor() {
-        super("resources.qualifications.ExamQuestionChoices", [
+        super("resources.qualifications.ExamQuestionMultipleChoice", [
             { no: 1, name: "multi", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "limit", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
             { no: 3, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
-    create(value?: PartialMessage<ExamQuestionChoices>): ExamQuestionChoices {
+    create(value?: PartialMessage<ExamQuestionMultipleChoice>): ExamQuestionMultipleChoice {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.multi = false;
         message.choices = [];
         if (value !== undefined)
-            reflectionMergePartial<ExamQuestionChoices>(this, message, value);
+            reflectionMergePartial<ExamQuestionMultipleChoice>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamQuestionChoices): ExamQuestionChoices {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamQuestionMultipleChoice): ExamQuestionMultipleChoice {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -596,7 +665,7 @@ class ExamQuestionChoices$Type extends MessageType<ExamQuestionChoices> {
         }
         return message;
     }
-    internalBinaryWrite(message: ExamQuestionChoices, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ExamQuestionMultipleChoice, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* bool multi = 1; */
         if (message.multi !== false)
             writer.tag(1, WireType.Varint).bool(message.multi);
@@ -613,29 +682,32 @@ class ExamQuestionChoices$Type extends MessageType<ExamQuestionChoices> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.qualifications.ExamQuestionChoices
+ * @generated MessageType for protobuf message resources.qualifications.ExamQuestionMultipleChoice
  */
-export const ExamQuestionChoices = new ExamQuestionChoices$Type();
+export const ExamQuestionMultipleChoice = new ExamQuestionMultipleChoice$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class QualificationExamResponse$Type extends MessageType<QualificationExamResponse> {
+class ExamUserResponse$Type extends MessageType<ExamUserResponse> {
     constructor() {
-        super("resources.qualifications.QualificationExamResponse", [
+        super("resources.qualifications.ExamUserResponse", [
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "started_at", kind: "message", T: () => Timestamp },
-            { no: 4, name: "ended_at", kind: "message", T: () => Timestamp },
-            { no: 6, name: "responses", kind: "message", T: () => ExamResponses }
+            { no: 3, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 4, name: "started_at", kind: "message", T: () => Timestamp },
+            { no: 5, name: "ended_at", kind: "message", T: () => Timestamp },
+            { no: 6, name: "responses", kind: "message", T: () => ExamResponses },
+            { no: 7, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
-    create(value?: PartialMessage<QualificationExamResponse>): QualificationExamResponse {
+    create(value?: PartialMessage<ExamUserResponse>): ExamUserResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.qualificationId = "0";
+        message.closed = false;
         if (value !== undefined)
-            reflectionMergePartial<QualificationExamResponse>(this, message, value);
+            reflectionMergePartial<ExamUserResponse>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationExamResponse): QualificationExamResponse {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamUserResponse): ExamUserResponse {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -646,14 +718,20 @@ class QualificationExamResponse$Type extends MessageType<QualificationExamRespon
                 case /* uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* optional resources.timestamp.Timestamp started_at */ 3:
+                case /* optional resources.timestamp.Timestamp created_at */ 3:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp started_at */ 4:
                     message.startedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startedAt);
                     break;
-                case /* optional resources.timestamp.Timestamp ended_at */ 4:
+                case /* optional resources.timestamp.Timestamp ended_at */ 5:
                     message.endedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endedAt);
                     break;
                 case /* resources.qualifications.ExamResponses responses */ 6:
                     message.responses = ExamResponses.internalBinaryRead(reader, reader.uint32(), options, message.responses);
+                    break;
+                case /* bool closed */ 7:
+                    message.closed = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -666,22 +744,28 @@ class QualificationExamResponse$Type extends MessageType<QualificationExamRespon
         }
         return message;
     }
-    internalBinaryWrite(message: QualificationExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ExamUserResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* uint64 id = 1 [jstype = JS_STRING]; */
         if (message.id !== "0")
             writer.tag(1, WireType.Varint).uint64(message.id);
         /* uint64 qualification_id = 2 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(2, WireType.Varint).uint64(message.qualificationId);
-        /* optional resources.timestamp.Timestamp started_at = 3; */
+        /* optional resources.timestamp.Timestamp created_at = 3; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp started_at = 4; */
         if (message.startedAt)
-            Timestamp.internalBinaryWrite(message.startedAt, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp ended_at = 4; */
+            Timestamp.internalBinaryWrite(message.startedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp ended_at = 5; */
         if (message.endedAt)
-            Timestamp.internalBinaryWrite(message.endedAt, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            Timestamp.internalBinaryWrite(message.endedAt, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         /* resources.qualifications.ExamResponses responses = 6; */
         if (message.responses)
             ExamResponses.internalBinaryWrite(message.responses, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* bool closed = 7; */
+        if (message.closed !== false)
+            writer.tag(7, WireType.Varint).bool(message.closed);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -689,14 +773,14 @@ class QualificationExamResponse$Type extends MessageType<QualificationExamRespon
     }
 }
 /**
- * @generated MessageType for protobuf message resources.qualifications.QualificationExamResponse
+ * @generated MessageType for protobuf message resources.qualifications.ExamUserResponse
  */
-export const QualificationExamResponse = new QualificationExamResponse$Type();
+export const ExamUserResponse = new ExamUserResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class ExamResponses$Type extends MessageType<ExamResponses> {
     constructor() {
         super("resources.qualifications.ExamResponses", [
-            { no: 1, name: "data", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamResponse }
+            { no: 1, name: "data", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => ExamResponse, options: { "validate.rules": { repeated: { maxItems: "50" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponses>): ExamResponses {
@@ -743,14 +827,16 @@ export const ExamResponses = new ExamResponses$Type();
 class ExamResponse$Type extends MessageType<ExamResponse> {
     constructor() {
         super("resources.qualifications.ExamResponse", [
-            { no: 1, name: "separator", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "yesno", kind: "message", oneof: "data", T: () => ExamResponseYesNo },
-            { no: 3, name: "free_text", kind: "message", oneof: "data", T: () => ExamResponseText },
-            { no: 4, name: "multiple_choice", kind: "message", oneof: "data", T: () => ExamResponseChoices }
+            { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "separator", kind: "scalar", oneof: "data", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "yesno", kind: "message", oneof: "data", T: () => ExamResponseYesNo },
+            { no: 4, name: "free_text", kind: "message", oneof: "data", T: () => ExamResponseText },
+            { no: 5, name: "multiple_choice", kind: "message", oneof: "data", T: () => ExamResponseMultipleChoice }
         ]);
     }
     create(value?: PartialMessage<ExamResponse>): ExamResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.id = "0";
         message.data = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<ExamResponse>(this, message, value);
@@ -761,28 +847,31 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool separator */ 1:
+                case /* uint64 id = 1 [jstype = JS_STRING];*/ 1:
+                    message.id = reader.uint64().toString();
+                    break;
+                case /* bool separator */ 2:
                     message.data = {
                         oneofKind: "separator",
                         separator: reader.bool()
                     };
                     break;
-                case /* resources.qualifications.ExamResponseYesNo yesno */ 2:
+                case /* resources.qualifications.ExamResponseYesNo yesno */ 3:
                     message.data = {
                         oneofKind: "yesno",
                         yesno: ExamResponseYesNo.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).yesno)
                     };
                     break;
-                case /* resources.qualifications.ExamResponseText free_text */ 3:
+                case /* resources.qualifications.ExamResponseText free_text */ 4:
                     message.data = {
                         oneofKind: "freeText",
                         freeText: ExamResponseText.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).freeText)
                     };
                     break;
-                case /* resources.qualifications.ExamResponseChoices multiple_choice */ 4:
+                case /* resources.qualifications.ExamResponseMultipleChoice multiple_choice */ 5:
                     message.data = {
                         oneofKind: "multipleChoice",
-                        multipleChoice: ExamResponseChoices.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).multipleChoice)
+                        multipleChoice: ExamResponseMultipleChoice.internalBinaryRead(reader, reader.uint32(), options, (message.data as any).multipleChoice)
                     };
                     break;
                 default:
@@ -797,18 +886,21 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         return message;
     }
     internalBinaryWrite(message: ExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool separator = 1; */
+        /* uint64 id = 1 [jstype = JS_STRING]; */
+        if (message.id !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.id);
+        /* bool separator = 2; */
         if (message.data.oneofKind === "separator")
-            writer.tag(1, WireType.Varint).bool(message.data.separator);
-        /* resources.qualifications.ExamResponseYesNo yesno = 2; */
+            writer.tag(2, WireType.Varint).bool(message.data.separator);
+        /* resources.qualifications.ExamResponseYesNo yesno = 3; */
         if (message.data.oneofKind === "yesno")
-            ExamResponseYesNo.internalBinaryWrite(message.data.yesno, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamResponseText free_text = 3; */
+            ExamResponseYesNo.internalBinaryWrite(message.data.yesno, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamResponseText free_text = 4; */
         if (message.data.oneofKind === "freeText")
-            ExamResponseText.internalBinaryWrite(message.data.freeText, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.ExamResponseChoices multiple_choice = 4; */
+            ExamResponseText.internalBinaryWrite(message.data.freeText, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamResponseMultipleChoice multiple_choice = 5; */
         if (message.data.oneofKind === "multipleChoice")
-            ExamResponseChoices.internalBinaryWrite(message.data.multipleChoice, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            ExamResponseMultipleChoice.internalBinaryWrite(message.data.multipleChoice, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -870,7 +962,7 @@ export const ExamResponseYesNo = new ExamResponseYesNo$Type();
 class ExamResponseText$Type extends MessageType<ExamResponseText> {
     constructor() {
         super("resources.qualifications.ExamResponseText", [
-            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "text", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxBytes: "500000" } } } }
         ]);
     }
     create(value?: PartialMessage<ExamResponseText>): ExamResponseText {
@@ -914,20 +1006,20 @@ class ExamResponseText$Type extends MessageType<ExamResponseText> {
  */
 export const ExamResponseText = new ExamResponseText$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class ExamResponseChoices$Type extends MessageType<ExamResponseChoices> {
+class ExamResponseMultipleChoice$Type extends MessageType<ExamResponseMultipleChoice> {
     constructor() {
-        super("resources.qualifications.ExamResponseChoices", [
-            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/ }
+        super("resources.qualifications.ExamResponseMultipleChoice", [
+            { no: 1, name: "choices", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
-    create(value?: PartialMessage<ExamResponseChoices>): ExamResponseChoices {
+    create(value?: PartialMessage<ExamResponseMultipleChoice>): ExamResponseMultipleChoice {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.choices = [];
         if (value !== undefined)
-            reflectionMergePartial<ExamResponseChoices>(this, message, value);
+            reflectionMergePartial<ExamResponseMultipleChoice>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamResponseChoices): ExamResponseChoices {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ExamResponseMultipleChoice): ExamResponseMultipleChoice {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -946,7 +1038,7 @@ class ExamResponseChoices$Type extends MessageType<ExamResponseChoices> {
         }
         return message;
     }
-    internalBinaryWrite(message: ExamResponseChoices, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: ExamResponseMultipleChoice, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* repeated string choices = 1; */
         for (let i = 0; i < message.choices.length; i++)
             writer.tag(1, WireType.LengthDelimited).string(message.choices[i]);
@@ -957,6 +1049,6 @@ class ExamResponseChoices$Type extends MessageType<ExamResponseChoices> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.qualifications.ExamResponseChoices
+ * @generated MessageType for protobuf message resources.qualifications.ExamResponseMultipleChoice
  */
-export const ExamResponseChoices = new ExamResponseChoices$Type();
+export const ExamResponseMultipleChoice = new ExamResponseMultipleChoice$Type();
