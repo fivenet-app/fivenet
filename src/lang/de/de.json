@@ -121,7 +121,13 @@
         "qualifications": {
             "title": "Qualifizierungen",
             "single": {
-                "title": "Qualifizierung"
+                "title": "Qualifizierung",
+                "exam": {
+                    "title": "Qualifizierungsprüfung",
+                    "edit": {
+                        "title": "Aktualisiere Qualifizierungsprüfung"
+                    }
+                }
             },
             "edit": {
                 "title": "Qualifizierung bearbeiten"
@@ -450,7 +456,8 @@
         "archive": "Archiv",
         "paste": "Einfügen",
         "messenger": "Konversationen",
-        "diff": "Unterschiede"
+        "diff": "Unterschiede",
+        "exam": "Prüfung | Prüfungen"
     },
     "components": {
         "partials": {
