@@ -48,8 +48,8 @@ importers:
         specifier: ^3.6.0
         version: 3.6.0
       dexie:
-        specifier: ^4.0.4
-        version: 4.0.4
+        specifier: ^4.0.7
+        version: 4.0.7
       emoji-blast:
         specifier: ^0.10.0
         version: 0.10.0
@@ -63,8 +63,8 @@ importers:
         specifier: ^2.2.4
         version: 2.2.4
       jodit:
-        specifier: 4.2.24
-        version: 4.2.24
+        specifier: 4.2.25
+        version: 4.2.25
       jodit-vue:
         specifier: 3.1.0
         version: 3.1.0
@@ -3042,8 +3042,8 @@ packages:
   devalue@4.3.3:
     resolution: {integrity: sha512-UH8EL6H2ifcY8TbD2QsxwCC/pr5xSwPvv85LrLXVihmHVC3T3YqTCIwnR5ak0yO1KYqlxrPVOA/JVZJYPy2ATg==}
 
-  dexie@4.0.4:
-    resolution: {integrity: sha512-wFzwWSUdi+MC3jiFeQcCp9nInR7EaX8edzYY+4wmiITkQAiSnHpe4Wo2o5Ce5tJZe2nqt7mLW91MsW4GYx3ziQ==}
+  dexie@4.0.7:
+    resolution: {integrity: sha512-M+Lo6rk4pekIfrc2T0o2tvVJwL6EAAM/B78DNfb8aaxFVoI1f8/rz5KTxuAnApkwqTSuxx7T5t0RKH7qprapGg==}
 
   dfa@1.2.0:
     resolution: {integrity: sha512-ED3jP8saaweFTjeGX8HQPjeC1YYyZs98jGNZx6IiBvxW7JG5v492kamAQB3m2wop07CvU/RQmzcKr6bgcC5D/Q==}
@@ -4041,8 +4041,8 @@ packages:
   jodit@3.24.9:
     resolution: {integrity: sha512-t2d73v7GFbGI08ZzdCTwrzi8ZtoOG4icGzD6IIN2e+ghlpUKYxcHZ/Rmy6/mc6055172z+tv7QSr9BcOz6IOFQ==}
 
-  jodit@4.2.24:
-    resolution: {integrity: sha512-iApzgngcXhjMzx9ZRKMXYxUVuK9IOuKV9AKqoZbYEXYqQgBKN5IpSL6dlseQmCuAuDbBMouoXvtSBKQnaAYtxA==}
+  jodit@4.2.25:
+    resolution: {integrity: sha512-gxQAycuI6WpQkvTBgJwPURaReqTKCo4zgncrCWoZDU9IA3CluVOssRK4MUgWbVJo0BwvlegnfskC6RlROray0g==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -10274,7 +10274,7 @@ snapshots:
 
   devalue@4.3.3: {}
 
-  dexie@4.0.4: {}
+  dexie@4.0.7: {}
 
   dfa@1.2.0: {}
 
@@ -11410,7 +11410,7 @@ snapshots:
       autobind-decorator: 2.4.0
       core-js: 3.37.1
 
-  jodit@4.2.24:
+  jodit@4.2.25:
     dependencies:
       autobind-decorator: 2.4.0
 

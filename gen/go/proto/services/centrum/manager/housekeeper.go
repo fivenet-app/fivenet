@@ -114,18 +114,19 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			defer s.wg.Done()
 
 			for {
+				select {
+				case <-s.ctx.Done():
+					return
+
+				case <-time.After(1 * time.Second):
+				}
+
 				// Load dispatches with null postal field
 				if err := s.LoadDispatchesFromDB(s.ctx, jet.AND(
 					tDispatch.Postal.IS_NULL(),
 				)); err != nil {
 					s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
 					continue
-				}
-
-				select {
-				case <-s.ctx.Done():
-					return
-				case <-time.After(1 * time.Second):
 				}
 			}
 		}()

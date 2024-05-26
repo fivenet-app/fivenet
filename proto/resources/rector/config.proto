@@ -68,7 +68,7 @@ message Discord {
   bool enabled = 1;
   google.protobuf.Duration sync_interval = 2 [(validate.rules).duration = {
     required: true,
-    lt:  {seconds: 180000000}
+    lt:  {seconds: 180000000},
     gte: {seconds: 60},
   }];
   optional string invite_url = 3 [(validate.rules).string.max_len = 255];

@@ -57,6 +57,13 @@ async function getQualification(qualificationId: string): Promise<GetExamRespons
     <UCard>
         {{ data?.exam }}
 
+        <h3>Settings</h3>
+        {{ data?.exam?.settings }}
+
+        <h3>Questions</h3>
+
+        {{ data?.exam?.questions }}
+
         <!-- TODO -->
     </UCard>
 </template>

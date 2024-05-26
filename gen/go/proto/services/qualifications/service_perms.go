@@ -12,9 +12,7 @@ import (
 var PermsRemap = map[string]string{
 
 	// Service: QualificationsService
-	"QualificationsService/CreateOrUpdateExam":                 "QualificationsService/UpdateQualification",
 	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/GetQualification",
-	"QualificationsService/GetExam":                            "QualificationsService/GetQualification",
 	"QualificationsService/ListQualificationRequests":          "QualificationsService/GetQualification",
 	"QualificationsService/ListQualificationsResults":          "QualificationsService/GetQualification",
 	"QualificationsService/SubmitExam":                         "QualificationsService/GetQualification",

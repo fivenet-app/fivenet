@@ -31,7 +31,8 @@ export const zodDurationSchema = z
         }
 
         return true;
-    });
+    })
+    .transform((val) => toDuration(val));
 
 export function zodFileSingleSchema(
     fileSize: number,

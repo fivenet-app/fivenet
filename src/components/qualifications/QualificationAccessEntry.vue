@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { type ArrayElement } from '~/utils/types';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 type AccessType = { id: number; name: string };

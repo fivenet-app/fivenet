@@ -457,7 +457,8 @@
         "paste": "Paste",
         "messenger": "Messenger",
         "diff": "Diff",
-        "exam": "Exam | Exams"
+        "exam": "Exam | Exams",
+        "question": "Question | Questions"
     },
     "components": {
         "partials": {

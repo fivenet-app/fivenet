@@ -31,6 +31,7 @@
 // source: resources/notifications/events.proto
 // source: resources/notifications/notifications.proto
 // source: resources/permissions/permissions.proto
+// source: resources/qualifications/access.proto
 // source: resources/qualifications/exam.proto
 // source: resources/qualifications/qualifications.proto
 // source: resources/rector/audit.proto

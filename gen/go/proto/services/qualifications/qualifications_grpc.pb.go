@@ -30,8 +30,6 @@ const (
 	QualificationsService_ListQualificationsResults_FullMethodName          = "/services.qualifications.QualificationsService/ListQualificationsResults"
 	QualificationsService_CreateOrUpdateQualificationResult_FullMethodName  = "/services.qualifications.QualificationsService/CreateOrUpdateQualificationResult"
 	QualificationsService_DeleteQualificationResult_FullMethodName          = "/services.qualifications.QualificationsService/DeleteQualificationResult"
-	QualificationsService_GetExam_FullMethodName                            = "/services.qualifications.QualificationsService/GetExam"
-	QualificationsService_CreateOrUpdateExam_FullMethodName                 = "/services.qualifications.QualificationsService/CreateOrUpdateExam"
 	QualificationsService_TakeExam_FullMethodName                           = "/services.qualifications.QualificationsService/TakeExam"
 	QualificationsService_SubmitExam_FullMethodName                         = "/services.qualifications.QualificationsService/SubmitExam"
 )
@@ -62,10 +60,6 @@ type QualificationsServiceClient interface {
 	CreateOrUpdateQualificationResult(ctx context.Context, in *CreateOrUpdateQualificationResultRequest, opts ...grpc.CallOption) (*CreateOrUpdateQualificationResultResponse, error)
 	// @perm
 	DeleteQualificationResult(ctx context.Context, in *DeleteQualificationResultRequest, opts ...grpc.CallOption) (*DeleteQualificationResultResponse, error)
-	// @perm: Name=GetQualification
-	GetExam(ctx context.Context, in *GetExamRequest, opts ...grpc.CallOption) (*GetExamResponse, error)
-	// @perm: Name=UpdateQualification
-	CreateOrUpdateExam(ctx context.Context, in *CreateOrUpdateExamRequest, opts ...grpc.CallOption) (*CreateOrUpdateExamResponse, error)
 	// @perm: Name=GetQualification
 	TakeExam(ctx context.Context, in *TakeExamRequest, opts ...grpc.CallOption) (*TakeExamResponse, error)
 	// @perm: Name=GetQualification
@@ -179,24 +173,6 @@ func (c *qualificationsServiceClient) DeleteQualificationResult(ctx context.Cont
 	return out, nil
 }
 
-func (c *qualificationsServiceClient) GetExam(ctx context.Context, in *GetExamRequest, opts ...grpc.CallOption) (*GetExamResponse, error) {
-	out := new(GetExamResponse)
-	err := c.cc.Invoke(ctx, QualificationsService_GetExam_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
-func (c *qualificationsServiceClient) CreateOrUpdateExam(ctx context.Context, in *CreateOrUpdateExamRequest, opts ...grpc.CallOption) (*CreateOrUpdateExamResponse, error) {
-	out := new(CreateOrUpdateExamResponse)
-	err := c.cc.Invoke(ctx, QualificationsService_CreateOrUpdateExam_FullMethodName, in, out, opts...)
-	if err != nil {
-		return nil, err
-	}
-	return out, nil
-}
-
 func (c *qualificationsServiceClient) TakeExam(ctx context.Context, in *TakeExamRequest, opts ...grpc.CallOption) (*TakeExamResponse, error) {
 	out := new(TakeExamResponse)
 	err := c.cc.Invoke(ctx, QualificationsService_TakeExam_FullMethodName, in, out, opts...)
@@ -242,10 +218,6 @@ type QualificationsServiceServer interface {
 	// @perm
 	DeleteQualificationResult(context.Context, *DeleteQualificationResultRequest) (*DeleteQualificationResultResponse, error)
 	// @perm: Name=GetQualification
-	GetExam(context.Context, *GetExamRequest) (*GetExamResponse, error)
-	// @perm: Name=UpdateQualification
-	CreateOrUpdateExam(context.Context, *CreateOrUpdateExamRequest) (*CreateOrUpdateExamResponse, error)
-	// @perm: Name=GetQualification
 	TakeExam(context.Context, *TakeExamRequest) (*TakeExamResponse, error)
 	// @perm: Name=GetQualification
 	SubmitExam(context.Context, *SubmitExamRequest) (*SubmitExamResponse, error)
@@ -288,12 +260,6 @@ func (UnimplementedQualificationsServiceServer) CreateOrUpdateQualificationResul
 }
 func (UnimplementedQualificationsServiceServer) DeleteQualificationResult(context.Context, *DeleteQualificationResultRequest) (*DeleteQualificationResultResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteQualificationResult not implemented")
-}
-func (UnimplementedQualificationsServiceServer) GetExam(context.Context, *GetExamRequest) (*GetExamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetExam not implemented")
-}
-func (UnimplementedQualificationsServiceServer) CreateOrUpdateExam(context.Context, *CreateOrUpdateExamRequest) (*CreateOrUpdateExamResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrUpdateExam not implemented")
 }
 func (UnimplementedQualificationsServiceServer) TakeExam(context.Context, *TakeExamRequest) (*TakeExamResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method TakeExam not implemented")
@@ -512,42 +478,6 @@ func _QualificationsService_DeleteQualificationResult_Handler(srv interface{}, c
 	return interceptor(ctx, in, info, handler)
 }
 
-func _QualificationsService_GetExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetExamRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QualificationsServiceServer).GetExam(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: QualificationsService_GetExam_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QualificationsServiceServer).GetExam(ctx, req.(*GetExamRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _QualificationsService_CreateOrUpdateExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrUpdateExamRequest)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(QualificationsServiceServer).CreateOrUpdateExam(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: QualificationsService_CreateOrUpdateExam_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(QualificationsServiceServer).CreateOrUpdateExam(ctx, req.(*CreateOrUpdateExamRequest))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
 func _QualificationsService_TakeExam_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(TakeExamRequest)
 	if err := dec(in); err != nil {
@@ -634,14 +564,6 @@ var QualificationsService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteQualificationResult",
 			Handler:    _QualificationsService_DeleteQualificationResult_Handler,
-		},
-		{
-			MethodName: "GetExam",
-			Handler:    _QualificationsService_GetExam_Handler,
-		},
-		{
-			MethodName: "CreateOrUpdateExam",
-			Handler:    _QualificationsService_CreateOrUpdateExam_Handler,
 		},
 		{
 			MethodName: "TakeExam",

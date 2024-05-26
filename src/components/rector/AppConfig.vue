@@ -103,14 +103,14 @@ const state = reactive<Schema>({
         },
     },
     userTracker: {
-        dbRefreshTime: '1s',
-        refreshTime: '3.35s',
+        dbRefreshTime: toDuration('1s'),
+        refreshTime: toDuration('3.35s'),
         livemapJobs: [],
     },
     // Discord
     discord: {
         enabled: false,
-        syncInterval: '9s',
+        syncInterval: toDuration('9s'),
         inviteUrl: '',
         ignoredJobs: [],
     },
@@ -128,13 +128,13 @@ async function updateAppConfig(values: Schema): Promise<void> {
     config.value.config.jobInfo = values.jobInfo;
     config.value.config.userTracker = {
         livemapJobs: values.userTracker.livemapJobs,
-        dbRefreshTime: toDuration(values.userTracker.dbRefreshTime),
-        refreshTime: toDuration(values.userTracker.refreshTime),
+        dbRefreshTime: values.userTracker.dbRefreshTime,
+        refreshTime: values.userTracker.refreshTime,
     };
     config.value.config.discord = {
         enabled: values.discord.enabled,
         inviteUrl: values.discord.inviteUrl,
-        syncInterval: toDuration(values.discord.syncInterval),
+        syncInterval: values.discord.syncInterval,
         ignoredJobs: values.discord.ignoredJobs,
     };
 
@@ -185,17 +185,17 @@ function setSettingsValues(): void {
     }
     if (config.value.config.userTracker) {
         if (config.value.config.userTracker.dbRefreshTime) {
-            state.userTracker.dbRefreshTime = fromDuration(config.value.config.userTracker.dbRefreshTime);
+            state.userTracker.dbRefreshTime = config.value.config.userTracker.dbRefreshTime;
         }
         if (config.value.config.userTracker.refreshTime) {
-            state.userTracker.refreshTime = fromDuration(config.value.config.userTracker.refreshTime);
+            state.userTracker.refreshTime = config.value.config.userTracker.refreshTime;
         }
         state.userTracker.livemapJobs = config.value.config.userTracker.livemapJobs;
     }
     if (config.value.config.discord) {
         state.discord.enabled = config.value.config.discord.enabled;
         if (config.value.config.discord.syncInterval) {
-            state.discord.syncInterval = fromDuration(config.value.config.discord.syncInterval);
+            state.discord.syncInterval = config.value.config.discord.syncInterval;
         }
         state.discord.inviteUrl = config.value.config.discord.inviteUrl;
         state.discord.ignoredJobs = config.value.config.discord.ignoredJobs;

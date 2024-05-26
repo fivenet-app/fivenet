@@ -182,9 +182,11 @@
     - [StringList](#resources-permissions-StringList)
   
 - [resources/qualifications/exam.proto](#resources_qualifications_exam-proto)
-    - [Exam](#resources-qualifications-Exam)
     - [ExamQuestion](#resources-qualifications-ExamQuestion)
+    - [ExamQuestionAnswerData](#resources-qualifications-ExamQuestionAnswerData)
+    - [ExamQuestionData](#resources-qualifications-ExamQuestionData)
     - [ExamQuestionMultipleChoice](#resources-qualifications-ExamQuestionMultipleChoice)
+    - [ExamQuestionSeparator](#resources-qualifications-ExamQuestionSeparator)
     - [ExamQuestionText](#resources-qualifications-ExamQuestionText)
     - [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo)
     - [ExamQuestions](#resources-qualifications-ExamQuestions)
@@ -193,23 +195,27 @@
     - [ExamResponseText](#resources-qualifications-ExamResponseText)
     - [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo)
     - [ExamResponses](#resources-qualifications-ExamResponses)
-    - [ExamSettings](#resources-qualifications-ExamSettings)
     - [ExamUserResponse](#resources-qualifications-ExamUserResponse)
   
 - [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
     - [Qualification](#resources-qualifications-Qualification)
-    - [QualificationAccess](#resources-qualifications-QualificationAccess)
     - [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings)
-    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
+    - [QualificationExamSettings](#resources-qualifications-QualificationExamSettings)
     - [QualificationRequest](#resources-qualifications-QualificationRequest)
     - [QualificationRequirement](#resources-qualifications-QualificationRequirement)
     - [QualificationResult](#resources-qualifications-QualificationResult)
     - [QualificationShort](#resources-qualifications-QualificationShort)
   
-    - [AccessLevel](#resources-qualifications-AccessLevel)
-    - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
+    - [QualificationExamMode](#resources-qualifications-QualificationExamMode)
     - [RequestStatus](#resources-qualifications-RequestStatus)
     - [ResultStatus](#resources-qualifications-ResultStatus)
+  
+- [resources/qualifications/access.proto](#resources_qualifications_access-proto)
+    - [QualificationAccess](#resources-qualifications-QualificationAccess)
+    - [QualificationJobAccess](#resources-qualifications-QualificationJobAccess)
+  
+    - [AccessLevel](#resources-qualifications-AccessLevel)
+    - [AccessLevelUpdateMode](#resources-qualifications-AccessLevelUpdateMode)
   
 - [resources/rector/audit.proto](#resources_rector_audit-proto)
     - [AuditEntry](#resources-rector-AuditEntry)
@@ -557,8 +563,6 @@
     - [NotificatorService](#services-notificator-NotificatorService)
   
 - [services/qualifications/qualifications.proto](#services_qualifications_qualifications-proto)
-    - [CreateOrUpdateExamRequest](#services-qualifications-CreateOrUpdateExamRequest)
-    - [CreateOrUpdateExamResponse](#services-qualifications-CreateOrUpdateExamResponse)
     - [CreateOrUpdateQualificationRequestRequest](#services-qualifications-CreateOrUpdateQualificationRequestRequest)
     - [CreateOrUpdateQualificationRequestResponse](#services-qualifications-CreateOrUpdateQualificationRequestResponse)
     - [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest)
@@ -571,8 +575,6 @@
     - [DeleteQualificationResponse](#services-qualifications-DeleteQualificationResponse)
     - [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest)
     - [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse)
-    - [GetExamRequest](#services-qualifications-GetExamRequest)
-    - [GetExamResponse](#services-qualifications-GetExamResponse)
     - [GetQualificationAccessRequest](#services-qualifications-GetQualificationAccessRequest)
     - [GetQualificationAccessResponse](#services-qualifications-GetQualificationAccessResponse)
     - [GetQualificationRequest](#services-qualifications-GetQualificationRequest)
@@ -3254,28 +3256,6 @@
 
 
 
-<a name="resources-qualifications-Exam"></a>
-
-### Exam
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| settings | [ExamSettings](#resources-qualifications-ExamSettings) |  |  |
-| questions | [ExamQuestions](#resources-qualifications-ExamQuestions) |  |  |
-
-
-
-
-
-
 <a name="resources-qualifications-ExamQuestion"></a>
 
 ### ExamQuestion
@@ -3285,9 +3265,38 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | title | [string](#string) |  |  |
 | description | [string](#string) | optional |  |
-| separator | [bool](#bool) |  |  |
+| data | [ExamQuestionData](#resources-qualifications-ExamQuestionData) |  |  |
+| answer | [ExamQuestionAnswerData](#resources-qualifications-ExamQuestionAnswerData) |  |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionAnswerData"></a>
+
+### ExamQuestionAnswerData
+
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionData"></a>
+
+### ExamQuestionData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| separator | [ExamQuestionSeparator](#resources-qualifications-ExamQuestionSeparator) |  |  |
 | yesno | [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo) |  |  |
 | free_text | [ExamQuestionText](#resources-qualifications-ExamQuestionText) |  |  |
 | multiple_choice | [ExamQuestionMultipleChoice](#resources-qualifications-ExamQuestionMultipleChoice) |  |  |
@@ -3305,9 +3314,18 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| multi | [bool](#bool) |  |  |
-| limit | [int32](#int32) | optional |  |
 | choices | [string](#string) | repeated |  |
+| limit | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionSeparator"></a>
+
+### ExamQuestionSeparator
+
 
 
 
@@ -3348,7 +3366,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| data | [ExamQuestion](#resources-qualifications-ExamQuestion) | repeated |  |
+| questions | [ExamQuestion](#resources-qualifications-ExamQuestion) | repeated |  |
 
 
 
@@ -3427,22 +3445,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| data | [ExamResponse](#resources-qualifications-ExamResponse) | repeated |  |
-
-
-
-
-
-
-<a name="resources-qualifications-ExamSettings"></a>
-
-### ExamSettings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| responses | [ExamResponse](#resources-qualifications-ExamResponse) | repeated |  |
 
 
 
@@ -3458,12 +3461,11 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | id | [uint64](#uint64) |  |  |
-| qualification_id | [uint64](#uint64) |  |  |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
 | started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | ended_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| responses | [ExamResponses](#resources-qualifications-ExamResponses) |  |  |
-| closed | [bool](#bool) |  |  |
+| responses | [ExamResponses](#resources-qualifications-ExamResponses) | optional |  |
 
 
 
@@ -3511,23 +3513,11 @@
 | access | [QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
 | requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
 | discord_settings | [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings) | optional |  |
+| exam_mode | [QualificationExamMode](#resources-qualifications-QualificationExamMode) |  |  |
+| exam_settings | [QualificationExamSettings](#resources-qualifications-QualificationExamSettings) | optional |  |
+| exam | [ExamQuestions](#resources-qualifications-ExamQuestions) | optional |  |
 | result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
 | request | [QualificationRequest](#resources-qualifications-QualificationRequest) | optional |  |
-
-
-
-
-
-
-<a name="resources-qualifications-QualificationAccess"></a>
-
-### QualificationAccess
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| jobs | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
 
 
 
@@ -3550,22 +3540,15 @@
 
 
 
-<a name="resources-qualifications-QualificationJobAccess"></a>
+<a name="resources-qualifications-QualificationExamSettings"></a>
 
-### QualificationJobAccess
+### QualificationExamSettings
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| minimum_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| access | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
+| time | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 
 
 
@@ -3667,7 +3650,107 @@
 | creator | [resources.users.UserShort](#resources-users-UserShort) | optional | @gotags: alias:&#34;creator&#34; |
 | creator_job | [string](#string) |  |  |
 | requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
+| exam_mode | [QualificationExamMode](#resources-qualifications-QualificationExamMode) |  |  |
+| exam_settings | [QualificationExamSettings](#resources-qualifications-QualificationExamSettings) | optional |  |
 | result | [QualificationResult](#resources-qualifications-QualificationResult) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-qualifications-QualificationExamMode"></a>
+
+### QualificationExamMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| QUALIFICATION_EXAM_MODE_UNSPECIFIED | 0 |  |
+| QUALIFICATION_EXAM_MODE_DISABLED | 1 |  |
+| QUALIFICATION_EXAM_MODE_ENABLED | 2 |  |
+| QUALIFICATION_EXAM_MODE_FORCED | 3 |  |
+
+
+
+<a name="resources-qualifications-RequestStatus"></a>
+
+### RequestStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| REQUEST_STATUS_UNSPECIFIED | 0 |  |
+| REQUEST_STATUS_PENDING | 1 |  |
+| REQUEST_STATUS_DENIED | 2 |  |
+| REQUEST_STATUS_ACCEPTED | 3 |  |
+| REQUEST_STATUS_COMPLETED | 4 |  |
+| REQUEST_STATUS_EXAM_PENDING | 5 |  |
+| REQUEST_STATUS_EXAM_COMPLETED | 6 |  |
+
+
+
+<a name="resources-qualifications-ResultStatus"></a>
+
+### ResultStatus
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| RESULT_STATUS_UNSPECIFIED | 0 |  |
+| RESULT_STATUS_PENDING | 1 |  |
+| RESULT_STATUS_FAILED | 2 |  |
+| RESULT_STATUS_SUCCESSFUL | 3 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_qualifications_access-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/qualifications/access.proto
+
+
+
+<a name="resources-qualifications-QualificationAccess"></a>
+
+### QualificationAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| jobs | [QualificationJobAccess](#resources-qualifications-QualificationJobAccess) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-QualificationJobAccess"></a>
+
+### QualificationJobAccess
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| qualification_id | [uint64](#uint64) |  |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| minimum_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| access | [AccessLevel](#resources-qualifications-AccessLevel) |  |  |
 
 
 
@@ -3705,37 +3788,6 @@
 | ACCESS_LEVEL_UPDATE_MODE_UPDATE | 1 |  |
 | ACCESS_LEVEL_UPDATE_MODE_DELETE | 2 |  |
 | ACCESS_LEVEL_UPDATE_MODE_CLEAR | 3 |  |
-
-
-
-<a name="resources-qualifications-RequestStatus"></a>
-
-### RequestStatus
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| REQUEST_STATUS_UNSPECIFIED | 0 |  |
-| REQUEST_STATUS_PENDING | 1 |  |
-| REQUEST_STATUS_DENIED | 2 |  |
-| REQUEST_STATUS_ACCEPTED | 3 |  |
-| REQUEST_STATUS_COMPLETED | 4 |  |
-| REQUEST_STATUS_EXAM_PENDING | 5 |  |
-| REQUEST_STATUS_EXAM_COMPLETED | 6 |  |
-
-
-
-<a name="resources-qualifications-ResultStatus"></a>
-
-### ResultStatus
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| RESULT_STATUS_UNSPECIFIED | 0 |  |
-| RESULT_STATUS_PENDING | 1 |  |
-| RESULT_STATUS_FAILED | 2 |  |
-| RESULT_STATUS_SUCCESSFUL | 3 |  |
 
 
  
@@ -8552,36 +8604,6 @@ Templates ==================================================================
 
 
 
-<a name="services-qualifications-CreateOrUpdateExamRequest"></a>
-
-### CreateOrUpdateExamRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| exam | [resources.qualifications.Exam](#resources-qualifications-Exam) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-CreateOrUpdateExamResponse"></a>
-
-### CreateOrUpdateExamResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| exam | [resources.qualifications.Exam](#resources-qualifications-Exam) |  |  |
-
-
-
-
-
-
 <a name="services-qualifications-CreateOrUpdateQualificationRequestRequest"></a>
 
 ### CreateOrUpdateQualificationRequestRequest
@@ -8748,36 +8770,6 @@ Templates ==================================================================
 
 
 
-<a name="services-qualifications-GetExamRequest"></a>
-
-### GetExamRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| qualification_id | [uint64](#uint64) |  |  |
-
-
-
-
-
-
-<a name="services-qualifications-GetExamResponse"></a>
-
-### GetExamResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| exam | [resources.qualifications.Exam](#resources-qualifications-Exam) |  |  |
-
-
-
-
-
-
 <a name="services-qualifications-GetQualificationAccessRequest"></a>
 
 ### GetQualificationAccessRequest
@@ -8817,6 +8809,7 @@ Templates ==================================================================
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | qualification_id | [uint64](#uint64) |  |  |
+| with_exam | [bool](#bool) | optional |  |
 
 
 
@@ -9005,6 +8998,7 @@ Templates ==================================================================
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | qualification_id | [uint64](#uint64) |  |  |
+| cancel | [bool](#bool) | optional |  |
 
 
 
@@ -9019,7 +9013,7 @@ Templates ==================================================================
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| exam | [resources.qualifications.Exam](#resources-qualifications-Exam) |  |  |
+| exam | [resources.qualifications.ExamQuestions](#resources-qualifications-ExamQuestions) |  |  |
 
 
 
@@ -9080,8 +9074,6 @@ Templates ==================================================================
 | ListQualificationsResults | [ListQualificationsResultsRequest](#services-qualifications-ListQualificationsResultsRequest) | [ListQualificationsResultsResponse](#services-qualifications-ListQualificationsResultsResponse) | @perm: Name=GetQualification |
 | CreateOrUpdateQualificationResult | [CreateOrUpdateQualificationResultRequest](#services-qualifications-CreateOrUpdateQualificationResultRequest) | [CreateOrUpdateQualificationResultResponse](#services-qualifications-CreateOrUpdateQualificationResultResponse) | @perm |
 | DeleteQualificationResult | [DeleteQualificationResultRequest](#services-qualifications-DeleteQualificationResultRequest) | [DeleteQualificationResultResponse](#services-qualifications-DeleteQualificationResultResponse) | @perm |
-| GetExam | [GetExamRequest](#services-qualifications-GetExamRequest) | [GetExamResponse](#services-qualifications-GetExamResponse) | @perm: Name=GetQualification |
-| CreateOrUpdateExam | [CreateOrUpdateExamRequest](#services-qualifications-CreateOrUpdateExamRequest) | [CreateOrUpdateExamResponse](#services-qualifications-CreateOrUpdateExamResponse) | @perm: Name=UpdateQualification |
 | TakeExam | [TakeExamRequest](#services-qualifications-TakeExamRequest) | [TakeExamResponse](#services-qualifications-TakeExamResponse) | @perm: Name=GetQualification |
 | SubmitExam | [SubmitExamRequest](#services-qualifications-SubmitExamRequest) | [SubmitExamResponse](#services-qualifications-SubmitExamResponse) | @perm: Name=GetQualification |
 

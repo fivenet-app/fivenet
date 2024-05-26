@@ -11,12 +11,13 @@ import (
 	"time"
 )
 
-type FivenetQualificationsExam struct {
+type FivenetQualificationsExamQuestions struct {
 	ID              uint64     `sql:"primary_key" json:"id"`
+	QualificationID uint64     `json:"qualification_id"`
 	CreatedAt       *time.Time `json:"created_at"`
 	UpdatedAt       *time.Time `json:"updated_at"`
-	DeletedAt       *time.Time `json:"deleted_at"`
-	QualificationID uint64     `json:"qualification_id"`
-	Settings        *string    `json:"settings"`
-	Questions       *string    `json:"questions"`
+	Title           string     `json:"title"`
+	Description     *string    `json:"description"`
+	Data            *string    `json:"data"`
+	Answer          *string    `json:"answer"`
 }

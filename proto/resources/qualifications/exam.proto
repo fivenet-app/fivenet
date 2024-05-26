@@ -2,8 +2,6 @@ syntax = "proto3";
 
 package resources.qualifications;
 
-import "google/protobuf/duration.proto";
-import "resources/qualifications/qualifications.proto";
 import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
@@ -11,44 +9,34 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/quali
 
 // Exam / Questions
 
-message Exam {
-  uint64 id = 1 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp created_at = 2;
-  optional resources.timestamp.Timestamp updated_at = 3;
-  optional resources.timestamp.Timestamp deleted_at = 4;
-  uint64 qualification_id = 5 [jstype = JS_STRING];
-  optional resources.qualifications.QualificationShort qualification = 6;
-  ExamSettings settings = 7 [(validate.rules).message.required = true];
-  ExamQuestions questions = 8 [(validate.rules).message.required = true];
-}
-
-message ExamSettings {
-  google.protobuf.Duration time = 1 [(validate.rules).duration = {
-    required: true,
-    lt:  {seconds: 300} // 5 minutes
-    gte: {seconds: 1036800}, // 24 hours
-  }];
-}
-
 message ExamQuestions {
-  repeated ExamQuestion data = 1 [(validate.rules).repeated.max_items = 50];
+  repeated ExamQuestion questions = 1 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamQuestion {
   uint64 id = 1 [jstype = JS_STRING];
-  string title = 2 [(validate.rules).string = {
+  uint64 qualification_id = 2 [jstype = JS_STRING];
+  optional resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp updated_at = 4;
+  string title = 5 [(validate.rules).string = {
     min_len: 3,
     max_len: 512
   }];
-  optional string description = 3 [(validate.rules).string.max_len = 1024];
+  optional string description = 6 [(validate.rules).string.max_len = 1024];
+  ExamQuestionData data = 7 [(validate.rules).message.required = true];
+  ExamQuestionAnswerData answer = 8 [(validate.rules).message.required = true];
+}
 
+message ExamQuestionData {
   oneof data {
-    bool separator = 4;
-    ExamQuestionYesNo yesno  = 5;
-    ExamQuestionText free_text = 6;
-    ExamQuestionMultipleChoice multiple_choice = 7;
+    ExamQuestionSeparator separator = 1;
+    ExamQuestionYesNo yesno  = 2;
+    ExamQuestionText free_text = 3;
+    ExamQuestionMultipleChoice multiple_choice = 4;
   }
 }
+
+message ExamQuestionSeparator {}
 
 message ExamQuestionYesNo {}
 
@@ -58,31 +46,31 @@ message ExamQuestionText {
 }
 
 message ExamQuestionMultipleChoice {
-  bool multi = 1;
+  repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
   optional int32 limit = 2;
-  repeated string choices = 3 [(validate.rules).repeated.max_items = 10];
 }
 
-// Response / Answers
+message ExamQuestionAnswerData {}
+
+// User Response
 
 message ExamUserResponse {
   uint64 id = 1 [jstype = JS_STRING];
-  uint64 qualification_id = 2 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp created_at = 3;
+  optional resources.timestamp.Timestamp created_at = 2;
+  uint64 qualification_id = 3 [jstype = JS_STRING];
   optional resources.timestamp.Timestamp started_at = 4;
   optional resources.timestamp.Timestamp ended_at = 5;
-  ExamResponses responses = 6;
-  bool closed = 7;
+  optional ExamResponses responses = 6;
 }
 
 message ExamResponses {
-  repeated ExamResponse data = 1 [(validate.rules).repeated.max_items = 50];
+  repeated ExamResponse responses = 1 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamResponse {
   uint64 id = 1 [jstype = JS_STRING];
 
-  oneof data {
+  oneof response {
     bool separator = 2;
     ExamResponseYesNo yesno  = 3;
     ExamResponseText free_text = 4;

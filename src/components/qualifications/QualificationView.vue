@@ -4,7 +4,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { AccessLevel, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import {
     checkQualificationAccess,
@@ -169,7 +170,7 @@ const accordionItems = computed(() =>
                         v-if="false && can('QualificationsService.UpdateQualification') && canDo.edit"
                         :to="{
                             name: 'qualifications-id-exam-edit',
-                            params: { id: qualification.id },
+                            params: { id: qualification!.id },
                         }"
                         icon="i-mdi-pencil"
                     >

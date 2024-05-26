@@ -4,6 +4,7 @@ package services.qualifications;
 
 import "google/protobuf/duration.proto";
 import "resources/common/database/database.proto";
+import "resources/qualifications/access.proto";
 import "resources/qualifications/exam.proto";
 import "resources/qualifications/qualifications.proto";
 import "validate/validate.proto";
@@ -23,6 +24,7 @@ message ListQualificationsResponse {
 
 message GetQualificationRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
+  optional bool with_exam = 2;
 }
 
 message GetQualificationResponse {
@@ -130,28 +132,13 @@ message DeleteQualificationResultResponse {}
 
 // Exam =======================================================================
 
-message GetExamRequest {
-  uint64 qualification_id = 1 [jstype = JS_STRING];
-}
-
-message GetExamResponse {
-  resources.qualifications.Exam exam = 1;
-}
-
-message CreateOrUpdateExamRequest {
-  resources.qualifications.Exam exam = 1 [(validate.rules).message.required = true];
-}
-
-message CreateOrUpdateExamResponse {
-  resources.qualifications.Exam exam = 1;
-}
-
 message TakeExamRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
+  optional bool cancel = 2;
 }
 
 message TakeExamResponse {
-  resources.qualifications.Exam exam = 1;
+  resources.qualifications.ExamQuestions exam = 1;
 }
 
 message SubmitExamRequest {
@@ -189,10 +176,6 @@ service QualificationsService {
   // @perm
   rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse);
 
-  // @perm: Name=GetQualification
-  rpc GetExam(GetExamRequest) returns (GetExamResponse);
-  // @perm: Name=UpdateQualification
-  rpc CreateOrUpdateExam(CreateOrUpdateExamRequest) returns (CreateOrUpdateExamResponse);
   // @perm: Name=GetQualification
   rpc TakeExam(TakeExamRequest) returns (TakeExamResponse);
   // @perm: Name=GetQualification

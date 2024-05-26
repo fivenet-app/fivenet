@@ -13,13 +13,13 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Duration } from "../../google/protobuf/duration";
 import { ExamResponses } from "../../resources/qualifications/exam";
-import { Exam } from "../../resources/qualifications/exam";
+import { ExamQuestions } from "../../resources/qualifications/exam";
 import { QualificationResult } from "../../resources/qualifications/qualifications";
 import { ResultStatus } from "../../resources/qualifications/qualifications";
 import { QualificationRequest } from "../../resources/qualifications/qualifications";
 import { RequestStatus } from "../../resources/qualifications/qualifications";
-import { AccessLevelUpdateMode } from "../../resources/qualifications/qualifications";
-import { QualificationAccess } from "../../resources/qualifications/qualifications";
+import { AccessLevelUpdateMode } from "../../resources/qualifications/access";
+import { QualificationAccess } from "../../resources/qualifications/access";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
@@ -59,6 +59,10 @@ export interface GetQualificationRequest {
      * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
      */
     qualificationId: string;
+    /**
+     * @generated from protobuf field: optional bool with_exam = 2;
+     */
+    withExam?: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.GetQualificationResponse
@@ -308,42 +312,6 @@ export interface DeleteQualificationResultResponse {
 // Exam =======================================================================
 
 /**
- * @generated from protobuf message services.qualifications.GetExamRequest
- */
-export interface GetExamRequest {
-    /**
-     * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
-     */
-    qualificationId: string;
-}
-/**
- * @generated from protobuf message services.qualifications.GetExamResponse
- */
-export interface GetExamResponse {
-    /**
-     * @generated from protobuf field: resources.qualifications.Exam exam = 1;
-     */
-    exam?: Exam;
-}
-/**
- * @generated from protobuf message services.qualifications.CreateOrUpdateExamRequest
- */
-export interface CreateOrUpdateExamRequest {
-    /**
-     * @generated from protobuf field: resources.qualifications.Exam exam = 1;
-     */
-    exam?: Exam;
-}
-/**
- * @generated from protobuf message services.qualifications.CreateOrUpdateExamResponse
- */
-export interface CreateOrUpdateExamResponse {
-    /**
-     * @generated from protobuf field: resources.qualifications.Exam exam = 1;
-     */
-    exam?: Exam;
-}
-/**
  * @generated from protobuf message services.qualifications.TakeExamRequest
  */
 export interface TakeExamRequest {
@@ -351,15 +319,19 @@ export interface TakeExamRequest {
      * @generated from protobuf field: uint64 qualification_id = 1 [jstype = JS_STRING];
      */
     qualificationId: string;
+    /**
+     * @generated from protobuf field: optional bool cancel = 2;
+     */
+    cancel?: boolean;
 }
 /**
  * @generated from protobuf message services.qualifications.TakeExamResponse
  */
 export interface TakeExamResponse {
     /**
-     * @generated from protobuf field: resources.qualifications.Exam exam = 1;
+     * @generated from protobuf field: resources.qualifications.ExamQuestions exam = 1;
      */
-    exam?: Exam;
+    exam?: ExamQuestions;
 }
 /**
  * @generated from protobuf message services.qualifications.SubmitExamRequest
@@ -494,7 +466,8 @@ export const ListQualificationsResponse = new ListQualificationsResponse$Type();
 class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> {
     constructor() {
         super("services.qualifications.GetQualificationRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "with_exam", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<GetQualificationRequest>): GetQualificationRequest {
@@ -512,6 +485,9 @@ class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> 
                 case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
                     message.qualificationId = reader.uint64().toString();
                     break;
+                case /* optional bool with_exam */ 2:
+                    message.withExam = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -527,6 +503,9 @@ class GetQualificationRequest$Type extends MessageType<GetQualificationRequest> 
         /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+        /* optional bool with_exam = 2; */
+        if (message.withExam !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.withExam);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1618,195 +1597,11 @@ class DeleteQualificationResultResponse$Type extends MessageType<DeleteQualifica
  */
 export const DeleteQualificationResultResponse = new DeleteQualificationResultResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class GetExamRequest$Type extends MessageType<GetExamRequest> {
-    constructor() {
-        super("services.qualifications.GetExamRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
-        ]);
-    }
-    create(value?: PartialMessage<GetExamRequest>): GetExamRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
-        if (value !== undefined)
-            reflectionMergePartial<GetExamRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetExamRequest): GetExamRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
-                    message.qualificationId = reader.uint64().toString();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetExamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(1, WireType.Varint).uint64(message.qualificationId);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.qualifications.GetExamRequest
- */
-export const GetExamRequest = new GetExamRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class GetExamResponse$Type extends MessageType<GetExamResponse> {
-    constructor() {
-        super("services.qualifications.GetExamResponse", [
-            { no: 1, name: "exam", kind: "message", T: () => Exam }
-        ]);
-    }
-    create(value?: PartialMessage<GetExamResponse>): GetExamResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<GetExamResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: GetExamResponse): GetExamResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.qualifications.Exam exam */ 1:
-                    message.exam = Exam.internalBinaryRead(reader, reader.uint32(), options, message.exam);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: GetExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.Exam exam = 1; */
-        if (message.exam)
-            Exam.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.qualifications.GetExamResponse
- */
-export const GetExamResponse = new GetExamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CreateOrUpdateExamRequest$Type extends MessageType<CreateOrUpdateExamRequest> {
-    constructor() {
-        super("services.qualifications.CreateOrUpdateExamRequest", [
-            { no: 1, name: "exam", kind: "message", T: () => Exam, options: { "validate.rules": { message: { required: true } } } }
-        ]);
-    }
-    create(value?: PartialMessage<CreateOrUpdateExamRequest>): CreateOrUpdateExamRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<CreateOrUpdateExamRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateExamRequest): CreateOrUpdateExamRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.qualifications.Exam exam */ 1:
-                    message.exam = Exam.internalBinaryRead(reader, reader.uint32(), options, message.exam);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CreateOrUpdateExamRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.Exam exam = 1; */
-        if (message.exam)
-            Exam.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.qualifications.CreateOrUpdateExamRequest
- */
-export const CreateOrUpdateExamRequest = new CreateOrUpdateExamRequest$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class CreateOrUpdateExamResponse$Type extends MessageType<CreateOrUpdateExamResponse> {
-    constructor() {
-        super("services.qualifications.CreateOrUpdateExamResponse", [
-            { no: 1, name: "exam", kind: "message", T: () => Exam }
-        ]);
-    }
-    create(value?: PartialMessage<CreateOrUpdateExamResponse>): CreateOrUpdateExamResponse {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        if (value !== undefined)
-            reflectionMergePartial<CreateOrUpdateExamResponse>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CreateOrUpdateExamResponse): CreateOrUpdateExamResponse {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* resources.qualifications.Exam exam */ 1:
-                    message.exam = Exam.internalBinaryRead(reader, reader.uint32(), options, message.exam);
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: CreateOrUpdateExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.Exam exam = 1; */
-        if (message.exam)
-            Exam.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message services.qualifications.CreateOrUpdateExamResponse
- */
-export const CreateOrUpdateExamResponse = new CreateOrUpdateExamResponse$Type();
-// @generated message type with reflection information, may provide speed optimized methods
 class TakeExamRequest$Type extends MessageType<TakeExamRequest> {
     constructor() {
         super("services.qualifications.TakeExamRequest", [
-            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+            { no: 1, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "cancel", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<TakeExamRequest>): TakeExamRequest {
@@ -1824,6 +1619,9 @@ class TakeExamRequest$Type extends MessageType<TakeExamRequest> {
                 case /* uint64 qualification_id = 1 [jstype = JS_STRING];*/ 1:
                     message.qualificationId = reader.uint64().toString();
                     break;
+                case /* optional bool cancel */ 2:
+                    message.cancel = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -1839,6 +1637,9 @@ class TakeExamRequest$Type extends MessageType<TakeExamRequest> {
         /* uint64 qualification_id = 1 [jstype = JS_STRING]; */
         if (message.qualificationId !== "0")
             writer.tag(1, WireType.Varint).uint64(message.qualificationId);
+        /* optional bool cancel = 2; */
+        if (message.cancel !== undefined)
+            writer.tag(2, WireType.Varint).bool(message.cancel);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1853,7 +1654,7 @@ export const TakeExamRequest = new TakeExamRequest$Type();
 class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
     constructor() {
         super("services.qualifications.TakeExamResponse", [
-            { no: 1, name: "exam", kind: "message", T: () => Exam }
+            { no: 1, name: "exam", kind: "message", T: () => ExamQuestions }
         ]);
     }
     create(value?: PartialMessage<TakeExamResponse>): TakeExamResponse {
@@ -1867,8 +1668,8 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.qualifications.Exam exam */ 1:
-                    message.exam = Exam.internalBinaryRead(reader, reader.uint32(), options, message.exam);
+                case /* resources.qualifications.ExamQuestions exam */ 1:
+                    message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1882,9 +1683,9 @@ class TakeExamResponse$Type extends MessageType<TakeExamResponse> {
         return message;
     }
     internalBinaryWrite(message: TakeExamResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.qualifications.Exam exam = 1; */
+        /* resources.qualifications.ExamQuestions exam = 1; */
         if (message.exam)
-            Exam.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+            ExamQuestions.internalBinaryWrite(message.exam, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -2010,8 +1811,6 @@ export const QualificationsService = new ServiceType("services.qualifications.Qu
     { name: "ListQualificationsResults", options: {}, I: ListQualificationsResultsRequest, O: ListQualificationsResultsResponse },
     { name: "CreateOrUpdateQualificationResult", options: {}, I: CreateOrUpdateQualificationResultRequest, O: CreateOrUpdateQualificationResultResponse },
     { name: "DeleteQualificationResult", options: {}, I: DeleteQualificationResultRequest, O: DeleteQualificationResultResponse },
-    { name: "GetExam", options: {}, I: GetExamRequest, O: GetExamResponse },
-    { name: "CreateOrUpdateExam", options: {}, I: CreateOrUpdateExamRequest, O: CreateOrUpdateExamResponse },
     { name: "TakeExam", options: {}, I: TakeExamRequest, O: TakeExamResponse },
     { name: "SubmitExam", options: {}, I: SubmitExamRequest, O: SubmitExamResponse }
 ]);

@@ -168,11 +168,11 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 		canContent = request.Status != nil && *request.Status == qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
 	}
 
+	canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
 	if !canContent {
-		canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)
-		if err != nil {
-			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-		}
 		canContent = canGrade
 	}
 
@@ -197,8 +197,18 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
-	if qualiAccess.Access != nil {
+	if qualiAccess != nil {
 		resp.Qualification.Access = qualiAccess.Access
+	}
+
+	if req.WithExam != nil && *req.WithExam {
+		exam, err := s.getExamQuestions(ctx, req.QualificationId, canGrade)
+		if err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+			}
+		}
+		resp.Qualification.Exam = exam
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
@@ -236,9 +246,11 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 			tQuali.Title,
 			tQuali.Description,
 			tQuali.Content,
+			tQuali.DiscordSettings,
+			tQuali.ExamMode,
+			tQuali.ExamSettings,
 			tQuali.CreatorID,
 			tQuali.CreatorJob,
-			tQuali.DiscordSettings,
 		).
 		VALUES(
 			userInfo.Job,
@@ -248,9 +260,11 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 			req.Qualification.Title,
 			req.Qualification.Description,
 			req.Qualification.Content,
+			req.Qualification.DiscordSettings,
+			req.Qualification.ExamMode,
+			req.Qualification.ExamSettings,
 			userInfo.UserId,
 			userInfo.Job,
-			req.Qualification.DiscordSettings,
 		)
 
 	result, err := stmt.ExecContext(ctx, tx)
@@ -270,6 +284,8 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 	if err := s.handleQualificationRequirementsChanges(ctx, tx, uint64(lastId), req.Qualification.Requirements); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+
+	// TODO handle exam questions
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -353,6 +369,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 				tQuali.Description,
 				tQuali.Content,
 				tQuali.DiscordSettings,
+				tQuali.ExamMode,
+				tQuali.ExamSettings,
 			).
 			SET(
 				req.Qualification.Weight,
@@ -362,6 +380,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 				req.Qualification.Description,
 				req.Qualification.Content,
 				req.Qualification.DiscordSettings,
+				req.Qualification.ExamMode,
+				req.Qualification.ExamSettings,
 			).
 			WHERE(
 				tQuali.ID.EQ(jet.Uint64(req.Qualification.Id)),
@@ -379,6 +399,8 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 	if err := s.handleQualificationRequirementsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Requirements); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
+
+	// TODO handle exam questions
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {

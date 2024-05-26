@@ -26,4 +26,6 @@ type FivenetQualifications struct {
 	CreatorID       *int32     `json:"creator_id"`
 	CreatorJob      string     `json:"creator_job"`
 	DiscordSettings *string    `json:"discord_settings"`
+	ExamMode        *int16     `json:"exam_mode"`
+	ExamSettings    *string    `json:"exam_settings"`
 }

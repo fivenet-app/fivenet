@@ -17,6 +17,8 @@ CREATE TABLE
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,
         `discord_settings` longtext,
+        `exam_mode` smallint(2) DEFAULT 1,
+        `exam_settings` longtext,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_qualifications_deleted_at` (`deleted_at`),
         KEY `idx_fivenet_qualifications_job` (`job`),

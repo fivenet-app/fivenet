@@ -31,6 +31,8 @@ type fivenetQualificationsTable struct {
 	CreatorID       mysql.ColumnInteger
 	CreatorJob      mysql.ColumnString
 	DiscordSettings mysql.ColumnString
+	ExamMode        mysql.ColumnInteger
+	ExamSettings    mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -85,8 +87,10 @@ func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) five
 		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
 		CreatorJobColumn      = mysql.StringColumn("creator_job")
 		DiscordSettingsColumn = mysql.StringColumn("discord_settings")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn}
+		ExamModeColumn        = mysql.IntegerColumn("exam_mode")
+		ExamSettingsColumn    = mysql.StringColumn("exam_settings")
+		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
 	)
 
 	return fivenetQualificationsTable{
@@ -107,6 +111,8 @@ func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) five
 		CreatorID:       CreatorIDColumn,
 		CreatorJob:      CreatorJobColumn,
 		DiscordSettings: DiscordSettingsColumn,
+		ExamMode:        ExamModeColumn,
+		ExamSettings:    ExamSettingsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

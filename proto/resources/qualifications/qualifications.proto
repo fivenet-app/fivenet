@@ -2,6 +2,9 @@ syntax = "proto3";
 
 package resources.qualifications;
 
+import "google/protobuf/duration.proto";
+import "resources/qualifications/access.proto";
+import "resources/qualifications/exam.proto";
 import "resources/timestamp/timestamp.proto";
 import "resources/users/users.proto";
 import "validate/validate.proto";
@@ -33,11 +36,14 @@ message Qualification {
   optional int32 creator_id = 12;
   optional resources.users.UserShort creator = 13; // @gotags: alias:"creator"
   string creator_job = 14 [(validate.rules).string.max_len = 20];
-  QualificationAccess access = 15;
+  resources.qualifications.QualificationAccess access = 15;
   repeated QualificationRequirement requirements = 16;
   optional QualificationDiscordSettings discord_settings = 17;
-  optional QualificationResult result = 18;
-  optional QualificationRequest request = 19;
+  QualificationExamMode exam_mode = 18 [(validate.rules).enum.defined_only = true];
+  optional QualificationExamSettings exam_settings = 19;
+  optional resources.qualifications.ExamQuestions exam = 20;
+  optional QualificationResult result = 21;
+  optional QualificationRequest request = 22;
 }
 
 message QualificationShort {
@@ -61,40 +67,9 @@ message QualificationShort {
   optional resources.users.UserShort creator = 13; // @gotags: alias:"creator"
   string creator_job = 14 [(validate.rules).string.max_len = 20];
   repeated QualificationRequirement requirements = 16;
-  optional QualificationResult result = 18;
-}
-
-enum AccessLevelUpdateMode {
-  ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED = 0;
-  ACCESS_LEVEL_UPDATE_MODE_UPDATE = 1;
-  ACCESS_LEVEL_UPDATE_MODE_DELETE = 2;
-  ACCESS_LEVEL_UPDATE_MODE_CLEAR = 3;
-}
-
-enum AccessLevel {
-  ACCESS_LEVEL_UNSPECIFIED = 0;
-  ACCESS_LEVEL_BLOCKED = 1;
-  ACCESS_LEVEL_VIEW = 2;
-  ACCESS_LEVEL_REQUEST = 3;
-  ACCESS_LEVEL_TAKE = 4;
-  ACCESS_LEVEL_GRADE = 5;
-  ACCESS_LEVEL_MANAGE = 6;
-  ACCESS_LEVEL_EDIT = 7;
-}
-
-message QualificationAccess {
-  repeated QualificationJobAccess jobs = 1;
-}
-
-message QualificationJobAccess {
-  uint64 id = 1 [jstype = JS_STRING]; // @gotags: sql:"primary_key" alias:"id"
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 qualification_id = 4 [jstype = JS_STRING];
-  string job = 5 [(validate.rules).string.max_len = 20];
-  optional string job_label = 6 [(validate.rules).string.max_len = 50];
-  int32 minimum_grade = 7 [(validate.rules).int32.gt = 0];
-  optional string job_grade_label = 8 [(validate.rules).string.max_len = 50];
-  AccessLevel access = 9 [(validate.rules).enum.defined_only = true];
+  QualificationExamMode exam_mode = 18 [(validate.rules).enum.defined_only = true];
+  optional QualificationExamSettings exam_settings = 19;
+  optional QualificationResult result = 21;
 }
 
 message QualificationRequirement {
@@ -108,6 +83,21 @@ message QualificationRequirement {
 message QualificationDiscordSettings {
   bool sync_enabled = 1;
   optional string role_name = 2 [(validate.rules).string.max_len = 64];
+}
+
+enum QualificationExamMode {
+  QUALIFICATION_EXAM_MODE_UNSPECIFIED = 0;
+  QUALIFICATION_EXAM_MODE_DISABLED = 1;
+  QUALIFICATION_EXAM_MODE_ENABLED = 2;
+  QUALIFICATION_EXAM_MODE_FORCED = 3;
+}
+
+message QualificationExamSettings {
+  google.protobuf.Duration time = 1 [(validate.rules).duration = {
+    required: true,
+    lt:  {seconds: 300}, // 5 minutes
+    gte: {seconds: 1036800}, // 24 hours
+  }];
 }
 
 enum ResultStatus {
