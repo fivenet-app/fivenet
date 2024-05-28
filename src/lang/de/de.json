@@ -459,7 +459,8 @@
         "diff": "Unterschiede",
         "exam": "Prüfung | Prüfungen",
         "question": "Frage | Fragen",
-        "answer": "Antwort | Antworten"
+        "answer": "Antwort | Antworten",
+        "chars": "Zeichen"
     },
     "components": {
         "partials": {
