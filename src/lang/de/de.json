@@ -457,7 +457,9 @@
         "paste": "Einfügen",
         "messenger": "Konversationen",
         "diff": "Unterschiede",
-        "exam": "Prüfung | Prüfungen"
+        "exam": "Prüfung | Prüfungen",
+        "question": "Frage | Fragen",
+        "answer": "Antwort | Antworten"
     },
     "components": {
         "partials": {
@@ -903,7 +905,16 @@
             "request_modal": {
                 "title": "Qualifizierung anfragen"
             },
-            "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde."
+            "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
+            "exam_editor": {
+                "question_types": {
+                    "separator": "Trenner",
+                    "yesno": "Ja/Nein",
+                    "freeText": "Freitext",
+                    "singleChoice": "Einfachauswahl",
+                    "multipleChoice": "Mehrfachauswahl"
+                }
+            }
         },
         "language_switcher": {
             "title": "Sprache wechseln"
@@ -2316,6 +2327,12 @@
                 "DENIED": "Abgelehnt",
                 "ACCEPTED": "Akzeptiert",
                 "COMPLETED": "Abgeschlossen"
+            },
+            "QualificationExamMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "DISABLED": "Deaktiviert",
+                "ENABLED": "Aktiviert",
+                "FORCED": "Benötigt"
             }
         },
         "rector": {
