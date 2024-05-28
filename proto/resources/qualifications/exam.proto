@@ -24,7 +24,7 @@ message ExamQuestion {
   }];
   optional string description = 6 [(validate.rules).string.max_len = 1024];
   ExamQuestionData data = 7 [(validate.rules).message.required = true];
-  ExamQuestionAnswerData answer = 8 [(validate.rules).message.required = true];
+  optional ExamQuestionAnswerData answer = 8;
 }
 
 message ExamQuestionData {
@@ -32,7 +32,8 @@ message ExamQuestionData {
     ExamQuestionSeparator separator = 1;
     ExamQuestionYesNo yesno  = 2;
     ExamQuestionText free_text = 3;
-    ExamQuestionMultipleChoice multiple_choice = 4;
+    ExamQuestionSingleChoice single_choice = 4;
+    ExamQuestionMultipleChoice multiple_choice = 5;
   }
 }
 
@@ -45,6 +46,10 @@ message ExamQuestionText {
   int32 max_length = 2;
 }
 
+message ExamQuestionSingleChoice {
+  repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
+}
+
 message ExamQuestionMultipleChoice {
   repeated string choices = 1 [(validate.rules).repeated.max_items = 10];
   optional int32 limit = 2;
@@ -54,27 +59,30 @@ message ExamQuestionAnswerData {}
 
 // User Response
 
-message ExamUserResponse {
-  uint64 id = 1 [jstype = JS_STRING];
-  optional resources.timestamp.Timestamp created_at = 2;
-  uint64 qualification_id = 3 [jstype = JS_STRING];
+message ExamUser {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
+  optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp started_at = 4;
   optional resources.timestamp.Timestamp ended_at = 5;
-  optional ExamResponses responses = 6;
 }
 
 message ExamResponses {
-  repeated ExamResponse responses = 1 [(validate.rules).repeated.max_items = 50];
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
+  repeated ExamResponse responses = 3 [(validate.rules).repeated.max_items = 50];
 }
 
 message ExamResponse {
-  uint64 id = 1 [jstype = JS_STRING];
+  uint64 question_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
 
   oneof response {
-    bool separator = 2;
-    ExamResponseYesNo yesno  = 3;
-    ExamResponseText free_text = 4;
-    ExamResponseMultipleChoice multiple_choice = 5;
+    bool separator = 3;
+    ExamResponseYesNo yesno  = 4;
+    ExamResponseText free_text = 5;
+    ExamResponseSingleChoice single_choice = 6;
+    ExamResponseMultipleChoice multiple_choice = 7;
   }
 }
 
@@ -84,6 +92,10 @@ message ExamResponseYesNo {
 
 message ExamResponseText {
   string text = 1 [(validate.rules).string.max_bytes = 500000]; // 0.5 Megabyte
+}
+
+message ExamResponseSingleChoice {
+  string choice = 1 [(validate.rules).string.max_len = 512];
 }
 
 message ExamResponseMultipleChoice {

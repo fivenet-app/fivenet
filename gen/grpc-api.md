@@ -187,15 +187,17 @@
     - [ExamQuestionData](#resources-qualifications-ExamQuestionData)
     - [ExamQuestionMultipleChoice](#resources-qualifications-ExamQuestionMultipleChoice)
     - [ExamQuestionSeparator](#resources-qualifications-ExamQuestionSeparator)
+    - [ExamQuestionSingleChoice](#resources-qualifications-ExamQuestionSingleChoice)
     - [ExamQuestionText](#resources-qualifications-ExamQuestionText)
     - [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo)
     - [ExamQuestions](#resources-qualifications-ExamQuestions)
     - [ExamResponse](#resources-qualifications-ExamResponse)
     - [ExamResponseMultipleChoice](#resources-qualifications-ExamResponseMultipleChoice)
+    - [ExamResponseSingleChoice](#resources-qualifications-ExamResponseSingleChoice)
     - [ExamResponseText](#resources-qualifications-ExamResponseText)
     - [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo)
     - [ExamResponses](#resources-qualifications-ExamResponses)
-    - [ExamUserResponse](#resources-qualifications-ExamUserResponse)
+    - [ExamUser](#resources-qualifications-ExamUser)
   
 - [resources/qualifications/qualifications.proto](#resources_qualifications_qualifications-proto)
     - [Qualification](#resources-qualifications-Qualification)
@@ -3271,7 +3273,7 @@
 | title | [string](#string) |  |  |
 | description | [string](#string) | optional |  |
 | data | [ExamQuestionData](#resources-qualifications-ExamQuestionData) |  |  |
-| answer | [ExamQuestionAnswerData](#resources-qualifications-ExamQuestionAnswerData) |  |  |
+| answer | [ExamQuestionAnswerData](#resources-qualifications-ExamQuestionAnswerData) | optional |  |
 
 
 
@@ -3299,6 +3301,7 @@
 | separator | [ExamQuestionSeparator](#resources-qualifications-ExamQuestionSeparator) |  |  |
 | yesno | [ExamQuestionYesNo](#resources-qualifications-ExamQuestionYesNo) |  |  |
 | free_text | [ExamQuestionText](#resources-qualifications-ExamQuestionText) |  |  |
+| single_choice | [ExamQuestionSingleChoice](#resources-qualifications-ExamQuestionSingleChoice) |  |  |
 | multiple_choice | [ExamQuestionMultipleChoice](#resources-qualifications-ExamQuestionMultipleChoice) |  |  |
 
 
@@ -3326,6 +3329,21 @@
 
 ### ExamQuestionSeparator
 
+
+
+
+
+
+
+<a name="resources-qualifications-ExamQuestionSingleChoice"></a>
+
+### ExamQuestionSingleChoice
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| choices | [string](#string) | repeated |  |
 
 
 
@@ -3381,10 +3399,12 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
+| question_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
 | separator | [bool](#bool) |  |  |
 | yesno | [ExamResponseYesNo](#resources-qualifications-ExamResponseYesNo) |  |  |
 | free_text | [ExamResponseText](#resources-qualifications-ExamResponseText) |  |  |
+| single_choice | [ExamResponseSingleChoice](#resources-qualifications-ExamResponseSingleChoice) |  |  |
 | multiple_choice | [ExamResponseMultipleChoice](#resources-qualifications-ExamResponseMultipleChoice) |  |  |
 
 
@@ -3401,6 +3421,21 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | choices | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-qualifications-ExamResponseSingleChoice"></a>
+
+### ExamResponseSingleChoice
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| choice | [string](#string) |  |  |
 
 
 
@@ -3445,6 +3480,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| qualification_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
 | responses | [ExamResponse](#resources-qualifications-ExamResponse) | repeated |  |
 
 
@@ -3452,20 +3489,19 @@
 
 
 
-<a name="resources-qualifications-ExamUserResponse"></a>
+<a name="resources-qualifications-ExamUser"></a>
 
-### ExamUserResponse
+### ExamUser
 
 
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  |  |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | qualification_id | [uint64](#uint64) |  |  |
+| user_id | [int32](#int32) |  |  |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | started_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | ended_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| responses | [ExamResponses](#resources-qualifications-ExamResponses) | optional |  |
 
 
 

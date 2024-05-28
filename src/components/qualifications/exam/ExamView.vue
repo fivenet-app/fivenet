@@ -38,22 +38,6 @@ async function getQualification(qualificationId: string): Promise<GetExamRespons
         </template>
     </UDashboardNavbar>
 
-    <UDashboardToolbar v-if="can('QualificationsService.UpdateQualification')">
-        <template #default>
-            <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
-                <UButton
-                    :to="{
-                        name: 'qualifications-id-exam-edit',
-                        params: { id: qualificationId },
-                    }"
-                    icon="i-mdi-pencil"
-                >
-                    {{ $t('common.edit') }}
-                </UButton>
-            </div>
-        </template>
-    </UDashboardToolbar>
-
     <UCard>
         {{ data?.exam }}
 

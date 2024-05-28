@@ -95,8 +95,8 @@ enum QualificationExamMode {
 message QualificationExamSettings {
   google.protobuf.Duration time = 1 [(validate.rules).duration = {
     required: true,
-    lt:  {seconds: 300}, // 5 minutes
-    gte: {seconds: 1036800}, // 24 hours
+    lt: {seconds: 1036800}, // 24 hours
+    gte:  {seconds: 300}, // 5 minutes
   }];
 }
 

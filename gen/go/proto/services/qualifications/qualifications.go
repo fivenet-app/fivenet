@@ -204,9 +204,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 	if req.WithExam != nil && *req.WithExam {
 		exam, err := s.getExamQuestions(ctx, req.QualificationId, canGrade)
 		if err != nil {
-			if !errors.Is(err, qrm.ErrNoRows) {
-				return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-			}
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 		resp.Qualification.Exam = exam
 	}
@@ -285,7 +283,11 @@ func (s *Server) CreateQualification(ctx context.Context, req *CreateQualificati
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	// TODO handle exam questions
+	if req.Qualification.Exam != nil && req.Qualification.Exam.Questions != nil {
+		if err := s.handleExamQuestionsChanges(ctx, tx, uint64(lastId), req.Qualification.Exam); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {
@@ -400,7 +402,11 @@ func (s *Server) UpdateQualification(ctx context.Context, req *UpdateQualificati
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	// TODO handle exam questions
+	if req.Qualification.Exam != nil && req.Qualification.Exam.Questions != nil {
+		if err := s.handleExamQuestionsChanges(ctx, tx, req.Qualification.Id, req.Qualification.Exam); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
 
 	// Commit the transaction
 	if err := tx.Commit(); err != nil {

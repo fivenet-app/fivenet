@@ -12,21 +12,30 @@ CREATE TABLE
         `data` longtext,
         `answer` longtext,
         PRIMARY KEY (`id`),
-        UNIQUE KEY `idx_fivenet_qualifications_exam_questions_quali_id_unique` (`qualification_id`),
         CONSTRAINT `fk_fivenet_qualifications_exam_questions_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+    ) ENGINE = InnoDB;
+
+-- Table: fivenet_qualifications_exam_users
+CREATE TABLE
+    IF NOT EXISTS `fivenet_qualifications_exam_users` (
+        `qualification_id` bigint(20) unsigned NOT NULL,
+        `user_id` int(11) NOT NULL,
+        `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
+        `started_at` datetime(3) DEFAULT NULL,
+        `ended_at` datetime(3) DEFAULT NULL,
+        PRIMARY KEY (`qualification_id`, `user_id`),
+        CONSTRAINT `fk_fivenet_qualifications_exam_users_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,
+        CONSTRAINT `fk_fivenet_qualifications_exam_users_user_id` FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 -- Table: fivenet_qualifications_exam_responses
 CREATE TABLE
     IF NOT EXISTS `fivenet_qualifications_exam_responses` (
+        `question_id` bigint(20) unsigned NOT NULL,
         `user_id` int(11) NOT NULL,
-        `qualification_id` bigint(20) unsigned NOT NULL,
-        `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
-        `started_at` datetime(3) DEFAULT NULL,
-        `ended_at` datetime(3) DEFAULT NULL,
-        `responses` longtext,
-        PRIMARY KEY (`user_id`, `qualification_id`),
-        CONSTRAINT `fk_fivenet_qualifications_exam_responses_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
+        `response` longtext,
+        PRIMARY KEY (`question_id`, `user_id`),
+        CONSTRAINT `fk_fivenet_qualifications_exam_responses_question_id` FOREIGN KEY (`question_id`) REFERENCES `fivenet_qualifications_exam_questions` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
 COMMIT;

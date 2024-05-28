@@ -8,6 +8,7 @@ import {
     QualificationRequirement,
     QualificationShort,
     QualificationExamMode,
+    QualificationExamSettings,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
@@ -43,6 +44,12 @@ const canDo = computed(() => ({
     access: true,
 }));
 
+const examModes = ref<{ mode: QualificationExamMode; selected?: boolean }[]>([
+    { mode: QualificationExamMode.DISABLED },
+    { mode: QualificationExamMode.ENABLED },
+    { mode: QualificationExamMode.FORCED },
+]);
+
 const schema = z.object({
     weight: z.number(),
     abbreviation: z.string().min(3).max(20),
@@ -55,9 +62,7 @@ const schema = z.object({
         roleName: z.string().max(64).optional(),
     }),
     examMode: z.nativeEnum(QualificationExamMode),
-    examSettings: z.object({
-        time: zodDurationSchema,
-    }),
+    examSettings: z.custom<QualificationExamSettings>(),
     exam: z.custom<ExamQuestions>(),
 });
 
@@ -125,6 +130,13 @@ async function getQualification(qualificationId: string): Promise<void> {
                 syncEnabled: false,
                 roleName: '',
             };
+            state.examMode = qualification.examMode;
+            if (qualification.examSettings) {
+                state.examSettings = qualification.examSettings;
+            }
+            if (qualification.exam) {
+                state.exam = qualification.exam;
+            }
 
             qualiRequirements.value = qualification.requirements;
         }
@@ -190,6 +202,8 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             } as QualificationAccess,
             discordSettings: values.discordSettings,
             examMode: QualificationExamMode.DISABLED,
+            examSettings: values.examSettings,
+            exam: values.exam,
         },
     };
     access.value.forEach((entry) => {
@@ -247,6 +261,8 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             } as QualificationAccess,
             discordSettings: values.discordSettings,
             examMode: QualificationExamMode.DISABLED,
+            examSettings: values.examSettings,
+            exam: values.exam,
         },
     };
     access.value.forEach((entry) => {
@@ -408,7 +424,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
+    <UForm :schema="schema" :state="state" @error="console.log($event)" @submit="onSubmitThrottle">
         <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
             <template #right>
                 <UButtonGroup class="inline-flex">
@@ -614,6 +630,46 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 </UContainer>
                             </template>
                         </UAccordion>
+                    </div>
+
+                    <div>
+                        <h2 class="text- text-gray-900 dark:text-white">
+                            {{ $t('common.exam', 1) }}
+                        </h2>
+
+                        <UFormGroup name="examMode">
+                            <USelectMenu
+                                v-model="state.examMode"
+                                :options="examModes"
+                                value-attribute="mode"
+                                class="w-40 max-w-40"
+                                @focusin="focusTablet(true)"
+                                @focusout="focusTablet(false)"
+                            >
+                                <template #label>
+                                    <span class="truncate">
+                                        {{
+                                            $t(
+                                                `enums.qualifications.QualificationExamMode.${QualificationExamMode[state.examMode]}`,
+                                            )
+                                        }}
+                                    </span>
+                                </template>
+                                <template #option="{ option }">
+                                    <span class="truncate">
+                                        {{
+                                            $t(
+                                                `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
+                                            )
+                                        }}
+                                    </span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                            </USelectMenu>
+                        </UFormGroup>
                     </div>
                 </div>
             </template>

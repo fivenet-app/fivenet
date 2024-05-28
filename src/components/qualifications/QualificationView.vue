@@ -165,19 +165,6 @@ const accordionItems = computed(() =>
                         {{ $t('common.edit') }}
                     </UButton>
 
-                    <!-- TODO Enable when the exam logic is ready -->
-                    <UButton
-                        v-if="false && can('QualificationsService.UpdateQualification') && canDo.edit"
-                        :to="{
-                            name: 'qualifications-id-exam-edit',
-                            params: { id: qualification!.id },
-                        }"
-                        icon="i-mdi-pencil"
-                    >
-                        {{ $t('common.exam', 1) }}
-                        {{ $t('common.edit') }}
-                    </UButton>
-
                     <UButton
                         v-if="can('QualificationsService.DeleteQualification') && canDo.edit"
                         icon="i-mdi-trash-can"

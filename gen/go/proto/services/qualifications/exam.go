@@ -15,7 +15,7 @@ import (
 )
 
 var (
-	tExamQuestions = table.FivenetQualificationsExamQuestions.AS("examquestions")
+	tExamQuestions = table.FivenetQualificationsExamQuestions.AS("examquestion")
 	tExamResponses = table.FivenetQualificationsExamResponses.AS("examuserresponse")
 )
 

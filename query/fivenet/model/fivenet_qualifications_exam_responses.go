@@ -7,16 +7,8 @@
 
 package model
 
-import (
-	"time"
-)
-
 type FivenetQualificationsExamResponses struct {
-	UserID          int32      `sql:"primary_key" json:"user_id"`
-	QualificationID uint64     `sql:"primary_key" json:"qualification_id"`
-	CreatedAt       *time.Time `json:"created_at"`
-	StartedAt       *time.Time `json:"started_at"`
-	EndedAt         *time.Time `json:"ended_at"`
-	Responses       *string    `json:"responses"`
-	Closed          *bool      `json:"closed"`
+	QuestionID uint64  `sql:"primary_key" json:"question_id"`
+	UserID     int32   `sql:"primary_key" json:"user_id"`
+	Response   *string `json:"response"`
 }

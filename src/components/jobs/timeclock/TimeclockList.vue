@@ -200,12 +200,14 @@ const input = ref<{ input: HTMLInputElement }>();
                                     @focusout="focusTablet(false)"
                                 >
                                     <template #label>
-                                        <template v-if="query.users?.length">
+                                        <span v-if="query.users?.length" class="truncate">
                                             {{ usersToLabel(query.users) }}
-                                        </template>
+                                        </span>
                                     </template>
                                     <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        <span class="truncate">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </span>
                                     </template>
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}

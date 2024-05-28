@@ -55,12 +55,14 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                     @focusout="focusTablet(false)"
                 >
                     <template #label>
-                        <template v-if="query.user">
+                        <span v-if="query.user" class="truncate">
                             {{ usersToLabel([query.user]) }}
-                        </template>
+                        </span>
                     </template>
                     <template #option="{ option: user }">
-                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        <span class="truncate">
+                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        </span>
                     </template>
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}

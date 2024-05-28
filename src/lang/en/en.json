@@ -458,7 +458,8 @@
         "messenger": "Messenger",
         "diff": "Diff",
         "exam": "Exam | Exams",
-        "question": "Question | Questions"
+        "question": "Question | Questions",
+        "answer": "Answer | Answers"
     },
     "components": {
         "partials": {
@@ -904,7 +905,16 @@
             "request_modal": {
                 "title": "Request Qualification"
             },
-            "content_unavailable": "Qualification content will be available once your request has been accepted."
+            "content_unavailable": "Qualification content will be available once your request has been accepted.",
+            "exam_editor": {
+                "question_types": {
+                    "separator": "Separator",
+                    "yesno": "Yes/No",
+                    "freeText": "Free Text",
+                    "singleChoice": "Single Choice",
+                    "multipleChoice": "Multiple Choice"
+                }
+            }
         },
         "language_switcher": {
             "title": "Switch language"
@@ -2317,6 +2327,12 @@
                 "DENIED": "Denied",
                 "ACCEPTED": "Accepted",
                 "COMPLETED": "Completed"
+            },
+            "QualificationExamMode": {
+                "UNSPECIFIED": "Unspecified",
+                "DISABLED": "Disabled",
+                "ENABLED": "Enabled",
+                "FORCED": "Forced"
             }
         },
         "rector": {

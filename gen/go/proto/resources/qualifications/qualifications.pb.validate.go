@@ -1370,13 +1370,13 @@ func (m *QualificationExamSettings) validate(all bool) error {
 			errors = append(errors, err)
 		} else {
 
-			lt := time.Duration(300*time.Second + 0*time.Nanosecond)
-			gte := time.Duration(1036800*time.Second + 0*time.Nanosecond)
+			lt := time.Duration(1036800*time.Second + 0*time.Nanosecond)
+			gte := time.Duration(300*time.Second + 0*time.Nanosecond)
 
-			if dur >= lt && dur < gte {
+			if dur < gte || dur >= lt {
 				err := QualificationExamSettingsValidationError{
 					field:  "Time",
-					reason: "value must be outside range [5m0s, 288h0m0s)",
+					reason: "value must be inside range [5m0s, 288h0m0s)",
 				}
 				if !all {
 					return err

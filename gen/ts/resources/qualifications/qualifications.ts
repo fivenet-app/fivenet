@@ -942,7 +942,7 @@ export const QualificationDiscordSettings = new QualificationDiscordSettings$Typ
 class QualificationExamSettings$Type extends MessageType<QualificationExamSettings> {
     constructor() {
         super("resources.qualifications.QualificationExamSettings", [
-            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "300" }, gte: { seconds: "1036800" } } } } }
+            { no: 1, name: "time", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "1036800" }, gte: { seconds: "300" } } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationExamSettings>): QualificationExamSettings {

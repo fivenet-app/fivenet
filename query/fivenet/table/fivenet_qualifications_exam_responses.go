@@ -17,13 +17,9 @@ type fivenetQualificationsExamResponsesTable struct {
 	mysql.Table
 
 	// Columns
-	UserID          mysql.ColumnInteger
-	QualificationID mysql.ColumnInteger
-	CreatedAt       mysql.ColumnTimestamp
-	StartedAt       mysql.ColumnTimestamp
-	EndedAt         mysql.ColumnTimestamp
-	Responses       mysql.ColumnString
-	Closed          mysql.ColumnBool
+	QuestionID mysql.ColumnInteger
+	UserID     mysql.ColumnInteger
+	Response   mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -64,28 +60,20 @@ func newFivenetQualificationsExamResponsesTable(schemaName, tableName, alias str
 
 func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias string) fivenetQualificationsExamResponsesTable {
 	var (
-		UserIDColumn          = mysql.IntegerColumn("user_id")
-		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
-		CreatedAtColumn       = mysql.TimestampColumn("created_at")
-		StartedAtColumn       = mysql.TimestampColumn("started_at")
-		EndedAtColumn         = mysql.TimestampColumn("ended_at")
-		ResponsesColumn       = mysql.StringColumn("responses")
-		ClosedColumn          = mysql.BoolColumn("closed")
-		allColumns            = mysql.ColumnList{UserIDColumn, QualificationIDColumn, CreatedAtColumn, StartedAtColumn, EndedAtColumn, ResponsesColumn, ClosedColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, StartedAtColumn, EndedAtColumn, ResponsesColumn, ClosedColumn}
+		QuestionIDColumn = mysql.IntegerColumn("question_id")
+		UserIDColumn     = mysql.IntegerColumn("user_id")
+		ResponseColumn   = mysql.StringColumn("response")
+		allColumns       = mysql.ColumnList{QuestionIDColumn, UserIDColumn, ResponseColumn}
+		mutableColumns   = mysql.ColumnList{ResponseColumn}
 	)
 
 	return fivenetQualificationsExamResponsesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		UserID:          UserIDColumn,
-		QualificationID: QualificationIDColumn,
-		CreatedAt:       CreatedAtColumn,
-		StartedAt:       StartedAtColumn,
-		EndedAt:         EndedAtColumn,
-		Responses:       ResponsesColumn,
-		Closed:          ClosedColumn,
+		QuestionID: QuestionIDColumn,
+		UserID:     UserIDColumn,
+		Response:   ResponseColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

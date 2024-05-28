@@ -110,12 +110,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             @focusout="focusTablet(false)"
                         >
                             <template #label>
-                                <span v-if="state.status" class="truncate">{{
-                                    $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`)
-                                }}</span>
+                                <span v-if="state.status" class="truncate">
+                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
+                                </span>
                             </template>
                             <template #option="{ option }">
-                                {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
+                                <span class="truncate">
+                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
+                                </span>
                             </template>
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
