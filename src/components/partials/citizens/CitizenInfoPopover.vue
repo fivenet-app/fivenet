@@ -36,7 +36,7 @@ const {
     { immediate: false },
 );
 
-async function getCitizen(id: number): Promise<User> {
+async function getCitizen(id: number): Promise<User | undefined> {
     try {
         const call = getGRPCCitizenStoreClient().getUser({
             userId: id,
@@ -46,8 +46,7 @@ async function getCitizen(id: number): Promise<User> {
 
         return response.user!;
     } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
+        return undefined;
     }
 }
 

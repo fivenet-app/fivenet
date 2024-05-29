@@ -159,7 +159,7 @@ func (s *Server) TakeExam(ctx context.Context, req *TakeExamRequest) (*TakeExamR
 	}
 
 	var exam *qualifications.ExamQuestions
-	if examUser != nil && examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) < quali.ExamSettings.Time.AsDuration() {
+	if examUser == nil || (examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) < quali.ExamSettings.Time.AsDuration()) {
 		exam, err = s.getExamQuestions(ctx, req.QualificationId, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -348,4 +348,20 @@ func (s *Server) GetUserExam(ctx context.Context, req *GetUserExamRequest) (*Get
 	resp.ExamUser = examUser
 
 	return resp, nil
+}
+
+func (s *Server) deleteExamUser(ctx context.Context, qualificationId uint64, userId int32) error {
+	stmt := tExamUser.
+		DELETE().
+		WHERE(jet.AND(
+			tExamUser.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamUser.UserID.EQ(jet.Int32(userId)),
+		)).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
 }

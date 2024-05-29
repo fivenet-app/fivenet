@@ -175,7 +175,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 						AND(tQJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
 				),
 		).
-		GROUP_BY(tQualiResults.ID).
+		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt).
 		ORDER_BY(tQualiResults.CreatedAt.DESC()).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
@@ -221,8 +221,14 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
+	result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, []qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL}, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
 	tQualiResults := table.FivenetQualificationsResults
-	if req.Result.Id <= 0 {
+	// There is currently no result with status successful
+	if req.Result.Id <= 0 && (result == nil || (result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL && req.Result.Status != qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL)) {
 		stmt := tQualiResults.
 			INSERT(
 				tQualiResults.QualificationID,
@@ -257,7 +263,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, userInfo)
+		result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, nil, userInfo)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -296,15 +302,10 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	result, err := s.getQualificationResult(ctx, quali.Id, req.Result.Id, userInfo)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
-	}
-
-	// Only send notification when there is currently no score
-	if result.Score == nil {
+	// Only send notification when the original result had no score and isn't in pending status
+	if req.Result.Status != qualifications.ResultStatus_RESULT_STATUS_PENDING && (result == nil || (result.Status == qualifications.ResultStatus_RESULT_STATUS_PENDING || (result.Score == nil && req.Result.Score != nil))) {
 		if err := s.notif.NotifyUser(ctx, &notifications.Notification{
-			UserId: result.UserId,
+			UserId: req.Result.UserId,
 			Title: &common.TranslateItem{
 				Key: "notifications.qualifications.result_updated.title",
 			},
@@ -316,7 +317,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 			Type:     notifications.NotificationType_NOTIFICATION_TYPE_INFO,
 			Data: &notifications.Data{
 				Link: &notifications.Link{
-					To: fmt.Sprintf("/qualifications/%d", result.QualificationId),
+					To: fmt.Sprintf("/qualifications/%d", req.Result.QualificationId),
 				},
 			},
 		}); err != nil {
@@ -329,11 +330,20 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		if err := s.updateRequestStatus(ctx, req.Result.QualificationId, req.Result.UserId, qualifications.RequestStatus_REQUEST_STATUS_COMPLETED); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
-	} else if req.Result.Status == qualifications.ResultStatus_RESULT_STATUS_FAILED {
-		// If failed status, delete the request
+	} else {
+		// If failed or other status, delete the request
 		if err := s.deleteQualificationRequest(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
+
+		if err := s.deleteExamUser(ctx, req.Result.QualificationId, req.Result.UserId); err != nil {
+			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+		}
+	}
+
+	result, err = s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	return &CreateOrUpdateQualificationResultResponse{
@@ -341,7 +351,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 	}, nil
 }
 
-func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
+func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
 	tUser := tUser.AS("user")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
@@ -353,6 +363,15 @@ func (s *Server) getQualificationResult(ctx context.Context, qualificationId uin
 	}
 	if qualificationId > 0 {
 		condition = condition.AND(tQualiResults.QualificationID.EQ(jet.Uint64(qualificationId)))
+	}
+
+	if len(status) > 0 {
+		statusConds := make([]jet.Expression, len(status))
+		for i := 0; i < len(status); i++ {
+			statusConds[i] = jet.Int16(int16(status[i]))
+		}
+
+		condition = condition.AND(tQualiResults.Status.IN(statusConds...))
 	}
 
 	stmt := tQualiResults.
@@ -429,9 +448,13 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	result, err := s.getQualificationResult(ctx, 0, req.ResultId, userInfo)
+	result, err := s.getQualificationResult(ctx, 0, req.ResultId, nil, userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if result == nil {
+		return &DeleteQualificationResultResponse{}, nil
 	}
 
 	check, err := s.checkIfUserHasAccessToQuali(ctx, result.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
@@ -454,7 +477,11 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
+	}
+
+	if err := s.deleteExamUser(ctx, result.QualificationId, result.UserId); err != nil {
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)

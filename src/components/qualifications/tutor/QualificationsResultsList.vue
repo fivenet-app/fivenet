@@ -10,6 +10,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { resultStatusToTextColor } from '../helpers';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -167,6 +168,21 @@ defineExpose({
                     </template>
                     <template #actions-data="{ row: result }">
                         <div :key="result.id">
+                            <UButton
+                                v-if="result.status === ResultStatus.PENDING"
+                                variant="link"
+                                icon="i-mdi-star"
+                                color="amber"
+                                @click="
+                                    modal.open(ExamViewResultModal, {
+                                        qualificationId: result.qualificationId,
+                                        userId: result.userId,
+                                        resultId: result.id,
+                                        onRefresh: onRefresh,
+                                    })
+                                "
+                            />
+
                             <UButton
                                 v-if="can('QualificationsService.DeleteQualificationResult')"
                                 class="flex-initial"

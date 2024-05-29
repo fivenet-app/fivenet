@@ -165,7 +165,7 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 
 	// If user's request is accepted or user has GRADE or higher perm to qualification, show content
 	if request != nil {
-		canContent = request.Status != nil && *request.Status == qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
+		canContent = request.Status != nil && *request.Status >= qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED
 	}
 
 	canGrade, err := s.checkIfUserHasAccessToQuali(ctx, req.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_GRADE)

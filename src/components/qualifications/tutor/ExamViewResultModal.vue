@@ -6,6 +6,7 @@ import ExamViewQuestions from '../exam/ExamViewQuestions.vue';
 const props = defineProps<{
     qualificationId: string;
     userId: number;
+    resultId?: string;
 }>();
 
 defineEmits<{
@@ -50,13 +51,14 @@ function updateCount(add: boolean): void {
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <QualificationResultTutorForm
-            :score="score"
             :qualification-id="qualificationId"
             :user-id="userId"
+            :result-id="resultId"
+            :score="score"
             @refresh="$emit('refresh')"
             @close="isOpen = false"
         >
-            <template #default>
+            <template v-if="data" #default>
                 <ExamViewQuestions
                     v-if="data?.exam && data?.examUser && data?.responses"
                     :qualification-id="qualificationId"
@@ -67,6 +69,7 @@ function updateCount(add: boolean): void {
                     <template #question-after="{ question }">
                         <UCheckbox
                             v-if="question.question.data?.data.oneofKind !== 'separator'"
+                            :label="$t('components.qualifications.correct_question')"
                             @update:model-value="updateCount($event)"
                         />
                     </template>

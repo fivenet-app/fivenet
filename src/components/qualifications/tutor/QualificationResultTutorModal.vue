@@ -4,6 +4,7 @@ import QualificationResultTutorForm from './QualificationResultTutorForm.vue';
 defineProps<{
     qualificationId: string;
     userId: number;
+    resultId?: string;
 }>();
 
 defineEmits<{
@@ -18,6 +19,7 @@ const { isOpen } = useModal();
         <QualificationResultTutorForm
             :qualification-id="qualificationId"
             :user-id="userId"
+            :result-id="resultId"
             @refresh="$emit('refresh')"
             @close="isOpen = false"
         />

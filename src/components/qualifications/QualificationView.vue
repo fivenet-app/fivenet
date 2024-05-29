@@ -178,7 +178,11 @@ const accordionItems = computed(() =>
                         </UButton>
 
                         <UButton
-                            v-if="canDo.take && qualification.examMode !== QualificationExamMode.DISABLED"
+                            v-if="
+                                canDo.take &&
+                                qualification.examMode !== QualificationExamMode.DISABLED &&
+                                qualification.result?.status !== ResultStatus.SUCCESSFUL
+                            "
                             icon="i-mdi-test-tube"
                             :disabled="
                                 qualification.closed ||
@@ -233,9 +237,16 @@ const accordionItems = computed(() =>
 
                 <div class="mb-2 flex gap-2">
                     <OpenClosedBadge :closed="qualification.closed" />
-                    <UBadge>
-                        {{ $t('common.exam', 1) }}:
-                        {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`) }}
+                    <UBadge class="inline-flex gap-1" size="md">
+                        <UIcon name="i-mdi-test-tube" class="size-5" />
+                        <span>
+                            {{ $t('common.exam', 1) }}:
+                            {{
+                                $t(
+                                    `enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`,
+                                )
+                            }}
+                        </span>
                     </UBadge>
 
                     <UBadge

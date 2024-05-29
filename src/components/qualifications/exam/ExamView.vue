@@ -16,9 +16,9 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`qualification-${props.qualificationId}`, () => getQualification(props.qualificationId));
+} = useLazyAsyncData(`qualification-${props.qualificationId}-examinfo`, () => getExamInfo(props.qualificationId));
 
-async function getQualification(qualificationId: string): Promise<GetExamInfoResponse> {
+async function getExamInfo(qualificationId: string): Promise<GetExamInfoResponse> {
     try {
         const call = getGRPCQualificationsClient().getExamInfo({
             qualificationId: qualificationId,
@@ -80,10 +80,10 @@ watch(data, async () => {
     />
 
     <ExamViewQuestions
-        v-else-if="exam && exam.questions.length && data?.qualification && data?.examUser && examUser?.endsAt"
+        v-else-if="exam && examUser && examUser?.endsAt"
         :qualification-id="qualificationId"
         :exam="exam"
-        :exam-user="data.examUser"
+        :exam-user="examUser"
         :qualification="data.qualification"
     />
 

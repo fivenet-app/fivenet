@@ -202,8 +202,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <UDashboardToolbar v-if="!responses">
         <template v-if="qualification" #default>
-            <div class="mb-4 flex flex-1 justify-between gap-2">
-                <div class="">
+            <div class="mb-2 flex flex-1 flex-row justify-between gap-2">
+                <div>
                     <h1 class="break-words px-0.5 py-1 text-4xl font-bold sm:pl-1">
                         {{ qualification.abbreviation }}: {{ qualification.title }}
                     </h1>
@@ -213,7 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </p>
                 </div>
 
-                <div class="inline-flex flex-col items-center gap-2">
+                <div class="inline-flex flex-col items-end gap-2">
                     <UIcon name="i-mdi-clock" class="size-10" />
                     <span class="font-semibold">
                         {{

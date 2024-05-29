@@ -260,7 +260,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 		}
 
 		// Only send notification when it wasn't already in the same status
-		if request.Status == nil || request.Status.Enum() != req.Request.Status.Enum() {
+		if request == nil || request.Status == nil || request.Status.Enum() != req.Request.Status.Enum() {
 			if err := s.notif.NotifyUser(ctx, &notifications.Notification{
 				UserId: request.UserId,
 				Title: &common.TranslateItem{
@@ -408,6 +408,7 @@ func (s *Server) getQualificationRequest(ctx context.Context, qualificationId ui
 		WHERE(jet.AND(
 			tQualiRequests.QualificationID.EQ(jet.Uint64(qualificationId)),
 			tQualiRequests.UserID.EQ(jet.Int32(userId)),
+			tQualiRequests.DeletedAt.IS_NULL(),
 		)).
 		LIMIT(1)
 
@@ -450,6 +451,10 @@ func (s *Server) DeleteQualificationReq(ctx context.Context, req *DeleteQualific
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
+	if re == nil {
+		return &DeleteQualificationReqResponse{}, nil
+	}
+
 	check, err := s.checkIfUserHasAccessToQuali(ctx, re.QualificationId, userInfo, qualifications.AccessLevel_ACCESS_LEVEL_MANAGE)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
@@ -481,6 +486,10 @@ func (s *Server) deleteQualificationRequest(ctx context.Context, qualificationId
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	if err := s.deleteExamUser(ctx, qualificationId, userId); err != nil {
 		return err
 	}
 

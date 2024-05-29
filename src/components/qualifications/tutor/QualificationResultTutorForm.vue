@@ -9,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 const props = defineProps<{
     qualificationId: string;
     userId: number;
+    resultId?: string;
     score?: number;
 }>();
 
@@ -34,7 +35,7 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    status: ResultStatus.PENDING,
+    status: ResultStatus.SUCCESSFUL,
     score: props.score ?? 0,
     summary: '',
 });
@@ -47,7 +48,7 @@ async function createOrUpdateQualificationResult(
     try {
         const call = getGRPCQualificationsClient().createOrUpdateQualificationResult({
             result: {
-                id: '0',
+                id: props.resultId ?? '0',
                 qualificationId: qualificationId,
                 userId: userId,
                 status: values.status,
