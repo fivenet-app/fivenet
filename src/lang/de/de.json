@@ -918,7 +918,11 @@
             },
             "result_modal": {
                 "title": "Qualifizierungsergebnis"
-            }
+            },
+            "exam_view": {
+                "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden."
+            },
+            "correct_question": "Richtig"
         },
         "language_switcher": {
             "title": "Sprache wechseln"
@@ -1437,6 +1441,14 @@
             "request_updated": {
                 "title": "Qualifizierungsanfrage wurde aktualisiert",
                 "content": "Deine Qualifizierungsanfrage wurde aktualisiert."
+            },
+            "time_low": {
+                "title": "Ihre Prüfungszeit ist fast vorbei!",
+                "content": "Bitte achten Sie auf die Zeit oben."
+            },
+            "times_up": {
+                "title": "Ihre Prüfungszeit ist vorbei!",
+                "content": "Ihre aktuellen Antworten wurden übermittelt."
             }
         },
         "calendar": {
