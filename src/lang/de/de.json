@@ -915,6 +915,9 @@
                     "singleChoice": "Einfachauswahl",
                     "multipleChoice": "Mehrfachauswahl"
                 }
+            },
+            "result_modal": {
+                "title": "Qualifizierungsergebnis"
             }
         },
         "language_switcher": {
@@ -2327,13 +2330,15 @@
                 "PENDING": "Ausstehend",
                 "DENIED": "Abgelehnt",
                 "ACCEPTED": "Akzeptiert",
-                "COMPLETED": "Abgeschlossen"
+                "COMPLETED": "Abgeschlossen",
+                "EXAM_STARTED": "Prüfung begonnen",
+                "EXAM_GRADING": "Prüfungsbenotung"
             },
             "QualificationExamMode": {
                 "UNSPECIFIED": "Unbestimmt",
                 "DISABLED": "Deaktiviert",
                 "ENABLED": "Aktiviert",
-                "FORCED": "Benötigt"
+                "REQUEST_NEEDED": "Anfrage benötigt"
             }
         },
         "rector": {
