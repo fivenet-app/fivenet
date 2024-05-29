@@ -64,8 +64,7 @@ const entriesAccessRoles: {
                 value: e.name,
             };
         })
-        .filter((e) => e.id !== 0)
-        .filter((e) => e.value !== 'TAKE'), // TODO Enable when the exam logic is ready
+        .filter((e) => e.id !== 0),
 ];
 
 async function setFromProps(): Promise<void> {

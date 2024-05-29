@@ -74,14 +74,16 @@ type ExamQuestion struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	Id              uint64                  `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
-	QualificationId uint64                  `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
-	CreatedAt       *timestamp.Timestamp    `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
-	UpdatedAt       *timestamp.Timestamp    `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
-	Title           string                  `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
-	Description     *string                 `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
-	Data            *ExamQuestionData       `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
-	Answer          *ExamQuestionAnswerData `protobuf:"bytes,8,opt,name=answer,proto3,oneof" json:"answer,omitempty"`
+	Id              uint64               `protobuf:"varint,1,opt,name=id,proto3" json:"id,omitempty"`
+	QualificationId uint64               `protobuf:"varint,2,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,3,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
+	UpdatedAt       *timestamp.Timestamp `protobuf:"bytes,4,opt,name=updated_at,json=updatedAt,proto3,oneof" json:"updated_at,omitempty"`
+	// @sanitize: method=StripTags
+	Title string `protobuf:"bytes,5,opt,name=title,proto3" json:"title,omitempty"`
+	// @sanitize: method=StripTags
+	Description *string                 `protobuf:"bytes,6,opt,name=description,proto3,oneof" json:"description,omitempty"`
+	Data        *ExamQuestionData       `protobuf:"bytes,7,opt,name=data,proto3" json:"data,omitempty"`
+	Answer      *ExamQuestionAnswerData `protobuf:"bytes,8,opt,name=answer,proto3,oneof" json:"answer,omitempty"`
 }
 
 func (x *ExamQuestion) Reset() {
@@ -992,6 +994,7 @@ type ExamResponseText struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Text string `protobuf:"bytes,1,opt,name=text,proto3" json:"text,omitempty"` // 0.5 Megabyte
 }
 
@@ -1039,6 +1042,7 @@ type ExamResponseSingleChoice struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Choice string `protobuf:"bytes,1,opt,name=choice,proto3" json:"choice,omitempty"`
 }
 
@@ -1086,6 +1090,7 @@ type ExamResponseMultipleChoice struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
+	// @sanitize: method=StripTags
 	Choices []string `protobuf:"bytes,1,rep,name=choices,proto3" json:"choices,omitempty"`
 }
 

@@ -56,7 +56,7 @@ export interface Message {
     creator?: UserShort; // @gotags: alias:"creator"
 }
 /**
- * TODO allow links to internal
+ * TODO add way to link to, e.g., internal "objects" (citizens, documents, calendar entries, qualifications, etc.)
  *
  * @generated from protobuf message resources.messenger.MessageData
  */

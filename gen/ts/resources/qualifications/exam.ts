@@ -43,10 +43,14 @@ export interface ExamQuestion {
      */
     updatedAt?: Timestamp;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string title = 5;
      */
     title: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string description = 6;
      */
     description?: string;
@@ -275,6 +279,8 @@ export interface ExamResponseYesNo {
  */
 export interface ExamResponseText {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string text = 1;
      */
     text: string; // 0.5 Megabyte
@@ -284,6 +290,8 @@ export interface ExamResponseText {
  */
 export interface ExamResponseSingleChoice {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string choice = 1;
      */
     choice: string;
@@ -293,6 +301,8 @@ export interface ExamResponseSingleChoice {
  */
 export interface ExamResponseMultipleChoice {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: repeated string choices = 1;
      */
     choices: string[];

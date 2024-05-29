@@ -25,6 +25,8 @@ async function getQualification(qualificationId: string): Promise<GetExamInfoRes
         });
         const { response } = await call;
 
+        examUser.value = response.examUser;
+
         return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
@@ -54,7 +56,7 @@ const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
 
 watch(data, async () => {
-    if (data.value?.user?.endsAt !== undefined && data.value?.user?.endedAt === undefined) {
+    if (data.value?.examUser?.endsAt !== undefined && data.value?.examUser?.endedAt === undefined) {
         await takeExam(false);
     }
 });
@@ -78,10 +80,10 @@ watch(data, async () => {
     />
 
     <ExamViewQuestions
-        v-else-if="exam && exam.questions.length && data?.qualification && data?.user && examUser?.endsAt"
+        v-else-if="exam && exam.questions.length && data?.qualification && data?.examUser && examUser?.endsAt"
         :qualification-id="qualificationId"
         :exam="exam"
-        :exam-user="data.user"
+        :exam-user="data.examUser"
         :qualification="data.qualification"
     />
 
@@ -101,35 +103,34 @@ watch(data, async () => {
                         </UBadge>
                     </div>
                     <div class="flex gap-2">
-                        <UBadge v-if="data.user?.startedAt">
+                        <UBadge v-if="data.examUser?.startedAt">
                             {{ $t('common.begins_at') }}
-                            {{ $d(toDate(data.user?.startedAt), 'long') }}
+                            {{ $d(toDate(data.examUser?.startedAt), 'long') }}
                         </UBadge>
-                        <UBadge v-if="data?.user?.endsAt">
+                        <UBadge v-if="data?.examUser?.endsAt">
                             {{ $t('common.ends_at') }}
-                            {{ $d(toDate(data?.user?.endsAt), 'long') }}
+                            {{ $d(toDate(data?.examUser?.endsAt), 'long') }}
                         </UBadge>
                     </div>
                 </div>
             </template>
         </UDashboardToolbar>
 
-        <UCard v-if="data?.user?.endedAt || isPast(toDate(data?.user?.endsAt))">
-            <h3 class="text-lg">
+        <UCard>
+            <h3 v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))" class="text-lg">
                 {{ $t('components.qualifications.exam_view.times_up') }}
             </h3>
+            <UButton
+                v-else-if="!data?.examUser?.endedAt"
+                size="xl"
+                color="gray"
+                icon="i-mdi-play"
+                block
+                class="w-full"
+                @click="takeExam(false)"
+            >
+                {{ $t('components.qualifications.take_test') }}
+            </UButton>
         </UCard>
-
-        <UButton
-            v-else-if="!data?.user?.endedAt"
-            size="xl"
-            color="gray"
-            icon="i-mdi-play"
-            block
-            class="w-full"
-            @click="takeExam(false)"
-        >
-            {{ $t('components.qualifications.take_test') }}
-        </UButton>
     </template>
 </template>

@@ -66,7 +66,7 @@ func (s *Server) GetExamInfo(ctx context.Context, req *GetExamInfoRequest) (*Get
 	return &GetExamInfoResponse{
 		Qualification: quali,
 		QuestionCount: int32(questionCount),
-		User:          examUser,
+		ExamUser:      examUser,
 	}, nil
 }
 

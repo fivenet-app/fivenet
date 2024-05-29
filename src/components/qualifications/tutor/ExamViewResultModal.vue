@@ -14,7 +14,9 @@ defineEmits<{
 
 const { isOpen } = useModal();
 
-const { data } = useLazyAsyncData('', () => getUserExam());
+const { data } = useLazyAsyncData(`qualification-${props.qualificationId}-result-examinfo-${props.userId}`, () =>
+    getUserExam(),
+);
 
 async function getUserExam(): Promise<GetUserExamResponse> {
     try {
@@ -24,18 +26,31 @@ async function getUserExam(): Promise<GetUserExamResponse> {
         });
         const { response } = await call;
 
+        totalQuestions.value = response.exam?.questions.filter((q) => q.data?.data.oneofKind !== 'separator').length ?? 0;
+
         return response;
     } catch (e) {
         throw e;
     }
 }
 
-// TODO
+const totalQuestions = ref(0);
+const correctCount = ref(0);
+const score = computed(() => (100 / totalQuestions.value) * correctCount.value);
+
+function updateCount(add: boolean): void {
+    if (add) {
+        correctCount.value++;
+    } else {
+        correctCount.value--;
+    }
+}
 </script>
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
         <QualificationResultTutorForm
+            :score="score"
             :qualification-id="qualificationId"
             :user-id="userId"
             @refresh="$emit('refresh')"
@@ -48,7 +63,21 @@ async function getUserExam(): Promise<GetUserExamResponse> {
                     :exam="data.exam"
                     :exam-user="data.examUser"
                     :responses="data.responses"
-                />
+                >
+                    <template #question-after="{ question }">
+                        <UCheckbox
+                            v-if="question.question.data?.data.oneofKind !== 'separator'"
+                            @update:model-value="updateCount($event)"
+                        />
+                    </template>
+                </ExamViewQuestions>
+
+                <div class="flex flex-1 justify-end p-2">
+                    <p class="text-sm">
+                        <span class="font-semibold">{{ $t('components.qualifications.correct_question') }}</span
+                        >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}
+                    </p>
+                </div>
 
                 <UDivider class="mb-4 mt-2" />
             </template>

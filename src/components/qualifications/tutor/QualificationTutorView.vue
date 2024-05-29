@@ -29,14 +29,14 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
 </script>
 
 <template>
-    <div>
+    <div class="flex flex-1 flex-col gap-2">
         <UForm :schema="schema" :state="query">
             <UFormGroup class="flex-1" name="user" :label="$t('common.search')">
                 <UInputMenu
                     v-model="query.user"
                     nullable
                     :search-attributes="['firstname', 'lastname']"
-                    :placeholder="$t('common.citizen')"
+                    :placeholder="$t('common.citizen', 1)"
                     :searchable-placeholder="$t('common.search_field')"
                     block
                     trailing
@@ -72,10 +72,8 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
             </UFormGroup>
         </UForm>
 
-        <UDivider />
-
         <div>
-            <h2 class="text-lg text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
+            <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.request', 2) }}</h2>
 
             <QualificationsRequestsList
                 ref="requests"
@@ -85,7 +83,7 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
         </div>
 
         <div>
-            <h2 class="text-lg text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
+            <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
 
             <QualificationsResultsList
                 ref="results"

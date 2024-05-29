@@ -85,6 +85,31 @@ watchOnce(data, async () => {
     }
 });
 
+const items = computed(() =>
+    [
+        { slot: 'info', label: t('common.content'), icon: 'i-mdi-info' },
+        canDo.value.grade ? { slot: 'tutor', label: t('common.tutor'), icon: 'i-mdi-sigma' } : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
+const route = useRoute();
+const router = useRouter();
+
+const selectedTab = computed({
+    get() {
+        const index = items.value.findIndex((item) => item.slot === route.query.tab);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        router.replace({ query: { tab: items.value[value].slot }, hash: '#' });
+    },
+});
+
 const accordionItems = computed(() =>
     [
         qualification.value?.result
@@ -93,7 +118,6 @@ const accordionItems = computed(() =>
               ? { slot: 'request', label: t('common.request'), icon: 'i-mdi-mail', defaultOpen: true }
               : undefined,
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
-        canDo.value.grade ? { slot: 'tutor', label: t('common.tutor'), icon: 'i-mdi-sigma' } : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
@@ -305,21 +329,42 @@ const accordionItems = computed(() =>
             </template>
 
             <div>
-                <h2 class="sr-only">
-                    {{ $t('common.content') }}
-                </h2>
+                <UTabs v-model="selectedTab" :items="items" class="w-full">
+                    <template #default="{ item, selected }">
+                        <div class="relative flex items-center gap-2 truncate">
+                            <UIcon :name="item.icon" class="size-4 shrink-0" />
 
-                <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
-                    <!-- eslint-disable vue/no-v-html -->
-                    <div
-                        v-if="qualification.content"
-                        v-html="qualification.content"
-                        class="prose dark:prose-invert min-w-full px-4 py-2"
-                    ></div>
-                    <p v-else>
-                        {{ $t('components.qualifications.content_unavailable') }}
-                    </p>
-                </div>
+                            <span class="truncate">{{ item.label }}</span>
+
+                            <span
+                                v-if="selected"
+                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
+                            />
+                        </div>
+                    </template>
+
+                    <template #info>
+                        <h2 class="sr-only">
+                            {{ $t('common.content') }}
+                        </h2>
+
+                        <div class="mx-auto max-w-screen-xl break-words rounded-lg bg-base-900">
+                            <!-- eslint-disable vue/no-v-html -->
+                            <div
+                                v-if="qualification.content"
+                                v-html="qualification.content"
+                                class="prose dark:prose-invert min-w-full px-4 py-2"
+                            ></div>
+                            <p v-else>
+                                {{ $t('components.qualifications.content_unavailable') }}
+                            </p>
+                        </div>
+                    </template>
+
+                    <template v-if="canDo.grade" #tutor>
+                        <QualificationTutorView :qualification="qualification" />
+                    </template>
+                </UTabs>
             </div>
 
             <template #footer>
@@ -420,10 +465,6 @@ const accordionItems = computed(() =>
                                 </div>
                             </div>
                         </UContainer>
-                    </template>
-
-                    <template v-if="canDo.grade" #tutor>
-                        <QualificationTutorView :qualification="qualification" />
                     </template>
                 </UAccordion>
             </template>

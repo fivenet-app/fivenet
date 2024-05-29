@@ -335,9 +335,9 @@ export interface GetExamInfoResponse {
      */
     questionCount: number;
     /**
-     * @generated from protobuf field: optional resources.qualifications.ExamUser user = 3;
+     * @generated from protobuf field: optional resources.qualifications.ExamUser exam_user = 3;
      */
-    user?: ExamUser;
+    examUser?: ExamUser;
 }
 /**
  * @generated from protobuf message services.qualifications.TakeExamRequest
@@ -1711,7 +1711,7 @@ class GetExamInfoResponse$Type extends MessageType<GetExamInfoResponse> {
         super("services.qualifications.GetExamInfoResponse", [
             { no: 1, name: "qualification", kind: "message", T: () => QualificationShort },
             { no: 2, name: "question_count", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "user", kind: "message", T: () => ExamUser }
+            { no: 3, name: "exam_user", kind: "message", T: () => ExamUser }
         ]);
     }
     create(value?: PartialMessage<GetExamInfoResponse>): GetExamInfoResponse {
@@ -1732,8 +1732,8 @@ class GetExamInfoResponse$Type extends MessageType<GetExamInfoResponse> {
                 case /* int32 question_count */ 2:
                     message.questionCount = reader.int32();
                     break;
-                case /* optional resources.qualifications.ExamUser user */ 3:
-                    message.user = ExamUser.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                case /* optional resources.qualifications.ExamUser exam_user */ 3:
+                    message.examUser = ExamUser.internalBinaryRead(reader, reader.uint32(), options, message.examUser);
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -1753,9 +1753,9 @@ class GetExamInfoResponse$Type extends MessageType<GetExamInfoResponse> {
         /* int32 question_count = 2; */
         if (message.questionCount !== 0)
             writer.tag(2, WireType.Varint).int32(message.questionCount);
-        /* optional resources.qualifications.ExamUser user = 3; */
-        if (message.user)
-            ExamUser.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.ExamUser exam_user = 3; */
+        if (message.examUser)
+            ExamUser.internalBinaryWrite(message.examUser, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

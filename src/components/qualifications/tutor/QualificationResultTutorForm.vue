@@ -9,6 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 const props = defineProps<{
     qualificationId: string;
     userId: number;
+    score?: number;
 }>();
 
 const emits = defineEmits<{
@@ -34,7 +35,7 @@ type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
     status: ResultStatus.PENDING,
-    score: 0,
+    score: props.score ?? 0,
     summary: '',
 });
 
@@ -73,6 +74,14 @@ async function createOrUpdateQualificationResult(
         throw e;
     }
 }
+
+watch(
+    () => props.score,
+    () => {
+        console.log('score', props.score);
+        state.score = props.score ?? 0;
+    },
+);
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {

@@ -921,7 +921,8 @@
             },
             "exam_view": {
                 "times_up": "Time's up! Your exam will be graded soon."
-            }
+            },
+            "correct_question": "Correct"
         },
         "language_switcher": {
             "title": "Switch language"

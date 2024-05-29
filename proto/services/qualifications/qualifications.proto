@@ -139,7 +139,7 @@ message GetExamInfoRequest {
 message GetExamInfoResponse {
   resources.qualifications.QualificationShort qualification = 1;
   int32 question_count = 2;
-  optional resources.qualifications.ExamUser user = 3;
+  optional resources.qualifications.ExamUser exam_user = 3;
 }
 
 message TakeExamRequest {

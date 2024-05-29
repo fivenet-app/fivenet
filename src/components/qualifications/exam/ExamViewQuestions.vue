@@ -47,6 +47,12 @@ async function submitExam(values: Schema): Promise<SubmitExamResponse> {
         });
         const { response } = await call;
 
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+
         state.value.responses = [];
         await navigateTo({
             name: 'qualifications-id',
@@ -194,7 +200,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-    <UDashboardToolbar>
+    <UDashboardToolbar v-if="!responses">
         <template v-if="qualification" #default>
             <div class="mb-4 flex flex-1 justify-between gap-2">
                 <div class="">
@@ -240,7 +246,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :key="question.id"
                         :question="question"
                         :disabled="disabled"
-                    />
+                    >
+                        <template #question-after="{ question }">
+                            <slot name="question-after" :question="{ question }" />
+                        </template>
+                    </ExamViewQuestion>
                 </div>
             </UContainer>
 

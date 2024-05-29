@@ -488,17 +488,21 @@ func (s *Server) deleteQualificationRequest(ctx context.Context, qualificationId
 }
 
 func (s *Server) updateRequestStatus(ctx context.Context, qualificationId uint64, userId int32, status qualifications.RequestStatus) error {
+	tQualiRequests := table.FivenetQualificationsRequests
 	stmt := tQualiRequests.
-		UPDATE(
+		INSERT(
+			tQualiRequests.QualificationID,
+			tQualiRequests.UserID,
 			tQualiRequests.Status,
 		).
-		SET(
+		VALUES(
+			qualificationId,
+			userId,
 			status,
 		).
-		WHERE(jet.AND(
-			tQualiRequests.QualificationID.EQ(jet.Uint64(qualificationId)),
-			tQualiRequests.UserID.EQ(jet.Int32(userId)),
-		))
+		ON_DUPLICATE_KEY_UPDATE(
+			tQualiRequests.Status.SET(jet.Int16(int16(status))),
+		)
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return err

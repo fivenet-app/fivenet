@@ -37,7 +37,7 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
 </script>
 
 <template>
-    <div v-if="question" class="py-4">
+    <div v-if="question" class="flex flex-1 justify-between py-4">
         <div v-if="question.data!.data.oneofKind === 'separator'">
             <UDivider class="mb-2 mt-2 text-xl">
                 <h4 class="text-xl">{{ question.title }}</h4>
@@ -151,5 +151,7 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
                 </div>
             </UFormGroup>
         </div>
+
+        <slot name="question-after" :question="question"></slot>
     </div>
 </template>
