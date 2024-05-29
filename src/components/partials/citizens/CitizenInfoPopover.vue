@@ -53,6 +53,8 @@ async function getCitizen(id: number): Promise<User> {
 
 const user = computed(() => data.value || props.user);
 
+const { game } = useAppConfig();
+
 const opened = ref(false);
 watchOnce(opened, async () => {
     if (!props.user) {
@@ -146,7 +148,9 @@ watchOnce(opened, async () => {
                         <p v-if="user.jobLabel" class="text-sm font-normal">
                             <span class="font-semibold">{{ $t('common.job') }}:</span>
                             {{ user.jobLabel }}
-                            <span v-if="(user.jobGrade ?? 0) > 0 && user.jobGradeLabel"> ({{ user.jobGradeLabel }})</span>
+                            <span v-if="(user.jobGrade ?? 0) > 0 && user.job !== game.unemployedJobName">
+                                ({{ user.jobGradeLabel }})</span
+                            >
                         </p>
 
                         <p v-if="user.dateofbirth">

@@ -88,8 +88,8 @@ message QualificationDiscordSettings {
 enum QualificationExamMode {
   QUALIFICATION_EXAM_MODE_UNSPECIFIED = 0;
   QUALIFICATION_EXAM_MODE_DISABLED = 1;
-  QUALIFICATION_EXAM_MODE_ENABLED = 2;
-  QUALIFICATION_EXAM_MODE_FORCED = 3;
+  QUALIFICATION_EXAM_MODE_REQUEST_NEEDED = 2;
+  QUALIFICATION_EXAM_MODE_ENABLED = 3;
 }
 
 message QualificationExamSettings {
@@ -98,6 +98,34 @@ message QualificationExamSettings {
     lt: {seconds: 1036800}, // 24 hours
     gte:  {seconds: 300}, // 5 minutes
   }];
+}
+
+enum RequestStatus {
+  REQUEST_STATUS_UNSPECIFIED = 0;
+  REQUEST_STATUS_PENDING = 1;
+  REQUEST_STATUS_DENIED = 2;
+  REQUEST_STATUS_ACCEPTED = 3;
+  REQUEST_STATUS_EXAM_STARTED = 4;
+  REQUEST_STATUS_EXAM_GRADING = 5;
+  REQUEST_STATUS_COMPLETED = 6;
+}
+
+message QualificationRequest {
+  optional resources.timestamp.Timestamp created_at = 1;
+  optional resources.timestamp.Timestamp deleted_at = 2;
+  uint64 qualification_id = 3 [jstype = JS_STRING];
+  optional QualificationShort qualification = 4;
+  int32 user_id = 5;
+  resources.users.UserShort user = 6; // @gotags: alias:"user"
+  // @sanitize: method=StripTags
+  optional string user_comment = 7 [(validate.rules).string = {max_len: 512}];
+  optional RequestStatus status = 8 [(validate.rules).enum.defined_only = true];
+  optional resources.timestamp.Timestamp approved_at = 9;
+  // @sanitize: method=StripTags
+  optional string approver_comment = 10 [(validate.rules).string = {max_len: 512}];
+  optional int32 approver_id = 11;
+  optional resources.users.UserShort approver = 12; // @gotags: alias:"approver"
+  optional string approver_job = 13;
 }
 
 enum ResultStatus {
@@ -122,32 +150,4 @@ message QualificationResult {
   int32 creator_id = 11;
   resources.users.UserShort creator = 12; // @gotags: alias:"creator"
   string creator_job = 13 [(validate.rules).string.max_len = 20];
-}
-
-enum RequestStatus {
-  REQUEST_STATUS_UNSPECIFIED = 0;
-  REQUEST_STATUS_PENDING = 1;
-  REQUEST_STATUS_DENIED = 2;
-  REQUEST_STATUS_ACCEPTED = 3;
-  REQUEST_STATUS_COMPLETED = 4;
-  REQUEST_STATUS_EXAM_PENDING = 5;
-  REQUEST_STATUS_EXAM_COMPLETED = 6;
-}
-
-message QualificationRequest {
-  optional resources.timestamp.Timestamp created_at = 1;
-  optional resources.timestamp.Timestamp deleted_at = 2;
-  uint64 qualification_id = 3 [jstype = JS_STRING];
-  optional QualificationShort qualification = 4;
-  int32 user_id = 5;
-  resources.users.UserShort user = 6; // @gotags: alias:"user"
-  // @sanitize: method=StripTags
-  optional string user_comment = 7 [(validate.rules).string = {max_len: 512}];
-  optional RequestStatus status = 8 [(validate.rules).enum.defined_only = true];
-  optional resources.timestamp.Timestamp approved_at = 9;
-  // @sanitize: method=StripTags
-  optional string approver_comment = 10 [(validate.rules).string = {max_len: 512}];
-  optional int32 approver_id = 11;
-  optional resources.users.UserShort approver = 12; // @gotags: alias:"approver"
-  optional string approver_job = 13;
 }

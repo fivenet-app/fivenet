@@ -243,65 +243,6 @@ export interface QualificationExamSettings {
     time?: Duration;
 }
 /**
- * @generated from protobuf message resources.qualifications.QualificationResult
- */
-export interface QualificationResult {
-    /**
-     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
-     */
-    id: string; // @gotags: sql:"primary_key" alias:"id"
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
-     */
-    createdAt?: Timestamp;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
-     */
-    deletedAt?: Timestamp;
-    /**
-     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
-     */
-    qualificationId: string;
-    /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 5;
-     */
-    qualification?: QualificationShort;
-    /**
-     * @generated from protobuf field: int32 user_id = 6;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: resources.users.UserShort user = 7;
-     */
-    user?: UserShort; // @gotags: alias:"user"
-    /**
-     * @generated from protobuf field: resources.qualifications.ResultStatus status = 8;
-     */
-    status: ResultStatus;
-    /**
-     * @generated from protobuf field: optional uint32 score = 9;
-     */
-    score?: number;
-    /**
-     * @sanitize: method=StripTags
-     *
-     * @generated from protobuf field: string summary = 10;
-     */
-    summary: string;
-    /**
-     * @generated from protobuf field: int32 creator_id = 11;
-     */
-    creatorId: number;
-    /**
-     * @generated from protobuf field: resources.users.UserShort creator = 12;
-     */
-    creator?: UserShort; // @gotags: alias:"creator"
-    /**
-     * @generated from protobuf field: string creator_job = 13;
-     */
-    creatorJob: string;
-}
-/**
  * @generated from protobuf message resources.qualifications.QualificationRequest
  */
 export interface QualificationRequest {
@@ -363,6 +304,65 @@ export interface QualificationRequest {
     approverJob?: string;
 }
 /**
+ * @generated from protobuf message resources.qualifications.QualificationResult
+ */
+export interface QualificationResult {
+    /**
+     * @generated from protobuf field: uint64 id = 1 [jstype = JS_STRING];
+     */
+    id: string; // @gotags: sql:"primary_key" alias:"id"
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp created_at = 2;
+     */
+    createdAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional resources.timestamp.Timestamp deleted_at = 3;
+     */
+    deletedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: uint64 qualification_id = 4 [jstype = JS_STRING];
+     */
+    qualificationId: string;
+    /**
+     * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 5;
+     */
+    qualification?: QualificationShort;
+    /**
+     * @generated from protobuf field: int32 user_id = 6;
+     */
+    userId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort user = 7;
+     */
+    user?: UserShort; // @gotags: alias:"user"
+    /**
+     * @generated from protobuf field: resources.qualifications.ResultStatus status = 8;
+     */
+    status: ResultStatus;
+    /**
+     * @generated from protobuf field: optional uint32 score = 9;
+     */
+    score?: number;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: string summary = 10;
+     */
+    summary: string;
+    /**
+     * @generated from protobuf field: int32 creator_id = 11;
+     */
+    creatorId: number;
+    /**
+     * @generated from protobuf field: resources.users.UserShort creator = 12;
+     */
+    creator?: UserShort; // @gotags: alias:"creator"
+    /**
+     * @generated from protobuf field: string creator_job = 13;
+     */
+    creatorJob: string;
+}
+/**
  * @generated from protobuf enum resources.qualifications.QualificationExamMode
  */
 export enum QualificationExamMode {
@@ -375,34 +375,13 @@ export enum QualificationExamMode {
      */
     DISABLED = 1,
     /**
-     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_ENABLED = 2;
+     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_REQUEST_NEEDED = 2;
      */
-    ENABLED = 2,
+    REQUEST_NEEDED = 2,
     /**
-     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_FORCED = 3;
+     * @generated from protobuf enum value: QUALIFICATION_EXAM_MODE_ENABLED = 3;
      */
-    FORCED = 3
-}
-/**
- * @generated from protobuf enum resources.qualifications.ResultStatus
- */
-export enum ResultStatus {
-    /**
-     * @generated from protobuf enum value: RESULT_STATUS_UNSPECIFIED = 0;
-     */
-    UNSPECIFIED = 0,
-    /**
-     * @generated from protobuf enum value: RESULT_STATUS_PENDING = 1;
-     */
-    PENDING = 1,
-    /**
-     * @generated from protobuf enum value: RESULT_STATUS_FAILED = 2;
-     */
-    FAILED = 2,
-    /**
-     * @generated from protobuf enum value: RESULT_STATUS_SUCCESSFUL = 3;
-     */
-    SUCCESSFUL = 3
+    ENABLED = 3
 }
 /**
  * @generated from protobuf enum resources.qualifications.RequestStatus
@@ -425,17 +404,38 @@ export enum RequestStatus {
      */
     ACCEPTED = 3,
     /**
-     * @generated from protobuf enum value: REQUEST_STATUS_COMPLETED = 4;
+     * @generated from protobuf enum value: REQUEST_STATUS_EXAM_STARTED = 4;
      */
-    COMPLETED = 4,
+    EXAM_STARTED = 4,
     /**
-     * @generated from protobuf enum value: REQUEST_STATUS_EXAM_PENDING = 5;
+     * @generated from protobuf enum value: REQUEST_STATUS_EXAM_GRADING = 5;
      */
-    EXAM_PENDING = 5,
+    EXAM_GRADING = 5,
     /**
-     * @generated from protobuf enum value: REQUEST_STATUS_EXAM_COMPLETED = 6;
+     * @generated from protobuf enum value: REQUEST_STATUS_COMPLETED = 6;
      */
-    EXAM_COMPLETED = 6
+    COMPLETED = 6
+}
+/**
+ * @generated from protobuf enum resources.qualifications.ResultStatus
+ */
+export enum ResultStatus {
+    /**
+     * @generated from protobuf enum value: RESULT_STATUS_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: RESULT_STATUS_PENDING = 1;
+     */
+    PENDING = 1,
+    /**
+     * @generated from protobuf enum value: RESULT_STATUS_FAILED = 2;
+     */
+    FAILED = 2,
+    /**
+     * @generated from protobuf enum value: RESULT_STATUS_SUCCESSFUL = 3;
+     */
+    SUCCESSFUL = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Qualification$Type extends MessageType<Qualification> {
@@ -985,6 +985,138 @@ class QualificationExamSettings$Type extends MessageType<QualificationExamSettin
  */
 export const QualificationExamSettings = new QualificationExamSettings$Type();
 // @generated message type with reflection information, may provide speed optimized methods
+class QualificationRequest$Type extends MessageType<QualificationRequest> {
+    constructor() {
+        super("resources.qualifications.QualificationRequest", [
+            { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
+            { no: 2, name: "deleted_at", kind: "message", T: () => Timestamp },
+            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "qualification", kind: "message", T: () => QualificationShort },
+            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "user", kind: "message", T: () => UserShort },
+            { no: 7, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 9, name: "approved_at", kind: "message", T: () => Timestamp },
+            { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
+            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 12, name: "approver", kind: "message", T: () => UserShort },
+            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<QualificationRequest>): QualificationRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.qualificationId = "0";
+        message.userId = 0;
+        if (value !== undefined)
+            reflectionMergePartial<QualificationRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationRequest): QualificationRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* optional resources.timestamp.Timestamp created_at */ 1:
+                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
+                    break;
+                case /* optional resources.timestamp.Timestamp deleted_at */ 2:
+                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
+                    break;
+                case /* uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
+                    message.qualificationId = reader.uint64().toString();
+                    break;
+                case /* optional resources.qualifications.QualificationShort qualification */ 4:
+                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
+                    break;
+                case /* int32 user_id */ 5:
+                    message.userId = reader.int32();
+                    break;
+                case /* resources.users.UserShort user */ 6:
+                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
+                    break;
+                case /* optional string user_comment */ 7:
+                    message.userComment = reader.string();
+                    break;
+                case /* optional resources.qualifications.RequestStatus status */ 8:
+                    message.status = reader.int32();
+                    break;
+                case /* optional resources.timestamp.Timestamp approved_at */ 9:
+                    message.approvedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.approvedAt);
+                    break;
+                case /* optional string approver_comment */ 10:
+                    message.approverComment = reader.string();
+                    break;
+                case /* optional int32 approver_id */ 11:
+                    message.approverId = reader.int32();
+                    break;
+                case /* optional resources.users.UserShort approver */ 12:
+                    message.approver = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.approver);
+                    break;
+                case /* optional string approver_job */ 13:
+                    message.approverJob = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: QualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* optional resources.timestamp.Timestamp created_at = 1; */
+        if (message.createdAt)
+            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp deleted_at = 2; */
+        if (message.deletedAt)
+            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* uint64 qualification_id = 3 [jstype = JS_STRING]; */
+        if (message.qualificationId !== "0")
+            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
+        /* optional resources.qualifications.QualificationShort qualification = 4; */
+        if (message.qualification)
+            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 5; */
+        if (message.userId !== 0)
+            writer.tag(5, WireType.Varint).int32(message.userId);
+        /* resources.users.UserShort user = 6; */
+        if (message.user)
+            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* optional string user_comment = 7; */
+        if (message.userComment !== undefined)
+            writer.tag(7, WireType.LengthDelimited).string(message.userComment);
+        /* optional resources.qualifications.RequestStatus status = 8; */
+        if (message.status !== undefined)
+            writer.tag(8, WireType.Varint).int32(message.status);
+        /* optional resources.timestamp.Timestamp approved_at = 9; */
+        if (message.approvedAt)
+            Timestamp.internalBinaryWrite(message.approvedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
+        /* optional string approver_comment = 10; */
+        if (message.approverComment !== undefined)
+            writer.tag(10, WireType.LengthDelimited).string(message.approverComment);
+        /* optional int32 approver_id = 11; */
+        if (message.approverId !== undefined)
+            writer.tag(11, WireType.Varint).int32(message.approverId);
+        /* optional resources.users.UserShort approver = 12; */
+        if (message.approver)
+            UserShort.internalBinaryWrite(message.approver, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
+        /* optional string approver_job = 13; */
+        if (message.approverJob !== undefined)
+            writer.tag(13, WireType.LengthDelimited).string(message.approverJob);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.qualifications.QualificationRequest
+ */
+export const QualificationRequest = new QualificationRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
 class QualificationResult$Type extends MessageType<QualificationResult> {
     constructor() {
         super("resources.qualifications.QualificationResult", [
@@ -1121,135 +1253,3 @@ class QualificationResult$Type extends MessageType<QualificationResult> {
  * @generated MessageType for protobuf message resources.qualifications.QualificationResult
  */
 export const QualificationResult = new QualificationResult$Type();
-// @generated message type with reflection information, may provide speed optimized methods
-class QualificationRequest$Type extends MessageType<QualificationRequest> {
-    constructor() {
-        super("resources.qualifications.QualificationRequest", [
-            { no: 1, name: "created_at", kind: "message", T: () => Timestamp },
-            { no: 2, name: "deleted_at", kind: "message", T: () => Timestamp },
-            { no: 3, name: "qualification_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
-            { no: 4, name: "qualification", kind: "message", T: () => QualificationShort },
-            { no: 5, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 6, name: "user", kind: "message", T: () => UserShort },
-            { no: 7, name: "user_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 8, name: "status", kind: "enum", opt: true, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 9, name: "approved_at", kind: "message", T: () => Timestamp },
-            { no: 10, name: "approver_comment", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "512" } } } },
-            { no: 11, name: "approver_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 12, name: "approver", kind: "message", T: () => UserShort },
-            { no: 13, name: "approver_job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
-        ]);
-    }
-    create(value?: PartialMessage<QualificationRequest>): QualificationRequest {
-        const message = globalThis.Object.create((this.messagePrototype!));
-        message.qualificationId = "0";
-        message.userId = 0;
-        if (value !== undefined)
-            reflectionMergePartial<QualificationRequest>(this, message, value);
-        return message;
-    }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: QualificationRequest): QualificationRequest {
-        let message = target ?? this.create(), end = reader.pos + length;
-        while (reader.pos < end) {
-            let [fieldNo, wireType] = reader.tag();
-            switch (fieldNo) {
-                case /* optional resources.timestamp.Timestamp created_at */ 1:
-                    message.createdAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.createdAt);
-                    break;
-                case /* optional resources.timestamp.Timestamp deleted_at */ 2:
-                    message.deletedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.deletedAt);
-                    break;
-                case /* uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
-                    message.qualificationId = reader.uint64().toString();
-                    break;
-                case /* optional resources.qualifications.QualificationShort qualification */ 4:
-                    message.qualification = QualificationShort.internalBinaryRead(reader, reader.uint32(), options, message.qualification);
-                    break;
-                case /* int32 user_id */ 5:
-                    message.userId = reader.int32();
-                    break;
-                case /* resources.users.UserShort user */ 6:
-                    message.user = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.user);
-                    break;
-                case /* optional string user_comment */ 7:
-                    message.userComment = reader.string();
-                    break;
-                case /* optional resources.qualifications.RequestStatus status */ 8:
-                    message.status = reader.int32();
-                    break;
-                case /* optional resources.timestamp.Timestamp approved_at */ 9:
-                    message.approvedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.approvedAt);
-                    break;
-                case /* optional string approver_comment */ 10:
-                    message.approverComment = reader.string();
-                    break;
-                case /* optional int32 approver_id */ 11:
-                    message.approverId = reader.int32();
-                    break;
-                case /* optional resources.users.UserShort approver */ 12:
-                    message.approver = UserShort.internalBinaryRead(reader, reader.uint32(), options, message.approver);
-                    break;
-                case /* optional string approver_job */ 13:
-                    message.approverJob = reader.string();
-                    break;
-                default:
-                    let u = options.readUnknownField;
-                    if (u === "throw")
-                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
-                    let d = reader.skip(wireType);
-                    if (u !== false)
-                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
-            }
-        }
-        return message;
-    }
-    internalBinaryWrite(message: QualificationRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* optional resources.timestamp.Timestamp created_at = 1; */
-        if (message.createdAt)
-            Timestamp.internalBinaryWrite(message.createdAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp deleted_at = 2; */
-        if (message.deletedAt)
-            Timestamp.internalBinaryWrite(message.deletedAt, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* uint64 qualification_id = 3 [jstype = JS_STRING]; */
-        if (message.qualificationId !== "0")
-            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
-        /* optional resources.qualifications.QualificationShort qualification = 4; */
-        if (message.qualification)
-            QualificationShort.internalBinaryWrite(message.qualification, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 5; */
-        if (message.userId !== 0)
-            writer.tag(5, WireType.Varint).int32(message.userId);
-        /* resources.users.UserShort user = 6; */
-        if (message.user)
-            UserShort.internalBinaryWrite(message.user, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* optional string user_comment = 7; */
-        if (message.userComment !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.userComment);
-        /* optional resources.qualifications.RequestStatus status = 8; */
-        if (message.status !== undefined)
-            writer.tag(8, WireType.Varint).int32(message.status);
-        /* optional resources.timestamp.Timestamp approved_at = 9; */
-        if (message.approvedAt)
-            Timestamp.internalBinaryWrite(message.approvedAt, writer.tag(9, WireType.LengthDelimited).fork(), options).join();
-        /* optional string approver_comment = 10; */
-        if (message.approverComment !== undefined)
-            writer.tag(10, WireType.LengthDelimited).string(message.approverComment);
-        /* optional int32 approver_id = 11; */
-        if (message.approverId !== undefined)
-            writer.tag(11, WireType.Varint).int32(message.approverId);
-        /* optional resources.users.UserShort approver = 12; */
-        if (message.approver)
-            UserShort.internalBinaryWrite(message.approver, writer.tag(12, WireType.LengthDelimited).fork(), options).join();
-        /* optional string approver_job = 13; */
-        if (message.approverJob !== undefined)
-            writer.tag(13, WireType.LengthDelimited).string(message.approverJob);
-        let u = options.writeUnknownFields;
-        if (u !== false)
-            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
-        return writer;
-    }
-}
-/**
- * @generated MessageType for protobuf message resources.qualifications.QualificationRequest
- */
-export const QualificationRequest = new QualificationRequest$Type();

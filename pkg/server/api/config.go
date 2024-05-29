@@ -10,6 +10,7 @@ type ClientConfig struct {
 	Discord      Discord      `json:"discord"`
 	Links        Links        `json:"links"`
 	FeatureGates FeatureGates `json:"featureGates"`
+	Game         Game         `json:"game"`
 }
 
 type LoginConfig struct {
@@ -34,4 +35,8 @@ type Links struct {
 }
 
 type FeatureGates struct {
+}
+
+type Game struct {
+	UnemployedJobName string `json:"unemployedJobName"`
 }

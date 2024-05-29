@@ -111,6 +111,8 @@ const selectedTab = computed({
     },
 });
 
+const { game } = useAppConfig();
+
 const isOpen = ref(false);
 </script>
 
@@ -169,9 +171,9 @@ const isOpen = ref(false);
                             <div class="inline-flex gap-2">
                                 <UBadge>
                                     {{ user.jobLabel }}
-                                    <template v-if="user.jobGrade > 0">
-                                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})</template
-                                    >
+                                    <template v-if="user.jobGrade > 0 && user.job !== game.unemployedJobName">
+                                        ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
+                                    </template>
                                 </UBadge>
 
                                 <UBadge v-if="user?.props?.wanted" color="red">

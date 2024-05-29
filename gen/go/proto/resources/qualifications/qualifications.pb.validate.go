@@ -1467,321 +1467,6 @@ var _ interface {
 	ErrorName() string
 } = QualificationExamSettingsValidationError{}
 
-// Validate checks the field values on QualificationResult with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the first error encountered is returned, or nil if there are no violations.
-func (m *QualificationResult) Validate() error {
-	return m.validate(false)
-}
-
-// ValidateAll checks the field values on QualificationResult with the rules
-// defined in the proto definition for this message. If any rules are
-// violated, the result is a list of violation errors wrapped in
-// QualificationResultMultiError, or nil if none found.
-func (m *QualificationResult) ValidateAll() error {
-	return m.validate(true)
-}
-
-func (m *QualificationResult) validate(all bool) error {
-	if m == nil {
-		return nil
-	}
-
-	var errors []error
-
-	// no validation rules for Id
-
-	// no validation rules for QualificationId
-
-	// no validation rules for UserId
-
-	if all {
-		switch v := interface{}(m.GetUser()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, QualificationResultValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, QualificationResultValidationError{
-					field:  "User",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return QualificationResultValidationError{
-				field:  "User",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if _, ok := ResultStatus_name[int32(m.GetStatus())]; !ok {
-		err := QualificationResultValidationError{
-			field:  "Status",
-			reason: "value must be one of the defined enum values",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if l := utf8.RuneCountInString(m.GetSummary()); l < 3 || l > 512 {
-		err := QualificationResultValidationError{
-			field:  "Summary",
-			reason: "value length must be between 3 and 512 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	// no validation rules for CreatorId
-
-	if all {
-		switch v := interface{}(m.GetCreator()).(type) {
-		case interface{ ValidateAll() error }:
-			if err := v.ValidateAll(); err != nil {
-				errors = append(errors, QualificationResultValidationError{
-					field:  "Creator",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		case interface{ Validate() error }:
-			if err := v.Validate(); err != nil {
-				errors = append(errors, QualificationResultValidationError{
-					field:  "Creator",
-					reason: "embedded message failed validation",
-					cause:  err,
-				})
-			}
-		}
-	} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
-		if err := v.Validate(); err != nil {
-			return QualificationResultValidationError{
-				field:  "Creator",
-				reason: "embedded message failed validation",
-				cause:  err,
-			}
-		}
-	}
-
-	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
-		err := QualificationResultValidationError{
-			field:  "CreatorJob",
-			reason: "value length must be at most 20 runes",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	if m.CreatedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetCreatedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationResultValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationResultValidationError{
-						field:  "CreatedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return QualificationResultValidationError{
-					field:  "CreatedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.DeletedAt != nil {
-
-		if all {
-			switch v := interface{}(m.GetDeletedAt()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationResultValidationError{
-						field:  "DeletedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationResultValidationError{
-						field:  "DeletedAt",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return QualificationResultValidationError{
-					field:  "DeletedAt",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Qualification != nil {
-
-		if all {
-			switch v := interface{}(m.GetQualification()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, QualificationResultValidationError{
-						field:  "Qualification",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, QualificationResultValidationError{
-						field:  "Qualification",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return QualificationResultValidationError{
-					field:  "Qualification",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.Score != nil {
-
-		if m.GetScore() >= 1000 {
-			err := QualificationResultValidationError{
-				field:  "Score",
-				reason: "value must be less than 1000",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if len(errors) > 0 {
-		return QualificationResultMultiError(errors)
-	}
-
-	return nil
-}
-
-// QualificationResultMultiError is an error wrapping multiple validation
-// errors returned by QualificationResult.ValidateAll() if the designated
-// constraints aren't met.
-type QualificationResultMultiError []error
-
-// Error returns a concatenation of all the error messages it wraps.
-func (m QualificationResultMultiError) Error() string {
-	var msgs []string
-	for _, err := range m {
-		msgs = append(msgs, err.Error())
-	}
-	return strings.Join(msgs, "; ")
-}
-
-// AllErrors returns a list of validation violation errors.
-func (m QualificationResultMultiError) AllErrors() []error { return m }
-
-// QualificationResultValidationError is the validation error returned by
-// QualificationResult.Validate if the designated constraints aren't met.
-type QualificationResultValidationError struct {
-	field  string
-	reason string
-	cause  error
-	key    bool
-}
-
-// Field function returns field value.
-func (e QualificationResultValidationError) Field() string { return e.field }
-
-// Reason function returns reason value.
-func (e QualificationResultValidationError) Reason() string { return e.reason }
-
-// Cause function returns cause value.
-func (e QualificationResultValidationError) Cause() error { return e.cause }
-
-// Key function returns key value.
-func (e QualificationResultValidationError) Key() bool { return e.key }
-
-// ErrorName returns error name.
-func (e QualificationResultValidationError) ErrorName() string {
-	return "QualificationResultValidationError"
-}
-
-// Error satisfies the builtin error interface
-func (e QualificationResultValidationError) Error() string {
-	cause := ""
-	if e.cause != nil {
-		cause = fmt.Sprintf(" | caused by: %v", e.cause)
-	}
-
-	key := ""
-	if e.key {
-		key = "key for "
-	}
-
-	return fmt.Sprintf(
-		"invalid %sQualificationResult.%s: %s%s",
-		key,
-		e.field,
-		e.reason,
-		cause)
-}
-
-var _ error = QualificationResultValidationError{}
-
-var _ interface {
-	Field() string
-	Reason() string
-	Key() bool
-	Cause() error
-	ErrorName() string
-} = QualificationResultValidationError{}
-
 // Validate checks the field values on QualificationRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.
@@ -2134,3 +1819,318 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = QualificationRequestValidationError{}
+
+// Validate checks the field values on QualificationResult with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *QualificationResult) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on QualificationResult with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// QualificationResultMultiError, or nil if none found.
+func (m *QualificationResult) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *QualificationResult) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Id
+
+	// no validation rules for QualificationId
+
+	// no validation rules for UserId
+
+	if all {
+		switch v := interface{}(m.GetUser()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, QualificationResultValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, QualificationResultValidationError{
+					field:  "User",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUser()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return QualificationResultValidationError{
+				field:  "User",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if _, ok := ResultStatus_name[int32(m.GetStatus())]; !ok {
+		err := QualificationResultValidationError{
+			field:  "Status",
+			reason: "value must be one of the defined enum values",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if l := utf8.RuneCountInString(m.GetSummary()); l < 3 || l > 512 {
+		err := QualificationResultValidationError{
+			field:  "Summary",
+			reason: "value length must be between 3 and 512 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	// no validation rules for CreatorId
+
+	if all {
+		switch v := interface{}(m.GetCreator()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, QualificationResultValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, QualificationResultValidationError{
+					field:  "Creator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCreator()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return QualificationResultValidationError{
+				field:  "Creator",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if utf8.RuneCountInString(m.GetCreatorJob()) > 20 {
+		err := QualificationResultValidationError{
+			field:  "CreatorJob",
+			reason: "value length must be at most 20 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if m.CreatedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetCreatedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationResultValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationResultValidationError{
+						field:  "CreatedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetCreatedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationResultValidationError{
+					field:  "CreatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.DeletedAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetDeletedAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationResultValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationResultValidationError{
+						field:  "DeletedAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDeletedAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationResultValidationError{
+					field:  "DeletedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Qualification != nil {
+
+		if all {
+			switch v := interface{}(m.GetQualification()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, QualificationResultValidationError{
+						field:  "Qualification",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, QualificationResultValidationError{
+						field:  "Qualification",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetQualification()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return QualificationResultValidationError{
+					field:  "Qualification",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if m.Score != nil {
+
+		if m.GetScore() >= 1000 {
+			err := QualificationResultValidationError{
+				field:  "Score",
+				reason: "value must be less than 1000",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return QualificationResultMultiError(errors)
+	}
+
+	return nil
+}
+
+// QualificationResultMultiError is an error wrapping multiple validation
+// errors returned by QualificationResult.ValidateAll() if the designated
+// constraints aren't met.
+type QualificationResultMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m QualificationResultMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m QualificationResultMultiError) AllErrors() []error { return m }
+
+// QualificationResultValidationError is the validation error returned by
+// QualificationResult.Validate if the designated constraints aren't met.
+type QualificationResultValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e QualificationResultValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e QualificationResultValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e QualificationResultValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e QualificationResultValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e QualificationResultValidationError) ErrorName() string {
+	return "QualificationResultValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e QualificationResultValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sQualificationResult.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = QualificationResultValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = QualificationResultValidationError{}

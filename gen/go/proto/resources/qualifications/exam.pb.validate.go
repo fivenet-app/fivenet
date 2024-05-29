@@ -1490,6 +1490,39 @@ func (m *ExamUser) validate(all bool) error {
 
 	}
 
+	if m.EndsAt != nil {
+
+		if all {
+			switch v := interface{}(m.GetEndsAt()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamUserValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamUserValidationError{
+						field:  "EndsAt",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetEndsAt()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamUserValidationError{
+					field:  "EndsAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.EndedAt != nil {
 
 		if all {
@@ -1775,185 +1808,33 @@ func (m *ExamResponse) validate(all bool) error {
 
 	// no validation rules for UserId
 
-	switch v := m.Response.(type) {
-	case *ExamResponse_Separator:
-		if v == nil {
-			err := ExamResponseValidationError{
-				field:  "Response",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-		// no validation rules for Separator
-	case *ExamResponse_Yesno:
-		if v == nil {
-			err := ExamResponseValidationError{
-				field:  "Response",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetYesno()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "Yesno",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "Yesno",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetYesno()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ExamResponseValidationError{
-					field:  "Yesno",
+	if all {
+		switch v := interface{}(m.GetResponse()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ExamResponseValidationError{
+					field:  "Response",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
 			}
-		}
-
-	case *ExamResponse_FreeText:
-		if v == nil {
-			err := ExamResponseValidationError{
-				field:  "Response",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetFreeText()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "FreeText",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "FreeText",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetFreeText()).(interface{ Validate() error }); ok {
+		case interface{ Validate() error }:
 			if err := v.Validate(); err != nil {
-				return ExamResponseValidationError{
-					field:  "FreeText",
+				errors = append(errors, ExamResponseValidationError{
+					field:  "Response",
 					reason: "embedded message failed validation",
 					cause:  err,
-				}
+				})
 			}
 		}
-
-	case *ExamResponse_SingleChoice:
-		if v == nil {
-			err := ExamResponseValidationError{
+	} else if v, ok := interface{}(m.GetResponse()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ExamResponseValidationError{
 				field:  "Response",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetSingleChoice()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "SingleChoice",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "SingleChoice",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetSingleChoice()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ExamResponseValidationError{
-					field:  "SingleChoice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
+				reason: "embedded message failed validation",
+				cause:  err,
 			}
 		}
-
-	case *ExamResponse_MultipleChoice:
-		if v == nil {
-			err := ExamResponseValidationError{
-				field:  "Response",
-				reason: "oneof value cannot be a typed-nil",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-		if all {
-			switch v := interface{}(m.GetMultipleChoice()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "MultipleChoice",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ExamResponseValidationError{
-						field:  "MultipleChoice",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetMultipleChoice()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ExamResponseValidationError{
-					field:  "MultipleChoice",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	default:
-		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -2032,6 +1913,418 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ExamResponseValidationError{}
+
+// Validate checks the field values on ExamResponseData with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *ExamResponseData) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExamResponseData with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExamResponseDataMultiError, or nil if none found.
+func (m *ExamResponseData) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExamResponseData) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	switch v := m.Response.(type) {
+	case *ExamResponseData_Separator:
+		if v == nil {
+			err := ExamResponseDataValidationError{
+				field:  "Response",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetSeparator()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "Separator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "Separator",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSeparator()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamResponseDataValidationError{
+					field:  "Separator",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamResponseData_Yesno:
+		if v == nil {
+			err := ExamResponseDataValidationError{
+				field:  "Response",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetYesno()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "Yesno",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "Yesno",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetYesno()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamResponseDataValidationError{
+					field:  "Yesno",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamResponseData_FreeText:
+		if v == nil {
+			err := ExamResponseDataValidationError{
+				field:  "Response",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetFreeText()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "FreeText",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "FreeText",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetFreeText()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamResponseDataValidationError{
+					field:  "FreeText",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamResponseData_SingleChoice:
+		if v == nil {
+			err := ExamResponseDataValidationError{
+				field:  "Response",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetSingleChoice()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "SingleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "SingleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSingleChoice()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamResponseDataValidationError{
+					field:  "SingleChoice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ExamResponseData_MultipleChoice:
+		if v == nil {
+			err := ExamResponseDataValidationError{
+				field:  "Response",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetMultipleChoice()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "MultipleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ExamResponseDataValidationError{
+						field:  "MultipleChoice",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetMultipleChoice()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ExamResponseDataValidationError{
+					field:  "MultipleChoice",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
+	}
+
+	if len(errors) > 0 {
+		return ExamResponseDataMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExamResponseDataMultiError is an error wrapping multiple validation errors
+// returned by ExamResponseData.ValidateAll() if the designated constraints
+// aren't met.
+type ExamResponseDataMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExamResponseDataMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExamResponseDataMultiError) AllErrors() []error { return m }
+
+// ExamResponseDataValidationError is the validation error returned by
+// ExamResponseData.Validate if the designated constraints aren't met.
+type ExamResponseDataValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExamResponseDataValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExamResponseDataValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExamResponseDataValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExamResponseDataValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExamResponseDataValidationError) ErrorName() string { return "ExamResponseDataValidationError" }
+
+// Error satisfies the builtin error interface
+func (e ExamResponseDataValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExamResponseData.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExamResponseDataValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExamResponseDataValidationError{}
+
+// Validate checks the field values on ExamResponseSeparator with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ExamResponseSeparator) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ExamResponseSeparator with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ExamResponseSeparatorMultiError, or nil if none found.
+func (m *ExamResponseSeparator) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ExamResponseSeparator) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return ExamResponseSeparatorMultiError(errors)
+	}
+
+	return nil
+}
+
+// ExamResponseSeparatorMultiError is an error wrapping multiple validation
+// errors returned by ExamResponseSeparator.ValidateAll() if the designated
+// constraints aren't met.
+type ExamResponseSeparatorMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ExamResponseSeparatorMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ExamResponseSeparatorMultiError) AllErrors() []error { return m }
+
+// ExamResponseSeparatorValidationError is the validation error returned by
+// ExamResponseSeparator.Validate if the designated constraints aren't met.
+type ExamResponseSeparatorValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ExamResponseSeparatorValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ExamResponseSeparatorValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ExamResponseSeparatorValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ExamResponseSeparatorValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ExamResponseSeparatorValidationError) ErrorName() string {
+	return "ExamResponseSeparatorValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ExamResponseSeparatorValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sExamResponseSeparator.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ExamResponseSeparatorValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ExamResponseSeparatorValidationError{}
 
 // Validate checks the field values on ExamResponseYesNo with the rules defined
 // in the proto definition for this message. If any rules are violated, the

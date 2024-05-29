@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -42,6 +43,24 @@ func (s *Server) getExamQuestions(ctx context.Context, qualificationId uint64, w
 	}
 
 	return &dest, nil
+}
+
+func (s *Server) countExamQuestions(ctx context.Context, qualificationid uint64) (int32, error) {
+	stmt := tExamQuestions.
+		SELECT(
+			jet.COUNT(jet.DISTINCT(tExamQuestions.ID)).AS("datacount.totalcount"),
+		).
+		FROM(tExamQuestions).
+		WHERE(
+			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationid)),
+		)
+
+	var count database.DataCount
+	if err := stmt.QueryContext(ctx, s.db, &count); err != nil {
+		return 0, err
+	}
+
+	return int32(count.TotalCount), nil
 }
 
 func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qualificiationId uint64, questions *qualifications.ExamQuestions) error {
@@ -123,4 +142,33 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 	}
 
 	return nil
+}
+
+func (s *Server) getExamResponses(ctx context.Context, qualificationId uint64, userId int32) (*qualifications.ExamResponses, error) {
+	stmt := tExamResponses.
+		SELECT(
+			tExamResponses.QuestionID,
+			tExamResponses.UserID,
+			tExamResponses.Response,
+		).
+		FROM(
+			tExamResponses.
+				INNER_JOIN(tExamQuestions,
+					tExamQuestions.ID.EQ(tExamResponses.QuestionID),
+				),
+		).
+		WHERE(jet.AND(
+			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamResponses.UserID.EQ(jet.Int32(userId)),
+		))
+
+	var dest qualifications.ExamResponses
+	if err := stmt.QueryContext(ctx, s.db, &dest.Responses); err != nil {
+		return nil, err
+	}
+
+	dest.QualificationId = qualificationId
+	dest.UserId = userId
+
+	return &dest, nil
 }

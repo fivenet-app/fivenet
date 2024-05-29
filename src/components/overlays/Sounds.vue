@@ -1,6 +1,5 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
-import { useState } from '#imports';
 import USound from './Sound.vue';
 import { useSettingsStore } from '~/store/settings';
 

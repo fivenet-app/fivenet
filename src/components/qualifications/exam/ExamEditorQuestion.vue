@@ -194,9 +194,9 @@ function changeQuestionType(qt: string): void {
                                 />
                             </UFormGroup>
 
-                            <UFormGroup name="data.data.freeText.minLength" :label="$t('common.max')" class="flex-1">
+                            <UFormGroup name="data.data.freeText.maxLength" :label="$t('common.max')" class="flex-1">
                                 <UInput
-                                    v-model="question.data!.data.freeText.minLength"
+                                    v-model="question.data!.data.freeText.maxLength"
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"

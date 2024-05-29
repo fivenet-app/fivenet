@@ -5,7 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import {
     checkQualificationAccess,
@@ -72,6 +72,19 @@ const canDo = computed(() => ({
     edit: checkQualificationAccess(qualification.value?.access, qualification.value?.creator, AccessLevel.EDIT),
 }));
 
+watchOnce(data, async () => {
+    if (!data.value?.qualification?.request) {
+        return;
+    }
+
+    if (data.value?.qualification?.request.status === RequestStatus.EXAM_STARTED) {
+        await navigateTo({
+            name: 'qualifications-id-exam',
+            params: { id: props.qualificationId },
+        });
+    }
+});
+
 const accordionItems = computed(() =>
     [
         qualification.value?.result
@@ -119,28 +132,15 @@ const accordionItems = computed(() =>
             <template #default>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <template v-if="!canDo.edit">
-                        <!-- TODO Enable when the exam logic is ready -->
                         <UButton
-                            v-if="false || canDo.take"
-                            icon="i-mdi-test-tube"
-                            :disabled="qualification.closed || !requirementsFullfilled(qualification.requirements)"
-                            @click="
-                                modal.open(QualificationRequestUserModal, {
-                                    qualificationId: qualification!.id,
-                                    onUpdatedRequest: ($event) => (qualification!.request = $event),
-                                })
-                            "
-                        >
-                            {{ $t('components.qualifications.take_test') }}
-                        </UButton>
-
-                        <UButton
-                            v-else-if="canDo.request"
+                            v-if="canDo.request && qualification.examMode !== QualificationExamMode.ENABLED"
                             :disabled="
                                 qualification.closed ||
                                 !requirementsFullfilled(qualification.requirements) ||
                                 qualification.request?.status === RequestStatus.PENDING ||
-                                qualification.request?.status === RequestStatus.ACCEPTED
+                                qualification.request?.status === RequestStatus.ACCEPTED ||
+                                qualification.request?.status === RequestStatus.EXAM_STARTED ||
+                                qualification.request?.status === RequestStatus.EXAM_GRADING
                             "
                             icon="i-mdi-account-school"
                             @click="
@@ -152,6 +152,41 @@ const accordionItems = computed(() =>
                         >
                             {{ $t('common.request') }}
                         </UButton>
+
+                        <template v-if="canDo.take">
+                            <UButton
+                                v-if="
+                                    qualification.request?.status !== RequestStatus.EXAM_STARTED &&
+                                    qualification.request?.status !== RequestStatus.EXAM_GRADING &&
+                                    (qualification.examMode === QualificationExamMode.ENABLED ||
+                                        (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
+                                            qualification.request?.status === RequestStatus.ACCEPTED))
+                                "
+                                :disabled="qualification.closed || !requirementsFullfilled(qualification.requirements)"
+                                icon="i-mdi-test-tube"
+                                @click="
+                                    modal.open(QualificationRequestUserModal, {
+                                        qualificationId: qualification!.id,
+                                        onUpdatedRequest: ($event) => (qualification!.request = $event),
+                                    })
+                                "
+                            >
+                                {{ $t('common.exam') }}
+                            </UButton>
+
+                            <UButton
+                                v-else
+                                icon="i-mdi-test-tube"
+                                :disabled="
+                                    qualification.closed ||
+                                    !requirementsFullfilled(qualification.requirements) ||
+                                    qualification.request?.status === RequestStatus.EXAM_GRADING
+                                "
+                                :to="{ name: 'qualifications-id-exam', params: { id: qualification.id } }"
+                            >
+                                {{ $t('components.qualifications.take_test') }}
+                            </UButton>
+                        </template>
                     </template>
 
                     <UButton

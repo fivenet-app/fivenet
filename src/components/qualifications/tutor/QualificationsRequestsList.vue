@@ -12,6 +12,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { requestStatusToTextColor } from '../helpers';
 import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -174,7 +175,11 @@ defineExpose({
                             />
 
                             <UButton
-                                v-if="request.status !== RequestStatus.ACCEPTED"
+                                v-if="
+                                    request.status !== RequestStatus.ACCEPTED &&
+                                    request.status !== RequestStatus.EXAM_STARTED &&
+                                    request.status !== RequestStatus.EXAM_GRADING
+                                "
                                 variant="link"
                                 icon="i-mdi-check-bold"
                                 color="green"
@@ -188,16 +193,23 @@ defineExpose({
                             />
 
                             <UButton
-                                v-if="request.status === RequestStatus.ACCEPTED"
+                                v-if="
+                                    request.status === RequestStatus.ACCEPTED || request.status === RequestStatus.EXAM_GRADING
+                                "
                                 variant="link"
                                 icon="i-mdi-star"
                                 color="amber"
                                 @click="
-                                    modal.open(QualificationResultTutorModal, {
-                                        qualificationId: request.qualificationId,
-                                        userId: request.userId,
-                                        onRefresh: onRefresh,
-                                    })
+                                    modal.open(
+                                        request.status === RequestStatus.EXAM_GRADING
+                                            ? ExamViewResultModal
+                                            : QualificationResultTutorModal,
+                                        {
+                                            qualificationId: request.qualificationId,
+                                            userId: request.userId,
+                                            onRefresh: onRefresh,
+                                        },
+                                    )
                                 "
                             />
 

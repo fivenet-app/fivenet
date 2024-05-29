@@ -469,6 +469,8 @@ func (s *Server) getQualificationShort(ctx context.Context, qualificationId uint
 		Description:  quali.Description,
 		CreatorId:    quali.CreatorId,
 		Creator:      quali.Creator,
+		ExamMode:     quali.ExamMode,
+		ExamSettings: quali.ExamSettings,
 		Requirements: quali.Requirements,
 		Result:       quali.Result,
 	}, nil

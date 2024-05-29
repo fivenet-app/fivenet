@@ -17,6 +17,8 @@ const authStore = useAuthStore();
 
 const { activeChar, jobProps } = storeToRefs(authStore);
 
+const { game } = useAppConfig();
+
 const showRadioFrequency = ref(false);
 </script>
 
@@ -42,7 +44,7 @@ const showRadioFrequency = ref(false);
                                             {{ activeChar?.jobLabel }}
                                         </h1>
                                         <h2
-                                            v-if="activeChar?.jobLabel !== activeChar?.jobGradeLabel"
+                                            v-if="activeChar?.job !== game.unemployedJobName"
                                             class="mt-2 text-xl font-semibold leading-6"
                                         >
                                             {{ $t('common.rank') }}: {{ activeChar?.jobGradeLabel }}

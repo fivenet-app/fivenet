@@ -73,6 +73,8 @@ const items = computed(() => [
     ],
 ]);
 
+const { game } = useAppConfig();
+
 const name = computed(() =>
     activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : username.value ?? t('common.na'),
 );
@@ -102,6 +104,10 @@ const name = computed(() =>
             <div class="truncate text-left">
                 <p>{{ $t('components.UserDropdown.signed_in_as') }}</p>
                 <p class="truncate font-medium text-gray-900 dark:text-white">{{ username }}</p>
+                <p v-if="activeChar" class="truncate font-medium text-gray-900 dark:text-white">
+                    {{ activeChar.jobLabel
+                    }}<template v-if="activeChar.job !== game.unemployedJobName"> - {{ activeChar.jobGradeLabel }}</template>
+                </p>
             </div>
         </template>
 

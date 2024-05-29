@@ -4,10 +4,14 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { QualificationsService } from "./qualifications";
+import type { GetUserExamResponse } from "./qualifications";
+import type { GetUserExamRequest } from "./qualifications";
 import type { SubmitExamResponse } from "./qualifications";
 import type { SubmitExamRequest } from "./qualifications";
 import type { TakeExamResponse } from "./qualifications";
 import type { TakeExamRequest } from "./qualifications";
+import type { GetExamInfoResponse } from "./qualifications";
+import type { GetExamInfoRequest } from "./qualifications";
 import type { DeleteQualificationResultResponse } from "./qualifications";
 import type { DeleteQualificationResultRequest } from "./qualifications";
 import type { CreateOrUpdateQualificationResultResponse } from "./qualifications";
@@ -106,6 +110,12 @@ export interface IQualificationsServiceClient {
     /**
      * @perm: Name=GetQualification
      *
+     * @generated from protobuf rpc: GetExamInfo(services.qualifications.GetExamInfoRequest) returns (services.qualifications.GetExamInfoResponse);
+     */
+    getExamInfo(input: GetExamInfoRequest, options?: RpcOptions): UnaryCall<GetExamInfoRequest, GetExamInfoResponse>;
+    /**
+     * @perm: Name=GetQualification
+     *
      * @generated from protobuf rpc: TakeExam(services.qualifications.TakeExamRequest) returns (services.qualifications.TakeExamResponse);
      */
     takeExam(input: TakeExamRequest, options?: RpcOptions): UnaryCall<TakeExamRequest, TakeExamResponse>;
@@ -115,6 +125,12 @@ export interface IQualificationsServiceClient {
      * @generated from protobuf rpc: SubmitExam(services.qualifications.SubmitExamRequest) returns (services.qualifications.SubmitExamResponse);
      */
     submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse>;
+    /**
+     * @perm: Name=CreateOrUpdateQualificationResult
+     *
+     * @generated from protobuf rpc: GetUserExam(services.qualifications.GetUserExamRequest) returns (services.qualifications.GetUserExamResponse);
+     */
+    getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse>;
 }
 /**
  * @generated from protobuf service services.qualifications.QualificationsService
@@ -227,10 +243,19 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
     /**
      * @perm: Name=GetQualification
      *
+     * @generated from protobuf rpc: GetExamInfo(services.qualifications.GetExamInfoRequest) returns (services.qualifications.GetExamInfoResponse);
+     */
+    getExamInfo(input: GetExamInfoRequest, options?: RpcOptions): UnaryCall<GetExamInfoRequest, GetExamInfoResponse> {
+        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetExamInfoRequest, GetExamInfoResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=GetQualification
+     *
      * @generated from protobuf rpc: TakeExam(services.qualifications.TakeExamRequest) returns (services.qualifications.TakeExamResponse);
      */
     takeExam(input: TakeExamRequest, options?: RpcOptions): UnaryCall<TakeExamRequest, TakeExamResponse> {
-        const method = this.methods[11], opt = this._transport.mergeOptions(options);
+        const method = this.methods[12], opt = this._transport.mergeOptions(options);
         return stackIntercept<TakeExamRequest, TakeExamResponse>("unary", this._transport, method, opt, input);
     }
     /**
@@ -239,7 +264,16 @@ export class QualificationsServiceClient implements IQualificationsServiceClient
      * @generated from protobuf rpc: SubmitExam(services.qualifications.SubmitExamRequest) returns (services.qualifications.SubmitExamResponse);
      */
     submitExam(input: SubmitExamRequest, options?: RpcOptions): UnaryCall<SubmitExamRequest, SubmitExamResponse> {
-        const method = this.methods[12], opt = this._transport.mergeOptions(options);
+        const method = this.methods[13], opt = this._transport.mergeOptions(options);
         return stackIntercept<SubmitExamRequest, SubmitExamResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=CreateOrUpdateQualificationResult
+     *
+     * @generated from protobuf rpc: GetUserExam(services.qualifications.GetUserExamRequest) returns (services.qualifications.GetUserExamResponse);
+     */
+    getUserExam(input: GetUserExamRequest, options?: RpcOptions): UnaryCall<GetUserExamRequest, GetUserExamResponse> {
+        const method = this.methods[14], opt = this._transport.mergeOptions(options);
+        return stackIntercept<GetUserExamRequest, GetUserExamResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -459,7 +459,8 @@
         "diff": "Diff",
         "exam": "Exam | Exams",
         "question": "Question | Questions",
-        "answer": "Answer | Answers"
+        "answer": "Answer | Answers",
+        "chars": "Char | Chars"
     },
     "components": {
         "partials": {
@@ -914,6 +915,9 @@
                     "singleChoice": "Single Choice",
                     "multipleChoice": "Multiple Choice"
                 }
+            },
+            "result_modal": {
+                "title": "Qualification Result"
             }
         },
         "language_switcher": {
@@ -2326,13 +2330,15 @@
                 "PENDING": "Pending",
                 "DENIED": "Denied",
                 "ACCEPTED": "Accepted",
-                "COMPLETED": "Completed"
+                "COMPLETED": "Completed",
+                "EXAM_STARTED": "Exam started",
+                "EXAM_GRADING": "Exam grading"
             },
             "QualificationExamMode": {
                 "UNSPECIFIED": "Unspecified",
                 "DISABLED": "Disabled",
                 "ENABLED": "Enabled",
-                "FORCED": "Forced"
+                "REQUEST_NEEDED": "Require Request"
             }
         },
         "rector": {

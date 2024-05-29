@@ -12,6 +12,9 @@ export default defineAppConfig({
     } as DiscordConfig,
     links: {} as Links,
     featureGates: {} as FeatureGates,
+    game: {
+        unemployedJobName: 'unemployed',
+    },
 
     // Nuxt UI app config
     ui: {

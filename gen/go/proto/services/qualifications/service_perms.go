@@ -13,6 +13,8 @@ var PermsRemap = map[string]string{
 
 	// Service: QualificationsService
 	"QualificationsService/CreateOrUpdateQualificationRequest": "QualificationsService/GetQualification",
+	"QualificationsService/GetExamInfo":                        "QualificationsService/GetQualification",
+	"QualificationsService/GetUserExam":                        "QualificationsService/CreateOrUpdateQualificationResult",
 	"QualificationsService/ListQualificationRequests":          "QualificationsService/GetQualification",
 	"QualificationsService/ListQualificationsResults":          "QualificationsService/GetQualification",
 	"QualificationsService/SubmitExam":                         "QualificationsService/GetQualification",

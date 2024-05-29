@@ -132,6 +132,16 @@ message DeleteQualificationResultResponse {}
 
 // Exam =======================================================================
 
+message GetExamInfoRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+}
+
+message GetExamInfoResponse {
+  resources.qualifications.QualificationShort qualification = 1;
+  int32 question_count = 2;
+  optional resources.qualifications.ExamUser user = 3;
+}
+
 message TakeExamRequest {
   uint64 qualification_id = 1 [jstype = JS_STRING];
   optional bool cancel = 2;
@@ -139,6 +149,7 @@ message TakeExamRequest {
 
 message TakeExamResponse {
   resources.qualifications.ExamQuestions exam = 1;
+  resources.qualifications.ExamUser exam_user = 2;
 }
 
 message SubmitExamRequest {
@@ -148,6 +159,17 @@ message SubmitExamRequest {
 
 message SubmitExamResponse {
   google.protobuf.Duration duration = 1;
+}
+
+message GetUserExamRequest {
+  uint64 qualification_id = 1 [jstype = JS_STRING];
+  int32 user_id = 2;
+}
+
+message GetUserExamResponse {
+  resources.qualifications.ExamQuestions exam = 1;
+  resources.qualifications.ExamUser exam_user = 2;
+  resources.qualifications.ExamResponses responses = 3;
 }
 
 service QualificationsService {
@@ -177,7 +199,11 @@ service QualificationsService {
   rpc DeleteQualificationResult(DeleteQualificationResultRequest) returns (DeleteQualificationResultResponse);
 
   // @perm: Name=GetQualification
+  rpc GetExamInfo(GetExamInfoRequest) returns (GetExamInfoResponse);
+  // @perm: Name=GetQualification
   rpc TakeExam(TakeExamRequest) returns (TakeExamResponse);
   // @perm: Name=GetQualification
   rpc SubmitExam(SubmitExamRequest) returns (SubmitExamResponse);
+  // @perm: Name=CreateOrUpdateQualificationResult
+  rpc GetUserExam(GetUserExamRequest) returns (GetUserExamResponse);
 }

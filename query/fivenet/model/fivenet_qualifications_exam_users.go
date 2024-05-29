@@ -16,5 +16,6 @@ type FivenetQualificationsExamUsers struct {
 	UserID          int32      `sql:"primary_key" json:"user_id"`
 	CreatedAt       *time.Time `json:"created_at"`
 	StartedAt       *time.Time `json:"started_at"`
+	EndsAt          *time.Time `json:"ends_at"`
 	EndedAt         *time.Time `json:"ended_at"`
 }

@@ -20,6 +20,8 @@ const props = withDefaults(
     },
 );
 
+const { game } = useAppConfig();
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (_) => {
     canSubmit.value = false;
@@ -51,7 +53,9 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             <dt class="text-sm font-medium">
                 {{ $t('common.job') }}
             </dt>
-            <dd class="text-sm">{{ char.jobLabel }} ({{ char.jobGradeLabel }})</dd>
+            <dd class="text-sm">
+                {{ char.jobLabel }}<template v-if="char.job !== game.unemployedJobName"> ({{ char.jobGradeLabel }})</template>
+            </dd>
 
             <dt class="text-sm font-medium">
                 {{ $t('common.date_of_birth') }}

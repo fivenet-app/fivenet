@@ -22,6 +22,7 @@ CREATE TABLE
         `user_id` int(11) NOT NULL,
         `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),
         `started_at` datetime(3) DEFAULT NULL,
+        `ends_at` datetime(3) DEFAULT NULL,
         `ended_at` datetime(3) DEFAULT NULL,
         PRIMARY KEY (`qualification_id`, `user_id`),
         CONSTRAINT `fk_fivenet_qualifications_exam_users_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE,

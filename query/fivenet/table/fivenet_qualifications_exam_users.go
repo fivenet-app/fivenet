@@ -21,6 +21,7 @@ type fivenetQualificationsExamUsersTable struct {
 	UserID          mysql.ColumnInteger
 	CreatedAt       mysql.ColumnTimestamp
 	StartedAt       mysql.ColumnTimestamp
+	EndsAt          mysql.ColumnTimestamp
 	EndedAt         mysql.ColumnTimestamp
 
 	AllColumns     mysql.ColumnList
@@ -66,9 +67,10 @@ func newFivenetQualificationsExamUsersTableImpl(schemaName, tableName, alias str
 		UserIDColumn          = mysql.IntegerColumn("user_id")
 		CreatedAtColumn       = mysql.TimestampColumn("created_at")
 		StartedAtColumn       = mysql.TimestampColumn("started_at")
+		EndsAtColumn          = mysql.TimestampColumn("ends_at")
 		EndedAtColumn         = mysql.TimestampColumn("ended_at")
-		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, CreatedAtColumn, StartedAtColumn, EndedAtColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, StartedAtColumn, EndedAtColumn}
+		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn}
+		mutableColumns        = mysql.ColumnList{CreatedAtColumn, StartedAtColumn, EndsAtColumn, EndedAtColumn}
 	)
 
 	return fivenetQualificationsExamUsersTable{
@@ -79,6 +81,7 @@ func newFivenetQualificationsExamUsersTableImpl(schemaName, tableName, alias str
 		UserID:          UserIDColumn,
 		CreatedAt:       CreatedAtColumn,
 		StartedAt:       StartedAtColumn,
+		EndsAt:          EndsAtColumn,
 		EndedAt:         EndedAtColumn,
 
 		AllColumns:     allColumns,

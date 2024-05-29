@@ -64,7 +64,8 @@ message ExamUser {
   int32 user_id = 2;
   optional resources.timestamp.Timestamp created_at = 3;
   optional resources.timestamp.Timestamp started_at = 4;
-  optional resources.timestamp.Timestamp ended_at = 5;
+  optional resources.timestamp.Timestamp ends_at = 5;
+  optional resources.timestamp.Timestamp ended_at = 6;
 }
 
 message ExamResponses {
@@ -77,14 +78,20 @@ message ExamResponse {
   uint64 question_id = 1 [jstype = JS_STRING];
   int32 user_id = 2;
 
+  ExamResponseData response = 3;
+}
+
+message ExamResponseData {
   oneof response {
-    bool separator = 3;
+    ExamResponseSeparator separator = 3;
     ExamResponseYesNo yesno  = 4;
     ExamResponseText free_text = 5;
     ExamResponseSingleChoice single_choice = 6;
     ExamResponseMultipleChoice multiple_choice = 7;
   }
 }
+
+message ExamResponseSeparator {}
 
 message ExamResponseYesNo {
   bool value = 1;
