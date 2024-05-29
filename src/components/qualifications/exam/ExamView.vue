@@ -5,6 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewQuestions from './ExamViewQuestions.vue';
 import type { ExamQuestions, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
+import { isPast } from 'date-fns';
 
 const props = defineProps<{
     qualificationId: string;
@@ -53,7 +54,7 @@ const exam = ref<ExamQuestions | undefined>();
 const examUser = ref<ExamUser | undefined>();
 
 watch(data, async () => {
-    if (exam.value === undefined) {
+    if (data.value?.user?.endsAt !== undefined && data.value?.user?.endedAt === undefined) {
         await takeExam(false);
     }
 });
@@ -113,12 +114,17 @@ watch(data, async () => {
             </template>
         </UDashboardToolbar>
 
+        <UCard v-if="data?.user?.endedAt || isPast(toDate(data?.user?.endsAt))">
+            <h3 class="text-lg">
+                {{ $t('components.qualifications.exam_view.times_up') }}
+            </h3>
+        </UCard>
+
         <UButton
-            v-if="!data?.user"
+            v-else-if="!data?.user?.endedAt"
             size="xl"
             color="gray"
             icon="i-mdi-play"
-            :disabled="!data?.user?.endedAt"
             block
             class="w-full"
             @click="takeExam(false)"

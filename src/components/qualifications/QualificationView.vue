@@ -133,7 +133,7 @@ const accordionItems = computed(() =>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <template v-if="!canDo.edit">
                         <UButton
-                            v-if="canDo.request && qualification.examMode !== QualificationExamMode.ENABLED"
+                            v-if="qualification.examMode !== QualificationExamMode.ENABLED"
                             :disabled="
                                 qualification.closed ||
                                 !requirementsFullfilled(qualification.requirements) ||
@@ -153,40 +153,20 @@ const accordionItems = computed(() =>
                             {{ $t('common.request') }}
                         </UButton>
 
-                        <template v-if="canDo.take">
-                            <UButton
-                                v-if="
-                                    qualification.request?.status !== RequestStatus.EXAM_STARTED &&
-                                    qualification.request?.status !== RequestStatus.EXAM_GRADING &&
-                                    (qualification.examMode === QualificationExamMode.ENABLED ||
-                                        (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
-                                            qualification.request?.status === RequestStatus.ACCEPTED))
-                                "
-                                :disabled="qualification.closed || !requirementsFullfilled(qualification.requirements)"
-                                icon="i-mdi-test-tube"
-                                @click="
-                                    modal.open(QualificationRequestUserModal, {
-                                        qualificationId: qualification!.id,
-                                        onUpdatedRequest: ($event) => (qualification!.request = $event),
-                                    })
-                                "
-                            >
-                                {{ $t('common.exam') }}
-                            </UButton>
-
-                            <UButton
-                                v-else
-                                icon="i-mdi-test-tube"
-                                :disabled="
-                                    qualification.closed ||
-                                    !requirementsFullfilled(qualification.requirements) ||
-                                    qualification.request?.status === RequestStatus.EXAM_GRADING
-                                "
-                                :to="{ name: 'qualifications-id-exam', params: { id: qualification.id } }"
-                            >
-                                {{ $t('components.qualifications.take_test') }}
-                            </UButton>
-                        </template>
+                        <UButton
+                            v-if="canDo.take && qualification.examMode !== QualificationExamMode.DISABLED"
+                            icon="i-mdi-test-tube"
+                            :disabled="
+                                qualification.closed ||
+                                !requirementsFullfilled(qualification.requirements) ||
+                                qualification.request?.status === RequestStatus.EXAM_GRADING ||
+                                (qualification.examMode === QualificationExamMode.REQUEST_NEEDED &&
+                                    qualification.request?.status !== RequestStatus.ACCEPTED)
+                            "
+                            :to="{ name: 'qualifications-id-exam', params: { id: qualification.id } }"
+                        >
+                            {{ $t('components.qualifications.take_test') }}
+                        </UButton>
                     </template>
 
                     <UButton
@@ -229,6 +209,10 @@ const accordionItems = computed(() =>
 
                 <div class="mb-2 flex gap-2">
                     <OpenClosedBadge :closed="qualification.closed" />
+                    <UBadge>
+                        {{ $t('common.exam', 1) }}:
+                        {{ $t(`enums.qualifications.QualificationExamMode.${QualificationExamMode[qualification.examMode]}`) }}
+                    </UBadge>
 
                     <UBadge
                         v-if="qualification.result?.status"
@@ -291,39 +275,31 @@ const accordionItems = computed(() =>
                     </UBadge>
                 </div>
 
-                <div class="mt-2 w-full">
+                <div v-if="qualification.requirements && qualification.requirements.length > 0" class="mt-2 w-full">
                     <h3>{{ $t('common.requirements', 2) }}:</h3>
 
                     <div class="flex flex-row flex-wrap gap-1 pb-2">
-                        <template v-if="!qualification.requirements || qualification.requirements.length === 0">
-                            <p class="text-base">
-                                {{ $t('common.not_found', [$t('common.requirements', 2)]) }}
-                            </p>
-                        </template>
-
-                        <template v-else>
-                            <ULink
-                                v-for="requirement in qualification.requirements"
-                                :key="requirement.id"
-                                :to="{
-                                    name: 'qualifications-id',
-                                    params: { id: requirement.targetQualificationId },
-                                }"
+                        <ULink
+                            v-for="requirement in qualification.requirements"
+                            :key="requirement.id"
+                            :to="{
+                                name: 'qualifications-id',
+                                params: { id: requirement.targetQualificationId },
+                            }"
+                        >
+                            <UBadge
+                                :color="
+                                    requirement.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
+                                        ? 'green'
+                                        : 'red'
+                                "
                             >
-                                <UBadge
-                                    :color="
-                                        requirement.targetQualification?.result?.status === ResultStatus.SUCCESSFUL
-                                            ? 'green'
-                                            : 'red'
-                                    "
-                                >
-                                    <span>
-                                        {{ requirement.targetQualification?.abbreviation }}:
-                                        {{ requirement.targetQualification?.title }}
-                                    </span>
-                                </UBadge>
-                            </ULink>
-                        </template>
+                                <span>
+                                    {{ requirement.targetQualification?.abbreviation }}:
+                                    {{ requirement.targetQualification?.title }}
+                                </span>
+                            </UBadge>
+                        </ULink>
                     </div>
                 </div>
             </template>

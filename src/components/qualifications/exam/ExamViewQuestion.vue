@@ -3,7 +3,7 @@ import type { ExamQuestion, ExamResponse } from '~~/gen/ts/resources/qualificati
 
 const props = withDefaults(
     defineProps<{
-        question: ExamQuestion;
+        question: ExamQuestion | undefined;
         modelValue: ExamResponse;
         disabled?: boolean;
     }>(),
@@ -13,7 +13,7 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'update:model-value', value: ExamResponse): void;
+    (e: 'update:model-value', value: ExamResponse | undefined): void;
 }>();
 
 const response = useVModel(props, 'modelValue', emits);
@@ -37,7 +37,7 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
 </script>
 
 <template>
-    <div class="py-4">
+    <div v-if="question" class="py-4">
         <div v-if="question.data!.data.oneofKind === 'separator'">
             <UDivider class="mb-2 mt-2 text-xl">
                 <h4 class="text-xl">{{ question.title }}</h4>

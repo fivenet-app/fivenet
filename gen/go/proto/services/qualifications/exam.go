@@ -23,7 +23,7 @@ import (
 
 var (
 	tExamQuestions = table.FivenetQualificationsExamQuestions.AS("examquestion")
-	tExamResponses = table.FivenetQualificationsExamResponses.AS("examuserresponse")
+	tExamResponses = table.FivenetQualificationsExamResponses.AS("examresponse")
 	tExamUser      = table.FivenetQualificationsExamUsers.AS("examuser")
 )
 
@@ -79,7 +79,7 @@ func (s *Server) checkIfUserCanTakeExam(ctx context.Context, quali *qualificatio
 			return false, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		if request.Status == nil || *request.Status != qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED {
+		if request == nil || request.Status == nil || (*request.Status != qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED && *request.Status != qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED) {
 			return false, errorsqualifications.ErrExamDisabled
 		}
 	}
@@ -159,7 +159,7 @@ func (s *Server) TakeExam(ctx context.Context, req *TakeExamRequest) (*TakeExamR
 	}
 
 	var exam *qualifications.ExamQuestions
-	if examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) < quali.ExamSettings.Time.AsDuration() {
+	if examUser != nil && examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) < quali.ExamSettings.Time.AsDuration() {
 		exam, err = s.getExamQuestions(ctx, req.QualificationId, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

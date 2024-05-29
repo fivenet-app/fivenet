@@ -918,6 +918,9 @@
             },
             "result_modal": {
                 "title": "Qualification Result"
+            },
+            "exam_view": {
+                "times_up": "Time's up! Your exam will be graded soon."
             }
         },
         "language_switcher": {
@@ -1437,6 +1440,14 @@
             "request_updated": {
                 "title": "Qualification Request updated",
                 "content": "Your qualification request has been updated."
+            },
+            "time_low": {
+                "title": "Your exam time is almost up!",
+                "content": "Please keep an eye on the time at the top of page."
+            },
+            "times_up": {
+                "title": "Your exam time is over!",
+                "content": "Your current responses have been submitted."
             }
         },
         "calendar": {

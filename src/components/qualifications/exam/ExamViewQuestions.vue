@@ -9,6 +9,7 @@ import type { ExamUser } from '~~/gen/ts/resources/qualifications/exam';
 import ExamViewQuestion from './ExamViewQuestion.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { differenceInMinutes, isPast } from 'date-fns';
 
 const props = defineProps<{
     qualificationId: string;
@@ -29,7 +30,6 @@ type Schema = z.output<typeof schema>;
 const disabled = ref(false);
 
 const endsAtTime = toDate(props.examUser.endsAt).getTime();
-const now = new Date().getTime();
 
 const state = useState<Schema>('qualifications-exam-responses', () => ({
     responses: [],
@@ -46,12 +46,6 @@ async function submitExam(values: Schema): Promise<SubmitExamResponse> {
             },
         });
         const { response } = await call;
-
-        notifications.add({
-            title: { key: 'notifications.action_successfull.title', parameters: {} },
-            description: { key: 'notifications.action_successfull.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
 
         state.value.responses = [];
         await navigateTo({
@@ -148,16 +142,29 @@ onBeforeMount(() =>
 const form = ref<InstanceType<typeof UForm> | null>(null);
 
 if (!props.responses) {
+    let timeLow = false;
     useIntervalFn(async () => {
-        if (endsAtTime - now < 0) {
+        const minutesLeft = differenceInMinutes(endsAtTime, new Date());
+        if (isPast(endsAtTime)) {
             await form.value?.submit();
 
-            // TODO send notification that the time is over
+            notifications.add({
+                title: { key: 'notifications.qualifications.times_up.title', parameters: {} },
+                description: { key: 'notifications.qualifications.times_up.content', parameters: {} },
+                type: NotificationType.SUCCESS,
+            });
 
             await navigateTo({
                 name: 'qualifications-id',
                 params: { id: props.qualificationId },
             });
+        } else if (!timeLow && minutesLeft <= 4) {
+            notifications.add({
+                title: { key: 'notifications.qualifications.time_low.title', parameters: {} },
+                description: { key: 'notifications.qualifications.time_low.content', parameters: {} },
+                type: NotificationType.INFO,
+            });
+            timeLow = true;
         }
     }, 1000);
 }
@@ -173,6 +180,7 @@ function setResponses(): void {
 }
 
 setResponses();
+
 watch(
     () => props.responses,
     () => setResponses(),
