@@ -77,36 +77,53 @@ watch(data, async () => {
     />
 
     <ExamViewQuestions
-        v-else-if="exam && data?.qualification && data?.user && examUser?.endsAt"
+        v-else-if="exam && exam.questions.length && data?.qualification && data?.user && examUser?.endsAt"
         :qualification-id="qualificationId"
         :exam="exam"
         :exam-user="data.user"
         :qualification="data.qualification"
     />
 
-    <UCard v-else>
-        <template #header>
-            <div class="flex gap-2">
-                <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
-                    <UIcon name="i-mdi-clock" class="size-4" />
-                    {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}
-                </UBadge>
-                <UBadge class="inline-flex gap-1">
-                    <UIcon name="i-mdi-question-mark" class="size-4" />
-                    {{ $t('common.count') }}: {{ data?.questionCount }} {{ $t('common.question', data?.questionCount ?? 1) }}
-                </UBadge>
-            </div>
-        </template>
+    <template v-else>
+        <UDashboardToolbar>
+            <template #default>
+                <div class="flex justify-between gap-2">
+                    <div class="flex gap-2">
+                        <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
+                            <UIcon name="i-mdi-clock" class="size-4" />
+                            {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}
+                        </UBadge>
+                        <UBadge class="inline-flex gap-1">
+                            <UIcon name="i-mdi-question-mark" class="size-4" />
+                            {{ $t('common.count') }}: {{ data?.questionCount }}
+                            {{ $t('common.question', data?.questionCount ?? 1) }}
+                        </UBadge>
+                    </div>
+                    <div class="flex gap-2">
+                        <UBadge v-if="data.user?.startedAt">
+                            {{ $t('common.begins_at') }}
+                            {{ $d(toDate(data.user?.startedAt), 'long') }}
+                        </UBadge>
+                        <UBadge v-if="data?.user?.endsAt">
+                            {{ $t('common.ends_at') }}
+                            {{ $d(toDate(data?.user?.endsAt), 'long') }}
+                        </UBadge>
+                    </div>
+                </div>
+            </template>
+        </UDashboardToolbar>
 
         <UButton
-            v-if="!data?.user || !data.user.endedAt"
+            v-if="!data?.user"
+            size="xl"
             color="gray"
             icon="i-mdi-play"
+            :disabled="!data?.user?.endedAt"
             block
             class="w-full"
             @click="takeExam(false)"
         >
             {{ $t('components.qualifications.take_test') }}
         </UButton>
-    </UCard>
+    </template>
 </template>

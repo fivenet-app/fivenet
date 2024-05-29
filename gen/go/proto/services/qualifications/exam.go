@@ -159,7 +159,7 @@ func (s *Server) TakeExam(ctx context.Context, req *TakeExamRequest) (*TakeExamR
 	}
 
 	var exam *qualifications.ExamQuestions
-	if examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) > quali.ExamSettings.Time.AsDuration() {
+	if examUser.EndsAt != nil && time.Since(examUser.EndsAt.AsTime()) < quali.ExamSettings.Time.AsDuration() {
 		exam, err = s.getExamQuestions(ctx, req.QualificationId, false)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

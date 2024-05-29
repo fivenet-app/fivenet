@@ -27,6 +27,10 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const disabled = ref(false);
+
+const endsAtTime = toDate(props.examUser.endsAt).getTime();
+const now = new Date().getTime();
+
 const state = useState<Schema>('qualifications-exam-responses', () => ({
     responses: [],
 }));
@@ -142,9 +146,6 @@ onBeforeMount(() =>
 );
 
 const form = ref<InstanceType<typeof UForm> | null>(null);
-
-const endsAtTime = toDate(props.examUser.endsAt).getTime();
-const now = new Date().getTime();
 
 if (!props.responses) {
     useIntervalFn(async () => {
