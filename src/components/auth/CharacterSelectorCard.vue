@@ -8,25 +8,24 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 const authStore = useAuthStore();
 
 const { lastCharID } = storeToRefs(authStore);
-const { chooseCharacter } = authStore;
 
-const props = withDefaults(
+withDefaults(
     defineProps<{
         char: User;
-        disabled?: boolean;
+        unavailable?: boolean;
+        canSubmit?: boolean;
     }>(),
     {
-        disabled: false,
+        unavailable: false,
+        canSubmit: true,
     },
 );
 
-const { game } = useAppConfig();
+defineEmits<{
+    (e: 'selected', id: number): void;
+}>();
 
-const canSubmit = ref(true);
-const onSubmitThrottle = useThrottleFn(async (_) => {
-    canSubmit.value = false;
-    await chooseCharacter(props.char.userId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
-}, 1000);
+const { game } = useAppConfig();
 </script>
 
 <template>
@@ -84,12 +83,12 @@ const onSubmitThrottle = useThrottleFn(async (_) => {
             <UButton
                 block
                 class="inline-flex items-center"
-                :disabled="disabled || !canSubmit"
+                :disabled="unavailable || !canSubmit"
                 :loading="!canSubmit"
-                :icon="disabled ? 'i-mdi-lock' : undefined"
-                @click="onSubmitThrottle(char.userId)"
+                :icon="unavailable ? 'i-mdi-lock' : undefined"
+                @click="$emit('selected', char.userId)"
             >
-                {{ !disabled ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char') }}
+                {{ !unavailable ? $t('common.choose') : $t('components.auth.CharacterSelectorCard.disabled_char') }}
             </UButton>
         </template>
     </UCard>

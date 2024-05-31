@@ -30,6 +30,12 @@ watch(chars, async () => {
         await chooseCharacter(chars.value[0].char!.userId, true);
     }
 });
+
+const canSubmit = ref(true);
+const onSubmitThrottle = useThrottleFn(async (charId: number) => {
+    canSubmit.value = false;
+    await chooseCharacter(charId, true).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+}, 1000);
 </script>
 
 <template>
@@ -56,7 +62,7 @@ watch(chars, async () => {
             }"
             :ui="{ item: 'basis-full sm:basis-1/4', container: 'rounded-lg' }"
         >
-            <CharacterSelectorCard :key="item.userId" :char="item.char" :disabled="!item.available" />
+            <CharacterSelectorCard :key="item.userId" :char="item.char" :disabled="!item.available" :can-submit="canSubmit" @selected="onSubmitThrottle($event)" />
         </UCarousel>
 
         <UContainer v-if="chars?.find((c) => c.available === false)" class="mt-4" :ui="{ constrained: 'max-w-xl' }">
