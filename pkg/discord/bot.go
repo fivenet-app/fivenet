@@ -50,7 +50,7 @@ var (
 		Subsystem: "discord_bot",
 		Name:      "last_sync",
 		Help:      "Last time sync has completed.",
-	}, []string{"job", "status"})
+	}, []string{"job_name", "status"})
 
 	metricGuildsTotal = promauto.NewGauge(prometheus.GaugeOpts{
 		Namespace: admin.MetricsNamespace,

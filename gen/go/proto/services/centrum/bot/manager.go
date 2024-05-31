@@ -24,7 +24,7 @@ var (
 		Subsystem: "centrum_bot",
 		Name:      "active",
 		Help:      "If centrum bot is active or not.",
-	}, []string{"job"})
+	}, []string{"job_name"})
 )
 
 var Module = fx.Module("centrum_bot_manager", fx.Provide(

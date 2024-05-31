@@ -12,5 +12,5 @@ var (
 		Subsystem: "centrum",
 		Name:      "dispatch_last_id",
 		Help:      "Last dispatch ID.",
-	}, []string{"job"})
+	}, []string{"job_name"})
 )
