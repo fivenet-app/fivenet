@@ -62,11 +62,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             {{ $t('components.auth.RegistrationForm.title') }}
         </h2>
 
-        <p class="pb-4 text-sm">
-            {{ $t('components.auth.RegistrationForm.subtitle') }}
-        </p>
+        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+            <UAlert icon="i-mdi-info-circle">
+                <template #description>
+                    <I18nT keypath="components.auth.RegistrationForm.subtitle">
+                        <template #command>
+                            <UKbd size="md" :ui="{ size: { md: '' }}" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
+                        </template>
+                    </I18nT>
+                </template>
+            </UAlert>
 
-        <UForm :schema="schema" :state="state" class="space-y-2" @submit="onSubmitThrottle">
             <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
                 <UInput
                     v-model="state.registrationToken"
@@ -96,7 +102,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UInput
                     v-model="state.password"
                     type="password"
-                    autocomplete="current-password"
+                    autocomplete="new-password"
                     :placeholder="$t('common.password')"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
@@ -110,7 +116,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UForm>
 
         <div class="mt-6">
-            <UButton block :to="{ name: 'auth-login' }">
+            <UButton block color="gray" :to="{ name: 'auth-login' }">
                 {{ $t('components.auth.RegistrationForm.back_to_login_button') }}
             </UButton>
         </div>

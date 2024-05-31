@@ -956,7 +956,7 @@
             },
             "ForgotPassword": {
                 "title": "Passwort vergessen",
-                "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein, um einen neuen Registrierungstoken zu erhalten.",
+                "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein, um einen neuen Registrierungstoken zu erhalten.",
                 "registration_token": "Registrierungstoken",
                 "submit_button": "Neues Passwort festlegen",
                 "back_to_login_button": "Zurück zur Anmeldung",
@@ -968,7 +968,7 @@
                 "submit_button": "Konto erstellen",
                 "back_to_login_button": "Zurück zur Anmeldung",
                 "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
-                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl /fivenet ein."
+                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein."
             },
             "UserSettingsPanel": {
                 "title": "Eigene FiveNet-Einstellungen",

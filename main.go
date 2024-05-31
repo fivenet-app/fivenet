@@ -26,6 +26,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/server/filestore"
 	"github.com/fivenet-app/fivenet/pkg/server/images"
 	"github.com/fivenet-app/fivenet/pkg/server/oauth2"
+	"github.com/fivenet-app/fivenet/pkg/server/wk"
 	"github.com/fivenet-app/fivenet/pkg/storage"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
 	"github.com/fivenet-app/fivenet/query"
@@ -179,6 +180,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			server.AsService(oauth2.New),
 			server.AsService(images.New),
 			server.AsService(filestore.New),
+			server.AsService(wk.New),
 		),
 
 		// GRPC Services

@@ -956,7 +956,7 @@
             },
             "ForgotPassword": {
                 "title": "Forgot Password",
-                "subtitle": "To reset your apssword, join the FiveM server and run /fivenet command to get a new registration token.",
+                "subtitle": "To reset your apssword, join the FiveM server and run {command} command to get a new registration token.",
                 "registration_token": "Registration Token",
                 "submit_button": "Set new Password",
                 "back_to_login_button": "Back to Login",
@@ -968,7 +968,7 @@
                 "submit_button": "Create Account",
                 "back_to_login_button": "Back to Login",
                 "create_error": "There was an error creating your account, please try again!",
-                "subtitle": "To create an account join the FiveM server and run /fivenet command."
+                "subtitle": "To create an account join the FiveM server and run {command} command."
             },
             "UserSettingsPanel": {
                 "title": "Settings",
