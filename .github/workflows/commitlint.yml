@@ -10,7 +10,7 @@ jobs:
         with:
           fetch-depth: 0
 
-      - run: rm tsconfig.json
+      - run: rm -f tsconfig.json
 
       - uses: wagoid/commitlint-github-action@v6
         with:
