@@ -68,16 +68,15 @@ func (m *UserShort) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetIdentifier()) != 46 {
+	if utf8.RuneCountInString(m.GetIdentifier()) > 64 {
 		err := UserShortValidationError{
 			field:  "Identifier",
-			reason: "value length must be 46 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
-
 	}
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {
@@ -323,16 +322,15 @@ func (m *User) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetIdentifier()) != 46 {
+	if utf8.RuneCountInString(m.GetIdentifier()) > 64 {
 		err := UserValidationError{
 			field:  "Identifier",
-			reason: "value length must be 46 runes",
+			reason: "value length must be at most 64 runes",
 		}
 		if !all {
 			return err
 		}
 		errors = append(errors, err)
-
 	}
 
 	if utf8.RuneCountInString(m.GetJob()) > 20 {

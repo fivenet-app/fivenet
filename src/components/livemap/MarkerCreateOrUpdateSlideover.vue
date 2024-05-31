@@ -193,6 +193,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="description">
                                     <UInput
+                                        v-model="state.description"
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"

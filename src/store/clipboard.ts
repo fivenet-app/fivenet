@@ -9,7 +9,6 @@ import { useAuthStore } from './auth';
 
 export class ClipboardUser {
     public userId: number | undefined;
-    public identifier: string | undefined;
     public job: string | undefined;
     public jobLabel: string | undefined;
     public jobGrade: number | undefined;
@@ -22,7 +21,6 @@ export class ClipboardUser {
 
     constructor(u: UserShort | User) {
         this.userId = u.userId;
-        this.identifier = u.identifier;
         this.job = u.job;
         this.jobLabel = u.jobLabel;
         this.jobGrade = u.jobGrade;
@@ -242,7 +240,6 @@ if (import.meta.hot) {
 export function getUser(obj: ClipboardUser): User {
     const u: User = {
         userId: obj.userId!,
-        identifier: obj.identifier!,
         job: obj.job!,
         jobLabel: obj.jobLabel ?? '',
         jobGrade: obj.jobGrade!,
