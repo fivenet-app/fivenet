@@ -11,7 +11,7 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/users
 
 message UserShort {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  string identifier = 2 [(validate.rules).string.max_len = 64];
+  optional string identifier = 2 [(validate.rules).string.max_len = 64];
   string job = 3 [(validate.rules).string.max_len = 20];
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
   int32 job_grade = 5 [(validate.rules).int32.gt = -1];
@@ -31,7 +31,7 @@ message UserShort {
 
 message User {
   int32 user_id = 1 [(validate.rules).int32.gt = 0]; // @gotags: alias:"id"
-  string identifier = 2 [(validate.rules).string.max_len = 64];
+  optional string identifier = 2 [(validate.rules).string.max_len = 64];
   string job = 3 [(validate.rules).string.max_len = 20];
   optional string job_label = 4 [(validate.rules).string.max_len = 50];
   int32 job_grade = 5 [(validate.rules).int32.gt = -1];

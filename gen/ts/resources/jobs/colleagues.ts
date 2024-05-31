@@ -21,9 +21,9 @@ export interface Colleague {
      */
     userId: number; // @gotags: alias:"id"
     /**
-     * @generated from protobuf field: string identifier = 2;
+     * @generated from protobuf field: optional string identifier = 2;
      */
-    identifier: string;
+    identifier?: string;
     /**
      * @generated from protobuf field: string job = 3;
      */
@@ -226,7 +226,7 @@ class Colleague$Type extends MessageType<Colleague> {
     constructor() {
         super("resources.jobs.Colleague", [
             { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 2, name: "identifier", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 2, name: "identifier", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
             { no: 3, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 4, name: "job_label", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
             { no: 5, name: "job_grade", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: -1 } } } },
@@ -242,7 +242,6 @@ class Colleague$Type extends MessageType<Colleague> {
     create(value?: PartialMessage<Colleague>): Colleague {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.userId = 0;
-        message.identifier = "";
         message.job = "";
         message.jobGrade = 0;
         message.firstname = "";
@@ -260,7 +259,7 @@ class Colleague$Type extends MessageType<Colleague> {
                 case /* int32 user_id */ 1:
                     message.userId = reader.int32();
                     break;
-                case /* string identifier */ 2:
+                case /* optional string identifier */ 2:
                     message.identifier = reader.string();
                     break;
                 case /* string job */ 3:
@@ -308,8 +307,8 @@ class Colleague$Type extends MessageType<Colleague> {
         /* int32 user_id = 1; */
         if (message.userId !== 0)
             writer.tag(1, WireType.Varint).int32(message.userId);
-        /* string identifier = 2; */
-        if (message.identifier !== "")
+        /* optional string identifier = 2; */
+        if (message.identifier !== undefined)
             writer.tag(2, WireType.LengthDelimited).string(message.identifier);
         /* string job = 3; */
         if (message.job !== "")

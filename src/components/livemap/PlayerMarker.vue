@@ -63,7 +63,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
         :key="`user_${marker.info!.id}`"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :name="marker.info!.name"
-        :z-index-offset="activeChar === null || marker.user?.identifier !== activeChar.identifier ? 20 : 30"
+        :z-index-offset="activeChar === null || marker.user?.userId !== activeChar.userId ? 20 : 30"
         @click="$emit('selected')"
     >
         <LIcon :icon-anchor="iconAnchor" :popup-anchor="popupAnchor" :icon-size="[size, size]">

@@ -2120,7 +2120,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) |  |  |
+| identifier | [string](#string) | optional |  |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | job_grade | [int32](#int32) |  |  |
@@ -4186,7 +4186,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) |  |  |
+| identifier | [string](#string) | optional |  |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | job_grade | [int32](#int32) |  |  |
@@ -4269,7 +4269,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) |  |  |
+| identifier | [string](#string) | optional |  |
 | job | [string](#string) |  |  |
 | job_label | [string](#string) | optional |  |
 | job_grade | [int32](#int32) |  |  |
