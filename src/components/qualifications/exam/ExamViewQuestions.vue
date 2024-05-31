@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import type { FormSubmitEvent } from '#ui/types';
-import { UForm } from '#components';
+import type { Form, FormSubmitEvent } from '#ui/types';
 import type { ExamQuestions, ExamResponse, ExamResponses } from '~~/gen/ts/resources/qualifications/exam';
 import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -145,7 +144,7 @@ onBeforeMount(() =>
     }),
 );
 
-const form = ref<InstanceType<typeof UForm> | null>(null);
+const form = ref<Form<Schema> | null>(null);
 
 if (!props.responses) {
     let timeLow = false;
