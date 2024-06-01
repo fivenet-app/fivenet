@@ -22,7 +22,9 @@ function spoilerNeeded(activityType: DocActivityType): boolean {
 </script>
 
 <template>
-    <div class="p-1">
+    <div
+        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-2 dark:border-gray-900"
+    >
         <div v-if="!spoilerNeeded(entry.activityType)" class="flex space-x-3">
             <div class="my-auto flex size-10 items-center justify-center rounded-full">
                 <UIcon :name="getDocAtivityIcon(entry.activityType)" class="size-7" />

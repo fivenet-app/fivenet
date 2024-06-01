@@ -13,7 +13,9 @@ defineProps<{
     <div class="w-full grow lg:flex">
         <div class="flex-1 px-4 py-5 sm:p-0">
             <dl class="space-y-4 sm:space-y-0 2xl:grid 2xl:grid-cols-2">
-                <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                <div
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.date_of_birth') }}
                     </dt>
@@ -22,7 +24,9 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                <div
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.sex') }}
                     </dt>
@@ -34,7 +38,9 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                <div
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.height') }}
                     </dt>
@@ -45,7 +51,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
-                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.phone_number') }}
@@ -55,7 +61,10 @@ defineProps<{
                     </dd>
                 </div>
 
-                <div v-if="user.visum" class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800">
+                <div
+                    v-if="user.visum"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.visum') }}
                     </dt>
@@ -66,7 +75,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.BloodType')"
-                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.blood_type') }}
@@ -78,7 +87,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')"
-                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.traffic_infraction_points', 2) }}
@@ -93,7 +102,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
-                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.fine') }}
@@ -110,7 +119,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes')"
-                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.attributes', 2) }}
@@ -140,7 +149,7 @@ defineProps<{
 
                 <div
                     v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'Licenses')"
-                    class="border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
+                    class="hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-b border-gray-100 sm:flex sm:px-5 sm:py-4 dark:border-gray-800"
                 >
                     <dt class="text-sm font-medium sm:w-40 sm:shrink-0 lg:w-48">
                         {{ $t('common.license', 2) }}

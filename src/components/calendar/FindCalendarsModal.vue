@@ -83,7 +83,7 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
                         <li
                             v-for="calendar in data?.calendars"
                             :key="calendar.id"
-                            class="flex flex-initial items-center justify-between gap-1"
+                            class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white dark:border-gray-900"
                         >
                             <div class="inline-flex gap-1">
                                 <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />

@@ -200,7 +200,13 @@ watchDebounced(query, async () => refresh(), {
                     </div>
                 </div>
             </li>
-            <li v-else v-for="activity in data?.activity" :key="activity.id" class="px-2 py-4">
+
+            <li
+                v-else
+                v-for="activity in data?.activity"
+                :key="activity.id"
+                class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
+            >
                 <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
             </li>
         </ul>

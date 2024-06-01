@@ -13,7 +13,7 @@ defineProps<{
 <template>
     <li
         :key="document.id"
-        class="flex-initial"
+        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex-initial border-white dark:border-gray-900"
         :class="[document.deletedAt ? 'bg-warn-100 hover:bg-warn-200 dark:bg-warn-800 dark:hover:bg-warn-700' : '']"
     >
         <ULink

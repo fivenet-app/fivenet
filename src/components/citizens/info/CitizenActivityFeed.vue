@@ -58,7 +58,11 @@ watch(offset, async () => refresh());
         />
 
         <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-            <li v-for="activity in data?.activity" :key="activity.id" class="py-2">
+            <li
+                v-for="activity in data?.activity"
+                :key="activity.id"
+                class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
+            >
                 <CitizenActivityFeedEntry :activity="activity" />
             </li>
         </ul>
