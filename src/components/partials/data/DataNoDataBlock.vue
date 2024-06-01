@@ -12,7 +12,7 @@ const props = withDefaults(
         icon: 'i-mdi-magnify',
         type: undefined,
         focus: undefined,
-        padding: 'p-6',
+        padding: 'p-4',
     },
 );
 
@@ -29,17 +29,17 @@ function click() {
         :disabled="!focus"
         :icon="icon"
         block
-        class="relative block w-full rounded-lg border border-dashed border-base-300 text-center"
+        class="block w-full rounded-lg border border-dashed border-base-800 text-center dark:border-base-400"
         :class="padding"
         @click="click()"
     >
         <span class="mt-2 block text-sm font-semibold">
-            <span v-if="message">
+            <template v-if="message">
                 {{ message }}
-            </span>
-            <span v-else>
+            </template>
+            <template v-else>
                 {{ $t('common.not_found', [type ?? $t('common.data')]) }}
-            </span>
+            </template>
         </span>
     </UButton>
 </template>

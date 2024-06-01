@@ -291,60 +291,62 @@ defineShortcuts({
         </template>
     </UDashboardToolbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
-    <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
+    <UDashboardPanelContent class="p-0">
+        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
+        <DataNoDataBlock v-else-if="data?.documents.length === 0" :type="$t('common.document', 2)" />
 
-    <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
-        <ul
-            role="list"
-            class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
-            :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
-        >
-            <li v-if="loading" v-for="_ in 7" class="flex-initial">
-                <div class="m-2">
-                    <div class="flex flex-row gap-2 truncate">
-                        <div class="flex flex-1 flex-row items-center justify-start">
+        <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
+            <ul
+                role="list"
+                class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
+                :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
+            >
+                <li v-if="loading" v-for="_ in 7" class="flex-initial">
+                    <div class="m-2">
+                        <div class="flex flex-row gap-2 truncate">
+                            <div class="flex flex-1 flex-row items-center justify-start">
+                                <USkeleton class="h-7 w-[125px]" />
+                            </div>
+
                             <USkeleton class="h-7 w-[125px]" />
+
+                            <div class="flex flex-1 flex-row items-center justify-end gap-1">
+                                <USkeleton class="h-7 w-[125px]" />
+                            </div>
                         </div>
 
-                        <USkeleton class="h-7 w-[125px]" />
+                        <div class="flex flex-row gap-2 truncate">
+                            <div class="inline-flex items-center gap-1 truncate">
+                                <h2 class="truncate py-2 pr-3 text-xl font-medium">
+                                    <USkeleton class="h-7 w-[650px]" />
+                                </h2>
+                            </div>
 
-                        <div class="flex flex-1 flex-row items-center justify-end gap-1">
-                            <USkeleton class="h-7 w-[125px]" />
-                        </div>
-                    </div>
-
-                    <div class="flex flex-row gap-2 truncate">
-                        <div class="inline-flex items-center gap-1 truncate">
-                            <h2 class="truncate py-2 pr-3 text-xl font-medium">
-                                <USkeleton class="h-7 w-[650px]" />
-                            </h2>
+                            <div class="flex flex-1 flex-row items-center justify-end">
+                                <USkeleton class="h-6 w-[250px]" />
+                            </div>
                         </div>
 
-                        <div class="flex flex-1 flex-row items-center justify-end">
-                            <USkeleton class="h-6 w-[250px]" />
-                        </div>
-                    </div>
+                        <div class="flex flex-row gap-2">
+                            <div class="flex flex-1 flex-row items-center justify-start">
+                                <USkeleton class="h-6 w-[150px]" />
+                            </div>
 
-                    <div class="flex flex-row gap-2">
-                        <div class="flex flex-1 flex-row items-center justify-start">
-                            <USkeleton class="h-6 w-[150px]" />
-                        </div>
+                            <div class="flex flex-1 flex-row items-center justify-center">
+                                <USkeleton class="h-6 w-[150px]" />
+                            </div>
 
-                        <div class="flex flex-1 flex-row items-center justify-center">
-                            <USkeleton class="h-6 w-[150px]" />
-                        </div>
-
-                        <div class="flex flex-1 flex-row items-center justify-end">
-                            <USkeleton class="h-6 w-[250px]" />
+                            <div class="flex flex-1 flex-row items-center justify-end">
+                                <USkeleton class="h-6 w-[250px]" />
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
+                </li>
 
-            <DocumentListEntry v-else v-for="doc in data?.documents" :key="doc.id" :document="doc" />
-        </ul>
-    </div>
+                <DocumentListEntry v-else v-for="doc in data?.documents" :key="doc.id" :document="doc" />
+            </ul>
+        </div>
+    </UDashboardPanelContent>
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 </template>

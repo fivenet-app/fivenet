@@ -44,7 +44,10 @@ const isOpen = ref(false);
 
 <template>
     <UDashboardPage class="h-full">
-        <UDashboardPanel class="h-full flex-shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800" grow>
+        <UDashboardPanel
+            class="h-full flex-shrink-0 border-b border-gray-200 lg:border-b-0 lg:border-r dark:border-gray-800"
+            grow
+        >
             <UDashboardNavbar :title="$t('pages.documents.title')">
                 <template #right>
                     <UButtonGroup class="inline-flex 2xl:hidden">
@@ -85,10 +88,16 @@ const isOpen = ref(false);
             <DocumentList />
         </UDashboardPanel>
 
-        <DashboardPanel v-model="isOpen" collapsible side="right" class="max-w-72 flex-1" :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }" >
+        <DashboardPanel
+            v-model="isOpen"
+            collapsible
+            side="right"
+            class="max-w-72 flex-1"
+            :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
+        >
             <UDashboardNavbar>
                 <template #toggle>
-                    <UDashboardNavbarToggle class="2xl:hidden lg:block" />
+                    <UDashboardNavbarToggle class="lg:block 2xl:hidden" />
                 </template>
 
                 <template #right>
@@ -115,28 +124,42 @@ const isOpen = ref(false);
             <UDashboardPanelContent>
                 <div class="flex flex-1 flex-col">
                     <UDashboardSection
-                            :ui="{
-                                wrapper: 'divide-y !divide-transparent space-y-0 *:pt-0 first:*:pt-0 first:*:pt-0 mb-6',
-                            }"
-                            :title="$t('common.pinned_document', 2)"
-                        >
-                        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])" :retry="refresh" class="min-w-full" />
-                        <DataNoDataBlock v-else-if="!data || data.documents.length === 0" icon="i-mdi-pin-outline" :type="$t('common.pinned_document', 2)" />
+                        :ui="{
+                            wrapper: 'divide-y space-y-0 *:pt-0 first:*:pt-0 first:*:pt-0 mb-6',
+                        }"
+                        :title="$t('common.pinned_document', 2)"
+                    >
+                        <div>
+                            <DataErrorBlock
+                                v-if="error"
+                                :title="$t('common.unable_to_load', [$t('common.pinned_document', 2)])"
+                                :retry="refresh"
+                            />
+                            <DataNoDataBlock
+                                v-else-if="!data || data.documents.length === 0"
+                                icon="i-mdi-pin-outline"
+                                :type="$t('common.pinned_document', 2)"
+                            />
 
-                        <ul v-else role="list" class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800">
-                            <li v-if="loading" v-for="_ in 10">
-                                <USkeleton class="h-16 w-full" />
-                            </li>
+                            <ul
+                                v-else-if="loading"
+                                role="list"
+                                class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
+                            >
+                                <li v-if="loading" v-for="_ in 10">
+                                    <USkeleton class="h-16 w-full" />
+                                </li>
 
-                            <li v-else v-for="document in data?.documents" class="flex flex-col">
-                                <DocumentInfoPopover :document="document" class="line-clamp-3 text-left" />
-                            </li>
-                        </ul>
+                                <li v-else v-for="document in data?.documents" class="flex flex-col">
+                                    <DocumentInfoPopover :document="document" class="line-clamp-3 text-left" />
+                                </li>
+                            </ul>
+                        </div>
                     </UDashboardSection>
                 </div>
-
-                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
             </UDashboardPanelContent>
+
+            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
         </DashboardPanel>
     </UDashboardPage>
 </template>

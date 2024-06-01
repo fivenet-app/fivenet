@@ -55,10 +55,10 @@ watchDebounced(
 <template>
     <div class="@container">
         <div
-            class="flex flex-col-reverse @sm:flex-row justify-between px-3 py-3.5"
+            class="@sm:flex-row flex flex-col-reverse justify-between gap-1 px-3 py-3.5 sm:items-center"
             :class="!disableBorder ? 'border-t border-gray-200 dark:border-gray-700' : ''"
         >
-            <div class="inline-flex flex-col @sm:flex-row items-center gap-2">
+            <div class="@sm:flex-row inline-flex flex-col items-center gap-2">
                 <I18nT keypath="components.partials.table_pagination.page_count" tag="p" class="text-sm">
                     <template #current>
                         <span class="text-neutral font-medium">
@@ -89,6 +89,7 @@ watchDebounced(
                     :title="$t('common.refresh')"
                     :disabled="loading || loadingState"
                     :loading="loading || loadingState"
+                    class="p-px"
                     @click="refresh()"
                 >
                     <span class="hidden sm:block">
