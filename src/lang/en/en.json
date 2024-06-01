@@ -460,7 +460,11 @@
         "exam": "Exam | Exams",
         "question": "Question | Questions",
         "answer": "Answer | Answers",
-        "chars": "Char | Chars"
+        "chars": "Char | Chars",
+        "pinned": "Pinned",
+        "pin": "Pin",
+        "unpin": "Unpin",
+        "pinned_document": "Pinned document | Pinned documents"
     },
     "components": {
         "partials": {
