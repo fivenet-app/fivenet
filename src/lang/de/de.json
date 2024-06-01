@@ -1715,6 +1715,10 @@
             "DeleteDocumentReq": {
                 "key": "Dokument-Anforderungen löschen",
                 "description": "Dokument-Anforderungen löschen"
+            },
+            "ToggleDocumentPin": {
+                "key": "Dokument Anheften oder Lösen",
+                "description": "Erlaubt es Dokumente anzuheften oder zulösen für die Gesamte Fraktion."
             }
         },
         "LivemapperService": {
