@@ -461,9 +461,10 @@
         "question": "Frage | Fragen",
         "answer": "Antwort | Antworten",
         "chars": "Zeichen",
-        "pinned": "Angepinnt",
+        "pinned": "Angeheftet",
         "pin": "Anheften",
-        "unpin": "Lösen"
+        "unpin": "Lösen",
+        "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente"
     },
     "components": {
         "partials": {
