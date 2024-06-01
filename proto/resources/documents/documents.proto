@@ -45,6 +45,7 @@ message Document {
   bool closed = 15;
   bool public = 16;
   optional uint64 template_id = 17 [jstype = JS_STRING];
+  bool pinned = 18;
 }
 
 message DocumentShort {

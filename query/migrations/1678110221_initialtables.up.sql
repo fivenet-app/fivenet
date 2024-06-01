@@ -83,7 +83,7 @@ CREATE TABLE IF NOT EXISTS `fivenet_documents` (
   CONSTRAINT `fk_fivenet_documents_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE SET NULL
 ) ENGINE=InnoDB;
 
--- Table:fivenet_documents_comments
+-- Table: fivenet_documents_comments
 CREATE TABLE IF NOT EXISTS `fivenet_documents_comments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
   `created_at` datetime(3) DEFAULT CURRENT_TIMESTAMP(3),

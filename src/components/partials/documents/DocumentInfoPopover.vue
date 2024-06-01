@@ -14,9 +14,11 @@ const props = withDefaults(
         documentId?: string;
         document?: Document | DocumentShort | undefined;
         trailing?: boolean;
+        hideCategory?: boolean;
     }>(),
     {
         trailing: true,
+        hideCategory: false,
     },
 );
 
@@ -79,11 +81,11 @@ watchOnce(opened, async () => {
                 <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />
 
                 <template v-else>
-                    <UBadge v-if="document?.category">
+                    <UBadge v-if="document?.category && !hideCategory">
                         {{ document.category.name }}
                     </UBadge>
 
-                    <span> {{ document?.title }} </span>
+                    <span v-bind="$attrs"> {{ document?.title }} </span>
                 </template>
             </slot>
         </UButton>
@@ -125,27 +127,29 @@ watchOnce(opened, async () => {
 
                 <div v-else-if="document" class="flex flex-col gap-2 text-gray-900 dark:text-white">
                     <UButton variant="link" :padded="false" :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }">
-                        <UBadge v-if="document?.category">
+                        <UBadge v-if="document?.category" class="xs">
                             {{ document.category.name }}
                         </UBadge>
 
                         <span class="line-clamp-1 text-lg hover:line-clamp-2">{{ document.title }}</span>
                     </UButton>
 
-                    <div class="flex flex-row flex-wrap gap-2">
-                        <UBadge v-if="document.state" class="inline-flex gap-1" size="md">
+                    <div>
+                        <UBadge v-if="document.state" class="inline-flex gap-1" size="xs">
                             <UIcon name="i-mdi-note-check" class="size-5" />
                             <span>
                                 {{ document.state }}
                             </span>
                         </UBadge>
+                    </div>
 
-                        <div v-if="document.createdAt" class="flex flex-row items-center gap-1">
+                    <div class="flex flex-row flex-wrap gap-2">
+                        <div v-if="document.createdAt" class="flex flex-row items-center gap-1 text-sm">
                             <span>{{ $t('common.created_at') }}:</span>
                             <GenericTime :value="document.createdAt" />
                         </div>
 
-                        <div v-if="document.updatedAt" class="flex flex-row items-center gap-1">
+                        <div v-if="document.updatedAt" class="flex flex-row items-center gap-1 text-sm">
                             <span>{{ $t('common.updated') }}:</span>
                             <GenericTime :value="document.updatedAt" :ago="true" />
                         </div>
@@ -154,10 +158,11 @@ watchOnce(opened, async () => {
                             <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
                             <span>{{ $t('common.deleted') }}</span>
                         </div>
+                    </div>
 
-                        <div v-if="document.creator" class="flex flex-row items-center justify-start gap-1">
-                            <CitizenInfoPopover :user="document.creator" />
-                        </div>
+                    <div v-if="document.creator" class="flex flex-row items-center justify-start gap-1 text-sm">
+                        <span>{{ $t('common.creator') }}:</span>
+                        <CitizenInfoPopover :user="document.creator" />
                     </div>
                 </div>
             </div>

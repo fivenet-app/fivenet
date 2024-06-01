@@ -8939,3 +8939,520 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DeleteCategoryResponseValidationError{}
+
+// Validate checks the field values on ListDocumentPinsRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListDocumentPinsRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDocumentPinsRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListDocumentPinsRequestMultiError, or nil if none found.
+func (m *ListDocumentPinsRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDocumentPinsRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if m.GetPagination() == nil {
+		err := ListDocumentPinsRequestValidationError{
+			field:  "Pagination",
+			reason: "value is required",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListDocumentPinsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListDocumentPinsRequestValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListDocumentPinsRequestValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return ListDocumentPinsRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDocumentPinsRequestMultiError is an error wrapping multiple validation
+// errors returned by ListDocumentPinsRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ListDocumentPinsRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDocumentPinsRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDocumentPinsRequestMultiError) AllErrors() []error { return m }
+
+// ListDocumentPinsRequestValidationError is the validation error returned by
+// ListDocumentPinsRequest.Validate if the designated constraints aren't met.
+type ListDocumentPinsRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDocumentPinsRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDocumentPinsRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDocumentPinsRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDocumentPinsRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDocumentPinsRequestValidationError) ErrorName() string {
+	return "ListDocumentPinsRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDocumentPinsRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDocumentPinsRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDocumentPinsRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDocumentPinsRequestValidationError{}
+
+// Validate checks the field values on ListDocumentPinsResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ListDocumentPinsResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ListDocumentPinsResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ListDocumentPinsResponseMultiError, or nil if none found.
+func (m *ListDocumentPinsResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ListDocumentPinsResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetPagination()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, ListDocumentPinsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, ListDocumentPinsResponseValidationError{
+					field:  "Pagination",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetPagination()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return ListDocumentPinsResponseValidationError{
+				field:  "Pagination",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetDocuments() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListDocumentPinsResponseValidationError{
+						field:  fmt.Sprintf("Documents[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListDocumentPinsResponseValidationError{
+						field:  fmt.Sprintf("Documents[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListDocumentPinsResponseValidationError{
+					field:  fmt.Sprintf("Documents[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return ListDocumentPinsResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ListDocumentPinsResponseMultiError is an error wrapping multiple validation
+// errors returned by ListDocumentPinsResponse.ValidateAll() if the designated
+// constraints aren't met.
+type ListDocumentPinsResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ListDocumentPinsResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ListDocumentPinsResponseMultiError) AllErrors() []error { return m }
+
+// ListDocumentPinsResponseValidationError is the validation error returned by
+// ListDocumentPinsResponse.Validate if the designated constraints aren't met.
+type ListDocumentPinsResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ListDocumentPinsResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ListDocumentPinsResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ListDocumentPinsResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ListDocumentPinsResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ListDocumentPinsResponseValidationError) ErrorName() string {
+	return "ListDocumentPinsResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ListDocumentPinsResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sListDocumentPinsResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ListDocumentPinsResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ListDocumentPinsResponseValidationError{}
+
+// Validate checks the field values on ToggleDocumentPinRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ToggleDocumentPinRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ToggleDocumentPinRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ToggleDocumentPinRequestMultiError, or nil if none found.
+func (m *ToggleDocumentPinRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ToggleDocumentPinRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for DocumentId
+
+	// no validation rules for State
+
+	if len(errors) > 0 {
+		return ToggleDocumentPinRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// ToggleDocumentPinRequestMultiError is an error wrapping multiple validation
+// errors returned by ToggleDocumentPinRequest.ValidateAll() if the designated
+// constraints aren't met.
+type ToggleDocumentPinRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ToggleDocumentPinRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ToggleDocumentPinRequestMultiError) AllErrors() []error { return m }
+
+// ToggleDocumentPinRequestValidationError is the validation error returned by
+// ToggleDocumentPinRequest.Validate if the designated constraints aren't met.
+type ToggleDocumentPinRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ToggleDocumentPinRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ToggleDocumentPinRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ToggleDocumentPinRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ToggleDocumentPinRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ToggleDocumentPinRequestValidationError) ErrorName() string {
+	return "ToggleDocumentPinRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ToggleDocumentPinRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sToggleDocumentPinRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ToggleDocumentPinRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ToggleDocumentPinRequestValidationError{}
+
+// Validate checks the field values on ToggleDocumentPinResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *ToggleDocumentPinResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on ToggleDocumentPinResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// ToggleDocumentPinResponseMultiError, or nil if none found.
+func (m *ToggleDocumentPinResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *ToggleDocumentPinResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for State
+
+	if len(errors) > 0 {
+		return ToggleDocumentPinResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// ToggleDocumentPinResponseMultiError is an error wrapping multiple validation
+// errors returned by ToggleDocumentPinResponse.ValidateAll() if the
+// designated constraints aren't met.
+type ToggleDocumentPinResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m ToggleDocumentPinResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m ToggleDocumentPinResponseMultiError) AllErrors() []error { return m }
+
+// ToggleDocumentPinResponseValidationError is the validation error returned by
+// ToggleDocumentPinResponse.Validate if the designated constraints aren't met.
+type ToggleDocumentPinResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e ToggleDocumentPinResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e ToggleDocumentPinResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e ToggleDocumentPinResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e ToggleDocumentPinResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e ToggleDocumentPinResponseValidationError) ErrorName() string {
+	return "ToggleDocumentPinResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e ToggleDocumentPinResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sToggleDocumentPinResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = ToggleDocumentPinResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = ToggleDocumentPinResponseValidationError{}

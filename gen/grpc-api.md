@@ -444,6 +444,8 @@
     - [ListCategoriesResponse](#services-docstore-ListCategoriesResponse)
     - [ListDocumentActivityRequest](#services-docstore-ListDocumentActivityRequest)
     - [ListDocumentActivityResponse](#services-docstore-ListDocumentActivityResponse)
+    - [ListDocumentPinsRequest](#services-docstore-ListDocumentPinsRequest)
+    - [ListDocumentPinsResponse](#services-docstore-ListDocumentPinsResponse)
     - [ListDocumentReqsRequest](#services-docstore-ListDocumentReqsRequest)
     - [ListDocumentReqsResponse](#services-docstore-ListDocumentReqsResponse)
     - [ListDocumentsRequest](#services-docstore-ListDocumentsRequest)
@@ -460,6 +462,8 @@
     - [RemoveDocumentRelationResponse](#services-docstore-RemoveDocumentRelationResponse)
     - [SetDocumentAccessRequest](#services-docstore-SetDocumentAccessRequest)
     - [SetDocumentAccessResponse](#services-docstore-SetDocumentAccessResponse)
+    - [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest)
+    - [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse)
     - [ToggleDocumentRequest](#services-docstore-ToggleDocumentRequest)
     - [ToggleDocumentResponse](#services-docstore-ToggleDocumentResponse)
     - [UpdateCategoryRequest](#services-docstore-UpdateCategoryRequest)
@@ -1717,6 +1721,7 @@
 | closed | [bool](#bool) |  |  |
 | public | [bool](#bool) |  |  |
 | template_id | [uint64](#uint64) | optional |  |
+| pinned | [bool](#bool) |  |  |
 
 
 
@@ -6752,7 +6757,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 <a name="services-docstore-GetCommentsRequest"></a>
 
 ### GetCommentsRequest
-Comments ===============================================================
+
 
 
 | Field | Type | Label | Description |
@@ -6784,7 +6789,7 @@ Comments ===============================================================
 <a name="services-docstore-GetDocumentAccessRequest"></a>
 
 ### GetDocumentAccessRequest
-Access =====================================================================
+
 
 
 | Field | Type | Label | Description |
@@ -6939,7 +6944,7 @@ Access =====================================================================
 <a name="services-docstore-ListCategoriesRequest"></a>
 
 ### ListCategoriesRequest
-Categories
+
 
 
 
@@ -6964,7 +6969,7 @@ Categories
 <a name="services-docstore-ListDocumentActivityRequest"></a>
 
 ### ListDocumentActivityRequest
-Document Activity and Requests =============================================
+
 
 
 | Field | Type | Label | Description |
@@ -6988,6 +6993,37 @@ Document Activity and Requests =============================================
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
 | activity | [resources.documents.DocActivity](#resources-documents-DocActivity) | repeated |  |
+
+
+
+
+
+
+<a name="services-docstore-ListDocumentPinsRequest"></a>
+
+### ListDocumentPinsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+
+
+
+
+
+
+<a name="services-docstore-ListDocumentPinsResponse"></a>
+
+### ListDocumentPinsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| documents | [resources.documents.DocumentShort](#resources-documents-DocumentShort) | repeated |  |
 
 
 
@@ -7029,7 +7065,7 @@ Document Activity and Requests =============================================
 <a name="services-docstore-ListDocumentsRequest"></a>
 
 ### ListDocumentsRequest
-Documents ==================================================================
+
 
 
 | Field | Type | Label | Description |
@@ -7068,7 +7104,7 @@ Documents ==================================================================
 <a name="services-docstore-ListTemplatesRequest"></a>
 
 ### ListTemplatesRequest
-Templates ==================================================================
+
 
 
 
@@ -7224,6 +7260,37 @@ Templates ==================================================================
 
 ### SetDocumentAccessResponse
 
+
+
+
+
+
+
+<a name="services-docstore-ToggleDocumentPinRequest"></a>
+
+### ToggleDocumentPinRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| document_id | [uint64](#uint64) |  |  |
+| state | [bool](#bool) |  |  |
+
+
+
+
+
+
+<a name="services-docstore-ToggleDocumentPinResponse"></a>
+
+### ToggleDocumentPinResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| state | [bool](#bool) |  |  |
 
 
 
@@ -7437,6 +7504,8 @@ Templates ==================================================================
 | CreateCategory | [CreateCategoryRequest](#services-docstore-CreateCategoryRequest) | [CreateCategoryResponse](#services-docstore-CreateCategoryResponse) | @perm |
 | UpdateCategory | [UpdateCategoryRequest](#services-docstore-UpdateCategoryRequest) | [UpdateCategoryResponse](#services-docstore-UpdateCategoryResponse) | @perm: Name=CreateCategory |
 | DeleteCategory | [DeleteCategoryRequest](#services-docstore-DeleteCategoryRequest) | [DeleteCategoryResponse](#services-docstore-DeleteCategoryResponse) | @perm |
+| ListDocumentPins | [ListDocumentPinsRequest](#services-docstore-ListDocumentPinsRequest) | [ListDocumentPinsResponse](#services-docstore-ListDocumentPinsResponse) | @perm: Name=ListDocuments |
+| ToggleDocumentPin | [ToggleDocumentPinRequest](#services-docstore-ToggleDocumentPinRequest) | [ToggleDocumentPinResponse](#services-docstore-ToggleDocumentPinResponse) | @perm |
 
  
 

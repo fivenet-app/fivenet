@@ -4,6 +4,10 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { DocStoreService } from "./docstore";
+import type { ToggleDocumentPinResponse } from "./docstore";
+import type { ToggleDocumentPinRequest } from "./docstore";
+import type { ListDocumentPinsResponse } from "./docstore";
+import type { ListDocumentPinsRequest } from "./docstore";
 import type { DeleteCategoryResponse } from "./docstore";
 import type { DeleteCategoryRequest } from "./docstore";
 import type { UpdateCategoryResponse } from "./docstore";
@@ -283,6 +287,18 @@ export interface IDocStoreServiceClient {
      * @generated from protobuf rpc: DeleteCategory(services.docstore.DeleteCategoryRequest) returns (services.docstore.DeleteCategoryResponse);
      */
     deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse>;
+    /**
+     * @perm: Name=ListDocuments
+     *
+     * @generated from protobuf rpc: ListDocumentPins(services.docstore.ListDocumentPinsRequest) returns (services.docstore.ListDocumentPinsResponse);
+     */
+    listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse>;
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ToggleDocumentPin(services.docstore.ToggleDocumentPinRequest) returns (services.docstore.ToggleDocumentPinResponse);
+     */
+    toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse>;
 }
 /**
  * @generated from protobuf service services.docstore.DocStoreService
@@ -598,5 +614,23 @@ export class DocStoreServiceClient implements IDocStoreServiceClient, ServiceInf
     deleteCategory(input: DeleteCategoryRequest, options?: RpcOptions): UnaryCall<DeleteCategoryRequest, DeleteCategoryResponse> {
         const method = this.methods[33], opt = this._transport.mergeOptions(options);
         return stackIntercept<DeleteCategoryRequest, DeleteCategoryResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=ListDocuments
+     *
+     * @generated from protobuf rpc: ListDocumentPins(services.docstore.ListDocumentPinsRequest) returns (services.docstore.ListDocumentPinsResponse);
+     */
+    listDocumentPins(input: ListDocumentPinsRequest, options?: RpcOptions): UnaryCall<ListDocumentPinsRequest, ListDocumentPinsResponse> {
+        const method = this.methods[34], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ListDocumentPinsRequest, ListDocumentPinsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm
+     *
+     * @generated from protobuf rpc: ToggleDocumentPin(services.docstore.ToggleDocumentPinRequest) returns (services.docstore.ToggleDocumentPinResponse);
+     */
+    toggleDocumentPin(input: ToggleDocumentPinRequest, options?: RpcOptions): UnaryCall<ToggleDocumentPinRequest, ToggleDocumentPinResponse> {
+        const method = this.methods[35], opt = this._transport.mergeOptions(options);
+        return stackIntercept<ToggleDocumentPinRequest, ToggleDocumentPinResponse>("unary", this._transport, method, opt, input);
     }
 }

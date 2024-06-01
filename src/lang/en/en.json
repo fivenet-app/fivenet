@@ -1715,6 +1715,10 @@
             "DeleteDocumentReq": {
                 "key": "Delete Document Requests",
                 "description": "Delete document requests."
+            },
+            "ToggleDocumentPin": {
+                "key": "Pin or upnin document",
+                "description": "Allows to pin or upin documents for the whole faction."
             }
         },
         "LivemapperService": {

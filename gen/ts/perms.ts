@@ -108,6 +108,7 @@ export type Perms =
 	| 'DocStoreService.ListUserDocuments'
 	| 'DocStoreService.PostComment'
 	| 'DocStoreService.ToggleDocument'
+	| 'DocStoreService.ToggleDocumentPin'
 	| 'DocStoreService.UpdateDocument'
 	| 'JobsConductService.CreateConductEntry'
 	| 'JobsConductService.DeleteConductEntry'

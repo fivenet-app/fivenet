@@ -22,6 +22,7 @@ import DocumentRequestAccess from '~/components/documents/requests/DocumentReque
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const props = defineProps<{
     documentId: string;
@@ -176,6 +177,25 @@ function openRequestsModal(): void {
     });
 }
 
+async function togglePin(documentId: string, state: boolean): Promise<ToggleDocumentPinResponse> {
+    try {
+        const call = getGRPCDocStoreClient().toggleDocumentPin({
+            documentId: documentId,
+            state: state,
+        });
+        const { response } = await call;
+
+        if (doc.value) {
+            doc.value.pinned = response.state;
+        }
+
+        return response;
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
 const accordionItems = computed(() =>
     [
         { slot: 'relations', label: t('common.relation', 2), icon: 'i-mdi-account-multiple' },
@@ -302,6 +322,23 @@ defineShortcuts({
                             icon="i-mdi-pencil"
                         >
                             {{ $t('common.edit') }}
+                        </UButton>
+                    </UTooltip>
+
+                    <UTooltip
+                        v-if="can('DocStoreService.ToggleDocumentPin')"
+                        class="flex-1"
+                        :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
+                    >
+                        <UButton block @click="togglePin(documentId, !doc.pinned)">
+                            <template v-if="!doc.pinned">
+                                <UIcon name="i-mdi-pin" class="size-5" />
+                                {{ $t('common.pin') }}
+                            </template>
+                            <template v-else>
+                                <UIcon name="i-mdi-pin-off" class="size-5" />
+                                {{ $t('common.unpin') }}
+                            </template>
                         </UButton>
                     </UTooltip>
 

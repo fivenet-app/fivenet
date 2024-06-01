@@ -36,6 +36,7 @@ const (
 	DocStoreServicePostCommentPerm                    perms.Name = "PostComment"
 	DocStoreServiceToggleDocumentPerm                 perms.Name = "ToggleDocument"
 	DocStoreServiceToggleDocumentAccessPermField      perms.Key  = "Access"
+	DocStoreServiceToggleDocumentPinPerm              perms.Name = "ToggleDocumentPin"
 	DocStoreServiceUpdateDocumentPerm                 perms.Name = "UpdateDocument"
 	DocStoreServiceUpdateDocumentAccessPermField      perms.Key  = "Access"
 )

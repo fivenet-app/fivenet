@@ -16,6 +16,7 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/docstore;docstore";
 
 // Templates ==================================================================
+
 message ListTemplatesRequest {}
 
 message ListTemplatesResponse {
@@ -56,6 +57,7 @@ message DeleteTemplateRequest {
 message DeleteTemplateResponse {}
 
 // Documents ==================================================================
+
 message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
@@ -129,6 +131,7 @@ message RemoveDocumentRelationRequest {
 message RemoveDocumentRelationResponse {}
 
 // Comments ===============================================================
+
 message GetCommentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2 [jstype = JS_STRING];
@@ -238,6 +241,7 @@ message UpdateDocumentRequest {
 }
 
 // Document Activity and Requests =============================================
+
 message ListDocumentActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   uint64 document_id = 2 [jstype = JS_STRING];
@@ -292,6 +296,7 @@ message DeleteDocumentReqRequest {
 message DeleteDocumentReqResponse {}
 
 // Access =====================================================================
+
 message GetDocumentAccessRequest {
   uint64 document_id = 1 [jstype = JS_STRING];
 }
@@ -319,7 +324,8 @@ message ListUserDocumentsResponse {
   repeated resources.documents.DocumentRelation relations = 2;
 }
 
-// Categories
+// Categories =================================================================
+
 message ListCategoriesRequest {}
 
 message ListCategoriesResponse {
@@ -345,6 +351,26 @@ message DeleteCategoryRequest {
 }
 
 message DeleteCategoryResponse {}
+
+// Pins =======================================================================
+
+message ListDocumentPinsRequest {
+  resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+}
+
+message ListDocumentPinsResponse {
+  resources.common.database.PaginationResponse pagination = 1;
+  repeated resources.documents.DocumentShort documents = 2;
+}
+
+message ToggleDocumentPinRequest {
+  uint64 document_id = 1 [jstype = JS_STRING];
+  bool state = 2;
+}
+
+message ToggleDocumentPinResponse {
+  bool state = 1;
+}
 
 service DocStoreService {
   // @perm
@@ -425,4 +451,9 @@ service DocStoreService {
   rpc UpdateCategory(UpdateCategoryRequest) returns (UpdateCategoryResponse);
   // @perm
   rpc DeleteCategory(DeleteCategoryRequest) returns (DeleteCategoryResponse);
+
+  // @perm: Name=ListDocuments
+  rpc ListDocumentPins(ListDocumentPinsRequest) returns (ListDocumentPinsResponse);
+  // @perm
+  rpc ToggleDocumentPin(ToggleDocumentPinRequest) returns (ToggleDocumentPinResponse);
 }

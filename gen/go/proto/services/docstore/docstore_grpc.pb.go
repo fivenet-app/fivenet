@@ -53,6 +53,8 @@ const (
 	DocStoreService_CreateCategory_FullMethodName          = "/services.docstore.DocStoreService/CreateCategory"
 	DocStoreService_UpdateCategory_FullMethodName          = "/services.docstore.DocStoreService/UpdateCategory"
 	DocStoreService_DeleteCategory_FullMethodName          = "/services.docstore.DocStoreService/DeleteCategory"
+	DocStoreService_ListDocumentPins_FullMethodName        = "/services.docstore.DocStoreService/ListDocumentPins"
+	DocStoreService_ToggleDocumentPin_FullMethodName       = "/services.docstore.DocStoreService/ToggleDocumentPin"
 )
 
 // DocStoreServiceClient is the client API for DocStoreService service.
@@ -127,6 +129,10 @@ type DocStoreServiceClient interface {
 	UpdateCategory(ctx context.Context, in *UpdateCategoryRequest, opts ...grpc.CallOption) (*UpdateCategoryResponse, error)
 	// @perm
 	DeleteCategory(ctx context.Context, in *DeleteCategoryRequest, opts ...grpc.CallOption) (*DeleteCategoryResponse, error)
+	// @perm: Name=ListDocuments
+	ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error)
+	// @perm
+	ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error)
 }
 
 type docStoreServiceClient struct {
@@ -443,6 +449,24 @@ func (c *docStoreServiceClient) DeleteCategory(ctx context.Context, in *DeleteCa
 	return out, nil
 }
 
+func (c *docStoreServiceClient) ListDocumentPins(ctx context.Context, in *ListDocumentPinsRequest, opts ...grpc.CallOption) (*ListDocumentPinsResponse, error) {
+	out := new(ListDocumentPinsResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_ListDocumentPins_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *docStoreServiceClient) ToggleDocumentPin(ctx context.Context, in *ToggleDocumentPinRequest, opts ...grpc.CallOption) (*ToggleDocumentPinResponse, error) {
+	out := new(ToggleDocumentPinResponse)
+	err := c.cc.Invoke(ctx, DocStoreService_ToggleDocumentPin_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // DocStoreServiceServer is the server API for DocStoreService service.
 // All implementations must embed UnimplementedDocStoreServiceServer
 // for forward compatibility
@@ -515,6 +539,10 @@ type DocStoreServiceServer interface {
 	UpdateCategory(context.Context, *UpdateCategoryRequest) (*UpdateCategoryResponse, error)
 	// @perm
 	DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error)
+	// @perm: Name=ListDocuments
+	ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error)
+	// @perm
+	ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error)
 	mustEmbedUnimplementedDocStoreServiceServer()
 }
 
@@ -623,6 +651,12 @@ func (UnimplementedDocStoreServiceServer) UpdateCategory(context.Context, *Updat
 }
 func (UnimplementedDocStoreServiceServer) DeleteCategory(context.Context, *DeleteCategoryRequest) (*DeleteCategoryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method DeleteCategory not implemented")
+}
+func (UnimplementedDocStoreServiceServer) ListDocumentPins(context.Context, *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ListDocumentPins not implemented")
+}
+func (UnimplementedDocStoreServiceServer) ToggleDocumentPin(context.Context, *ToggleDocumentPinRequest) (*ToggleDocumentPinResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method ToggleDocumentPin not implemented")
 }
 func (UnimplementedDocStoreServiceServer) mustEmbedUnimplementedDocStoreServiceServer() {}
 
@@ -1249,6 +1283,42 @@ func _DocStoreService_DeleteCategory_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _DocStoreService_ListDocumentPins_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ListDocumentPinsRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).ListDocumentPins(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocStoreService_ListDocumentPins_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).ListDocumentPins(ctx, req.(*ListDocumentPinsRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _DocStoreService_ToggleDocumentPin_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(ToggleDocumentPinRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(DocStoreServiceServer).ToggleDocumentPin(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: DocStoreService_ToggleDocumentPin_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(DocStoreServiceServer).ToggleDocumentPin(ctx, req.(*ToggleDocumentPinRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // DocStoreService_ServiceDesc is the grpc.ServiceDesc for DocStoreService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -1391,6 +1461,14 @@ var DocStoreService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "DeleteCategory",
 			Handler:    _DocStoreService_DeleteCategory_Handler,
+		},
+		{
+			MethodName: "ListDocumentPins",
+			Handler:    _DocStoreService_ListDocumentPins_Handler,
+		},
+		{
+			MethodName: "ToggleDocumentPin",
+			Handler:    _DocStoreService_ToggleDocumentPin_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

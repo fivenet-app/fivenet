@@ -158,6 +158,8 @@ func (m *Document) validate(all bool) error {
 
 	// no validation rules for Public
 
+	// no validation rules for Pinned
+
 	if m.UpdatedAt != nil {
 
 		if all {

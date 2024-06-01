@@ -93,6 +93,10 @@ export interface Document {
      * @generated from protobuf field: optional uint64 template_id = 17 [jstype = JS_STRING];
      */
     templateId?: string;
+    /**
+     * @generated from protobuf field: bool pinned = 18;
+     */
+    pinned: boolean;
 }
 /**
  * @generated from protobuf message resources.documents.DocumentShort
@@ -330,7 +334,8 @@ class Document$Type extends MessageType<Document> {
             { no: 14, name: "state", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 15, name: "closed", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 16, name: "public", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 17, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ }
+            { no: 17, name: "template_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 18, name: "pinned", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<Document>): Document {
@@ -343,6 +348,7 @@ class Document$Type extends MessageType<Document> {
         message.state = "";
         message.closed = false;
         message.public = false;
+        message.pinned = false;
         if (value !== undefined)
             reflectionMergePartial<Document>(this, message, value);
         return message;
@@ -402,6 +408,9 @@ class Document$Type extends MessageType<Document> {
                     break;
                 case /* optional uint64 template_id = 17 [jstype = JS_STRING];*/ 17:
                     message.templateId = reader.uint64().toString();
+                    break;
+                case /* bool pinned */ 18:
+                    message.pinned = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -466,6 +475,9 @@ class Document$Type extends MessageType<Document> {
         /* optional uint64 template_id = 17 [jstype = JS_STRING]; */
         if (message.templateId !== undefined)
             writer.tag(17, WireType.Varint).uint64(message.templateId);
+        /* bool pinned = 18; */
+        if (message.pinned !== false)
+            writer.tag(18, WireType.Varint).bool(message.pinned);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

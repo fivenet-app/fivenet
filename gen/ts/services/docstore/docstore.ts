@@ -32,9 +32,9 @@ import { PaginationRequest } from "../../resources/common/database/database";
 import { Template } from "../../resources/documents/templates";
 import { TemplateData } from "../../resources/documents/templates";
 import { TemplateShort } from "../../resources/documents/templates";
+// Templates ==================================================================
+
 /**
- * Templates ==================================================================
- *
  * @generated from protobuf message services.docstore.ListTemplatesRequest
  */
 export interface ListTemplatesRequest {
@@ -128,9 +128,9 @@ export interface DeleteTemplateRequest {
  */
 export interface DeleteTemplateResponse {
 }
+// Documents ==================================================================
+
 /**
- * Documents ==================================================================
- *
  * @generated from protobuf message services.docstore.ListDocumentsRequest
  */
 export interface ListDocumentsRequest {
@@ -312,9 +312,9 @@ export interface RemoveDocumentRelationRequest {
  */
 export interface RemoveDocumentRelationResponse {
 }
+// Comments ===============================================================
+
 /**
- * Comments ===============================================================
- *
  * @generated from protobuf message services.docstore.GetCommentsRequest
  */
 export interface GetCommentsRequest {
@@ -560,9 +560,9 @@ export interface UpdateDocumentRequest {
      */
     access?: DocumentAccess;
 }
+// Document Activity and Requests =============================================
+
 /**
- * Document Activity and Requests =============================================
- *
  * @generated from protobuf message services.docstore.ListDocumentActivityRequest
  */
 export interface ListDocumentActivityRequest {
@@ -702,9 +702,9 @@ export interface DeleteDocumentReqRequest {
  */
 export interface DeleteDocumentReqResponse {
 }
+// Access =====================================================================
+
 /**
- * Access =====================================================================
- *
  * @generated from protobuf message services.docstore.GetDocumentAccessRequest
  */
 export interface GetDocumentAccessRequest {
@@ -774,9 +774,9 @@ export interface ListUserDocumentsResponse {
      */
     relations: DocumentRelation[];
 }
+// Categories =================================================================
+
 /**
- * Categories
- *
  * @generated from protobuf message services.docstore.ListCategoriesRequest
  */
 export interface ListCategoriesRequest {
@@ -835,6 +835,52 @@ export interface DeleteCategoryRequest {
  * @generated from protobuf message services.docstore.DeleteCategoryResponse
  */
 export interface DeleteCategoryResponse {
+}
+// Pins =======================================================================
+
+/**
+ * @generated from protobuf message services.docstore.ListDocumentPinsRequest
+ */
+export interface ListDocumentPinsRequest {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationRequest pagination = 1;
+     */
+    pagination?: PaginationRequest;
+}
+/**
+ * @generated from protobuf message services.docstore.ListDocumentPinsResponse
+ */
+export interface ListDocumentPinsResponse {
+    /**
+     * @generated from protobuf field: resources.common.database.PaginationResponse pagination = 1;
+     */
+    pagination?: PaginationResponse;
+    /**
+     * @generated from protobuf field: repeated resources.documents.DocumentShort documents = 2;
+     */
+    documents: DocumentShort[];
+}
+/**
+ * @generated from protobuf message services.docstore.ToggleDocumentPinRequest
+ */
+export interface ToggleDocumentPinRequest {
+    /**
+     * @generated from protobuf field: uint64 document_id = 1 [jstype = JS_STRING];
+     */
+    documentId: string;
+    /**
+     * @generated from protobuf field: bool state = 2;
+     */
+    state: boolean;
+}
+/**
+ * @generated from protobuf message services.docstore.ToggleDocumentPinResponse
+ */
+export interface ToggleDocumentPinResponse {
+    /**
+     * @generated from protobuf field: bool state = 1;
+     */
+    state: boolean;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class ListTemplatesRequest$Type extends MessageType<ListTemplatesRequest> {
@@ -4171,6 +4217,208 @@ class DeleteCategoryResponse$Type extends MessageType<DeleteCategoryResponse> {
  * @generated MessageType for protobuf message services.docstore.DeleteCategoryResponse
  */
 export const DeleteCategoryResponse = new DeleteCategoryResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDocumentPinsRequest$Type extends MessageType<ListDocumentPinsRequest> {
+    constructor() {
+        super("services.docstore.ListDocumentPinsRequest", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } }
+        ]);
+    }
+    create(value?: PartialMessage<ListDocumentPinsRequest>): ListDocumentPinsRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<ListDocumentPinsRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDocumentPinsRequest): ListDocumentPinsRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationRequest pagination */ 1:
+                    message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDocumentPinsRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationRequest pagination = 1; */
+        if (message.pagination)
+            PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ListDocumentPinsRequest
+ */
+export const ListDocumentPinsRequest = new ListDocumentPinsRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ListDocumentPinsResponse$Type extends MessageType<ListDocumentPinsResponse> {
+    constructor() {
+        super("services.docstore.ListDocumentPinsResponse", [
+            { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
+            { no: 2, name: "documents", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => DocumentShort }
+        ]);
+    }
+    create(value?: PartialMessage<ListDocumentPinsResponse>): ListDocumentPinsResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documents = [];
+        if (value !== undefined)
+            reflectionMergePartial<ListDocumentPinsResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ListDocumentPinsResponse): ListDocumentPinsResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.common.database.PaginationResponse pagination */ 1:
+                    message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
+                    break;
+                case /* repeated resources.documents.DocumentShort documents */ 2:
+                    message.documents.push(DocumentShort.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ListDocumentPinsResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.common.database.PaginationResponse pagination = 1; */
+        if (message.pagination)
+            PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.documents.DocumentShort documents = 2; */
+        for (let i = 0; i < message.documents.length; i++)
+            DocumentShort.internalBinaryWrite(message.documents[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ListDocumentPinsResponse
+ */
+export const ListDocumentPinsResponse = new ListDocumentPinsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ToggleDocumentPinRequest$Type extends MessageType<ToggleDocumentPinRequest> {
+    constructor() {
+        super("services.docstore.ToggleDocumentPinRequest", [
+            { no: 1, name: "document_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
+            { no: 2, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ToggleDocumentPinRequest>): ToggleDocumentPinRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.documentId = "0";
+        message.state = false;
+        if (value !== undefined)
+            reflectionMergePartial<ToggleDocumentPinRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ToggleDocumentPinRequest): ToggleDocumentPinRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 document_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.documentId = reader.uint64().toString();
+                    break;
+                case /* bool state */ 2:
+                    message.state = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ToggleDocumentPinRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 document_id = 1 [jstype = JS_STRING]; */
+        if (message.documentId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.documentId);
+        /* bool state = 2; */
+        if (message.state !== false)
+            writer.tag(2, WireType.Varint).bool(message.state);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ToggleDocumentPinRequest
+ */
+export const ToggleDocumentPinRequest = new ToggleDocumentPinRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class ToggleDocumentPinResponse$Type extends MessageType<ToggleDocumentPinResponse> {
+    constructor() {
+        super("services.docstore.ToggleDocumentPinResponse", [
+            { no: 1, name: "state", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<ToggleDocumentPinResponse>): ToggleDocumentPinResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.state = false;
+        if (value !== undefined)
+            reflectionMergePartial<ToggleDocumentPinResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: ToggleDocumentPinResponse): ToggleDocumentPinResponse {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool state */ 1:
+                    message.state = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: ToggleDocumentPinResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool state = 1; */
+        if (message.state !== false)
+            writer.tag(1, WireType.Varint).bool(message.state);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.docstore.ToggleDocumentPinResponse
+ */
+export const ToggleDocumentPinResponse = new ToggleDocumentPinResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.docstore.DocStoreService
  */
@@ -4208,5 +4456,7 @@ export const DocStoreService = new ServiceType("services.docstore.DocStoreServic
     { name: "ListCategories", options: {}, I: ListCategoriesRequest, O: ListCategoriesResponse },
     { name: "CreateCategory", options: {}, I: CreateCategoryRequest, O: CreateCategoryResponse },
     { name: "UpdateCategory", options: {}, I: UpdateCategoryRequest, O: UpdateCategoryResponse },
-    { name: "DeleteCategory", options: {}, I: DeleteCategoryRequest, O: DeleteCategoryResponse }
+    { name: "DeleteCategory", options: {}, I: DeleteCategoryRequest, O: DeleteCategoryResponse },
+    { name: "ListDocumentPins", options: {}, I: ListDocumentPinsRequest, O: ListDocumentPinsResponse },
+    { name: "ToggleDocumentPin", options: {}, I: ToggleDocumentPinRequest, O: ToggleDocumentPinResponse }
 ]);

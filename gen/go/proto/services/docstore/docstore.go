@@ -40,12 +40,13 @@ const (
 )
 
 var (
-	tUsers       = table.Users
-	tUserProps   = table.FivenetUserProps
-	tCreator     = tUsers.AS("creator")
-	tDocument    = table.FivenetDocuments.AS("document")
-	tDJobAccess  = table.FivenetDocumentsJobAccess.AS("job_access")
-	tDUserAccess = table.FivenetDocumentsUserAccess.AS("user_access")
+	tUsers         = table.Users
+	tUserProps     = table.FivenetUserProps
+	tCreator       = tUsers.AS("creator")
+	tDocument      = table.FivenetDocuments.AS("document")
+	tDocumentShort = table.FivenetDocuments.AS("documentshort")
+	tDJobAccess    = table.FivenetDocumentsJobAccess.AS("job_access")
+	tDUserAccess   = table.FivenetDocumentsUserAccess.AS("user_access")
 )
 
 type Server struct {
@@ -88,7 +89,6 @@ func (s *Server) RegisterServer(srv *grpc.Server) {
 func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (*ListDocumentsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tDocument := tDocument.AS("documentshort")
 	condition := jet.Bool(true)
 	if req.Search != nil && *req.Search != "" {
 		condition = jet.BoolExp(
@@ -103,7 +103,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			tDocument.CategoryID.IN(ids...),
+			tDocumentShort.CategoryID.IN(ids...),
 		)
 	}
 	if len(req.CreatorIds) > 0 {
@@ -113,21 +113,21 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			tDocument.CreatorID.IN(ids...),
+			tDocumentShort.CreatorID.IN(ids...),
 		)
 	}
 	if req.From != nil {
-		condition = condition.AND(tDocument.CreatedAt.GT_EQ(
+		condition = condition.AND(tDocumentShort.CreatedAt.GT_EQ(
 			jet.TimestampT(req.From.AsTime()),
 		))
 	}
 	if req.To != nil {
-		condition = condition.AND(tDocument.CreatedAt.LT_EQ(
+		condition = condition.AND(tDocumentShort.CreatedAt.LT_EQ(
 			jet.TimestampT(req.To.AsTime()),
 		))
 	}
 	if req.Closed != nil {
-		condition = condition.AND(tDocument.Closed.EQ(
+		condition = condition.AND(tDocumentShort.Closed.EQ(
 			jet.Bool(*req.Closed),
 		))
 	}
@@ -138,12 +138,12 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 
 		condition = condition.AND(
-			tDocument.ID.IN(ids...),
+			tDocumentShort.ID.IN(ids...),
 		)
 	}
 
 	countStmt := s.listDocumentsQuery(
-		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocument.ID)).AS("datacount.totalcount")}, userInfo)
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocumentShort.ID)).AS("datacount.totalcount")}, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {
@@ -162,7 +162,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 
 	stmt := s.listDocumentsQuery(condition, nil, userInfo).
 		OFFSET(req.Pagination.Offset).
-		GROUP_BY(tDocument.ID).
+		GROUP_BY(tDocumentShort.ID).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Documents); err != nil {

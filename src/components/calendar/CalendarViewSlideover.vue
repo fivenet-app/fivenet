@@ -30,7 +30,7 @@ const calendar = computed(() => data.value?.calendar);
 </script>
 
 <template>
-    <USlideover :ui="{ width: 'w-full sm:max-w-2xl' }" :overlay="false">
+    <USlideover :ui="{ width: 'w-screen sm:max-w-2xl' }" :overlay="false">
         <UCard
             class="flex flex-1 flex-col"
             :ui="{
