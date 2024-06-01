@@ -460,7 +460,10 @@
         "exam": "Prüfung | Prüfungen",
         "question": "Frage | Fragen",
         "answer": "Antwort | Antworten",
-        "chars": "Zeichen"
+        "chars": "Zeichen",
+        "pinned": "Angepinnt",
+        "pin": "Anheften",
+        "unpin": "Lösen"
     },
     "components": {
         "partials": {
