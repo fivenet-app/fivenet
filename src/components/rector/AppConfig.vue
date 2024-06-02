@@ -550,9 +550,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UInput
-                                        v-model="state.userTracker.refreshTime"
                                         type="text"
                                         :placeholder="$t('common.duration')"
+                                        :value="fromDuration(state.userTracker.refreshTime)"
+                                        @update:model-value="state.userTracker.refreshTime = toDuration($event)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -565,9 +566,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UInput
-                                        v-model="state.userTracker.dbRefreshTime"
                                         type="text"
                                         :placeholder="$t('common.duration')"
+                                        :value="fromDuration(state.userTracker.dbRefreshTime)"
+                                        @update:model-value="state.userTracker.dbRefreshTime = toDuration($event)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
@@ -633,10 +635,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UInput
-                                        v-model="state.discord.syncInterval"
                                         name="discord.syncInterval"
                                         type="text"
                                         :placeholder="$t('common.duration')"
+                                        :value="fromDuration(state.discord.syncInterval)"
+                                        @update:model-value="state.discord.syncInterval = toDuration($event)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
