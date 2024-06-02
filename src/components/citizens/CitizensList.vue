@@ -129,7 +129,7 @@ const columns = [
     attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')
         ? {
               key: 'trafficInfractionPoints',
-              label: t('common.traffic_infraction_points'),
+              label: t('common.traffic_infraction_points', 2),
           }
         : undefined,
     attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')
