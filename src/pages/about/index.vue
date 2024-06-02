@@ -28,11 +28,11 @@ const faqs = [
     },
     {
         label: t('components.about.faq.three.question'),
-        content: t('components.about.faq.three.answer', { repoLink }),
+        content: t('components.about.faq.three.answer', { repoLink: repoLink }),
     },
     {
         label: t('components.about.faq.four.question'),
-        content: t('components.about.faq.four.answer', { discordLink, repoLink }),
+        content: t('components.about.faq.four.answer', { discordLink: discordLink, repoLink: repoLink }),
     },
 ] as { label: string; content: string }[];
 </script>
@@ -136,7 +136,10 @@ const faqs = [
                                         <template #item="{ item: faq }">
                                             <UContainer>
                                                 <!-- eslint-disable-next-line vue/no-v-html -->
-                                                <p class="text-base leading-7" v-html="faq.content"></p>
+                                                <p
+                                                    class="text-base leading-7 text-gray-900 dark:text-white"
+                                                    v-html="faq.content"
+                                                ></p>
                                             </UContainer>
                                         </template>
                                     </UAccordion>
@@ -158,7 +161,7 @@ const faqs = [
                                     <UButton
                                         :to="discordLink"
                                         :external="true"
-                                        variant="link"
+                                        variant="outline"
                                         block
                                         icon="i-simple-icons-discord"
                                         class="text-[#5865f2]"
@@ -169,6 +172,7 @@ const faqs = [
                             </div>
                         </div>
                     </div>
+
                     <div class="relative">
                         <div class="mx-auto max-w-7xl px-6 py-12 sm:py-16 lg:px-8 lg:py-10">
                             <div class="mx-auto max-w-4xl">
@@ -176,7 +180,7 @@ const faqs = [
                                     {{ $t('common.licenses') }}
                                 </p>
                                 <div class="mt-8">
-                                    <UButton variant="link" block icon="i-mdi-license" :to="{ name: 'about-licenses' }">
+                                    <UButton variant="outline" block icon="i-mdi-license" :to="{ name: 'about-licenses' }">
                                         {{ $t('components.about.licenses_list') }}
                                     </UButton>
                                 </div>

@@ -81,15 +81,13 @@ watch(offset, async () => refresh());
                 icon="i-mdi-account-school"
             />
 
-            <template v-else>
-                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-                    <QualificationsRequestsListEntry
-                        v-for="request in data?.requests"
-                        :key="`${request.qualificationId}-${request.userId}`"
-                        :request="request"
-                    />
-                </ul>
-            </template>
+            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <QualificationsRequestsListEntry
+                    v-for="request in data?.requests"
+                    :key="`${request.qualificationId}-${request.userId}`"
+                    :request="request"
+                />
+            </ul>
         </div>
 
         <template #footer>

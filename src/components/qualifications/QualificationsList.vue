@@ -57,15 +57,13 @@ watch(offset, async () => refresh());
                 icon="i-mdi-school"
             />
 
-            <template v-else>
-                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-                    <QualificationsListEntry
-                        v-for="qualification in data?.qualifications"
-                        :key="qualification.id"
-                        :qualification="qualification"
-                    />
-                </ul>
-            </template>
+            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <QualificationsListEntry
+                    v-for="qualification in data?.qualifications"
+                    :key="qualification.id"
+                    :qualification="qualification"
+                />
+            </ul>
         </div>
 
         <template #footer>

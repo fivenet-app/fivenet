@@ -81,11 +81,9 @@ watch(offset, async () => refresh());
                 icon="i-mdi-sigma"
             />
 
-            <template v-else>
-                <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-                    <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
-                </ul>
-            </template>
+            <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <QualificationsResultsListEntry v-for="result in data?.results" :key="result.id" :result="result" />
+            </ul>
         </div>
 
         <template #footer>

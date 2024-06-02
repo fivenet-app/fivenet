@@ -104,10 +104,10 @@ const canSubmit = ref(true);
 </script>
 
 <template>
-    <div class="sm:flex sm:items-center">
-        <div class="sm:flex-auto">
-            <UForm :schema="schema" :state="query" @submit="refresh()">
-                <div class="flex flex-row items-center gap-2">
+    <UDashboardToolbar>
+        <template #default>
+            <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
+                <div class="flex flex-row gap-2">
                     <UFormGroup name="includeRead" :label="$t('components.notifications.include_read')" class="flex-initial">
                         <UToggle v-model="query.includeRead">
                             <span class="sr-only">{{ $t('components.notifications.include_read') }}</span>
@@ -139,7 +139,7 @@ const canSubmit = ref(true);
                         </USelectMenu>
                     </UFormGroup>
 
-                    <UFormGroup class="flex-initial">
+                    <UFormGroup label="&nbsp;" class="flex-initial">
                         <UButton
                             :disabled="!canSubmit || data?.notifications === undefined || data?.notifications.length === 0"
                             @click="markAllRead().finally(timeoutFn)"
@@ -149,102 +149,95 @@ const canSubmit = ref(true);
                     </UFormGroup>
                 </div>
             </UForm>
-        </div>
-    </div>
-    <div class="mt-2 flow-root">
-        <div class="-my-2 mx-0 overflow-x-auto">
-            <div class="inline-block min-w-full px-1 py-2 align-middle">
-                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.notification', 2)])" />
-                <DataErrorBlock
-                    v-else-if="error"
-                    :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
-                    :retry="refresh"
-                />
-                <DataNoDataBlock
-                    v-else-if="data?.notifications.length === 0"
-                    :type="$t('common.notification', 2)"
-                    icon="i-mdi-bell"
-                />
+        </template>
+    </UDashboardToolbar>
 
-                <div v-else class="relative overflow-x-auto">
-                    <ul class="flex flex-col">
-                        <li
-                            v-for="not in data?.notifications"
-                            :key="not.id"
-                            class="hover:bg-background relative my-1 flex justify-between gap-x-6 rounded-lg bg-base-900 px-4 py-5 sm:px-6"
-                        >
-                            <div class="flex flex-1 gap-x-2">
-                                <div class="min-w-0 flex-auto">
-                                    <p class="py-2 pr-3 text-sm font-medium">
-                                        <template v-if="not.data && not.data.link">
-                                            <!-- @vue-ignore the route should be valid... at least in most cases -->
-                                            <UButton
-                                                variant="link"
-                                                :to="not.data.link.to"
-                                                :icon="notificationCategoryToIcon(not.category)"
-                                                trailing-icon="i-mdi-link-variant"
-                                                class="inline-flex items-center gap-1"
-                                                @click="
-                                                    markRead(not.id);
-                                                    $emit('clicked');
-                                                "
-                                            >
-                                                {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                            </UButton>
-                                        </template>
-                                        <template v-else>
-                                            {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                        </template>
-                                    </p>
-                                    <p class="mt-1 flex text-xs leading-5 text-gray-200">
-                                        {{ $t(not.content!.key, not.content?.parameters ?? {}) }}
-                                    </p>
-                                </div>
-                            </div>
+    <UDashboardPanelContent class="p-0">
+        <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.notification', 2)])" />
+        <DataErrorBlock
+            v-else-if="error"
+            :title="$t('common.unable_to_load', [$t('common.notification', 2)])"
+            :retry="refresh"
+        />
+        <DataNoDataBlock v-else-if="data?.notifications.length === 0" :type="$t('common.notification', 2)" icon="i-mdi-bell" />
 
-                            <div class="flex items-center gap-x-2">
-                                <div class="hidden sm:flex sm:flex-col sm:items-end">
-                                    <p class="mt-1 text-xs leading-5">
-                                        {{ $t('common.received') }}
-                                        <GenericTime :value="not.createdAt" :ago="true" />
+        <div v-else class="relative overflow-x-auto">
+            <ul class="my-1 flex flex-col">
+                <li
+                    v-for="not in data?.notifications"
+                    :key="not.id"
+                    class="relative my-1 flex justify-between gap-x-6 px-4 py-5 sm:px-6"
+                >
+                    <div class="flex flex-1 gap-x-2">
+                        <div class="min-w-0 flex-auto">
+                            <p class="py-2 pr-3 text-sm font-medium">
+                                <template v-if="not.data && not.data.link">
+                                    <!-- @vue-ignore the route should be valid... at least in most cases -->
+                                    <UButton
+                                        variant="link"
+                                        :to="not.data.link.to"
+                                        :icon="notificationCategoryToIcon(not.category)"
+                                        trailing-icon="i-mdi-link-variant"
+                                        class="inline-flex items-center gap-1"
+                                        @click="
+                                            markRead(not.id);
+                                            $emit('clicked');
+                                        "
+                                    >
+                                        {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
+                                    </UButton>
+                                </template>
+                                <template v-else>
+                                    {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
+                                </template>
+                            </p>
+                            <p class="mt-1 flex text-xs leading-5 text-gray-200">
+                                {{ $t(not.content!.key, not.content?.parameters ?? {}) }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center gap-x-2">
+                        <div class="hidden sm:flex sm:flex-col sm:items-end">
+                            <p class="mt-1 text-xs leading-5">
+                                {{ $t('common.received') }}
+                                <GenericTime :value="not.createdAt" :ago="true" />
+                            </p>
+                            <div class="mt-1 flex items-center gap-x-1.5">
+                                <template v-if="not.readAt">
+                                    <p class="text-xs leading-5">
+                                        {{ $t('common.read') }}
+                                        <GenericTime :value="not.readAt" :ago="true" />
                                     </p>
-                                    <div class="mt-1 flex items-center gap-x-1.5">
-                                        <template v-if="not.readAt">
-                                            <p class="text-xs leading-5">
-                                                {{ $t('common.read') }}
-                                                <GenericTime :value="not.readAt" :ago="true" />
-                                            </p>
-                                        </template>
-                                        <template v-else>
-                                            <div class="flex-none rounded-full bg-error-500/20 p-1">
-                                                <div class="size-1.5 rounded-full bg-error-500" />
-                                            </div>
-                                            <p class="text-xs leading-5">
-                                                {{ $t('components.notifications.unread') }}
-                                            </p>
-                                        </template>
+                                </template>
+                                <template v-else>
+                                    <div class="flex-none rounded-full bg-error-500/20 p-1">
+                                        <div class="size-1.5 rounded-full bg-error-500" />
                                     </div>
-                                </div>
+                                    <p class="text-xs leading-5">
+                                        {{ $t('components.notifications.unread') }}
+                                    </p>
+                                </template>
                             </div>
+                        </div>
+                    </div>
 
-                            <div class="-my-5 -mr-6 flex">
-                                <UButton
-                                    v-if="!not.readAt"
-                                    class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
-                                    :disabled="!canSubmit"
-                                    icon="i-mdi-check"
-                                    @click="markRead(not.id).finally(timeoutFn)"
-                                >
-                                    <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
-                                </UButton>
-                                <span v-else class="size-5"></span>
-                            </div>
-                        </li>
-                    </ul>
-                </div>
-
-                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-            </div>
+                    <div class="-my-5 -mr-6 flex">
+                        <UButton
+                            v-if="!not.readAt"
+                            class="flex shrink items-center rounded-r-md p-1 text-sm font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2"
+                            :disabled="!canSubmit"
+                            icon="i-mdi-check"
+                            @click="markRead(not.id).finally(timeoutFn)"
+                        >
+                            <span class="sr-only">{{ $t('components.notifications.mark_read') }}</span>
+                        </UButton>
+                        <span v-else class="size-5"></span>
+                    </div>
+                </li>
+            </ul>
         </div>
-    </div>
+
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+    </UDashboardPanelContent>
 </template>

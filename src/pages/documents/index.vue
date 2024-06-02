@@ -101,21 +101,27 @@ const isOpen = ref(false);
                 </template>
 
                 <template #right>
-                    <UButtonGroup class="hidden 2xl:inline-flex">
+                    <UButtonGroup class="hidden truncate 2xl:inline-flex">
                         <UButton
                             v-if="can('CompletorService.CompleteDocumentCategories')"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
+                            truncate
                         >
-                            {{ $t('common.category', 2) }}
+                            <span class="truncate">
+                                {{ $t('common.category', 2) }}
+                            </span>
                         </UButton>
 
                         <UButton
                             v-if="can('DocStoreService.ListTemplates')"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
+                            truncate
                         >
-                            {{ $t('common.template', 2) }}
+                            <span class="truncate">
+                                {{ $t('common.template', 2) }}
+                            </span>
                         </UButton>
                     </UButtonGroup>
                 </template>
@@ -141,17 +147,27 @@ const isOpen = ref(false);
                                 :type="$t('common.pinned_document', 2)"
                             />
 
-                            <ul
-                                v-else-if="loading"
-                                role="list"
-                                class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800"
-                            >
+                            <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
                                 <li v-if="loading" v-for="_ in 10">
                                     <USkeleton class="h-16 w-full" />
                                 </li>
 
-                                <li v-else v-for="document in data?.documents" class="flex flex-col">
-                                    <DocumentInfoPopover :document="document" class="line-clamp-3 text-left" />
+                                <li v-else v-for="document in data?.documents" class="flex flex-col px-1">
+                                    <DocumentInfoPopover :document="document">
+                                        <template #title="{ document, loading }">
+                                            <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />
+
+                                            <div v-else class="flex flex-col">
+                                                <UBadge v-if="document?.category">
+                                                    {{ document.category.name }}
+                                                </UBadge>
+
+                                                <span class="line-clamp-3 hyphens-auto break-words text-left">
+                                                    {{ document?.title }}
+                                                </span>
+                                            </div>
+                                        </template>
+                                    </DocumentInfoPopover>
                                 </li>
                             </ul>
                         </div>

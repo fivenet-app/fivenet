@@ -14,20 +14,20 @@ definePageMeta({
 
 const licenses = [
     {
-        label: 'FiveNet Project License',
-        path: '/licenses/LICENSE',
+        label: `FiveNet Project`,
+        path: '/licenses/LICENSE.txt',
     },
     {
-        label: 'Frontend Licenses',
+        label: `Frontend`,
         path: '/licenses/frontend.txt',
     },
     {
-        label: 'Sounds Licenses',
-        path: '/licenses/sounds.txt',
+        label: `Backend`,
+        path: '/licenses/backend.txt',
     },
     {
-        label: 'Backend Licenses',
-        path: '/licenses/backend.txt',
+        label: `Sounds`,
+        path: '/licenses/sounds.txt',
     },
 ];
 </script>
@@ -50,7 +50,7 @@ const licenses = [
                     </div>
 
                     <div>
-                        <div class="mx-auto max-w-6xl px-2">
+                        <UContainer class="px-2">
                             <div class="divide-neutral/10 mx-auto max-w-7xl divide-y">
                                 <dl class="divide-neutral/10 mt-10 space-y-6 divide-y">
                                     <UAccordion :items="licenses" multiple :unmount="true">
@@ -60,7 +60,7 @@ const licenses = [
                                     </UAccordion>
                                 </dl>
                             </div>
-                        </div>
+                        </UContainer>
                     </div>
                 </div>
             </div>

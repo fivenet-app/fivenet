@@ -4,6 +4,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
+import type { ButtonVariant } from '#ui/types';
 
 defineOptions({
     inheritAttrs: false,
@@ -77,7 +78,7 @@ watchOnce(opened, async () => {
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             @click="opened = true"
         >
-            <slot name="title">
+            <slot name="title" :document="document" :loading="loading">
                 <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />
 
                 <template v-else>

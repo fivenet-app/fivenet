@@ -78,39 +78,33 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
                     icon="i-mdi-calendar"
                 />
 
-                <template v-else>
-                    <ul role="list" class="my-1 flex flex-col gap-1 divide-y divide-gray-100 dark:divide-gray-800">
-                        <li
-                            v-for="calendar in data?.calendars"
-                            :key="calendar.id"
-                            class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white dark:border-gray-900"
-                        >
-                            <div class="inline-flex gap-1">
-                                <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+                <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
+                    <li
+                        v-for="calendar in data?.calendars"
+                        :key="calendar.id"
+                        class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white py-1 dark:border-gray-900"
+                    >
+                        <div class="inline-flex gap-1">
+                            <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
 
-                                <span>{{ calendar.name }}</span>
-                                <span v-if="calendar.description" class="hidden sm:block"
-                                    >({{ $t('common.description') }}: {{ calendar.description }})</span
-                                >
+                            <span>{{ calendar.name }}</span>
+                            <span v-if="calendar.description" class="hidden sm:block"
+                                >({{ $t('common.description') }}: {{ calendar.description }})</span
+                            >
 
-                                <CitizenInfoPopover v-if="calendar.creator" :user="calendar.creator" />
-                            </div>
+                            <CitizenInfoPopover v-if="calendar.creator" :user="calendar.creator" />
+                        </div>
 
-                            <div>
-                                <UButton
-                                    v-if="calendar.subscription"
-                                    color="red"
-                                    @click="subscribeToCalendar(calendar.id, false)"
-                                >
-                                    {{ $t('common.unsubscribe') }}
-                                </UButton>
-                                <UButton v-else color="amber" @click="subscribeToCalendar(calendar.id, true)">
-                                    {{ $t('common.subscribe') }}
-                                </UButton>
-                            </div>
-                        </li>
-                    </ul>
-                </template>
+                        <div>
+                            <UButton v-if="calendar.subscription" color="red" @click="subscribeToCalendar(calendar.id, false)">
+                                {{ $t('common.unsubscribe') }}
+                            </UButton>
+                            <UButton v-else color="amber" @click="subscribeToCalendar(calendar.id, true)">
+                                {{ $t('common.subscribe') }}
+                            </UButton>
+                        </div>
+                    </li>
+                </ul>
 
                 <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
             </div>
