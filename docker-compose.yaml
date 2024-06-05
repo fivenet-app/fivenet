@@ -4,7 +4,7 @@ services:
   # GRPC Web to GRPC proxy
   envoy:
     container_name: envoy
-    image: docker.io/envoyproxy/envoy:v1.30.1
+    image: docker.io/envoyproxy/envoy:v1.30.2
     environment:
       - ENVOY_UID=0
     volumes:
