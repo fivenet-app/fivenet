@@ -19,13 +19,14 @@ const route = useRoute();
 // `oauth2Connect` can be `failed` (with `reason`) or `success`
 const query = route.query;
 if (query.oauth2Connect) {
-    if (query.oauth2Connect === 'success') {
+    const status = query.oauth2Connect as string;
+    if (status === 'success') {
         notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: {} },
             description: { key: 'notifications.auth.oauth2_connect.success.content', parameters: {} },
-            type: NotificationType.INFO,
+            type: NotificationType.SUCCESS,
         });
-    } else if (query.oauth2Connect === 'failed') {
+    } else {
         const reason = query.reason ?? 'N/A';
 
         notifications.add({

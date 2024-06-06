@@ -34,8 +34,6 @@ async function removeOAuth2Connection(provider: string): Promise<void> {
     const idx = account.value?.oauth2Connections.findIndex((v) => v.providerName === provider);
     if (idx !== undefined && idx > -1) {
         account.value?.oauth2Connections.splice(idx, 1);
-
-        await refresh();
     }
 }
 

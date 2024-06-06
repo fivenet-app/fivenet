@@ -135,7 +135,7 @@ func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, 
 	if !success {
 		redirURL := ""
 		if connectOnly {
-			redirURL = AccountInfoRedirBase + "?oauth2Connect=failed"
+			redirURL = AccountInfoRedirBase + "?oauth2Connect=failed&tab=oauth2Connections#"
 		} else {
 			redirURL = LoginRedirBase + "?oauth2Login=failed"
 		}
@@ -150,7 +150,7 @@ func (o *OAuth2) handleRedirect(c *gin.Context, connectOnly bool, success bool, 
 
 	redirURL := ""
 	if connectOnly {
-		redirURL = AccountInfoRedirBase + "?oauth2Connect=success"
+		redirURL = AccountInfoRedirBase + "?oauth2Connect=success&tab=oauth2Connections#"
 	} else {
 		redirURL = LoginRedirBase + "?oauth2Login=success"
 	}
@@ -253,7 +253,7 @@ func (o *OAuth2) Callback(c *gin.Context) {
 	if connectOnly {
 		claims, err := o.tm.ParseWithClaims(token)
 		if err != nil {
-			c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Connect=failed&reason=token_invalid")
+			c.Redirect(http.StatusTemporaryRedirect, LoginRedirBase+"?oauth2Connect=failed&reason=token_invalid&tab=oauth2Connections#")
 			return
 		}
 
