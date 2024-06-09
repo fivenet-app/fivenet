@@ -459,7 +459,13 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}, 45.0)
 				s.logger.Debug("deduplicating dispatches", zap.String("job", dsp.Job), zap.Uint64("dispatch_id", dsp.Id), zap.Int("closeby_dsps", len(closestsDsp)))
 
-				refs := []*centrum.DispatchReference{}
+				var refs *centrum.DispatchReferences
+				if dsp.References != nil {
+					refs = dsp.References
+				} else {
+					refs = &centrum.DispatchReferences{}
+				}
+
 				activeDispatchesCloseBy := []*centrum.Dispatch{}
 				for _, dest := range closestsDsp {
 					if dest == nil {
@@ -480,8 +486,8 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						continue
 					}
 
-					// Add close by dispatch as a referenc
-					refs = append(refs, &centrum.DispatchReference{
+					// Add close by dispatch as a reference
+					refs.Add(&centrum.DispatchReference{
 						TargetDispatchId: closeByDsp.Id,
 						ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATED_BY,
 					})
@@ -489,7 +495,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 					activeDispatchesCloseBy = append(activeDispatchesCloseBy, closeByDsp)
 				}
 
-				// Prevent unnecessary updates to the dispatch description
+				// Prevent unnecessary updates to the dispatch
 				if len(activeDispatchesCloseBy) == 0 {
 					continue
 				}
@@ -500,11 +506,11 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 				}
 
 				// Set dispatch references on dispatch
-				if err := s.AddReferencesOnDispatch(ctx, dsp, refs...); err != nil {
+				if err := s.AddReferencesToDispatch(ctx, dsp, refs.References...); err != nil {
 					s.logger.Error("failed to update duplicate dispatch references", zap.Error(err))
 				}
 
-				dspRef := &centrum.DispatchReference{
+				sourceDspRef := &centrum.DispatchReference{
 					TargetDispatchId: dsp.Id,
 					ReferenceType:    centrum.DispatchReferenceType_DISPATCH_REFERENCE_TYPE_DUPLICATE_OF,
 				}
@@ -524,7 +530,7 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 						s.logger.Error("failed to update duplicate dispatch attribute", zap.Error(err))
 					}
 
-					if err := s.AddReferencesOnDispatch(ctx, closeByDsp, dspRef); err != nil {
+					if err := s.AddReferencesToDispatch(ctx, closeByDsp, sourceDspRef); err != nil {
 						s.logger.Error("failed to update duplicate dispatch references", zap.Error(err))
 					}
 
