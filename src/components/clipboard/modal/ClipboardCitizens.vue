@@ -113,12 +113,10 @@ watch(props, async (newVal) => {
         icon="i-mdi-account-multiple"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.citizen', 2)])"
         :focus="
-            submit === undefined
-                ? async () => {
-                      navigateTo({ name: 'citizens' });
-                      $emit('close');
-                  }
-                : undefined
+            async () => {
+                navigateTo({ name: 'citizens' });
+                $emit('close');
+            }
         "
         padding="p-2"
     />

@@ -104,6 +104,6 @@
         "typescript": "5.4.5",
         "vue": "^3.4.27",
         "vue-i18n-routing": "^1.2.0",
-        "vue-tsc": "2.0.20"
+        "vue-tsc": "2.0.21"
     }
 }

@@ -113,12 +113,10 @@ watch(props, async (newVal) => {
         icon="i-mdi-file-document-multiple"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.document', 2)])"
         :focus="
-            submit === undefined
-                ? async () => {
-                      navigateTo({ name: 'documents' });
-                      $emit('close');
-                  }
-                : undefined
+            async () => {
+                navigateTo({ name: 'documents' });
+                $emit('close');
+            }
         "
         padding="p-2"
     />

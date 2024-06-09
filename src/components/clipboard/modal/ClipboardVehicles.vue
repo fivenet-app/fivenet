@@ -113,12 +113,10 @@ watch(props, (newVal) => {
         icon="i-mdi-car"
         :message="$t('components.clipboard.clipboard_modal.no_data', [$t('common.vehicle', 2)])"
         :focus="
-            submit === undefined
-                ? async () => {
-                      navigateTo({ name: 'vehicles' });
-                      $emit('close');
-                  }
-                : undefined
+            async () => {
+                navigateTo({ name: 'vehicles' });
+                $emit('close');
+            }
         "
         padding="p-2"
     />
