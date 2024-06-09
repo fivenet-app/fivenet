@@ -4,7 +4,7 @@ const props = withDefaults(
         message?: string;
         icon?: string;
         type?: string;
-        focus?: Function;
+        focus?: () => void | Promise<void>;
         padding?: string;
     }>(),
     {
@@ -16,7 +16,7 @@ const props = withDefaults(
     },
 );
 
-function click() {
+async function click() {
     if (props.focus) {
         props.focus();
     }
