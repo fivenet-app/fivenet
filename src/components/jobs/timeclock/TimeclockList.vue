@@ -346,7 +346,7 @@ const input = ref<{ input: HTMLInputElement }>();
                 :stats="data.stats"
                 :weekly="data.weekly"
                 :hide-header="true"
-                :failed="error !== null"
+                :failed="!!error"
                 :loading="loading"
             />
         </template>

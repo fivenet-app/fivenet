@@ -33,7 +33,7 @@ const refreshThrottle = useThrottleFn(async () => {
     <TimeclockStatsBlock
         :stats="data?.stats"
         :weekly="data?.weekly"
-        :failed="error !== null"
+        :failed="!!error"
         :loading="loading"
         @refresh="refreshThrottle"
     />

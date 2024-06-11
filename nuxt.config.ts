@@ -5,6 +5,10 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     srcDir: 'src/',
+    dir: {
+        app: 'app',
+        public: 'src/public',
+    },
     telemetry: false,
     ssr: false,
     extends: [process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'],
@@ -20,6 +24,9 @@ export default defineNuxtConfig({
         '@nuxtjs/i18n',
         'nuxt-update',
     ],
+    future: {
+        compatibilityVersion: 4,
+    },
     ui: {
         icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],

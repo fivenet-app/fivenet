@@ -1,5 +1,6 @@
 import { type RpcMetadata, type RpcStatus } from '@protobuf-ts/runtime-rpc';
 import { Metadata } from '~/composables/grpcws/metadata';
+import type { HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
 
 export function createGrpcStatus(metaData: Metadata): RpcStatus {
     return {
@@ -19,4 +20,10 @@ export function createGrpcTrailers(metaData: Metadata): RpcMetadata {
     });
 
     return trailers.headersMap;
+}
+
+export function headersToMetadata(headers: { [key: string]: HeaderValue }): Metadata {
+    const metaData = new Metadata();
+    Object.keys(headers).forEach((k) => metaData.append(k.replaceAll(':', '+'), headers[k]!.value));
+    return metaData;
 }

@@ -1,5 +1,6 @@
 import { RpcError, type MethodInfo } from '@protobuf-ts/runtime-rpc';
 import { Body, Cancel, Complete, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
+import { headersToMetadata } from '../../bridge/utils';
 import { Metadata } from '../../metadata';
 import { type Transport, type TransportFactory, type TransportOptions } from '../transport';
 
@@ -40,11 +41,11 @@ function createRpcError(metaData: Metadata, methodDefinition: MethodInfo<object,
         return;
     }
 
-    const message = metaData.get('grpc-message').at(0) ?? '';
     const status = metaData.get('grpc-status').at(0);
     if (status === '0') {
         return;
     }
+    const message = metaData.get('grpc-message').at(0) ?? '';
 
     const err = new RpcError(message, status ?? '0', metaData.headersMap);
     err.serviceName = methodDefinition.service.typeName;
@@ -103,7 +104,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     close() {
-        closed = true;
+        this.closed = true;
         this.ws?.close();
     }
 
@@ -119,10 +120,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     stream[0].debug && console.debug('GRPC-WS: received header for stream', streamId);
                     const header = frame.payload.header;
                     if (header !== null) {
-                        const metaData = new Metadata();
-                        Object.keys(header.headers).forEach((k) =>
-                            metaData.append(k.replaceAll(':', '+'), header.headers[k].value),
-                        );
+                        const metaData = headersToMetadata(header.headers);
                         stream[0].onHeaders(metaData, header.status);
 
                         const err = createRpcError(metaData, stream[0].methodDefinition);
@@ -150,10 +148,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     if (failure !== null) {
                         const message = failure.errorMessage;
                         stream[0].debug && console.debug('GRPC-WS: failed', streamId, message);
-                        const metaData = new Metadata();
-                        Object.keys(failure.headers).forEach((k) =>
-                            metaData.append(k.replaceAll(':', '+'), failure.headers[k].value),
-                        );
+                        const metaData = headersToMetadata(failure.headers);
                         stream[0].onEnd(createRpcError(metaData, stream[0].methodDefinition));
                     } else {
                         stream[0].onEnd(new Error('GRPC-WS: unknown error'));

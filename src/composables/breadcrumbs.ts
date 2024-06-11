@@ -38,9 +38,19 @@ function getBreadcrumbs(input: string) {
     return stepNode(startNode);
 }
 
-export function useBreadcrumbs() {
+type Opts = {
+    hideIndex: boolean;
+};
+
+const defaultOpts: Opts = {
+    hideIndex: true,
+};
+
+export function useBreadcrumbs(opts?: Partial<Opts>) {
+    if (!opts) {
+        opts = defaultOpts;
+    }
     const router = useRouter();
-    const resolveUrlAbs = createInternalLinkResolver(true);
     const resolveUrl = createInternalLinkResolver();
 
     return computed(() => {
@@ -65,6 +75,7 @@ export function useBreadcrumbs() {
                 }
             })
             .filter(({ meta }) => meta !== undefined)
+            .filter(({ path }) => path !== '/' && !!opts?.hideIndex)
             .map(({ path, meta }) => {
                 // title case string regex
                 let title = meta?.title;
@@ -76,13 +87,11 @@ export function useBreadcrumbs() {
                         title = toTitleCase(withoutTrailingSlash(path).split('/').pop() || '');
                     }
                 }
+                console.log(opts, path);
                 return {
-                    schema: {
-                        name: title,
-                        item: resolveUrlAbs(path),
-                    },
                     to: resolveUrl(path),
-                    title,
+                    title: title,
+                    icon: meta?.icon as string | undefined,
                 };
             });
     });

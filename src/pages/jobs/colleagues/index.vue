@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import ColleaguesList from '~/components/jobs/colleagues/ColleaguesList.vue';
+import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.title',

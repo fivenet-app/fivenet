@@ -5,6 +5,7 @@ import type { Perms } from '~~/gen/ts/perms';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 
 useHead({

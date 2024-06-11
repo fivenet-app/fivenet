@@ -1,4 +1,3 @@
-import { HookResult } from '@nuxt/schema';
 import type { Perms } from '~~/gen/ts/perms';
 
 declare module '#app' {
@@ -53,20 +52,6 @@ export type AppConfig = {
     links: Links;
     featureGates: FeatureGates;
 };
-
-// Custom hooks for custom loading bar logic
-declare module '#app' {
-    interface RuntimeNuxtHooks {
-        'data:loading:start': () => HookResult;
-        'data:loading:finish': () => HookResult;
-        'data:loading:finish_error': () => HookResult;
-    }
-    interface NuxtHooks {
-        'data:loading:start': () => HookResult;
-        'data:loading:finish': () => HookResult;
-        'data:loading:finish_error': () => HookResult;
-    }
-}
 
 // It is always important to ensure you import/export something when augmenting a type
 export {};

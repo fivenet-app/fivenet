@@ -107,7 +107,7 @@ export async function handleGRPCError(err: RpcError): Promise<boolean> {
         `GRPC Client: Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Message: ${err.message}`,
     );
 
-    if (err.message.startsWith('errors.')) {
+    if (err.message?.startsWith('errors.')) {
         const errSplits = err.message.split(';');
         if (errSplits.length > 1) {
             notification.title = { key: errSplits[0], parameters: {} };

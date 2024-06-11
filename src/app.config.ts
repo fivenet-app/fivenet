@@ -62,6 +62,11 @@ export default defineAppConfig({
             close: 'i-mdi-window-close',
             check: 'i-mdi-check-circle',
         },
+        breadcrumb: {
+            default: {
+                divider: 'i-mdi-chevron-right',
+            },
+        },
         // Nuxt UI Pro
         dashboard: {
             page: {
@@ -86,6 +91,6 @@ export default defineAppConfig({
         },
     },
     popover: {
-        waitTime: 1000,
+        waitTime: 850,
     },
 });
