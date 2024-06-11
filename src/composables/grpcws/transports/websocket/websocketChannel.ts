@@ -28,9 +28,10 @@ export function WebsocketChannelTransport(): TransportFactory {
 }
 
 export function closeWebsocketChannels(): void {
-    activeWebsockets.forEach((ws) => ws.close());
+    activeWebsockets.forEach((aws) => aws.close());
 
     activeWebsockets.clear();
+    console.info('GRPC-WS: closed websocket');
 }
 
 interface GrpcStream extends Transport {
@@ -80,7 +81,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     recover(event: CloseEvent | Event) {
-        if (closed) {
+        if (this.closed) {
             return;
         }
 

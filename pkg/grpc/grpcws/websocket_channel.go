@@ -219,7 +219,7 @@ func (ws *WebsocketChannel) poll() error {
 		for key, element := range frame.GetHeader().Headers {
 			req.Header[key] = element.Value
 		}
-		grpclog.Infof("starting grpc request to %v %v", url, req)
+		grpclog.Infof("starting grpc request to %v", url)
 
 		// TODO add handler to the websocket channel and then forward it to this.
 		interceptedRequest := makeGrpcRequest(req.WithContext(stream.ctx))
