@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"math"
-	"net"
 	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
@@ -59,8 +58,6 @@ var ServerModule = fx.Module("grpcserver",
 
 type ServerParams struct {
 	fx.In
-
-	LC fx.Lifecycle
 
 	Logger   *zap.Logger
 	Config   *config.Config
@@ -153,32 +150,6 @@ func NewServer(p ServerParams) (ServerResult, error) {
 	for _, service := range p.Services {
 		service.RegisterServer(srv)
 	}
-
-	p.LC.Append(fx.Hook{
-		OnStart: func(ctx context.Context) error {
-			ln, err := net.Listen("tcp", p.Config.GRPC.Listen)
-			if err != nil {
-				return err
-			}
-			p.Logger.Info("grpc server listening", zap.String("address", p.Config.GRPC.Listen))
-			go func() {
-				if err := srv.Serve(ln); err != nil {
-					p.Logger.Error("failed to serve grpc server", zap.Error(err))
-				}
-			}()
-			return nil
-		},
-		OnStop: func(ctx context.Context) error {
-			go func() {
-				srv.GracefulStop()
-			}()
-			// Wait 3 seconds before "forceful stop"
-			time.Sleep(3 * time.Second)
-
-			srv.Stop()
-			return nil
-		},
-	})
 
 	return ServerResult{
 		Server: srv,

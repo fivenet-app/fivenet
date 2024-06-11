@@ -105,14 +105,10 @@ export default defineNuxtConfig({
                     target: 'http://localhost:8080',
                     changeOrigin: true,
                     ws: true,
+                    proxyTimeout: 60 * 60 * 1000,
+                    timeout: 60 * 60 * 1000,
                 },
                 '/api': 'http://localhost:8080',
-                '/grpc': {
-                    target: 'http://localhost:8181',
-                    // Make sure streaming works, but is also limited by the "real world" (1800s = 30m)
-                    proxyTimeout: 1800 * 1000,
-                    timeout: 1800 * 1000,
-                },
             },
         },
     },

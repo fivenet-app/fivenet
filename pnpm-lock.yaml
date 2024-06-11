@@ -112,7 +112,7 @@ dependencies:
     version: 2.4.0(vue@3.4.27)
   vue3-colorpicker:
     specifier: ^2.3.0
-    version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@10.10.0)(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1)(vue@3.4.27)
+    version: 2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@10.10.1)(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1)(vue@3.4.27)
   zod:
     specifier: ^3.23.8
     version: 3.23.8
@@ -161,14 +161,14 @@ devDependencies:
     specifier: ^4.4.4
     version: 4.4.4
   '@vueuse/core':
-    specifier: ^10.10.0
-    version: 10.10.0(vue@3.4.27)
+    specifier: ^10.10.1
+    version: 10.10.1(vue@3.4.27)
   '@vueuse/nuxt':
-    specifier: ^10.10.0
-    version: 10.10.0(nuxt@3.12.1)(rollup@4.18.0)(vue@3.4.27)
+    specifier: ^10.10.1
+    version: 10.10.1(nuxt@3.12.1)(rollup@4.18.0)(vue@3.4.27)
   '@vueuse/router':
-    specifier: ^10.10.0
-    version: 10.10.0(vue-router@4.3.3)(vue@3.4.27)
+    specifier: ^10.10.1
+    version: 10.10.1(vue-router@4.3.3)(vue@3.4.27)
   autoprefixer:
     specifier: ^10.4.19
     version: 10.4.19(postcss@8.4.38)
@@ -1994,7 +1994,7 @@ packages:
     resolution: {integrity: sha512-lWcCijOqf/5xqjK2vN3e828fzxvun2JgFRgc4q+iG6hn/L2WRvuBAikV4KuAe4NjQGz3J8xT2XzWqs7vitisCw==}
     dependencies:
       '@nuxt/ui': 2.16.0(nuxt@3.12.1)(rollup@4.18.0)(vite@5.2.13)(vue@3.4.27)
-      '@vueuse/core': 10.10.0(vue@3.4.27)
+      '@vueuse/core': 10.10.1(vue@3.4.27)
       defu: 6.1.4
       git-url-parse: 14.0.0
       ofetch: 1.3.4
@@ -2041,7 +2041,7 @@ packages:
       '@tailwindcss/container-queries': 0.1.1(tailwindcss@3.4.4)
       '@tailwindcss/forms': 0.5.7(tailwindcss@3.4.4)
       '@tailwindcss/typography': 0.5.13(tailwindcss@3.4.4)
-      '@vueuse/core': 10.10.0(vue@3.4.27)
+      '@vueuse/core': 10.10.1(vue@3.4.27)
       '@vueuse/integrations': 10.10.0(fuse.js@6.6.2)(vue@3.4.27)
       '@vueuse/math': 10.10.0(vue@3.4.27)
       defu: 6.1.4
@@ -4047,7 +4047,7 @@ packages:
       '@unocss/reset': 0.60.4
       '@vue/devtools-shared': 7.2.1
       '@vueuse/components': 10.10.0(vue@3.4.27)
-      '@vueuse/core': 10.10.0(vue@3.4.27)
+      '@vueuse/core': 10.10.1(vue@3.4.27)
       '@vueuse/integrations': 10.10.0(focus-trap@7.5.4)(vue@3.4.27)
       colord: 2.9.3
       floating-vue: 5.2.2(vue@3.4.27)
@@ -4131,6 +4131,17 @@ packages:
       '@types/web-bluetooth': 0.0.20
       '@vueuse/metadata': 10.10.0
       '@vueuse/shared': 10.10.0(vue@3.4.27)
+      vue-demi: 0.14.8(vue@3.4.27)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  /@vueuse/core@10.10.1(vue@3.4.27):
+    resolution: {integrity: sha512-8Vr8wxILdK+qfBjbngav8LVI+6UuM2TQCufRKMPz/GrpLHQ6dbY6kL5PLa9Eobq8JRrMaDyArPX9Jj18fMTPew==}
+    dependencies:
+      '@types/web-bluetooth': 0.0.20
+      '@vueuse/metadata': 10.10.1
+      '@vueuse/shared': 10.10.1(vue@3.4.27)
       vue-demi: 0.14.8(vue@3.4.27)
     transitivePeerDependencies:
       - '@vue/composition-api'
@@ -4248,14 +4259,17 @@ packages:
   /@vueuse/metadata@10.10.0:
     resolution: {integrity: sha512-UNAo2sTCAW5ge6OErPEHb5z7NEAg3XcO9Cj7OK45aZXfLLH1QkexDcZD77HBi5zvEiLOm1An+p/4b5K3Worpug==}
 
-  /@vueuse/nuxt@10.10.0(nuxt@3.12.1)(rollup@4.18.0)(vue@3.4.27):
-    resolution: {integrity: sha512-l8uFNuFASmcjPEaKAbigUrQZDtVQ9wRTfbuIBEpr3oAGnYtXGwBoQqYGnZopUR1Kdh8qiurpKuwvzVQnrzDjyw==}
+  /@vueuse/metadata@10.10.1:
+    resolution: {integrity: sha512-dpEL5afVLUqbchwGiLrV6spkl4/6UOKJ3YgxFE+wWLj/LakyIZUC83bfeFgbHkRcNhsAqTQCGR74jImsLfK8pg==}
+
+  /@vueuse/nuxt@10.10.1(nuxt@3.12.1)(rollup@4.18.0)(vue@3.4.27):
+    resolution: {integrity: sha512-CoikMWkj4z52ZKBAKe3tPN4rHkYBe1vH5/Unew2nl7EeSY1HqLnSsIfajDMqCKRBmw0kIA10oQpsVNRGl3USpw==}
     peerDependencies:
       nuxt: ^3.0.0
     dependencies:
       '@nuxt/kit': 3.12.1(rollup@4.18.0)
-      '@vueuse/core': 10.10.0(vue@3.4.27)
-      '@vueuse/metadata': 10.10.0
+      '@vueuse/core': 10.10.1(vue@3.4.27)
+      '@vueuse/metadata': 10.10.1
       local-pkg: 0.5.0
       nuxt: 3.12.1(@opentelemetry/api@1.8.0)(@types/node@20.14.2)(@unocss/reset@0.60.4)(eslint@9.4.0)(floating-vue@5.2.2)(rollup@4.18.0)(sass@1.77.4)(typescript@5.4.5)(unocss@0.60.4)(vite@5.2.13)(vue-tsc@2.0.21)
       vue-demi: 0.14.8(vue@3.4.27)
@@ -4266,12 +4280,12 @@ packages:
       - vue
     dev: true
 
-  /@vueuse/router@10.10.0(vue-router@4.3.3)(vue@3.4.27):
-    resolution: {integrity: sha512-NYPT7PFncdSOQSPxsaBOGfu1KnDeJIiqzf9qEFTzLnj8bjRXr3295M0bRnS3NxGT48j3UegpDcktlvVBCbivLw==}
+  /@vueuse/router@10.10.1(vue-router@4.3.3)(vue@3.4.27):
+    resolution: {integrity: sha512-pStxV6e0sGaFgNBxYLn0Tl6scgLT/lKx3b5QDeUGj17Cv5M9mDWx178+EKTYAnfKlZUXjkWzIGNX9aXSK81q7g==}
     peerDependencies:
       vue-router: '>=4.0.0-rc.1'
     dependencies:
-      '@vueuse/shared': 10.10.0(vue@3.4.27)
+      '@vueuse/shared': 10.10.1(vue@3.4.27)
       vue-demi: 0.14.8(vue@3.4.27)
       vue-router: 4.3.3(vue@3.4.27)
     transitivePeerDependencies:
@@ -4281,6 +4295,14 @@ packages:
 
   /@vueuse/shared@10.10.0(vue@3.4.27):
     resolution: {integrity: sha512-2aW33Ac0Uk0U+9yo3Ypg9s5KcR42cuehRWl7vnUHadQyFvCktseyxxEPBi1Eiq4D2yBGACOnqLZpx1eMc7g5Og==}
+    dependencies:
+      vue-demi: 0.14.8(vue@3.4.27)
+    transitivePeerDependencies:
+      - '@vue/composition-api'
+      - vue
+
+  /@vueuse/shared@10.10.1(vue@3.4.27):
+    resolution: {integrity: sha512-edqexI+RQpoeqDxTatqBZa+K87ganbrwpoP++Fd9828U3js5jzwcEDeyrYcUgkKZ5LLL8q7M5SOMvSpMrxBPxg==}
     dependencies:
       vue-demi: 0.14.8(vue@3.4.27)
     transitivePeerDependencies:
@@ -11651,7 +11673,7 @@ packages:
       vue-observe-visibility: 2.0.0-alpha.1(vue@3.4.27)
       vue-resize: 2.0.0-alpha.1(vue@3.4.27)
 
-  /vue3-colorpicker@2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@10.10.0)(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1)(vue@3.4.27):
+  /vue3-colorpicker@2.3.0(@aesoper/normal-utils@0.1.5)(@popperjs/core@2.11.8)(@vueuse/core@10.10.1)(gradient-parser@1.0.2)(lodash-es@4.17.21)(tinycolor2@1.6.0)(vue-types@4.2.1)(vue@3.4.27):
     resolution: {integrity: sha512-e3lLmBcy7mkRrNQVeUny1DjOd6E11L8H5ok5Bx4MdXmrG+RzyacRF7KkhrEWmRYPhKAsaoUrWsFkmpPAaYnE5A==}
     peerDependencies:
       '@aesoper/normal-utils': ^0.1.5
@@ -11665,7 +11687,7 @@ packages:
     dependencies:
       '@aesoper/normal-utils': 0.1.5
       '@popperjs/core': 2.11.8
-      '@vueuse/core': 10.10.0(vue@3.4.27)
+      '@vueuse/core': 10.10.1(vue@3.4.27)
       gradient-parser: 1.0.2
       lodash-es: 4.17.21
       tinycolor2: 1.6.0

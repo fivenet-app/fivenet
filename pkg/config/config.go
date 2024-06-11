@@ -13,7 +13,6 @@ type Config struct {
 	Tracing Tracing `yaml:"tracing"`
 
 	HTTP        HTTP       `yaml:"http"`
-	GRPC        GRPC       `yaml:"grpc"`
 	Database    Database   `yaml:"database"`
 	NATS        NATS       `yaml:"nats"`
 	JWT         JWT        `yaml:"jwt"`
@@ -66,10 +65,6 @@ type Sessions struct {
 type Links struct {
 	PrivacyPolicy *string `json:"privacyPolicy"`
 	Imprint       *string `json:"imprint"`
-}
-
-type GRPC struct {
-	Listen string `default:":9090" yaml:"listen"`
 }
 
 type Database struct {

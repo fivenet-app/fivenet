@@ -191,7 +191,7 @@ func NewEngine(p EngineParams) *gin.Engine {
 	}
 	wrapperGrpc := grpcws.WrapServer(
 		p.GRPCSrv,
-		grpcws.WithAllowedRequestHeaders([]string{"Cookie", "cookie"}), // Allow cookie header
+		grpcws.WithAllowedRequestHeaders([]string{"Origin", "Content-Length", "Content-Type", "Cookie", "Keep-Alive"}), // Allow cookie header
 		grpcws.WithWebsocketChannelMaxStreamCount(10000),
 		grpcws.WithWebsocketOriginFunc(func(req *http.Request) bool {
 			return true

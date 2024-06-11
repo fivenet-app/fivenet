@@ -22,8 +22,6 @@ http:
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "fivenet.example.com"
-grpc:
-  listen: ":9090"
 database:
   # refer to https://github.com/go-sql-driver/mysql#dsn-data-source-name for details
   dsn: "DB_USER:DB_PASS@tcp(DB_HOST:DB_PORT)/DB_NAME?collation=utf8mb4_unicode_ci&parseTime=True&loc=Europe%2FBerlin"

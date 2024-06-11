@@ -1,21 +1,6 @@
 version: '3.5'
 
 services:
-  # GRPC Web to GRPC proxy
-  envoy:
-    container_name: envoy
-    image: docker.io/envoyproxy/envoy:v1.30.2
-    environment:
-      - ENVOY_UID=0
-    volumes:
-      - ./envoy.yaml:/etc/envoy/envoy.yaml
-      - ${HOME}/.vite-plugin-mkcert:/certs:ro
-    user: 0:0
-    ports:
-      - "8181:8181"
-    network_mode: host
-    restart: unless-stopped
-
   # Used for testing only
   mysql:
     container_name: mysql
@@ -61,7 +46,6 @@ services:
   #  ports:
   #    - "7070:7070"
   #    - "8080:8080"
-  #    - "9090:9090"
   #  network_mode: host
   #  restart: unless-stopped
   #  volumes:
