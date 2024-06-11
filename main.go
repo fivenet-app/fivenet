@@ -35,7 +35,6 @@ import (
 	"go.uber.org/fx/fxevent"
 	"go.uber.org/zap"
 
-	grpcserver "google.golang.org/grpc"
 	// GRPC Services
 	pbauth "github.com/fivenet-app/fivenet/gen/go/proto/services/auth"
 	pbcalendar "github.com/fivenet-app/fivenet/gen/go/proto/services/calendar"
@@ -74,16 +73,11 @@ func (c *FrontendCmd) Run(ctx *Context) error {
 }
 
 type ServerCmd struct {
-	ServeFrontend bool `help:"Serve HTTP Frontend."`
 }
 
 func (c *ServerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts(cli.StartTimeout)
-	fxOpts = append(fxOpts, fx.Invoke(func(*grpcserver.Server) {}))
-
-	if c.ServeFrontend {
-		fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
-	}
+	fxOpts = append(fxOpts, fx.Invoke(func(server.HTTPServer) {}))
 
 	app := fx.New(fxOpts...)
 	app.Run()
