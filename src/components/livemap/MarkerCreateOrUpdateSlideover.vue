@@ -8,6 +8,7 @@ import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { format } from 'date-fns';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
+import type { DefineComponent } from 'vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -117,6 +118,19 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
         handleGRPCError(e as RpcError);
         throw e;
     }
+}
+
+async function markerIconSearch(query: string): Promise<DefineComponent[]> {
+    // Remove spaces from query as icon names don't have spaces
+    query = query.toLowerCase().replaceAll(' ', '').trim();
+    let count = 0;
+    return markerIcons.filter((icon) => {
+        if (count < 15 && icon.name.toLowerCase().includes(query)) {
+            count++;
+            return true;
+        }
+        return false;
+    });
 }
 
 const canSubmit = ref(true);
@@ -318,7 +332,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UFormGroup name="icon">
                                     <USelectMenu
                                         v-model="state.icon"
-                                        :options="markerIcons"
+                                        :searchable="markerIconSearch"
                                         :searchable-placeholder="$t('common.search_field')"
                                         value-attribute="name"
                                         @focusin="focusTablet(true)"

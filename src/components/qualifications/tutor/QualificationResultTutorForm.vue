@@ -78,10 +78,7 @@ async function createOrUpdateQualificationResult(
 
 watch(
     () => props.score,
-    () => {
-        console.log('score', props.score);
-        state.score = props.score ?? 0;
-    },
+    () => (state.score = props.score ?? 0),
 );
 
 const canSubmit = ref(true);

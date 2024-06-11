@@ -12,7 +12,7 @@ function getParentResourceName(): string {
 
 export async function fetchNUI<T = any, V = any>(event: string, data: T): Promise<V> {
     const body = JSON.stringify(data);
-    console.debug(`NUI: Fetch ${event}: ${body}`);
+    console.debug(`NUI: Fetch ${event}:`, body);
     // @ts-ignore FiveM NUI functions
     const resp = await fetch(`https://${getParentResourceName()}/${event}`, {
         method: 'POST',
@@ -39,7 +39,7 @@ export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<voi
     if (event.data.type === 'navigateTo') {
         await navigateTo(event.data.route);
     } else {
-        console.error('NUI Message: Unknown message type received', event.data);
+        console.error('NUI: Message - Unknown message type received', event.data);
     }
 }
 

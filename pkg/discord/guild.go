@@ -32,10 +32,12 @@ type Guild struct {
 	job string
 	id  string
 
-	logger  *zap.Logger
-	bot     *Bot
-	guild   *discordgo.Guild
-	modules []string
+	logger *zap.Logger
+	bot    *Bot
+	guild  *discordgo.Guild
+
+	lastVersion int
+	modules     []string
 }
 
 func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
@@ -85,6 +87,11 @@ func (g *Guild) Run() error {
 		return nil
 	}
 
+	if g.lastVersion == g.bot.discord.State.Version {
+		g.logger.Warn("discord state version is same", zap.Int("discord_state_last_version", g.lastVersion), zap.Int("discord_state_version", g.bot.discord.State.Version))
+	}
+	g.lastVersion = g.bot.discord.State.Version
+
 	settings, planDiff, err := g.getSyncSettings(g.ctx, g.job)
 	if err != nil {
 		return err
@@ -133,6 +140,7 @@ func (g *Guild) Run() error {
 		return errs
 	}
 	logs = append(logs, ls...)
+	plan.DryRun = settings.DryRun
 
 	// Encode plan as yaml for our "change list"
 	b := bytes.Buffer{}
@@ -146,8 +154,7 @@ func (g *Guild) Run() error {
 		Plan: b.String(),
 	})
 
-	if !settings.DryRun {
-		plan.DryRun = false
+	if !plan.DryRun {
 		pLogs, err := plan.Apply(g.ctx, g.bot.discord)
 		logs = append(logs, pLogs...)
 		if err != nil {

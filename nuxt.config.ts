@@ -88,6 +88,11 @@ export default defineNuxtConfig({
                     rewrite: (path) => path.replace(/^\/api\/icons/, ''),
                     changeOrigin: true,
                 },
+                '/api/ws': {
+                    target: 'http://localhost:8080',
+                    changeOrigin: true,
+                    ws: true,
+                },
                 '/api': 'http://localhost:8080',
                 '/grpc': {
                     target: 'http://localhost:8181',

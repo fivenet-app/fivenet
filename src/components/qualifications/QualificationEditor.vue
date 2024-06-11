@@ -428,7 +428,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @error="console.log($event)" @submit="onSubmitThrottle" class="pb-24">
+    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle" class="pb-24">
         <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
             <template #right>
                 <UButtonGroup class="inline-flex">

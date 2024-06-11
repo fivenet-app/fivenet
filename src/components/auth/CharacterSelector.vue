@@ -62,7 +62,13 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             }"
             :ui="{ item: 'basis-full sm:basis-1/4', container: 'rounded-lg' }"
         >
-            <CharacterSelectorCard :key="item.userId" :char="item.char" :disabled="!item.available" :can-submit="canSubmit" @selected="onSubmitThrottle($event)" />
+            <CharacterSelectorCard
+                :key="item.userId"
+                :char="item.char"
+                :disabled="!item.available"
+                :can-submit="canSubmit"
+                @selected="onSubmitThrottle($event)"
+            />
         </UCarousel>
 
         <UContainer v-if="chars?.find((c) => c.available === false)" class="mt-4" :ui="{ constrained: 'max-w-xl' }">

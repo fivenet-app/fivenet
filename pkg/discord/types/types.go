@@ -71,9 +71,11 @@ func (u *User) Merge(user *User) {
 		u.KickReason = user.KickReason
 	}
 
-	if user.Roles != nil && len(u.Roles.Sum) > 0 {
+	if u.Roles == nil {
+		u.Roles = &UserRoles{}
+	}
+	if user.Roles != nil && len(user.Roles.Sum) > 0 {
 		u.Roles.Sum = append(u.Roles.Sum, user.Roles.Sum...)
 		u.Roles.Sum = utils.RemoveSliceDuplicates(u.Roles.Sum)
-
 	}
 }

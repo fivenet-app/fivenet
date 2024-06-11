@@ -29,6 +29,10 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	disconnectRestartCountThreshold = 5
+)
+
 var (
 	tJobProps = table.FivenetJobProps.AS("jobprops")
 )
@@ -94,9 +98,10 @@ type Bot struct {
 
 	wg sync.WaitGroup
 
-	id           string
-	discord      *discordgo.Session
-	activeGuilds *xsync.MapOf[string, *Guild]
+	id              string
+	disconnectCount atomic.Uint64
+	discord         *discordgo.Session
+	activeGuilds    *xsync.MapOf[string, *Guild]
 }
 
 func NewBot(p BotParams) (*Bot, error) {
@@ -130,14 +135,28 @@ func NewBot(p BotParams) (*Bot, error) {
 
 		wg: sync.WaitGroup{},
 
-		discord:      discord,
-		activeGuilds: xsync.NewMapOf[string, *Guild](),
+		disconnectCount: atomic.Uint64{},
+		discord:         discord,
+		activeGuilds:    xsync.NewMapOf[string, *Guild](),
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
 		if err := b.start(ctx); err != nil {
 			return err
 		}
+
+		// Cause discord client disconnects to cause bot restart
+		b.discord.AddHandler(func(discord *discordgo.Session, r *discordgo.Disconnect) {
+			b.logger.Warn("discord client disconnected")
+
+			b.disconnectCount.Add(1)
+
+			if b.disconnectCount.Load() > disconnectRestartCountThreshold {
+				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
+					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
+				}
+			}
+		})
 
 		go func() {
 			b.logger.Info("sleeping 5 seconds before running first discord sync")
