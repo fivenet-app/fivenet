@@ -189,6 +189,7 @@ func NewEngine(p EngineParams) *gin.Engine {
 			p.Logger.Error("failed to read 404.html file contents", zap.Error(err))
 		}
 	}
+
 	wrapperGrpc := grpcws.WrapServer(
 		p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders([]string{"Origin", "Content-Length", "Content-Type", "Cookie", "Keep-Alive"}), // Allow cookie header
@@ -197,16 +198,15 @@ func NewEngine(p EngineParams) *gin.Engine {
 			return true
 		}),
 		grpcws.WithCorsForRegisteredEndpointsOnly(false),
+		grpcws.WithAllowNonRootResource(true),
 	)
+	ginWrappedGrpc := gin.WrapH(wrapperGrpc)
+	e.Any("/api/grpc", ginWrappedGrpc)
+	e.Any("/api/grpc/*path", ginWrappedGrpc)
 
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
-		if strings.HasPrefix(requestPath, "/api/ws") {
-			wrapperGrpc.ServeHTTP(c.Writer, c.Request)
-			return
-		}
-
-		if strings.HasPrefix(requestPath, "/api") || requestPath == "/" {
+		if requestPath == "/" {
 			return
 		}
 

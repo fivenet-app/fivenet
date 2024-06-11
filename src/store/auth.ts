@@ -1,5 +1,6 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { parseQuery } from 'vue-router';
+import { closeWebsocketChannels } from '~/composables/grpcws/transports/websocket/websocketChannel';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -76,6 +77,7 @@ export const useAuthStore = defineStore('auth', {
             this.setPermissions([]);
             this.setJobProps(undefined);
             this.username = null;
+            closeWebsocketChannels();
         },
 
         // GRPC Calls
@@ -93,7 +95,7 @@ export const useAuthStore = defineStore('auth', {
 
                 this.username = username;
                 if (!response.char) {
-                    console.info('Simple login response received, redirecting to char selector');
+                    console.info('Login response without included char, redirecting to char selector');
                     this.setAccessTokenExpiration(toDate(response.expires));
 
                     const route = useRoute();
@@ -103,7 +105,7 @@ export const useAuthStore = defineStore('auth', {
                         query: route.query,
                     });
                 } else {
-                    console.info('Received fast-tracked char response for char id:', response.char.char?.userId);
+                    console.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
                     this.setActiveChar(response.char.char ?? null);
                     this.setAccessTokenExpiration(toDate(response.char.expires));
                     this.setPermissions(response.char.permissions);

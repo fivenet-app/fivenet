@@ -38,6 +38,7 @@ export class GrpcWSTransport implements RpcTransport {
                 methodDefinition: method,
                 debug: opt.debug,
                 url: opt.url,
+
                 onChunk(chunkBytes) {
                     defHeader.resolvePending({});
                     defTrailer.resolvePending({});
@@ -99,6 +100,7 @@ export class GrpcWSTransport implements RpcTransport {
                 methodDefinition: method,
                 debug: opt.debug,
                 url: opt.url,
+
                 onChunk(chunkBytes) {
                     if (outStream.closed) {
                         transport.cancel();
@@ -164,6 +166,7 @@ export class GrpcWSTransport implements RpcTransport {
                 methodDefinition: method,
                 debug: opt.debug,
                 url: opt.url,
+
                 onChunk(chunkBytes) {
                     defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
@@ -219,6 +222,7 @@ export class GrpcWSTransport implements RpcTransport {
                 methodDefinition: method,
                 debug: opt.debug,
                 url: opt.url,
+
                 onChunk(chunkBytes) {
                     outStream.notifyMessage(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },

@@ -5,6 +5,7 @@ package grpcws
 
 import (
 	"context"
+	"encoding/base64"
 	"io"
 	"net/http"
 	"strings"
@@ -25,6 +26,7 @@ var (
 // https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md#protocol-differences-vs-grpc-over-http2
 const grpcContentType = "application/grpc"
 const grpcWebContentType = "application/grpc-web"
+const grpcWebTextContentType = "application/grpc-web-text"
 
 type WrappedGrpcServer struct {
 	handler             http.Handler
@@ -116,13 +118,29 @@ func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Reques
 				return
 			}
 		}
+
 		resp.WriteHeader(http.StatusForbidden)
 		_, _ = resp.Write(make([]byte, 0))
-	} else {
-		resp.WriteHeader(400)
-		resp.Write([]byte("only support websocket requests, Sec-Websocket-Protocol == grpc-websocket-channel"))
+	}
+
+	if w.IsAcceptableGrpcCorsRequest(req) || w.IsGrpcWebRequest(req) {
+		w.corsWrapper.Handler(http.HandlerFunc(w.HandleGrpcWebRequest)).ServeHTTP(resp, req)
 		return
 	}
+
+	resp.WriteHeader(400)
+	resp.Write([]byte("only support websocket requests, Sec-Websocket-Protocol == grpc-websocket-channel"))
+}
+
+// HandleGrpcWebRequest takes a HTTP request that is assumed to be a gRPC-Web request and wraps it with a compatibility
+// layer to transform it to a standard gRPC request for the wrapped gRPC server and transforms the response to comply
+// with the gRPC-Web protocol.
+func (w *WrappedGrpcServer) HandleGrpcWebRequest(resp http.ResponseWriter, req *http.Request) {
+	intReq, isTextFormat := hackIntoNormalGrpcRequest(req)
+	intResp := newGrpcWebResponse(resp, isTextFormat)
+	intReq.URL.Path = w.endpointFunc(intReq)
+	w.handler.ServeHTTP(intResp, intReq)
+	intResp.finishRequest(req)
 }
 
 // IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Sec-Websocket-Protocol"
@@ -217,6 +235,13 @@ func hackIntoNormalGrpcRequest(req *http.Request) (*http.Request, bool) {
 
 	contentType := req.Header.Get("content-type")
 	incomingContentType := grpcWebContentType
+	isTextFormat := strings.HasPrefix(contentType, grpcWebTextContentType)
+	if isTextFormat {
+		// body is base64-encoded: decode it; Wrap it in readerCloser so Body is still closed
+		decoder := base64.NewDecoder(base64.StdEncoding, req.Body)
+		req.Body = &readerCloser{reader: decoder, closer: req.Body}
+		incomingContentType = grpcWebTextContentType
+	}
 	req.Header.Set("content-type", strings.Replace(contentType, incomingContentType, grpcContentType, 1))
 
 	// Remove content-length header since it represents http1.1 payload size, not the sum of the h2
@@ -224,7 +249,7 @@ func hackIntoNormalGrpcRequest(req *http.Request) (*http.Request, bool) {
 	// switches to chunked encoding which is the default for h2
 	req.Header.Del("content-length")
 
-	return req, false
+	return req, isTextFormat
 }
 
 func defaultWebsocketOriginFunc(req *http.Request) bool {

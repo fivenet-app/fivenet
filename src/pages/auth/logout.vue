@@ -15,22 +15,17 @@ definePageMeta({
 
 const authStore = useAuthStore();
 const { doLogout } = authStore;
-const { username } = storeToRefs(authStore);
 
 onMounted(async () => {
-    if (!username.value) {
-        await navigateTo({ name: 'auth-login' });
-    } else {
-        try {
-            await doLogout();
-        } finally {
-            useTimeoutFn(async () => {
-                const route = useRoute();
-                if (route.name === 'auth-logout') {
-                    await navigateTo({ name: 'index' });
-                }
-            }, 1500);
-        }
+    try {
+        await doLogout();
+    } finally {
+        useTimeoutFn(async () => {
+            const route = useRoute();
+            if (route.name === 'auth-logout') {
+                await navigateTo({ name: 'index' });
+            }
+        }, 1500);
     }
 });
 </script>

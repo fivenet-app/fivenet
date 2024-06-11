@@ -1,3 +1,4 @@
+import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
 import { GrpcWSTransport } from '~/composables/grpcws/bridge';
 import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
@@ -22,8 +23,17 @@ import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestor
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 
+const grpcWebTransport = new GrpcWebFetchTransport({
+    baseUrl: '/api/grpc',
+    format: 'text',
+    fetchInit: {
+        credentials: 'same-origin',
+    },
+    timeout: 8500,
+});
+
 const grpcWSTransport = new GrpcWSTransport({
-    url: `${window.location.protocol}//${window.location.hostname}:${!import.meta.dev ? window.location.port : 8080}/api/ws`,
+    url: `${window.location.protocol}//${window.location.hostname}:${!import.meta.dev ? window.location.port : 8080}/api/grpc`,
     interceptors: [],
     debug: import.meta.dev,
 });
@@ -131,7 +141,7 @@ export async function handleGRPCError(err: RpcError): Promise<boolean> {
 // GRPC Clients ===============================================================
 // Auth
 export function getGRPCAuthClient(): AuthServiceClient {
-    return new AuthServiceClient(grpcWSTransport);
+    return new AuthServiceClient(grpcWebTransport);
 }
 
 // Centrum

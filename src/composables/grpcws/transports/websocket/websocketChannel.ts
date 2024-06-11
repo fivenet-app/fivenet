@@ -4,10 +4,11 @@ import { headersToMetadata } from '../../bridge/utils';
 import { Metadata } from '../../metadata';
 import { type Transport, type TransportFactory, type TransportOptions } from '../transport';
 
-export function WebsocketChannelTransport(): TransportFactory {
-    type WebsocketAddress = string;
-    let activeWebsockets = new Map<WebsocketAddress, WebsocketChannel>();
+type WebsocketAddress = string;
 
+const activeWebsockets = new Map<WebsocketAddress, WebsocketChannel>();
+
+export function WebsocketChannelTransport(): TransportFactory {
     function getChannel(wsHost: string): WebsocketChannel {
         let channel = activeWebsockets.get(wsHost);
         if (channel == null) {
@@ -24,6 +25,12 @@ export function WebsocketChannelTransport(): TransportFactory {
 
         return getChannel(wsHost).websocketChannelRequest(opts);
     };
+}
+
+export function closeWebsocketChannels(): void {
+    activeWebsockets.forEach((ws) => ws.close());
+
+    activeWebsockets.clear();
 }
 
 interface GrpcStream extends Transport {
