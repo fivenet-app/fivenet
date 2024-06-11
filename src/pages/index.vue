@@ -20,7 +20,7 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
 
-const appVersion = __APP_VERSION__.split('-')[0];
+const appVersion = APP_VERSION.split('-')[0];
 
 const links = computed(
     () =>

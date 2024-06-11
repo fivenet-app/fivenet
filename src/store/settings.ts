@@ -36,7 +36,7 @@ export interface SettingsState {
 export const useSettingsStore = defineStore('settings', {
     state: () =>
         ({
-            version: __APP_VERSION__,
+            version: APP_VERSION,
             updateAvailable: false,
             locale: null,
 

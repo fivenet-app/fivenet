@@ -57,11 +57,11 @@ useSeoMeta({
 const settings = useSettingsStore();
 const { locale: userLocale, isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
-if (__APP_VERSION__ !== settings.version) {
-    console.info('Resetting app data because new version has been detected', settings.version, __APP_VERSION__);
+if (APP_VERSION !== settings.version) {
+    console.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
-    settings.setVersion(__APP_VERSION__);
+    settings.setVersion(APP_VERSION);
 }
 
 // Set locale and theme colors in app config
@@ -135,6 +135,7 @@ const route = router.currentRoute;
     <div>
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
 
+        <NuxtRouteAnnouncer />
         <NuxtLayout>
             <NuxtPage
                 :transition="{

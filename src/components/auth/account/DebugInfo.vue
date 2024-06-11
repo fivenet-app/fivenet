@@ -41,7 +41,7 @@ async function sendTestNotifications(): Promise<void> {
     });
 }
 
-const version = __APP_VERSION__;
+const version = APP_VERSION;
 </script>
 
 <template>

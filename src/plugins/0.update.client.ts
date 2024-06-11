@@ -9,7 +9,7 @@ export default defineNuxtPlugin(() => {
             'Update Check: Detected new version',
             version,
             'app version',
-            __APP_VERSION__,
+            APP_VERSION,
             'settings store version',
             settings.version,
         );
@@ -18,7 +18,7 @@ export default defineNuxtPlugin(() => {
             return;
         }
 
-        if (__APP_VERSION__ !== version) {
+        if (APP_VERSION !== version) {
             settings.setUpdateAvailable(version as string);
         }
     });

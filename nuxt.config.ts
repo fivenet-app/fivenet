@@ -27,6 +27,13 @@ export default defineNuxtConfig({
     future: {
         compatibilityVersion: 4,
     },
+    experimental: {
+        defaults: {
+            useAsyncData: {
+                deep: true,
+            },
+        },
+    },
     ui: {
         icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
@@ -54,7 +61,6 @@ export default defineNuxtConfig({
             compilerOptions: {
                 removeComments: true,
             },
-            exclude: ['../docs'],
         },
     },
     imports: {
@@ -78,7 +84,7 @@ export default defineNuxtConfig({
     },
     vite: {
         define: {
-            __APP_VERSION__: `"${appVersion}"`,
+            APP_VERSION: `"${appVersion}"`,
         },
         build: {
             terserOptions: {
@@ -159,7 +165,7 @@ export default defineNuxtConfig({
     },
     update: {
         version: appVersion,
-        checkInterval: 110,
+        checkInterval: 115,
         path: '/api/version',
     },
 });
