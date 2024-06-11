@@ -11,6 +11,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	grpcws "github.com/fivenet-app/fivenet/pkg/grpc/grpcws"
 	"github.com/gin-contrib/cors"
 	"github.com/gin-contrib/sessions"
 	"github.com/gin-contrib/sessions/cookie"
@@ -23,6 +24,7 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	"google.golang.org/grpc"
 )
 
 var HTTPServerModule = fx.Module("httpserver",
@@ -101,6 +103,8 @@ type EngineParams struct {
 	TokenMgr *auth.TokenMgr
 
 	Services []Service `group:"httpservices"`
+
+	GRPCSrv *grpc.Server
 }
 
 func NewEngine(p EngineParams) *gin.Engine {
@@ -185,9 +189,23 @@ func NewEngine(p EngineParams) *gin.Engine {
 			p.Logger.Error("failed to read 404.html file contents", zap.Error(err))
 		}
 	}
+	wrapperGrpc := grpcws.WrapServer(
+		p.GRPCSrv,
+		grpcws.WithAllowedRequestHeaders([]string{"Cookie", "cookie"}), // Allow cookie header
+		grpcws.WithWebsocketChannelMaxStreamCount(10000),
+		grpcws.WithWebsocketOriginFunc(func(req *http.Request) bool {
+			return true
+		}),
+		grpcws.WithCorsForRegisteredEndpointsOnly(false),
+	)
 
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
+		if strings.HasPrefix(requestPath, "/api/ws") {
+			wrapperGrpc.ServeHTTP(c.Writer, c.Request)
+			return
+		}
+
 		if strings.HasPrefix(requestPath, "/api") || requestPath == "/" {
 			return
 		}

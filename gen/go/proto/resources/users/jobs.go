@@ -217,6 +217,10 @@ func (x *DiscordSyncChanges) Value() (driver.Value, error) {
 }
 
 func (x *DiscordSyncChanges) Add(change *DiscordSyncChange) {
+	if x.Changes == nil {
+		x.Changes = []*DiscordSyncChange{}
+	}
+
 	if len(x.Changes) > 0 {
 		lastChange := x.Changes[len(x.Changes)-1]
 

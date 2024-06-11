@@ -10,6 +10,7 @@ require (
 	github.com/blevesearch/bleve/v2 v2.4.0
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/creasty/defaults v1.7.0
+	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/gin-contrib/cors v1.7.2
@@ -22,13 +23,16 @@ require (
 	github.com/go-sql-driver/mysql v1.8.1
 	github.com/golang-jwt/jwt/v5 v5.2.1
 	github.com/golang-migrate/migrate/v4 v4.17.1
+	github.com/golang/protobuf v1.5.4
 	github.com/gosimple/slug v1.14.0
 	github.com/grpc-ecosystem/go-grpc-middleware/providers/prometheus v1.0.1
 	github.com/grpc-ecosystem/go-grpc-middleware/v2 v2.1.0
 	github.com/h2non/filetype v1.1.3
+	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.26
 	github.com/minio/minio-go/v7 v7.0.71
+	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
 	github.com/nats-io/nats-server/v2 v2.10.16
 	github.com/nats-io/nats.go v1.35.0
 	github.com/ory/dockertest/v3 v3.10.0
@@ -36,6 +40,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.19.1
 	github.com/puzpuzpuz/xsync/v3 v3.1.0
+	github.com/rs/cors v1.11.0
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	go.eigsys.de/gin-cachecontrol/v2 v2.1.0
@@ -59,6 +64,7 @@ require (
 	google.golang.org/protobuf v1.34.1
 	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.1
+	nhooyr.io/websocket v1.8.11
 	willnorris.com/go/imageproxy v0.11.2
 )
 
@@ -117,7 +123,6 @@ require (
 	github.com/goccy/go-json v0.10.2 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
-	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect
 	github.com/google/go-cmp v0.6.0 // indirect
 	github.com/google/shlex v0.0.0-20191202100458-e7afc7fbc510 // indirect

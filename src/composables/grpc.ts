@@ -1,4 +1,4 @@
-import { GrpcWebFetchTransport } from '@protobuf-ts/grpcweb-transport';
+import { GrpcWSTransport } from '~/composables/grpcws/bridge';
 import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -22,11 +22,10 @@ import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestor
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 
-const grpcTransport = new GrpcWebFetchTransport({
-    baseUrl: '/grpc',
-    format: 'text',
+const grpcWSTransport = new GrpcWSTransport({
+    url: `${window.location.protocol}//${window.location.hostname}:${!import.meta.dev ? window.location.port : 8080}/api/ws`,
     interceptors: [],
-    fetchInit: { credentials: 'same-origin' },
+    debug: import.meta.dev,
 });
 
 // Handle GRPC errors
@@ -37,13 +36,10 @@ export async function handleGRPCError(err: RpcError): Promise<boolean> {
         id: '',
         type: NotificationType.ERROR,
         title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
-        description: { key: err.message ?? 'Unknown error', parameters: {} },
+        description: { key: err?.message ?? 'Unknown error', parameters: {} },
     } as Notification;
 
-    let traceId = 'UNKNOWN';
-    if (err.meta !== undefined && err.meta['x-trace-id'] !== undefined) {
-        traceId = err.meta['x-trace-id'] as string;
-    }
+    const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'UNKNOWN';
 
     if (err.code !== undefined) {
         const route = useRoute();
@@ -135,85 +131,85 @@ export async function handleGRPCError(err: RpcError): Promise<boolean> {
 // GRPC Clients ===============================================================
 // Auth
 export function getGRPCAuthClient(): AuthServiceClient {
-    return new AuthServiceClient(grpcTransport);
+    return new AuthServiceClient(grpcWSTransport);
 }
 
 // Centrum
 export function getGRPCCentrumClient(): CentrumServiceClient {
-    return new CentrumServiceClient(grpcTransport);
+    return new CentrumServiceClient(grpcWSTransport);
 }
 
 // Citizens
 export function getGRPCCitizenStoreClient(): CitizenStoreServiceClient {
-    return new CitizenStoreServiceClient(grpcTransport);
+    return new CitizenStoreServiceClient(grpcWSTransport);
 }
 
 // Completion
 export function getGRPCCompletorClient(): CompletorServiceClient {
-    return new CompletorServiceClient(grpcTransport);
+    return new CompletorServiceClient(grpcWSTransport);
 }
 
 // DMV (Vehicles)
 export function getGRPCDMVClient(): DMVServiceClient {
-    return new DMVServiceClient(grpcTransport);
+    return new DMVServiceClient(grpcWSTransport);
 }
 
 // Documents
 export function getGRPCDocStoreClient(): DocStoreServiceClient {
-    return new DocStoreServiceClient(grpcTransport);
+    return new DocStoreServiceClient(grpcWSTransport);
 }
 
 // Livemap
 export function getGRPCLivemapperClient(): LivemapperServiceClient {
-    return new LivemapperServiceClient(grpcTransport);
+    return new LivemapperServiceClient(grpcWSTransport);
 }
 
 // Notificator
 export function getGRPCNotificatorClient(): NotificatorServiceClient {
-    return new NotificatorServiceClient(grpcTransport);
+    return new NotificatorServiceClient(grpcWSTransport);
 }
 
 // Rector
 export function getGRPCRectorClient(): RectorServiceClient {
-    return new RectorServiceClient(grpcTransport);
+    return new RectorServiceClient(grpcWSTransport);
 }
 
 export function getGRPCRectorConfigClient(): RectorConfigServiceClient {
-    return new RectorConfigServiceClient(grpcTransport);
+    return new RectorConfigServiceClient(grpcWSTransport);
 }
 
 export function getGRPCRectorFilestoreClient(): RectorFilestoreServiceClient {
-    return new RectorFilestoreServiceClient(grpcTransport);
+    return new RectorFilestoreServiceClient(grpcWSTransport);
 }
 
 export function getGRPCRectorLawsClient(): RectorLawsServiceClient {
-    return new RectorLawsServiceClient(grpcTransport);
+    return new RectorLawsServiceClient(grpcWSTransport);
 }
 
 // Jobs
 export function getGRPCJobsClient(): JobsServiceClient {
-    return new JobsServiceClient(grpcTransport);
+    return new JobsServiceClient(grpcWSTransport);
 }
 
 export function getGRPCJobsConductClient(): JobsConductServiceClient {
-    return new JobsConductServiceClient(grpcTransport);
+    return new JobsConductServiceClient(grpcWSTransport);
 }
 
 export function getGRPCJobsTimeclockClient(): JobsTimeclockServiceClient {
-    return new JobsTimeclockServiceClient(grpcTransport);
+    return new JobsTimeclockServiceClient(grpcWSTransport);
 }
 
 // Qualifications
 export function getGRPCQualificationsClient(): QualificationsServiceClient {
-    return new QualificationsServiceClient(grpcTransport);
+    return new QualificationsServiceClient(grpcWSTransport);
 }
 
 // Calendar
 export function getGRPCCalendarClient(): CalendarServiceClient {
-    return new CalendarServiceClient(grpcTransport);
+    return new CalendarServiceClient(grpcWSTransport);
 }
 
 // Messenger
 export function getGRPCMessengerClient(): MessengerServiceClient {
-    return new MessengerServiceClient(grpcTransport);
+    return new MessengerServiceClient(grpcWSTransport);
 }

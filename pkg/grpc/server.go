@@ -28,8 +28,10 @@ import (
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+	"go.uber.org/zap/zapgrpc"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
+	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/keepalive"
 	"google.golang.org/grpc/status"
 )
@@ -146,6 +148,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			),
 		),
 	)
+	grpclog.SetLoggerV2(zapgrpc.NewLogger(p.Logger))
 
 	for _, service := range p.Services {
 		service.RegisterServer(srv)
@@ -169,7 +172,7 @@ func NewServer(p ServerParams) (ServerResult, error) {
 			go func() {
 				srv.GracefulStop()
 			}()
-			// Wait 3 seconds before "forceful stop
+			// Wait 3 seconds before "forceful stop"
 			time.Sleep(3 * time.Second)
 
 			srv.Stop()
