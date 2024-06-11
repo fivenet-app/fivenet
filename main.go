@@ -72,8 +72,7 @@ func (c *FrontendCmd) Run(ctx *Context) error {
 	return nil
 }
 
-type ServerCmd struct {
-}
+type ServerCmd struct{}
 
 func (c *ServerCmd) Run(ctx *Context) error {
 	fxOpts := getFxBaseOpts(cli.StartTimeout)

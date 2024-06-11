@@ -42,7 +42,6 @@ services:
   #  image: ghcr.io/fivenet-app/fivenet:main
   #  command:
   #    - server
-  #    - --serve-frontend
   #  ports:
   #    - "7070:7070"
   #    - "8080:8080"
