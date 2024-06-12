@@ -79,12 +79,12 @@ const onBeforeEnter = async () => {
 
 // NUI message handling
 onMounted(async () => {
-    if (process.client && isNUIAvailable.value) {
+    if (import.meta.client && isNUIAvailable.value) {
         window.addEventListener('message', onNUIMessage);
     }
 });
 onBeforeUnmount(async () => {
-    if (process.client && isNUIAvailable.value) {
+    if (import.meta.client && isNUIAvailable.value) {
         window.removeEventListener('message', onNUIMessage);
     }
 });

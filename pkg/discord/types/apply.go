@@ -2,6 +2,7 @@ package types
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/bwmarrin/discordgo"
 	"go.uber.org/multierr"
@@ -35,7 +36,7 @@ func (p *Plan) applyRoles(ctx context.Context, dc *discordgo.Session, guildId st
 			Permissions: role.Permissions,
 		}, discordgo.WithContext(ctx))
 		if err != nil {
-			errs = multierr.Append(errs, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to create role %s. %w", role.Name, err))
 			continue
 		}
 
@@ -49,7 +50,7 @@ func (p *Plan) applyRoles(ctx context.Context, dc *discordgo.Session, guildId st
 			Permissions: role.Permissions,
 		}, discordgo.WithContext(ctx))
 		if err != nil {
-			errs = multierr.Append(errs, err)
+			errs = multierr.Append(errs, fmt.Errorf("failed to update role %s. %w", role.Name, err))
 			continue
 		}
 	}
@@ -68,7 +69,7 @@ func (p *Plan) applyUsers(ctx context.Context, dc *discordgo.Session) error {
 
 			if err := dc.GuildMemberDeleteWithReason(p.GuildID, user.ID, user.KickReason,
 				discordgo.WithContext(ctx)); err != nil {
-				errs = multierr.Append(errs, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to kick user %s (reason: %q). %w", user.ID, user.KickReason, err))
 				continue
 			}
 			continue
@@ -76,21 +77,21 @@ func (p *Plan) applyUsers(ctx context.Context, dc *discordgo.Session) error {
 
 		if user.Nickname != nil {
 			if err := dc.GuildMemberNickname(p.GuildID, user.ID, *user.Nickname, discordgo.WithContext(ctx)); err != nil {
-				errs = multierr.Append(errs, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
 				continue
 			}
 		}
 
 		for _, role := range user.Roles.ToRemove {
 			if err := dc.GuildMemberRoleRemove(p.GuildID, user.ID, role.ID, discordgo.WithContext(ctx)); err != nil {
-				errs = multierr.Append(errs, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.ID, role.Name, err))
 				continue
 			}
 		}
 
 		for _, role := range user.Roles.ToAdd {
 			if err := dc.GuildMemberRoleAdd(p.GuildID, user.ID, role.ID, discordgo.WithContext(ctx)); err != nil {
-				errs = multierr.Append(errs, err)
+				errs = multierr.Append(errs, fmt.Errorf("failed to add user %s to role %s (%s). %w", user.ID, role.ID, role.Name, err))
 				continue
 			}
 		}

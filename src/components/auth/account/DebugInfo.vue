@@ -20,7 +20,7 @@ const notifications = useNotificatorStore();
 async function resetLocalStorage(): Promise<void> {
     clearAuthInfo();
 
-    if (process.client) {
+    if (import.meta.client) {
         window.localStorage.clear();
     }
 

@@ -26,8 +26,8 @@ async function fetchCharacters(): Promise<Character[]> {
 
 watch(chars, async () => {
     // If user only has one char, auto select that char
-    if (chars.value?.length === 1) {
-        await chooseCharacter(chars.value[0].char!.userId, true);
+    if (chars.value?.length === 1 && chars.value[0]?.char?.userId !== undefined) {
+        await onSubmitThrottle(chars.value[0].char.userId);
     }
 });
 

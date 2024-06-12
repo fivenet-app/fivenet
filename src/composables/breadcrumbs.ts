@@ -87,7 +87,7 @@ export function useBreadcrumbs(opts?: Partial<Opts>) {
                         title = toTitleCase(withoutTrailingSlash(path).split('/').pop() || '');
                     }
                 }
-                console.log(opts, path);
+
                 return {
                     to: resolveUrl(path),
                     title: title,

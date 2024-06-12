@@ -1,6 +1,6 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { parseQuery } from 'vue-router';
-import { closeWebsocketChannels } from '~/composables/grpcws/transports/websocket/websocketChannel';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -59,6 +59,9 @@ export const useAuthStore = defineStore('auth', {
         setActiveChar(char: null | User): void {
             this.activeChar = char;
             this.lastCharID = char ? char.userId : this.lastCharID;
+            if (char === null) {
+                useGRPCWebsocketTransport().close();
+            }
         },
         setPermissions(permissions: string[]): void {
             this.permissions.length = 0;
@@ -77,7 +80,7 @@ export const useAuthStore = defineStore('auth', {
             this.setPermissions([]);
             this.setJobProps(undefined);
             this.username = null;
-            closeWebsocketChannels();
+            useGRPCWebsocketTransport().close();
         },
 
         // GRPC Calls
@@ -94,6 +97,7 @@ export const useAuthStore = defineStore('auth', {
                 this.loginStop(null);
 
                 this.username = username;
+
                 if (!response.char) {
                     console.info('Login response without included char, redirecting to char selector');
                     this.setAccessTokenExpiration(toDate(response.expires));

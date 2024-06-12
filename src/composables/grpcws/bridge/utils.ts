@@ -27,3 +27,12 @@ export function headersToMetadata(headers: { [key: string]: HeaderValue }): Meta
     Object.keys(headers).forEach((k) => metaData.append(k.replaceAll(':', '+'), headers[k]!.value));
     return metaData;
 }
+
+export function constructWebSocketAddress(url: string) {
+    if (url.substr(0, 8) === 'https://') {
+        return `wss://${url.substr(8)}`;
+    } else if (url.substr(0, 7) === 'http://') {
+        return `ws://${url.substr(7)}`;
+    }
+    throw new Error('Websocket transport constructed with non-https:// or http:// host.' + url);
+}

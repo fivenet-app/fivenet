@@ -1,5 +1,6 @@
 import { defineStore, type StoreDefinition } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -156,6 +157,8 @@ export const useNotificatorStore = defineStore('notifications', {
                     if (resp.restart) {
                         console.debug('Notificator: Server requested stream to be restarted');
                         this.reconnectBackoffTime = 0;
+                        this.stopStream();
+                        useGRPCWebsocketTransport().close();
                         this.restartStream();
                         break;
                     }

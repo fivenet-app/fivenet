@@ -9,8 +9,8 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 )
 
-func (s *State) Calculate(ctx context.Context, dc *discordgo.Session) (*Plan, []*discordgo.MessageEmbed, error) {
-	plan := NewPlan(s.GuildID, true)
+func (s *State) Calculate(ctx context.Context, dc *discordgo.Session, dryRun bool) (*Plan, []*discordgo.MessageEmbed, error) {
+	plan := NewPlan(s.GuildID, dryRun)
 	logs := []*discordgo.MessageEmbed{}
 
 	roles, ls, err := s.calculateRoles(ctx, dc)
@@ -22,7 +22,7 @@ func (s *State) Calculate(ctx context.Context, dc *discordgo.Session) (*Plan, []
 
 	guild, err := dc.State.Guild(s.GuildID)
 	if err != nil {
-		return plan, logs, err
+		return plan, logs, fmt.Errorf("failed to get guild state. %w", err)
 	}
 
 	for _, member := range guild.Members {
@@ -51,7 +51,7 @@ func (s *State) calculateRoles(ctx context.Context, dc *discordgo.Session) (*Pla
 
 	roles, err := dc.GuildRoles(s.GuildID, discordgo.WithContext(ctx))
 	if err != nil {
-		return nil, logs, err
+		return nil, logs, fmt.Errorf("failed to get guild roles. %w", err)
 	}
 	var botRole *discordgo.Role
 	slices.ContainsFunc(roles, func(item *discordgo.Role) bool {

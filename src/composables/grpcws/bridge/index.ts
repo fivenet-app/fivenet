@@ -13,6 +13,7 @@ import {
     type RpcStatus,
     type RpcTransport,
 } from '@protobuf-ts/runtime-rpc';
+import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpcws/metadata';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import type { Transport, TransportFactory } from '../transports/transport';
@@ -21,11 +22,24 @@ import { createGrpcStatus, createGrpcTrailers } from './utils';
 
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;
+    private webSocket: UseWebSocketReturn<any>;
     private wsTs: TransportFactory;
 
     constructor(defaultOptions: GrpcWSOptions) {
         this.defaultOptions = defaultOptions;
-        this.wsTs = WebsocketChannelTransport();
+
+        this.webSocket = useWebSocket(defaultOptions.url, {
+            immediate: false,
+            autoReconnect: {
+                delay: 1150,
+            },
+            protocols: ['grpc-websocket-channel'],
+            onConnected(ws) {
+                ws.binaryType = 'arraybuffer';
+            },
+        });
+
+        this.wsTs = WebsocketChannelTransport(this.webSocket);
     }
 
     mergeOptions(options?: Partial<RpcOptions>): RpcOptions {
@@ -272,6 +286,15 @@ export class GrpcWSTransport implements RpcTransport {
         transport.start(new Metadata());
 
         return call;
+    }
+
+    close(): void {
+        if (this.webSocket.status.value === 'CLOSED') {
+            return;
+        }
+
+        this.webSocket.close();
+        console.info('GRPC-WS: Closed Websocket');
     }
 }
 
