@@ -35,6 +35,7 @@ export class GrpcWSTransport implements RpcTransport {
             },
             protocols: ['grpc-websocket-channel'],
             onConnected(ws) {
+                console.info('GRPC-WS: Opened Websocket, status', ws.readyState);
                 ws.binaryType = 'arraybuffer';
             },
         });

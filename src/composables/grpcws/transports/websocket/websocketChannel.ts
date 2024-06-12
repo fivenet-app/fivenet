@@ -18,7 +18,6 @@ export function WebsocketChannelTransport(webSocket: UseWebSocketReturn<any>): T
         opts.debug && console.debug('GRPC-WS: Websocket factory triggered');
         if (webSocket.status.value === 'CLOSED') {
             webSocket.open();
-            console.info('GRPC-WS: Opened Websocket');
         }
 
         return wsChannel.getStream(opts);
