@@ -9,7 +9,7 @@ export function checkIfCanAccessColleague(activeChar: UserShort | User, target: 
         return true;
     }
 
-    const fields = attrList(perm, 'Access');
+    const fields = attrList(perm, 'Access').value;
     if (fields.length === 0) {
         return target.userId === activeChar.userId;
     }

@@ -3,7 +3,7 @@ import { constructWebSocketAddress } from './bridge/utils';
 
 let grpcWebsocketTransport: GrpcWSTransport | undefined = undefined;
 
-export const useGRPCWebsocketTransport = createSharedComposable(() => {
+export function useGRPCWebsocketTransport(): GrpcWSTransport {
     if (grpcWebsocketTransport === undefined) {
         grpcWebsocketTransport = new GrpcWSTransport({
             url: constructWebSocketAddress(
@@ -13,4 +13,4 @@ export const useGRPCWebsocketTransport = createSharedComposable(() => {
     }
 
     return grpcWebsocketTransport;
-});
+}

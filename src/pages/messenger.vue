@@ -36,7 +36,7 @@ const selectedTab = ref(0);
 const dropdownItems = computed(() =>
     [
         [
-            can('MessengerService.CreateOrUpdateThread') &&
+            can('MessengerService.CreateOrUpdateThread').value &&
             canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.MANAGE)
                 ? {
                       label: t('common.edit'),
@@ -66,7 +66,7 @@ const dropdownItems = computed(() =>
                   },
         ].flatMap((item) => (item !== undefined ? [item] : [])),
         [
-            can('MessengerService.DeleteThread') &&
+            can('MessengerService.DeleteThread').value &&
             canAccessThread(selectedThread.value?.access, selectedThread.value?.creator, AccessLevel.ADMIN)
                 ? {
                       label: t('common.delete'),

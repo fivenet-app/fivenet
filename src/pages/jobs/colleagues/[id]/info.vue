@@ -83,10 +83,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 }, 1000);
 
 const canDo = computed(() => ({
-    view: can('JobsService.GetColleague') && attr('JobsService.GetColleague', 'Types', 'Note'),
+    view: can('JobsService.GetColleague').value && attr('JobsService.GetColleague', 'Types', 'Note').value,
     edit:
-        can('JobsService.SetJobsUserProps') &&
-        attr('JobsService.SetJobsUserProps', 'Types', 'Note') &&
+        can('JobsService.SetJobsUserProps').value &&
+        attr('JobsService.SetJobsUserProps', 'Types', 'Note').value &&
         checkIfCanAccessColleague(activeChar.value!, props.colleague, 'JobsService.SetJobsUserProps'),
 }));
 

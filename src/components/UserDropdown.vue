@@ -38,14 +38,14 @@ const items = computed(() => [
             shortcuts: [metaSymbol.value, 'K'],
             click: () => (isDashboardSearchModalOpen.value = true),
         },
-        can(['CanBeSuper', 'SuperUser'])
+        can(['CanBeSuper', 'SuperUser']).value
             ? {
                   label: t('common.superuser') + ': ' + isSuperuser.value,
                   icon: 'i-mdi-square-root',
                   click: () => authStore.setSuperUserMode(!isSuperuser.value),
               }
             : undefined,
-        can('SuperUser')
+        can('SuperUser').value
             ? {
                   slot: 'job',
                   label: 'Select Job',

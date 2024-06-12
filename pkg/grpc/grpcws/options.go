@@ -12,9 +12,9 @@ var (
 	defaultOptions = &options{
 		allowedRequestHeaders:          []string{"*"},
 		corsForRegisteredEndpointsOnly: true,
-		corsMaxAge:                     10 * time.Minute,
 		originFunc:                     func(origin string) bool { return false },
 		allowNonRootResources:          false,
+		corsMaxAge:                     10 * time.Minute,
 		websocketReadLimit:             8 * 1024 * 1024, // 8 MB
 		websocketChannelMaxStreamCount: 25,
 	}

@@ -19,7 +19,7 @@ defineEmits<{
 <template>
     <UPageGrid>
         <UPageCard
-            v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission))"
+            v-for="(module, index) in items.filter((i) => i.permission === undefined || can(i.permission).value)"
             :key="index"
             :to="module.to"
             :title="module.title"

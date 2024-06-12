@@ -34,7 +34,7 @@ const requestTypes = [
 ] as RequestType[];
 
 const availableRequestTypes = computed<RequestType[]>(() =>
-    requestTypes.filter((rt) => attr('DocStoreService.CreateDocumentReq', 'Types', rt.attrKey)),
+    requestTypes.filter((rt) => attr('DocStoreService.CreateDocumentReq', 'Types', rt.attrKey).value),
 );
 
 const schema = z.object({
@@ -101,17 +101,19 @@ async function createDocumentRequest(values: Schema): Promise<void> {
     }
 }
 
-const canCreate =
-    props.doc.creatorId !== activeChar.value?.userId &&
-    availableRequestTypes.value.length > 0 &&
-    can('DocStoreService.CreateDocumentReq') &&
-    checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW);
-const canUpdate =
-    can('DocStoreService.CreateDocumentReq') &&
-    checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.CreateDocumentReq');
-const canDelete =
-    can('DocStoreService.DeleteDocumentReq') &&
-    checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocumentReq');
+const canDo = computed(() => ({
+    create:
+        props.doc.creatorId !== activeChar.value?.userId &&
+        availableRequestTypes.value.length > 0 &&
+        can('DocStoreService.CreateDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.VIEW),
+    update:
+        can('DocStoreService.CreateDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.CreateDocumentReq'),
+    delete:
+        can('DocStoreService.DeleteDocumentReq').value &&
+        checkDocAccess(props.access, props.doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocumentReq'),
+}));
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
@@ -135,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </template>
 
                 <div>
-                    <template v-if="canCreate">
+                    <template v-if="canDo.create">
                         <UFormGroup name="reason" :label="$t('common.reason')">
                             <UInput
                                 v-model="state.reason"
@@ -222,8 +224,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-for="request in requests.requests"
                                 :key="request.id"
                                 :request="request"
-                                :can-update="canUpdate"
-                                :can-delete="canDelete"
+                                :can-update="canDo.update"
+                                :can-delete="canDo.delete"
                                 @refresh-requests="refresh()"
                             />
                         </ul>
@@ -237,7 +239,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UButton>
 
                         <UButton
-                            v-if="canCreate"
+                            v-if="canDo.create"
                             type="submit"
                             block
                             class="flex-1"

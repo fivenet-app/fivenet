@@ -202,7 +202,7 @@ const accordionItems = computed(() =>
         { slot: 'references', label: t('common.reference', 2), icon: 'i-mdi-file-document' },
         { slot: 'access', label: t('common.access'), icon: 'i-mdi-lock', defaultOpen: true },
         { slot: 'comments', label: t('common.comment', 2), icon: 'i-mdi-comment', defaultOpen: true },
-        can('DocStoreService.ListDocumentActivity')
+        can('DocStoreService.ListDocumentActivity').value
             ? { slot: 'activity', label: t('common.activity'), icon: 'i-mdi-comment-quote' }
             : undefined,
     ].flatMap((item) => (item !== undefined ? [item] : [])),
@@ -213,7 +213,7 @@ defineShortcuts({
         if (
             !doc.value ||
             !(
-                can('DocStoreService.ToggleDocument') &&
+                can('DocStoreService.ToggleDocument').value &&
                 checkDocAccess(access.value, doc.value.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
             )
         ) {
@@ -226,7 +226,7 @@ defineShortcuts({
         if (
             !doc.value ||
             !(
-                can('DocStoreService.UpdateDocument') &&
+                can('DocStoreService.UpdateDocument').value &&
                 checkDocAccess(access.value, doc.value.creator, AccessLevel.EDIT, 'DocStoreService.ToggleDocument')
             )
         ) {
@@ -239,7 +239,7 @@ defineShortcuts({
         });
     },
     'd-r': () => {
-        if (!doc.value || !can('DocStoreService.ListDocumentReqs')) {
+        if (!doc.value || !can('DocStoreService.ListDocumentReqs').value) {
             return;
         }
 

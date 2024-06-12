@@ -132,7 +132,7 @@ export const useNotificatorStore = defineStore('notifications', {
                                 this.add(not);
                                 continue;
                             } else if (resp.data.userEvent.data.oneofKind === 'messenger') {
-                                if (can('MessengerService.ListThreads')) {
+                                if (can('MessengerService.ListThreads').value) {
                                     useMessengerStore().handleEvent(resp.data.userEvent.data.messenger);
                                 }
                             }

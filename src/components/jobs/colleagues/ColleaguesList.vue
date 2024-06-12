@@ -109,7 +109,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps'] as Perms[])
+    can(['JobsService.GetColleague', 'JobsService.SetJobsUserProps']).value
         ? {
               key: 'actions',
               label: t('common.action', 2),

@@ -11,12 +11,10 @@ import (
 	"encoding/binary"
 	"fmt"
 	"io"
-	"log"
 	"net"
 	"net/http"
 	"net/http/httptest"
 	"net/textproto"
-	"os"
 	"strconv"
 	"strings"
 	"testing"
@@ -29,6 +27,8 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 	"github.com/stretchr/testify/suite"
+	"go.uber.org/zap"
+	"go.uber.org/zap/zapgrpc"
 	"golang.org/x/net/context"
 	"golang.org/x/net/http2"
 	"google.golang.org/grpc"
@@ -79,19 +79,21 @@ func TestNonRootResource(t *testing.T) {
 	headers := http.Header{}
 	headers.Add("Access-Control-Request-Method", "POST")
 	headers.Add("Access-Control-Request-Headers", "origin, x-something-custom, x-grpc-web, accept")
-	req := httptest.NewRequest("OPTIONS", "http://host/grpc/improbable.grpcws.test.TestService/Echo", nil)
+	req := httptest.NewRequest("OPTIONS", "http://host/grpc/improbable.grpcweb.test.TestService/Echo", nil)
 	req.Header = headers
 	resp := httptest.NewRecorder()
 	wrappedServer.ServeHTTP(resp, req)
 
-	assert.Equal(t, http.StatusOK, resp.Code)
+	assert.Equal(t, http.StatusNoContent, resp.Code)
 }
 
 func (s *GrpcWebWrapperTestSuite) SetupTest() {
 	var err error
 	s.grpcServer = grpc.NewServer()
 	testproto.RegisterTestServiceServer(s.grpcServer, &testServiceImpl{})
-	grpclog.SetLogger(log.New(os.Stderr, "grpc: ", log.LstdFlags))
+	logger, err := zap.NewDevelopment()
+	require.NoError(s.T(), err)
+	grpclog.SetLoggerV2(zapgrpc.NewLogger(logger.Named("grpc")))
 	s.wrappedServer = grpcws.WrapServer(s.grpcServer)
 
 	httpServer := http.Server{
@@ -104,7 +106,7 @@ func (s *GrpcWebWrapperTestSuite) SetupTest() {
 
 	s.listener, err = net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(s.T(), err, "failed to set up server socket for test")
-	tlsConfig, err := connhelpers.TlsConfigForServerCerts("../../misc/localhost.crt", "../../misc/localhost.key")
+	tlsConfig, err := connhelpers.TlsConfigForServerCerts("../../../internal/tests/certs/localhost.crt", "../../../internal/tests/certs/localhost.key")
 	require.NoError(s.T(), err, "failed loading keys")
 	if s.httpMajorVersion == 2 {
 		tlsConfig, err = connhelpers.TlsConfigWithHttp2Enabled(tlsConfig)
@@ -247,7 +249,7 @@ func (s *GrpcWebWrapperTestSuite) makeGrpcRequest(
 
 func (s *GrpcWebWrapperTestSuite) TestPingEmpty() {
 	headers, trailers, responses, err := s.makeGrpcRequest(
-		"/improbable.grpcws.test.TestService/PingEmpty",
+		"/improbable.grpcweb.test.TestService/PingEmpty",
 		headerWithFlag(),
 		serializeProtoMessages([]proto.Message{&google_protobuf.Empty{}}),
 		false)
@@ -264,7 +266,7 @@ func (s *GrpcWebWrapperTestSuite) TestPing() {
 	// test both the text and binary formats
 	for _, contentType := range []string{grpcWebContentType, grpcWebTextContentType} {
 		headers, trailers, responses, err := s.makeGrpcRequest(
-			"/improbable.grpcws.test.TestService/Ping",
+			"/improbable.grpcweb.test.TestService/Ping",
 			headerWithFlag(),
 			serializeProtoMessages([]proto.Message{&testproto.PingRequest{Value: "foo"}}),
 			contentType == grpcWebTextContentType)
@@ -283,7 +285,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInData() {
 	// gRPC-Web spec says that if there is no payload to an answer, the trailers (including grpc-status) must be in the
 	// headers and not in trailers. However, that's not true if SendHeaders are pushed before. This tests this.
 	headers, trailers, responses, err := s.makeGrpcRequest(
-		"/improbable.grpcws.test.TestService/PingError",
+		"/improbable.grpcweb.test.TestService/PingError",
 		headerWithFlag(useFlushForHeaders),
 		serializeProtoMessages([]proto.Message{&google_protobuf.Empty{}}),
 		false)
@@ -301,7 +303,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInHeaders() {
 	// gRPC-Web spec says that if there is no payload to an answer, the trailers (including grpc-status) must be in the
 	// headers and not in trailers.
 	headers, _, responses, err := s.makeGrpcRequest(
-		"/improbable.grpcws.test.TestService/PingError",
+		"/improbable.grpcweb.test.TestService/PingError",
 		http.Header{},
 		serializeProtoMessages([]proto.Message{&google_protobuf.Empty{}}),
 		false)
@@ -317,7 +319,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingError_WithTrailersInHeaders() {
 
 func (s *GrpcWebWrapperTestSuite) TestPingList() {
 	headers, trailers, responses, err := s.makeGrpcRequest(
-		"/improbable.grpcws.test.TestService/PingList",
+		"/improbable.grpcweb.test.TestService/PingList",
 		headerWithFlag(),
 		serializeProtoMessages([]proto.Message{&testproto.PingRequest{Value: "something"}}),
 		false)
@@ -395,7 +397,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingStream_NormalGrpcWorks() {
 
 func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_DeniedByDefault() {
 	/**
-	OPTIONS /improbable.grpcws.test.TestService/Ping
+	OPTIONS /improbable.grpcweb.test.TestService/Ping
 	Access-Control-Request-Method: POST
 	Access-Control-Request-Headers: origin, x-requested-with, accept
 	Origin: http://foo.client.com
@@ -405,7 +407,7 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_DeniedByDefault() {
 	headers.Add("Access-Control-Request-Headers", "origin, x-something-custom, x-grpc-web, accept")
 	headers.Add("Origin", "https://foo.client.com")
 
-	corsResp, err := s.makeRequest("OPTIONS", "/improbable.grpcws.test.TestService/PingList", headers, nil, false)
+	corsResp, err := s.makeRequest("OPTIONS", "/improbable.grpcweb.test.TestService/PingList", headers, nil, false)
 	assert.NoError(s.T(), err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
@@ -417,7 +419,7 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_DeniedByDefault() {
 
 func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_AllowedByOriginFunc() {
 	/**
-	OPTIONS /improbable.grpcws.test.TestService/Ping
+	OPTIONS /improbable.grpcweb.test.TestService/Ping
 	Access-Control-Request-Method: POST
 	Access-Control-Request-Headers: origin, x-requested-with, accept
 	Origin: http://foo.client.com
@@ -434,23 +436,23 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_AllowedByOriginFunc() {
 		}),
 	)
 
-	corsResp, err := s.makeRequest("OPTIONS", "/improbable.grpcws.test.TestService/PingList", headers, nil, false)
+	corsResp, err := s.makeRequest("OPTIONS", "/improbable.grpcweb.test.TestService/PingList", headers, nil, false)
 	assert.NoError(s.T(), err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
 	assert.Equal(s.T(), "https://foo.client.com", preflight.Get("Access-Control-Allow-Origin"), "origin must be in the response headers")
 	assert.Equal(s.T(), "POST", preflight.Get("Access-Control-Allow-Methods"), "allowed methods must be in the response headers")
 	assert.Equal(s.T(), "600", preflight.Get("Access-Control-Max-Age"), "allowed max age must be in the response headers")
-	assert.Equal(s.T(), "Origin, X-Something-Custom, X-Grpc-Web, Accept", preflight.Get("Access-Control-Allow-Headers"), "allowed headers must be in the response headers")
+	assert.Equal(s.T(), "origin, x-something-custom, x-grpc-web, accept", preflight.Get("Access-Control-Allow-Headers"), "allowed headers must be in the response headers")
 
-	corsResp, err = s.makeRequest("OPTIONS", "/improbable.grpcws.test.TestService/Unknown", headers, nil, false)
+	corsResp, err = s.makeRequest("OPTIONS", "/improbable.grpcweb.test.TestService/Unknown", headers, nil, false)
 	assert.NoError(s.T(), err, "cors preflight should not return errors")
-	assert.Equal(s.T(), 500, corsResp.StatusCode, "cors should return 500 as grpc server does not understand that endpoint")
+	assert.Equal(s.T(), http.StatusMethodNotAllowed, corsResp.StatusCode, "cors should return 405 (MethodNotAllowed) as grpc server does not handle requests other than POST requests")
 }
 
 func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_CorsMaxAge() {
 	/**
-	OPTIONS /improbable.grpcws.test.TestService/Ping
+	OPTIONS /improbable.grpcweb.test.TestService/Ping
 	Access-Control-Request-Method: POST
 	Access-Control-Request-Headers: origin, x-requested-with, accept
 	Origin: http://foo.client.com
@@ -468,7 +470,7 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_CorsMaxAge() {
 		grpcws.WithCorsMaxAge(time.Hour),
 	)
 
-	corsResp, err := s.makeRequest("OPTIONS", "/improbable.grpcws.test.TestService/PingList", headers, nil, false)
+	corsResp, err := s.makeRequest("OPTIONS", "/improbable.grpcweb.test.TestService/PingList", headers, nil, false)
 	assert.NoError(s.T(), err, "cors preflight should not return errors")
 
 	preflight := corsResp.Header
@@ -477,7 +479,7 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_CorsMaxAge() {
 
 func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_EndpointsOnlyTrueWithHandlerFunc() {
 	/**
-	OPTIONS /improbable.grpcws.test.TestService/Ping
+	OPTIONS /improbable.grpcweb.test.TestService/Ping
 	Access-Control-Request-Method: POST
 	Access-Control-Request-Headers: origin, x-requested-with, accept
 	Origin: http://foo.client.com
@@ -488,8 +490,8 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_EndpointsOnlyTrueWithHandler
 	headers.Add("Origin", "https://foo.client.com")
 
 	// Create a new grpc server that uses WrapHandler and the WithEndpointsFunc option
-	const pingMethod = "/improbable.grpcws.test.TestService/PingList"
-	const badMethod = "/improbable.grpcws.test.TestService/Bad"
+	const pingMethod = "/improbable.grpcweb.test.TestService/PingList"
+	const badMethod = "/improbable.grpcweb.test.TestService/Bad"
 
 	mux := http.NewServeMux()
 	mux.Handle(pingMethod, s.grpcServer)
@@ -513,7 +515,7 @@ func (s *GrpcWebWrapperTestSuite) TestCORSPreflight_EndpointsOnlyTrueWithHandler
 	assert.Equal(s.T(), "https://foo.client.com", preflight.Get("Access-Control-Allow-Origin"), "origin must be in the response headers")
 	assert.Equal(s.T(), "POST", preflight.Get("Access-Control-Allow-Methods"), "allowed methods must be in the response headers")
 	assert.Equal(s.T(), "600", preflight.Get("Access-Control-Max-Age"), "allowed max age must be in the response headers")
-	assert.Equal(s.T(), "Origin, X-Something-Custom, X-Grpc-Web, Accept", preflight.Get("Access-Control-Allow-Headers"), "allowed headers must be in the response headers")
+	assert.Equal(s.T(), "origin, x-something-custom, x-grpc-web, accept", preflight.Get("Access-Control-Allow-Headers"), "allowed headers must be in the response headers")
 
 	corsResp, err = s.makeRequest("OPTIONS", badMethod, headers, nil, false)
 	assert.NoError(s.T(), err, "cors preflight should not return errors")
@@ -626,14 +628,14 @@ type testServiceImpl struct {
 
 func (s *testServiceImpl) PingEmpty(ctx context.Context, _ *google_protobuf.Empty) (*testproto.PingResponse, error) {
 	grpc.SendHeader(ctx, expectedHeaders)
-	grpclog.Printf("Handling PingEmpty")
+	grpclog.Info("Handling PingEmpty")
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return &testproto.PingResponse{Value: "foobar"}, nil
 }
 
 func (s *testServiceImpl) Ping(ctx context.Context, ping *testproto.PingRequest) (*testproto.PingResponse, error) {
 	grpc.SendHeader(ctx, expectedHeaders)
-	grpclog.Printf("Handling Ping")
+	grpclog.Info("Handling Ping")
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return &testproto.PingResponse{Value: ping.Value}, nil
 }
@@ -642,11 +644,11 @@ func (s *testServiceImpl) PingError(ctx context.Context, ping *testproto.PingReq
 	md, _ := metadata.FromIncomingContext(ctx)
 	if _, exists := md[useFlushForHeaders]; exists {
 		grpc.SendHeader(ctx, expectedHeaders)
-		grpclog.Printf("Handling PingError with flushed headers")
+		grpclog.Info("Handling PingError with flushed headers")
 
 	} else {
 		grpc.SetHeader(ctx, expectedHeaders)
-		grpclog.Printf("Handling PingError without flushing")
+		grpclog.Info("Handling PingError without flushing")
 	}
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return nil, grpc.Errorf(codes.Unimplemented, "Not implemented PingError")
@@ -655,7 +657,7 @@ func (s *testServiceImpl) PingError(ctx context.Context, ping *testproto.PingReq
 func (s *testServiceImpl) PingList(ping *testproto.PingRequest, stream testproto.TestService_PingListServer) error {
 	stream.SendHeader(expectedHeaders)
 	stream.SetTrailer(expectedTrailers)
-	grpclog.Printf("Handling PingList")
+	grpclog.Info("Handling PingList")
 	for i := int32(0); i < int32(expectedListResponses); i++ {
 		stream.Send(&testproto.PingResponse{Value: fmt.Sprintf("%s %d", ping.Value, i), Counter: i})
 	}
@@ -665,7 +667,7 @@ func (s *testServiceImpl) PingList(ping *testproto.PingRequest, stream testproto
 func (s *testServiceImpl) PingStream(stream testproto.TestService_PingStreamServer) error {
 	stream.SendHeader(expectedHeaders)
 	stream.SetTrailer(expectedTrailers)
-	grpclog.Printf("Handling PingStream")
+	grpclog.Info("Handling PingStream")
 	allValues := ""
 	for {
 		in, err := stream.Recv()
@@ -698,7 +700,7 @@ func (s *testServiceImpl) PingStream(stream testproto.TestService_PingStreamServ
 
 func (s *testServiceImpl) Echo(ctx context.Context, text *testproto.TextMessage) (*testproto.TextMessage, error) {
 	grpc.SendHeader(ctx, expectedHeaders)
-	grpclog.Printf("Handling Echo")
+	grpclog.Info("Handling Echo")
 	grpc.SetTrailer(ctx, expectedTrailers)
 	return text, nil
 }
@@ -706,7 +708,7 @@ func (s *testServiceImpl) Echo(ctx context.Context, text *testproto.TextMessage)
 func (s *testServiceImpl) PingPongBidi(stream testproto.TestService_PingPongBidiServer) error {
 	stream.SendHeader(expectedHeaders)
 	stream.SetTrailer(expectedTrailers)
-	grpclog.Printf("Handling PingPongBidi")
+	grpclog.Info("Handling PingPongBidi")
 	for {
 		in, err := stream.Recv()
 		if err == io.EOF {

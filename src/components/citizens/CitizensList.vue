@@ -117,7 +117,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')
+    attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber').value
         ? { key: 'phoneNumber', label: t('common.phone_number') }
         : undefined,
     {
@@ -126,13 +126,13 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints')
+    attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.TrafficInfractionPoints').value
         ? {
               key: 'trafficInfractionPoints',
               label: t('common.traffic_infraction_points', 2),
           }
         : undefined,
-    attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')
+    attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines').value
         ? {
               key: 'openFines',
               label: t('common.fine', 2),
@@ -144,7 +144,7 @@ const columns = [
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
     },
-    can('CitizenStoreService.GetUser')
+    can('CitizenStoreService.GetUser').value
         ? {
               key: 'actions',
               label: t('common.action', 2),

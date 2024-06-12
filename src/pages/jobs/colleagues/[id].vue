@@ -79,7 +79,7 @@ const links = [
         icon: 'i-mdi-list-status',
         permission: 'JobsConductService.ListConductEntries' as Perms,
     },
-].filter((tab) => can(tab.permission)) as { label: string; to: RoutesNamedLocations; icon: string; permission: Perms }[];
+].filter((tab) => can(tab.permission).value) as { label: string; to: RoutesNamedLocations; icon: string; permission: Perms }[];
 </script>
 
 <template>

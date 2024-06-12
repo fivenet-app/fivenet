@@ -23,7 +23,7 @@ const completorStore = useCompletorStore();
 
 const usersLoading = ref(false);
 
-const typesAttrs = attrList('JobsService.ListColleagueActivity', 'Types').map((t) => t.toUpperCase());
+const typesAttrs = attrList('JobsService.ListColleagueActivity', 'Types').value.map((t) => t.toUpperCase());
 const activityTypes = Object.keys(JobsUserActivityType)
     .filter((aType) => typesAttrs.includes(aType))
     .map((aType) => JobsUserActivityType[aType as keyof typeof JobsUserActivityType]);

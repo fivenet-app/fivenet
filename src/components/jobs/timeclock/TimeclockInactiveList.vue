@@ -90,7 +90,7 @@ const columns = [
         sortable: false,
         permission: 'JobsService.GetColleague' as Perms,
     },
-].filter((c) => c.permission === undefined || can(c.permission));
+].filter((c) => c.permission === undefined || can(c.permission).value);
 </script>
 
 <template>

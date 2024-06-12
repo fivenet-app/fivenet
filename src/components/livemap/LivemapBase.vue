@@ -45,7 +45,7 @@ const mapOptions = {
     markerZoomAnimation: true,
 } as MapOptions;
 
-if (can('CentrumService.CreateDispatch')) {
+if (can('CentrumService.CreateDispatch').value) {
     mapOptions.contextmenuItems.push({
         text: t('components.centrum.create_dispatch.title'),
         callback: (e: ContextMenuItemClickEvent) => {
@@ -59,7 +59,7 @@ if (can('CentrumService.CreateDispatch')) {
         },
     });
 }
-if (can('LivemapperService.CreateOrUpdateMarker')) {
+if (can('LivemapperService.CreateOrUpdateMarker').value) {
     mapOptions.contextmenuItems.push({
         text: t('components.livemap.create_marker.title'),
         callback: (e: ContextMenuItemClickEvent) => {

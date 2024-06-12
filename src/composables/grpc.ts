@@ -35,7 +35,11 @@ const grpcWebTransport = new GrpcWebFetchTransport({
 const grpcWebsocketTransport = useGRPCWebsocketTransport();
 
 // Handle GRPC errors
-export async function handleGRPCError(err: RpcError): Promise<boolean> {
+export async function handleGRPCError(err: RpcError | undefined): Promise<boolean> {
+    if (err === undefined) {
+        return true;
+    }
+
     const notifications = useNotificatorStore();
 
     const notification = {

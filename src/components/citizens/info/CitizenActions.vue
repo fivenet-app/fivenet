@@ -65,7 +65,7 @@ function copyLinkToClipboard(): void {
 if (props.registerShortcuts) {
     defineShortcuts({
         'c-w': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')) {
+            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted').value) {
                 return;
             }
 
@@ -75,7 +75,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-j': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')) {
+            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'Job').value) {
                 return;
             }
 
@@ -85,7 +85,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-p': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')) {
+            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value) {
                 return;
             }
 
@@ -95,7 +95,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-m': () => {
-            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')) {
+            if (!attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot').value) {
                 return;
             }
 
@@ -105,7 +105,7 @@ if (props.registerShortcuts) {
             });
         },
         'c-d': () => {
-            if (!can('DocStoreService.CreateDocument')) {
+            if (!can('DocStoreService.CreateDocument').value) {
                 return;
             }
 

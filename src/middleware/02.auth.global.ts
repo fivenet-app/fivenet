@@ -85,7 +85,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         }
 
         // Route has permission attached to it, check if user "can" go there
-        if (can(to.meta.permission)) {
+        if (can(to.meta.permission).value) {
             // User has permission
             return true;
         } else {

@@ -655,23 +655,23 @@ export const useCentrumStore = defineStore('centrum', {
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
             switch (action) {
                 case 'TakeControl':
-                    return can('CentrumService.TakeControl');
+                    return can('CentrumService.TakeControl').value;
 
                 case 'TakeDispatch':
-                    return can('CentrumService.TakeDispatch') && this.getCurrentMode !== CentrumMode.CENTRAL_COMMAND;
+                    return can('CentrumService.TakeDispatch').value && this.getCurrentMode !== CentrumMode.CENTRAL_COMMAND;
 
                 case 'AssignDispatch':
-                    return can('CentrumService.TakeControl');
+                    return can('CentrumService.TakeControl').value;
 
                 case 'UpdateDispatchStatus':
                     return (
-                        can('CentrumService.TakeDispatch') &&
+                        can('CentrumService.TakeDispatch').value &&
                         dispatch !== undefined &&
                         this.checkIfUnitAssignedToDispatch(dispatch, this.ownUnitId)
                     );
 
                 case 'UpdateUnitStatus':
-                    return can('CentrumService.TakeDispatch');
+                    return can('CentrumService.TakeDispatch').value;
 
                 default:
                     return false;

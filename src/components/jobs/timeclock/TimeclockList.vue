@@ -54,7 +54,7 @@ const {
     () => listTimeclockEntries(),
 );
 
-const perDayView = computed(() => !canAccessAll || !(query.users !== undefined && query.users.length > 0));
+const perDayView = computed(() => !canAccessAll.value || !(query.users !== undefined && query.users.length > 0));
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
     try {
@@ -166,7 +166,7 @@ const input = ref<{ input: HTMLInputElement }>();
                 <div class="flex w-full flex-col gap-2">
                     <div class="flex w-full flex-col">
                         <UButton
-                            v-if="can('JobsTimeclockService.ListInactiveEmployees')"
+                            v-if="can('JobsTimeclockService.ListInactiveEmployees').value"
                             :to="{ name: 'jobs-timeclock-inactive' }"
                             class="mb-2 place-self-end"
                             trailing-icon="i-mdi-arrow-right"

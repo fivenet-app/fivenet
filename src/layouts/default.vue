@@ -19,6 +19,8 @@ const { t } = useI18n();
 
 const { isHelpSlideoverOpen } = useDashboard();
 
+const modal = useModal();
+
 const unreadThreadCount = useDexieLiveQuery(() => messengerDB.threads.filter((t) => !!t.userState?.unread).count(), {
     initialValue: 0,
 });
@@ -109,7 +111,7 @@ const links = computed(() =>
                     to: '/jobs/conduct',
                     permission: 'JobsConductService.ListConductEntries' as Perms,
                 },
-            ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+            ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
             permission: 'JobsService.ListColleagues' as Perms,
         },
         {
@@ -161,7 +163,7 @@ const links = computed(() =>
             },
             permission: 'RectorService.GetJobProps' as Perms,
         },
-    ].flatMap((item) => (item.permission === undefined || can(item.permission) ? [item] : [])),
+    ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
 
 const footerLinks = [
@@ -336,12 +338,10 @@ const groups = computed(() => [
     },
 ]);
 
-const modal = useModal();
-
 const clipboardLink = computed(() =>
     [
         activeChar.value &&
-        can(['DocStoreService.CreateDocument', 'CitizenStoreService.GetUser', 'DMVService.ListVehicles'], 'oneof')
+        can(['DocStoreService.CreateDocument', 'CitizenStoreService.GetUser', 'DMVService.ListVehicles'], 'oneof').value
             ? {
                   label: t('common.clipboard'),
                   icon: 'i-mdi-clipboard-list-outline',

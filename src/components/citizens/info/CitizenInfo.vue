@@ -51,7 +51,7 @@ const items: { slot: string; label: string; icon: string; permission: Perms }[] 
         icon: 'i-mdi-bulletin-board',
         permission: 'CitizenStoreService.ListUserActivity' as Perms,
     },
-].filter((item) => can(item.permission));
+].filter((item) => can(item.permission).value);
 
 const {
     data: user,
@@ -107,7 +107,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
 

@@ -34,7 +34,7 @@ const links = [
         icon: 'i-mdi-list-status',
         permission: 'JobsConductService.ListConductEntries' as Perms,
     },
-].filter((t) => t.permission === undefined || can(t.permission)) as {
+].filter((t) => t.permission === undefined || can(t.permission).value) as {
     label: string;
     to: RoutesNamedLocations;
     icon: string;

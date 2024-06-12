@@ -40,7 +40,7 @@
     </div>
 </template>
 
-<style>
+<style scoped>
 /* Customizable snowflake styling */
 .snowflake {
     color: #ffffff;

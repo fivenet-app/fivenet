@@ -8,6 +8,7 @@ import (
 	"encoding/base64"
 	"io"
 	"net/http"
+	"slices"
 	"strings"
 	"time"
 
@@ -121,6 +122,7 @@ func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Reques
 
 		resp.WriteHeader(http.StatusForbidden)
 		_, _ = resp.Write(make([]byte, 0))
+		return
 	}
 
 	if w.IsAcceptableGrpcCorsRequest(req) || w.IsGrpcWebRequest(req) {
@@ -128,8 +130,7 @@ func (w *WrappedGrpcServer) ServeHTTP(resp http.ResponseWriter, req *http.Reques
 		return
 	}
 
-	resp.WriteHeader(400)
-	resp.Write([]byte("only support websocket requests, Sec-Websocket-Protocol == grpc-websocket-channel"))
+	w.handler.ServeHTTP(resp, req)
 }
 
 // HandleGrpcWebRequest takes a HTTP request that is assumed to be a gRPC-Web request and wraps it with a compatibility
@@ -146,7 +147,20 @@ func (w *WrappedGrpcServer) HandleGrpcWebRequest(resp http.ResponseWriter, req *
 // IsGrpcWebSocketRequest determines if a request is a gRPC-Web request by checking that the "Sec-Websocket-Protocol"
 // header value is "grpc-websocket-channel"
 func (w *WrappedGrpcServer) IsGrpcWebSocketChannelRequest(req *http.Request) bool {
-	return strings.ToLower(req.Header.Get("Upgrade")) == "websocket" && strings.ToLower(req.Header.Get("Sec-Websocket-Protocol")) == "grpc-websocket-channel"
+	if strings.ToLower(req.Header.Get("Upgrade")) != "websocket" {
+		return false
+	}
+
+	for _, subproto := range req.Header.Values("Sec-Websocket-Protocol") {
+		for _, token := range strings.Split(subproto, ",") {
+			token = strings.TrimSpace(token)
+			if strings.EqualFold(token, "grpc-websocket-channel") {
+				return true
+			}
+		}
+	}
+
+	return false
 }
 
 // IsGrpcWebRequest determines if a request is a gRPC-Web request by checking that the "content-type" is
@@ -207,12 +221,7 @@ func (w *WrappedGrpcServer) IsAcceptableGrpcCorsRequest(req *http.Request) bool 
 func (w *WrappedGrpcServer) isRequestForRegisteredEndpoint(req *http.Request) bool {
 	registeredEndpoints := w.endpointsFunc()
 	requestedEndpoint := w.endpointFunc(req)
-	for _, v := range registeredEndpoints {
-		if v == requestedEndpoint {
-			return true
-		}
-	}
-	return false
+	return slices.Contains(registeredEndpoints, requestedEndpoint)
 }
 
 // readerCloser combines an io.Reader and an io.Closer into an io.ReadCloser.

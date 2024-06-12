@@ -60,7 +60,7 @@ const { activeChar } = storeToRefs(authStore);
 
             <UButton
                 v-if="
-                    can('JobsService.SetJobsUserProps') &&
+                    can('JobsService.SetJobsUserProps').value &&
                     (colleague.userId === activeChar!.userId || attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate')) &&
                     checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                 "

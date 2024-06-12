@@ -62,7 +62,7 @@ function checkIfCanAccessOwnJobQualification(activeChar: User, creator: UserShor
         return true;
     }
 
-    const fields = attrList(perm, 'Access');
+    const fields = attrList(perm, 'Access').value;
     if (fields.length === 0) {
         return creator?.userId === activeChar.userId;
     }
@@ -138,7 +138,7 @@ export function resultStatusToTextColor(status: ResultStatus): string {
 export function requirementsFullfilled(reqs: QualificationRequirement[]): boolean {
     for (let i = 0; i < reqs.length; i++) {
         const req = reqs[i];
-        if (req.targetQualification?.result?.status !== ResultStatus.SUCCESSFUL) {
+        if (req?.targetQualification?.result?.status !== ResultStatus.SUCCESSFUL) {
             return false;
         }
     }

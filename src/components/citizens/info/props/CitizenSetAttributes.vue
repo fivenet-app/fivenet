@@ -22,7 +22,8 @@ const notifications = useNotificatorStore();
 const completorStore = useCompletorStore();
 
 const canDo = computed(() => ({
-    set: can('CitizenStoreService.SetUserProps') && attr('CitizenStoreService.SetUserProps', 'Fields', 'Attributes'),
+    set:
+        can('CitizenStoreService.SetUserProps').value && attr('CitizenStoreService.SetUserProps', 'Fields', 'Attributes').value,
 }));
 
 const attributesLoading = ref(false);

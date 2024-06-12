@@ -615,8 +615,8 @@ const canDo = computed(() => ({
         props.documentId === undefined
             ? true
             : checkDocAccess(docAccess.value, docCreator.value, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument'),
-    references: can('DocStoreService.AddDocumentReference'),
-    relations: can('DocStoreService.AddDocumentRelation'),
+    references: can('DocStoreService.AddDocumentReference').value,
+    relations: can('DocStoreService.AddDocumentRelation').value,
 }));
 
 console.info(

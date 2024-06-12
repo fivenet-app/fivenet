@@ -166,7 +166,7 @@ watch(design.value, () => {
                 <USelectMenu
                     v-if="activeChar"
                     v-model="selectedHomepage"
-                    :options="homepages.filter((h) => h.permission === undefined || can(h.permission))"
+                    :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
                     option-attribute="name"
                     :searchable-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"

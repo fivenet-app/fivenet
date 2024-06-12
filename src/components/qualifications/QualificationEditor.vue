@@ -40,7 +40,7 @@ const completorStore = useCompletorStore();
 const maxAccessEntries = 10;
 
 const canDo = computed(() => ({
-    edit: can('QualificationsService.UpdateQualification'),
+    edit: can('QualificationsService.UpdateQualification').value,
     access: true,
 }));
 

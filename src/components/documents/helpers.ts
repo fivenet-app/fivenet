@@ -68,7 +68,7 @@ function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, pe
         return true;
     }
 
-    const fields = attrList(perm, 'Access');
+    const fields = attrList(perm, 'Access').value;
     if (fields.length === 0) {
         return creator?.userId === activeChar.userId;
     }
