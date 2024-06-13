@@ -101,7 +101,7 @@ async function deleteConductEntry(id: string): Promise<void> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query, () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
     if (data.value === null) {

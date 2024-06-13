@@ -21,7 +21,7 @@ const notifications = useNotificatorStore();
 
 const appConfig = useAppConfig();
 
-const mugShotSchema = zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images);
+const mugShotSchema = zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images);
 const schema = z
     .object({
         reason: z.string().min(3).max(255),

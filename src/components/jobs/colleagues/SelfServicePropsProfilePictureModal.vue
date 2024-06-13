@@ -17,7 +17,7 @@ const { isOpen } = useModal();
 const appConfig = useAppConfig();
 
 const schema = z.object({
-    avatar: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images),
+    avatar: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images),
     reset: z.boolean(),
 });
 

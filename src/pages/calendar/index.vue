@@ -55,9 +55,9 @@ async function listCalendars(): Promise<ListCalendarsResponse> {
 
         if (activeCalendarIds.value.length === 0) {
             activeCalendarIds.value = response.calendars.map((c) => c.id);
-        } else {
-            refresh();
         }
+
+        refresh();
 
         return response;
     } catch (e) {
@@ -80,7 +80,7 @@ const {
     { immediate: false },
 );
 
-watchDebounced(currentDate, () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(currentDate, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 function formatStartEndTime(entry: CalendarEntry): string {
     const start = toDate(entry.startTime);
@@ -247,7 +247,7 @@ async function resetToToday(): Promise<void> {
 
 const loadingState = ref(false);
 watch(
-    () => loading.value,
+    loading,
     () => {
         if (loading.value) {
             loadingState.value = true;
@@ -255,7 +255,7 @@ watch(
     },
 );
 watchDebounced(
-    () => loading.value,
+    loading,
     () => {
         if (!loading.value) {
             loadingState.value = false;

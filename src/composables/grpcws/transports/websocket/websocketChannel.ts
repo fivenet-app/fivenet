@@ -5,11 +5,7 @@ import { headersToMetadata } from '../../bridge/utils';
 import { Metadata } from '../../metadata';
 import { type Transport, type TransportFactory, type TransportOptions } from '../transport';
 import { createRpcError } from './utils';
-
-const errStreamCanceled = new Error('GRPC-WS: stream was canceled');
-const errStreamFailureUnknownError = new Error('GRPC-WS: unknown error');
-
-export { errStreamCanceled, errStreamFailureUnknownError };
+import { errCancelled, errInternal, errUnavailable } from '../../errors';
 
 export function WebsocketChannelTransport(webSocket: UseWebSocketReturn<any>): TransportFactory {
     const wsChannel = new WebsocketChannelImpl(webSocket);
@@ -94,7 +90,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 case 'failure': {
                     const failure = frame.payload.failure;
                     if (failure === null) {
-                        stream[0].onEnd(errStreamFailureUnknownError);
+                        stream[0].onEnd(errInternal);
                         return;
                     }
 
@@ -114,7 +110,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 case 'cancel': {
                     stream[0].debug && console.debug('GRPC-WS: received cancel for stream', streamId);
 
-                    stream[0].onEnd(errStreamCanceled);
+                    stream[0].onEnd(errCancelled);
                     break;
                 }
 
@@ -136,6 +132,10 @@ class WebsocketChannelImpl implements WebsocketChannel {
             if (!self.activeStreams.has(toSend.streamId)) {
                 opts.debug && console.debug('GRPC-WS: stream does not exist', toSend.streamId);
                 return;
+            }
+
+            if (self.ws.status.value === 'CLOSED') {
+                throw errUnavailable;
             }
 
             self.ws.send(GrpcFrame.toBinary(toSend), true);
@@ -220,6 +220,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     oneofKind: 'cancel',
                     cancel: Cancel.create(),
                 };
+
+                opts.onEnd(errCancelled);
 
                 sendToWebsocket(frame);
             },

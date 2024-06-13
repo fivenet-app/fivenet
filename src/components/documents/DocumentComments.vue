@@ -119,7 +119,7 @@ async function removeComment(comment: Comment): Promise<void> {
 const commentsEl = ref<HTMLDivElement | null>(null);
 const isVisible = useElementVisibility(commentsEl);
 
-watchOnce(isVisible, () => refresh());
+watchOnce(isVisible, async () => refresh());
 
 const commentInput = ref<HTMLInputElement | null>(null);
 

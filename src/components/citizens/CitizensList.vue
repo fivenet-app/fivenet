@@ -74,7 +74,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
 }
 
 watch(offset, async () => refresh());
-watchDebounced(query.value, () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(query.value, async () => refresh(), { debounce: 200, maxWait: 1250 });
 
 const clipboardStore = useClipboardStore();
 const notifications = useNotificatorStore();

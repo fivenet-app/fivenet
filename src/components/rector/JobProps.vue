@@ -65,7 +65,7 @@ const schema = z.object({
             ignoredRoleIds: z.string().max(64).array().max(20),
         }),
     }),
-    logoUrl: zodFileSingleSchema(appConfig.filestore.fileSizes.images, appConfig.filestore.types.images, true).optional(),
+    logoUrl: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images, true).optional(),
 });
 
 type Schema = z.output<typeof schema>;

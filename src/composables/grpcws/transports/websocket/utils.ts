@@ -1,5 +1,6 @@
 import { RpcError, type MethodInfo } from '@protobuf-ts/runtime-rpc';
 import { Metadata } from '../../metadata';
+import { GrpcStatusCode } from '@protobuf-ts/grpcweb-transport';
 
 export function createRpcError(metaData: Metadata, methodDefinition: MethodInfo<object, object>): RpcError | undefined {
     if (!metaData.has('grpc-message') || !metaData.has('grpc-status')) {
@@ -15,5 +16,6 @@ export function createRpcError(metaData: Metadata, methodDefinition: MethodInfo<
     const err = new RpcError(message, status ?? '0', metaData.headersMap);
     err.serviceName = methodDefinition.service.typeName;
     err.methodName = methodDefinition.name;
+    err.code = GrpcStatusCode[parseInt(err.code)].toLowerCase();
     return err;
 }

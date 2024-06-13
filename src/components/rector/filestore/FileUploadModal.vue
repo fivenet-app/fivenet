@@ -15,7 +15,7 @@ const appConfig = useAppConfig();
 const schema = z.object({
     category: z.string().min(3).max(255),
     name: z.string().min(3).max(255),
-    file: zodFileSingleSchema(appConfig.filestore.fileSizes.rector, appConfig.filestore.types.images),
+    file: zodFileSingleSchema(appConfig.fileUpload.fileSizes.rector, appConfig.fileUpload.types.images),
 });
 
 type Schema = z.output<typeof schema>;

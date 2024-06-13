@@ -110,7 +110,7 @@ function setFromProps(): void {
 }
 
 watch(data, () => setFromProps());
-watch(props, () => refresh());
+watch(props, async () => refresh());
 
 watch(
     () => state.startTime,

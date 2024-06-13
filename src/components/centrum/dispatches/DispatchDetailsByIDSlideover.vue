@@ -35,7 +35,7 @@ async function getDispatch(id: string): Promise<GetDispatchResponse> {
     }
 }
 
-watch(props, () => refresh());
+watch(props, async () => refresh());
 </script>
 
 <template>

@@ -16,6 +16,23 @@ export default defineAppConfig({
         unemployedJobName: 'unemployed',
     },
 
+    // File upload related config
+    fileUpload: {
+        fileSizes: {
+            rector: 5 * 1024 * 1024,
+            images: 2 * 1024 * 1024,
+        },
+        types: {
+            images: ['image/jpeg', 'image/jpg', 'image/png'],
+        },
+    },
+    timeouts: {
+        grpc: {
+            unary: 10000,
+        },
+        notification: 3500,
+    },
+
     // Nuxt UI app config
     ui: {
         primary: 'blue',
@@ -81,15 +98,6 @@ export default defineAppConfig({
         },
     },
 
-    filestore: {
-        fileSizes: {
-            rector: 5 * 1024 * 1024,
-            images: 2 * 1024 * 1024,
-        },
-        types: {
-            images: ['image/jpeg', 'image/jpg', 'image/png'],
-        },
-    },
     popover: {
         waitTime: 850,
     },

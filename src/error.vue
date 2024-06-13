@@ -40,6 +40,8 @@ function copyError(): void {
 
     copyToClipboardWrapper(JSON.stringify(props.error));
 }
+
+const isDev = import.meta.dev;
 </script>
 
 <template>
@@ -118,6 +120,10 @@ function copyError(): void {
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>
                         </UButtonGroup>
+
+                        <UButton v-if="isDev" @click="updateAppConfig({ version: 'UNKNOWN' }); clearError();" class="mt-4">
+                            Set Dev App Config
+                        </UButton>
                     </div>
                 </main>
             </div>

@@ -13,8 +13,7 @@ export type canMode = 'oneof' | 'all';
 export const can = reactify((perm: Perms | Perms[], mode?: canMode): boolean => {
     const { permissions, isSuperuser } = storeToRefs(useAuthStore());
 
-    if (isSuperuser.value) {
-        debugger;
+    if (isSuperuser.value === true) {
         return true;
     }
 

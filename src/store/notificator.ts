@@ -40,7 +40,7 @@ export const useNotificatorStore = defineStore('notifications', {
             notification.id = uuidv4();
 
             if (notification.timeout === undefined) {
-                notification.timeout = 3500;
+                notification.timeout = useAppConfig().timeouts.notification;
             }
 
             this.notifications.push(notification);
@@ -163,7 +163,9 @@ export const useNotificatorStore = defineStore('notifications', {
                         break;
                     }
                 }
+                debugger;
             } catch (e) {
+                debugger;
                 const error = e as RpcError;
                 if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
@@ -173,6 +175,8 @@ export const useNotificatorStore = defineStore('notifications', {
                     } else {
                         this.restartStream();
                     }
+                } else {
+                    this.restartStream();
                 }
             }
 

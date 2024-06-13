@@ -1209,6 +1209,10 @@
             "not_found": {
                 "title": "Nicht gefunden",
                 "content": "Inhalt nicht gefunden."
+            },
+            "available": {
+                "title": "Verbindung wiederhergestellt",
+                "content": "FiveNet Server Verbindung wiederhergestellt."
             }
         },
         "rector": {

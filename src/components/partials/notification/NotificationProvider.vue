@@ -5,18 +5,20 @@ import { notificationTypeToIcon, notificationTypeToColor } from '~/components/pa
 
 const { t } = useI18n();
 
+const { timeouts } = useAppConfig();
+
 const authStore = useAuthStore();
 const { username, activeChar } = storeToRefs(authStore);
 
 const notificatorStore = useNotificatorStore();
-const { notifications } = storeToRefs(notificatorStore);
+const { abort, notifications } = storeToRefs(notificatorStore);
 const { startStream, stopStream } = notificatorStore;
 
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
     if (username.value !== null && activeChar.value !== null) {
         startStream();
-    } else {
+    } else if (abort.value !== undefined) {
         await stopStream();
         notificatorStore.$reset();
     }
@@ -41,7 +43,7 @@ watchArray(
                 description: t(notification.description.key, notification.description.parameters ?? {}),
                 icon: notificationTypeToIcon(notification.type),
                 color: notificationTypeToColor(notification.type),
-                timeout: notification.timeout ?? 3500,
+                timeout: notification.timeout ?? timeouts.notification,
                 actions: notification.onClick
                     ? [
                           {

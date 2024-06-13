@@ -172,7 +172,7 @@ func (w *WrappedGrpcServer) IsGrpcWebRequest(req *http.Request) bool {
 // HandleGrpcWebsocketChannelRequest takes a HTTP request that is assumed to be a gRPC-Websocket-channel request and starts a
 // duplexed grpc-websocket-channel which will create multiple virtual streams over a single websocket.
 func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.ResponseWriter, req *http.Request) {
-	grpclog.Info("Handle grpc channel request")
+	grpclog.Infof("Handle grpc channel request %s", req.Host)
 
 	wsConn, err := websocket.Accept(resp, req, &websocket.AcceptOptions{
 		InsecureSkipVerify: true, // managed by ServeHTTP
