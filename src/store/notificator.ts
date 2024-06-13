@@ -163,9 +163,7 @@ export const useNotificatorStore = defineStore('notifications', {
                         break;
                     }
                 }
-                debugger;
             } catch (e) {
-                debugger;
                 const error = e as RpcError;
                 if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
                     console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
