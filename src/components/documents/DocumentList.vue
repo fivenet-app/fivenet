@@ -301,10 +301,10 @@ defineShortcuts({
         <div v-else-if="data?.documents || loading" class="relative overflow-x-auto">
             <ul
                 role="list"
-                class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800"
+                class="my-1 flex flex-initial flex-col divide-y divide-gray-100 dark:divide-gray-800"
                 :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
             >
-                <li v-if="loading" v-for="_ in 7" class="flex-initial">
+                <li v-if="loading" v-for="_ in 8" class="flex-initial">
                     <div class="m-2">
                         <div class="flex flex-row gap-2 truncate">
                             <div class="flex flex-1 flex-row items-center justify-start">

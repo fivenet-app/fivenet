@@ -92,7 +92,7 @@ const isOpen = ref(false);
             v-model="isOpen"
             collapsible
             side="right"
-            class="max-w-72 flex-1"
+            class="max-w-72"
             breakpoint="2xl"
             :ui="{ collapsible: 'lg:!hidden 2xl:!flex', slideover: 'lg:!flex 2xl:hidden' }"
         >

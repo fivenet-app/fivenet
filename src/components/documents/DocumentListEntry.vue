@@ -23,8 +23,8 @@ defineProps<{
             }"
         >
             <div class="m-2">
-                <div class="flex flex-row gap-2 truncate">
-                    <div class="flex flex-1 flex-row items-center justify-start">
+                <div class="flex flex-row justify-between gap-2">
+                    <div class="flex flex-row items-center">
                         <IDCopyBadge
                             :id="document.id"
                             prefix="DOC"
@@ -41,33 +41,34 @@ defineProps<{
                         </span>
                     </UBadge>
 
-                    <div class="flex flex-1 flex-row items-center justify-end gap-1">
+                    <div class="flex flex-row items-center gap-1">
                         <OpenClosedBadge :closed="document.closed" />
+                    </div>
+
+                    <div v-if="document.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5 font-bold">
+                        <UIcon name="i-mdi-trash-can" class="size-5 shrink-0" />
+                        {{ $t('common.deleted') }}
                     </div>
                 </div>
 
-                <div class="flex flex-row gap-2 truncate">
-                    <div class="inline-flex items-center gap-1 truncate">
-                        <UBadge v-if="document.category" class="inline-flex gap-1" size="md">
+                <div class="flex max-w-full shrink flex-row gap-2">
+                    <div class="flex items-center gap-1">
+                        <UBadge v-if="document.category" class="inline-flex flex-initial gap-1" size="md">
                             <UIcon name="i-mdi-shape" class="size-5" />
                             <span :title="document.category.description ?? $t('common.na')">
                                 {{ document.category.name }}
                             </span>
                         </UBadge>
 
-                        <h2 class="truncate py-2 pr-3 text-xl font-medium">
-                            {{ document.title }}
+                        <h2 class="my-2 mr-2 line-clamp-1 flex-1 break-all text-xl font-medium hover:line-clamp-3">
+                            <!-- {{ document.title }} -->
+                            Test1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111Test1111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111
                         </h2>
                     </div>
 
-                    <div v-if="document.deletedAt" class="flex flex-1 flex-row items-center justify-center font-bold">
-                        <UIcon name="i-mdi-trash-can" class="mr-1.5 size-5 shrink-0" />
-                        {{ $t('common.deleted') }}
-                    </div>
-
-                    <div v-if="document.updatedAt" class="flex flex-1 flex-row items-center justify-end">
-                        <UIcon name="i-mdi-update" class="mr-1.5 size-5 shrink-0" />
-                        <p>
+                    <div v-if="document.updatedAt" class="flex flex-1 flex-row items-center justify-end gap-1.5">
+                        <UIcon name="i-mdi-update" class="size-5 shrink-0" />
+                        <p class="text-nowrap">
                             {{ $t('common.updated') }}
                             <GenericTime :value="document.updatedAt" :ago="true" />
                         </p>
@@ -79,13 +80,13 @@ defineProps<{
                         <CitizenInfoPopover :user="document.creator" />
                     </div>
 
-                    <div class="flex flex-1 flex-row items-center justify-center">
-                        <UIcon name="i-mdi-briefcase" class="mr-1.5 size-5 shrink-0" />
+                    <div class="flex flex-1 flex-row items-center justify-center gap-1.5">
+                        <UIcon name="i-mdi-briefcase" class="size-5 shrink-0" />
                         {{ document.creator?.jobLabel }}
                     </div>
 
-                    <div class="flex flex-1 flex-row items-center justify-end">
-                        <UIcon name="i-mdi-calendar" class="mr-1.5 size-5 shrink-0" />
+                    <div class="flex flex-1 flex-initial flex-row items-center justify-end gap-1.5">
+                        <UIcon name="i-mdi-calendar" class="size-5 shrink-0" />
                         <p>
                             {{ $t('common.created_at') }}
                             <GenericTime :value="document.createdAt" />
