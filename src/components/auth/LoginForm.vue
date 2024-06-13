@@ -45,61 +45,56 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
 </script>
 
 <template>
-        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
-            <UFormGroup name="username" :label="$t('common.username')">
-                <UInput
-                    v-model="state.username"
-                    type="text"
-                    autocomplete="username"
-                    :placeholder="$t('common.username')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-            </UFormGroup>
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+        <UFormGroup name="username" :label="$t('common.username')">
+            <UInput
+                v-model="state.username"
+                type="text"
+                autocomplete="username"
+                :placeholder="$t('common.username')"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
+            />
+        </UFormGroup>
 
-            <UFormGroup name="password" :label="$t('common.password')">
-                <UInput
-                    v-model="state.password"
-                    type="password"
-                    autocomplete="current-password"
-                    :placeholder="$t('common.password')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-            </UFormGroup>
+        <UFormGroup name="password" :label="$t('common.password')">
+            <UInput
+                v-model="state.password"
+                type="password"
+                autocomplete="current-password"
+                :placeholder="$t('common.password')"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
+            />
+        </UFormGroup>
 
-            <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                {{ $t('common.login') }}
-            </UButton>
+        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+            {{ $t('common.login') }}
+        </UButton>
 
-            <div v-if="!isNUIAvailable" class="space-y-2">
-                <p v-if="!socialLoginEnabled" class="text-sm text-error-400">
-                    {{ $t('components.auth.LoginForm.social_login_disabled') }}
-                </p>
+        <div v-if="!isNUIAvailable" class="space-y-2">
+            <p v-if="!socialLoginEnabled" class="text-sm text-error-400">
+                {{ $t('components.auth.LoginForm.social_login_disabled') }}
+            </p>
 
-                <template v-else>
-                    <UDivider label="OR" orientation="horizontal" class="mt-2" />
+            <template v-else>
+                <UDivider label="OR" orientation="horizontal" class="mt-2" />
 
-                    <div v-for="provider in login.providers" :key="provider.name">
-                        <UButton
-                            block
-                            color="white"
-                            :external="true"
-                            :to="`/api/oauth2/login/${provider.name}`"
-                            :disabled="!canSubmit"
-                            :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
-                        >
-                            <img
-                                v-if="!provider.icon?.startsWith('i-')"
-                                :src="provider.icon"
-                                :alt="provider.name"
-                                class="size-5"
-                            />
-                            {{ $t('components.auth.LoginForm.login_with', [provider.label]) }}
-                        </UButton>
-                    </div>
-                </template>
-            </div>
+                <div v-for="provider in login.providers" :key="provider.name">
+                    <UButton
+                        block
+                        color="white"
+                        :external="true"
+                        :to="`/api/oauth2/login/${provider.name}`"
+                        :disabled="!canSubmit"
+                        :icon="provider.icon?.startsWith('i-') ? provider.icon : undefined"
+                    >
+                        <img v-if="!provider.icon?.startsWith('i-')" :src="provider.icon" :alt="provider.name" class="size-5" />
+                        {{ $t('components.auth.LoginForm.login_with', [provider.label]) }}
+                    </UButton>
+                </div>
+            </template>
+        </div>
 
         <UAlert
             v-if="loginError"

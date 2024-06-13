@@ -73,12 +73,10 @@ useTimeoutFn(() => {
 
 <template>
     <div v-if="notificationId" class="relative z-50">
-        <div class="fixed inset-0 transition-opacity bg-gray-200/75 dark:bg-gray-800/75" />
+        <div class="fixed inset-0 bg-gray-200/75 transition-opacity dark:bg-gray-800/75" />
 
         <div class="fixed inset-0 overflow-y-auto">
-            <div
-                class="flex min-h-full items-end sm:items-center justify-center text-center p-4 sm:p-0"
-            ></div>
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0"></div>
         </div>
     </div>
 </template>

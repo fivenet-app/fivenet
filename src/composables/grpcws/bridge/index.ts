@@ -19,7 +19,6 @@ import type { GrpcWSOptions } from '../../grpcws/bridge/options';
 import type { Transport, TransportFactory } from '../transports/transport';
 import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
 import { createGrpcStatus, createGrpcTrailers } from './utils';
-import { errInternal } from '../errors';
 
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;

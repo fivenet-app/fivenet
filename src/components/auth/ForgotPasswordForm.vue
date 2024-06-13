@@ -55,60 +55,60 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 </script>
 
 <template>
-        <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
-            <UAlert icon="i-mdi-info-circle">
-                <template #description>
-                    <I18nT keypath="components.auth.ForgotPassword.subtitle">
-                        <template #command>
-                            <UKbd size="md" :ui="{ size: { md: '' }}" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
-                        </template>
-                    </I18nT>
-                </template>
-            </UAlert>
+    <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
+        <UAlert icon="i-mdi-info-circle">
+            <template #description>
+                <I18nT keypath="components.auth.ForgotPassword.subtitle">
+                    <template #command>
+                        <UKbd size="md" :ui="{ size: { md: '' } }" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
+                    </template>
+                </I18nT>
+            </template>
+        </UAlert>
 
-            <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
-                <UInput
-                    v-model="state.registrationToken"
-                    type="text"
-                    inputmode="numeric"
-                    aria-describedby="hint"
-                    pattern="[0-9]*"
-                    autocomplete="registrationToken"
-                    :placeholder="$t('components.auth.ForgotPassword.registration_token')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-            </UFormGroup>
-
-            <UFormGroup name="password" :label="$t('common.password')">
-                <UInput
-                    v-model="state.password"
-                    type="password"
-                    autocomplete="new-password"
-                    :placeholder="$t('common.password')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
-                <PasswordStrengthMeter :input="state.password" class="mt-2" />
-            </UFormGroup>
-
-            <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
-                {{ $t('components.auth.ForgotPassword.submit_button') }}
-            </UButton>
-
-            <UAlert
-                v-if="accountError"
-                class="mt-2"
-                :title="$t('components.auth.ForgotPassword.create_error')"
-                :message="getErrorMessage(accountError)"
-                color="red"
-                :close-button="{
-                    icon: 'i-mdi-window-close',
-                    color: 'gray',
-                    variant: 'link',
-                    padded: false,
-                }"
-                @close="accountError = ''"
+        <UFormGroup name="registrationToken" :label="$t('components.auth.ForgotPassword.registration_token')">
+            <UInput
+                v-model="state.registrationToken"
+                type="text"
+                inputmode="numeric"
+                aria-describedby="hint"
+                pattern="[0-9]*"
+                autocomplete="registrationToken"
+                :placeholder="$t('components.auth.ForgotPassword.registration_token')"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
             />
-        </UForm>
+        </UFormGroup>
+
+        <UFormGroup name="password" :label="$t('common.password')">
+            <UInput
+                v-model="state.password"
+                type="password"
+                autocomplete="new-password"
+                :placeholder="$t('common.password')"
+                @focusin="focusTablet(true)"
+                @focusout="focusTablet(false)"
+            />
+            <PasswordStrengthMeter :input="state.password" class="mt-2" />
+        </UFormGroup>
+
+        <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
+            {{ $t('components.auth.ForgotPassword.submit_button') }}
+        </UButton>
+
+        <UAlert
+            v-if="accountError"
+            class="mt-2"
+            :title="$t('components.auth.ForgotPassword.create_error')"
+            :message="getErrorMessage(accountError)"
+            color="red"
+            :close-button="{
+                icon: 'i-mdi-window-close',
+                color: 'gray',
+                variant: 'link',
+                padded: false,
+            }"
+            @close="accountError = ''"
+        />
+    </UForm>
 </template>

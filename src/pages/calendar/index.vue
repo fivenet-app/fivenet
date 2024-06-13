@@ -246,14 +246,11 @@ async function resetToToday(): Promise<void> {
 }
 
 const loadingState = ref(false);
-watch(
-    loading,
-    () => {
-        if (loading.value) {
-            loadingState.value = true;
-        }
-    },
-);
+watch(loading, () => {
+    if (loading.value) {
+        loadingState.value = true;
+    }
+});
 watchDebounced(
     loading,
     () => {

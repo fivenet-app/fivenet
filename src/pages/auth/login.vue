@@ -27,7 +27,7 @@ const { username } = storeToRefs(authStore);
 const notifications = useNotificatorStore();
 
 const items = [
-{
+    {
         slot: 'login',
         label: t('components.auth.LoginForm.title'),
         icon: 'i-mdi-login',
@@ -88,41 +88,37 @@ onMounted(async () => {
 <template>
     <UCard class="w-full max-w-md bg-white/75 backdrop-blur dark:bg-white/5">
         <div class="space-y-4">
-        <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
+            <FiveNetLogo class="mx-auto mb-2 h-auto w-20" />
 
-        <UTabs v-model="selectedTab" :items="items" class="w-full">
-            <template #default="{ item, selected }">
-                        <div class="relative flex items-center gap-2 truncate">
-                            <UIcon :name="item.icon" class="size-4 shrink-0" />
+            <UTabs v-model="selectedTab" :items="items" class="w-full">
+                <template #default="{ item, selected }">
+                    <div class="relative flex items-center gap-2 truncate">
+                        <UIcon :name="item.icon" class="size-4 shrink-0" />
 
-                            <span class="truncate">{{ item.label }}</span>
+                        <span class="truncate">{{ item.label }}</span>
 
-                            <span
-                                v-if="selected"
-                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
-                            />
-                        </div>
-                    </template>
+                        <span
+                            v-if="selected"
+                            class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
+                        />
+                    </div>
+                </template>
 
-            <template #login>
-                <LoginForm />
-            </template>
-            <template #forgotPassword>
-                <ForgotPasswordForm />
-            </template>
-        </UTabs>
+                <template #login>
+                    <LoginForm />
+                </template>
+                <template #forgotPassword>
+                    <ForgotPasswordForm />
+                </template>
+            </UTabs>
 
-        <div v-if="login.signupEnabled" class="space-y-4">
-            <UDivider orientation="horizontal" />
+            <div v-if="login.signupEnabled" class="space-y-4">
+                <UDivider orientation="horizontal" />
 
-            <UButton
-                block
-                color="gray"
-                :to="{ name: 'auth-registration' }"
-            >
-                {{ $t('components.auth.LoginForm.register_account') }}
-            </UButton>
+                <UButton block color="gray" :to="{ name: 'auth-registration' }">
+                    {{ $t('components.auth.LoginForm.register_account') }}
+                </UButton>
+            </div>
         </div>
-    </div>
     </UCard>
 </template>

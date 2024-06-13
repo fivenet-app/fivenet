@@ -67,7 +67,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <template #description>
                     <I18nT keypath="components.auth.RegistrationForm.subtitle">
                         <template #command>
-                            <UKbd size="md" :ui="{ size: { md: '' }}" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
+                            <UKbd size="md" :ui="{ size: { md: '' } }" class="h-7 min-w-[24px] text-[13px]">/fivenet</UKbd>
                         </template>
                     </I18nT>
                 </template>

@@ -121,7 +121,14 @@ const isDev = import.meta.dev;
                             </UButton>
                         </UButtonGroup>
 
-                        <UButton v-if="isDev" @click="updateAppConfig({ version: 'UNKNOWN' }); clearError();" class="mt-4">
+                        <UButton
+                            v-if="isDev"
+                            @click="
+                                updateAppConfig({ version: 'UNKNOWN' });
+                                clearError();
+                            "
+                            class="mt-4"
+                        >
                             Set Dev App Config
                         </UButton>
                     </div>
