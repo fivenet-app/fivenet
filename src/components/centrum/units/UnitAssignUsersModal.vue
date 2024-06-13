@@ -102,12 +102,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                             return colleagues;
                                         }
                                     "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
                                     :search-attributes="['firstname', 'lastname']"
                                     block
                                     :placeholder="$t('common.owner')"
                                     trailing
                                     by="userId"
-                                    :searchable-placeholder="$t('common.search_field')"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >

@@ -136,9 +136,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     >
                                         <USelectMenu
                                             v-model="state.users[idx].user"
-                                            :search-attributes="['firstname', 'lastname']"
                                             :placeholder="$t('common.user')"
-                                            :searchable-placeholder="$t('common.search_field')"
                                             block
                                             trailing
                                             by="userId"
@@ -152,6 +150,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     return users;
                                                 }
                                             "
+                                            searchable-lazy
+                                            :searchable-placeholder="$t('common.search_field')"
+                                            :search-attributes="['firstname', 'lastname']"
                                             @focusin="focusTablet(true)"
                                             @focusout="focusTablet(false)"
                                         >

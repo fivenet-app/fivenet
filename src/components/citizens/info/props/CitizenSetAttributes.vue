@@ -150,11 +150,12 @@ watch(state, () => {
                         return colleagues;
                     }
                 "
+                searchable-lazy
+                :searchable-placeholder="$t('common.search_field')"
                 :search-attributes="['name']"
                 option-attribute="name"
                 by="name"
                 clear-search-on-close
-                :searchable-placeholder="$t('common.search_field')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             >

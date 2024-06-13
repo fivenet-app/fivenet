@@ -216,12 +216,13 @@ const columns = [
                                     return users;
                                 }
                             "
+                            searchable-lazy
+                            :searchable-placeholder="$t('common.search_field')"
                             :search-attributes="['firstname', 'lastname']"
                             block
                             :placeholder="$t('common.user', 2)"
                             trailing
                             by="userId"
-                            :searchable-placeholder="$t('common.search_field')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >

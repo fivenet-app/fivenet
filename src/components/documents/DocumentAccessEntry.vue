@@ -286,12 +286,13 @@ watch(selectedAccessRole, () => {
                             return users;
                         }
                     "
+                    searchable-lazy
+                    :searchable-placeholder="$t('common.search_field')"
                     :search-attributes="['firstname', 'lastname']"
                     class="flex-1"
                     :placeholder="$t('common.citizen', 1)"
                     trailing
                     by="userId"
-                    :searchable-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 >

@@ -98,12 +98,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 return users.filter((u) => u.userId !== activeChar?.userId);
                             }
                         "
+                        searchable-lazy
+                        :searchable-placeholder="$t('common.search_field')"
                         :search-attributes="['firstname', 'lastname']"
                         block
                         :placeholder="$t('common.citizen', 2)"
                         trailing
                         by="userId"
-                        :searchable-placeholder="$t('common.search_field')"
                         @focusin="focusTablet(true)"
                         @focusout="focusTablet(false)"
                     >

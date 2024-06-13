@@ -333,6 +333,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <USelectMenu
                                         v-model="state.icon"
                                         :searchable="markerIconSearch"
+                                        searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
                                         value-attribute="name"
                                         @focusin="focusTablet(true)"

@@ -37,7 +37,6 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                     nullable
                     :search-attributes="['firstname', 'lastname']"
                     :placeholder="$t('common.citizen', 1)"
-                    :searchable-placeholder="$t('common.search_field')"
                     block
                     trailing
                     by="userId"
@@ -51,6 +50,8 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                             return users;
                         }
                     "
+                    search-lazy
+                    :search-placeholder="$t('common.search_field')"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 >

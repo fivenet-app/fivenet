@@ -701,7 +701,8 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                         }
                                     }
                                 "
-                                :searchable-placeholder="$t('common.search_field')"
+                                search-lazy
+                                :search-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >

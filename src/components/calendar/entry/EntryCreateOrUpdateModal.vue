@@ -181,7 +181,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 v-model="state.calendar"
                                 :disabled="!!entryId"
                                 :searchable="
-                                    async (_) =>
+                                    async () =>
                                         (
                                             await calendarStore.listCalendars({
                                                 pagination: { offset: 0 },
@@ -190,11 +190,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             })
                                         ).calendars?.filter((c) => !c.closed)
                                 "
+                                searchable-lazy
+                                :searchable-placeholder="$t('common.search_field')"
                                 :search-attributes="['name']"
                                 option-attribute="name"
                                 by="id"
                                 :placeholder="$t('common.calendar')"
-                                :searchable-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >
@@ -296,12 +297,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         return users;
                                     }
                                 "
+                                searchable-lazy
+                                :searchable-placeholder="$t('common.search_field')"
                                 :search-attributes="['firstname', 'lastname']"
                                 block
                                 :placeholder="$t('common.citizen', 2)"
                                 trailing
                                 by="userId"
-                                :searchable-placeholder="$t('common.search_field')"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >

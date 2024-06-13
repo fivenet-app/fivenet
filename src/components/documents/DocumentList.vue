@@ -185,6 +185,8 @@ defineShortcuts({
                                             }
                                         }
                                     "
+                                    search-lazy
+                                    :search-placeholder="$t('common.category', 1)"
                                     @focusin="focusTablet(true)"
                                     @focusout="focusTablet(false)"
                                 >
@@ -211,9 +213,10 @@ defineShortcuts({
                                             return users;
                                         }
                                     "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
                                     :search-attributes="['firstname', 'lastname']"
                                     :placeholder="$t('common.creator')"
-                                    :searchable-placeholder="$t('common.search_field')"
                                     trailing
                                     by="userId"
                                     @focusin="focusTablet(true)"

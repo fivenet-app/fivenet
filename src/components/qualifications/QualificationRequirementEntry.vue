@@ -55,8 +55,9 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                 :search-attributes="['title']"
                 block
                 :search="(query: string) => listQualifications(query)"
+                search-lazy
+                :search-placeholder="$t('common.search_field')"
                 :loading="qualificationsLoading"
-                :searchable-placeholder="$t('common.search_field')"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             >
