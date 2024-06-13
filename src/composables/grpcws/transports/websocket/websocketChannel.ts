@@ -2,10 +2,10 @@ import type { UseWebSocketReturn } from '@vueuse/core';
 import { writeUInt32BE } from '~/utils/array';
 import { Body, Cancel, Complete, GrpcFrame, Header, HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
 import { headersToMetadata } from '../../bridge/utils';
+import { errCancelled, errInternal, errUnavailable } from '../../errors';
 import { Metadata } from '../../metadata';
 import { type Transport, type TransportFactory, type TransportOptions } from '../transport';
 import { createRpcError } from './utils';
-import { errCancelled, errInternal, errUnavailable } from '../../errors';
 
 export function WebsocketChannelTransport(webSocket: UseWebSocketReturn<any>): TransportFactory {
     const wsChannel = new WebsocketChannelImpl(webSocket);
