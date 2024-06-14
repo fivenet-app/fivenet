@@ -218,10 +218,8 @@ defineShortcuts({
                 <UButton
                     v-if="
                         can('JobsService.SetJobsUserProps').value &&
-                        (
-                            colleague.userId === activeChar!.userId ||
-                            attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate')
-                        ).value &&
+                        (colleague.userId === activeChar!.userId ||
+                            attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate').value) &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                     "
                     variant="link"

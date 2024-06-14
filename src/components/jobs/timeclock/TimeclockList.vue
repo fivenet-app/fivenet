@@ -18,7 +18,7 @@ const { t } = useI18n();
 
 const completorStore = useCompletorStore();
 
-const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All').value;
+const canAccessAll = attr('JobsTimeclockService.ListTimeclock', 'Access', 'All');
 
 const schema = z.object({
     users: z.custom<Colleague>().array().max(5).optional(),

@@ -125,7 +125,7 @@ async function markerIconSearch(query: string): Promise<DefineComponent[]> {
     query = query.toLowerCase().replaceAll(' ', '').trim();
     let count = 0;
     return markerIcons.filter((icon) => {
-        if (count < 35 && icon.name.toLowerCase().startsWith(query)) {
+        if (count < 35 && icon?.name?.toLowerCase()?.startsWith(query)) {
             count++;
             return true;
         }
