@@ -203,9 +203,7 @@ export const useLivemapStore = defineStore('livemap', {
                 if (marker.creator !== undefined) {
                     this.updateUserInfo(m.creator!, marker.creator);
                 }
-                if (m.data?.data.oneofKind !== marker.data?.data.oneofKind) {
-                    m.data = marker.data;
-                }
+                m.data = marker.data;
                 if (m.expiresAt !== marker.expiresAt) {
                     m.expiresAt = marker.expiresAt;
                 }
