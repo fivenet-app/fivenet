@@ -15,6 +15,8 @@ import (
 	"net/http"
 	"net/http/httptest"
 	"net/textproto"
+	"path/filepath"
+	"runtime"
 	"strconv"
 	"strings"
 	"testing"
@@ -37,6 +39,11 @@ import (
 	"google.golang.org/grpc/grpclog"
 	"google.golang.org/grpc/metadata"
 	"google.golang.org/protobuf/proto"
+)
+
+var (
+	_, b, _, _ = runtime.Caller(0)
+	basepath   = filepath.Dir(b)
 )
 
 var (
@@ -106,7 +113,10 @@ func (s *GrpcWebWrapperTestSuite) SetupTest() {
 
 	s.listener, err = net.Listen("tcp", "127.0.0.1:0")
 	require.NoError(s.T(), err, "failed to set up server socket for test")
-	tlsConfig, err := connhelpers.TlsConfigForServerCerts("../../../internal/tests/certs/localhost.crt", "../../../internal/tests/certs/localhost.key")
+	tlsConfig, err := connhelpers.TlsConfigForServerCerts(
+		filepath.Join(basepath, "../../../internal/tests/certs/localhost.crt"),
+		filepath.Join(basepath, "../../../internal/tests/certs/localhost.key"),
+	)
 	require.NoError(s.T(), err, "failed loading keys")
 	if s.httpMajorVersion == 2 {
 		tlsConfig, err = connhelpers.TlsConfigWithHttp2Enabled(tlsConfig)
