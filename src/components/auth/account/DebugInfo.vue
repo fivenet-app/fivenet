@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
@@ -16,6 +17,8 @@ const { activeChar, permissions, getAccessTokenExpiration } = storeToRefs(authSt
 const { clearAuthInfo } = authStore;
 
 const notifications = useNotificatorStore();
+
+const { webSocket, wsInitiated } = useGRPCWebsocketTransport();
 
 async function resetLocalStorage(): Promise<void> {
     clearAuthInfo();
@@ -106,6 +109,16 @@ const version = APP_VERSION;
             >
                 {{ settings.nuiEnabled ? $t('common.enabled') : $t('common.disabled') }}:
                 {{ settings.nuiResourceName ?? $t('common.na') }}
+            </UFormGroup>
+
+            <UFormGroup
+                name="status"
+                :label="$t('common.status')"
+                class="grid grid-cols-2 items-center gap-2"
+                :ui="{ container: '' }"
+            >
+                {{ $t('common.active') }}: {{ wsInitiated ? $t('common.yes') : $t('common.no') }}<br />
+                {{ $t('common.status') }}: <code>{{ webSocket.status.value }}</code>
             </UFormGroup>
 
             <UFormGroup
