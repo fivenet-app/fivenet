@@ -5,6 +5,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { Template } from '~~/gen/ts/resources/documents/templates';
+import { logger } from '~/components/documents/helpers';
 
 const props = defineProps<{
     templateId: string;
@@ -28,7 +29,7 @@ async function getTemplate(): Promise<Template> {
     try {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
-        console.debug('Documents: Editor - Clipboard Template Data', data);
+        logger.debug('Documents: Editor - Clipboard Template Data', data);
 
         const call = getGRPCDocStoreClient().getTemplate({
             templateId: props.templateId,

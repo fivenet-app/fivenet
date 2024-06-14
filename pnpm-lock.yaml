@@ -47,6 +47,9 @@ importers:
       browser-headers:
         specifier: 0.4.1
         version: 0.4.1
+      consola:
+        specifier: ^3.2.3
+        version: 3.2.3
       date-fns:
         specifier: 3.6.0
         version: 3.6.0

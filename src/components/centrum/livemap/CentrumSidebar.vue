@@ -10,7 +10,7 @@ import {
 } from '~/components/centrum/helpers';
 import UnitDetailsSlideover from '~/components/centrum/units/UnitDetailsSlideover.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
-import { useCentrumStore } from '~/store/centrum';
+import { logger, useCentrumStore } from '~/store/centrum';
 import { useNotificatorStore } from '~/store/notificator';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
@@ -26,8 +26,6 @@ import { useSettingsStore } from '~/store/settings';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 import DisponentsInfo from '../disponents/DisponentsInfo.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-
-
 
 const modal = useModal();
 
@@ -211,7 +209,7 @@ watchDebounced(
             const dispatch = dispatches.value.get(selectedDispatch.value);
             if (dispatch !== undefined) {
                 setWaypoint(dispatch.x, dispatch.y);
-                console.debug('Centrum: Sidebar - Set Dispatch waypoint, id:', dispatch.id);
+                logger.debug('Centrum: Sidebar - Set Dispatch waypoint, id:', dispatch.id);
             }
         }
     },
@@ -249,7 +247,7 @@ const attentionDebouncedPlay = useDebounceFn(async () => debouncedPlay(), 950);
 const lastCheckupNotification = ref<Date | undefined>();
 
 async function checkup(): Promise<void> {
-    console.debug('Centrum: Sidebar - Running checkup');
+    logger.debug('Centrum: Sidebar - Running checkup');
     const ownUnit = getOwnUnit.value;
     if (ownUnit === undefined || ownUnit.status === undefined) {
         return;

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { type TranslateItem } from '~/composables/i18n';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
@@ -22,7 +21,7 @@ import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
 import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
-import { checkDocAccess } from '~/components/documents/helpers';
+import { checkDocAccess, logger } from '~/components/documents/helpers';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -104,7 +103,7 @@ onMounted(async () => {
     if (route.query.templateId) {
         const data = clipboardStore.getTemplateData();
         data.activeChar = activeChar.value!;
-        console.debug('Documents: Editor - Clipboard Template Data', data);
+        logger.debug('Editor - Clipboard Template Data', data);
 
         templateId.value = route.query.templateId as string;
 
@@ -160,7 +159,7 @@ onMounted(async () => {
             }
         } catch (e) {
             handleGRPCError(e as RpcError);
-            console.error('Documents: Editor - Template Error', e);
+            logger.error('Editor - Template Error', e);
 
             await navigateTo({ name: 'documents' });
 
@@ -619,8 +618,8 @@ const canDo = computed(() => ({
     relations: can('DocStoreService.AddDocumentRelation').value,
 }));
 
-console.info(
-    'Documents Editor - Can Do: Edit',
+logger.info(
+    'Editor - Can Do: Edit',
     canDo.value.edit,
     'Access',
     canDo.value.access,

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { useAuthStore } from '~/store/auth';
+import { useAuthStore, logger as authLogger } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
@@ -61,7 +61,7 @@ onMounted(async () => {
     const query = route.query;
     // `t` and `exp` set, means social login was successful
     if (query.u && query.u !== '' && query.exp && query.exp !== '') {
-        console.info('Login: Got access token via query param (oauth2 login)');
+        authLogger.info('Got access token via query param (oauth2 login)');
         username.value = query.u as string;
         setAccessTokenExpiration(query.exp as string);
 

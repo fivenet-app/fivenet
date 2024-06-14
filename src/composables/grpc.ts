@@ -23,6 +23,8 @@ import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
 import { useGRPCWebsocketTransport } from './grpcws';
 
+const logger = useLogger('GRPC-WS');
+
 const grpcWebTransport = new GrpcWebFetchTransport({
     baseUrl: '/api/grpc',
     format: 'text',
@@ -51,12 +53,14 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
 
     const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'UNKNOWN';
 
-    if (err.code !== undefined) {
+    const code = err.code?.toLowerCase();
+    if (code !== undefined) {
         const route = useRoute();
-        switch (err.code.toLowerCase()) {
+        switch (code) {
             case 'internal':
                 break;
 
+            case 'cancelled':
             case 'unavailable':
                 notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
@@ -113,9 +117,14 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         }
     }
 
-    console.error(
-        `GRPC Client: Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Message: ${err.message}`,
+    logger.error(
+        `Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Code: ${err.code}, Message: ${err.message}`,
     );
+
+    if (code === 'cancelled') {
+        // Don't send notifications for cancelled requests
+        return true;
+    }
 
     if (err.message?.startsWith('errors.')) {
         const errSplits = err.message.split(';');

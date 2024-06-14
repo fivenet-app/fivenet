@@ -1,6 +1,8 @@
 import { type TypedRouteFromName } from '@typed-router';
 import { useSettingsStore } from '~/store/settings';
 
+export const logger = useLogger('🎮 NUI');
+
 // Checking for `GetParentResourceName` existance doesn't work (anymore) in FiveM NUI iframes
 export function isNUIAvailable(): boolean {
     return useSettingsStore().isNUIAvailable;
@@ -10,11 +12,11 @@ function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';
 }
 
-export async function fetchNUI<T = any, V = any>(event: string, data: T): Promise<V> {
+export async function fetchNUI<T = any, V = any>(method: string, data: T): Promise<V> {
     const body = JSON.stringify(data);
-    console.debug(`NUI: Fetch ${event}:`, body);
+    logger.debug(`Fetch ${method}:`, body);
     // @ts-ignore FiveM NUI functions
-    const resp = await fetch(`https://${getParentResourceName()}/${event}`, {
+    const resp = await fetch(`https://${getParentResourceName()}/${method}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json; charset=UTF-8',
@@ -39,7 +41,7 @@ export async function onNUIMessage(event: MessageEvent<NUIMessage>): Promise<voi
     if (event.data.type === 'navigateTo') {
         await navigateTo(event.data.route);
     } else {
-        console.error('NUI: Message - Unknown message type received', event.data);
+        logger.error('Message - Unknown message type received', event.data);
     }
 }
 

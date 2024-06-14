@@ -38,7 +38,7 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
         return;
     }
 
-    console.debug('Switching language to:', lang.name);
+    useLogger('⚙️ Settings').info('Switching language to:', lang.name);
     preventClose.value = true;
 
     userLocale.value = lang.iso!;

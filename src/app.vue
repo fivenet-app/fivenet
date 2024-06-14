@@ -58,7 +58,8 @@ const settings = useSettingsStore();
 const { locale: userLocale, isNUIAvailable, design, updateAvailable } = storeToRefs(settings);
 
 if (APP_VERSION !== settings.version) {
-    console.info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
+    useLogger('⚙️ Settings').info('Resetting app data because new version has been detected', settings.version, APP_VERSION);
+
     useClipboardStore().$reset();
     useDocumentEditorStore().$reset();
     settings.setVersion(APP_VERSION);

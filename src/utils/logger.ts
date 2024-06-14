@@ -1,3 +1,5 @@
+import { LogLevels, consola, type ConsolaInstance } from 'consola';
+
 export interface ILogger {
     log(message?: any, ...optionalParams: any[]): void;
     debug(message?: any, ...optionalParams: any[]): void;
@@ -7,33 +9,42 @@ export interface ILogger {
 }
 
 export class Logger {
+    readonly consola: ConsolaInstance;
     readonly prefix?: string;
 
     constructor(prefix?: string) {
         this.prefix = prefix?.trim();
-    }
 
-    getPrefix(): string {
-        return this.prefix ? this.prefix + ': ' : '';
+        if (this.prefix !== undefined) {
+            this.consola = consola.withTag(this.prefix?.trim());
+        } else {
+            this.consola = consola;
+        }
+
+        if (import.meta.dev) {
+            this.consola.level = LogLevels.debug;
+        } else {
+            this.consola.level = LogLevels.info;
+        }
     }
 
     log(message?: any, ...optionalParams: any[]): void {
-        console.log(this.getPrefix() + message, ...optionalParams);
+        this.consola.log(message, ...optionalParams);
     }
 
     debug(message?: any, ...optionalParams: any[]): void {
-        console.debug(this.getPrefix() + message, ...optionalParams);
+        this.consola.debug(message, ...optionalParams);
     }
 
     info(message?: any, ...optionalParams: any[]): void {
-        console.info(this.getPrefix() + message, ...optionalParams);
+        this.consola.info(message, ...optionalParams);
     }
 
     warn(message?: any, ...optionalParams: any[]): void {
-        console.warn(this.getPrefix() + message, ...optionalParams);
+        this.consola.warn(message, ...optionalParams);
     }
 
     error(message?: any, ...optionalParams: any[]): void {
-        console.error(this.getPrefix() + message, ...optionalParams);
+        this.consola.error(message, ...optionalParams);
     }
 }

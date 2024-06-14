@@ -1,4 +1,5 @@
 import { type RouteLocationNormalized } from 'vue-router';
+import { logger } from '~/composables/nui';
 import { useSettingsStore } from '~/store/settings';
 
 export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
@@ -14,13 +15,13 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         const settings = useSettingsStore();
         if (nuiQuery.toLowerCase() !== 'false') {
             settings.setNuiDetails(true, nuiQuery);
-            console.info('ClientCfg: Enabled NUI integration! Resource Name:', settings.nuiResourceName);
+            logger.info('Enabled NUI integration, resource:', settings.nuiResourceName);
         } else {
             settings.setNuiDetails(false, undefined);
-            console.info('ClientCfg: Disabled NUI integration!');
+            logger.info('Disabled NUI integration');
         }
     } else {
-        console.debug('ClientCfg: No NUI query param detected.');
+        logger.debug('No NUI query param detected');
     }
 
     if (route.query?.refreshApp !== undefined) {

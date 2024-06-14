@@ -8,7 +8,7 @@ import { Job, type JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 
-const logger = useLogger('🔑 Auth');
+export const logger = useLogger('🔑 Auth');
 
 export interface AuthState {
     accessTokenExpiration: null | Date;

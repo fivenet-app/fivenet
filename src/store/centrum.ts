@@ -9,7 +9,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 
-const logger = useLogger('⛑️ Centrum');
+export const logger = useLogger('⛑️ Centrum');
 
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours

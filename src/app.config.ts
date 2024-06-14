@@ -28,7 +28,7 @@ export default defineAppConfig({
     },
     timeouts: {
         grpc: {
-            unary: 10000,
+            unary: 8500,
         },
         notification: 3500,
     },

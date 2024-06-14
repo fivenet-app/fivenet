@@ -6,6 +6,8 @@ import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { User, UserShort } from '~~/gen/ts/resources/users/users';
 
+export const logger = useLogger('📃 Docstore');
+
 export function checkDocAccess(
     docAccess: DocumentAccess | undefined,
     creator: UserShort | undefined,

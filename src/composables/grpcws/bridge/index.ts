@@ -43,7 +43,14 @@ export class GrpcWSTransport implements RpcTransport {
             onConnected(ws) {
                 ws.binaryType = 'arraybuffer';
                 self.wsInitiated.value = true;
-                self.logger.info('Connected Websocket');
+                self.logger.info('Websocket connected');
+            },
+            onDisconnected(_, event) {
+                if (event.wasClean) {
+                    return;
+                }
+
+                self.logger.error('Websocket disconnected, code:', event.code, 'reason:', event.reason);
             },
         });
         this.webSocket = webSocket;
