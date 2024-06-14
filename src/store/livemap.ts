@@ -1,9 +1,11 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { type Coordinate } from '~/composables/livemap';
 import { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { Job } from '~~/gen/ts/resources/users/jobs';
 import { type UserShort } from '~~/gen/ts/resources/users/users';
 import { useSettingsStore } from './settings';
+
+const logger = useLogger('🗺️ Livemap');
 
 // In seconds
 const initialReconnectBackoffTime = 1.75;
@@ -58,7 +60,7 @@ export const useLivemapStore = defineStore('livemap', {
                 return;
             }
 
-            console.debug('Livemap: Starting Data Stream');
+            logger.debug('Starting Data Stream');
 
             const settingsStore = useSettingsStore();
             const { livemap } = storeToRefs(settingsStore);
@@ -84,7 +86,7 @@ export const useLivemapStore = defineStore('livemap', {
                         continue;
                     }
 
-                    console.debug('Livemap: Received change - Kind:', resp.data.oneofKind, resp.data);
+                    logger.debug('Received change - Kind:', resp.data.oneofKind, resp.data);
 
                     if (resp.data.oneofKind === 'jobs') {
                         this.jobsMarkers = resp.data.jobs.markers;
@@ -104,7 +106,7 @@ export const useLivemapStore = defineStore('livemap', {
                             }
                         });
                         foundMarkers.length = 0;
-                        console.debug(`Livemap: Removed ${removedMarkers} old marker markers`);
+                        logger.debug(`Removed ${removedMarkers} old marker markers`);
                     } else if (resp.data.oneofKind === 'users') {
                         resp.data.users.users.forEach((v) => {
                             foundUsers.push(v.info!.id);
@@ -129,12 +131,12 @@ export const useLivemapStore = defineStore('livemap', {
                                 }
                             });
                             foundUsers.length = 0;
-                            console.debug(`Livemap: Removed ${removedMarkers} old user markers`);
+                            logger.debug(`Removed ${removedMarkers} old user markers`);
                         }
 
                         this.initiated = true;
                     } else {
-                        console.warn('Centrum: Unknown data received - Kind: ' + resp.data.oneofKind);
+                        logger.warn('Unknown data received - Kind: ' + resp.data.oneofKind);
                     }
                 }
             } catch (e) {
@@ -142,7 +144,7 @@ export const useLivemapStore = defineStore('livemap', {
                 if (error) {
                     // Only restart when not cancelled and abort is still valid
                     if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                        console.error('Livemap: Data Stream Failed', error.code, error.message, error.cause);
+                        logger.error('Data Stream Failed', error.code, error.message, error.cause);
 
                         // Only set error if we don't need to restart
                         if (this.abort !== undefined && !this.abort?.signal.aborted) {
@@ -156,7 +158,7 @@ export const useLivemapStore = defineStore('livemap', {
                 }
             }
 
-            console.debug('Livemap: Data Stream Ended');
+            logger.debug('Data Stream Ended');
         },
         async stopStream(): Promise<void> {
             if (this.abort === undefined) {
@@ -165,7 +167,7 @@ export const useLivemapStore = defineStore('livemap', {
 
             this.abort.abort();
             this.abort = undefined;
-            console.debug('Livemap: Stopping Data Stream');
+            logger.debug('Stopping Data Stream');
         },
         async restartStream(): Promise<void> {
             this.reconnecting = true;
@@ -177,7 +179,7 @@ export const useLivemapStore = defineStore('livemap', {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;
             }
 
-            console.debug('Livemap: Restart back off time in', this.reconnectBackoffTime, 'seconds');
+            logger.debug('Restart back off time in', this.reconnectBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {
@@ -300,5 +302,5 @@ export const useLivemapStore = defineStore('livemap', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useLivemapStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useLivemapStore, import.meta.hot));
 }

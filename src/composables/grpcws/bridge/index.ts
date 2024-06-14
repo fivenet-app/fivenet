@@ -22,12 +22,15 @@ import { createGrpcStatus, createGrpcTrailers } from './utils';
 
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;
+    private logger: ILogger;
     webSocket: UseWebSocketReturn<any>;
     wsInitiated: Ref<boolean>;
     private wsTs: TransportFactory;
 
     constructor(defaultOptions: GrpcWSOptions) {
         this.defaultOptions = defaultOptions;
+
+        this.logger = useLogger('📡 GRPC-WS');
 
         this.wsInitiated = ref(false);
         const self = this;
@@ -40,11 +43,11 @@ export class GrpcWSTransport implements RpcTransport {
             onConnected(ws) {
                 ws.binaryType = 'arraybuffer';
                 self.wsInitiated.value = true;
-                console.info('GRPC-WS: Connected Websocket');
+                self.logger.info('Connected Websocket');
             },
         });
         this.webSocket = webSocket;
-        this.wsTs = WebsocketChannelTransport(this.webSocket);
+        this.wsTs = WebsocketChannelTransport(this.logger, this.webSocket);
     }
 
     mergeOptions(options?: Partial<RpcOptions>): RpcOptions {
@@ -300,7 +303,7 @@ export class GrpcWSTransport implements RpcTransport {
         }
 
         this.webSocket.close();
-        console.info('GRPC-WS: Closed Websocket');
+        this.logger.info('Closed Websocket');
     }
 }
 

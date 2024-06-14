@@ -30,7 +30,7 @@ const data = computed(() =>
 
 const cardRef = ref<HTMLElement | null>(null);
 
-const { width } = useElementSize(cardRef);
+const { width, height } = useElementSize(cardRef);
 
 const x = (_: DataRecord, i: number) => i;
 const y = (d: DataRecord) => d.sum;
@@ -68,7 +68,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
             </div>
         </template>
 
-        <VisXYContainer :data="data" :padding="{ top: 10 }" class="h-96" :width="width">
+        <VisXYContainer :key="width" :data="data" :padding="{ top: 10 }" class="h-96" :width="width">
             <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
             <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
 

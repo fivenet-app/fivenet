@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { parseQuery } from 'vue-router';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useNotificatorStore } from '~/store/notificator';
@@ -7,6 +7,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { Job, type JobProps } from '~~/gen/ts/resources/users/jobs';
 import { User } from '~~/gen/ts/resources/users/users';
 import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
+
+const logger = useLogger('🔑 Auth');
 
 export interface AuthState {
     accessTokenExpiration: null | Date;
@@ -99,7 +101,7 @@ export const useAuthStore = defineStore('auth', {
                 this.username = username;
 
                 if (!response.char) {
-                    console.info('Login response without included char, redirecting to char selector');
+                    logger.info('Login response without included char, redirecting to char selector');
                     this.setAccessTokenExpiration(toDate(response.expires));
 
                     const route = useRoute();
@@ -109,7 +111,7 @@ export const useAuthStore = defineStore('auth', {
                         query: route.query,
                     });
                 } else {
-                    console.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
+                    logger.info('Received fast-tracked login response with char, id:', response.char.char?.userId);
                     this.setActiveChar(response.char.char ?? null);
                     this.setAccessTokenExpiration(toDate(response.char.expires));
                     this.setPermissions(response.char.permissions);
@@ -239,5 +241,5 @@ export const useAuthStore = defineStore('auth', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useAuthStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useAuthStore, import.meta.hot));
 }

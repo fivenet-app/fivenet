@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { useAuthStore } from './auth';
 
@@ -43,5 +43,5 @@ export const useDocumentEditorStore = defineStore('documentEditor', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useDocumentEditorStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useDocumentEditorStore, import.meta.hot));
 }

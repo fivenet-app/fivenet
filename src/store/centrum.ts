@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
@@ -8,6 +8,8 @@ import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units'
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import { UserShort } from '~~/gen/ts/resources/users/users';
+
+const logger = useLogger('⛑️ Centrum');
 
 const cleanupInterval = 40 * 1000; // 40 seconds
 const dispatchEndOfLifeTime = 2 * 60 * 60 * 1000; // 2 hours
@@ -133,7 +135,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const u = this.units.get(status.unitId);
             if (u === undefined) {
-                console.warn('Centrum: Processed Unit Status for unknown Unit', status.unitId);
+                logger.warn('Processed Unit Status for unknown Unit', status.unitId);
                 return;
             }
 
@@ -226,7 +228,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const d = this.dispatches.get(status.dispatchId);
             if (d === undefined) {
-                console.warn('Centrum: Processed Dispatch Status for unknown Dispatch', status.dispatchId, status);
+                logger.warn('Processed Dispatch Status for unknown Dispatch', status.dispatchId, status);
                 return;
             }
 
@@ -348,7 +350,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.cleanupIntervalId = setInterval(() => this.cleanup(), cleanupInterval);
             }
 
-            console.debug('Centrum: Starting Data Stream');
+            logger.debug('Starting Data Stream');
 
             const authStore = useAuthStore();
             const notifications = useNotificatorStore();
@@ -372,7 +374,7 @@ export const useCentrumStore = defineStore('centrum', {
                         continue;
                     }
 
-                    console.debug('Centrum: Received change - Kind:', resp.change.oneofKind, resp.change);
+                    logger.debug('Received change - Kind:', resp.change.oneofKind, resp.change);
 
                     if (resp.change.oneofKind === 'latestState') {
                         if (resp.change.latestState.serverTime !== undefined) {
@@ -399,7 +401,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 removedUnits++;
                             }
                         });
-                        console.debug(`Centrum: Removed ${removedUnits} old units`);
+                        logger.debug(`Removed ${removedUnits} old units`);
                         this.setOwnUnit(resp.change.latestState.ownUnitId);
 
                         const foundDispatches: string[] = [];
@@ -415,7 +417,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 removedDispatches++;
                             }
                         });
-                        console.debug(`Centrum: Removed ${removedDispatches} old dispatches`);
+                        logger.debug(`Removed ${removedDispatches} old dispatches`);
                     } else if (resp.change.oneofKind === 'settings') {
                         this.updateSettings(resp.change.settings);
                     } else if (resp.change.oneofKind === 'disponents') {
@@ -569,7 +571,7 @@ export const useCentrumStore = defineStore('centrum', {
                             }
                         }
                     } else {
-                        console.warn('Centrum: Unknown change received - Kind: ' + resp.change.oneofKind);
+                        logger.warn('Unknown change received - Kind: ' + resp.change.oneofKind);
                     }
                 }
             } catch (e) {
@@ -577,7 +579,7 @@ export const useCentrumStore = defineStore('centrum', {
                 if (error) {
                     // Only restart when not cancelled and abort is still valid
                     if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                        console.error('Centrum: Data Stream Failed', error.code, error.message, error.cause);
+                        logger.error('Data Stream Failed', error.code, error.message, error.cause);
 
                         // Only set error if we don't need to restart
                         if (this.abort !== undefined && !this.abort?.signal.aborted) {
@@ -591,14 +593,14 @@ export const useCentrumStore = defineStore('centrum', {
                 }
             }
 
-            console.debug('Centrum: Data Stream Ended');
+            logger.debug('Data Stream Ended');
         },
         async stopStream(): Promise<void> {
             if (this.abort !== undefined) {
                 this.abort.abort();
                 this.abort = undefined;
 
-                console.debug('Centrum: Stopping Data Stream');
+                logger.debug('Stopping Data Stream');
             }
 
             if (!this.reconnecting) {
@@ -618,7 +620,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;
             }
 
-            console.debug('Centrum: Restart back off time in', this.reconnectBackoffTime, 'seconds');
+            logger.debug('Restart back off time in', this.reconnectBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {
@@ -642,8 +644,8 @@ export const useCentrumStore = defineStore('centrum', {
             const correction = now - st;
             this.timeCorrection = Math.floor(correction);
 
-            console.debug(
-                'Centrum: Calculated time correction - Now: ',
+            logger.debug(
+                'Calculated time correction - Now: ',
                 now,
                 'Server Time:',
                 st,
@@ -678,7 +680,7 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         async cleanup(): Promise<void> {
-            console.debug('Centrum: Running cleanup tasks');
+            logger.debug('Running cleanup tasks');
             const now = new Date().getTime() - this.timeCorrection;
 
             // Cleanup pending dispatches
@@ -729,7 +731,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.feed.length = 100;
             }
 
-            console.info('Centrum: Cleaned up dispatches, count:', count, 'skipped:', skipped);
+            logger.info('Cleaned up dispatches, count:', count, 'skipped:', skipped);
         },
 
         removeDispatchAssignments(dispatch: Dispatch, unitId?: string): void {
@@ -758,5 +760,5 @@ export const useCentrumStore = defineStore('centrum', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useCentrumStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useCentrumStore, import.meta.hot));
 }

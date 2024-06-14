@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 
 export interface CookiesState {
     cookiesState: null | boolean;
@@ -18,5 +18,5 @@ export const useCookiesStore = defineStore('cookies', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useCookiesStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useCookiesStore, import.meta.hot));
 }

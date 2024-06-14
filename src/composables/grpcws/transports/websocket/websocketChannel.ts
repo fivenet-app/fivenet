@@ -7,11 +7,11 @@ import { Metadata } from '../../metadata';
 import { type Transport, type TransportFactory, type TransportOptions } from '../transport';
 import { createRpcError } from './utils';
 
-export function WebsocketChannelTransport(webSocket: UseWebSocketReturn<any>): TransportFactory {
-    const wsChannel = new WebsocketChannelImpl(webSocket);
+export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSocketReturn<any>): TransportFactory {
+    const wsChannel = new WebsocketChannelImpl(logger, webSocket);
 
     return (opts: TransportOptions) => {
-        opts.debug && console.debug('GRPC-WS: Websocket factory triggered');
+        opts.debug && logger.debug('Websocket factory triggered');
         if (webSocket.status.value === 'CLOSED') {
             webSocket.open();
         }
@@ -30,11 +30,13 @@ interface WebsocketChannel {
 }
 
 class WebsocketChannelImpl implements WebsocketChannel {
+    private logger: ILogger;
     protected ws: UseWebSocketReturn<any>;
     readonly activeStreams = new Map<number, [TransportOptions, GrpcStream]>();
     protected streamId = 0;
 
-    constructor(ws: UseWebSocketReturn<any>) {
+    constructor(logger: ILogger, ws: UseWebSocketReturn<any>) {
+        this.logger = logger;
         this.ws = ws;
         watch(ws.data, async (val) => this.onMessage(val as any));
     }
@@ -51,7 +53,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
         if (stream) {
             switch (frame.payload.oneofKind) {
                 case 'header': {
-                    stream[0].debug && console.debug('GRPC-WS: received header for stream', streamId);
+                    stream[0].debug && this.logger.debug('Received header for stream', streamId);
 
                     const header = frame.payload.header;
                     if (header === null) {
@@ -69,7 +71,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 }
 
                 case 'body': {
-                    stream[0].debug && console.debug('GRPC-WS: received body for stream', streamId);
+                    stream[0].debug && this.logger.debug('Received body for stream', streamId);
 
                     const body = frame.payload.body;
                     if (body === null) {
@@ -81,7 +83,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 }
 
                 case 'complete': {
-                    stream[0].debug && console.debug('GRPC-WS: received complete for stream', streamId);
+                    stream[0].debug && this.logger.debug('Received complete for stream', streamId);
 
                     stream[0].onEnd();
                     break;
@@ -95,12 +97,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     }
 
                     stream[0].debug &&
-                        console.debug(
-                            'GRPC-WS: received failure for stream',
-                            streamId,
-                            failure.errorStatus,
-                            failure.errorMessage,
-                        );
+                        this.logger.debug('Received failure for stream', streamId, failure.errorStatus, failure.errorMessage);
 
                     const metaData = headersToMetadata(failure.headers);
                     stream[0].onEnd(createRpcError(metaData, stream[0].methodDefinition));
@@ -108,7 +105,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
                 }
 
                 case 'cancel': {
-                    stream[0].debug && console.debug('GRPC-WS: received cancel for stream', streamId);
+                    stream[0].debug && this.logger.debug('Received cancel for stream', streamId);
 
                     stream[0].onEnd(errCancelled);
                     break;
@@ -116,11 +113,11 @@ class WebsocketChannelImpl implements WebsocketChannel {
 
                 default:
                     stream[0].debug &&
-                        console.debug('GRPC-WS: received unknown message type for stream', streamId, frame.payload.oneofKind);
+                        this.logger.debug('Received unknown message type for stream', streamId, frame.payload.oneofKind);
                     break;
             }
         } else {
-            console.warn('GRPC-WS: stream does not exist', streamId);
+            this.logger.warn('Stream does not exist', streamId);
         }
     }
 
@@ -130,7 +127,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
 
         async function sendToWebsocket(toSend: GrpcFrame): Promise<void> {
             if (!self.activeStreams.has(toSend.streamId)) {
-                opts.debug && console.debug('GRPC-WS: stream does not exist', toSend.streamId);
+                opts.debug && self.logger.debug('Stream does not exist', toSend.streamId);
                 return;
             }
 
@@ -153,8 +150,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
 
             start: (metadata: Metadata) => {
                 opts.debug &&
-                    console.debug(
-                        'GRPC-WS: stream start',
+                    this.logger.debug(
+                        'Stream start',
                         currentStreamId,
                         `${opts.methodDefinition.service.typeName}/${opts.methodDefinition.name}`,
                     );
@@ -180,7 +177,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
             },
 
             sendMessage: async (msgBytes: Uint8Array, complete?: boolean) => {
-                opts.debug && console.debug('GRPC-WS: stream send', currentStreamId);
+                opts.debug && this.logger.debug('Stream send', currentStreamId);
 
                 const output = new Uint8Array(msgBytes.length + 5);
                 output[0] = 0; // Compression none
@@ -201,7 +198,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
             },
 
             finishSend: async () => {
-                opts.debug && console.debug('GRPC-WS: stream complete', currentStreamId);
+                opts.debug && this.logger.debug('Stream complete', currentStreamId);
 
                 const frame = newFrame();
                 frame.payload = {
@@ -213,7 +210,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
             },
 
             cancel: async () => {
-                opts.debug && console.debug('GRPC-WS: stream cancel', currentStreamId);
+                opts.debug && this.logger.debug('Stream cancel', currentStreamId);
 
                 const frame = newFrame();
                 frame.payload = {

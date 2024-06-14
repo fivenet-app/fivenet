@@ -13,6 +13,8 @@ import type {
 } from '~~/gen/ts/services/messenger/messenger';
 import { useAuthStore } from './auth';
 
+const logger = useLogger('💬 Messenger');
+
 export interface MessengerState {
     selectedThread: Thread | undefined;
 }
@@ -54,7 +56,7 @@ export const useMessengerStore = defineStore('messenger', {
             } else if (event.data.oneofKind === 'messageDelete') {
                 await messengerDB.messages.delete(event.data.messageDelete);
             } else {
-                console.debug('Messenger: Unknown MessengerEvent received:', event.data.oneofKind);
+                logger.debug('Messenger: Unknown MessengerEvent received:', event.data.oneofKind);
             }
         },
 

@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { DocContentType, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
@@ -234,7 +234,7 @@ export const useClipboardStore = defineStore('clipboard', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useClipboardStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useClipboardStore, import.meta.hot));
 }
 
 export function getUser(obj: ClipboardUser): User {

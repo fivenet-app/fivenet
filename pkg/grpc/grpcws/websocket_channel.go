@@ -213,7 +213,7 @@ func (ws *WebsocketChannel) poll() error {
 		req := &http.Request{
 			Method: http.MethodPost,
 			URL:    url,
-			Header: ws.req.Header,
+			Header: ws.req.Header.Clone(),
 			Body:   stream,
 		}
 		for key, element := range frame.GetHeader().Headers {
@@ -282,7 +282,6 @@ func makeGrpcRequest(req *http.Request) *http.Request {
 	req.ProtoMinor = 0
 
 	req.Header.Set("content-type", "application/grpc+proto")
-	//req.Header.Set("grpc-encoding", "identity")
 
 	// Remove content-length header since it represents http1.1 payload size, not the sum of the h2
 	// DATA frame payload lengths. https://http2.github.io/http2-spec/#malformed This effectively

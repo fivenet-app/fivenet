@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 
 export interface SettingsState {
     version: string;
@@ -103,5 +103,5 @@ export const useSettingsStore = defineStore('settings', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useSettingsStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useSettingsStore, import.meta.hot));
 }

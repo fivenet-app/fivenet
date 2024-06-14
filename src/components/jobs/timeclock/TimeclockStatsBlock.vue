@@ -126,7 +126,9 @@ watchDebounced(
 
                 <DataErrorBlock v-if="failed" :retry="async () => $emit('refresh')" />
                 <DataNoDataBlock v-else-if="weekly === undefined" />
-                <TimeclockStatsChart v-else :stats="weekly" :loading="loading" />
+                <ClientOnly v-else>
+                    <TimeclockStatsChart :stats="weekly" :loading="loading" />
+                </ClientOnly>
             </div>
         </div>
     </UCard>

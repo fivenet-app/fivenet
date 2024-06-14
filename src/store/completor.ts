@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { LawBook } from '~~/gen/ts/resources/laws/laws';
@@ -136,5 +136,5 @@ export const useCompletorStore = defineStore('completor', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useCompletorStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useCompletorStore, import.meta.hot));
 }

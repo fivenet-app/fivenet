@@ -292,6 +292,7 @@ const input = ref<{ input: HTMLInputElement }>();
     </UDashboardToolbar>
 
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
+
     <UTable
         v-else
         :loading="loading"

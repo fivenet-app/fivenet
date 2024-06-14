@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { CalendarEntry, RsvpResponses, type Calendar } from '~~/gen/ts/resources/calendar/calendar';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
@@ -268,5 +268,5 @@ export const useCalendarStore = defineStore('calendar', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useCalendarStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useCalendarStore, import.meta.hot));
 }

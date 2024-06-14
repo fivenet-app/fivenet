@@ -1,4 +1,4 @@
-import { defineStore, type StoreDefinition } from 'pinia';
+import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { type Notification } from '~/composables/notifications';
@@ -7,6 +7,8 @@ import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/noti
 import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 import { useCalendarStore } from './calendar';
 import { useMessengerStore } from './messenger';
+
+const logger = useLogger('📣 Notificator');
 
 // In seconds
 const initialReconnectBackoffTime = 2;
@@ -51,7 +53,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 return;
             }
 
-            console.debug('Notificator: Starting Data Stream');
+            logger.debug('Starting Data Stream');
 
             this.abort = new AbortController();
             this.reconnecting = false;
@@ -73,7 +75,7 @@ export const useNotificatorStore = defineStore('notifications', {
                     if (resp.data.oneofKind !== undefined) {
                         if (resp.data.oneofKind === 'userEvent') {
                             if (resp.data.userEvent.data.oneofKind === 'refreshToken') {
-                                console.info('Notificator: Refreshing token...');
+                                logger.info('Refreshing token...');
                                 await authStore.chooseCharacter(undefined);
                                 continue;
                             } else if (resp.data.userEvent.data.oneofKind === 'notification') {
@@ -140,22 +142,18 @@ export const useNotificatorStore = defineStore('notifications', {
                             if (resp.data.jobEvent.data.oneofKind === 'jobProps') {
                                 authStore.setJobProps(resp.data.jobEvent.data.jobProps);
                             } else {
-                                console.warn(
-                                    'Notificator: Unknown job event data received - Kind: ',
-                                    resp.data.oneofKind,
-                                    resp.data,
-                                );
+                                logger.warn('Unknown job event data received - Kind: ', resp.data.oneofKind, resp.data);
                             }
                             continue;
                         } else if (resp.data.oneofKind === 'systemEvent') {
                         } else {
                             // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..
-                            console.warn('Notificator: Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
+                            logger.warn('Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
                     }
 
                     if (resp.restart) {
-                        console.debug('Notificator: Server requested stream to be restarted');
+                        logger.debug('Server requested stream to be restarted');
                         this.reconnectBackoffTime = 0;
                         this.stopStream();
                         useGRPCWebsocketTransport().close();
@@ -166,7 +164,7 @@ export const useNotificatorStore = defineStore('notifications', {
             } catch (e) {
                 const error = e as RpcError;
                 if (error.code !== 'CANCELLED' && error.code !== 'ABORTED') {
-                    console.debug('Notificator: Stream failed', error.code, error.message, error.cause);
+                    logger.debug('Stream failed', error.code, error.message, error.cause);
 
                     if (error.message.includes('ErrCharLock')) {
                         handleGRPCError(error);
@@ -178,7 +176,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 }
             }
 
-            console.debug('Notificator: Stream ended');
+            logger.debug('Stream ended');
         },
 
         async stopStream(): Promise<void> {
@@ -188,7 +186,7 @@ export const useNotificatorStore = defineStore('notifications', {
 
             this.abort?.abort();
             this.abort = undefined;
-            console.debug('Notificator: Stopping Data Stream');
+            logger.debug('Stopping Data Stream');
         },
 
         async restartStream(): Promise<void> {
@@ -201,7 +199,7 @@ export const useNotificatorStore = defineStore('notifications', {
                 this.reconnectBackoffTime += initialReconnectBackoffTime;
             }
 
-            console.debug('Notificator: Restart back off time in', this.reconnectBackoffTime, 'seconds');
+            logger.debug('Restart back off time in', this.reconnectBackoffTime, 'seconds');
             await this.stopStream();
 
             setTimeout(async () => {
@@ -235,5 +233,5 @@ export const useNotificatorStore = defineStore('notifications', {
 });
 
 if (import.meta.hot) {
-    import.meta.hot.accept(acceptHMRUpdate(useNotificatorStore as unknown as StoreDefinition, import.meta.hot));
+    import.meta.hot.accept(acceptHMRUpdate(useNotificatorStore, import.meta.hot));
 }
