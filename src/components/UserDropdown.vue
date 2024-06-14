@@ -111,7 +111,7 @@ const name = computed(() =>
             </div>
         </template>
 
-        <template v-if="can('SuperUser')" #job>
+        <template v-if="can('SuperUser').value" #job>
             <SuperUserJobSelection />
         </template>
     </UDropdown>

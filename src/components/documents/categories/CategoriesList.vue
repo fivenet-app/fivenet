@@ -44,7 +44,7 @@ const modal = useModal();
                 </UButton>
 
                 <UButton
-                    v-if="can('DocStoreService.CreateCategory')"
+                    v-if="can('DocStoreService.CreateCategory').value"
                     color="gray"
                     trailing-icon="i-mdi-plus"
                     @click="

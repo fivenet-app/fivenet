@@ -55,7 +55,7 @@ onMounted(() => {
                 <UButton
                     v-if="
                         colleagueSelf?.colleague &&
-                        can('JobsService.SetJobsUserProps') &&
+                        can('JobsService.SetJobsUserProps').value &&
                         checkIfCanAccessColleague(activeChar!, colleagueSelf.colleague, 'JobsService.SetJobsUserProps')
                     "
                     block

@@ -79,7 +79,7 @@ const canDo = computed(() => ({
                             <span>{{ entry?.title ?? $t('common.appointment', 1) }}</span>
 
                             <UButton
-                                v-if="entry && can('CalendarService.CreateOrUpdateCalendarEntry') && canDo.edit"
+                                v-if="entry && can('CalendarService.CreateOrUpdateCalendarEntry').value && canDo.edit"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-pencil"
@@ -92,7 +92,7 @@ const canDo = computed(() => ({
                             />
 
                             <UButton
-                                v-if="entry && can('CalendarService.DeleteCalendarEntry') && canDo.manage"
+                                v-if="entry && can('CalendarService.DeleteCalendarEntry').value && canDo.manage"
                                 variant="link"
                                 :padded="false"
                                 icon="i-mdi-trash-can"

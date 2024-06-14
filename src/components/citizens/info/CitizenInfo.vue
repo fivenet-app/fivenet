@@ -206,17 +206,17 @@ const isOpen = ref(false);
                                 <CitizenProfile :user="user" />
                             </UContainer>
                         </template>
-                        <template v-if="can('DMVService.ListVehicles')" #vehicles>
+                        <template v-if="can('DMVService.ListVehicles').value" #vehicles>
                             <UContainer>
                                 <CitizenVehicles :user-id="user.userId" />
                             </UContainer>
                         </template>
-                        <template v-if="can('DocStoreService.ListUserDocuments')" #documents>
+                        <template v-if="can('DocStoreService.ListUserDocuments').value" #documents>
                             <UContainer>
                                 <CitizenDocuments :user-id="user.userId" />
                             </UContainer>
                         </template>
-                        <template v-if="can('CitizenStoreService.ListUserActivity')" #activity>
+                        <template v-if="can('CitizenStoreService.ListUserActivity').value" #activity>
                             <UContainer>
                                 <CitizenActivityFeed :user-id="user.userId" />
                             </UContainer>
@@ -273,8 +273,8 @@ const isOpen = ref(false);
 
                         <UDashboardSection
                             v-if="
-                                can('CitizenStoreService.GetUser') &&
-                                attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes')
+                                can('CitizenStoreService.GetUser').value &&
+                                attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Attributes').value
                             "
                             :ui="{
                                 wrapper: 'divide-y !divide-transparent space-y-0 *:pt-2 first:*:pt-2 first:*:pt-0 mb-6',

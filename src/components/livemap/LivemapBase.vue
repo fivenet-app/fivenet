@@ -120,7 +120,7 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
                     <SettingsButton />
                 </LControl>
 
-                <template v-if="can('LivemapperService.Stream')">
+                <template v-if="can('LivemapperService.Stream').value">
                     <PlayersLayer
                         :show-unit-names="showUnitNames"
                         :show-unit-status="showUnitStatus"

@@ -176,7 +176,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
                 <template v-if="template">
                     <UButton
-                        v-if="can('DocStoreService.CreateTemplate')"
+                        v-if="can('DocStoreService.CreateTemplate').value"
                         block
                         class="flex-1"
                         color="white"
@@ -191,7 +191,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </UButton>
 
                     <UButton
-                        v-if="can('DocStoreService.CreateTemplate')"
+                        v-if="can('DocStoreService.CreateTemplate').value"
                         block
                         class="flex-1"
                         trailing-icon="i-mdi-pencil"
@@ -201,7 +201,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                     </UButton>
 
                     <UButton
-                        v-if="can('DocStoreService.DeleteTemplate')"
+                        v-if="can('DocStoreService.DeleteTemplate').value"
                         block
                         class="flex-1"
                         color="red"

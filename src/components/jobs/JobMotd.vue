@@ -49,7 +49,7 @@ async function setMOTD(values: Schema): Promise<SetMOTDResponse> {
     }
 }
 
-const canEdit = can('JobsService.SetMOTD');
+const canEdit = can('JobsService.SetMOTD').value;
 
 const editing = ref(false);
 

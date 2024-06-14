@@ -118,7 +118,7 @@ if (props.registerShortcuts) {
 <template>
     <div class="flex w-full flex-col gap-2">
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted')"
+            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Wanted').value"
             :text="
                 user?.props?.wanted
                     ? $t('components.citizens.CitizenInfoProfile.revoke_wanted')
@@ -147,7 +147,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job')"
+            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'Job').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_job')"
             :shortcuts="['C', 'J']"
         >
@@ -166,7 +166,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints')"
+            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'TrafficInfractionPoints').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_traffic_points')"
             :shortcuts="['C', 'P']"
         >
@@ -185,7 +185,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot')"
+            v-if="attr('CitizenStoreService.SetUserProps', 'Fields', 'MugShot').value"
             :text="$t('components.citizens.CitizenInfoProfile.set_mug_shot')"
             :shortcuts="['C', 'M']"
         >
@@ -204,7 +204,7 @@ if (props.registerShortcuts) {
         </UTooltip>
 
         <UTooltip
-            v-if="can('DocStoreService.CreateDocument')"
+            v-if="can('DocStoreService.CreateDocument').value"
             :text="$t('components.citizens.CitizenInfoProfile.create_new_document')"
             :shortcuts="['C', 'D']"
         >
@@ -216,7 +216,7 @@ if (props.registerShortcuts) {
         <UButton
             v-if="
                 activeChar?.job === user.job &&
-                can('JobsService.GetColleague') &&
+                can('JobsService.GetColleague').value &&
                 checkIfCanAccessColleague(activeChar!, user, 'JobsService.GetColleague')
             "
             block

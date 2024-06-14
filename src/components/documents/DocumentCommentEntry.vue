@@ -114,14 +114,14 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <UButton
-                            v-if="can('DocStoreService.PostComment')"
+                            v-if="can('DocStoreService.PostComment').value"
                             variant="link"
                             icon="i-mdi-pencil"
                             @click="editing = true"
                         />
 
                         <UButton
-                            v-if="can('DocStoreService.DeleteComment')"
+                            v-if="can('DocStoreService.DeleteComment').value"
                             variant="link"
                             icon="i-mdi-trash-can"
                             @click="
@@ -140,7 +140,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </div>
 
         <template v-else>
-            <div v-if="can('DocStoreService.PostComment')" class="flex items-start space-x-4">
+            <div v-if="can('DocStoreService.PostComment').value" class="flex items-start space-x-4">
                 <div class="min-w-0 flex-1">
                     <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                         <UFormGroup name="comment">

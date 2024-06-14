@@ -99,7 +99,7 @@ watchOnce(opened, async () => {
             <div class="flex flex-col gap-2 p-4">
                 <UButtonGroup class="inline-flex w-full">
                     <UButton
-                        v-if="can('JobsService.GetColleague') && activeChar?.job === user?.job"
+                        v-if="can('JobsService.GetColleague').value && activeChar?.job === user?.job"
                         variant="link"
                         icon="i-mdi-account"
                         :to="{
@@ -110,7 +110,7 @@ watchOnce(opened, async () => {
                         {{ $t('common.profile') }}
                     </UButton>
                     <UButton
-                        v-else-if="can('CitizenStoreService.ListCitizens')"
+                        v-else-if="can('CitizenStoreService.ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
                         :to="{
@@ -148,7 +148,7 @@ watchOnce(opened, async () => {
                     </div>
                     <div>
                         <UButton
-                            v-if="can('JobsService.GetColleague') && activeChar?.job === user.job"
+                            v-if="can('JobsService.GetColleague').value && activeChar?.job === user.job"
                             variant="link"
                             :padded="false"
                             :to="{
@@ -159,7 +159,7 @@ watchOnce(opened, async () => {
                             {{ user.firstname }} {{ user.lastname }}
                         </UButton>
                         <UButton
-                            v-else-if="can('CitizenStoreService.ListCitizens')"
+                            v-else-if="can('CitizenStoreService.ListCitizens').value"
                             variant="link"
                             :padded="false"
                             :to="{

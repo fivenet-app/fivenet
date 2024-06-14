@@ -65,7 +65,7 @@ watch(attributes, () => (state.value = attributes.value ?? []));
                 </template>
 
                 <UFormGroup
-                    v-if="state && can('CitizenStoreService.SetUserProps')"
+                    v-if="state && can('CitizenStoreService.SetUserProps').value"
                     name="citizenAttributes.list"
                     class="grid items-center gap-2"
                     :ui="{ container: '' }"

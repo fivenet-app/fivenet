@@ -217,9 +217,11 @@ defineShortcuts({
             <div :key="colleague.id" class="flex flex-col justify-end md:flex-row">
                 <UButton
                     v-if="
-                        can('JobsService.SetJobsUserProps') &&
-                        (colleague.userId === activeChar!.userId ||
-                            attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate')) &&
+                        can('JobsService.SetJobsUserProps').value &&
+                        (
+                            colleague.userId === activeChar!.userId ||
+                            attr('JobsService.SetJobsUserProps', 'Types', 'AbsenceDate')
+                        ).value &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.SetJobsUserProps')
                     "
                     variant="link"
@@ -234,7 +236,7 @@ defineShortcuts({
 
                 <UButton
                     v-if="
-                        can('JobsService.GetColleague') &&
+                        can('JobsService.GetColleague').value &&
                         checkIfCanAccessColleague(activeChar!, colleague, 'JobsService.GetColleague')
                     "
                     variant="link"

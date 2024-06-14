@@ -170,7 +170,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
 
                             <span class="isolate mt-2 inline-flex rounded-md shadow-sm">
                                 <UButton
-                                    v-if="can('CentrumService.TakeControl')"
+                                    v-if="can('CentrumService.TakeControl').value"
                                     icon="i-mdi-pencil"
                                     truncate
                                     @click="

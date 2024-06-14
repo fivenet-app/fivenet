@@ -10,7 +10,9 @@ const modal = useModal();
 
 <template>
     <div
-        v-if="can('DocStoreService.CreateDocumentReq') && attr('DocStoreService.CreateDocumentReq', 'Types', 'Access')"
+        v-if="
+            can('DocStoreService.CreateDocumentReq').value && attr('DocStoreService.CreateDocumentReq', 'Types', 'Access').value
+        "
         class="mx-auto max-w-md rounded-md"
     >
         <UAlert

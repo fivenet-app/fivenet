@@ -265,7 +265,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </h2>
 
                     <UButton
-                        v-if="can('RectorService.DeleteRole')"
+                        v-if="can('RectorService.DeleteRole').value"
                         variant="link"
                         icon="i-mdi-trash-can"
                         @click="
@@ -280,7 +280,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                 <div class="flex flex-col gap-4 py-2">
                     <UButton
-                        v-if="can('RectorService.UpdateRolePerms')"
+                        v-if="can('RectorService.UpdateRolePerms').value"
                         block
                         :disabled="!changed || !canSubmit"
                         :loading="!canSubmit"

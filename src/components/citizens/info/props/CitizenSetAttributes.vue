@@ -138,7 +138,7 @@ watch(state, () => {
             </div>
         </template>
 
-        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenAttributes')" name="attributes">
+        <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenAttributes').value" name="attributes">
             <USelectMenu
                 v-model="state.attributes"
                 multiple

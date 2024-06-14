@@ -108,7 +108,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
         <div class="px-1 sm:px-2">
             <div class="flex flex-col lg:flex-row">
                 <div class="mt-2 flow-root basis-1/3">
-                    <div v-if="can('RectorService.CreateRole')" class="sm:flex sm:items-center">
+                    <div v-if="can('RectorService.CreateRole').value" class="sm:flex sm:items-center">
                         <div class="sm:flex-auto">
                             <UForm :schema="schema" :state="state" @submit="refresh()">
                                 <div class="flex flex-row gap-2">

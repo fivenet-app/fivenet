@@ -48,7 +48,7 @@ async function deleteMarker(id: string): Promise<void> {
                 </UButton>
 
                 <UButton
-                    v-if="can('LivemapperService.CreateOrUpdateMarker')"
+                    v-if="can('LivemapperService.CreateOrUpdateMarker').value"
                     :title="$t('common.edit')"
                     variant="link"
                     icon="i-mdi-pencil"
@@ -64,7 +64,7 @@ async function deleteMarker(id: string): Promise<void> {
                 </UButton>
 
                 <UButton
-                    v-if="can('LivemapperService.DeleteMarker')"
+                    v-if="can('LivemapperService.DeleteMarker').value"
                     :title="$t('common.delete')"
                     variant="link"
                     icon="i-mdi-trash-can"

@@ -307,7 +307,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     </h2>
 
                     <UButton
-                        v-if="can('RectorService.DeleteRole')"
+                        v-if="can('RectorService.DeleteRole').value"
                         variant="link"
                         icon="i-mdi-trash-can"
                         @click="

@@ -56,7 +56,7 @@ onBeforeUnmount(() => stopStream());
 
                         <LivemapBase :show-unit-names="true" :show-unit-status="true">
                             <template #default>
-                                <DispatchesLayer v-if="can('CentrumService.Stream')" :show-all-dispatches="true" />
+                                <DispatchesLayer v-if="can('CentrumService.Stream').value" :show-all-dispatches="true" />
                             </template>
                         </LivemapBase>
                     </div>

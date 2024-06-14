@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UButton>
 
                         <UButton
-                            v-if="category !== undefined && can('DocStoreService.DeleteCategory')"
+                            v-if="category !== undefined && can('DocStoreService.DeleteCategory').value"
                             block
                             class="flex-1"
                             :disabled="!canSubmit"

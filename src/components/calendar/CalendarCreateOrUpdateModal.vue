@@ -32,7 +32,7 @@ const notifications = useNotificatorStore();
 
 const maxAccessEntries = 10;
 
-const canCreateNonPrivateCalendar = attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job');
+const canCreateNonPrivateCalendar = attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Job').value;
 
 const schema = z.object({
     name: z.string().min(3).max(255),
@@ -370,7 +370,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public')"
+                            v-if="attr('CalendarService.CreateOrUpdateCalendar', 'Fields', 'Public').value"
                             name="public"
                             :label="$t('common.public')"
                             class="flex-1"

@@ -101,7 +101,7 @@ watchOnce(opened, async () => {
                     />
 
                     <UButton
-                        v-if="can('CitizenStoreService.ListCitizens')"
+                        v-if="can('CitizenStoreService.ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
                         :to="{ name: 'citizens-id', params: { id: userId ?? user?.userId ?? 0 } }"

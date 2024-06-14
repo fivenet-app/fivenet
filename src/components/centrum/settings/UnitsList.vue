@@ -80,12 +80,12 @@ const columns = [
                 {{ $t('common.back') }}
             </UButton>
 
-            <UButton v-if="can('CentrumService.Stream')" icon="i-mdi-settings" to="/centrum/settings">
+            <UButton v-if="can('CentrumService.Stream').value" icon="i-mdi-settings" to="/centrum/settings">
                 {{ $t('common.setting', 2) }}
             </UButton>
 
             <UButton
-                v-if="can('CentrumService.CreateOrUpdateUnit')"
+                v-if="can('CentrumService.CreateOrUpdateUnit').value"
                 trailing-icon="i-mdi-plus"
                 color="gray"
                 @click="
@@ -125,7 +125,7 @@ const columns = [
         <template #actions-data="{ row: unit }">
             <div .key="unit.id" class="flex items-center">
                 <UButton
-                    v-if="can('CentrumService.CreateOrUpdateUnit')"
+                    v-if="can('CentrumService.CreateOrUpdateUnit').value"
                     variant="link"
                     icon="i-mdi-pencil"
                     @click="
@@ -136,7 +136,7 @@ const columns = [
                     "
                 />
                 <UButton
-                    v-if="can('CentrumService.DeleteUnit')"
+                    v-if="can('CentrumService.DeleteUnit').value"
                     variant="link"
                     icon="i-mdi-trash-can"
                     @click="

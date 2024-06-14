@@ -195,7 +195,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 <UToggle
                                     v-model="state.enabled"
                                     name="enabled"
-                                    :disabled="!can('SuperUser')"
+                                    :disabled="!can('SuperUser').value"
                                     :placeholder="$t('common.enabled')"
                                 />
                             </UFormGroup>

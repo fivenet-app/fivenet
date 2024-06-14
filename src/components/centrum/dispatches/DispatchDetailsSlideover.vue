@@ -93,7 +93,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.val
                         </p>
 
                         <UButton
-                            v-if="can('CentrumService.DeleteDispatch')"
+                            v-if="can('CentrumService.DeleteDispatch').value"
                             variant="link"
                             icon="i-mdi-trash-can"
                             :title="$t('common.delete')"

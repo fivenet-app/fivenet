@@ -285,7 +285,7 @@ defineShortcuts({
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <UTooltip
                         v-if="
-                            can('DocStoreService.ToggleDocument') &&
+                            can('DocStoreService.ToggleDocument').value &&
                             checkDocAccess(access, doc.creator, AccessLevel.STATUS, 'DocStoreService.ToggleDocument')
                         "
                         class="flex-1"
@@ -306,7 +306,7 @@ defineShortcuts({
 
                     <UTooltip
                         v-if="
-                            can('DocStoreService.UpdateDocument') &&
+                            can('DocStoreService.UpdateDocument').value &&
                             checkDocAccess(access, doc.creator, AccessLevel.ACCESS, 'DocStoreService.UpdateDocument')
                         "
                         class="flex-1"
@@ -326,7 +326,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="can('DocStoreService.ToggleDocumentPin')"
+                        v-if="can('DocStoreService.ToggleDocumentPin').value"
                         class="flex-1"
                         :text="`${$t('common.pin', 1)}/ ${$t('common.unpin')}`"
                     >
@@ -343,7 +343,7 @@ defineShortcuts({
                     </UTooltip>
 
                     <UTooltip
-                        v-if="can('DocStoreService.ListDocumentReqs')"
+                        v-if="can('DocStoreService.ListDocumentReqs').value"
                         class="flex-1"
                         :text="$t('common.request', 2)"
                         :shortcuts="['D', 'R']"
@@ -356,7 +356,7 @@ defineShortcuts({
                     <UButton
                         v-if="
                             (doc?.creatorJob === activeChar?.job || isSuperuser) &&
-                            can('DocStoreService.ChangeDocumentOwner') &&
+                            can('DocStoreService.ChangeDocumentOwner').value &&
                             checkDocAccess(access, doc?.creator, AccessLevel.EDIT, 'DocStoreService.ChangeDocumentOwner')
                         "
                         class="flex-1"
@@ -374,7 +374,7 @@ defineShortcuts({
 
                     <UButton
                         v-if="
-                            can('DocStoreService.DeleteDocument') &&
+                            can('DocStoreService.DeleteDocument').value &&
                             checkDocAccess(access, doc.creator, AccessLevel.EDIT, 'DocStoreService.DeleteDocument')
                         "
                         class="flex-1"
@@ -560,7 +560,7 @@ defineShortcuts({
                         </UContainer>
                     </template>
 
-                    <template v-if="can('DocStoreService.ListDocumentActivity')" #activity>
+                    <template v-if="can('DocStoreService.ListDocumentActivity').value" #activity>
                         <UContainer>
                             <DocumentActivityList :document-id="documentId" />
                         </UContainer>

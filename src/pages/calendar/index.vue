@@ -277,12 +277,13 @@ const isOpen = ref(false);
                 <template #right>
                     <UButtonGroup
                         v-if="
-                            can('CalendarService.CreateOrUpdateCalendarEntry') || can('CalendarService.CreateOrUpdateCalendar')
+                            can('CalendarService.CreateOrUpdateCalendarEntry').value ||
+                            can('CalendarService.CreateOrUpdateCalendar').value
                         "
                         class="inline-flex w-full xl:hidden"
                     >
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendar')"
+                            v-if="can('CalendarService.CreateOrUpdateCalendar').value"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -293,7 +294,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry') && calendars.length > 0"
+                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry').value && calendars.length > 0"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -516,12 +517,13 @@ const isOpen = ref(false);
                 <template #right>
                     <UButtonGroup
                         v-if="
-                            can('CalendarService.CreateOrUpdateCalendarEntry') || can('CalendarService.CreateOrUpdateCalendar')
+                            can('CalendarService.CreateOrUpdateCalendarEntry').value ||
+                            can('CalendarService.CreateOrUpdateCalendar').value
                         "
                         class="inline-flex w-full"
                     >
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendar')"
+                            v-if="can('CalendarService.CreateOrUpdateCalendar').value"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"
@@ -532,7 +534,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry')"
+                            v-if="can('CalendarService.CreateOrUpdateCalendarEntry').value"
                             block
                             color="gray"
                             trailing-icon="i-mdi-plus"

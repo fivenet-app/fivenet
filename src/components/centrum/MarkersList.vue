@@ -99,7 +99,7 @@ const columns = [
                             </UButton>
 
                             <UButton
-                                v-if="can('LivemapperService.DeleteMarker')"
+                                v-if="can('LivemapperService.DeleteMarker').value"
                                 :title="$t('common.delete')"
                                 variant="link"
                                 icon="i-mdi-trash-can"

@@ -98,7 +98,7 @@ const columns = [
         <template #default>
             <div class="flex w-full flex-col">
                 <UButton
-                    v-if="can('JobsTimeclockService.ListTimeclock')"
+                    v-if="can('JobsTimeclockService.ListTimeclock').value"
                     :to="{ name: 'jobs-timeclock' }"
                     icon="i-mdi-arrow-left"
                     class="mb-2 place-self-end"

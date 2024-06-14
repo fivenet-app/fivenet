@@ -52,7 +52,7 @@ const isOpen = ref(false);
                 <template #right>
                     <UButtonGroup class="inline-flex 2xl:hidden">
                         <UButton
-                            v-if="can('CompletorService.CompleteDocumentCategories')"
+                            v-if="can('CompletorService.CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
                         >
@@ -60,7 +60,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('DocStoreService.ListTemplates')"
+                            v-if="can('DocStoreService.ListTemplates').value"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
                         >
@@ -104,7 +104,7 @@ const isOpen = ref(false);
                 <template #right>
                     <UButtonGroup class="hidden truncate 2xl:inline-flex">
                         <UButton
-                            v-if="can('CompletorService.CompleteDocumentCategories')"
+                            v-if="can('CompletorService.CompleteDocumentCategories').value"
                             :to="{ name: 'documents-categories' }"
                             icon="i-mdi-shape"
                             truncate
@@ -115,7 +115,7 @@ const isOpen = ref(false);
                         </UButton>
 
                         <UButton
-                            v-if="can('DocStoreService.ListTemplates')"
+                            v-if="can('DocStoreService.ListTemplates').value"
                             :to="{ name: 'documents-templates' }"
                             icon="i-mdi-file-code"
                             truncate

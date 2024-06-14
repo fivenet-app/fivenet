@@ -199,7 +199,7 @@ defineShortcuts({
                 </UFormGroup>
 
                 <UFormGroup
-                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted')"
+                    v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.Wanted').value"
                     name="wanted"
                     :label="$t('components.citizens.CitizensList.only_wanted')"
                 >
@@ -221,7 +221,7 @@ defineShortcuts({
                 <template #search>
                     <div class="flex flex-row gap-2">
                         <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber')"
+                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'PhoneNumber').value"
                             name="phoneNumber"
                             :label="$t('common.phone_number')"
                             class="flex-1"
@@ -238,7 +238,7 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints')"
+                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'TrafficInfractionPoints').value"
                             name="trafficInfractionPoints"
                             :label="$t('common.traffic_infraction_points', 2)"
                             class="flex-1"
@@ -256,7 +256,7 @@ defineShortcuts({
                         </UFormGroup>
 
                         <UFormGroup
-                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines')"
+                            v-if="attr('CitizenStoreService.ListCitizens', 'Fields', 'UserProps.OpenFines').value"
                             name="openFines"
                             :label="$t('components.citizens.CitizensList.open_fine')"
                             class="flex-1"
@@ -331,7 +331,7 @@ defineShortcuts({
             {{ citizen.dateofbirth.value }}
         </template>
         <template #height-data="{ row: citizen }"> {{ citizen.height.value }}cm </template>
-        <template v-if="can('CitizenStoreService.GetUser')" #actions-data="{ row: citizen }">
+        <template v-if="can('CitizenStoreService.GetUser').value" #actions-data="{ row: citizen }">
             <div :key="citizen.userId" class="flex flex-col justify-end md:flex-row">
                 <UButton variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(citizen)" />
 

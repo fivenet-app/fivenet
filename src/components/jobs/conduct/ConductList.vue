@@ -263,7 +263,7 @@ defineShortcuts({
                     </UFormGroup>
 
                     <UFormGroup
-                        v-if="can('JobsConductService.CreateConductEntry')"
+                        v-if="can('JobsConductService.CreateConductEntry').value"
                         :label="$t('common.create')"
                         class="flex-initial"
                     >
@@ -346,7 +346,7 @@ defineShortcuts({
                     />
 
                     <UButton
-                        v-if="can('JobsConductService.UpdateConductEntry')"
+                        v-if="can('JobsConductService.UpdateConductEntry').value"
                         variant="link"
                         icon="i-mdi-pencil"
                         @click="
@@ -360,7 +360,7 @@ defineShortcuts({
                     />
 
                     <UButton
-                        v-if="can('JobsConductService.DeleteConductEntry')"
+                        v-if="can('JobsConductService.DeleteConductEntry').value"
                         variant="link"
                         icon="i-mdi-trash-can"
                         @click="

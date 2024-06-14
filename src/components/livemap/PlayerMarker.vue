@@ -104,7 +104,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                     </UButton>
 
                     <UButton
-                        v-if="can('CitizenStoreService.ListCitizens')"
+                        v-if="can('CitizenStoreService.ListCitizens').value"
                         variant="link"
                         icon="i-mdi-account"
                         :padded="false"

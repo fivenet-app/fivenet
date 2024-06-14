@@ -233,7 +233,7 @@ defineShortcuts({
                 <UButton v-if="!hideCopy" variant="link" icon="i-mdi-clipboard-plus" @click="addToClipboard(vehicle)" />
 
                 <UButton
-                    v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens')"
+                    v-if="!hideCitizenLink && can('CitizenStoreService.ListCitizens').value"
                     variant="link"
                     icon="i-mdi-account-eye"
                     :to="{

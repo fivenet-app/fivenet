@@ -174,7 +174,7 @@ onMounted(async () => {
                 <template #right>
                     <UButtonGroup class="inline-flex">
                         <UButton
-                            v-if="can('MessengerService.CreateOrUpdateThread')"
+                            v-if="can('MessengerService.CreateOrUpdateThread').value"
                             color="gray"
                             trailing-icon="i-mdi-plus"
                             @click="() => modal.open(ThreadCreateOrUpdateModal, {})"

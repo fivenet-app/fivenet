@@ -54,7 +54,7 @@ const selectedTab = computed({
             <UDashboardNavbar :title="$t('pages.qualifications.title')">
                 <template #right>
                     <UButton
-                        v-if="can('QualificationsService.CreateQualification')"
+                        v-if="can('QualificationsService.CreateQualification').value"
                         :to="{ name: 'qualifications-create' }"
                         trailing-icon="i-mdi-plus"
                         color="gray"

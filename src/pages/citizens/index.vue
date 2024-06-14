@@ -20,7 +20,7 @@ const modal = useModal();
             <UDashboardNavbar :title="$t('pages.citizens.title')">
                 <template #right>
                     <UButton
-                        v-if="can('CitizenStoreService.ManageCitizenAttributes')"
+                        v-if="can('CitizenStoreService.ManageCitizenAttributes').value"
                         :label="$t('common.attributes', 2)"
                         icon="i-mdi-tag"
                         @click="modal.open(CitizensAttributesModal, {})"

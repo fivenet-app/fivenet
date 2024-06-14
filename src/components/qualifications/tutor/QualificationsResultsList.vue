@@ -184,7 +184,7 @@ defineExpose({
                             />
 
                             <UButton
-                                v-if="can('QualificationsService.DeleteQualificationResult')"
+                                v-if="can('QualificationsService.DeleteQualificationResult').value"
                                 class="flex-initial"
                                 variant="link"
                                 icon="i-mdi-trash-can"

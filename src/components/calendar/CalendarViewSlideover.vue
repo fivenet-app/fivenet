@@ -51,7 +51,7 @@ const calendar = computed(() => data.value?.calendar);
                             <UButton
                                 v-if="
                                     calendar &&
-                                    can('CalendarService.CreateOrUpdateCalendar') &&
+                                    can('CalendarService.CreateOrUpdateCalendar').value &&
                                     checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.EDIT)
                                 "
                                 variant="link"
@@ -67,7 +67,7 @@ const calendar = computed(() => data.value?.calendar);
                             <UButton
                                 v-if="
                                     calendar &&
-                                    can('CalendarService.DeleteCalendar') &&
+                                    can('CalendarService.DeleteCalendar').value &&
                                     checkCalendarAccess(calendar?.access, calendar?.creator, AccessLevel.MANAGE)
                                 "
                                 variant="link"

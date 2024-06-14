@@ -87,9 +87,9 @@ const showRadioFrequency = ref(false);
                         </UCard>
                     </div>
 
-                    <JobSelfService v-if="can('JobsService.ListColleagues') && activeChar" :user-id="activeChar.userId" />
+                    <JobSelfService v-if="can('JobsService.ListColleagues').value && activeChar" :user-id="activeChar.userId" />
 
-                    <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock')" />
+                    <TimeclockOverviewBlock v-if="can('JobsTimeclockService.ListTimeclock').value" />
                 </div>
             </div>
         </template>

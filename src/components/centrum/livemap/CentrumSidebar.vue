@@ -44,7 +44,7 @@ const notifications = useNotificatorStore();
 const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
-const canStream = can('CentrumService.Stream');
+const canStream = can('CentrumService.Stream').value;
 
 const selectedDispatch = ref<string | undefined>();
 

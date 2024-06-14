@@ -48,7 +48,7 @@ const grouped = computedAsync(async () => {
             <h2 class="inline-flex items-center text-base font-semibold leading-6 text-gray-100">
                 {{ $t('common.unit') }}
                 <UButton
-                    v-if="can('CentrumService.CreateOrUpdateUnit')"
+                    v-if="can('CentrumService.CreateOrUpdateUnit').value"
                     :to="{ name: 'centrum-units' }"
                     :title="$t('common.unit')"
                     icon="i-mdi-cog"
