@@ -11,7 +11,7 @@ const { webSocket, wsInitiated } = useGRPCWebsocketTransport();
 
 const toast = useToast();
 
-const status = useDebounce(webSocket.status, 275);
+const status = useDebounce(webSocket.status, 150);
 
 const notificationId = ref<string | undefined>();
 
@@ -48,6 +48,13 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
                     ui: { rounded: 'rounded-full', base: 'hidden' },
                 },
             },
+            actions: [
+                {
+                    label: t('common.refresh'),
+                    icon: 'i-mdi-refresh',
+                    click: () => reloadNuxtApp({}),
+                },
+            ],
         });
     }
 }

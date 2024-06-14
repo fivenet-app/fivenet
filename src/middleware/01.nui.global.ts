@@ -14,10 +14,10 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
 
         const settings = useSettingsStore();
         if (nuiQuery.toLowerCase() !== 'false') {
-            settings.setNuiDetails(true, nuiQuery);
+            settings.setNuiSettings(true, nuiQuery);
             logger.info('Enabled NUI integration, resource:', settings.nuiResourceName);
         } else {
-            settings.setNuiDetails(false, undefined);
+            settings.setNuiSettings(false, undefined);
             logger.info('Disabled NUI integration');
         }
     } else {

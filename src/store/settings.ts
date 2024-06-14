@@ -90,7 +90,7 @@ export const useSettingsStore = defineStore('settings', {
         async setUpdateAvailable(version: string): Promise<void> {
             this.updateAvailable = version;
         },
-        setNuiDetails(enabled: boolean, resourceName: string | undefined): void {
+        setNuiSettings(enabled: boolean, resourceName: string | undefined): void {
             this.nuiEnabled = enabled;
             this.nuiResourceName = resourceName;
         },
