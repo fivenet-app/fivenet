@@ -165,8 +165,8 @@ watch(selectedAccessRole, () => {
         </UFormGroup>
 
         <template v-if="selectedAccessType?.id === 0">
-            <UFormGroup>
-                <UInputMenu
+            <UFormGroup name="selectedJob" class="flex-1">
+                <USelectMenu
                     v-model="selectedJob"
                     :disabled="readOnly"
                     class="flex-1"
@@ -182,11 +182,11 @@ watch(selectedAccessRole, () => {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                </UInputMenu>
+                </USelectMenu>
             </UFormGroup>
 
-            <UFormGroup>
-                <UInputMenu
+            <UFormGroup name="selectedMinimumRank" class="flex-1">
+                <USelectMenu
                     v-model="selectedMinimumRank"
                     :disabled="readOnly || !selectedJob"
                     class="flex-1"
@@ -202,7 +202,7 @@ watch(selectedAccessRole, () => {
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                     </template>
                     <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                </UInputMenu>
+                </USelectMenu>
             </UFormGroup>
         </template>
 
