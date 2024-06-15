@@ -157,6 +157,7 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
         async listCalendarEntries(req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
+            console.log('listCalendarEntries', req);
             if (req === undefined) {
                 req = {
                     calendarIds: this.activeCalendarIds,

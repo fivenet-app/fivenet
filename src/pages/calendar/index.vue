@@ -42,7 +42,7 @@ const {
     pending: calendarsLoading,
     error: calendarsError,
     refresh: calendarsRefresh,
-} = useLazyAsyncData(`calendars-${currentDate.value.year}-${currentDate.value.month}`, () => listCalendars());
+} = useLazyAsyncData(`calendars:${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
     try {
@@ -80,7 +80,7 @@ const {
     { immediate: false },
 );
 
-watchDebounced(currentDate, async () => refresh(), { debounce: 200, maxWait: 1250 });
+watchDebounced(currentDate.value, async () => refresh(), { debounce: 100, maxWait: 1000 });
 
 function formatStartEndTime(entry: CalendarEntry): string {
     const start = toDate(entry.startTime);
