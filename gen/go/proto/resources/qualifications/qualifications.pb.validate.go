@@ -201,6 +201,8 @@ func (m *Qualification) validate(all bool) error {
 
 	}
 
+	// no validation rules for DiscordSyncEnabled
+
 	if _, ok := QualificationExamMode_name[int32(m.GetExamMode())]; !ok {
 		err := QualificationValidationError{
 			field:  "ExamMode",
@@ -1224,8 +1226,6 @@ func (m *QualificationDiscordSettings) validate(all bool) error {
 	}
 
 	var errors []error
-
-	// no validation rules for SyncEnabled
 
 	if m.RoleName != nil {
 

@@ -152,6 +152,10 @@ export interface DiscordSyncSettings {
      * @generated from protobuf field: resources.users.GroupSyncSettings group_sync_settings = 8;
      */
     groupSyncSettings?: GroupSyncSettings;
+    /**
+     * @generated from protobuf field: string qualifications_role_format = 9;
+     */
+    qualificationsRoleFormat: string;
 }
 /**
  * @generated from protobuf message resources.users.DiscordSyncChanges
@@ -602,7 +606,8 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
             { no: 5, name: "status_log_settings", kind: "message", T: () => StatusLogSettings },
             { no: 6, name: "jobs_absence", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 7, name: "jobs_absence_settings", kind: "message", T: () => JobsAbsenceSettings },
-            { no: 8, name: "group_sync_settings", kind: "message", T: () => GroupSyncSettings }
+            { no: 8, name: "group_sync_settings", kind: "message", T: () => GroupSyncSettings },
+            { no: 9, name: "qualifications_role_format", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<DiscordSyncSettings>): DiscordSyncSettings {
@@ -611,6 +616,7 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
         message.userInfoSync = false;
         message.statusLog = false;
         message.jobsAbsence = false;
+        message.qualificationsRoleFormat = "";
         if (value !== undefined)
             reflectionMergePartial<DiscordSyncSettings>(this, message, value);
         return message;
@@ -643,6 +649,9 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
                     break;
                 case /* resources.users.GroupSyncSettings group_sync_settings */ 8:
                     message.groupSyncSettings = GroupSyncSettings.internalBinaryRead(reader, reader.uint32(), options, message.groupSyncSettings);
+                    break;
+                case /* string qualifications_role_format */ 9:
+                    message.qualificationsRoleFormat = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -680,6 +689,9 @@ class DiscordSyncSettings$Type extends MessageType<DiscordSyncSettings> {
         /* resources.users.GroupSyncSettings group_sync_settings = 8; */
         if (message.groupSyncSettings)
             GroupSyncSettings.internalBinaryWrite(message.groupSyncSettings, writer.tag(8, WireType.LengthDelimited).fork(), options).join();
+        /* string qualifications_role_format = 9; */
+        if (message.qualificationsRoleFormat !== "")
+            writer.tag(9, WireType.LengthDelimited).string(message.qualificationsRoleFormat);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

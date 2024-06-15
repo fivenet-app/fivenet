@@ -38,12 +38,13 @@ message Qualification {
   string creator_job = 14 [(validate.rules).string.max_len = 20];
   resources.qualifications.QualificationAccess access = 15;
   repeated QualificationRequirement requirements = 16;
-  optional QualificationDiscordSettings discord_settings = 17;
-  QualificationExamMode exam_mode = 18 [(validate.rules).enum.defined_only = true];
-  optional QualificationExamSettings exam_settings = 19;
-  optional resources.qualifications.ExamQuestions exam = 20;
-  optional QualificationResult result = 21;
-  optional QualificationRequest request = 22;
+  bool discord_sync_enabled = 17;
+  optional QualificationDiscordSettings discord_settings = 18;
+  QualificationExamMode exam_mode = 19 [(validate.rules).enum.defined_only = true];
+  optional QualificationExamSettings exam_settings = 20;
+  optional resources.qualifications.ExamQuestions exam = 21;
+  optional QualificationResult result = 22;
+  optional QualificationRequest request = 23;
 }
 
 message QualificationShort {
@@ -81,8 +82,7 @@ message QualificationRequirement {
 }
 
 message QualificationDiscordSettings {
-  bool sync_enabled = 1;
-  optional string role_name = 2 [(validate.rules).string.max_len = 64];
+  optional string role_name = 1 [(validate.rules).string.max_len = 64];
 }
 
 enum QualificationExamMode {

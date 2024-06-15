@@ -64,6 +64,7 @@ const schema = z.object({
         groupSyncSettings: z.object({
             ignoredRoleIds: z.string().max(64).array().max(20),
         }),
+        qualificationsRoleFormat: z.string(),
     }),
     logoUrl: zodFileSingleSchema(appConfig.fileUpload.fileSizes.images, appConfig.fileUpload.types.images, true).optional(),
 });
@@ -102,6 +103,7 @@ const state = reactive<Schema>({
         groupSyncSettings: {
             ignoredRoleIds: [],
         },
+        qualificationsRoleFormat: '',
     },
     logoUrl: undefined,
 });
@@ -193,6 +195,8 @@ function setSettingsValues(): void {
         selectedChange.value = jobProps.value.discordSyncChanges?.changes.at(
             jobProps.value.discordSyncChanges?.changes.length - 1,
         );
+
+        state.discordSyncSettings.qualificationsRoleFormat = jobProps.value.discordSyncSettings.qualificationsRoleFormat;
     }
 }
 
@@ -830,7 +834,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     </UFormGroup>
 
                                     <UFormGroup
-                                        name="userInfoSync"
+                                        name="discordSyncSettings.jobsAbsence"
                                         :label="
                                             $t(
                                                 'components.rector.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_enabled',
@@ -865,7 +869,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <UInput
                                                 v-model="state.discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                                 type="text"
-                                                name="jobsAbsenceRole"
+                                                name="discordSyncSettings.jobsAbsenceSettings.absenceRole"
                                                 :disabled="
                                                     !state.discordSyncSettings.userInfoSync ||
                                                     !state.discordSyncSettings.jobsAbsence
@@ -880,6 +884,35 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             />
                                         </UFormGroup>
                                     </template>
+
+                                    <UFormGroup
+                                        name="discordSyncSettings.qualificationsRoleFormat"
+                                        :label="
+                                            $t(
+                                                'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                            )
+                                        "
+                                        :description="
+                                            $t(
+                                                'components.rector.job_props.discord_sync_settings.qualifications_role_format.description',
+                                            )
+                                        "
+                                        class="grid grid-cols-2 items-center gap-2"
+                                        :ui="{ container: '' }"
+                                    >
+                                        <UInput
+                                            v-model="state.discordSyncSettings.qualificationsRoleFormat"
+                                            type="text"
+                                            name="discordSyncSettings.qualificationsRoleFormat"
+                                            :placeholder="
+                                                $t(
+                                                    'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
+                                                )
+                                            "
+                                            @focusin="focusTablet(true)"
+                                            @focusout="focusTablet(false)"
+                                        />
+                                    </UFormGroup>
                                 </template>
                             </UDashboardSection>
 

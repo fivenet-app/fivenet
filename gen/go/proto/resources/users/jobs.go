@@ -16,6 +16,8 @@ const (
 	DefaultGradeRoleFormat     = "[%grade%] %grade_label%"
 	DefaultUnemployedRoleName  = "Citizen"
 	DefaultJobsAbsenceRoleName = "Absent"
+
+	DefaultQualificationsRoleFormat = "%name% Qualification"
 )
 
 func (x *Job) GetJob() string {
@@ -53,8 +55,9 @@ func (x *JobProps) Default(job string) {
 	// Discord Sync Settings
 	if x.DiscordSyncSettings == nil {
 		x.DiscordSyncSettings = &DiscordSyncSettings{
-			DryRun:       false,
-			UserInfoSync: false,
+			DryRun:                   false,
+			UserInfoSync:             false,
+			QualificationsRoleFormat: DefaultQualificationsRoleFormat,
 		}
 	}
 
@@ -100,6 +103,10 @@ func (x *JobProps) Default(job string) {
 		x.DiscordSyncSettings.GroupSyncSettings = &GroupSyncSettings{
 			IgnoredRoleIds: []string{},
 		}
+	}
+
+	if x.DiscordSyncSettings.QualificationsRoleFormat == "" {
+		x.DiscordSyncSettings.QualificationsRoleFormat = DefaultQualificationsRoleFormat
 	}
 }
 

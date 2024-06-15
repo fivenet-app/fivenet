@@ -627,7 +627,11 @@
                             "field": "Ignored Role ID"
                         }
                     },
-                    "dry_run": "Dry run mode"
+                    "dry_run": "Dry run mode",
+                    "qualifications_role_format": {
+                        "title": "Qualifications Role Format",
+                        "description": "Use %name% for the qualification role format."
+                    }
                 },
                 "citizen_attributes": {
                     "title": "Citizen Attributes"

@@ -17,22 +17,23 @@ type fivenetQualificationsTable struct {
 	mysql.Table
 
 	// Columns
-	ID              mysql.ColumnInteger
-	CreatedAt       mysql.ColumnTimestamp
-	UpdatedAt       mysql.ColumnTimestamp
-	DeletedAt       mysql.ColumnTimestamp
-	Job             mysql.ColumnString
-	Weight          mysql.ColumnInteger
-	Closed          mysql.ColumnBool
-	Abbreviation    mysql.ColumnString
-	Title           mysql.ColumnString
-	Description     mysql.ColumnString
-	Content         mysql.ColumnString
-	CreatorID       mysql.ColumnInteger
-	CreatorJob      mysql.ColumnString
-	DiscordSettings mysql.ColumnString
-	ExamMode        mysql.ColumnInteger
-	ExamSettings    mysql.ColumnString
+	ID                 mysql.ColumnInteger
+	CreatedAt          mysql.ColumnTimestamp
+	UpdatedAt          mysql.ColumnTimestamp
+	DeletedAt          mysql.ColumnTimestamp
+	Job                mysql.ColumnString
+	Weight             mysql.ColumnInteger
+	Closed             mysql.ColumnBool
+	Abbreviation       mysql.ColumnString
+	Title              mysql.ColumnString
+	Description        mysql.ColumnString
+	Content            mysql.ColumnString
+	CreatorID          mysql.ColumnInteger
+	CreatorJob         mysql.ColumnString
+	DiscordSyncEnabled mysql.ColumnBool
+	DiscordSettings    mysql.ColumnString
+	ExamMode           mysql.ColumnInteger
+	ExamSettings       mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -73,46 +74,48 @@ func newFivenetQualificationsTable(schemaName, tableName, alias string) *Fivenet
 
 func newFivenetQualificationsTableImpl(schemaName, tableName, alias string) fivenetQualificationsTable {
 	var (
-		IDColumn              = mysql.IntegerColumn("id")
-		CreatedAtColumn       = mysql.TimestampColumn("created_at")
-		UpdatedAtColumn       = mysql.TimestampColumn("updated_at")
-		DeletedAtColumn       = mysql.TimestampColumn("deleted_at")
-		JobColumn             = mysql.StringColumn("job")
-		WeightColumn          = mysql.IntegerColumn("weight")
-		ClosedColumn          = mysql.BoolColumn("closed")
-		AbbreviationColumn    = mysql.StringColumn("abbreviation")
-		TitleColumn           = mysql.StringColumn("title")
-		DescriptionColumn     = mysql.StringColumn("description")
-		ContentColumn         = mysql.StringColumn("content")
-		CreatorIDColumn       = mysql.IntegerColumn("creator_id")
-		CreatorJobColumn      = mysql.StringColumn("creator_job")
-		DiscordSettingsColumn = mysql.StringColumn("discord_settings")
-		ExamModeColumn        = mysql.IntegerColumn("exam_mode")
-		ExamSettingsColumn    = mysql.StringColumn("exam_settings")
-		allColumns            = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
-		mutableColumns        = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
+		IDColumn                 = mysql.IntegerColumn("id")
+		CreatedAtColumn          = mysql.TimestampColumn("created_at")
+		UpdatedAtColumn          = mysql.TimestampColumn("updated_at")
+		DeletedAtColumn          = mysql.TimestampColumn("deleted_at")
+		JobColumn                = mysql.StringColumn("job")
+		WeightColumn             = mysql.IntegerColumn("weight")
+		ClosedColumn             = mysql.BoolColumn("closed")
+		AbbreviationColumn       = mysql.StringColumn("abbreviation")
+		TitleColumn              = mysql.StringColumn("title")
+		DescriptionColumn        = mysql.StringColumn("description")
+		ContentColumn            = mysql.StringColumn("content")
+		CreatorIDColumn          = mysql.IntegerColumn("creator_id")
+		CreatorJobColumn         = mysql.StringColumn("creator_job")
+		DiscordSyncEnabledColumn = mysql.BoolColumn("discord_sync_enabled")
+		DiscordSettingsColumn    = mysql.StringColumn("discord_settings")
+		ExamModeColumn           = mysql.IntegerColumn("exam_mode")
+		ExamSettingsColumn       = mysql.StringColumn("exam_settings")
+		allColumns               = mysql.ColumnList{IDColumn, CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
+		mutableColumns           = mysql.ColumnList{CreatedAtColumn, UpdatedAtColumn, DeletedAtColumn, JobColumn, WeightColumn, ClosedColumn, AbbreviationColumn, TitleColumn, DescriptionColumn, ContentColumn, CreatorIDColumn, CreatorJobColumn, DiscordSyncEnabledColumn, DiscordSettingsColumn, ExamModeColumn, ExamSettingsColumn}
 	)
 
 	return fivenetQualificationsTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		ID:              IDColumn,
-		CreatedAt:       CreatedAtColumn,
-		UpdatedAt:       UpdatedAtColumn,
-		DeletedAt:       DeletedAtColumn,
-		Job:             JobColumn,
-		Weight:          WeightColumn,
-		Closed:          ClosedColumn,
-		Abbreviation:    AbbreviationColumn,
-		Title:           TitleColumn,
-		Description:     DescriptionColumn,
-		Content:         ContentColumn,
-		CreatorID:       CreatorIDColumn,
-		CreatorJob:      CreatorJobColumn,
-		DiscordSettings: DiscordSettingsColumn,
-		ExamMode:        ExamModeColumn,
-		ExamSettings:    ExamSettingsColumn,
+		ID:                 IDColumn,
+		CreatedAt:          CreatedAtColumn,
+		UpdatedAt:          UpdatedAtColumn,
+		DeletedAt:          DeletedAtColumn,
+		Job:                JobColumn,
+		Weight:             WeightColumn,
+		Closed:             ClosedColumn,
+		Abbreviation:       AbbreviationColumn,
+		Title:              TitleColumn,
+		Description:        DescriptionColumn,
+		Content:            ContentColumn,
+		CreatorID:          CreatorIDColumn,
+		CreatorJob:         CreatorJobColumn,
+		DiscordSyncEnabled: DiscordSyncEnabledColumn,
+		DiscordSettings:    DiscordSettingsColumn,
+		ExamMode:           ExamModeColumn,
+		ExamSettings:       ExamSettingsColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

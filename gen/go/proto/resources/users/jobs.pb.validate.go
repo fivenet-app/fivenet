@@ -955,6 +955,17 @@ func (m *DiscordSyncSettings) validate(all bool) error {
 		}
 	}
 
+	if utf8.RuneCountInString(m.GetQualificationsRoleFormat()) > 64 {
+		err := DiscordSyncSettingsValidationError{
+			field:  "QualificationsRoleFormat",
+			reason: "value length must be at most 64 runes",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if len(errors) > 0 {
 		return DiscordSyncSettingsMultiError(errors)
 	}

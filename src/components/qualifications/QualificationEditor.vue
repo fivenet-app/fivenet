@@ -59,8 +59,8 @@ const schema = z.object({
     description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     content: z.string().min(20).max(750000),
     closed: z.boolean(),
+    discordSyncEnabled: z.boolean(),
     discordSettings: z.object({
-        syncEnabled: z.boolean(),
         roleName: z.string().max(64).optional(),
     }),
     examMode: z.nativeEnum(QualificationExamMode),
@@ -77,8 +77,8 @@ const state = reactive<Schema>({
     description: '',
     content: '',
     closed: false,
+    discordSyncEnabled: false,
     discordSettings: {
-        syncEnabled: false,
         roleName: '',
     },
     examMode: QualificationExamMode.DISABLED,
@@ -128,8 +128,8 @@ async function getQualification(qualificationId: string): Promise<void> {
             state.content = qualification.content;
             state.closed = qualification.closed;
             state.abbreviation = qualification.abbreviation;
+            state.discordSyncEnabled = qualification.discordSyncEnabled;
             state.discordSettings = qualification.discordSettings ?? {
-                syncEnabled: false,
                 roleName: '',
             };
             state.examMode = qualification.examMode;
@@ -204,6 +204,7 @@ async function createQualification(values: Schema): Promise<CreateQualificationR
             access: {
                 jobs: [],
             } as QualificationAccess,
+            discordSyncEnabled: values.discordSyncEnabled,
             discordSettings: values.discordSettings,
             examMode: values.examMode,
             examSettings: values.examSettings,
@@ -263,6 +264,7 @@ async function updateQualification(values: Schema): Promise<UpdateQualificationR
             access: {
                 jobs: [],
             } as QualificationAccess,
+            discordSyncEnabled: values.discordSyncEnabled,
             discordSettings: values.discordSettings,
             examMode: values.examMode,
             examSettings: values.examSettings,
@@ -619,7 +621,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 <template #discord>
                                     <UContainer>
                                         <UFormGroup name="discordSettings.enabled" :label="$t('common.enabled')">
-                                            <UToggle v-model="state.discordSettings.syncEnabled" :disabled="!canDo.edit">
+                                            <UToggle v-model="state.discordSyncEnabled" :disabled="!canDo.edit">
                                                 <span class="sr-only">
                                                     {{ $t('common.enabled') }}
                                                 </span>

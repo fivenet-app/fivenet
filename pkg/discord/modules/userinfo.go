@@ -6,7 +6,6 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
-	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -78,7 +77,7 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 					return user, nil, nil
 				}
 
-				if slices.Contains(g.ignoredJobs, user.Job) {
+				if g.checkIfJobIgnored(user.Job) {
 					user.Job = g.job
 					return user, nil, nil
 				}
@@ -197,7 +196,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 			}
 			grade, err := strconv.Atoi(sGrade)
 			if err != nil {
-				return nil, nil, err
+				return nil, logs, err
 			}
 			gradeRoles[int32(grade)] = role
 		} else if strings.HasPrefix(role.Module, userInfoRoleModuleGroupMappingPrefix) {
@@ -207,7 +206,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 			}
 			index, err := strconv.Atoi(sGroup)
 			if err != nil {
-				return nil, nil, err
+				return nil, logs, err
 			}
 			groupRoles[index] = role
 		}
@@ -371,10 +370,7 @@ func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, l
 func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade int32) (types.Roles, error) {
 	userRoles := types.Roles{}
 
-	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
-	// "ambulance" job Discord, and an user is currently in the ignored, e.g., "army", jobs.
-	ignoredJobs := g.appCfg.Get().Discord.IgnoredJobs
-	if g.job != job && slices.Contains(ignoredJobs, job) {
+	if g.checkIfJobIgnored(job) {
 		return userRoles, nil
 	}
 

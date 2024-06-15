@@ -92,27 +92,31 @@ export interface Qualification {
      */
     requirements: QualificationRequirement[];
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationDiscordSettings discord_settings = 17;
+     * @generated from protobuf field: bool discord_sync_enabled = 17;
+     */
+    discordSyncEnabled: boolean;
+    /**
+     * @generated from protobuf field: optional resources.qualifications.QualificationDiscordSettings discord_settings = 18;
      */
     discordSettings?: QualificationDiscordSettings;
     /**
-     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 18;
+     * @generated from protobuf field: resources.qualifications.QualificationExamMode exam_mode = 19;
      */
     examMode: QualificationExamMode;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 19;
+     * @generated from protobuf field: optional resources.qualifications.QualificationExamSettings exam_settings = 20;
      */
     examSettings?: QualificationExamSettings;
     /**
-     * @generated from protobuf field: optional resources.qualifications.ExamQuestions exam = 20;
+     * @generated from protobuf field: optional resources.qualifications.ExamQuestions exam = 21;
      */
     exam?: ExamQuestions;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 21;
+     * @generated from protobuf field: optional resources.qualifications.QualificationResult result = 22;
      */
     result?: QualificationResult;
     /**
-     * @generated from protobuf field: optional resources.qualifications.QualificationRequest request = 22;
+     * @generated from protobuf field: optional resources.qualifications.QualificationRequest request = 23;
      */
     request?: QualificationRequest;
 }
@@ -225,11 +229,7 @@ export interface QualificationRequirement {
  */
 export interface QualificationDiscordSettings {
     /**
-     * @generated from protobuf field: bool sync_enabled = 1;
-     */
-    syncEnabled: boolean;
-    /**
-     * @generated from protobuf field: optional string role_name = 2;
+     * @generated from protobuf field: optional string role_name = 1;
      */
     roleName?: string;
 }
@@ -457,12 +457,13 @@ class Qualification$Type extends MessageType<Qualification> {
             { no: 14, name: "creator_job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
             { no: 15, name: "access", kind: "message", T: () => QualificationAccess },
             { no: 16, name: "requirements", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => QualificationRequirement },
-            { no: 17, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
-            { no: 18, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
-            { no: 19, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
-            { no: 20, name: "exam", kind: "message", T: () => ExamQuestions },
-            { no: 21, name: "result", kind: "message", T: () => QualificationResult },
-            { no: 22, name: "request", kind: "message", T: () => QualificationRequest }
+            { no: 17, name: "discord_sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 18, name: "discord_settings", kind: "message", T: () => QualificationDiscordSettings },
+            { no: 19, name: "exam_mode", kind: "enum", T: () => ["resources.qualifications.QualificationExamMode", QualificationExamMode, "QUALIFICATION_EXAM_MODE_"], options: { "validate.rules": { enum: { definedOnly: true } } } },
+            { no: 20, name: "exam_settings", kind: "message", T: () => QualificationExamSettings },
+            { no: 21, name: "exam", kind: "message", T: () => ExamQuestions },
+            { no: 22, name: "result", kind: "message", T: () => QualificationResult },
+            { no: 23, name: "request", kind: "message", T: () => QualificationRequest }
         ]);
     }
     create(value?: PartialMessage<Qualification>): Qualification {
@@ -476,6 +477,7 @@ class Qualification$Type extends MessageType<Qualification> {
         message.content = "";
         message.creatorJob = "";
         message.requirements = [];
+        message.discordSyncEnabled = false;
         message.examMode = 0;
         if (value !== undefined)
             reflectionMergePartial<Qualification>(this, message, value);
@@ -534,22 +536,25 @@ class Qualification$Type extends MessageType<Qualification> {
                 case /* repeated resources.qualifications.QualificationRequirement requirements */ 16:
                     message.requirements.push(QualificationRequirement.internalBinaryRead(reader, reader.uint32(), options));
                     break;
-                case /* optional resources.qualifications.QualificationDiscordSettings discord_settings */ 17:
+                case /* bool discord_sync_enabled */ 17:
+                    message.discordSyncEnabled = reader.bool();
+                    break;
+                case /* optional resources.qualifications.QualificationDiscordSettings discord_settings */ 18:
                     message.discordSettings = QualificationDiscordSettings.internalBinaryRead(reader, reader.uint32(), options, message.discordSettings);
                     break;
-                case /* resources.qualifications.QualificationExamMode exam_mode */ 18:
+                case /* resources.qualifications.QualificationExamMode exam_mode */ 19:
                     message.examMode = reader.int32();
                     break;
-                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 19:
+                case /* optional resources.qualifications.QualificationExamSettings exam_settings */ 20:
                     message.examSettings = QualificationExamSettings.internalBinaryRead(reader, reader.uint32(), options, message.examSettings);
                     break;
-                case /* optional resources.qualifications.ExamQuestions exam */ 20:
+                case /* optional resources.qualifications.ExamQuestions exam */ 21:
                     message.exam = ExamQuestions.internalBinaryRead(reader, reader.uint32(), options, message.exam);
                     break;
-                case /* optional resources.qualifications.QualificationResult result */ 21:
+                case /* optional resources.qualifications.QualificationResult result */ 22:
                     message.result = QualificationResult.internalBinaryRead(reader, reader.uint32(), options, message.result);
                     break;
-                case /* optional resources.qualifications.QualificationRequest request */ 22:
+                case /* optional resources.qualifications.QualificationRequest request */ 23:
                     message.request = QualificationRequest.internalBinaryRead(reader, reader.uint32(), options, message.request);
                     break;
                 default:
@@ -612,24 +617,27 @@ class Qualification$Type extends MessageType<Qualification> {
         /* repeated resources.qualifications.QualificationRequirement requirements = 16; */
         for (let i = 0; i < message.requirements.length; i++)
             QualificationRequirement.internalBinaryWrite(message.requirements[i], writer.tag(16, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.QualificationDiscordSettings discord_settings = 17; */
+        /* bool discord_sync_enabled = 17; */
+        if (message.discordSyncEnabled !== false)
+            writer.tag(17, WireType.Varint).bool(message.discordSyncEnabled);
+        /* optional resources.qualifications.QualificationDiscordSettings discord_settings = 18; */
         if (message.discordSettings)
-            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(17, WireType.LengthDelimited).fork(), options).join();
-        /* resources.qualifications.QualificationExamMode exam_mode = 18; */
+            QualificationDiscordSettings.internalBinaryWrite(message.discordSettings, writer.tag(18, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.QualificationExamMode exam_mode = 19; */
         if (message.examMode !== 0)
-            writer.tag(18, WireType.Varint).int32(message.examMode);
-        /* optional resources.qualifications.QualificationExamSettings exam_settings = 19; */
+            writer.tag(19, WireType.Varint).int32(message.examMode);
+        /* optional resources.qualifications.QualificationExamSettings exam_settings = 20; */
         if (message.examSettings)
-            QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(19, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.ExamQuestions exam = 20; */
+            QualificationExamSettings.internalBinaryWrite(message.examSettings, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.ExamQuestions exam = 21; */
         if (message.exam)
-            ExamQuestions.internalBinaryWrite(message.exam, writer.tag(20, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.QualificationResult result = 21; */
+            ExamQuestions.internalBinaryWrite(message.exam, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.QualificationResult result = 22; */
         if (message.result)
-            QualificationResult.internalBinaryWrite(message.result, writer.tag(21, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.qualifications.QualificationRequest request = 22; */
+            QualificationResult.internalBinaryWrite(message.result, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.qualifications.QualificationRequest request = 23; */
         if (message.request)
-            QualificationRequest.internalBinaryWrite(message.request, writer.tag(22, WireType.LengthDelimited).fork(), options).join();
+            QualificationRequest.internalBinaryWrite(message.request, writer.tag(23, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -888,13 +896,11 @@ export const QualificationRequirement = new QualificationRequirement$Type();
 class QualificationDiscordSettings$Type extends MessageType<QualificationDiscordSettings> {
     constructor() {
         super("resources.qualifications.QualificationDiscordSettings", [
-            { no: 1, name: "sync_enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 2, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
+            { no: 1, name: "role_name", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } }
         ]);
     }
     create(value?: PartialMessage<QualificationDiscordSettings>): QualificationDiscordSettings {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.syncEnabled = false;
         if (value !== undefined)
             reflectionMergePartial<QualificationDiscordSettings>(this, message, value);
         return message;
@@ -904,10 +910,7 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* bool sync_enabled */ 1:
-                    message.syncEnabled = reader.bool();
-                    break;
-                case /* optional string role_name */ 2:
+                case /* optional string role_name */ 1:
                     message.roleName = reader.string();
                     break;
                 default:
@@ -922,12 +925,9 @@ class QualificationDiscordSettings$Type extends MessageType<QualificationDiscord
         return message;
     }
     internalBinaryWrite(message: QualificationDiscordSettings, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* bool sync_enabled = 1; */
-        if (message.syncEnabled !== false)
-            writer.tag(1, WireType.Varint).bool(message.syncEnabled);
-        /* optional string role_name = 2; */
+        /* optional string role_name = 1; */
         if (message.roleName !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.roleName);
+            writer.tag(1, WireType.LengthDelimited).string(message.roleName);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

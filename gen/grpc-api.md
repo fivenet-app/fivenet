@@ -3561,6 +3561,7 @@
 | creator_job | [string](#string) |  |  |
 | access | [QualificationAccess](#resources-qualifications-QualificationAccess) |  |  |
 | requirements | [QualificationRequirement](#resources-qualifications-QualificationRequirement) | repeated |  |
+| discord_sync_enabled | [bool](#bool) |  |  |
 | discord_settings | [QualificationDiscordSettings](#resources-qualifications-QualificationDiscordSettings) | optional |  |
 | exam_mode | [QualificationExamMode](#resources-qualifications-QualificationExamMode) |  |  |
 | exam_settings | [QualificationExamSettings](#resources-qualifications-QualificationExamSettings) | optional |  |
@@ -3581,7 +3582,6 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| sync_enabled | [bool](#bool) |  |  |
 | role_name | [string](#string) | optional |  |
 
 
@@ -4091,6 +4091,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | jobs_absence | [bool](#bool) |  |  |
 | jobs_absence_settings | [JobsAbsenceSettings](#resources-users-JobsAbsenceSettings) |  |  |
 | group_sync_settings | [GroupSyncSettings](#resources-users-GroupSyncSettings) |  |  |
+| qualifications_role_format | [string](#string) |  |  |
 
 
 

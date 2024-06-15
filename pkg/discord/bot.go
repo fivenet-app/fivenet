@@ -347,6 +347,7 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 		FROM(tJobProps).
 		WHERE(jet.AND(
 			tJobProps.DiscordGuildID.IS_NOT_NULL(),
+			tJobProps.Job.EQ(jet.String("ambulance")),
 		))
 
 	var dest []*struct {

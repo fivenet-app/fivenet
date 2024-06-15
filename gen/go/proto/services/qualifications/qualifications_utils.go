@@ -216,6 +216,8 @@ func (s *Server) getQualificationQuery(qualificationId uint64, where jet.BoolExp
 			tCreator.Lastname,
 			tCreator.Dateofbirth,
 			tQuali.CreatorJob,
+			tQuali.DiscordSyncEnabled,
+			tQuali.DiscordSettings,
 			tQualiResults.ID,
 			tQualiResults.QualificationID,
 			tQualiResults.Status,

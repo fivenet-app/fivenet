@@ -44,12 +44,14 @@ func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (
 	ctx, cancel := context.WithCancel(ctx)
 
 	modules := []string{}
-	if b.cfg.GroupSync.Enabled {
+	if false && b.cfg.GroupSync.Enabled {
 		modules = append(modules, "groupsync")
 	}
-	if b.cfg.UserInfoSync.Enabled {
+	if false && b.cfg.UserInfoSync.Enabled {
 		modules = append(modules, "userinfo")
 	}
+
+	modules = append(modules, "qualifications")
 
 	return &Guild{
 		mutex:  sync.Mutex{},

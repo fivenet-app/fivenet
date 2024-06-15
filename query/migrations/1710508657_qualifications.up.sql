@@ -16,6 +16,7 @@ CREATE TABLE
         `content` longtext,
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,
+        `discord_sync_enabled` tinyint(1) DEFAULT 0,
         `discord_settings` longtext,
         `exam_mode` smallint(2) DEFAULT 1,
         `exam_settings` longtext,
@@ -23,6 +24,7 @@ CREATE TABLE
         KEY `idx_fivenet_qualifications_deleted_at` (`deleted_at`),
         KEY `idx_fivenet_qualifications_job` (`job`),
         KEY `idx_fivenet_qualifications_weight` (`weight`),
+        KEY `idx_fivenet_qualifications_discord_sync_enabled` (`job`, `discord_sync_enabled`),
         CONSTRAINT `fk_fivenet_qualifications_creator_id` FOREIGN KEY (`creator_id`) REFERENCES `users` (`id`) ON DELETE SET NULL ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 
