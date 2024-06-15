@@ -755,8 +755,8 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 
 		key := state.JobIdKey(job, dspId)
 		if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
-			// If dispatch is completed, disallow to accept the dispatch
-			if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
+			// If dispatch is nil or completed, disallow to accept the dispatch
+			if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {
 				return nil, false, errorscentrum.ErrDispatchAlreadyCompleted
 			}
 

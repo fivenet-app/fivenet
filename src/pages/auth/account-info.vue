@@ -14,12 +14,11 @@ definePageMeta({
 });
 
 const notifications = useNotificatorStore();
-const route = useRoute();
 
 // `oauth2Connect` can be `failed` (with `reason`) or `success`
-const query = route.query;
-if (query.oauth2Connect) {
-    const status = query.oauth2Connect as string;
+const oauth2Connect = useRouteQuery('oauth2Connect');
+if (oauth2Connect.value) {
+    const status = oauth2Connect.value;
     if (status === 'success') {
         notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.success.title', parameters: {} },
@@ -27,7 +26,7 @@ if (query.oauth2Connect) {
             type: NotificationType.SUCCESS,
         });
     } else {
-        const reason = query.reason ?? 'N/A';
+        const reason = useRouteQuery('reason', 'N/A');
 
         notifications.add({
             title: { key: 'notifications.auth.oauth2_connect.failed.title', parameters: {} },
