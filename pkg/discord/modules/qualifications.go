@@ -127,7 +127,6 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 }
 
 func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []*discordgo.MessageEmbed, error) {
-	users := types.Users{}
 	logs := []*discordgo.MessageEmbed{}
 
 	qualificationRoles := map[uint64]*types.Role{}
@@ -152,6 +151,7 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 		jobs = append(jobs, jet.String(job))
 	}
 
+	users := types.Users{}
 	for qualificationId, role := range qualificationRoles {
 		stmt := tOauth2Accs.
 			SELECT(
@@ -185,7 +185,7 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 		var dest []*qualificationUserMapping
 		if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
-				return users, logs, err
+				return nil, logs, err
 			}
 		}
 
