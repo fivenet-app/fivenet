@@ -126,7 +126,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         return true;
     }
 
-    if (err.message?.startsWith('errors.')) {
+    if (isTranslatedError(err.message)) {
         const errSplits = err.message.split(';');
         if (errSplits.length > 1) {
             notification.title = { key: errSplits[0], parameters: {} };

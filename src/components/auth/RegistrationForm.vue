@@ -125,7 +125,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             v-if="accountError"
             class="mt-2"
             :title="$t('components.auth.RegistrationForm.create_error')"
-            :message="accountError.startsWith('errors.') ? $t(accountError) : accountError"
+            :description="isTranslatedError(accountError) ? $t(accountError) : accountError"
             color="red"
             :close-button="{
                 icon: 'i-mdi-window-close',

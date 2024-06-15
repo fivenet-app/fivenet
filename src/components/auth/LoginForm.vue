@@ -101,7 +101,7 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
             class="mt-2"
             icon="i-mdi-alert"
             :title="$t('components.auth.LoginForm.login_error')"
-            :message="loginError.startsWith('errors.') ? $t(loginError) : loginError"
+            :description="isTranslatedError(loginError) ? $t(loginError) : loginError"
             color="red"
             :close-button="{
                 icon: 'i-mdi-window-close',
