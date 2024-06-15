@@ -78,7 +78,7 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
             </p>
 
             <template v-else>
-                <UDivider label="OR" orientation="horizontal" class="mt-2" />
+                <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-2" />
 
                 <div v-for="provider in login.providers" :key="provider.name">
                     <UButton

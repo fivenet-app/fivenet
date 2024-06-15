@@ -464,7 +464,8 @@
         "pinned": "Pinned",
         "pin": "Pin",
         "unpin": "Unpin",
-        "pinned_document": "Pinned document | Pinned documents"
+        "pinned_document": "Pinned document | Pinned documents",
+        "or": "OR"
     },
     "components": {
         "partials": {
