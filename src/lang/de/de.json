@@ -464,7 +464,8 @@
         "pinned": "Angeheftet",
         "pin": "Anheften",
         "unpin": "Lösen",
-        "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente"
+        "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente",
+        "or": "ODER"
     },
     "components": {
         "partials": {
@@ -627,7 +628,11 @@
                             "field": "Ignorierte Rollen ID"
                         }
                     },
-                    "dry_run": "Trockenlaufmodus"
+                    "dry_run": "Trockenlaufmodus",
+                    "qualifications_role_format": {
+                        "title": "Qualifizierungen-Rollen-Format",
+                        "description": "Nutze %name% für das Rollen-Namen-Format für Qualifizierungen."
+                    }
                 },
                 "citizen_attributes": {
                     "title": "Bürger-Attribute"
