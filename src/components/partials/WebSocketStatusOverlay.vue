@@ -16,11 +16,9 @@ const status = useDebounce(webSocket.status, 150);
 const notificationId = ref<string | undefined>();
 
 async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: WebSocketStatus): Promise<void> {
-    if (status === 'OPEN') {
-        if (notificationId.value !== undefined) {
-            toast.remove(notificationId.value);
-            notificationId.value = undefined;
-        }
+    if (notificationId.value !== undefined && status === 'OPEN') {
+        toast.remove(notificationId.value);
+        notificationId.value = undefined;
 
         toast.add({
             id: uuidv4(),
