@@ -6,9 +6,8 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 export default defineNuxtConfig({
     srcDir: 'src/',
     dir: {
-        // For Nuxt 3.12.x
-        //app: 'app',
-        //public: 'src/public',
+        app: 'app',
+        public: 'src/public',
     },
     telemetry: false,
     ssr: false,
@@ -26,8 +25,7 @@ export default defineNuxtConfig({
         'nuxt-update',
     ],
     future: {
-        // For Nuxt 3.12.x
-        //compatibilityVersion: 4,
+        compatibilityVersion: 4,
     },
     experimental: {
         defaults: {
