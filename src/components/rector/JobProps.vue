@@ -719,8 +719,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     >
                                                         <UInput
                                                             v-model="
-                                                                state.discordSyncSettings.userInfoSyncSettings.groupMapping[idx]
-                                                                    ?.name
+                                                                state.discordSyncSettings.userInfoSyncSettings.groupMapping[
+                                                                    idx
+                                                                ]!.name
                                                             "
                                                             :name="`userInfoSyncSettings.${idx}.name`"
                                                             type="text"
@@ -750,7 +751,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 v-model="
                                                                     state.discordSyncSettings.userInfoSyncSettings.groupMapping[
                                                                         idx
-                                                                    ]?.fromGrade
+                                                                    ]!.fromGrade
                                                                 "
                                                                 :name="`discordSyncSettings.userInfoSyncSettings.${idx}.fromGrade`"
                                                                 type="number"
@@ -778,7 +779,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 v-model="
                                                                     state.discordSyncSettings.userInfoSyncSettings.groupMapping[
                                                                         idx
-                                                                    ]?.toGrade
+                                                                    ]!.toGrade
                                                                 "
                                                                 :name="`userInfoSyncSettings.${idx}.toGrade`"
                                                                 type="number"

@@ -352,7 +352,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
                                             <UFormGroup :name="`perms.default.${idx}.category`" class="flex-1">
                                                 <UInput
-                                                    v-model="state.perms.default[idx]?.category"
+                                                    v-model="state.perms.default[idx]!.category"
                                                     type="text"
                                                     :placeholder="$t('common.category')"
                                                     @focusin="focusTablet(true)"
@@ -362,7 +362,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                             <UFormGroup :name="`perms.default.${idx}.name`" class="flex-1">
                                                 <UInput
-                                                    v-model="state.perms.default[idx]?.name"
+                                                    v-model="state.perms.default[idx]!.name"
                                                     type="text"
                                                     :placeholder="$t('common.name')"
                                                     @focusin="focusTablet(true)"
