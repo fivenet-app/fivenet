@@ -77,7 +77,7 @@ const grouped = computedAsync(async () => {
                 key: e.status?.status.toString() ?? '',
             });
         } else {
-            groups[idx].units.push(e);
+            groups[idx]!.units.push(e);
         }
     });
 

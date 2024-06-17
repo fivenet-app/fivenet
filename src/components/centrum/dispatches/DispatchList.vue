@@ -7,7 +7,7 @@ import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import UnitInfoPopover from '../units/UnitInfoPopover.vue';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
-import DispatchDetailsSlideover from './DispatchDetailsSlideover.vue';
+import DispatchDetailsByIDSlideover from './DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from './DispatchStatusUpdateModal.vue';
 import DispatchAssignModal from './DispatchAssignModal.vue';
 import { useLivemapStore } from '~/store/livemap';
@@ -52,7 +52,7 @@ const grouped = computedAsync(async () => {
                 key: dateToDateString(date),
             });
         } else {
-            groups[idx].dispatches.push(e);
+            groups[idx]!.dispatches.push(e);
         }
     });
 
@@ -180,7 +180,7 @@ const columns = [
                                     :title="$t('common.detail', 2)"
                                     @click="
                                         () =>
-                                            slideover.open(DispatchDetailsSlideover, {
+                                            slideover.open(DispatchDetailsByIDSlideover, {
                                                 dispatchId: dispatch.id,
                                             })
                                     "

@@ -12,9 +12,7 @@ const { dispatches } = storeToRefs(centrumStore);
 
 const { isOpen } = useSlideover();
 
-const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId), {
-    immediate: false,
-});
+const { data, refresh } = useLazyAsyncData(`centrum-dispatch-${props.dispatchId}`, () => getDispatch(props.dispatchId));
 
 async function getDispatch(id: string): Promise<GetDispatchResponse> {
     if (dispatches.value.has(id)) {
