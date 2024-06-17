@@ -93,7 +93,7 @@ const links = [
                     :message="$t(error.message)"
                     :retry="refresh"
                 />
-                <DataNoDataBlock v-else-if="colleague === null || !colleague.colleague" />
+                <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
 
                 <template v-else>
                     <ColleagueInfo :colleague="colleague.colleague" />

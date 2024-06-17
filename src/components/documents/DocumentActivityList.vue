@@ -46,7 +46,7 @@ watch(offset, async () => refresh());
         <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.document', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.document', 2)])" :retry="refresh" />
         <DataNoDataBlock
-            v-else-if="data === null || data.activity.length === 0"
+            v-else-if="!data || data.activity.length === 0"
             icon="i-mdi-ticket"
             :message="$t('common.not_found', [$t('common.activity')])"
         />

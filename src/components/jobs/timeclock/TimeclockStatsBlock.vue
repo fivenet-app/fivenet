@@ -25,7 +25,13 @@ defineEmits<{
     (e: 'refresh'): void;
 }>();
 
-const statsData = ref<Record<string, { name: string; value?: number }>>({
+type Stats = { name: string; value?: number };
+
+const statsData = ref<{
+    sum: Stats;
+    avg: Stats;
+    max: Stats;
+}>({
     sum: {
         name: 'components.jobs.timeclock.Stats.sum',
     },

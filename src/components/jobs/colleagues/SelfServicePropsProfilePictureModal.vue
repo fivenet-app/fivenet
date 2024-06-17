@@ -31,7 +31,7 @@ const state = reactive({
 async function setProfilePicture(values: Schema): Promise<void> {
     const req = {} as SetProfilePictureRequest;
     if (!values.reset) {
-        if (!values.avatar) {
+        if (!values.avatar || !values.avatar[0]) {
             return;
         }
 

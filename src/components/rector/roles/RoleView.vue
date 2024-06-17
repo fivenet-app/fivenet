@@ -230,7 +230,7 @@ async function initializeRoleView(): Promise<void> {
 watch(role, async () => initializeRoleView());
 
 watch(props, () => {
-    if (role.value === null || role.value.id !== props.roleId) {
+    if (!role.value || role.value?.id !== props.roleId) {
         refresh();
     }
 });
@@ -256,7 +256,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
         <div class="px-1 sm:px-2">
             <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.role', 2)])" />
             <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.role', 2)])" :retry="refresh" />
-            <DataNoDataBlock v-else-if="role === null" :type="$t('common.role', 2)" />
+            <DataNoDataBlock v-else-if="!role" :type="$t('common.role', 2)" />
 
             <template v-else>
                 <div class="flex justify-between">

@@ -106,7 +106,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items.value[value].slot }, hash: '#' });
+        router.replace({ query: { tab: items.value[value]?.slot }, hash: '#' });
     },
 });
 

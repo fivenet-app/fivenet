@@ -71,7 +71,7 @@ const filteredLawBooks = computed(() =>
 );
 
 function getNameForLawBookId(id: string): string | undefined {
-    return lawBooks.value?.filter((b) => b.id === id)[0].name;
+    return lawBooks.value?.filter((b) => b.id === id)[0]?.name;
 }
 
 function calculate(e: SelectedPenalty): void {

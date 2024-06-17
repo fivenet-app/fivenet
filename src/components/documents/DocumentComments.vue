@@ -88,7 +88,7 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
         const { response } = await call;
 
         if (response.comment) {
-            data.value.comments.unshift(response.comment);
+            data.value?.comments.unshift(response.comment);
         }
 
         state.comment = '';
@@ -175,7 +175,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :retry="refresh"
             />
             <DataNoDataBlock
-                v-else-if="!data || !data.comments || data?.comments.length === 0"
+                v-else-if="!data?.comments || data?.comments.length === 0"
                 :message="$t('components.documents.document_comments.no_comments')"
                 icon="i-mdi-comment-text-multiple"
                 :focus="focusCommentField"
@@ -183,9 +183,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
                 <DocumentCommentEntry
-                    v-for="(comment, idx) in data?.comments"
+                    v-for="(comment, idx) in data.comments"
                     :key="comment.id"
-                    v-model:comment="data!.comments[idx]"
+                    v-model="data!.comments[idx]"
                     @deleted="removeComment($event)"
                 />
             </ul>

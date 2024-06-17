@@ -10,11 +10,11 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    comment: Comment;
+    modelValue: Comment;
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:comment', comment: Comment): void;
+    (e: 'update:modelValue', comment: Comment): void;
     (e: 'deleted', comment: Comment): void;
 }>();
 
@@ -51,7 +51,11 @@ async function editComment(documentId: string, commentId: string, values: Schema
         editing.value = false;
         resetForm();
 
-        emit('update:comment', response.comment!);
+        if (!response.comment) {
+            return;
+        }
+
+        emit('update:modelValue', response.comment);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -70,7 +74,7 @@ async function deleteComment(id: string): Promise<void> {
             type: NotificationType.SUCCESS,
         });
 
-        emit('deleted', props.comment);
+        emit('deleted', props.modelValue);
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -78,7 +82,7 @@ async function deleteComment(id: string): Promise<void> {
 }
 
 function resetForm(): void {
-    state.comment = props.comment.comment;
+    state.comment = props.modelValue.comment;
 }
 
 onMounted(() => resetForm());
@@ -88,7 +92,7 @@ watch(props, () => resetForm());
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await editComment(props.comment.documentId, props.comment.id, event.data).finally(() =>
+    await editComment(props.modelValue.documentId, props.modelValue.id, event.data).finally(() =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
@@ -97,22 +101,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 <template>
     <li class="py-2">
         <div v-if="!editing" class="flex space-x-3">
-            <div :class="[comment.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
+            <div :class="[modelValue.deletedAt ? 'bg-warn-800' : '', 'flex-1 space-y-1']">
                 <div class="flex items-center justify-between">
                     <div class="flex items-center">
-                        <CitizenInfoPopover :user="comment.creator" show-avatar-in-name />
+                        <CitizenInfoPopover :user="modelValue.creator" show-avatar-in-name />
                     </div>
 
                     <div class="flex flex-1 items-center">
-                        <GenericTime class="ml-2 text-sm" :value="comment.createdAt" />
+                        <GenericTime class="ml-2 text-sm" :value="modelValue.createdAt" />
                     </div>
 
-                    <div v-if="comment.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5">
+                    <div v-if="modelValue.deletedAt" class="flex flex-1 flex-row items-center justify-center gap-1.5">
                         <UIcon name="i-mdi-trash-can" class="size-5 shrink-0" />
                         <span>{{ $t('common.deleted') }}</span>
                     </div>
 
-                    <div v-if="comment.creatorId === activeChar?.userId || permissions.includes('superuser')">
+                    <div v-if="modelValue.creatorId === activeChar?.userId || permissions.includes('superuser')">
                         <UButton
                             v-if="can('DocStoreService.PostComment').value"
                             variant="link"
@@ -126,7 +130,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             icon="i-mdi-trash-can"
                             @click="
                                 modal.open(ConfirmModal, {
-                                    confirm: async () => deleteComment(comment.id),
+                                    confirm: async () => deleteComment(modelValue.id),
                                 })
                             "
                         />
@@ -134,7 +138,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
 
                 <p class="whitespace-pre-line break-words text-sm">
-                    {{ comment.comment }}
+                    {{ modelValue.comment }}
                 </p>
             </div>
         </div>

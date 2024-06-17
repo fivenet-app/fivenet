@@ -6,7 +6,7 @@ import { type CardElements } from '~/utils/types';
 import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 defineEmits<{
-    (e: 'selected', t: TemplateShort): void;
+    (e: 'selected', t: TemplateShort | undefined): void;
 }>();
 
 defineOptions({
@@ -34,8 +34,8 @@ watch(templates, () =>
     }),
 );
 
-function selected(idx: number): TemplateShort {
-    return templates.value![idx];
+function selected(idx: number): TemplateShort | undefined {
+    return templates.value?.at(idx);
 }
 </script>
 

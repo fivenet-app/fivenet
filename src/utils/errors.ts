@@ -2,7 +2,7 @@ export function getErrorMessage(message: string): string {
     if (isTranslatedError(message)) {
         const errSplits = message.split(';');
         if (errSplits.length > 1) {
-            return errSplits[1];
+            return errSplits[1] ?? message;
         }
     }
     return message;

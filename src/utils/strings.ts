@@ -25,10 +25,14 @@ const initialsCleanerRegex = /(Prof\.|Dr\.|Sr(\.| ))[ ]*/gm;
 export function getInitials(input: string): string {
     input = input.replaceAll(initialsCleanerRegex, '');
     const names = input.split(' ');
-    let initials = names[0].substring(0, 1).toUpperCase();
+    // Indicates a "broken" name if there are not at least "two parts"
+    if (!names[0] || names.length < 2) {
+        return input;
+    }
 
+    let initials = names[0].substring(0, 1).toUpperCase();
     if (names.length > 1) {
-        initials += names[names.length - 1].substring(0, 1).toUpperCase();
+        initials += names[names.length - 1]?.substring(0, 1).toUpperCase();
     }
 
     return initials;

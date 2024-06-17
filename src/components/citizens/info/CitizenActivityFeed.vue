@@ -52,7 +52,7 @@ watch(offset, async () => refresh());
             :retry="refresh"
         />
         <DataNoDataBlock
-            v-else-if="data === null || data?.activity.length === 0"
+            v-else-if="!data || data?.activity.length === 0"
             :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
             icon="i-mdi-bulletin-board"
         />

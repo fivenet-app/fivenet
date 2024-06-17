@@ -83,7 +83,7 @@ async function listDocuments(): Promise<DocumentShort[]> {
 
 function addReference(doc: DocumentShort, reference: DocReference): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]) + 1).toString();
+    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]!) + 1).toString();
 
     props.modelValue.set(key, {
         id: key,
@@ -340,7 +340,7 @@ function removeReference(id: string): void {
                                             :retry="refresh"
                                         />
                                         <DataNoDataBlock
-                                            v-else-if="documents === null || documents.length === 0"
+                                            v-else-if="!documents || documents.length === 0"
                                             :message="$t('components.citizens.CitizensList.no_citizens')"
                                         />
                                         <table v-else class="min-w-full divide-y divide-base-200">

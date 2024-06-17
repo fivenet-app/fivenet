@@ -3,7 +3,7 @@ import * as googleProtobufDuration from '~~/gen/ts/google/protobuf/duration';
 export function toDuration(input: string): googleProtobufDuration.Duration {
     const split = input.split('.');
     return {
-        seconds: parseInt(split[0].replace(/\D/g, '')),
+        seconds: split[0] !== undefined ? parseInt(split[0].replace(/\D/g, '')) : 1,
         nanos: split[1] !== undefined ? parseInt(split[1].replace(/\D/g, '')) * 10000000 : 0,
     };
 }

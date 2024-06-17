@@ -145,6 +145,10 @@ gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
 		--fronthelper_out=./gen/ts \
 		$(shell find proto/ -iname "*.proto")
 
+	# Fix ignore TS typecheck comment
+	find ./gen/ts/ -type f -iname "*.ts" -print0 | \
+		xargs -0 sed -i 's~// tslint:disable~// @ts-nocheck~g'
+
 .PHONY: fmt
 fmt:
 	$(MAKE) fmt-proto gen-proto

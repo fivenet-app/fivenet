@@ -30,7 +30,7 @@ const data = computed(() =>
 
 const cardRef = ref<HTMLElement | null>(null);
 
-const { width, height } = useElementSize(cardRef);
+const { width } = useElementSize(cardRef);
 
 const x = (_: DataRecord, i: number) => i;
 const y = (d: DataRecord) => d.sum;
@@ -44,7 +44,7 @@ const xTicks = (i: number) => {
         return '';
     }
 
-    return formatDate(data.value[i].date);
+    return formatDate(data.value[i]?.date ?? new Date());
 };
 
 const template = (d: DataRecord) =>

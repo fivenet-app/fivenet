@@ -214,7 +214,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :retry="refresh"
                         />
                         <DataNoDataBlock
-                            v-else-if="requests === null || requests.requests.length === 0"
+                            v-else-if="!requests || requests.requests.length === 0"
                             icon="i-mdi-frequently-asked-questions"
                             :message="$t('common.not_found', [$t('common.request', 2)])"
                         />

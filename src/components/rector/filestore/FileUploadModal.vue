@@ -28,8 +28,12 @@ const state = reactive({
 
 const categories = ['jobassets'];
 
-async function uploadFile(values: Schema): Promise<UploadFileResponse> {
+async function uploadFile(values: Schema): Promise<UploadFileResponse | undefined> {
     const file = {} as File;
+
+    if (!values.file[0]) {
+        return;
+    }
 
     file.data = new Uint8Array(await values.file[0].arrayBuffer());
 

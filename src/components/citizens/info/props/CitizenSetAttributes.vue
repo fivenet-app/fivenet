@@ -90,7 +90,7 @@ watch(props, () => (state.attributes = attributes.value?.list !== undefined ? at
 watch(state, () => {
     if (
         state.attributes.length === attributes.value?.list.length &&
-        state.attributes.every((el, idx) => el.name === attributes.value?.list[idx].name)
+        state.attributes.every((el, idx) => el.name === attributes.value?.list[idx]?.name)
     ) {
         changed.value = false;
     } else {

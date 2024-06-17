@@ -184,17 +184,17 @@ function ensureOwnDispatchSelected(): void {
     // otherwise select that current first one
     if (getSortedOwnDispatches.value.length > 1) {
         for (let index = 0; index < getSortedOwnDispatches.value.length; ++index) {
-            const od = getSortedOwnDispatches.value[index];
-            if (od === selectedDispatch.value) {
+            const ownedDsp = getSortedOwnDispatches.value[index];
+            if (!ownedDsp || ownedDsp === selectedDispatch.value) {
                 continue;
             }
 
-            const dispatch = dispatches.value.get(od);
+            const dispatch = dispatches.value.get(ownedDsp);
             if (isStatusDispatchCompleted(dispatch?.status?.status ?? StatusDispatch.UNSPECIFIED)) {
                 continue;
             }
 
-            selectedDispatch.value = od;
+            selectedDispatch.value = ownedDsp;
             break;
         }
     } else {

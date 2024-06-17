@@ -191,9 +191,9 @@ const groupedCalendarEntries = computedAsync(async () => {
         }
 
         if (entry.customData.isPast) {
-            groups[idx].entries.past.push(entry);
+            groups[idx]!.entries.past.push(entry);
         } else {
-            groups[idx].entries.upcoming.push(entry);
+            groups[idx]!.entries.upcoming.push(entry);
         }
     });
 

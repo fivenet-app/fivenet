@@ -48,7 +48,7 @@ async function setMugShot(values: Schema): Promise<void> {
         userId: props.user.userId,
     };
     if (!values.reset) {
-        if (!values.mugShot) {
+        if (!values.mugShot || !values.mugShot[0]) {
             return;
         }
 

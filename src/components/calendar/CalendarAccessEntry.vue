@@ -22,7 +22,7 @@ const props = withDefaults(
             };
             required?: boolean;
         };
-        jobs: Job[] | null;
+        jobs: Job[] | undefined;
     }>(),
     {
         readOnly: false,
@@ -172,7 +172,7 @@ watch(selectedAccessRole, () => {
                 v-if="accessTypes.length === 1"
                 type="text"
                 disabled
-                :value="accessTypes[0].name"
+                :value="accessTypes[0]?.name"
                 @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             />

@@ -132,7 +132,7 @@ async function setJobProps(values: Schema): Promise<void> {
     jobProps.value.radioFrequency = values.radioFrequency;
     jobProps.value.discordGuildId = values.discordGuildId.trim().length > 0 ? values.discordGuildId : undefined;
     jobProps.value.discordSyncSettings = values.discordSyncSettings;
-    if (values.logoUrl) {
+    if (values.logoUrl && values.logoUrl[0]) {
         jobProps.value.logoUrl = { data: new Uint8Array(await values.logoUrl[0].arrayBuffer()) };
     }
 
@@ -225,7 +225,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
 
@@ -280,11 +280,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :title="$t('common.unable_to_load', [$t('components.rector.job_props.job_properties')])"
                 :retry="refresh"
             />
-            <DataNoDataBlock
-                v-else-if="jobProps === null"
-                icon="i-mdi-tune"
-                :type="$t('components.rector.job_props.job_properties')"
-            />
+            <DataNoDataBlock v-else-if="!jobProps" icon="i-mdi-tune" :type="$t('components.rector.job_props.job_properties')" />
 
             <template v-else-if="loading || jobProps">
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
@@ -724,7 +720,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         <UInput
                                                             v-model="
                                                                 state.discordSyncSettings.userInfoSyncSettings.groupMapping[idx]
-                                                                    .name
+                                                                    ?.name
                                                             "
                                                             :name="`userInfoSyncSettings.${idx}.name`"
                                                             type="text"
@@ -754,7 +750,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 v-model="
                                                                     state.discordSyncSettings.userInfoSyncSettings.groupMapping[
                                                                         idx
-                                                                    ].fromGrade
+                                                                    ]?.fromGrade
                                                                 "
                                                                 :name="`discordSyncSettings.userInfoSyncSettings.${idx}.fromGrade`"
                                                                 type="number"
@@ -782,7 +778,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                 v-model="
                                                                     state.discordSyncSettings.userInfoSyncSettings.groupMapping[
                                                                         idx
-                                                                    ].toGrade
+                                                                    ]?.toGrade
                                                                 "
                                                                 :name="`userInfoSyncSettings.${idx}.toGrade`"
                                                                 type="number"
@@ -940,7 +936,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <CodeDiff
                                             class="codediff"
                                             theme="dark"
-                                            :old-string="jobProps.discordSyncChanges.changes[0].plan ?? ''"
+                                            :old-string="jobProps.discordSyncChanges.changes[0]?.plan ?? ''"
                                             :new-string="selectedChange?.plan ?? ''"
                                             :filename="$d(toDate(jobProps.discordSyncChanges.changes[0]?.time), 'short')"
                                             :new-filename="$d(toDate(selectedChange?.time), 'short')"

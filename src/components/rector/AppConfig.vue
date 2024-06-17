@@ -227,7 +227,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
 
@@ -284,7 +284,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 :title="$t('common.unable_to_load', [$t('common.setting', 2)])"
                 :retry="refresh"
             />
-            <DataNoDataBlock v-else-if="config === null" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
+            <DataNoDataBlock v-else-if="!config" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
@@ -352,7 +352,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <div v-for="(_, idx) in state.perms.default" :key="idx" class="flex items-center gap-1">
                                             <UFormGroup :name="`perms.default.${idx}.category`" class="flex-1">
                                                 <UInput
-                                                    v-model="state.perms.default[idx].category"
+                                                    v-model="state.perms.default[idx]?.category"
                                                     type="text"
                                                     :placeholder="$t('common.category')"
                                                     @focusin="focusTablet(true)"
@@ -362,7 +362,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                             <UFormGroup :name="`perms.default.${idx}.name`" class="flex-1">
                                                 <UInput
-                                                    v-model="state.perms.default[idx].name"
+                                                    v-model="state.perms.default[idx]?.name"
                                                     type="text"
                                                     :placeholder="$t('common.name')"
                                                     @focusin="focusTablet(true)"

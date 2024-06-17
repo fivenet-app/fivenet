@@ -108,9 +108,9 @@ async function updateEntryInPlace(entry: ConductEntry): Promise<void> {
         return refresh();
     }
 
-    const idx = data.value.entries.findIndex((e) => e.id === entry.id);
+    const idx = data.value?.entries.findIndex((e) => e.id === entry.id);
     if (idx !== undefined && idx > -1) {
-        data.value.entries.splice(idx, 1, entry);
+        data.value?.entries.splice(idx, 1, entry);
     }
 
     refresh();

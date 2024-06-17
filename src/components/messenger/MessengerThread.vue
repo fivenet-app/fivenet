@@ -79,10 +79,10 @@ const groupedMessages = computed(() => {
             const k = toDate(msg.createdAt).toDateString();
 
             acc[k] = acc[k] || [];
-            if (acc[k].length > 0 && acc[k][acc[k].length - 1].creatorId === msg.creatorId) {
+            if (acc[k]!.length > 0 && acc[k]![acc[k]!.length - 1]?.creatorId === msg.creatorId) {
                 msg.creator = undefined;
             }
-            acc[k].push(msg);
+            acc[k]?.push(msg);
 
             return acc;
         }, {});

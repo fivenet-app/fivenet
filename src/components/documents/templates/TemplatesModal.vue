@@ -52,7 +52,7 @@ function closeDialog(): void {
     isOpen.value = false;
 }
 
-async function templateSelected(t: TemplateShort): Promise<void> {
+async function templateSelected(t: TemplateShort | undefined): Promise<void> {
     if (t) {
         template.value = t;
         if (t.schema) {
@@ -154,7 +154,7 @@ async function clipboardDialog(): Promise<void> {
                 </UButton>
 
                 <div class="pt-6">
-                    <TemplatesList @selected="(t: TemplateShort) => templateSelected(t)" />
+                    <TemplatesList @selected="templateSelected($event)" />
                 </div>
             </template>
             <template v-else-if="template !== undefined && reqs !== undefined && steps.selectClipboard">

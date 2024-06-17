@@ -81,7 +81,7 @@ async function listCitizens(): Promise<User[]> {
 
 function addRelation(user: User, relation: DocRelation): void {
     const keys = Array.from(props.modelValue.keys());
-    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]) + 1).toString();
+    const key = !keys.length ? '1' : (parseInt(keys[keys.length - 1]!) + 1).toString();
 
     props.modelValue.set(key, {
         id: key,
@@ -302,7 +302,7 @@ function removeRelation(id: string): void {
                                             :retry="refresh"
                                         />
                                         <DataNoDataBlock
-                                            v-else-if="citizens === null || citizens.length === 0"
+                                            v-else-if="!citizens || citizens.length === 0"
                                             :message="$t('components.citizens.CitizensList.no_citizens')"
                                         />
 

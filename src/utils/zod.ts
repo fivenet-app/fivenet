@@ -40,16 +40,16 @@ export function zodFileSingleSchema(
     optional?: boolean,
 ): z.ZodEffects<z.ZodType<FileList, z.ZodTypeDef, FileList>, FileList, FileList> {
     return z.custom<FileList>().superRefine((files, ctx) => {
-        if (optional && (!files || files.length === 0)) {
-            return true;
-        }
+        if (!files || files.length === 0 || !files[0]) {
+            if (!optional) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: 'zodI18n.custom.filelist.required',
+                });
+                return false;
+            }
 
-        if (!optional && (!files || files.length === 0)) {
-            ctx.addIssue({
-                code: z.ZodIssueCode.custom,
-                message: 'zodI18n.custom.filelist.required',
-            });
-            return false;
+            return true;
         }
 
         if (!types.includes(files[0].type)) {

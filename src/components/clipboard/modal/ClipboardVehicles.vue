@@ -98,7 +98,7 @@ watch(props, (newVal) => {
         if (clipboardStore.activeStack) {
             clipboardStore.activeStack.vehicles.length = 0;
             selected.value.forEach((v) => clipboardStore.activeStack.vehicles.push(v));
-        } else if (vehicles.value && vehicles.value.length === 1) {
+        } else if (vehicles.value && vehicles.value[0]) {
             selected.value.unshift(vehicles.value[0]);
         }
     }

@@ -98,7 +98,7 @@ watch(props, async (newVal) => {
         if (activeStack.value) {
             activeStack.value.users.length = 0;
             selected.value.forEach((v) => activeStack.value.users.push(v));
-        } else if (users.value && users.value.length === 1) {
+        } else if (users.value && users.value[0]) {
             selected.value.unshift(users.value[0]);
         }
     }

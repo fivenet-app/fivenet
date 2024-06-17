@@ -11,7 +11,11 @@ definePageMeta({
     permission: 'DocStoreService.ListTemplates',
 });
 
-async function selected(t: TemplateShort): Promise<void> {
+async function selected(t: TemplateShort | undefined): Promise<void> {
+    if (!t) {
+        return;
+    }
+
     await navigateTo({ name: 'documents-templates-id', params: { id: t.id } });
 }
 </script>

@@ -42,7 +42,7 @@ async function deleteFile(path: string): Promise<DeleteFileResponse> {
 
         const idx = data.value?.files.findIndex((f) => f.name === path);
         if (idx !== undefined && idx > -1 && data.value !== null) {
-            data.value.files = data.value.files.splice(idx, 1);
+            data.value!.files = data.value?.files.splice(idx, 1) ?? [];
         }
 
         return response;

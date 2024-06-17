@@ -63,18 +63,14 @@ function updateLaw(event: { id: string; law: Law }): void {
     <UDashboardPanelContent>
         <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.law', 2)])" />
         <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.law', 2)])" :retry="refresh" />
-        <DataNoDataBlock
-            v-else-if="lawBooks === null || lawBooks.length === 0"
-            icon="i-mdi-gavel"
-            :type="$t('common.law', 2)"
-        />
+        <DataNoDataBlock v-else-if="!lawBooks || lawBooks.length === 0" icon="i-mdi-gavel" :type="$t('common.law', 2)" />
 
         <template v-else>
             <ul role="list" class="space-y-3">
                 <li v-for="(book, idx) in lawBooks" :key="book.id">
                     <LawBookEntry
                         v-model="lawBooks[idx]"
-                        v-model:laws="lawBooks[idx].laws"
+                        v-model:laws="lawBooks[idx]!.laws"
                         :start-in-edit="parseInt(book.id) < 0"
                         @update:law="updateLaw($event)"
                         @deleted="deletedLawBook($event)"

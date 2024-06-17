@@ -387,12 +387,12 @@ function updateAccessEntryAccess(event: { id: string; access: AccessLevel }): vo
 }
 
 function updateQualificationRequirement(idx: number, qualification?: QualificationShort): void {
-    if (!qualification) {
+    if (!qualification || !qualiRequirements.value[idx]) {
         return;
     }
 
-    qualiRequirements.value[idx].qualificationId = props.qualificationId ?? '0';
-    qualiRequirements.value[idx].targetQualificationId = qualification.id;
+    qualiRequirements.value[idx]!.qualificationId = props.qualificationId ?? '0';
+    qualiRequirements.value[idx]!.targetQualificationId = qualification.id;
 }
 
 const items = [
@@ -422,7 +422,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
 

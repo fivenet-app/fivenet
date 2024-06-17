@@ -79,7 +79,7 @@ async function getUser(userId: number): Promise<User> {
 }
 
 function addToClipboard(): void {
-    if (user.value === null) {
+    if (!user.value) {
         return;
     }
 
@@ -149,7 +149,7 @@ const isOpen = ref(false);
                     :message="$t(error.message)"
                     :retry="refresh"
                 />
-                <DataNoDataBlock v-else-if="user === null" />
+                <DataNoDataBlock v-else-if="!user" />
 
                 <div v-else>
                     <div class="mb-4 flex items-center gap-2 px-4">

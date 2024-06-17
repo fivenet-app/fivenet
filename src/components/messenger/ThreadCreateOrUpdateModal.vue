@@ -135,7 +135,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         required
                                     >
                                         <USelectMenu
-                                            v-model="state.users[idx].user"
+                                            v-model="state.users[idx]!.user"
                                             :placeholder="$t('common.user')"
                                             block
                                             trailing
@@ -157,8 +157,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             @focusout="focusTablet(false)"
                                         >
                                             <template #label>
-                                                <template v-if="state.users[idx].user">
-                                                    {{ usersToLabel([state.users[idx].user!]) }}
+                                                <template v-if="state.users[idx]!.user">
+                                                    {{ usersToLabel([state.users[idx]!.user!]) }}
                                                 </template>
                                             </template>
                                             <template #option="{ option: user }">
@@ -180,7 +180,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         required
                                     >
                                         <USelectMenu
-                                            v-model="state.users[idx].access"
+                                            v-model="state.users[idx]!.access"
                                             :options="accessLevels"
                                             value-attribute="mode"
                                             :searchable-placeholder="$t('common.search_field')"
@@ -190,7 +190,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             <template #label>
                                                 <span class="truncate">{{
                                                     $t(
-                                                        `enums.messenger.AccessLevel.${AccessLevel[state.users[idx].access ?? 0]}`,
+                                                        `enums.messenger.AccessLevel.${AccessLevel[state.users[idx]!.access ?? 0]}`,
                                                     )
                                                 }}</span>
                                             </template>

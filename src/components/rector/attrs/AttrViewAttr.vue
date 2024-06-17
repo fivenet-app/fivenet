@@ -108,6 +108,10 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         return;
     }
 
+    if (!job.grades[0]) {
+        return;
+    }
+
     const map = currentValue.validValues.jobGradeList.jobs;
     if (checked && !map[job.name]) {
         map[job.name] = 1;
@@ -133,7 +137,10 @@ async function updateJobGradeValue(job: Job, grade: JobGrade): Promise<void> {
     const map = currentValue.validValues.jobGradeList.jobs;
 
     map[job.name] = grade.grade;
-    jobGrades.value.set(job.name, job.grades[grade.grade - 1]);
+    if (!job.grades[grade.grade - 1]) {
+        return;
+    }
+    jobGrades.value.set(job.name, job.grades[grade.grade - 1]!);
 
     currentValue.validValues.jobGradeList.jobs = map;
     states.value.set(id.value, currentValue);
@@ -150,7 +157,11 @@ onBeforeMount(async () => {
                 return;
             }
 
-            jobGrades.value.set(job.name, job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1]);
+            const grade = job.grades[(currentValue.validValues?.jobGradeList.jobs[job.name] ?? 1) - 1];
+            if (!grade) {
+                return;
+            }
+            jobGrades.value.set(job.name, grade);
         });
     }
 });
@@ -239,8 +250,8 @@ onBeforeMount(async () => {
                                 <template #label>
                                     <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
                                         <span class="truncate">{{
-                                            job.grades[currentValue.validValues.jobGradeList.jobs[job.name] - 1]?.label ??
-                                            $t('common.na')
+                                            job.grades[(currentValue.validValues.jobGradeList.jobs[job.name] ?? 1) - 1]
+                                                ?.label ?? $t('common.na')
                                         }}</span>
                                     </template>
                                 </template>

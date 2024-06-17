@@ -162,13 +162,10 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
     }
 
     const args = hash.split('/');
-    if (args.length !== 3) {
-        return;
-    }
 
-    const zoom = parseInt(args[0]);
-    const lat = parseFloat(args[1]);
-    const lng = parseFloat(args[2]);
+    const zoom = args[0] ? parseInt(args[0]) : 2;
+    const lat = args[1] ? parseFloat(args[1]) : 0;
+    const lng = args[2] ? parseFloat(args[2]) : 0;
 
     if (isNaN(zoom) || isNaN(lat) || isNaN(lng)) {
         return;

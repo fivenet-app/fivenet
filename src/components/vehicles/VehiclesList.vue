@@ -62,7 +62,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
         const { response } = await call;
 
         if (response.vehicles.length > 0) {
-            if (response.vehicles[0].model === undefined) {
+            if (response.vehicles[0]?.model === undefined) {
                 hideVehicleModell.value = true;
             } else {
                 hideVehicleModell.value = false;

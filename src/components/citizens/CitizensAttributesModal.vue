@@ -74,7 +74,7 @@ watch(attributes, () => (state.value = attributes.value ?? []));
                         <div v-for="(_, idx) in state" :key="idx" class="flex items-center gap-1">
                             <UFormGroup :name="`${idx}.name`" class="flex-1">
                                 <UInput
-                                    v-model="state[idx].name"
+                                    v-model="state[idx]!.name"
                                     :name="`${idx}.name`"
                                     type="text"
                                     class="w-full flex-1"
@@ -85,7 +85,7 @@ watch(attributes, () => (state.value = attributes.value ?? []));
                             </UFormGroup>
 
                             <UFormGroup :name="`${idx}.color`">
-                                <ColorPicker v-model="state[idx].color" :name="`${idx}.color`" class="min-w-16" />
+                                <ColorPicker v-model="state[idx]!.color" :name="`${idx}.color`" class="min-w-16" />
                             </UFormGroup>
 
                             <UButton

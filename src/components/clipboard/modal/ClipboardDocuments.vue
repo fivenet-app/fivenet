@@ -98,7 +98,7 @@ watch(props, async (newVal) => {
         if (clipboardStore.activeStack) {
             clipboardStore.activeStack.documents.length = 0;
             selected.value.forEach((v) => clipboardStore.activeStack.documents.push(v));
-        } else if (documents.value && documents.value.length === 1) {
+        } else if (documents.value && documents.value[0]) {
             selected.value.unshift(documents.value[0]);
         }
     }

@@ -22,8 +22,9 @@ const { data: account, pending: loading, refresh, error } = useLazyAsyncData(`ac
 async function getAccountInfo(): Promise<GetAccountInfoResponse> {
     try {
         const call = getGRPCAuthClient().getAccountInfo({});
+        const { response } = await call;
 
-        return call.response!;
+        return response;
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -65,7 +66,7 @@ const selectedTab = computed({
     },
     set(value) {
         // Hash is specified here to prevent the page from scrolling to the top
-        router.replace({ query: { tab: items[value].slot }, hash: '#' });
+        router.replace({ query: { tab: items[value]?.slot }, hash: '#' });
     },
 });
 </script>
@@ -90,11 +91,7 @@ const selectedTab = computed({
                 :title="$t('common.unable_to_load', [`${$t('common.account')} ${$t('common.info')}`])"
                 :retry="refresh"
             />
-            <DataNoDataBlock
-                v-else-if="account === null"
-                :type="`${$t('common.account')} ${$t('common.data')}`"
-                icon="i-mdi-account"
-            />
+            <DataNoDataBlock v-else-if="!account" :type="`${$t('common.account')} ${$t('common.data')}`" icon="i-mdi-account" />
 
             <template v-else>
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
