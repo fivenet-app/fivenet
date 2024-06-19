@@ -57,8 +57,10 @@ func (s *Server) checkIfUserHasAccessToThreadIDs(ctx context.Context, userInfo *
 			tThreads.ID.IN(ids...),
 			tThreads.DeletedAt.IS_NULL(),
 			jet.OR(
-				tThreads.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tThreads.CreatorJob.EQ(jet.String(userInfo.Job)),
+				jet.AND(
+					tThreads.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					tThreads.CreatorJob.EQ(jet.String(userInfo.Job)),
+				),
 				jet.AND(
 					tThreadsUserAccess.Access.IS_NOT_NULL(),
 					tThreadsUserAccess.Access.GT_EQ(jet.Int32(int32(access))),

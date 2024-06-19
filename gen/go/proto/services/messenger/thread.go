@@ -33,8 +33,10 @@ func (s *Server) ListThreads(ctx context.Context, req *ListThreadsRequest) (*Lis
 			jet.AND(
 				tThreads.DeletedAt.IS_NULL(),
 				jet.OR(
-					tThreads.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-					tThreads.CreatorJob.EQ(jet.String(userInfo.Job)),
+					jet.AND(
+						tThreads.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+						tThreads.CreatorJob.EQ(jet.String(userInfo.Job)),
+					),
 					jet.AND(
 						tThreadsUserAccess.Access.IS_NOT_NULL(),
 						tThreadsUserAccess.Access.GT_EQ(jet.Int32(int32(messenger.AccessLevel_ACCESS_LEVEL_BLOCKED))),
@@ -199,8 +201,10 @@ func (s *Server) getThread(ctx context.Context, threadId uint64, userInfo *useri
 		WHERE(jet.AND(
 			tThreads.ID.EQ(jet.Uint64(threadId)),
 			jet.OR(
-				tThreads.CreatorID.EQ(jet.Int32(userInfo.UserId)),
-				tThreads.CreatorJob.EQ(jet.String(userInfo.Job)),
+				jet.AND(
+					tThreads.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+					tThreads.CreatorJob.EQ(jet.String(userInfo.Job)),
+				),
 				jet.AND(
 					tThreadsUserAccess.Access.IS_NOT_NULL(),
 					tThreadsUserAccess.Access.GT_EQ(jet.Int32(int32(messenger.AccessLevel_ACCESS_LEVEL_BLOCKED))),
