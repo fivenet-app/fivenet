@@ -73,7 +73,7 @@
         "@types/leaflet-contextmenu": "1.4.3",
         "@types/node": "20.14.6",
         "@types/splitpanes": "2.2.6",
-        "@types/uuid": "9.0.8",
+        "@types/uuid": "10.0.0",
         "@types/zxcvbn": "4.4.4",
         "@vueuse/core": "10.11.0",
         "@vueuse/nuxt": "10.11.0",
