@@ -47,8 +47,10 @@ const links = computed(
 </script>
 
 <template>
-    <div class="hero flex flex-col">
-        <div class="w-full flex-1 bg-black/50">
+    <div class="flex flex-col">
+        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+
+        <div class="w-full flex-1">
             <ULandingHero :title="$t('pages.index.welcome')" :description="$t('pages.index.subtext')" :links="links">
                 <template #headline>
                     <UButton
@@ -65,3 +67,15 @@ const links = computed(
         </div>
     </div>
 </template>
+
+<style scoped>
+.gradient {
+    mask-image: radial-gradient(100% 100% at top, white, transparent);
+}
+
+.dark {
+    .gradient {
+        mask-image: radial-gradient(100% 100% at top, black, transparent);
+    }
+}
+</style>

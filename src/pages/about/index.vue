@@ -42,8 +42,11 @@ const faqs = [
         <UDashboardPanel>
             <div class="flex flex-col justify-between">
                 <div>
-                    <div class="hero bg-background relative isolate px-6 py-20 lg:px-8">
-                        <div class="hero-overlay absolute left-0 top-0 z-[-1] size-full"></div>
+                    <div class="relative isolate px-6 py-20 lg:px-8">
+                        <div
+                            class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]"
+                        />
+
                         <div class="mx-auto max-w-2xl text-center">
                             <h2 class="text-4xl font-bold tracking-tight sm:text-6xl">
                                 {{ $t('common.about') }}
