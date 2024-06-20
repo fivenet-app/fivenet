@@ -48,8 +48,10 @@ const isDev = import.meta.dev;
     <div class="h-dscreen">
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #d72638 0%, #ac1e2d 50%, #d72638 100%)" />
 
-        <div class="hero bg-background h-full">
-            <div class="hero-overlay h-full">
+        <div class="h-full">
+            <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+
+            <div class="h-full">
                 <main class="mx-auto flex size-full max-w-3xl text-center">
                     <div class="my-auto py-2 max-sm:w-full sm:mx-auto lg:mx-auto">
                         <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />

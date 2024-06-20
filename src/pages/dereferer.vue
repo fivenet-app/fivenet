@@ -32,8 +32,10 @@ const target = route.query.target as string;
 </script>
 
 <template>
-    <div class="hero flex h-dscreen flex-col">
-        <div class="flex w-full flex-1 items-center justify-center bg-black/50">
+    <div class="flex h-dscreen flex-col">
+        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+
+        <div class="flex w-full flex-1 items-center justify-center">
             <UCard class="w-full max-w-lg bg-white/75 backdrop-blur dark:bg-white/5">
                 <template #header>
                     <div class="flex items-center justify-between">

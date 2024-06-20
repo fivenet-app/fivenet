@@ -2,6 +2,7 @@
 import type { Button } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import '~/assets/css/herofull-pattern.css';
+import { handleError } from 'vue';
 
 useHead({
     title: 'common.home',

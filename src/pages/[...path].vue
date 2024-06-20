@@ -18,8 +18,10 @@ const { username } = storeToRefs(authStore);
 </script>
 
 <template>
-    <div class="hero flex flex-col">
-        <div class="w-full flex-1 bg-black/50">
+    <div class="flex flex-col">
+        <div class="hero absolute inset-0 z-[-1] [mask-image:radial-gradient(100%_100%_at_top,white,transparent)]" />
+
+        <div class="w-full flex-1">
             <ULandingHero
                 :title="$t('pages.notfound.page_not_found')"
                 :description="$t('pages.notfound.fun_error')"
