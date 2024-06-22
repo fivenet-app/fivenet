@@ -3,7 +3,7 @@ import QualificationResultTutorForm from './QualificationResultTutorForm.vue';
 
 defineProps<{
     qualificationId: string;
-    userId: number;
+    userId?: number;
     resultId?: string;
 }>();
 

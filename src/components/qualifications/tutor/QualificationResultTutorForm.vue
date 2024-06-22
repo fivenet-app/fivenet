@@ -5,10 +5,12 @@ import { useNotificatorStore } from '~/store/notificator';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import { useCompletorStore } from '~/store/completor';
 
 const props = defineProps<{
     qualificationId: string;
-    userId: number;
+    userId?: number;
     resultId?: string;
     score?: number;
 }>();
@@ -18,6 +20,8 @@ const emits = defineEmits<{
     (e: 'refresh'): void;
 }>();
 
+const completorStore = useCompletorStore();
+
 const notifications = useNotificatorStore();
 
 const availableStatus = [
@@ -25,6 +29,9 @@ const availableStatus = [
     { status: ResultStatus.FAILED },
     { status: ResultStatus.PENDING },
 ];
+
+const usersLoading = ref(false);
+const selectedUser = ref<undefined | UserShort>(undefined);
 
 const schema = z.object({
     status: z.nativeEnum(ResultStatus),
@@ -42,7 +49,6 @@ const state = reactive<Schema>({
 
 async function createOrUpdateQualificationResult(
     qualificationId: string,
-    userId: number,
     values: Schema,
 ): Promise<CreateOrUpdateQualificationResultResponse> {
     try {
@@ -50,7 +56,7 @@ async function createOrUpdateQualificationResult(
             result: {
                 id: props.resultId ?? '0',
                 qualificationId: qualificationId,
-                userId: userId,
+                userId: props.userId ?? selectedUser.value?.userId ?? 0,
                 status: values.status,
                 score: values.score,
                 summary: values.summary,
@@ -84,7 +90,7 @@ watch(
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
-    await createOrUpdateQualificationResult(props.qualificationId, props.userId, event.data).finally(() =>
+    await createOrUpdateQualificationResult(props.qualificationId, event.data).finally(() =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
@@ -105,6 +111,44 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <div>
                 <slot />
+
+                <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.citizen')" class="flex-1">
+                    <USelectMenu
+                        v-model="selectedUser"
+                        :searchable="
+                            async (query: string) => {
+                                usersLoading = true;
+                                const users = await completorStore.completeCitizens({
+                                    search: query,
+                                });
+                                usersLoading = false;
+                                return users;
+                            }
+                        "
+                        searchable-lazy
+                        :searchable-placeholder="$t('common.search_field')"
+                        :search-attributes="['firstname', 'lastname']"
+                        class="flex-1"
+                        :placeholder="$t('common.citizen', 1)"
+                        trailing
+                        by="userId"
+                        @focusin="focusTablet(true)"
+                        @focusout="focusTablet(false)"
+                    >
+                        <template #label>
+                            <template v-if="selectedUser">
+                                {{ usersToLabel([selectedUser]) }}
+                            </template>
+                        </template>
+                        <template #option="{ option: user }">
+                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                    </USelectMenu>
+                </UFormGroup>
 
                 <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
                     <USelectMenu

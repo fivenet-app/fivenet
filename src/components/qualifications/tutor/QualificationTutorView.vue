@@ -5,10 +5,13 @@ import QualificationsRequestsList from '~/components/qualifications/tutor/Qualif
 import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { useCompletorStore } from '~/store/completor';
+import QualificationResultTutorModal from './QualificationResultTutorModal.vue';
 
 defineProps<{
     qualification: Qualification;
 }>();
+
+const modal = useModal();
 
 const completorStore = useCompletorStore();
 
@@ -84,7 +87,20 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
         </div>
 
         <div>
-            <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
+            <div class="flex flex-row justify-between gap-2">
+                <h2 class="text-sm text-gray-900 dark:text-white">{{ $t('common.result', 2) }}</h2>
+
+                <UButton
+                    icon="i-mdi-plus"
+                    :label="$t('common.add')"
+                    @click="
+                        modal.open(QualificationResultTutorModal, {
+                            qualificationId: qualification.id,
+                            onRefresh: () => results?.refresh(),
+                        })
+                    "
+                />
+            </div>
 
             <QualificationsResultsList
                 ref="results"

@@ -430,7 +430,7 @@ func (s *Server) getQualification(ctx context.Context, qualificationId uint64, c
 	}
 	quali.Request = request
 
-	result, err := s.getQualificationResult(ctx, qualificationId, 0, nil, userInfo)
+	result, err := s.getQualificationResult(ctx, qualificationId, 0, nil, userInfo, 0)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

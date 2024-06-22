@@ -48,6 +48,13 @@ async function getCitizen(id: number): Promise<User | undefined> {
         });
         const { response } = await call;
 
+        if (response.user!.phoneNumber && props.user?.phoneNumber) {
+            response.user!.phoneNumber = props.user.phoneNumber;
+        }
+        if (response.user!.avatar && props.user?.avatar) {
+            response.user!.avatar = props.user.avatar;
+        }
+
         return response.user!;
     } catch (e) {
         return undefined;

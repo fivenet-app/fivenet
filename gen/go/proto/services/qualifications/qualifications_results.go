@@ -221,7 +221,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, []qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL}, userInfo)
+	result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, []qualifications.ResultStatus{qualifications.ResultStatus_RESULT_STATUS_SUCCESSFUL}, userInfo, req.Result.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -263,7 +263,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_CREATED)
 	} else {
-		result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, nil, userInfo)
+		result, err := s.getQualificationResult(ctx, req.Result.QualificationId, req.Result.Id, nil, userInfo, req.Result.UserId)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
@@ -341,7 +341,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		}
 	}
 
-	result, err = s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo)
+	result, err = s.getQualificationResult(ctx, quali.Id, req.Result.Id, nil, userInfo, req.Result.UserId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -351,13 +351,15 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 	}, nil
 }
 
-func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo) (*qualifications.QualificationResult, error) {
+func (s *Server) getQualificationResult(ctx context.Context, qualificationId uint64, resultId uint64, status []qualifications.ResultStatus, userInfo *userinfo.UserInfo, userId int32) (*qualifications.QualificationResult, error) {
 	tUser := tUser.AS("user")
 
 	condition := tQualiResults.DeletedAt.IS_NULL()
 
 	if resultId > 0 {
 		condition = condition.AND(tQualiResults.ID.EQ(jet.Uint64(resultId)))
+	} else if userId > 0 {
+		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userId)))
 	} else {
 		condition = condition.AND(tQualiResults.UserID.EQ(jet.Int32(userInfo.UserId)))
 	}
@@ -448,7 +450,7 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	result, err := s.getQualificationResult(ctx, 0, req.ResultId, nil, userInfo)
+	result, err := s.getQualificationResult(ctx, 0, req.ResultId, nil, userInfo, 0)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
