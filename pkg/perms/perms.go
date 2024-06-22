@@ -351,7 +351,9 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 	}
 
 	for _, role := range dest {
-		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
+		grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() *xsync.MapOf[int32, uint64] {
+			return xsync.NewMapOf[int32, uint64]()
+		})
 		grades.Store(role.Grade, role.ID)
 
 		p.roleIDToJobMap.Store(role.ID, role.Job)
@@ -393,7 +395,9 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 	}
 
 	for _, rolePerms := range dest {
-		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, xsync.NewMapOf[uint64, bool])
+		perms, _ := p.permsRoleMap.LoadOrCompute(rolePerms.RoleID, func() *xsync.MapOf[uint64, bool] {
+			return xsync.NewMapOf[uint64, bool]()
+		})
 		perms.Store(rolePerms.ID, rolePerms.Val)
 	}
 
@@ -428,7 +432,9 @@ func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
 	}
 
 	for _, jobAttrs := range dest {
-		attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, xsync.NewMapOf[uint64, *permissions.AttributeValues])
+		attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() *xsync.MapOf[uint64, *permissions.AttributeValues] {
+			return xsync.NewMapOf[uint64, *permissions.AttributeValues]()
+		})
 		attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
 	}
 
@@ -487,7 +493,9 @@ func (p *Perms) updateRoleAttributeInMap(roleId uint64, permId uint64, attrId ui
 		return
 	}
 
-	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, xsync.NewMapOf[uint64, *cacheRoleAttr])
+	attrRoleMap, _ := p.attrsRoleMap.LoadOrCompute(roleId, func() *xsync.MapOf[uint64, *cacheRoleAttr] {
+		return xsync.NewMapOf[uint64, *cacheRoleAttr]()
+	})
 	cached, ok := attrRoleMap.Load(attrId)
 	if !ok {
 		attrRoleMap.Store(attrId, &cacheRoleAttr{

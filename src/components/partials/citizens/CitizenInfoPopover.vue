@@ -8,8 +8,8 @@ import DataErrorBlock from '../data/DataErrorBlock.vue';
 
 const props = withDefaults(
     defineProps<{
-        userId?: number;
-        user?: ClipboardUser | User | UserShort | undefined;
+        userId?: number | string;
+        user?: ClipboardUser | User | UserShort;
         textClass?: unknown;
         showAvatar?: boolean;
         showAvatarInName?: boolean;
@@ -25,16 +25,20 @@ const props = withDefaults(
 
 const { popover } = useAppConfig();
 
+const userId = computed(() => {
+    if (typeof props.userId === 'string') {
+        return parseInt(props.userId);
+    }
+
+    return props.userId ?? props.user?.userId ?? 0;
+});
+
 const {
     data,
     refresh,
     pending: loading,
     error,
-} = useLazyAsyncData(
-    `citizen-info-${props.userId ?? props.user?.userId}`,
-    () => getCitizen(props.userId ?? props.user?.userId ?? 0),
-    { immediate: false },
-);
+} = useLazyAsyncData(`citizen-info-${userId.value}`, () => getCitizen(userId.value), { immediate: !props.user });
 
 async function getCitizen(id: number): Promise<User | undefined> {
     try {
@@ -56,9 +60,7 @@ const { game } = useAppConfig();
 
 const opened = ref(false);
 watchOnce(opened, async () => {
-    if (!props.user) {
-        refresh();
-    } else {
+    if (props.user) {
         useTimeoutFn(async () => refresh(), popover.waitTime);
     }
 });
@@ -70,7 +72,7 @@ watchOnce(opened, async () => {
             {{ $t('common.na') }}
         </span>
     </template>
-    <UPopover v-else>
+    <UPopover v-else :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">
         <UButton
             v-bind="$attrs"
             variant="link"

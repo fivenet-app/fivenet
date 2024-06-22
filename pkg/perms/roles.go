@@ -201,7 +201,9 @@ func (p *Perms) CreateRole(ctx context.Context, job string, grade int32) (*model
 
 	p.permsRoleMap.Store(role.ID, xsync.NewMapOf[uint64, bool]())
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() *xsync.MapOf[int32, uint64] {
+		return xsync.NewMapOf[int32, uint64]()
+	})
 	grades.Store(role.Grade, role.ID)
 
 	p.roleIDToJobMap.Store(role.ID, role.Job)
@@ -245,7 +247,9 @@ func (p *Perms) DeleteRole(ctx context.Context, id uint64) error {
 func (p *Perms) deleteRole(role *model.FivenetRoles) {
 	p.permsRoleMap.Delete(role.ID)
 
-	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, xsync.NewMapOf[int32, uint64])
+	grades, _ := p.permsJobsRoleMap.LoadOrCompute(role.Job, func() *xsync.MapOf[int32, uint64] {
+		return xsync.NewMapOf[int32, uint64]()
+	})
 	grades.Delete(role.Grade)
 
 	p.roleIDToJobMap.Delete(role.ID)
@@ -351,7 +355,9 @@ func (p *Perms) UpdateRolePermissions(ctx context.Context, roleId uint64, perms 
 		}
 	}
 
-	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, xsync.NewMapOf[uint64, bool])
+	roleCache, _ := p.permsRoleMap.LoadOrCompute(roleId, func() *xsync.MapOf[uint64, bool] {
+		return xsync.NewMapOf[uint64, bool]()
+	})
 	for _, v := range rolePerms {
 		roleCache.Store(v.PermissionID, v.Val)
 	}

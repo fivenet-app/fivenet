@@ -7,7 +7,7 @@ import { useCompletorStore } from '~/store/completor';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
-    modelValue?: CitizenAttributes | undefined;
+    modelValue?: CitizenAttributes;
     userId: number;
 }>();
 

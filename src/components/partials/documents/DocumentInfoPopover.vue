@@ -4,7 +4,6 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
-import type { ButtonVariant } from '#ui/types';
 
 defineOptions({
     inheritAttrs: false,
@@ -13,7 +12,7 @@ defineOptions({
 const props = withDefaults(
     defineProps<{
         documentId?: string;
-        document?: Document | DocumentShort | undefined;
+        document?: Document | DocumentShort;
         trailing?: boolean;
         hideCategory?: boolean;
     }>(),
@@ -25,16 +24,14 @@ const props = withDefaults(
 
 const { popover } = useAppConfig();
 
+const documentId = computed(() => props.documentId ?? props.document?.id ?? '0');
+
 const {
     data,
     refresh,
     pending: loading,
     error,
-} = useLazyAsyncData(
-    `document-info-${props.documentId ?? props.document?.id}`,
-    () => getDocument(props.documentId ?? props.document?.id ?? '0'),
-    { immediate: false },
-);
+} = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), { immediate: !props.document });
 
 async function getDocument(id: string): Promise<Document> {
     try {
@@ -51,13 +48,11 @@ async function getDocument(id: string): Promise<Document> {
     }
 }
 
-const document = computed(() => props.document || data.value);
+const document = computed(() => data.value || props.document);
 
 const opened = ref(false);
 watchOnce(opened, async () => {
-    if (!props.document) {
-        refresh();
-    } else {
+    if (props.document) {
         useTimeoutFn(async () => refresh(), popover.waitTime);
     }
 });

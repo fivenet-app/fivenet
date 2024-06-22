@@ -53,7 +53,7 @@ watch(offset, async () => refresh());
         />
         <DataNoDataBlock
             v-else-if="!data || data?.activity.length === 0"
-            :type="`${$t('common.document', 1)} ${$t('common.relation', 2)}`"
+            :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
             icon="i-mdi-bulletin-board"
         />
 

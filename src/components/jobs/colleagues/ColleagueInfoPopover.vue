@@ -9,8 +9,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const props = withDefaults(
     defineProps<{
-        userId?: number | undefined;
-        user?: Colleague | undefined;
+        userId?: number | string;
+        user?: Colleague;
         textClass?: unknown;
         showAvatar?: boolean;
         trailing?: boolean;
@@ -29,16 +29,20 @@ const { activeChar } = storeToRefs(authStore);
 
 const { popover } = useAppConfig();
 
+const userId = computed(() => {
+    if (typeof props.userId === 'string') {
+        return parseInt(props.userId);
+    }
+
+    return props.userId ?? props.user?.userId ?? 0;
+});
+
 const {
     data,
     refresh,
     pending: loading,
     error,
-} = useLazyAsyncData(
-    `colleague-info-${props.userId ?? props.user?.userId}`,
-    () => getCitizen(props.userId ?? props.user?.userId ?? 0),
-    { immediate: false },
-);
+} = useLazyAsyncData(`colleague-info-${userId.value}`, () => getCitizen(userId.value), { immediate: !props.user });
 
 async function getCitizen(id: number): Promise<Colleague> {
     try {
@@ -59,9 +63,7 @@ const user = computed(() => data.value || props.user);
 
 const opened = ref(false);
 watchOnce(opened, async () => {
-    if (!props.user) {
-        refresh();
-    } else {
+    if (props.user) {
         useTimeoutFn(async () => refresh(), popover.waitTime);
     }
 });

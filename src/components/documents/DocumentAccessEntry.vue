@@ -24,7 +24,7 @@ const props = withDefaults(
             required?: boolean;
         };
         accessTypes: AccessType[];
-        accessRoles?: undefined | AccessLevel[];
+        accessRoles?: AccessLevel[];
         jobs: Job[] | undefined;
     }>(),
     {
