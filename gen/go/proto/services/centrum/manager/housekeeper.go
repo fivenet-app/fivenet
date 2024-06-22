@@ -22,6 +22,8 @@ import (
 
 const (
 	MaxCancelledDispatchesPerRun = 6
+
+	DeleteDispatchDays = 14
 )
 
 var HousekeeperModule = fx.Module("centrum_manager_housekeeper", fx.Provide(
@@ -331,6 +333,10 @@ func (s *Housekeeper) runDeleteOldDispatches() {
 				if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
 					s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
 				}
+
+				if err := s.deleteOldUnitStatus(ctx); err != nil {
+					s.logger.Error("failed to remove old unit status", zap.Error(err))
+				}
 			}()
 		}
 	}
@@ -347,7 +353,7 @@ func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
 		).
 		WHERE(jet.AND(
 			tDispatch.CreatedAt.LT_EQ(
-				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(14, jet.DAY)),
+				jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(DeleteDispatchDays, jet.DAY)),
 			),
 		)).
 		// Get 75 at a time
@@ -394,6 +400,21 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 	}
 
 	return errs
+}
+
+func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
+	stmt := tUnitStatus.
+		DELETE().
+		WHERE(jet.AND(
+			tUnitStatus.CreatedAt.LT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(DeleteDispatchDays, jet.DAY))),
+		)).
+		LIMIT(1500)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return fmt.Errorf("failed to delete old unit status. %w", err)
+	}
+
+	return nil
 }
 
 func (s *Housekeeper) runDispatchDeduplication() {
