@@ -383,8 +383,8 @@ func (b *Bot) runSync(ctx context.Context) error {
 		return true
 	})
 
-	metricGuildsTotal.Add(totalCount)
-	metricGuildsReady.Add(readyCount)
+	metricGuildsTotal.Set(totalCount)
+	metricGuildsReady.Set(readyCount)
 
 	errs := multierr.Combine()
 
