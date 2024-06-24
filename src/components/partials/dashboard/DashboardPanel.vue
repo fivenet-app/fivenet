@@ -103,16 +103,16 @@ const { el, width, onDrag, isDragging } = props.resizable
     : { el: undefined, width: toRef(props.width), onDrag: undefined, isDragging: undefined };
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const { isDashboardSidebarSlidoverOpen } = useUIState();
+const { isDashboardSidebarSlideoverOpen } = useUIState();
 
 const smallerThanLg = breakpoints.smaller(props.breakpoint);
 
 const isOpen = computed({
     get() {
-        return props.modelValue !== undefined ? props.modelValue : isDashboardSidebarSlidoverOpen.value;
+        return props.modelValue !== undefined ? props.modelValue : isDashboardSidebarSlideoverOpen.value;
     },
     set(value) {
-        props.modelValue !== undefined ? emit('update:modelValue', value) : (isDashboardSidebarSlidoverOpen.value = value);
+        props.modelValue !== undefined ? emit('update:modelValue', value) : (isDashboardSidebarSlideoverOpen.value = value);
     },
 });
 

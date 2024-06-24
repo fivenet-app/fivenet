@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	"slices"
 	"strings"
 
@@ -764,7 +765,7 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 
 	char, _, _, err := s.getCharacter(ctx, claims.CharID)
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrNoCharFound)
+		return nil, errswrap.NewError(fmt.Errorf("failed to get char %d. %w", claims.CharID, err), errorsauth.ErrNoCharFound)
 	}
 
 	var jobProps *users.JobProps
@@ -780,14 +781,14 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 		// Send original char job props to user
 		_, _, jProps, err := s.getJobWithProps(ctx, char.Job)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(fmt.Errorf("failed to get job props from %s job. %w", char.Job, err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
 	} else if req.Job != nil {
 		// Only set job if requested
 		job, jobGrade, jProps, err := s.getJobWithProps(ctx, *req.Job)
 		if err != nil {
-			return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+			return nil, errswrap.NewError(fmt.Errorf("failed to get job props from %s job. %w", *req.Job, err), errorsauth.ErrGenericLogin)
 		}
 		jobProps = jProps
 
@@ -802,7 +803,7 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 	}
 
 	if err := s.ui.SetUserInfo(ctx, claims.AccID, req.Superuser, userInfo.OverrideJob, userInfo.OverrideJobGrade); err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		return nil, errswrap.NewError(fmt.Errorf("failed to set user info. %w", err), errorsauth.ErrGenericLogin)
 	}
 
 	userInfo.SuperUser = req.Superuser
@@ -810,7 +811,7 @@ func (s *Server) SetSuperUserMode(ctx context.Context, req *SetSuperUserModeRequ
 	// Load account data for token creation
 	account, err := s.getAccountFromDB(ctx, tAccounts.Username.EQ(jet.String(claims.Username)))
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsauth.ErrGenericLogin)
+		return nil, errswrap.NewError(fmt.Errorf("failed to get account from db. %w", err), errorsauth.ErrGenericLogin)
 	}
 
 	newToken, newClaims, err := s.createTokenFromAccountAndChar(account, char)

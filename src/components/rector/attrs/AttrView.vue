@@ -44,7 +44,7 @@ const attrStates = ref<Map<string, AttributeValues | undefined>>(new Map());
 async function getRole(id: string): Promise<Role> {
     try {
         const call = getGRPCRectorClient().getRole({
-            id,
+            id: id,
             filtered: false,
         });
         const { response } = await call;
@@ -54,23 +54,6 @@ async function getRole(id: string): Promise<Role> {
         }
 
         return response.role;
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
-
-async function deleteRole(id: string): Promise<void> {
-    try {
-        await getGRPCRectorClient().deleteRole({ id });
-
-        notifications.add({
-            title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
-            description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
-            type: NotificationType.SUCCESS,
-        });
-
-        emit('deleted');
     } catch (e) {
         handleGRPCError(e as RpcError);
         throw e;
@@ -305,17 +288,6 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <h2 class="text-3xl" :title="`ID: ${role.id}`">
                         {{ role?.jobLabel! }}
                     </h2>
-
-                    <UButton
-                        v-if="can('RectorService.DeleteRole').value"
-                        variant="link"
-                        icon="i-mdi-trash-can"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteRole(role!.id),
-                            })
-                        "
-                    />
                 </div>
 
                 <UDivider :label="$t('common.attributes', 2)" />
