@@ -136,7 +136,7 @@ const route = router.currentRoute;
     <div>
         <NuxtLoadingIndicator color="repeating-linear-gradient(to right, #55dde0 0%, #34cdfe 50%, #7161ef 100%)" />
 
-        <!-- <NuxtRouteAnnouncer />-->
+        <NuxtRouteAnnouncer />
         <NuxtLayout>
             <NuxtPage
                 :transition="{
@@ -151,6 +151,7 @@ const route = router.currentRoute;
 
         <ClientOnly>
             <LazyOverlaysSounds />
+            <NotificationProvider />
         </ClientOnly>
 
         <CookieControl v-if="!isNUIAvailable && route.meta.showCookieOptions !== undefined && route.meta.showCookieOptions" />

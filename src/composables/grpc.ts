@@ -42,8 +42,6 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         return true;
     }
 
-    const notifications = useNotificatorStore();
-
     const notification = {
         id: '',
         type: NotificationType.ERROR,
@@ -136,6 +134,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         }
     }
 
+    const notifications = useNotificatorStore();
     notifications.add({
         type: notification.type,
         title: notification.title,

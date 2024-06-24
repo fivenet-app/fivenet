@@ -65,7 +65,7 @@ const onSubmitThrottle = useThrottleFn(async (charId: number) => {
             <CharacterSelectorCard
                 :key="item.userId"
                 :char="item.char"
-                :disabled="!item.available"
+                :unavailable="!item.available"
                 :can-submit="canSubmit"
                 @selected="onSubmitThrottle($event)"
             />

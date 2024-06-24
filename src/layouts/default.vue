@@ -12,7 +12,6 @@ import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import DashboardSidebarLinks from '~/components/partials/dashboard/DashboardSidebarLinks.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
 import { messengerDB } from '~/store/messenger';
-import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 
 const authStore = useAuthStore();
 const { activeChar, jobProps } = storeToRefs(authStore);
@@ -420,8 +419,6 @@ const quickAccessButtons = computed(() =>
             <LazyPartialsEventsLayer />
 
             <WebSocketStatusOverlay />
-
-            <NotificationProvider />
         </ClientOnly>
 
         <HelpSlideover />
