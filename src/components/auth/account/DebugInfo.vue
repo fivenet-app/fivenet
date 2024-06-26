@@ -140,6 +140,9 @@ const version = APP_VERSION;
                     <UButton color="gray" @click="sendTestNotifications">
                         {{ $t('components.debug_info.test_notifications') }}
                     </UButton>
+                    <UButton color="gray" @click="showError(new Error('You pressed the trigger error page button'))">
+                        {{ $t('components.debug_info.trigger_error') }}
+                    </UButton>
                 </UButtonGroup>
             </UFormGroup>
 

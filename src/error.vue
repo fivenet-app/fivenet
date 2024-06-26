@@ -94,7 +94,7 @@ const isDev = import.meta.dev;
                             </span>
                         </div>
 
-                        <UButtonGroup class="inline-flex w-full">
+                        <div class="inline-flex w-full gap-2">
                             <UButton block class="flex-1" size="lg" :disabled="buttonDisabled" @click="handleError()">
                                 {{ $t('common.home') }}
                             </UButton>
@@ -121,7 +121,7 @@ const isDev = import.meta.dev;
                             >
                                 {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>
-                        </UButtonGroup>
+                        </div>
 
                         <UButton
                             v-if="isDev"

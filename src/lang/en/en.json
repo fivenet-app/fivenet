@@ -698,7 +698,8 @@
             "version": "Version",
             "nui_info": "NUI Info",
             "no_char_selected": "No char active, please choose a character and check again.",
-            "test_notifications": "Test Notifications"
+            "test_notifications": "Test Notifications",
+            "trigger_error": "Trigger Error page"
         },
         "penaltycalculator": {
             "title": "Penalty Calculator"
