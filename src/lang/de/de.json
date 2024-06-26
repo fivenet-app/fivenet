@@ -698,7 +698,8 @@
             "version": "Version",
             "nui_info": "NUI-Info",
             "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut.",
-            "test_notifications": "Teste Benachrichtigungen"
+            "test_notifications": "Teste Benachrichtigungen",
+            "trigger_error": "Fehlerseite auslösen"
         },
         "penaltycalculator": {
             "title": "Strafenrechner"
