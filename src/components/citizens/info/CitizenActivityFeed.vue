@@ -5,10 +5,14 @@ import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivity
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { useAuthStore } from '~/store/auth';
 
 const props = defineProps<{
     userId: number;
 }>();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -41,7 +45,16 @@ watch(offset, async () => refresh());
 </script>
 
 <template>
-    <div>
+    <UAlert
+        v-if="userId === activeChar?.userId && attr('CitizenStoreService.ListUserActivity', 'Fields', 'Own')"
+        variant="subtle"
+        color="red"
+        icon="i-mdi-denied"
+        :title="$t('components.citizens.CitizenInfoActivityFeed.own.title')"
+        :description="$t('components.citizens.CitizenInfoActivityFeed.own.message')"
+    />
+
+    <div v-else>
         <DataPendingBlock
             v-if="loading"
             :message="$t('common.loading', [`${$t('common.citizen', 1)} ${$t('common.activity')}`])"

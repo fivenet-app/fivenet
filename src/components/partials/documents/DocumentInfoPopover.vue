@@ -43,7 +43,6 @@ async function getDocument(id: string): Promise<Document> {
 
         return response.document!;
     } catch (e) {
-        handleGRPCError(e as RpcError);
         throw e;
     }
 }
