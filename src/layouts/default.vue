@@ -415,10 +415,10 @@ const quickAccessButtons = computed(() =>
         <slot />
 
         <ClientOnly>
+            <WebSocketStatusOverlay />
+
             <!-- Events -->
             <LazyPartialsEventsLayer />
-
-            <WebSocketStatusOverlay />
         </ClientOnly>
 
         <HelpSlideover />
