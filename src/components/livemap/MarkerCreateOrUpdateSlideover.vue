@@ -33,7 +33,7 @@ defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 
 const schema = z.object({
     name: z.string().min(3).max(255),
     description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
-    expiresAt: z.date().optional(),
+    expiresAt: z.date().nullish(),
     color: z.string().length(7),
     markerType: z.nativeEnum(MarkerType),
     circleRadius: z.number().gte(5).lte(250),
@@ -78,7 +78,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
                 y: props.marker?.info?.y ?? props.location?.y ?? storeLocation.value?.y ?? 0,
                 color: values.color,
             },
-            expiresAt,
+            expiresAt: expiresAt,
             type: values.markerType,
         };
 
