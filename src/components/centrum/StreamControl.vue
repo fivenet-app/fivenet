@@ -27,7 +27,11 @@ const running = computed(() => livemapAbort.value || centrumAbort.value);
 
 <template>
     <div>
-        <UButton v-if="running" variant="soft" icon="i-mdi-pause" class="flex-initial" @click="stop()"> Pause </UButton>
-        <UButton v-else variant="soft" icon="i-mdi-play" class="flex-initial" @click="start()"> Start </UButton>
+        <UButton v-if="running" variant="soft" icon="i-mdi-pause" class="flex-initial" @click="stop()">
+            {{ $t('components.centrum.StreamControl.pause') }}
+        </UButton>
+        <UButton v-else variant="soft" icon="i-mdi-play" class="flex-initial" @click="start()">
+            {{ $t('components.centrum.StreamControl.start') }}
+        </UButton>
     </div>
 </template>
