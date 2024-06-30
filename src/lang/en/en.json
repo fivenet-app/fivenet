@@ -789,6 +789,10 @@
                     "description": "Timings for dispatch and unit status updates/pings.",
                     "dispatch_max_wait": "Dispatch: Max Wait (in seconds)"
                 }
+            },
+            "StreamControl": {
+                "pause": "Pause",
+                "start": "Start"
             }
         },
         "jobs": {
