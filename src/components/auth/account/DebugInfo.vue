@@ -39,9 +39,18 @@ async function sendTestNotifications(): Promise<void> {
                 parameters: { type: NotificationType[notificationType] },
             },
             type: notificationType,
-            onClick: () => alert('Test was successful!'),
+            actions: [
+                {
+                    label: { key: 'common.click_here' },
+                    click: () => alert('Test was successful!'),
+                },
+            ],
         });
     });
+}
+
+function triggerErrorPage(): void {
+    showError(new Error('You pressed the trigger error page button'));
 }
 
 const version = APP_VERSION;
@@ -140,7 +149,7 @@ const version = APP_VERSION;
                     <UButton color="gray" @click="sendTestNotifications">
                         {{ $t('components.debug_info.test_notifications') }}
                     </UButton>
-                    <UButton color="gray" @click="showError(new Error('You pressed the trigger error page button'))">
+                    <UButton color="gray" @click="triggerErrorPage">
                         {{ $t('components.debug_info.trigger_error') }}
                     </UButton>
                 </UButtonGroup>

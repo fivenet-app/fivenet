@@ -14,14 +14,12 @@ import DisponentsInfo from './disponents/DisponentsInfo.vue';
 
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
-const { startStream, stopStream } = centrumStore;
+const { startStream } = centrumStore;
 
 onMounted(async () => useTimeoutFn(async () => startStream(true), 250));
 
 const mount = ref(false);
 onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
-
-onBeforeUnmount(() => stopStream());
 </script>
 
 <template>

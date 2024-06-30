@@ -1,3 +1,4 @@
+import { type NotificationAction } from '#ui/types';
 import { type TranslateItem } from '~/composables/i18n';
 import { Data, NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
@@ -8,6 +9,10 @@ export const NotificationTypes: NotificationType[] = [
     NotificationType.SUCCESS,
 ];
 
+export interface NotificationActionI18n extends Omit<NotificationAction, 'label'> {
+    label: TranslateItem;
+}
+
 export interface Notification {
     id?: string;
     title: TranslateItem;
@@ -16,7 +21,6 @@ export interface Notification {
     type?: NotificationType;
     category?: NotificationCategory;
     data?: Data;
-    onClick?: ((data?: Data) => any) | ((data?: Data) => Promise<any>);
-    onClickText?: TranslateItem;
     callback?: Function;
+    actions?: NotificationActionI18n[];
 }

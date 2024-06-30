@@ -47,6 +47,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         type: NotificationType.ERROR,
         title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
         description: { key: err?.message ?? 'Unknown error', parameters: {} },
+        actions: [],
     } as Notification;
 
     const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'UNKNOWN';
@@ -59,6 +60,9 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 break;
 
             case 'cancelled':
+                // Don't send notifications for cancelled requests
+                return true;
+
             case 'unavailable':
                 notification.title = { key: 'notifications.grpc_errors.unavailable.title', parameters: {} };
                 notification.description = { key: 'notifications.grpc_errors.unavailable.content', parameters: {} };
@@ -104,13 +108,16 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                     key: 'notifications.grpc_errors.default.content',
                     parameters: { msg: err.message, code: err.code.valueOf() },
                 };
-                notification.onClick = async () =>
-                    copyToClipboardWrapper(
-                        `## Error occured at ${new Date().toLocaleDateString()}:
-**Service/Method**: ${err.serviceName}/${err.methodName} => ${err.code}
-**Message**: ${err.message}
-**TraceID**: ${traceId}`,
-                    );
+                notification.actions?.push({
+                    label: { key: 'pages.error.copy_error' },
+                    click: async () =>
+                        copyToClipboardWrapper(
+                            `## Error occured at ${new Date().toLocaleDateString()}:
+    **Service/Method**: ${err.serviceName}/${err.methodName} => ${err.code}
+    **Message**: ${err.message}
+    **TraceID**: ${traceId}`,
+                        ),
+                });
                 break;
         }
     }
@@ -118,11 +125,6 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
     logger.error(
         `Failed request ${err.serviceName}/${err.methodName} (Trace ID: '${traceId}', Code: ${err.code}, Message: ${err.message}`,
     );
-
-    if (code === 'cancelled') {
-        // Don't send notifications for cancelled requests
-        return true;
-    }
 
     if (isTranslatedError(err.message)) {
         const errSplits = err.message.split(';');
@@ -139,8 +141,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         type: notification.type,
         title: notification.title,
         description: notification.description,
-        onClick: notification.onClick,
-        onClickText: { key: 'pages.error.copy_error', parameters: {} },
+        actions: notification.actions,
     });
 
     return true;

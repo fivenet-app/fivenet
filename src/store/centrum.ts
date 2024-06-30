@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
 import { statusOrder } from '~/components/centrum/helpers';
+import type { NotificationActionI18n } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
@@ -323,6 +324,7 @@ export const useCentrumStore = defineStore('centrum', {
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: {} },
                     description: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
                     type: NotificationType.INFO,
+                    actions: getNotificationActions(),
                 });
 
                 useSound().play({ name: 'centrum/message-incoming' });
@@ -454,6 +456,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: NotificationType.SUCCESS,
+                                actions: getNotificationActions(),
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
@@ -466,6 +469,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: NotificationType.WARNING,
+                                actions: getNotificationActions(),
                             });
 
                             // User has been removed from the unit
@@ -503,6 +507,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: NotificationType.SUCCESS,
+                                actions: getNotificationActions(),
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
@@ -515,6 +520,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: NotificationType.WARNING,
+                                actions: getNotificationActions(),
                             });
 
                             // User has been removed from the unit
@@ -761,4 +767,15 @@ export const useCentrumStore = defineStore('centrum', {
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCentrumStore, import.meta.hot));
+}
+
+function getNotificationActions(): NotificationActionI18n[] {
+    return useRoute().name === 'centrum'
+        ? [
+              {
+                  label: { key: 'common.click_here' },
+                  to: '/centrum',
+              },
+          ]
+        : [];
 }

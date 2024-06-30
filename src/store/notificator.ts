@@ -96,19 +96,15 @@ export const useNotificatorStore = defineStore('notifications', {
                                     type: nType,
                                     category: n.category,
                                     data: n.data,
+                                    actions: [],
                                 };
 
                                 if (n.data?.link !== undefined) {
-                                    if (n.data.link.external === true) {
-                                        not.onClick = async () => navigateTo(n.data!.link!.to, { external: true });
-                                    } else {
-                                        // @ts-ignore route from a notification is a string
-                                        const route = useRouter().resolve(n.data!.link!.to);
-
-                                        not.onClick = async () => {
-                                            navigateTo(route);
-                                        };
-                                    }
+                                    not.actions?.push({
+                                        label: { key: 'common.click_here' },
+                                        to: n.data.link.to,
+                                        external: n.data.link.external,
+                                    });
                                 }
 
                                 if (n.category === NotificationCategory.CALENDAR) {

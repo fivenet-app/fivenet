@@ -34,7 +34,7 @@ onBeforeMount(async () => {
     useTimeoutFn(async () => startStream(), 50);
 });
 
-onBeforeUnmount(() => stopStream());
+onBeforeUnmount(async () => stopStream());
 
 const playerQueryRaw = ref<string>('');
 const playerQuery = computed(() => playerQueryRaw.value.toLowerCase().trim());

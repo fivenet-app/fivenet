@@ -44,19 +44,17 @@ watchArray(
                 icon: notificationTypeToIcon(notification.type),
                 color: notificationTypeToColor(notification.type),
                 timeout: notification.timeout ?? timeouts.notification,
-                actions: notification.onClick
-                    ? [
-                          {
-                              label: notification.onClickText
-                                  ? t(notification.onClickText.key, notification.onClickText.parameters ?? {})
-                                  : t('common.click_here'),
-                              click: notification.onClick,
-                          },
-                      ]
-                    : [],
+                actions: notification.actions?.map((action) => ({
+                    ...action,
+                    label: t(action.label.key, action.label.parameters ?? {}),
+                })),
                 callback: () => {
-                    if (notification.callback) notification.callback();
-                    if (notification.id) notificatorStore.remove(notification.id);
+                    if (notification.id) {
+                        notificatorStore.remove(notification.id);
+                    }
+                    if (notification.callback) {
+                        notification.callback();
+                    }
                 },
             });
         });

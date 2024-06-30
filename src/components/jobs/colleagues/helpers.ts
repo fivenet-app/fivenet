@@ -10,10 +10,6 @@ export function checkIfCanAccessColleague(activeChar: UserShort | User, target: 
     }
 
     const fields = attrList(perm, 'Access').value;
-    if (fields.length === 0) {
-        return target.userId === activeChar.userId;
-    }
-
     if (fields.includes('any')) {
         return true;
     }
@@ -33,5 +29,5 @@ export function checkIfCanAccessColleague(activeChar: UserShort | User, target: 
         }
     }
 
-    return false;
+    return target.userId === activeChar.userId;
 }
