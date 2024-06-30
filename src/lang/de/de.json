@@ -789,6 +789,10 @@
                     "description": "Zeitangaben für Einsatz- und Einheit-Status-Pings.",
                     "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)"
                 }
+            },
+            "StreamControl": {
+                "pause": "Pausieren",
+                "start": "Start"
             }
         },
         "jobs": {
