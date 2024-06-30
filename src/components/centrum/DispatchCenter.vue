@@ -11,6 +11,7 @@ import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
 import MarkersList from '~/components/centrum/MarkersList.vue';
 import DisponentsInfo from './disponents/DisponentsInfo.vue';
+import StreamControl from './StreamControl.vue';
 
 const centrumStore = useCentrumStore();
 const { error, abort, reconnecting, feed } = storeToRefs(centrumStore);
@@ -25,6 +26,10 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 <template>
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.dispatch_center')">
+            <template #center>
+                <StreamControl />
+            </template>
+
             <template #right>
                 <DisponentsInfo />
             </template>
