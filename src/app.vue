@@ -36,7 +36,7 @@ useHead({
         lang: 'en',
     },
     bodyAttrs: {
-        class: 'h-full scrollbar-thin scrollbar-thumb-sky-700 scrollbar-track-sky-300',
+        class: 'h-full',
     },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
