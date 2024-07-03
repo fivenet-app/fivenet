@@ -1,6 +1,8 @@
 module github.com/fivenet-app/fivenet
 
-go 1.22.5
+go 1.22.4
+
+toolchain go1.22.5
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
@@ -10,7 +12,7 @@ require (
 	github.com/blevesearch/bleve/v2 v2.4.0
 	github.com/bwmarrin/discordgo v0.28.1
 	github.com/creasty/defaults v1.7.0
-	github.com/desertbit/timer v0.0.0-20180107155436-c41aec40b27f
+	github.com/desertbit/timer v1.0.1
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.0.4
 	github.com/gin-contrib/cors v1.7.2
@@ -56,7 +58,7 @@ require (
 	go.uber.org/multierr v1.11.0
 	go.uber.org/zap v1.27.0
 	golang.org/x/crypto v0.24.0
-	golang.org/x/exp v0.0.0-20240604190554-fc45aab8b7f8
+	golang.org/x/exp v0.0.0-20240613232115-7f521ea00fb8
 	golang.org/x/image v0.18.0
 	golang.org/x/net v0.26.0
 	golang.org/x/oauth2 v0.21.0
