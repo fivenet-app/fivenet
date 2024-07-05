@@ -5,13 +5,16 @@ const appVersion: string = process.env.COMMIT_REF || 'COMMIT_REF';
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
     srcDir: 'src/',
+
     dir: {
         app: 'app',
         public: 'src/public',
     },
+
     telemetry: false,
     ssr: false,
     extends: [process.env.NUXT_UI_PRO_PATH || '@nuxt/ui-pro'],
+
     modules: [
         '@nuxt/ui',
         'nuxt-typed-router',
@@ -24,9 +27,11 @@ export default defineNuxtConfig({
         '@nuxtjs/i18n',
         'nuxt-update',
     ],
+
     future: {
         compatibilityVersion: 4,
     },
+
     experimental: {
         defaults: {
             useAsyncData: {
@@ -34,13 +39,16 @@ export default defineNuxtConfig({
             },
         },
     },
+
     ui: {
         icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
     },
+
     fonts: {
         families: [{ name: 'DM Sans', weights: [100, 200, 300, 400, 500, 600, 700, 800, 900], global: true }],
     },
+
     app: {
         head: {
             charset: 'utf-8',
@@ -52,9 +60,11 @@ export default defineNuxtConfig({
         },
         pageTransition: { name: 'page', mode: 'out-in' },
     },
+
     colorMode: {
         preference: 'dark',
     },
+
     typescript: {
         strict: true,
         tsConfig: {
@@ -63,6 +73,7 @@ export default defineNuxtConfig({
             },
         },
     },
+
     imports: {
         presets: [
             {
@@ -76,12 +87,15 @@ export default defineNuxtConfig({
             },
         ],
     },
+
     sourcemap: {
         client: true,
     },
+
     devtools: {
         enabled: true,
     },
+
     vite: {
         define: {
             APP_VERSION: `"${appVersion}"`,
@@ -112,6 +126,7 @@ export default defineNuxtConfig({
             },
         },
     },
+
     robots: {
         rules: {
             UserAgent: '*',
@@ -119,6 +134,7 @@ export default defineNuxtConfig({
             Allow: ['/$', '/index.html'],
         },
     },
+
     i18n: {
         vueI18n: './i18n.config.ts',
         strategy: STRATEGIES.NO_PREFIX,
@@ -153,15 +169,20 @@ export default defineNuxtConfig({
         },
         parallelPlugin: true,
     },
+
     zodI18n: {
         useModuleLocale: true,
     },
+
     piniaPersistedstate: {
         storage: 'localStorage',
     },
+
     update: {
         version: appVersion,
         checkInterval: 115,
         path: '/api/version',
     },
+
+    compatibilityDate: '2024-07-05',
 });

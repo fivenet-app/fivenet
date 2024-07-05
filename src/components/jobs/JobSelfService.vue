@@ -3,7 +3,6 @@ import { isToday, parse } from 'date-fns';
 import { emojiBlasts } from 'emoji-blast';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import SelfServicePropsProfilePictureModal from '~/components/jobs/colleagues/SelfServicePropsProfilePictureModal.vue';
-import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import { useAuthStore } from '~/store/auth';
 
 defineProps<{
@@ -56,7 +55,7 @@ onMounted(() => {
                     v-if="
                         colleagueSelf?.colleague &&
                         can('JobsService.SetJobsUserProps').value &&
-                        checkIfCanAccessColleague(activeChar!, colleagueSelf.colleague, 'JobsService.SetJobsUserProps')
+                        activeChar?.userId === colleagueSelf.colleague?.userId
                     "
                     block
                     class="flex-1"
