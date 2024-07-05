@@ -79,7 +79,7 @@
         "@vueuse/nuxt": "10.11.0",
         "@vueuse/router": "10.11.0",
         "autoprefixer": "10.4.19",
-        "cssnano": "7.0.3",
+        "cssnano": "7.0.4",
         "eslint": "9.6.0",
         "eslint-config-prettier": "9.1.0",
         "eslint-plugin-prettier": "5.1.3",
