@@ -91,7 +91,7 @@
         "nuxt-icon": "0.6.10",
         "nuxt-typed-router": "3.6.5",
         "postcss": "8.4.39",
-        "postcss-custom-properties": "13.3.11",
+        "postcss-custom-properties": "13.3.12",
         "postcss-import": "16.1.0",
         "postcss-nesting": "12.1.5",
         "postcss-url": "10.1.3",

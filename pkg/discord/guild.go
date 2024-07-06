@@ -44,10 +44,10 @@ func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (
 	ctx, cancel := context.WithCancel(ctx)
 
 	modules := []string{}
-	if false && b.cfg.GroupSync.Enabled {
+	if b.cfg.GroupSync.Enabled {
 		modules = append(modules, "groupsync")
 	}
-	if false && b.cfg.UserInfoSync.Enabled {
+	if b.cfg.UserInfoSync.Enabled {
 		modules = append(modules, "userinfo")
 	}
 
@@ -179,7 +179,7 @@ func (g *Guild) Run() error {
 		errs = multierr.Append(errs, err)
 	}
 
-	g.logger.Info("completed sync run")
+	g.logger.Info("completed sync run", zap.Duration("duration", time.Since(start)))
 
 	return errs
 }
