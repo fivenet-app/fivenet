@@ -10,7 +10,7 @@ definePageMeta({
     title: 'components.auth.CharacterSelector.title',
     layout: 'auth',
     requiresAuth: true,
-    authOnlyToken: true,
+    authTokenOnly: true,
 });
 
 const authStore = useAuthStore();
@@ -35,7 +35,15 @@ onMounted(async () => {
         </UContainer>
 
         <div class="absolute bottom-4 left-1/2 z-10 flex -translate-x-1/2 items-center justify-center">
-            <UButton icon="i-mdi-logout" :label="$t('common.sign_out')" to="/auth/logout" color="white" />
+            <UButtonGroup>
+                <UButton
+                    icon="i-mdi-account-cog-outline"
+                    :label="$t('components.auth.AccountInfo.title')"
+                    to="/auth/account-info"
+                    color="white"
+                />
+                <UButton icon="i-mdi-logout" :label="$t('common.sign_out')" to="/auth/logout" color="white" />
+            </UButtonGroup>
         </div>
     </div>
 </template>

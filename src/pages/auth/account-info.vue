@@ -9,7 +9,7 @@ useHead({
 definePageMeta({
     title: 'components.auth.AccountInfo.title',
     requiresAuth: true,
-    authOnlyToken: true,
+    authTokenOnly: true,
     showCookieOptions: true,
 });
 

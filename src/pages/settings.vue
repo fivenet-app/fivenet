@@ -7,7 +7,7 @@ useHead({
 definePageMeta({
     title: 'components.auth.UserSettingsPanel.title',
     requiresAuth: true,
-    authOnlyToken: true,
+    authTokenOnly: true,
     showCookieOptions: true,
 });
 </script>

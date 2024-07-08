@@ -6,7 +6,7 @@ declare module '#app' {
         requiresAuth?: boolean;
         redirectIfAuthed?: boolean;
         permission?: Perms | Perms[];
-        authOnlyToken?: boolean;
+        authTokenOnly?: boolean;
         showCookieOptions?: boolean;
     }
 }
@@ -17,7 +17,7 @@ declare module 'vue-router' {
         requiresAuth?: boolean;
         redirectIfAuthed?: boolean;
         permission?: Perms | Perms[];
-        authOnlyToken?: boolean;
+        authTokenOnly?: boolean;
         showCookieOptions?: boolean;
     }
 }

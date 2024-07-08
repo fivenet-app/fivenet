@@ -29,7 +29,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
     }
 
     // Auth token is not null and only needed by route
-    if (to.meta.authOnlyToken && username.value !== null) {
+    if (to.meta.authTokenOnly && username.value !== null) {
         return true;
     }
 
