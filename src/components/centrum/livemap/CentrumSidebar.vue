@@ -308,20 +308,16 @@ defineShortcuts({
 
         <UMain>
             <div class="relative z-0 size-full">
-                <LivemapBase >
+                <LivemapBase>
                     <template v-if="canStream" #default>
                         <DispatchesLayer
-                            :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED"
-
-                        />
+                            :show-all-dispatches="livemap.showAllDispatches || getCurrentMode === CentrumMode.SIMPLIFIED" />
 
                         <LControl position="bottomright">
                             <UButton
                                 class="inset-0 inline-flex items-center justify-center rounded-md border border-black/20 bg-clip-padding text-black hover:bg-[#f4f4f4]"
-                                size="2xs"
-                                :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
-                                @click="open = !open"
-                            >
+                                size="2xs" :icon="open ? 'i-mdi-toggle-switch' : 'i-mdi-toggle-switch-off'"
+                                @click="open = !open">
                                 <span v-if="!open" class="inline-flex items-center justify-center">
                                     {{ $t('common.unit') }}
                                 </span>
@@ -333,68 +329,52 @@ defineShortcuts({
                         <div>
                             <transition
                                 enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
-                                enter-from-class="translate-x-full"
-                                enter-to-class="translate-x-0"
+                                enter-from-class="translate-x-full" enter-to-class="translate-x-0"
                                 leave-active-class="transform transition ease-in-out duration-100 sm:duration-200"
-                                leave-from-class="translate-x-0"
-                                leave-to-class="translate-x-full"
-                            >
-                                <div
-                                    v-if="open"
+                                leave-from-class="translate-x-0" leave-to-class="translate-x-full">
+                                <div v-if="open"
                                     class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-1"
-                                    :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
-                                >
+                                    :class="open || getOwnUnit !== undefined ? 'px-2' : ''">
                                     <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
                                         <ul role="list" class="flex flex-1 flex-col gap-y-2 divide-y divide-base-400">
                                             <li>
                                                 <ul role="list" class="-mx-1 space-y-0.5">
                                                     <li>
-                                                        <template v-if="getOwnUnit !== undefined">
-                                                            <UButton
-                                                                icon="i-mdi-information-outline"
-                                                                block
-                                                                class="flex flex-col"
-                                                                :class="ownUnitStatus"
-                                                                @click="
-                                                                    slideover.open(UnitDetailsSlideover, {
-                                                                        unit: getOwnUnit,
-                                                                    })
-                                                                "
-                                                            >
-                                                                <span class="truncate">
-                                                                    <span class="font-semibold"
-                                                                        >{{ getOwnUnit.initials }}:</span
-                                                                    >
-                                                                    {{ getOwnUnit.name }}</span
-                                                                >
-                                                                <span class="truncate text-xs">
-                                                                    <span class="font-semibold"
-                                                                        >{{ $t('common.status') }}:</span
-                                                                    >
-                                                                    {{
-                                                                        $t(
-                                                                            `enums.centrum.StatusUnit.${StatusUnit[getOwnUnit.status?.status ?? 0]}`,
-                                                                        )
-                                                                    }}
-                                                                </span>
-                                                            </UButton>
-                                                        </template>
+                                                        <UButton v-if="getOwnUnit !== undefined"
+                                                            icon="i-mdi-information-outline" block class="flex flex-col"
+                                                            :class="ownUnitStatus" @click="
+                                                                slideover.open(UnitDetailsSlideover, {
+                                                                    unit: getOwnUnit,
+                                                                })
+                                                                ">
+                                                            <span class="truncate">
+                                                                <span class="font-semibold">{{ getOwnUnit.initials
+                                                                    }}:</span>
+                                                                {{ getOwnUnit.name }}</span>
+                                                            <span class="truncate text-xs">
+                                                                <span class="font-semibold">{{ $t('common.status')
+                                                                    }}:</span>
+                                                                {{
+                                                                    $t(
+                                                                        `enums.centrum.StatusUnit.${StatusUnit[getOwnUnit.status?.status
+                                                                        ?? 0]}`,
+                                                                    )
+                                                                }}
+                                                            </span>
+                                                        </UButton>
 
-                                                        <UButton
-                                                            variant="soft"
-                                                            color="primary"
-                                                            size="xs"
-                                                            block
-                                                            @click="slideover.open(JoinUnitSlideover, {})"
-                                                        >
+                                                        <UButton variant="soft" color="primary" size="xs" block
+                                                            @click="slideover.open(JoinUnitSlideover, {})">
                                                             <template v-if="getOwnUnit === undefined">
-                                                                <UIcon name="i-mdi-information-outline" class="size-5" />
+                                                                <UIcon name="i-mdi-information-outline"
+                                                                    class="size-5" />
                                                                 <span class="mt-1 truncate">{{
                                                                     $t('common.no_own_unit')
-                                                                }}</span>
+                                                                    }}</span>
                                                             </template>
                                                             <template v-else>
-                                                                <span class="truncate">{{ $t('common.leave_unit') }}</span>
+                                                                <span class="truncate">{{ $t('common.leave_unit')
+                                                                    }}</span>
                                                             </template>
                                                         </UButton>
                                                     </li>
@@ -404,53 +384,43 @@ defineShortcuts({
                                             <template v-if="getOwnUnit !== undefined">
                                                 <li>
                                                     <ul role="list" class="-mx-1 space-y-0.5">
-                                                        <li class="inline-flex items-center text-xs font-semibold leading-6">
+                                                        <li
+                                                            class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.units') }}
-                                                            <UIcon
-                                                                v-if="!canSubmitUnitStatus"
-                                                                name="i-mdi-loading"
-                                                                class="ml-1 size-4 animate-spin"
-                                                            />
+                                                            <UIcon v-if="!canSubmitUnitStatus" name="i-mdi-loading"
+                                                                class="ml-1 size-4 animate-spin" />
                                                         </li>
+
                                                         <li>
                                                             <div class="grid grid-cols-2 gap-0.5">
-                                                                <UButton
-                                                                    v-for="item in unitStatuses"
-                                                                    :key="item.name"
+                                                                <UButton v-for="item in unitStatuses" :key="item.name"
                                                                     :ui="{ gap: 'gap-x-0.5', padding: { xs: 'px-1.5 py-1.5' } }"
-                                                                    size="xs"
-                                                                    :disabled="!canSubmitUnitStatus"
+                                                                    size="xs" :disabled="!canSubmitUnitStatus"
                                                                     :icon="item.icon"
                                                                     :class="[item.status && unitStatusToBGColor(item.status)]"
-                                                                    truncate
-                                                                    @click="
+                                                                    truncate @click="
                                                                         onSubmitUnitStatusThrottle(getOwnUnit.id!, item.status)
-                                                                    "
-                                                                >
+                                                                        ">
                                                                     <span class="line-clamp-2">
                                                                         {{
                                                                             item.status
                                                                                 ? $t(
-                                                                                      `enums.centrum.StatusUnit.${StatusUnit[item.status ?? 0]}`,
-                                                                                  )
+                                                                                    `enums.centrum.StatusUnit.${StatusUnit[item.status
+                                                                                    ?? 0]}`,
+                                                                                )
                                                                                 : $t(item.name)
                                                                         }}
                                                                     </span>
                                                                 </UButton>
 
-                                                                <UTooltip
-                                                                    class="col-span-2"
+                                                                <UTooltip class="col-span-2"
                                                                     :text="$t('components.centrum.update_unit_status.title')"
-                                                                    :shortcuts="['S', 'U']"
-                                                                >
-                                                                    <UButton
-                                                                        variant="soft"
-                                                                        color="primary"
-                                                                        size="xs"
-                                                                        block
-                                                                        @click="updateUtStatus(getOwnUnit.id)"
-                                                                    >
-                                                                        {{ $t('components.centrum.update_unit_status.title') }}
+                                                                    :shortcuts="['S', 'U']">
+                                                                    <UButton variant="soft" color="primary" size="xs"
+                                                                        block @click="updateUtStatus(getOwnUnit.id)">
+                                                                        {{
+                                                                        $t('components.centrum.update_unit_status.title')
+                                                                        }}
                                                                     </UButton>
                                                                 </UTooltip>
                                                             </div>
@@ -460,62 +430,45 @@ defineShortcuts({
 
                                                 <li>
                                                     <ul role="list" class="-mx-1 space-y-0.5">
-                                                        <li class="inline-flex items-center text-xs font-semibold leading-6">
+                                                        <li
+                                                            class="inline-flex items-center text-xs font-semibold leading-6">
                                                             {{ $t('common.dispatch') }} {{ $t('common.status') }}
-                                                            <UIcon
-                                                                v-if="!canSubmitDispatchStatus"
-                                                                name="i-mdi-loading"
-                                                                class="ml-1 size-4 animate-spin"
-                                                            />
+                                                            <UIcon v-if="!canSubmitDispatchStatus" name="i-mdi-loading"
+                                                                class="ml-1 size-4 animate-spin" />
                                                         </li>
+
                                                         <li>
                                                             <div class="grid grid-cols-2 gap-0.5">
-                                                                <UButton
-                                                                    v-for="item in dispatchStatuses.filter(
-                                                                        (s) => s.status !== StatusDispatch.CANCELLED,
-                                                                    )"
-                                                                    :key="item.name"
+                                                                <UButton v-for="item in dispatchStatuses.filter(
+                                                                    (s) => s.status !== StatusDispatch.CANCELLED,
+                                                                )" :key="item.name"
                                                                     :ui="{ gap: 'gap-x-0.5', padding: { xs: 'px-1.5 py-1.5' } }"
-                                                                    size="xs"
-                                                                    :disabled="!canSubmitDispatchStatus"
-                                                                    :icon="item.icon"
-                                                                    :class="[
+                                                                    size="xs" :disabled="!canSubmitDispatchStatus"
+                                                                    :icon="item.icon" :class="[
                                                                         item.status && dispatchStatusToBGColor(item.status),
-                                                                    ]"
-                                                                    @click="
+                                                                    ]" @click="
                                                                         onSubmitDispatchStatusThrottle(
                                                                             selectedDispatch,
                                                                             item.status,
                                                                         )
-                                                                    "
-                                                                >
+                                                                        ">
                                                                     <span class="mt-0.5 line-clamp-2">
                                                                         {{
                                                                             item.status
                                                                                 ? $t(
-                                                                                      `enums.centrum.StatusDispatch.${
-                                                                                          StatusDispatch[item.status ?? 0]
-                                                                                      }`,
-                                                                                  )
+                                                                                    `enums.centrum.StatusDispatch.${StatusDispatch[item.status ?? 0]
+                                                                                    }`,
+                                                                                )
                                                                                 : $t(item.name)
                                                                         }}
                                                                     </span>
                                                                 </UButton>
 
-                                                                <UTooltip
-                                                                    :text="
-                                                                        $t('components.centrum.update_dispatch_status.title')
-                                                                    "
-                                                                    :shortcuts="['S', 'D']"
-                                                                    class="col-span-2"
-                                                                >
-                                                                    <UButton
-                                                                        variant="soft"
-                                                                        color="primary"
-                                                                        size="xs"
+                                                                <UTooltip :text="$t('components.centrum.update_dispatch_status.title')
+                                                                    " :shortcuts="['S', 'D']" class="col-span-2">
+                                                                    <UButton variant="soft" color="primary" size="xs"
                                                                         block
-                                                                        @click="updateDspStatus(selectedDispatch)"
-                                                                    >
+                                                                        @click="updateDspStatus(selectedDispatch)">
                                                                         {{
                                                                             $t(
                                                                                 'components.centrum.update_dispatch_status.title',
@@ -529,30 +482,23 @@ defineShortcuts({
                                                 </li>
 
                                                 <li>
-                                                    <li class="inline-flex items-center text-xs font-semibold leading-6">
-                                                        {{ $t('common.your_dispatches') }}
-                                                    </li>
-                                                    <ul role="list" class="-mx-1 space-y-0.5">
-                                                        <li v-if="getSortedOwnDispatches.length === 0">
-                                                            <UButton
-                                                                variant="soft"
-                                                                color="white"
-                                                                icon="i-mdi-car-emergency"
-                                                                block
-                                                            >
-                                                                {{ $t('common.no_assigned_dispatches') }}
-                                                            </UButton>
-                                                        </li>
-                                                        <template v-else>
-                                                            <OwnDispatchEntry
-                                                                v-for="id in getSortedOwnDispatches.slice().reverse()"
-                                                                :key="id"
-                                                                v-model:selected-dispatch="selectedDispatch"
-                                                                :dispatch="dispatches.get(id)!"
+                                                <li class="inline-flex items-center text-xs font-semibold leading-6">
+                                                    {{ $t('common.your_dispatches') }}
+                                                </li>
 
-                                                            />
-                                                        </template>
-                                                    </ul>
+                                                <ul role="list" class="-mx-1 space-y-0.5">
+                                                    <li v-if="getSortedOwnDispatches.length === 0">
+                                                        <UButton variant="soft" color="white" icon="i-mdi-car-emergency"
+                                                            block>
+                                                            {{ $t('common.no_assigned_dispatches') }}
+                                                        </UButton>
+                                                    </li>
+
+                                                    <OwnDispatchEntry v-else
+                                                        v-for="id in getSortedOwnDispatches.slice().reverse()" :key="id"
+                                                        v-model:selected-dispatch="selectedDispatch"
+                                                        :dispatch="dispatches.get(id)!" />
+                                                </ul>
                                                 </li>
 
                                                 <li>
@@ -569,40 +515,26 @@ defineShortcuts({
                             <!-- "Take Dispatches" Button -->
                             <template v-if="open && getOwnUnit !== undefined">
                                 <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
-                                    <UChip
-                                        :ui="{
-                                            base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
-                                        }"
-                                        position="top-left"
-                                        size="xl"
-                                        color="red"
-                                        :show="pendingDispatches.length > 0"
-                                    >
-                                        <UTooltip :text="$t('components.centrum.take_dispatch.title')" :shortcuts="['M', 'D']">
-                                            <UButton
-                                                :color="pendingDispatches.length > 0 ? 'red' : 'primary'"
-                                                size="xl"
+                                    <UChip :ui="{
+                                        base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
+                                    }" position="top-left" size="xl" color="red"
+                                        :show="pendingDispatches.length > 0">
+                                        <UTooltip :text="$t('components.centrum.take_dispatch.title')"
+                                            :shortcuts="['M', 'D']">
+                                            <UButton :color="pendingDispatches.length > 0 ? 'red' : 'primary'" size="xl"
                                                 icon="i-mdi-car-emergency"
-                                                class="flex size-12 items-center justify-center"
-                                                :class="[
+                                                class="flex size-12 items-center justify-center" :class="[
                                                     getOwnUnit.homePostal !== undefined ? 'rounded-l-full' : 'rounded-full',
-                                                ]"
-                                                @click="openTakeDispatches"
-                                            />
+                                                ]" @click="openTakeDispatches" />
                                         </UTooltip>
                                     </UChip>
 
-                                    <UTooltip
-                                        v-if="getOwnUnit.homePostal !== undefined"
+                                    <UTooltip v-if="getOwnUnit.homePostal !== undefined"
                                         :text="`${$t('common.mark')}: ${$t('common.department_postal')}`"
-                                        :shortcuts="['M', 'H']"
-                                    >
-                                        <UButton
-                                            class="flex size-12 items-center justify-center rounded-r-full"
-                                            size="xl"
-                                            icon="i-mdi-home-floor-b"
-                                            @click="setWaypointPLZ(getOwnUnit.homePostal)"
-                                        />
+                                        :shortcuts="['M', 'H']">
+                                        <UButton class="flex size-12 items-center justify-center rounded-r-full"
+                                            size="xl" icon="i-mdi-home-floor-b"
+                                            @click="setWaypointPLZ(getOwnUnit.homePostal)" />
                                     </UTooltip>
                                 </span>
                             </template>

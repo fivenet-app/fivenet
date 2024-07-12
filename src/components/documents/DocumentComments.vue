@@ -1,13 +1,13 @@
 <script setup lang="ts">
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
+import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import { type Comment } from '~~/gen/ts/resources/documents/comment';
 import { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import DocumentCommentEntry from '~/components/documents/DocumentCommentEntry.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import Pagination from '~/components/partials/Pagination.vue';
 
 const props = withDefaults(
     defineProps<{

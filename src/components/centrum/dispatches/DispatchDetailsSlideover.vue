@@ -3,17 +3,17 @@ import DispatchAssignModal from '~/components/centrum/dispatches//DispatchAssign
 import DispatchFeed from '~/components/centrum/dispatches/DispatchFeed.vue';
 import DispatchStatusUpdateModal from '~/components/centrum/dispatches/DispatchStatusUpdateModal.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
+import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
+import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
+import { useLivemapStore } from '~/store/livemap';
 import { useNotificatorStore } from '~/store/notificator';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
-import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
-import DispatchReferences from '~/components/centrum/partials/DispatchReferences.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { useLivemapStore } from '~/store/livemap';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

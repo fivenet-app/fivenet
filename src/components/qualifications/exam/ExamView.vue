@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { isPast } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import type { ExamQuestions, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
 import type { GetExamInfoResponse, TakeExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import ExamViewQuestions from './ExamViewQuestions.vue';
-import type { ExamQuestions, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
-import { isPast } from 'date-fns';
 
 const props = defineProps<{
     qualificationId: string;

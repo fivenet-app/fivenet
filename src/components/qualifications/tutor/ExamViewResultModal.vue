@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationResultTutorForm from './QualificationResultTutorForm.vue';
 import ExamViewQuestions from '../exam/ExamViewQuestions.vue';
+import QualificationResultTutorForm from './QualificationResultTutorForm.vue';
 
 const props = defineProps<{
     qualificationId: string;

@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { type RoutesNamedLocations, type TypedRouteFromName } from '@typed-router';
 import ColleagueInfo from '~/components/jobs/colleagues/info/ColleagueInfo.vue';
-import type { Perms } from '~~/gen/ts/perms';
+import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
+import type { Perms } from '~~/gen/ts/perms';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 
 useHead({

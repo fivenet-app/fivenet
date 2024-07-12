@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 
 defineProps<{
     provider: OAuth2Provider;

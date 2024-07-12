@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { useCalendarStore } from '~/store/calendar';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import Pagination from '../partials/Pagination.vue';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 
 const { isOpen } = useModal();
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 import OAuth2Connection from '~/components/auth/account/OAuth2Connection.vue';
+import { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 
 const props = defineProps<{
     providers: OAuth2Provider[];

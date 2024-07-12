@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { vMaska } from 'maska';
 import { CodeDiff } from 'v-code-diff';
+import { z } from 'zod';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
-import { DiscordSyncChange, JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
-import SquareImg from '~/components/partials/elements/SquareImg.vue';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { DiscordSyncChange, JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 
 const { t } = useI18n();
 

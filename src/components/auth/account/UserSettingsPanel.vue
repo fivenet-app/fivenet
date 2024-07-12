@@ -3,7 +3,7 @@ import type { RoutePathSchema } from '@typed-router';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
-import { primaryColors, backgroundColors } from './settings';
+import { backgroundColors, primaryColors } from './settings';
 
 const { t } = useI18n();
 

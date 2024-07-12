@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import { useAuthStore } from '~/store/auth';
-import { Comment } from '~~/gen/ts/resources/documents/comment';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
+import { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

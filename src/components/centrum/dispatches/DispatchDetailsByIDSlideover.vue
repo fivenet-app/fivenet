@@ -1,7 +1,7 @@
 <script lang="ts" setup>
-import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { useCentrumStore } from '~/store/centrum';
+import type { GetDispatchResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     dispatchId: string;

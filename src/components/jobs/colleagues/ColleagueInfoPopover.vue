@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import { isFuture } from 'date-fns';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
-import { useAuthStore } from '~/store/auth';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { isFuture } from 'date-fns';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useAuthStore } from '~/store/auth';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
 const props = withDefaults(
     defineProps<{

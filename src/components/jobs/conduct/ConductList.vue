@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
-import { User } from '~~/gen/ts/resources/users/users';
 import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
-import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { useCompletorStore } from '~/store/completor';
-import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { useCompletorStore } from '~/store/completor';
+import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
+import { User } from '~~/gen/ts/resources/users/users';
+import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ConductViewSlideover from './ConductViewSlideover.vue';
+import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
 
 const props = defineProps<{
     userId?: number;

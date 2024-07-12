@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import { useAuthStore } from '~/store/auth';
-import { useSettingsStore } from '~/store/settings';
 import { useCookiesStore } from '~/store/cookies';
+import { useSettingsStore } from '~/store/settings';
 
 const { login } = useAppConfig();
 

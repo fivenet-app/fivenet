@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import 'jodit/es5/jodit.min.css';
 import { Jodit } from 'jodit';
+import 'jodit/es5/jodit.min.css';
 // @ts-ignore jodit-vue has types, but they are not detected
 import { JoditEditor } from 'jodit-vue';
 import type { IJodit } from 'jodit/types/types';

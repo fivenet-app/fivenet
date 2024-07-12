@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useClipboardStore } from '~/store/clipboard';
 import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
+import { useClipboardStore } from '~/store/clipboard';
 
 const { isOpen } = useModal();
 

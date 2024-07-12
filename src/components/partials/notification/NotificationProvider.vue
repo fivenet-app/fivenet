@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { notificationTypeToIcon, notificationTypeToColor } from '~/components/partials/notification/helpers';
 
 const { t } = useI18n();
 

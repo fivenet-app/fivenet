@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { useSettingsStore } from '~/store/settings';
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
-import { useNotificatorStore } from '~/store/notificator';
 import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 import { toDuration } from '~/utils/duration';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 
 const { t } = useI18n();
 

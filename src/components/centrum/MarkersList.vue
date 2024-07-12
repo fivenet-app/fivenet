@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useLivemapStore } from '~/store/livemap';
-import GenericTime from '../partials/elements/GenericTime.vue';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
-import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { useLivemapStore } from '~/store/livemap';
+import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
+import GenericTime from '../partials/elements/GenericTime.vue';
 
 const { t } = useI18n();
 

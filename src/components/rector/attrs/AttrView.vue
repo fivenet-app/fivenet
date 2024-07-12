@@ -1,15 +1,14 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
 import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
-import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     roleId: string;

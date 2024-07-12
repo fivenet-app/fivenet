@@ -1,17 +1,16 @@
 <script lang="ts" setup>
-import { z } from 'zod';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import type { Perms } from '~~/gen/ts/perms';
-import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
-import { useAuthStore } from '~/store/auth';
-import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
-import Pagination from '~/components/partials/Pagination.vue';
-import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
 import { isFuture } from 'date-fns';
+import { z } from 'zod';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import Pagination from '~/components/partials/Pagination.vue';
+import { useAuthStore } from '~/store/auth';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import type { ListColleaguesResponse } from '~~/gen/ts/services/jobs/jobs';
+import SelfServicePropsAbsenceDateModal from './SelfServicePropsAbsenceDateModal.vue';
 
 const { t } = useI18n();
 

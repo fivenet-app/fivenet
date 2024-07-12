@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { Form } from '#ui/types';
+import { z } from 'zod';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
-import { checkIfCanAccessColleague } from '../colleagues/helpers';
+import Pagination from '~/components/partials/Pagination.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
-import Pagination from '~/components/partials/Pagination.vue';
+import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
+import { checkIfCanAccessColleague } from '../colleagues/helpers';
 
 const { t } = useI18n();
 

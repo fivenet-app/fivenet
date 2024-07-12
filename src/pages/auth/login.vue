@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { useAuthStore, logger as authLogger } from '~/store/auth';
-import { useNotificatorStore } from '~/store/notificator';
 import ForgotPasswordForm from '~/components/auth/ForgotPasswordForm.vue';
 import LoginForm from '~/components/auth/LoginForm.vue';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import { logger as authLogger, useAuthStore } from '~/store/auth';
+import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 useHead({

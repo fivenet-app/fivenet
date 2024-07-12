@@ -2,8 +2,8 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { useCompletorStore } from '~/store/completor';
 import LawBookEntry from '~/components/rector/laws/LawBookEntry.vue';
+import { useCompletorStore } from '~/store/completor';
 import type { Law } from '~~/gen/ts/resources/laws/laws';
 
 const completorStore = useCompletorStore();

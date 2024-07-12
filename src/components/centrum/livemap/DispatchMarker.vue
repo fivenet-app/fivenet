@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
+import { BellIcon } from 'mdi-vue3';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchStatusToFillColor } from '~/components/centrum/helpers';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useLivemapStore } from '~/store/livemap';
-import { BellIcon } from 'mdi-vue3';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{

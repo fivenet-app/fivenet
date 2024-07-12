@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { useCentrumStore } from '~/store/centrum';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
-import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor } from '../helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import UnitInfoPopover from '../units/UnitInfoPopover.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useCentrumStore } from '~/store/centrum';
+import { useLivemapStore } from '~/store/livemap';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor } from '../helpers';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
+import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
+import UnitInfoPopover from '../units/UnitInfoPopover.vue';
+import DispatchAssignModal from './DispatchAssignModal.vue';
 import DispatchDetailsByIDSlideover from './DispatchDetailsByIDSlideover.vue';
 import DispatchStatusUpdateModal from './DispatchStatusUpdateModal.vue';
-import DispatchAssignModal from './DispatchAssignModal.vue';
-import { useLivemapStore } from '~/store/livemap';
 
 const props = withDefaults(
     defineProps<{

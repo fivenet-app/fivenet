@@ -2,10 +2,10 @@
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import Pagination from '~/components/partials/Pagination.vue';
 import QualificationsRequestsListEntry from '~/components/qualifications/QualificationsRequestsListEntry.vue';
 import type { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import Pagination from '~/components/partials/Pagination.vue';
+import type { ListQualificationRequestsResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = withDefaults(
     defineProps<{

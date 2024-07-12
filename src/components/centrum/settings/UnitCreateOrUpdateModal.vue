@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { Unit } from '~~/gen/ts/resources/centrum/units';
+import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
+import { Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
     unit?: Unit;

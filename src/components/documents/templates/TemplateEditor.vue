@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
+import SingleHint from '~/components/SingleHint.vue';
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
+import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
+import type { ObjectSpecsValue } from '~/components/documents/templates/types';
+import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { Category } from '~~/gen/ts/resources/documents/category';
+import type { Template } from '~~/gen/ts/resources/documents/templates';
 import { ObjectSpecs, TemplateJobAccess, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { CreateTemplateRequest, UpdateTemplateRequest } from '~~/gen/ts/services/docstore/docstore';
-import TemplateSchemaEditor, { type SchemaEditorValue } from '~/components/documents/templates/TemplateSchemaEditor.vue';
-import type { ObjectSpecsValue } from '~/components/documents/templates/types';
-import type { Template } from '~~/gen/ts/resources/documents/templates';
-import SingleHint from '~/components/SingleHint.vue';
-import DocEditor from '~/components/partials/DocEditor.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     templateId?: string;

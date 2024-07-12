@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import type { GetMOTDResponse, SetMOTDResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const { data, pending: loading, refresh } = useLazyAsyncData('jobs-motd', () => getMOTD());

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { useCompletorStore } from '~/store/completor';
+import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const { isOpen } = useModal();
 

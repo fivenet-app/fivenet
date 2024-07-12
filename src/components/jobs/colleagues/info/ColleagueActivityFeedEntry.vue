@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { jobsUserActivityTypeBGColor, jobsUserActivityTypeIcon } from '~/components/jobs/colleagues/info/helpers';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { JobsUserActivityType, type JobsUserActivity } from '~~/gen/ts/resources/jobs/colleagues';
 import ColleagueInfoPopover from '../ColleagueInfoPopover.vue';
 

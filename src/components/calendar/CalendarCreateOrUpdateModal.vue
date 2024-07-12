@@ -1,19 +1,19 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-import { useCalendarStore } from '~/store/calendar';
+import { z } from 'zod';
 import { primaryColors } from '~/components/auth/account/settings';
 import { useAuthStore } from '~/store/auth';
-import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
-import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
+import type { AccessLevel, CalendarAccess } from '~~/gen/ts/resources/calendar/access';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
+import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 
 const props = defineProps<{
     calendarId?: string;

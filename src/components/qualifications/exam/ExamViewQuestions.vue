@@ -1,14 +1,13 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { Form, FormSubmitEvent } from '#ui/types';
-import type { ExamQuestions, ExamResponse, ExamResponses } from '~~/gen/ts/resources/qualifications/exam';
-import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { ExamUser } from '~~/gen/ts/resources/qualifications/exam';
-import ExamViewQuestion from './ExamViewQuestion.vue';
+import { differenceInMinutes, isPast } from 'date-fns';
+import { z } from 'zod';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { differenceInMinutes, isPast } from 'date-fns';
+import type { ExamQuestions, ExamResponse, ExamResponses, ExamUser } from '~~/gen/ts/resources/qualifications/exam';
+import type { QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { SubmitExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import ExamViewQuestion from './ExamViewQuestion.vue';
 
 const props = defineProps<{
     qualificationId: string;

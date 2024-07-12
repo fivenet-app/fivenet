@@ -2,6 +2,7 @@
 import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
 import TemplatePreviewModal from '~/components/documents/templates/TemplatePreviewModal.vue';
 import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -9,7 +10,6 @@ import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

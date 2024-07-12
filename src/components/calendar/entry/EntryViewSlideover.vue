@@ -1,19 +1,19 @@
 <script lang="ts" setup>
+import { isSameDay } from 'date-fns';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import EntryRSVPList from './EntryRSVPList.vue';
-import { useCalendarStore } from '~/store/calendar';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import EntryCreateOrUpdateModal from './EntryCreateOrUpdateModal.vue';
-import { checkCalendarAccess } from '../helpers';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { isSameDay } from 'date-fns';
 import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
+import { useCalendarStore } from '~/store/calendar';
 import { useNotificatorStore } from '~/store/notificator';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { checkCalendarAccess } from '../helpers';
+import EntryCreateOrUpdateModal from './EntryCreateOrUpdateModal.vue';
+import EntryRSVPList from './EntryRSVPList.vue';
 
 const props = defineProps<{
     entryId: string;

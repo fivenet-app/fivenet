@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import { VueDraggable } from 'vue-draggable-plus';
+import { z } from 'zod';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{

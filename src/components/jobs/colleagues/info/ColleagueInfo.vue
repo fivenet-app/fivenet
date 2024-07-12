@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import { isFuture } from 'date-fns';
 import SelfServicePropsAbsenceDateModal from '~/components/jobs/colleagues/SelfServicePropsAbsenceDateModal.vue';
 import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import { useAuthStore } from '~/store/auth';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { useAuthStore } from '~/store/auth';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import { isFuture } from 'date-fns';
 
 defineProps<{
     colleague: Colleague;

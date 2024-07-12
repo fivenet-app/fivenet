@@ -1,10 +1,10 @@
 <script lang="ts" setup>
+import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
+import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
-import TakeDispatchEntry from '~/components/centrum/livemap/TakeDispatchEntry.vue';
-import { isStatusDispatchCompleted } from '~/components/centrum/helpers';
 
 const { isOpen } = useSlideover();
 

@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/ColleagueActivityFeedEntry.vue';
-import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
-import { JobsUserActivityType, type Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import { useCompletorStore } from '~/store/completor';
 import Pagination from '~/components/partials/Pagination.vue';
+import { useCompletorStore } from '~/store/completor';
+import { JobsUserActivityType, type Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
 
 const props = withDefaults(
     defineProps<{

@@ -1,17 +1,17 @@
 <script lang="ts" setup>
 import type { Group } from '#ui/types';
-import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
-import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
-import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
-import { useAuthStore } from '~/store/auth';
-import type { Perms } from '~~/gen/ts/perms';
-import UserDropdown from '~/components/UserDropdown.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
 import DashboardSidebarLinks from '~/components/partials/dashboard/DashboardSidebarLinks.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
+import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
+import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
+import TopLogoDropdown from '~/components/TopLogoDropdown.vue';
+import UserDropdown from '~/components/UserDropdown.vue';
+import { useAuthStore } from '~/store/auth';
 import { messengerDB } from '~/store/messenger';
+import type { Perms } from '~~/gen/ts/perms';
 
 const authStore = useAuthStore();
 const { activeChar, jobProps } = storeToRefs(authStore);

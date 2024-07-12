@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import LicensePlate from '~/components/partials/LicensePlate.vue';
-import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import Pagination from '~/components/partials/Pagination.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import Pagination from '~/components/partials/Pagination.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
+import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 
 const { t } = useI18n();
 

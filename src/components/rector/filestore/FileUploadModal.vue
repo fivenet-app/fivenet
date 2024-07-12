@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import type { File, FileInfo } from '~~/gen/ts/resources/filestore/file';
 import type { UploadFileResponse } from '~~/gen/ts/services/rector/filestore';
 

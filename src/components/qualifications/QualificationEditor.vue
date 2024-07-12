@@ -1,28 +1,28 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
+import DocEditor from '~/components/partials/DocEditor.vue';
+import QualificationAccessEntry from '~/components/qualifications/QualificationAccessEntry.vue';
+import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
+import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
+import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import {
     type Qualification,
-    QualificationRequirement,
-    QualificationShort,
     QualificationExamMode,
     QualificationExamSettings,
+    QualificationRequirement,
+    QualificationShort,
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
     CreateQualificationResponse,
     UpdateQualificationResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
-import QualificationAccessEntry from '~/components/qualifications/QualificationAccessEntry.vue';
-import QualificationRequirementEntry from '~/components/qualifications/QualificationRequirementEntry.vue';
-import { useAuthStore } from '~/store/auth';
-import { useCompletorStore } from '~/store/completor';
-import DocEditor from '~/components/partials/DocEditor.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import ExamEditor from './exam/ExamEditor.vue';
-import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
     qualificationId?: string;

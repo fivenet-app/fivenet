@@ -1,14 +1,14 @@
 <script setup lang="ts">
+import type { FormSubmitEvent } from '#ui/types';
 import { isToday } from 'date-fns';
 import { z } from 'zod';
-import type { FormSubmitEvent } from '#ui/types';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { messengerDB, useMessengerStore } from '~/store/messenger';
+import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
+import type { Message } from '~~/gen/ts/resources/messenger/message';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '../partials/elements/GenericTime.vue';
 import { canAccessThread } from './helpers';
-import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
-import type { Message } from '~~/gen/ts/resources/messenger/message';
 
 const props = withDefaults(
     defineProps<{

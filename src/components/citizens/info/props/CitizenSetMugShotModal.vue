@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import SquareImg from '~/components/partials/elements/SquareImg.vue';
 import { useNotificatorStore } from '~/store/notificator';
-import { User, UserProps } from '~~/gen/ts/resources/users/users';
 import type { File as FilestoreFile } from '~~/gen/ts/resources/filestore/file';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     user: User;

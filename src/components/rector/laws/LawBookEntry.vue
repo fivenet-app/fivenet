@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
-import LawEntry from '~/components/rector/laws/LawEntry.vue';
+import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import LawEntry from '~/components/rector/laws/LawEntry.vue';
+import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
     modelValue: LawBook;

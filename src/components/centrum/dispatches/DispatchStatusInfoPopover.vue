@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches//DispatchDetailsByIDSlideover.vue';
+import { DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
     status: DispatchStatus | undefined;

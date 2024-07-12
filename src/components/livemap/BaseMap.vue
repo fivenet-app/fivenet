@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useRouteHash } from '@vueuse/router';
-import L, { extend, latLngBounds, CRS, LatLng, Projection, Transformation, type PointExpression } from 'leaflet';
-import 'leaflet/dist/leaflet.css';
+import L, { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet-contextmenu';
+import 'leaflet/dist/leaflet.css';
+import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { type ValueOf } from '~/utils/types';
-import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 
 defineProps<{
     mapOptions?: Record<string, any>;

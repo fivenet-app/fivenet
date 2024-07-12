@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import type { GroupedUnits } from '~/components/centrum/helpers';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
-import type { GroupedUnits } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
 const { dispatches, getSortedUnits } = storeToRefs(centrumStore);

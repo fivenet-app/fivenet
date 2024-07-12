@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import { useNotificatorStore } from '~/store/notificator';
-import { User, UserProps } from '~~/gen/ts/resources/users/users';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     user: User;

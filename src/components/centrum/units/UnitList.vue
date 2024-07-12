@@ -1,8 +1,8 @@
 <script lang="ts" setup>
-import { useCentrumStore } from '~/store/centrum';
-import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
-import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { statusOrder, type GroupedUnits } from '~/components/centrum/helpers';
+import UnitListEntry from '~/components/centrum/units/UnitListEntry.vue';
+import { useCentrumStore } from '~/store/centrum';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const centrumStore = useCentrumStore();
 const { getSortedUnits, abort, reconnecting } = storeToRefs(centrumStore);

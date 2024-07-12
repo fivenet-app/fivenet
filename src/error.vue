@@ -1,7 +1,7 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script setup lang="ts">
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import '~/assets/css/herofull-pattern.css';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 useHead({
     title: 'Error occured - FiveNet',

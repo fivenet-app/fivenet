@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { SetProfilePictureRequest } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);

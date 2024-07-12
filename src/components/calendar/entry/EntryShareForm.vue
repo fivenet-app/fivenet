@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
-import { useCompletorStore } from '~/store/completor';
+import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { ShareCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{
     entryId: string;

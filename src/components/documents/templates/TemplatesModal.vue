@@ -2,10 +2,10 @@
 import ClipboardCitizens from '~/components/clipboard/modal/ClipboardCitizens.vue';
 import ClipboardDocuments from '~/components/clipboard/modal/ClipboardDocuments.vue';
 import ClipboardVehicles from '~/components/clipboard/modal/ClipboardVehicles.vue';
+import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
+import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { TemplateRequirements, TemplateShort } from '~~/gen/ts/resources/documents/templates';
-import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
-import TemplateRequirementsList from '~/components/documents/templates/TemplateRequirementsList.vue';
 
 const clipboardStore = useClipboardStore();
 

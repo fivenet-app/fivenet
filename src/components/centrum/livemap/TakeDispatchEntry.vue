@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import DispatchDetailsSlideover from '~/components/centrum/dispatches/DispatchDetailsSlideover.vue';
 import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
+import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes.vue';
 import { useLivemapStore } from '~/store/livemap';
+import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{

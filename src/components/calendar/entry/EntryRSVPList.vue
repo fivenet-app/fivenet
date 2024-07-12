@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -8,7 +9,6 @@ import { useCalendarStore } from '~/store/calendar';
 import { CalendarEntryRSVP, RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import EntryShareForm from './EntryShareForm.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 
 const props = withDefaults(
     defineProps<{

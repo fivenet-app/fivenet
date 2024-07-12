@@ -1,15 +1,15 @@
 <script lang="ts" setup>
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import Pagination from '~/components/partials/Pagination.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationResultResponse,
     ListQualificationsResultsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
-import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { resultStatusToTextColor } from '../helpers';
-import Pagination from '~/components/partials/Pagination.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(

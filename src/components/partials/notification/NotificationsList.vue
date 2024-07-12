@@ -4,11 +4,11 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { useNotificatorStore } from '~/store/notificator';
-import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 import Pagination from '~/components/partials/Pagination.vue';
-import { notificationCategoryToIcon } from './helpers';
+import { useNotificatorStore } from '~/store/notificator';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
+import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
+import { notificationCategoryToIcon } from './helpers';
 
 defineEmits<{
     (e: 'clicked'): void;

@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { format, addDays, subDays, isFuture } from 'date-fns';
+import { addDays, format, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
-import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
-import { getWeekNumber } from '~/utils/time';
-import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
-import { useCompletorStore } from '~/store/completor';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import Pagination from '~/components/partials/Pagination.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import { useCompletorStore } from '~/store/completor';
+import { getWeekNumber } from '~/utils/time';
+import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
+import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 
 const { t } = useI18n();

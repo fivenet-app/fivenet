@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
-import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import UnitAttributes from '../partials/UnitAttributes.vue';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
+import UnitAttributes from '../partials/UnitAttributes.vue';
 
 const { t } = useI18n();
 

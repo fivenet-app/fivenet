@@ -1,12 +1,12 @@
 <script lang="ts" setup>
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
-import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import QualificationRequestUserModal from '~/components/qualifications/QualificationRequestUserModal.vue';
 import {
     checkQualificationAccess,
     requestStatusToBadgeColor,
@@ -15,11 +15,11 @@ import {
     resultStatusToBadgeColor,
     resultStatusToTextColor,
 } from '~/components/qualifications/helpers';
-import QualificationRequestUserModal from '~/components/qualifications/QualificationRequestUserModal.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import QualificationTutorView from './tutor/QualificationTutorView.vue';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
+import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
+import QualificationTutorView from './tutor/QualificationTutorView.vue';
 
 const props = defineProps<{
     qualificationId: string;

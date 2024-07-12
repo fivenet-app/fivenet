@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import { LPopup } from '@vue-leaflet/vue-leaflet';
-import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
 defineProps<{

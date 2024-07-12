@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
-import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { z } from 'zod';
+import { checkDocAccess } from '~/components/documents/helpers';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel, type DocumentAccess } from '~~/gen/ts/resources/documents/access';
-import { checkDocAccess } from '~/components/documents/helpers';
-import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
+import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
+import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { ListDocumentReqsResponse } from '~~/gen/ts/services/docstore/docstore';
+import DocumentRequestsListEntry from './DocumentRequestsListEntry.vue';
 
 const props = defineProps<{
     access: DocumentAccess;

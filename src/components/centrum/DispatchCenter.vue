@@ -1,15 +1,15 @@
 <script lang="ts" setup>
 import { Pane, Splitpanes } from 'splitpanes';
 import 'splitpanes/dist/splitpanes.css';
+import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
 import DispatchList from '~/components/centrum/dispatches/DispatchList.vue';
+import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
+import MarkersList from '~/components/centrum/MarkersList.vue';
 import UnitList from '~/components/centrum/units/UnitList.vue';
 import LivemapBase from '~/components/livemap/LivemapBase.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
-import CentrumFeed from '~/components/centrum/CentrumFeed.vue';
-import DispatchesLayer from '~/components/centrum/livemap/DispatchesLayer.vue';
-import MarkersList from '~/components/centrum/MarkersList.vue';
 import DisponentsInfo from './disponents/DisponentsInfo.vue';
 import StreamControl from './StreamControl.vue';
 

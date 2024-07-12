@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { useNotificatorStore } from '~/store/notificator';
 import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import { useNotificatorStore } from '~/store/notificator';
 
 const { isNotificationsSlideoverOpen } = useDashboard();
 

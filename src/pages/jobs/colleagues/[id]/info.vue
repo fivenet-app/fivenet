@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import type { TypedRouteFromName } from '@typed-router';
+import { z } from 'zod';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
+import { useAuthStore } from '~/store/auth';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { SetJobsUserPropsResponse } from '~~/gen/ts/services/jobs/jobs';
-import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import { useAuthStore } from '~/store/auth';
-import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.single.title',

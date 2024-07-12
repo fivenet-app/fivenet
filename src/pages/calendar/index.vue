@@ -1,18 +1,18 @@
 <script lang="ts" setup>
+import { useRouteQuery } from '@vueuse/router';
+import { addDays, isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
-import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
-import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
-import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
-import { useCalendarStore } from '~/store/calendar';
 import CalendarCreateOrUpdateModal from '~/components/calendar/CalendarCreateOrUpdateModal.vue';
 import CalendarViewSlideover from '~/components/calendar/CalendarViewSlideover.vue';
 import FindCalendarsModal from '~/components/calendar/FindCalendarsModal.vue';
-import { addDays, isFuture, isPast, isSameDay, isToday } from 'date-fns';
-import { useRouteQuery } from '@vueuse/router';
+import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
+import EntryViewSlideover from '~/components/calendar/entry/EntryViewSlideover.vue';
+import MonthCalendarClient from '~/components/partials/MonthCalendar.client.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useCalendarStore } from '~/store/calendar';
+import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import type { ListCalendarsResponse } from '~~/gen/ts/services/calendar/calendar';
 
 useHead({
     title: 'common.calendar',

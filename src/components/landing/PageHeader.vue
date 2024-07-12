@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/store/auth';
-import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 import LanguageSwitcherModal from '~/components/partials/LanguageSwitcherModal.vue';
+import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
+import { useAuthStore } from '~/store/auth';
 
 const { t } = useI18n();
 

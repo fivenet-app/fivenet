@@ -1,10 +1,10 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import { ConductType, type ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { conductTypesToBadgeColor } from './helpers';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 
 defineProps<{
     entry: ConductEntry & { creator?: { value: Colleague } };

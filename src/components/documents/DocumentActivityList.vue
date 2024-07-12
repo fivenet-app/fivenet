@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
+import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DocumentActivityListEntry from '~/components/documents/DocumentActivityListEntry.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import type { ListDocumentActivityResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const props = defineProps<{
     documentId: string;

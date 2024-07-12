@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import TimeclockInactiveList from '~/components/jobs/timeclock/TimeclockInactiveList.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
+import TimeclockInactiveList from '~/components/jobs/timeclock/TimeclockInactiveList.vue';
 
 useHead({
     title: 'common.inactive_colleagues',

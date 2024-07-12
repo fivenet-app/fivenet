@@ -28,8 +28,8 @@
 </template>
 
 <script setup lang="ts">
+import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import type { PropType } from 'vue';
-import { useBreakpoints, breakpointsTailwind } from '@vueuse/core';
 
 const config = {
     wrapper: 'flex-col items-stretch relative w-full',

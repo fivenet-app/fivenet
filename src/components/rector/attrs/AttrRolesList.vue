@@ -1,13 +1,13 @@
 <script lang="ts" setup>
 import { z } from 'zod';
-import AttrView from '~/components/rector/attrs/AttrView.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import AttrView from '~/components/rector/attrs/AttrView.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { Role } from '~~/gen/ts/resources/permissions/permissions';
 import { Job } from '~~/gen/ts/resources/users/jobs';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const { t } = useI18n();
 

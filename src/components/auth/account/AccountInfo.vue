@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 import ChangePasswordModal from '~/components/auth/account/ChangePasswordModal.vue';
 import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.vue';
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
-import { useSettingsStore } from '~/store/settings';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import { useSettingsStore } from '~/store/settings';
+import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 
 const { t } = useI18n();
 

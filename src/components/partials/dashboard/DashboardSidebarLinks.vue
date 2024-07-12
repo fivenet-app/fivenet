@@ -146,14 +146,14 @@
 </template>
 
 <script setup lang="ts">
-import type { PropType } from 'vue';
 import { Disclosure, DisclosureButton, DisclosurePanel, provideUseId } from '@headlessui/vue';
+import type { PropType } from 'vue';
 // @ts-ignore
-import { twMerge, twJoin } from 'tailwind-merge';
-import { getULinkProps } from '#ui/utils';
-import type { ChipColor } from '#ui/types';
-import type { DashboardSidebarLink } from '#ui-pro/types';
 import { useId } from '#imports';
+import type { DashboardSidebarLink } from '#ui-pro/types';
+import type { ChipColor } from '#ui/types';
+import { getULinkProps } from '#ui/utils';
+import { twJoin, twMerge } from 'tailwind-merge';
 
 const appConfig = useAppConfig();
 

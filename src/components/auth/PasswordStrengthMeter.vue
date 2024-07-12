@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
 import type { ProgressColor } from '#ui/types';
+import { zxcvbn, zxcvbnOptions } from '@zxcvbn-ts/core';
 
 const props = defineProps<{
     input: string;

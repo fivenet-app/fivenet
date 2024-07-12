@@ -1,19 +1,19 @@
 <script lang="ts" setup>
+import type { FormSubmitEvent } from '#ui/types';
 import { addHours, addMinutes, format, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import { z } from 'zod';
-import type { FormSubmitEvent } from '#ui/types';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
-import DocEditor from '~/components/partials/DocEditor.vue';
-import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
-import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
-import { useCalendarStore } from '~/store/calendar';
-import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import DocEditor from '~/components/partials/DocEditor.vue';
+import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
+import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
+import type { CalendarShort } from '~~/gen/ts/resources/calendar/calendar';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { CreateOrUpdateCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 
 const props = defineProps<{
     calendarId?: string;

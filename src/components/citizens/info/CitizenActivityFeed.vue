@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 import CitizenActivityFeedEntry from '~/components/citizens/info/CitizenActivityFeedEntry.vue';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useAuthStore } from '~/store/auth';
+import { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const props = defineProps<{
     userId: number;

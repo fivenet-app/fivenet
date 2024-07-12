@@ -1,16 +1,16 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import { vMaska } from 'maska';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { attr } from '~/composables/can';
-import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
-import type { User } from '~~/gen/ts/resources/users/users';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
+import { z } from 'zod';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import { attr } from '~/composables/can';
+import { useClipboardStore } from '~/store/clipboard';
+import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import type { User } from '~~/gen/ts/resources/users/users';
+import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const { t } = useI18n();
 

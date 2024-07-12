@@ -1,20 +1,20 @@
 <script lang="ts" setup>
 import { format } from 'date-fns';
-import { z } from 'zod';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { useCompletorStore } from '~/store/completor';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
-import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
-import { useNotificatorStore } from '~/store/notificator';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
-import Pagination from '~/components/partials/Pagination.vue';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
+import { z } from 'zod';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import Pagination from '~/components/partials/Pagination.vue';
+import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { AuditEntry, EventType } from '~~/gen/ts/resources/rector/audit';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';
 
 const { d, t } = useI18n();
 

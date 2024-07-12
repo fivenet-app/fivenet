@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import type { Button } from '#ui/types';
-import { useAuthStore } from '~/store/auth';
 import '~/assets/css/herofull-pattern.css';
-import { handleError } from 'vue';
+import { useAuthStore } from '~/store/auth';
 
 useHead({
     title: 'common.home',

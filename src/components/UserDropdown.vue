@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { useAuthStore } from '~/store/auth';
 import SuperUserJobSelection from '~/components/partials/SuperUserJobSelection.vue';
+import { useAuthStore } from '~/store/auth';
 import LanguageSwitcherModal from './partials/LanguageSwitcherModal.vue';
 
 const { isDashboardSearchModalOpen } = useUIState();

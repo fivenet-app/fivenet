@@ -1,6 +1,6 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
 import { useNotificatorStore } from '~/store/notificator';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';

@@ -1,10 +1,10 @@
 <script setup lang="ts">
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { UserActivity } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import type { CitizenAttributes } from '~~/gen/ts/resources/users/users';
-import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
+import { UserActivity } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     activity: UserActivity;

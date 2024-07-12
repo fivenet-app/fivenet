@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { logger } from '~/components/documents/helpers';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
 import { Template } from '~~/gen/ts/resources/documents/templates';
-import { logger } from '~/components/documents/helpers';
 
 const props = defineProps<{
     templateId: string;

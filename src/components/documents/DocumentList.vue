@@ -1,18 +1,18 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import { watchDebounced } from '@vueuse/shared';
 import { format } from 'date-fns';
+import { z } from 'zod';
+import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
+import { useSettingsStore } from '~/store/settings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
-import Pagination from '~/components/partials/Pagination.vue';
-import { useSettingsStore } from '~/store/settings';
 
 const { t } = useI18n();
 

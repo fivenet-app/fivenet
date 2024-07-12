@@ -1,21 +1,21 @@
 <script lang="ts" setup>
-import AddToButton from '~/components/clipboard/AddToButton.vue';
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
-import { User } from '~~/gen/ts/resources/users/users';
 import CitizenActivityFeed from '~/components/citizens/info/CitizenActivityFeed.vue';
 import CitizenDocuments from '~/components/citizens/info/CitizenDocuments.vue';
 import CitizenProfile from '~/components/citizens/info/CitizenProfile.vue';
 import CitizenVehicles from '~/components/citizens/info/CitizenVehicles.vue';
+import AddToButton from '~/components/clipboard/AddToButton.vue';
+import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import { useClipboardStore } from '~/store/clipboard';
+import { useNotificatorStore } from '~/store/notificator';
 import type { Perms } from '~~/gen/ts/perms';
-import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { User } from '~~/gen/ts/resources/users/users';
 import CitizenActions from './CitizenActions.vue';
 import CitizenSetAttributes from './props/CitizenSetAttributes.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     userId: number;

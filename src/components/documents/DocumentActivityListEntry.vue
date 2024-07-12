@@ -1,9 +1,9 @@
 <script lang="ts" setup>
-import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
+import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import ActivityDocUpdatedDiff from '~/components/documents/activity/ActivityDocUpdatedDiff.vue';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import { type DocActivity, DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { getDocAtivityIcon } from './helpers';
 
 defineProps<{

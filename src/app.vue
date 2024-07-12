@@ -1,10 +1,10 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <script lang="ts" setup>
+import CookieControl from '~/components/partials/CookieControl.vue';
+import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
 import { useClipboardStore } from '~/store/clipboard';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
-import NotificationProvider from '~/components/partials/notification/NotificationProvider.vue';
-import CookieControl from '~/components/partials/CookieControl.vue';
 import { useAuthStore } from './store/auth';
 
 const { t, setLocale, locale, finalizePendingLocaleChange } = useI18n();

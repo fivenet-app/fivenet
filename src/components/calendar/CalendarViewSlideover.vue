@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
-import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
-import { checkCalendarAccess } from './helpers';
+import { useCalendarStore } from '~/store/calendar';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import ConfirmModal from '../partials/ConfirmModal.vue';
-import { useCalendarStore } from '~/store/calendar';
-import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
+import CalendarCreateOrUpdateModal from './CalendarCreateOrUpdateModal.vue';
+import { checkCalendarAccess } from './helpers';
 
 const props = defineProps<{
     calendarId: string;

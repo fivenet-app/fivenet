@@ -1,10 +1,10 @@
 <script lang="ts" setup>
+import CategoriesModal from '~/components/documents/categories/CategoriesModal.vue';
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { type CardElements } from '~/utils/types';
 import { Category } from '~~/gen/ts/resources/documents/category';
-import CategoriesModal from '~/components/documents/categories/CategoriesModal.vue';
 
 const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 

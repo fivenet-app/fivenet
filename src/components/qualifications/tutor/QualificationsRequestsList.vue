@@ -1,17 +1,17 @@
 <script lang="ts" setup>
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import Pagination from '~/components/partials/Pagination.vue';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
+import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
+import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationReqResponse,
     ListQualificationRequestsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
-import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
-import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import { requestStatusToTextColor } from '../helpers';
-import Pagination from '~/components/partials/Pagination.vue';
-import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(

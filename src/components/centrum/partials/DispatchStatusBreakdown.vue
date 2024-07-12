@@ -1,7 +1,7 @@
 <script lang="ts" setup>
+import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 import { useCentrumStore } from '~/store/centrum';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { dispatchStatusToBGColor } from '~/components/centrum/helpers';
 
 const centrumStore = useCentrumStore();
 const { dispatches } = storeToRefs(centrumStore);

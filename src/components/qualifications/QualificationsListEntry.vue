@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { Qualification, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import { resultStatusToBadgeColor } from './helpers';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
+import { resultStatusToBadgeColor } from './helpers';
 
 defineProps<{
     qualification: Qualification;

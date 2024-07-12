@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
-import { useNotificatorStore } from '~/store/notificator';
-import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { UserShort } from '~~/gen/ts/resources/users/users';
+import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
+import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = defineProps<{
     qualificationId: string;

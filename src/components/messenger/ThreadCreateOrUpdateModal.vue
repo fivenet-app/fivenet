@@ -1,11 +1,11 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
+import { useCompletorStore } from '~/store/completor';
 import { useMessengerStore } from '~/store/messenger';
+import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
 import type { Thread } from '~~/gen/ts/resources/messenger/thread';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
-import { useCompletorStore } from '~/store/completor';
 
 const props = defineProps<{
     thread?: Thread;

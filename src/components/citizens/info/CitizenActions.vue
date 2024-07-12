@@ -1,17 +1,17 @@
 <script lang="ts" setup>
-import { useClipboardStore } from '~/store/clipboard';
-import { useNotificatorStore } from '~/store/notificator';
-import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import CitizenSetJobModal from '~/components/citizens/info/props/CitizenSetJobModal.vue';
+import CitizenSetMugShotModal from '~/components/citizens/info/props/CitizenSetMugShotModal.vue';
 import CitizenSetTrafficPointsModal from '~/components/citizens/info/props/CitizenSetTrafficPointsModal.vue';
 import CitizenSetWantedModal from '~/components/citizens/info/props/CitizenSetWantedModal.vue';
-import CitizenSetMugShotModal from '~/components/citizens/info/props/CitizenSetMugShotModal.vue';
+import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
+import { useAuthStore } from '~/store/auth';
+import { useClipboardStore } from '~/store/clipboard';
+import { useNotificatorStore } from '~/store/notificator';
+import type { File } from '~~/gen/ts/resources/filestore/file';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { User } from '~~/gen/ts/resources/users/users';
-import type { File } from '~~/gen/ts/resources/filestore/file';
-import { useAuthStore } from '~/store/auth';
-import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(
     defineProps<{

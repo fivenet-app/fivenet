@@ -1,15 +1,15 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
 import { format } from 'date-fns';
-import { useCompletorStore } from '~/store/completor';
-import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import { z } from 'zod';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
-import { conductTypesToBGColor } from './helpers';
 import { useAuthStore } from '~/store/auth';
+import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
+import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { UserShort } from '~~/gen/ts/resources/users/users';
+import { conductTypesToBGColor } from './helpers';
 
 const props = defineProps<{
     entry?: ConductEntry;

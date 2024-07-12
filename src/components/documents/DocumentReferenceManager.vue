@@ -1,11 +1,11 @@
 <script setup lang="ts">
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { ClipboardDocument, getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { DocReference, DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 
 const props = defineProps<{
     open: boolean;

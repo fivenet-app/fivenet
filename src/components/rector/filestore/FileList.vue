@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import { useSettingsStore } from '~/store/settings';
-import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
-import FileUploadModal from '~/components/rector/filestore/FileUploadModal.vue';
-import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
-import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import FileUploadModal from '~/components/rector/filestore/FileUploadModal.vue';
+import { useSettingsStore } from '~/store/settings';
+import type { FileInfo } from '~~/gen/ts/resources/filestore/file';
+import type { DeleteFileResponse, ListFilesResponse } from '~~/gen/ts/services/rector/filestore';
 
 const { t } = useI18n();
 
