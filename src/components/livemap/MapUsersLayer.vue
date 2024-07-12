@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
 import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
-import PlayerMarker from '~/components/livemap/PlayerMarker.vue';
 
 withDefaults(
     defineProps<{
@@ -57,7 +57,7 @@ const playerMarkersFiltered = computedAsync(async () =>
             livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.employee', 2)} ${job.label}`)
         "
     >
-        <PlayerMarker
+        <MapUserMarker
             v-for="marker in playerMarkersFiltered?.filter((m) => m.info?.job === job.name)"
             :key="marker.info!.id"
             :marker="marker"

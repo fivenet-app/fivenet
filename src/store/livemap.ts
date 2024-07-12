@@ -95,7 +95,7 @@ export const useLivemapStore = defineStore('livemap', {
                         const foundMarkers: string[] = [];
                         resp.data.markers.markers.forEach((v) => {
                             foundMarkers.push(v.info!.id);
-                            this.addOrpdateMarkerMarker(v);
+                            this.addOrUpdateMarkerMarker(v);
                         });
                         // Remove marker markers not found in latest state
                         let removedMarkers = 0;
@@ -110,7 +110,7 @@ export const useLivemapStore = defineStore('livemap', {
                     } else if (resp.data.oneofKind === 'users') {
                         resp.data.users.users.forEach((v) => {
                             foundUsers.push(v.info!.id);
-                            this.addOrpdateUserMarker(v);
+                            this.addOrUpdateUserMarker(v);
 
                             if (livemap.value.centerSelectedMarker && v.info!.id === this.selectedMarker?.info?.id) {
                                 this.selectedMarker = v;
@@ -189,7 +189,7 @@ export const useLivemapStore = defineStore('livemap', {
             }, this.reconnectBackoffTime * 1000);
         },
 
-        addOrpdateMarkerMarker(marker: MarkerMarker): void {
+        addOrUpdateMarkerMarker(marker: MarkerMarker): void {
             const m = this.markersMarkers.get(marker.info!.id);
             if (m === undefined) {
                 this.markersMarkers.set(marker.info!.id, marker);
@@ -209,7 +209,7 @@ export const useLivemapStore = defineStore('livemap', {
                 }
             }
         },
-        addOrpdateUserMarker(marker: UserMarker): void {
+        addOrUpdateUserMarker(marker: UserMarker): void {
             const m = this.markersUsers.get(marker.info!.id);
             if (m === undefined) {
                 this.markersUsers.set(marker.info!.id, marker);
@@ -283,6 +283,9 @@ export const useLivemapStore = defineStore('livemap', {
             }
             if (dest.phoneNumber !== src.phoneNumber) {
                 dest.phoneNumber = src.phoneNumber;
+            }
+            if (dest.avatar !== src.avatar) {
+                dest.avatar = src.avatar;
             }
         },
 

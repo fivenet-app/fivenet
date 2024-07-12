@@ -1,14 +1,14 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
+import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
-import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';
-import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import { MapMarkerIcon } from 'mdi-vue3';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 const props = withDefaults(
     defineProps<{
@@ -28,6 +28,8 @@ defineEmits<{
     (e: 'selected'): void;
 }>();
 
+const { livemap } = useAppConfig();
+
 const slideover = useSlideover();
 
 const authStore = useAuthStore();
@@ -39,16 +41,16 @@ const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
 
 function getMarkerColor(): string {
-    if (activeChar !== null && props.marker.user?.userId === activeChar.value?.userId) {
-        return '#fcab10';
+    if (activeChar.value !== null && props.marker.user?.userId === activeChar.value?.userId) {
+        return livemap.userMarkers.activeCharColor;
     } else {
-        return props.marker.info?.color ?? '#8d81f2';
+        return props.marker.info?.color ?? livemap.userMarkers.fallbackColor;
     }
 }
 
 const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
 const unitInverseColor = computed(() => {
-    return hexToRgb(unit.value?.color ?? '#8d81f2', RGBBlack)!;
+    return hexToRgb(unit.value?.color ?? livemap.userMarkers.fallbackColor, RGBBlack)!;
 });
 
 const hasUnit = computed(() => props.showUnitNames && props.marker.unitId !== undefined);
@@ -72,7 +74,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                     v-if="showUnitNames && unit"
                     class="inset-0 whitespace-nowrap rounded-md border border-black/20 bg-clip-padding"
                     :class="isColourBright(unitInverseColor) ? 'text-black' : 'text-neutral'"
-                    :style="{ backgroundColor: unit?.color ?? '#8d81f2' }"
+                    :style="{ backgroundColor: unit?.color ?? livemap.userMarkers.fallbackColor }"
                 >
                     {{ unit?.initials }}
                 </span>

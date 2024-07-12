@@ -101,4 +101,14 @@ export default defineAppConfig({
     popover: {
         waitTime: 850,
     },
+
+    livemap: {
+        userMarkers: {
+            activeCharColor: '#fcab10',
+            fallbackColor: '#8d81f2',
+        },
+        markerMarkers: {
+            fallbackColor: '#ffffff',
+        },
+    },
 });

@@ -1,6 +1,11 @@
 <script lang="ts" setup>
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { z } from 'zod';
+import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
+import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
+import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
+import { checkDocAccess, logger } from '~/components/documents/helpers';
+import DocEditor from '~/components/partials/DocEditor.vue';
 import { useAuthStore } from '~/store/auth';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
@@ -15,15 +20,10 @@ import {
     DocumentReference,
     DocumentRelation,
 } from '~~/gen/ts/resources/documents/documents';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
-import DocumentAccessEntry from '~/components/documents/DocumentAccessEntry.vue';
-import DocumentReferenceManager from '~/components/documents/DocumentReferenceManager.vue';
-import DocumentRelationManager from '~/components/documents/DocumentRelationManager.vue';
-import { checkDocAccess, logger } from '~/components/documents/helpers';
-import DocEditor from '~/components/partials/DocEditor.vue';
-import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     documentId?: string;

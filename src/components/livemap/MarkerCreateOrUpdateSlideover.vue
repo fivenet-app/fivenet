@@ -1,14 +1,14 @@
 <script lang="ts" setup>
-import { HelpIcon } from 'mdi-vue3';
-import { z } from 'zod';
 import type { FormSubmitEvent } from '#ui/types';
+import { format } from 'date-fns';
+import { HelpIcon } from 'mdi-vue3';
+import type { DefineComponent } from 'vue';
+import { z } from 'zod';
+import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
+import ColorPicker from '~/components/partials/ColorPicker.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
-import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
-import { format } from 'date-fns';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
-import type { DefineComponent } from 'vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -23,7 +23,7 @@ const { isOpen } = useSlideover();
 
 const livemapStore = useLivemapStore();
 const { location: storeLocation } = storeToRefs(livemapStore);
-const { addOrpdateMarkerMarker } = livemapStore;
+const { addOrUpdateMarkerMarker } = livemapStore;
 
 const markerTypes = [{ type: MarkerType.CIRCLE }, { type: MarkerType.DOT }, { type: MarkerType.ICON }];
 
@@ -109,7 +109,7 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
         const { response } = await call;
 
         if (response.marker !== undefined) {
-            addOrpdateMarkerMarker(response.marker);
+            addOrUpdateMarkerMarker(response.marker);
         }
 
         emits('close');

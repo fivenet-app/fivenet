@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
+import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { MarkerMarker as Marker } from '~~/gen/ts/resources/livemap/livemap';
-import MarkerMarker from '~/components/livemap/MarkerMarker.vue';
+import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 defineEmits<{
-    (e: 'markerSelected', marker: Marker): void;
+    (e: 'markerSelected', marker: MarkerMarker): void;
 }>();
 
 const livemapStore = useLivemapStore();
@@ -24,7 +24,7 @@ const { livemap } = storeToRefs(settingsStore);
         layer-type="overlay"
         :visible="livemap.activeLayers.length === 0 || livemap.activeLayers.includes(`${$t('common.marker', 2)} ${job.label}`)"
     >
-        <MarkerMarker
+        <MapMarkerMarker
             v-for="marker in [...markersMarkers.values()].filter((p) => p.info?.job === job.name)"
             :key="marker.info!.id"
             :marker="marker"

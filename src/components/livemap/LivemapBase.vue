@@ -3,10 +3,10 @@ import { LControl } from '@vue-leaflet/vue-leaflet';
 import { type ContextMenuItemClickEvent, type MapOptions } from 'leaflet';
 import DispatchCreateOrUpdateSlideover from '~/components/centrum/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
-import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
+import MapMarkersLayer from '~/components/livemap/MapMarkersLayer.vue';
 import MapTempMarker from '~/components/livemap/MapTempMarker.vue';
-import MarkersLayer from '~/components/livemap/MarkersLayer.vue';
-import PlayersLayer from '~/components/livemap/PlayersLayer.vue';
+import MapUsersLayer from '~/components/livemap/MapUsersLayer.vue';
+import MarkerCreateOrUpdateSlideover from '~/components/livemap/MarkerCreateOrUpdateSlideover.vue';
 import ReconnectingPopup from '~/components/livemap/ReconnectingPopup.vue';
 import PostalSearch from '~/components/livemap/controls/PostalSearch.vue';
 import SettingsButton from '~/components/livemap/controls/SettingsButton.vue';
@@ -121,12 +121,12 @@ const reconnectionCentrumDebounced = useDebounce(reconnectingCentrum, 500);
                 </LControl>
 
                 <template v-if="can('LivemapperService.Stream').value">
-                    <PlayersLayer
+                    <MapUsersLayer
                         :show-unit-names="showUnitNames"
                         :show-unit-status="showUnitStatus"
                         @user-selected="selectedMarker = $event"
                     />
-                    <MarkersLayer />
+                    <MapMarkersLayer />
                 </template>
 
                 <MapTempMarker />

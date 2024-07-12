@@ -1,10 +1,9 @@
 <script lang="ts" setup>
 import { LCircle, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
 import { type PointExpression } from 'leaflet';
-import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
+import { convertDynamicIconNameToComponent, markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
-import { convertDynamicIconNameToComponent } from '~/components/livemap/helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -20,6 +19,8 @@ defineEmits<{
     (e: 'selected'): void;
 }>();
 
+const { livemap } = useAppConfig();
+
 const iconAnchor = ref<PointExpression>([props.size / 2, props.size]);
 const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
 </script>
@@ -30,8 +31,8 @@ const popupAnchor = ref<PointExpression>([0, (props.size / 2) * -1]);
         :key="marker.info!.id"
         :lat-lng="[marker.info!.y, marker.info!.x]"
         :radius="marker.data?.data.circle.radius / 0.6931471805599453"
-        :color="marker.info?.color ?? '#ffffff'"
-        :fill-color="marker.info?.color ?? '#ffffff'"
+        :color="marker.info?.color ?? livemap.markerMarkers.fallbackColor"
+        :fill-color="marker.info?.color ?? livemap.markerMarkers.fallbackColor"
         :fill-opacity="(marker.data.data.circle.opacity ?? 15) / 100"
     >
         <MarkerMarkerPopup :marker="marker" />
