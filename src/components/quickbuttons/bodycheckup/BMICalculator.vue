@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { vMaska } from 'maska';
+import { vMaska } from 'maska/vue';
 
 const height = ref<string>('165');
 const mass = ref<string>('83');

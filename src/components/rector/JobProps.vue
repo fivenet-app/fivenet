@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { vMaska } from 'maska';
+import { vMaska } from "maska/vue"
 import { CodeDiff } from 'v-code-diff';
 import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { vMaska } from 'maska';
+import { vMaska } from 'maska/vue';
 import { z } from 'zod';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
