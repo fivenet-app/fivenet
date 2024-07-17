@@ -127,14 +127,6 @@ export default defineNuxtConfig({
         },
     },
 
-    robots: {
-        rules: {
-            UserAgent: '*',
-            Disallow: '/',
-            Allow: ['/$', '/index.html'],
-        },
-    },
-
     i18n: {
         vueI18n: './i18n.config.ts',
         strategy: STRATEGIES.NO_PREFIX,
