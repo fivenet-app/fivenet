@@ -1,8 +1,6 @@
 module github.com/fivenet-app/fivenet
 
-go 1.22.4
-
-toolchain go1.22.5
+go 1.22.5
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
@@ -33,9 +31,9 @@ require (
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/json-iterator/go v1.1.12
 	github.com/microcosm-cc/bluemonday v1.0.27
-	github.com/minio/minio-go/v7 v7.0.73
+	github.com/minio/minio-go/v7 v7.0.74
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
-	github.com/nats-io/nats-server/v2 v2.10.17
+	github.com/nats-io/nats-server/v2 v2.10.18
 	github.com/nats-io/nats.go v1.36.0
 	github.com/ory/dockertest/v3 v3.10.0
 	github.com/paulmach/orb v0.11.1
