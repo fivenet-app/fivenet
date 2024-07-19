@@ -21,7 +21,7 @@ type WK struct {
 func New() *WK {
 	return &WK{
 		// ISO-8601 format see https://www.rfc-editor.org/rfc/rfc9116#section-2.5.5
-		securityTxt: fmt.Sprintf(securityTxtTpl, time.Now().AddDate(0, 4, 0).Format("2006-01-02T15:04:05-07:00")),
+		securityTxt: fmt.Sprintf(securityTxtTpl, time.Now().AddDate(0, 4, 0).Format("2006-01-02T15:04:05:07.000Z")),
 	}
 }
 
