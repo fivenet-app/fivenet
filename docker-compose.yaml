@@ -29,6 +29,9 @@ services:
     image: docker.io/library/nats:2.10.7-alpine3.18
     command:
       - --jetstream
+      # If you change the user/password, you must update the `.nats.url` in FiveNet's `config.yaml`
+      - --user=fivenet
+      - --pass=fivenet_topsecret
     ports:
       - "4222:4222"
       - "8222:8222"

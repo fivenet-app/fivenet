@@ -58,20 +58,6 @@ import (
 
 type Context struct{}
 
-type FrontendCmd struct{}
-
-func (c *FrontendCmd) Run(ctx *Context) error {
-	fxOpts := getFxBaseOpts(cli.StartTimeout)
-	fxOpts = append(fxOpts,
-		fx.Invoke(func(server.HTTPServer) {}),
-	)
-
-	app := fx.New(fxOpts...)
-	app.Run()
-
-	return nil
-}
-
 type ServerCmd struct{}
 
 func (c *ServerCmd) Run(ctx *Context) error {
@@ -121,9 +107,8 @@ var cli struct {
 	Config       string        `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
 	StartTimeout time.Duration `help:"App start timeout duration"`
 
-	Frontend FrontendCmd `cmd:"" help:"Run FiveNet frontend."`
-	Server   ServerCmd   `cmd:"" help:"Run FiveNet server."`
-	Worker   WorkerCmd   `cmd:"" help:"Run FiveNet worker."`
+	Server ServerCmd `cmd:"" help:"Run FiveNet server."`
+	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
 }
 
 func getFxBaseOpts(startTimeout time.Duration) []fx.Option {

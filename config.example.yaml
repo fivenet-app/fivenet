@@ -43,7 +43,8 @@ database:
       user:
         filterEmptyName: false
 nats:
-  url: "nats://localhost:4222"
+  # This NATS url is for using the `docker-compose.yaml` NATS server
+  url: "nats://fivenet:fivenet_topsecret@localhost:4222"
   replicas: 1
 jwt:
   secret: "your_generated_jwt_secret"
