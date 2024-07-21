@@ -378,6 +378,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 func (s *Manager) DeleteDispatch(ctx context.Context, job string, id uint64, allTheWay bool) error {
 	if allTheWay {
+		tDispatch := table.FivenetCentrumDispatches
 		stmt := tDispatch.
 			DELETE().
 			WHERE(jet.AND(

@@ -75,5 +75,18 @@ services:
   #  volumes:
   #    - ./config.yaml:/config/config.yaml
 
+  # Iconify - Requires an ingress like Traefik that makes iconify available under `/api/icons`
+  #iconify:
+  #  container_name: iconify
+  #  image: docker.io/iconify/api:latest
+  #  environment:
+  #    ICONIFY_SOURCE: "full"
+  #    REDIRECT_INDEX: "/about"
+  #    ALLOW_UPDATE: "false"
+  #    ENABLE_ICON_LISTS: "false"
+  #    ENABLE_SEARCH_ENGINE: "false"
+  #  ports:
+  #    - "3000:3000"
+
 volumes:
   mysql:

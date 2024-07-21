@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	centrumutils "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -403,6 +404,7 @@ func (s *Housekeeper) deleteOldDispatchesFromKV(ctx context.Context) error {
 }
 
 func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
+	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		DELETE().
 		WHERE(jet.AND(
