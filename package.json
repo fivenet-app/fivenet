@@ -107,5 +107,5 @@
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.0.28"
     },
-    "packageManager": "pnpm@8.15.6+sha1.8105075ad0aa306138be128c017e9c41e28ecffa"
+    "packageManager": "pnpm@9.6.0"
 }
