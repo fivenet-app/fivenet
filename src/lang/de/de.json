@@ -854,6 +854,9 @@
             "commandpalette": {
                 "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
                 "keyboard": "STRG+K"
+            },
+            "rector_roles_superuser": {
+                "content": "Sollten Sie bestimmte Berechtigungen vermissen oder eine leere Berechtigungsliste haben, kontaktieren Sie einen FiveNet Administrator damit dieser die Berechtigungen für ihre Fraktion einstellt."
             }
         },
         "notifications": {
