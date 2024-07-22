@@ -10,6 +10,10 @@ type State struct {
 }
 
 func (s *State) Merge(state *State) {
+	if state == nil {
+		return
+	}
+
 	s.Roles = append(s.Roles, state.Roles...)
 
 	for _, user := range state.Users {

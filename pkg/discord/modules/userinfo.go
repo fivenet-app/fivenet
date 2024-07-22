@@ -60,7 +60,7 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error) {
 	job := g.enricher.GetJobByName(g.job)
 	if job == nil {
-		g.logger.Error("unknown job for discord guild, skipping")
+		g.logger.Warn("unknown job for discord guild, skipping")
 		return nil, nil, nil
 	}
 

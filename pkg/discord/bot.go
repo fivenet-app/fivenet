@@ -320,7 +320,7 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 		}
 
 		if found == nil {
-			b.logger.Error("didn't find bot being in guild", zap.String("discord_guild_id", guildID), zap.String("job", job))
+			b.logger.Warn("didn't find bot being in guild", zap.String("discord_guild_id", guildID), zap.String("job", job))
 			continue
 		}
 
