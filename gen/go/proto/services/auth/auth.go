@@ -630,12 +630,12 @@ func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *
 func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterRequest) (*ChooseCharacterResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)
 	if err != nil {
-		return nil, auth.ErrInvalidToken
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	claims, err := s.tm.ParseWithClaims(token)
 	if err != nil {
-		return nil, auth.ErrInvalidToken
+		return nil, errswrap.NewError(err, auth.ErrInvalidToken)
 	}
 
 	// Load account data for token creation
@@ -722,9 +722,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 	ps = append(ps, attrs...)
 
-	if len(ps) == 0 {
-		return nil, errorsauth.ErrUnableToChooseChar
-	} else if !slices.Contains(ps, "authservice-choosecharacter") {
+	if len(ps) == 0 || (!isSuperUser && !slices.Contains(ps, "authservice-choosecharacter")) {
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
 

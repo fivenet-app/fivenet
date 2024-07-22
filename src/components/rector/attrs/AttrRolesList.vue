@@ -153,23 +153,21 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 :title="$t('common.unable_to_load', [$t('common.job', 2)])"
                                 :retry="refresh"
                             />
-                            <template v-else>
-                                <UTable :columns="columns" :rows="sortedRoles" :loading="loading">
-                                    <template #job-data="{ row: role }">
-                                        <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
-                                    </template>
-                                    <template #actions-data="{ row: role }">
-                                        <div class="text-right">
-                                            <UButton
-                                                class="place-self-end"
-                                                variant="link"
-                                                icon="i-mdi-eye"
-                                                @click="selectedRole = role"
-                                            />
-                                        </div>
-                                    </template>
-                                </UTable>
-                            </template>
+                            <UTable v-else :columns="columns" :rows="sortedRoles" :loading="loading">
+                                <template #job-data="{ row: role }">
+                                    <div class="text-gray-900 dark:text-white">{{ role.jobLabel }} ({{ role.job }})</div>
+                                </template>
+                                <template #actions-data="{ row: role }">
+                                    <div class="text-right">
+                                        <UButton
+                                            class="place-self-end"
+                                            variant="link"
+                                            icon="i-mdi-eye"
+                                            @click="selectedRole = role"
+                                        />
+                                    </div>
+                                </template>
+                            </UTable>
                         </div>
                     </div>
                 </div>

@@ -161,25 +161,26 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 :title="$t('common.unable_to_load', [$t('common.role', 2)])"
                                 :retry="refresh"
                             />
-                            <template v-else>
-                                <UTable :columns="columns" :rows="sortedRoles" :loading="loading">
-                                    <template #rank-data="{ row: role }">
-                                        <div class="text-gray-900 dark:text-white">
-                                            {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
-                                        </div>
-                                    </template>
-                                    <template #actions-data="{ row: role }">
-                                        <div class="text-right">
-                                            <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
-                                        </div>
-                                    </template>
-                                </UTable>
-                            </template>
+                            <UTable v-else :columns="columns" :rows="sortedRoles" :loading="loading">
+                                <template #rank-data="{ row: role }">
+                                    <div class="text-gray-900 dark:text-white">
+                                        {{ role.jobLabel }} - {{ role.jobGradeLabel }} ({{ role.grade }})
+                                    </div>
+                                </template>
+                                <template #actions-data="{ row: role }">
+                                    <div class="text-right">
+                                        <UButton variant="link" icon="i-mdi-eye" @click="selectedRole = role" />
+                                    </div>
+                                </template>
+                            </UTable>
 
                             <SingleHint class="mt-2" hint-id="rector_roles_list" />
+
+                            <SingleHint class="mt-2" hint-id="rector_roles_superuser" />
                         </div>
                     </div>
                 </div>
+
                 <div class="ml-2 flex w-full basis-2/3">
                     <template v-if="selectedRole">
                         <RoleView

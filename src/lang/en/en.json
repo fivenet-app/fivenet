@@ -854,6 +854,9 @@
             "commandpalette": {
                 "content": "FiveNet has a command palette for power users, you can open it using:",
                 "keyboard": "CTRL+K"
+            },
+            "rector_roles_superuser": {
+                "content": "If you are missing permissions to assign or the list is empty, a FiveNet superuser must configure the available permissions for your faction."
             }
         },
         "notifications": {

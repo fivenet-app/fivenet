@@ -97,27 +97,27 @@ const faqs = [
                                             <li class="flex gap-x-3">
                                                 <UIcon name="i-mdi-magnify" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
-                                                    <strong class="font-semibold text-gray-200">{{
+                                                    <span class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_one.title')
-                                                    }}</strong>
+                                                    }}</span>
                                                     {{ $t('components.about.introduction.feature_one.content') }}
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
                                                 <UIcon name="i-mdi-lock" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
-                                                    <strong class="font-semibold text-gray-200">{{
+                                                    <span class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_two.title')
-                                                    }}</strong>
+                                                    }}</span>
                                                     {{ $t('components.about.introduction.feature_two.content') }}
                                                 </span>
                                             </li>
                                             <li class="flex gap-x-3">
                                                 <UIcon name="i-mdi-map" class="text-primary-300 mt-1 size-5 flex-none" />
                                                 <span>
-                                                    <strong class="font-semibold text-gray-200">{{
+                                                    <span class="font-semibold text-gray-200">{{
                                                         $t('components.about.introduction.feature_three.title')
-                                                    }}</strong>
+                                                    }}</span>
                                                     {{ $t('components.about.introduction.feature_three.content') }}
                                                 </span>
                                             </li>

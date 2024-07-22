@@ -30,7 +30,7 @@ const hints = shuffle([
         <template #header>
             <div class="inline-flex items-center">
                 <UIcon name="i-mdi-information-slab-circle" class="size-6" />
-                <strong class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+                <span class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</span>
             </div>
         </template>
 

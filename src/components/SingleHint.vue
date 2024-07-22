@@ -11,30 +11,33 @@ defineProps<{
 </script>
 
 <template>
-    <UCard
+    <UAlert
+        v-bind="$attrs"
         :ui="{
             body: { padding: 'px-2 py-3 sm:p-3' },
             header: { padding: 'px-2 py-3 sm:p-3' },
             footer: { padding: 'px-2 py-2 sm:p-3' },
         }"
     >
-        <template #header>
-            <div class="inline-flex items-center">
+        <template #title>
+            <div class="inline-flex items-center gap-1">
                 <UIcon name="i-mdi-information-slab-circle" class="size-6" />
-                <strong class="ml-1 shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</strong>
+                <span class="shrink-0 font-semibold">{{ $t('components.hints.start_text') }}</span>
             </div>
         </template>
 
-        <div class="mx-auto mb-2 flex items-center gap-1 text-base">
-            <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
+        <template #description>
+            <div class="mx-auto mb-2 flex items-center gap-1 text-base">
+                <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
 
-            <div v-if="keyboard || to" class="flex-initial">
-                <UKbd v-if="keyboard" :value="$t(`components.hints.${hintId}.keyboard`)" />
+                <div v-if="keyboard || to" class="flex-initial">
+                    <UKbd v-if="keyboard" :value="$t(`components.hints.${hintId}.keyboard`)" />
 
-                <UButton v-else-if="to" variant="soft" :to="to" :external="external" :target="linkTarget ?? null">
-                    {{ $t('components.hints.click_me') }}
-                </UButton>
+                    <UButton v-else-if="to" variant="soft" :to="to" :external="external" :target="linkTarget ?? null">
+                        {{ $t('components.hints.click_me') }}
+                    </UButton>
+                </div>
             </div>
-        </div>
-    </UCard>
+        </template>
+    </UAlert>
 </template>
