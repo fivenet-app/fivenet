@@ -40,13 +40,17 @@ const schema = z.object({
 
             <UFormGroup name="settings.time" :label="$t('common.duration')">
                 <UInput
-                    type="text"
+                    type="number"
                     :placeholder="$t('common.duration')"
-                    :value="settings.time ? fromDuration(settings.time) : '600s'"
+                    :value="settings.time ? fromDuration(settings.time) : 600"
                     @update:model-value="settings.time = toDuration($event)"
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
-                />
+                >
+                    <template #trailing>
+                        <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                    </template>
+                </UInput>
             </UFormGroup>
 
             <h3>{{ $t('common.question', 2) }}</h3>

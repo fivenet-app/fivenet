@@ -32,6 +32,8 @@ func (s *Server) GetAppConfig(ctx context.Context, req *GetAppConfigRequest) (*G
 		return nil, err
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_VIEWED)
+
 	return &GetAppConfigResponse{
 		Config: config,
 	}, nil

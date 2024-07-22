@@ -90,41 +90,41 @@ const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <tr v-if="!editing">
-        <td class="flex flex-row py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <UButtonGroup class="inline-flex w-full">
-                <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
-                <UButton
-                    variant="link"
-                    icon="i-mdi-trash-can"
-                    :title="$t('common.delete')"
-                    @click="
-                        modal.open(ConfirmModal, {
-                            confirm: async () => deleteLaw(law.id),
-                        })
-                    "
-                />
-            </UButtonGroup>
-        </td>
-        <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            {{ law.name }}
-        </td>
-        <td class="whitespace-nowrap p-1 text-left">${{ law.fine }}</td>
-        <td class="whitespace-nowrap p-1 text-left">
-            {{ law.detentionTime }}
-        </td>
-        <td class="whitespace-nowrap p-1 text-left">
-            {{ law.stvoPoints }}
-        </td>
-        <td class="p-1 text-left text-sm font-medium">
-            {{ law.description }}
-        </td>
-    </tr>
-    <tr v-else>
-        <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
-            <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
+    <UForm :schema="schema" :state="state" class="flex table-row flex-1" @submit="onSubmitThrottle">
+        <template v-if="!editing">
+            <div class="flex table-cell flex-row py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
                 <UButtonGroup class="inline-flex w-full">
-                    <UButton variant="link" icon="i-mdi-content-save" :title="$t('common.save')" />
+                    <UButton variant="link" icon="i-mdi-pencil" :title="$t('common.edit')" @click="editing = true" />
+                    <UButton
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        :title="$t('common.delete')"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteLaw(law.id),
+                            })
+                        "
+                    />
+                </UButtonGroup>
+            </div>
+            <div class="table-cell py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                {{ law.name }}
+            </div>
+            <div class="table-cell whitespace-nowrap p-1 text-left">${{ law.fine }}</div>
+            <div class="table-cell whitespace-nowrap p-1 text-left">
+                {{ law.detentionTime }}
+            </div>
+            <div class="table-cell whitespace-nowrap p-1 text-left">
+                {{ law.stvoPoints }}
+            </div>
+            <div class="table-cell p-1 text-left text-sm font-medium">
+                {{ law.description }}
+            </div>
+        </template>
+        <template v-else>
+            <div class="table-cellpy-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
+                <UButtonGroup class="inline-flex w-full">
+                    <UButton type="submit" variant="link" icon="i-mdi-content-save" :title="$t('common.save')" />
                     <UButton
                         variant="link"
                         icon="i-mdi-cancel"
@@ -135,8 +135,8 @@ const editing = ref(props.startInEdit);
                         "
                     />
                 </UButtonGroup>
-            </td>
-            <td class="py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
+            </div>
+            <div class="table-cell py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
                 <UInput
                     v-model="state.name"
                     name="name"
@@ -145,8 +145,8 @@ const editing = ref(props.startInEdit);
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
-            </td>
-            <td class="whitespace-nowrap p-1 text-left">
+            </div>
+            <div class="table-cell whitespace-nowrap p-1 text-left">
                 <UInput
                     name="fine"
                     type="text"
@@ -155,8 +155,8 @@ const editing = ref(props.startInEdit);
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
-            </td>
-            <td class="whitespace-nowrap p-1 text-left">
+            </div>
+            <div class="table-cell whitespace-nowrap p-1 text-left">
                 <UInput
                     v-model="state.detentionTime"
                     name="detentionTime"
@@ -165,8 +165,8 @@ const editing = ref(props.startInEdit);
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
-            </td>
-            <td class="whitespace-nowrap p-1 text-left">
+            </div>
+            <div class="table-cell whitespace-nowrap p-1 text-left">
                 <UInput
                     v-model="state.stvoPoints"
                     name="stvoPoints"
@@ -175,8 +175,8 @@ const editing = ref(props.startInEdit);
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
-            </td>
-            <td class="p-1 text-left">
+            </div>
+            <div class="table-cell p-1 text-left">
                 <UInput
                     v-model="state.description"
                     name="description"
@@ -185,7 +185,7 @@ const editing = ref(props.startInEdit);
                     @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
                 />
-            </td>
-        </UForm>
-    </tr>
+            </div>
+        </template>
+    </UForm>
 </template>

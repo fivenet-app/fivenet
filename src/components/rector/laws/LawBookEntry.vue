@@ -126,9 +126,11 @@ const editing = ref(props.startInEdit);
                     />
                 </UButtonGroup>
 
-                <h2 class="text-xl">{{ modelValue.name }}</h2>
+                <div class="inline-flex flex-col">
+                    <h2 class="text-xl">{{ modelValue.name }}</h2>
 
-                <p v-if="modelValue.description" class="pl-2">- {{ $t('common.description') }}: {{ modelValue.description }}</p>
+                    <p v-if="modelValue.description">{{ $t('common.description') }}: {{ modelValue.description }}</p>
+                </div>
 
                 <UButton @click="addLaw">
                     {{ $t('pages.rector.laws.add_new_law') }}
@@ -141,7 +143,7 @@ const editing = ref(props.startInEdit);
                 class="flex w-full flex-row items-start gap-x-2"
                 @submit="onSubmitThrottle"
             >
-                <UButton :title="$t('common.save')" variant="link" icon="i-mdi-content-save" />
+                <UButton type="submit" :title="$t('common.save')" variant="link" icon="i-mdi-content-save" />
                 <UButton
                     :title="$t('common.cancel')"
                     variant="link"
@@ -176,39 +178,39 @@ const editing = ref(props.startInEdit);
             </UForm>
         </template>
 
-        <table class="min-w-full divide-y divide-base-600">
-            <thead>
-                <tr>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
+        <div class="table min-w-full divide-y divide-base-600">
+            <div class="table-header-group">
+                <div class="table-row">
+                    <div class="table-cell py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                         {{ $t('common.action', 2) }}
-                    </th>
-                    <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
+                    </div>
+                    <div class="table-cell py-3.5 pl-4 pr-3 text-left text-sm font-semibold sm:pl-1">
                         {{ $t('common.crime') }}
-                    </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
+                    </div>
+                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.fine') }}
-                    </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
+                    </div>
+                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.detention_time') }}
-                    </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
+                    </div>
+                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.traffic_infraction_points', 2) }}
-                    </th>
-                    <th scope="col" class="px-2 py-3.5 text-left text-sm font-semibold">
+                    </div>
+                    <div class="table-cell px-2 py-3.5 text-left text-sm font-semibold">
                         {{ $t('common.description') }}
-                    </th>
-                </tr>
-            </thead>
-            <tbody class="divide-y divide-base-800">
+                    </div>
+                </div>
+            </div>
+            <div class="table-row-group divide-y divide-base-800">
                 <LawEntry
-                    v-for="law in modelValue.laws"
+                    v-for="law in laws"
                     :key="law.id"
                     :law="law"
                     :start-in-edit="parseInt(law.id) < 0"
                     @update:law="$emit('update:law', $event)"
                     @deleted="deletedLaw($event)"
                 />
-            </tbody>
-        </table>
+            </div>
+        </div>
     </UCard>
 </template>

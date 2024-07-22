@@ -1,11 +1,11 @@
 import { z } from 'zod';
 
 export const zodDurationSchema = z
-    .string()
+    .number()
     .min(2)
     .max(10)
     .superRefine((duration, ctx) => {
-        if (!duration) {
+        if (!duration || duration < 0) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'zodI18n.custom.duration.invalid',
@@ -13,7 +13,8 @@ export const zodDurationSchema = z
             return false;
         }
 
-        if (!/^\d+(\.\d+)?s$/.test(duration)) {
+        const d = duration.toString();
+        if (!/^\d+(\.\d+)?s$/.test(d)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'zodI18n.custom.duration.invalid',
@@ -21,7 +22,8 @@ export const zodDurationSchema = z
             return false;
         }
 
-        const val = toDuration(duration);
+        console.log(d);
+        const val = toDuration(d);
         if (val.seconds < 0 || val.nanos < 0 || (val.seconds === 0 && val.nanos > 0)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
@@ -31,8 +33,7 @@ export const zodDurationSchema = z
         }
 
         return true;
-    })
-    .transform((val) => toDuration(val));
+    });
 
 export function zodFileSingleSchema(
     fileSize: number,

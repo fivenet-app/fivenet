@@ -224,7 +224,7 @@ func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {
 			tLaws.StvoPoints,
 		).
 		FROM(tLawBooks.
-			INNER_JOIN(tLaws,
+			LEFT_JOIN(tLaws,
 				tLaws.LawbookID.EQ(tLawBooks.ID),
 			),
 		).

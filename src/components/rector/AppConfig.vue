@@ -103,14 +103,14 @@ const state = reactive<Schema>({
         },
     },
     userTracker: {
-        dbRefreshTime: toDuration('1s'),
-        refreshTime: toDuration('3.35s'),
+        dbRefreshTime: 1.0,
+        refreshTime: 3.35,
         livemapJobs: [],
     },
     // Discord
     discord: {
         enabled: false,
-        syncInterval: toDuration('9s'),
+        syncInterval: 9.0,
         inviteUrl: '',
         ignoredJobs: [],
     },
@@ -128,13 +128,13 @@ async function updateAppConfig(values: Schema): Promise<void> {
     config.value.config.jobInfo = values.jobInfo;
     config.value.config.userTracker = {
         livemapJobs: values.userTracker.livemapJobs,
-        dbRefreshTime: values.userTracker.dbRefreshTime,
-        refreshTime: values.userTracker.refreshTime,
+        dbRefreshTime: toDuration(values.userTracker.dbRefreshTime),
+        refreshTime: toDuration(values.userTracker.refreshTime),
     };
     config.value.config.discord = {
         enabled: values.discord.enabled,
         inviteUrl: values.discord.inviteUrl,
-        syncInterval: values.discord.syncInterval,
+        syncInterval: toDuration(values.discord.syncInterval),
         ignoredJobs: values.discord.ignoredJobs,
     };
 
@@ -185,17 +185,17 @@ function setSettingsValues(): void {
     }
     if (config.value.config.userTracker) {
         if (config.value.config.userTracker.dbRefreshTime) {
-            state.userTracker.dbRefreshTime = config.value.config.userTracker.dbRefreshTime;
+            state.userTracker.dbRefreshTime = fromDuration(config.value.config.userTracker.dbRefreshTime);
         }
         if (config.value.config.userTracker.refreshTime) {
-            state.userTracker.refreshTime = config.value.config.userTracker.refreshTime;
+            state.userTracker.refreshTime = fromDuration(config.value.config.userTracker.refreshTime);
         }
         state.userTracker.livemapJobs = config.value.config.userTracker.livemapJobs;
     }
     if (config.value.config.discord) {
         state.discord.enabled = config.value.config.discord.enabled;
         if (config.value.config.discord.syncInterval) {
-            state.discord.syncInterval = config.value.config.discord.syncInterval;
+            state.discord.syncInterval = fromDuration(config.value.config.discord.syncInterval);
         }
         state.discord.inviteUrl = config.value.config.discord.inviteUrl;
         state.discord.ignoredJobs = config.value.config.discord.ignoredJobs;
@@ -550,13 +550,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UInput
-                                        type="text"
+                                        v-model="state.userTracker.refreshTime"
+                                        type="number"
                                         :placeholder="$t('common.duration')"
-                                        :value="fromDuration(state.userTracker.refreshTime)"
-                                        @update:model-value="state.userTracker.refreshTime = toDuration($event)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
-                                    />
+                                    >
+                                        <template #trailing>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                                        </template>
+                                    </UInput>
                                 </UFormGroup>
 
                                 <UFormGroup
@@ -566,13 +569,16 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UInput
-                                        type="text"
+                                        v-model="state.userTracker.dbRefreshTime"
+                                        type="number"
                                         :placeholder="$t('common.duration')"
-                                        :value="fromDuration(state.userTracker.dbRefreshTime)"
-                                        @update:model-value="state.userTracker.dbRefreshTime = toDuration($event)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
-                                    />
+                                    >
+                                        <template #trailing>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                                        </template>
+                                    </UInput>
                                 </UFormGroup>
 
                                 <UFormGroup
@@ -635,14 +641,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :ui="{ container: '' }"
                                 >
                                     <UInput
+                                        v-model="state.discord.syncInterval"
+                                        type="number"
                                         name="discord.syncInterval"
-                                        type="text"
                                         :placeholder="$t('common.duration')"
-                                        :value="fromDuration(state.discord.syncInterval)"
-                                        @update:model-value="state.discord.syncInterval = toDuration($event)"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
-                                    />
+                                    >
+                                        <template #trailing>
+                                            <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
+                                        </template>
+                                    </UInput>
                                 </UFormGroup>
 
                                 <UFormGroup

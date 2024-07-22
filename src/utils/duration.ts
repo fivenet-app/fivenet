@@ -1,6 +1,10 @@
 import * as googleProtobufDuration from '~~/gen/ts/google/protobuf/duration';
 
-export function toDuration(input: string): googleProtobufDuration.Duration {
+export function toDuration(input: string | number): googleProtobufDuration.Duration {
+    if (typeof input === 'number') {
+        input = input.toFixed(6);
+    }
+
     const split = input.split('.');
     return {
         seconds: split[0] !== undefined ? parseInt(split[0].replace(/\D/g, '')) : 1,
@@ -8,6 +12,6 @@ export function toDuration(input: string): googleProtobufDuration.Duration {
     };
 }
 
-export function fromDuration(input: googleProtobufDuration.Duration): string {
-    return parseFloat(input.seconds.toString() + '.' + (input.nanos ?? 0) / 1000000).toString() + 's';
+export function fromDuration(input: googleProtobufDuration.Duration): number {
+    return parseFloat(input.seconds.toString() + '.' + (input.nanos ?? 0) / 1000000);
 }

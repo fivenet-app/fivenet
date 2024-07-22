@@ -94,7 +94,7 @@ watch(data, async () => {
                     <div class="flex gap-2">
                         <UBadge v-if="data?.qualification?.examSettings?.time" class="inline-flex gap-1">
                             <UIcon name="i-mdi-clock" class="size-4" />
-                            {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}
+                            {{ $t('common.duration') }}: {{ fromDuration(data.qualification.examSettings.time) }}s
                         </UBadge>
                         <UBadge class="inline-flex gap-1">
                             <UIcon name="i-mdi-question-mark" class="size-4" />
