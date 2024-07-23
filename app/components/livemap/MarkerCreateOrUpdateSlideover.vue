@@ -341,7 +341,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     >
                                         <template #label>
                                             <component
-                                                :is="state.icon ?? markerFallbackIcon"
+                                                :is="markerIcons.find((icon) => icon.name === state.icon) ?? markerFallbackIcon"
                                                 class="size-5"
                                                 :style="{ fill: state.color }"
                                             />
@@ -351,9 +351,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                         <template #option="{ option }">
                                             <component :is="option" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{
-                                                camelCaseToTitleCase(state.icon ?? markerFallbackIcon.name ?? 'Unknown')
-                                            }}</span>
+                                            <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
                                         </template>
                                     </USelectMenu>
                                 </UFormGroup>
