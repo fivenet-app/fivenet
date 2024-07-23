@@ -19,21 +19,21 @@ var postalCodesMap = map[string]*Postal{}
 func New(cfg *config.Config) (Postals, error) {
 	file, err := os.Open(cfg.PostalsFile)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to open postals file. %w", err)
 	}
 	defer file.Close()
 
 	buf, err := io.ReadAll(file)
 	if err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to read postals file. %w", err)
 	}
 
 	var codes []*Postal
 	if err := json.Unmarshal(buf, &codes); err != nil {
-		return nil, err
+		return nil, fmt.Errorf("failed to unmarshal postals file. %w", err)
 	}
 
-	cs, err := coords.NewReadOnly[*Postal](codes)
+	cs, err := coords.NewReadOnly(codes)
 	if err != nil {
 		return nil, fmt.Errorf("failed to add postals to postals coords map: %w", err)
 	}
