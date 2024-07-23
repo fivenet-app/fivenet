@@ -38,6 +38,7 @@ CREATE TABLE
         `rsvp_open` tinyint(1) DEFAULT 0,
         `creator_id` int(11) NULL DEFAULT NULL,
         `creator_job` varchar(50) NOT NULL,
+        `recurring` varchar(512) DEFAULT NULL,
         PRIMARY KEY (`id`),
         KEY `idx_fivenet_calendar_entries_deleted_at` (`deleted_at`),
         KEY `idx_fivenet_calendar_entries_calendar_id` (`calendar_id`),
