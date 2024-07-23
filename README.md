@@ -103,7 +103,7 @@ Helm chart is available in the separate [GitHub fivenet-app/charts repository](h
 
 ## Development
 
-Please see [development documentation](docs/development.md).
+Please see [development documentation](https://fivenet.app/development).
 
 ## Security
 
