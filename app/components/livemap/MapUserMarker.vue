@@ -40,13 +40,13 @@ const { goto } = useLivemapStore();
 const centrumStore = useCentrumStore();
 const { units } = storeToRefs(centrumStore);
 
-function getMarkerColor(): string {
+const markerColor = computed(() => {
     if (activeChar.value !== null && props.marker.user?.userId === activeChar.value?.userId) {
         return livemap.userMarkers.activeCharColor;
     } else {
         return props.marker.info?.color ?? livemap.userMarkers.fallbackColor;
     }
-}
+});
 
 const unit = computed(() => (props.marker.unitId !== undefined ? units.value.get(props.marker.unitId) : undefined));
 const unitInverseColor = computed(() => {
@@ -78,7 +78,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                 >
                     {{ unit?.initials }}
                 </span>
-                <MapMarkerIcon class="size-full" :style="{ color: getMarkerColor() }" />
+                <MapMarkerIcon class="size-full" :style="{ color: markerColor }" />
             </div>
             <div v-if="showUnitStatus && unit" class="pointer-events-none uppercase">
                 <span class="absolute right-0 top-0 -mr-2 -mt-1.5 flex size-3">
