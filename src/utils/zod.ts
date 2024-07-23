@@ -2,8 +2,8 @@ import { z } from 'zod';
 
 export const zodDurationSchema = z
     .number()
-    .min(2)
-    .max(10)
+    .nonnegative()
+    .max(999_999)
     .superRefine((duration, ctx) => {
         if (!duration || duration < 0) {
             ctx.addIssue({
@@ -14,7 +14,7 @@ export const zodDurationSchema = z
         }
 
         const d = duration.toString();
-        if (!/^\d+(\.\d+)?s$/.test(d)) {
+        if (!/^\d+(\.\d+)?$/.test(d)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'zodI18n.custom.duration.invalid',
@@ -22,9 +22,8 @@ export const zodDurationSchema = z
             return false;
         }
 
-        console.log(d);
         const val = toDuration(d);
-        if (val.seconds < 0 || val.nanos < 0 || (val.seconds === 0 && val.nanos > 0)) {
+        if (val.seconds <= 0 || val.nanos < 0 || (val.seconds === 0 && val.nanos > 0)) {
             ctx.addIssue({
                 code: z.ZodIssueCode.custom,
                 message: 'zodI18n.custom.duration.invalid',

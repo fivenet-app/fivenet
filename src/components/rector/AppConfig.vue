@@ -552,6 +552,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UInput
                                         v-model="state.userTracker.refreshTime"
                                         type="number"
+                                        :min="1"
                                         :placeholder="$t('common.duration')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -571,6 +572,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UInput
                                         v-model="state.userTracker.dbRefreshTime"
                                         type="number"
+                                        :min="1"
                                         :placeholder="$t('common.duration')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -643,6 +645,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UInput
                                         v-model="state.discord.syncInterval"
                                         type="number"
+                                        :min="1"
                                         name="discord.syncInterval"
                                         :placeholder="$t('common.duration')"
                                         @focusin="focusTablet(true)"
