@@ -2,7 +2,6 @@
 import DocumentList from '~/components/documents/DocumentList.vue';
 import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import DashboardPanel from '~/components/partials/dashboard/DashboardPanel.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
@@ -88,7 +87,7 @@ const isOpen = ref(false);
             <DocumentList />
         </UDashboardPanel>
 
-        <DashboardPanel
+        <UDashboardPanel
             v-model="isOpen"
             collapsible
             side="right"
@@ -177,6 +176,6 @@ const isOpen = ref(false);
             </UDashboardPanelContent>
 
             <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-        </DashboardPanel>
+        </UDashboardPanel>
     </UDashboardPage>
 </template>

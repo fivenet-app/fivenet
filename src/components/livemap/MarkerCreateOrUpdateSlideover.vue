@@ -125,7 +125,7 @@ async function markerIconSearch(query: string): Promise<DefineComponent[]> {
     query = query.toLowerCase().replaceAll(' ', '').trim();
     let count = 0;
     return markerIcons.filter((icon) => {
-        if (count < 35 && icon?.name?.toLowerCase()?.startsWith(query)) {
+        if (count < 35 && icon.name?.toLowerCase()?.startsWith(query)) {
             count++;
             return true;
         }
@@ -341,7 +341,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     >
                                         <template #label>
                                             <component
-                                                :is="markerIcons.find((icon) => icon.name === state.icon) ?? markerFallbackIcon"
+                                                :is="state.icon ?? markerFallbackIcon"
                                                 class="size-5"
                                                 :style="{ fill: state.color }"
                                             />
@@ -351,7 +351,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         </template>
                                         <template #option="{ option }">
                                             <component :is="option" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
+                                            <span class="truncate">{{
+                                                camelCaseToTitleCase(state.icon ?? markerFallbackIcon.name ?? 'Unknown')
+                                            }}</span>
                                         </template>
                                     </USelectMenu>
                                 </UFormGroup>

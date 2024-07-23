@@ -70,7 +70,7 @@ function updateLaw(event: { id: string; law: Law }): void {
                 <li v-for="(book, idx) in lawBooks" :key="book.id">
                     <LawBookEntry
                         v-model="lawBooks[idx]"
-                        v-model:laws="lawBooks[idx]!.laws"
+                        v-model:laws="book.laws"
                         :start-in-edit="parseInt(book.id) < 0"
                         @update:law="updateLaw($event)"
                         @deleted="deletedLawBook($event)"

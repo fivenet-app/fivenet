@@ -185,7 +185,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <DocumentCommentEntry
                     v-for="(comment, idx) in data.comments"
                     :key="comment.id"
-                    v-model="data!.comments[idx]"
+                    v-model="data.comments[idx]"
                     @deleted="removeComment($event)"
                 />
             </ul>

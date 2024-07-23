@@ -3,7 +3,6 @@ import type { Group } from '#ui/types';
 import ClipboardModal from '~/components/clipboard/modal/ClipboardModal.vue';
 import HelpSlideover from '~/components/HelpSlideover.vue';
 import NotificationsSlideover from '~/components/NotificationsSlideover.vue';
-import DashboardSidebarLinks from '~/components/partials/dashboard/DashboardSidebarLinks.vue';
 import WebSocketStatusOverlay from '~/components/partials/WebSocketStatusOverlay.vue';
 import BodyCheckupModal from '~/components/quickbuttons/bodycheckup/BodyCheckupModal.vue';
 import PenaltyCalculatorModal from '~/components/quickbuttons/penaltycalculator/PenaltyCalculatorModal.vue';
@@ -386,23 +385,23 @@ const quickAccessButtons = computed(() =>
                     <UDashboardSearchButton :label="$t('common.search_field')" />
                 </template>
 
-                <DashboardSidebarLinks :links="links" />
+                <UDashboardSidebarLinks :links="links" />
 
                 <template v-if="clipboardLink.length > 0">
                     <UDivider />
 
-                    <DashboardSidebarLinks :links="clipboardLink" />
+                    <UDashboardSidebarLinks :links="clipboardLink" />
                 </template>
 
                 <template v-if="quickAccessButtons">
                     <UDivider />
 
-                    <DashboardSidebarLinks :links="quickAccessButtons" />
+                    <UDashboardSidebarLinks :links="quickAccessButtons" />
                 </template>
 
                 <div class="flex-1" />
 
-                <DashboardSidebarLinks :links="footerLinks" />
+                <UDashboardSidebarLinks :links="footerLinks" />
 
                 <UDivider class="sticky bottom-0" />
 
