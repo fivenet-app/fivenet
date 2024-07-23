@@ -1,28 +1,8 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "extends": [
-        "config:base",
-        "github>nuxt/renovate-config-nuxt",
-        "group:allNonMajor"
+        "github>nuxt/renovate-config-nuxt"
     ],
     "baseBranches": ["develop"],
-    "postUpdateOptions": ["gomodTidy"],
-    "packageRules": [
-        {
-            "matchCategories": ["docker", "helm", "kubernetes"],
-            "groupName": "external"
-        },
-        {
-            "matchCategories": ["js", "node"],
-            "groupName": "js"
-        },
-        {
-            "matchCategories": ["golang"],
-            "groupName": "go"
-        },
-        {
-            "matchCategories": ["ci"],
-            "groupName": "ci"
-        }
-    ]
+    "postUpdateOptions": ["gomodTidy"]
 }
