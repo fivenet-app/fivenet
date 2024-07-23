@@ -71,7 +71,7 @@
         "@types/howler": "2.2.11",
         "@types/leaflet": "1.9.12",
         "@types/leaflet-contextmenu": "1.4.3",
-        "@types/node": "20.14.11",
+        "@types/node": "20.14.12",
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "10.0.0",
         "@types/zxcvbn": "4.4.4",
@@ -107,5 +107,5 @@
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.0.28"
     },
-    "packageManager": "pnpm@8.15.6+sha1.8105075ad0aa306138be128c017e9c41e28ecffa"
+    "packageManager": "pnpm@8.15.9"
 }
