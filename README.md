@@ -1,5 +1,5 @@
 <p align="center">
-    <img alt="FiveNet Logo" src="src/public/images/social-card.png" width="640" />
+    <img alt="FiveNet Logo" src="public/images/social-card.png" width="640" />
 </p>
 
 # FiveNet
@@ -117,4 +117,4 @@ If you find a vulnerability or a potential vulnerability in FiveNet, please see 
 
 Code licensed under Apache 2.0 license, see [LICENSE](LICENSE).
 
-Licenses of used libraries, code and media can be found in the [`src/public/licenses/` folder](src/public/licenses/).
+Licenses of used libraries, code and media can be found in the [`public/licenses/` folder](public/licenses/).

@@ -6,8 +6,8 @@ ARG NUXT_UI_PRO_LICENSE
 WORKDIR /app
 COPY . ./
 RUN rm -rf ./.nuxt/ && \
-    find ./src/public/images/livemap/ \
-        ! -path '*/tiles*' -and ! -path './src/public/images/livemap/' \
+    find ./public/images/livemap/ \
+        ! -path '*/tiles*' -and ! -path './public/images/livemap/' \
         -exec rm -rf {} + && \
     apk add --no-cache git && \
     corepack enable && \

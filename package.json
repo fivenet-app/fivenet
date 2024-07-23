@@ -14,7 +14,7 @@
         "generate": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi generate",
         "preview": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi preview",
         "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi prepare",
-        "pretty": "pnpm prettier --write ./src/",
+        "pretty": "pnpm prettier --write ./app/",
         "analyze": "pnpm nuxi analyze",
         "typecheck": "pnpm nuxi typecheck",
         "lint": "pnpm eslint .",

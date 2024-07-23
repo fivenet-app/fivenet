@@ -152,11 +152,11 @@ fmt-proto: buf
 
 .PHONY: fmt-js
 fmt-js:
-	pnpm prettier --write ./src
+	pnpm prettier --write ./app
 
 .PHONY: gen-licenses
 gen-licenses: go-licenses
-	yarn licenses generate-disclaimer > ./src/public/licenses/frontend.txt
+	yarn licenses generate-disclaimer > ./public/licenses/frontend.txt
 	go-licenses report ./... --ignore $$($(GO) list -m) --include_tests \
 		--ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
-		--template internal/scripts/go-licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
+		--template internal/scripts/go-licenses-backend.txt.tpl > ./public/licenses/backend.txt

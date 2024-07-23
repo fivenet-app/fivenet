@@ -15,7 +15,7 @@ const (
 var EmbedAuthor = &discordgo.MessageEmbedAuthor{
 	Name:    "FiveNet Discord Bot",
 	URL:     "https://fivenet.app/",
-	IconURL: "https://raw.githubusercontent.com/fivenet-app/fivenet/main/src/public/images/logo-200x200.png",
+	IconURL: "https://raw.githubusercontent.com/fivenet-app/fivenet/main/public/images/logo-200x200.png",
 }
 
 var EmbedFooter = &discordgo.MessageEmbedFooter{
