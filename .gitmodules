@@ -1,0 +1,3 @@
+[submodule "src/public/images/livemap"]
+	path = src/public/images/livemap
+	url = https://github.com/fivenet-app/livemap-tiles.git
