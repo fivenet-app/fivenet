@@ -14,6 +14,9 @@ ifneq (,$(wildcard ./.env))
     export
 endif
 
+build_dir:
+	mkdir -p $(BUILD_DIR)
+
 # Build, Format, etc., Tools, Dependency checkouts
 
 buf:
@@ -37,13 +40,6 @@ protoc-gen-customizer:
 protoc-gen-fronthelper:
 	$(GO) build -o ./internal/cmd/protoc-gen-fronthelper ./internal/cmd/protoc-gen-fronthelper
 
-gdal2tiles-leaflet: build_dir
-	if test ! -d $(BUILD_DIR)gdal2tiles-leaflet/; then \
-		git clone https://github.com/commenthol/gdal2tiles-leaflet.git $(BUILD_DIR)gdal2tiles-leaflet; \
-	else \
-		git -C $(BUILD_DIR)gdal2tiles-leaflet pull --all; \
-	fi
-
 go-licenses:
 ifeq (, $(shell which go-licenses))
 	@GO111MODULE=on $(GO) install github.com/google/go-licenses@latest
@@ -51,14 +47,10 @@ endif
 
 # Actual targets
 
-build_dir:
-	mkdir -p $(BUILD_DIR)
-
 .PHONY: clean
 clean:
 	@pnpx nuxi cleanup
 	rm -rf ./.nuxt/dist/
-	rm -rf gdal2tiles-leaflet
 
 .PHONY: watch
 watch:
@@ -168,20 +160,3 @@ gen-licenses: go-licenses
 	go-licenses report ./... --ignore $$($(GO) list -m) --include_tests \
 		--ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
 		--template internal/scripts/go-licenses-backend.txt.tpl > ./src/public/licenses/backend.txt
-
-.PHONY: gen-tiles
-gen-tiles: gdal2tiles-leaflet
-	GDAL_ALLOW_LARGE_LIBJPEG_MEM_ALLOC=true \
-	JPEGMEM=2048M \
-		$(BUILD_DIR)gdal2tiles-leaflet/gdal2tiles.py \
-		-l -p raster -z 1-7 -w none \
-		./internal/maps/GTAV_POSTAL_16384x16384.jpg ./src/public/images/livemap/tiles/postal
-
-.PHONY: optimize-tiles
-optimize-tiles:
-	find ./src/public/images/livemap/tiles/ -iname '*.png' -print0 | xargs -n1 -P16 -0 optipng -strip all -clobber -fix -o9
-
-.PHONY: tiles
-tiles:
-	$(MAKE) gen-tiles
-	$(MAKE) optimize-tiles
