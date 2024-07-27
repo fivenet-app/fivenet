@@ -1,5 +1,5 @@
 import type { Config } from 'tailwindcss';
-import defaultTheme from 'tailwindcss/defaultTheme';
+import { fontFamily } from 'tailwindcss/defaultTheme';
 
 export default <Partial<Config>>{
     mode: 'jit',
@@ -78,18 +78,12 @@ export default <Partial<Config>>{
                 },
             },
             fontFamily: {
-                sans: ['DM Sans', ...defaultTheme.fontFamily.sans],
-            },
-            boxShadow: {
-                float: '0px 0px 22px 0px rgba(0,0,0,0.5)',
-                glow: '0px 0px 22px 0px rgba(255,255,255,0.2)',
+                sans: ['DM Sans', 'DM Sans fallback', ...fontFamily.sans],
             },
             maxWidth: {
-                '8xl': '88rem',
                 screen: '100vw',
             },
             height: {
-                '112': '28rem',
                 dscreen: '100dvh',
             },
             animation: {
@@ -116,8 +110,6 @@ export default <Partial<Config>>{
             },
             zIndex: {
                 '150': '150',
-                '100': '100',
-                '5': '5',
             },
         },
     },

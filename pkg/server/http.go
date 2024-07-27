@@ -199,6 +199,7 @@ func NewEngine(p EngineParams) *gin.Engine {
 		}),
 		grpcws.WithCorsForRegisteredEndpointsOnly(false),
 		grpcws.WithAllowNonRootResource(true),
+		grpcws.WithWebsocketPingInterval(40*time.Second),
 	)
 	ginWrappedGrpc := gin.WrapH(wrapperGrpc)
 	e.Any("/api/grpc", ginWrappedGrpc)

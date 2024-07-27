@@ -13,6 +13,7 @@ export default defineNuxtConfig({
         'nuxt-typed-router',
         '@nuxtjs/robots',
         '@nuxt/fonts',
+        '@nuxtjs/fontaine',
         '@vueuse/nuxt',
         '@pinia/nuxt',
         '@pinia-plugin-persistedstate/nuxt',
