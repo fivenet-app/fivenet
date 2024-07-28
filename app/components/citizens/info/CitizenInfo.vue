@@ -48,7 +48,7 @@ const items: { slot: string; label: string; icon: string; permission: Perms }[] 
     {
         slot: 'activity',
         label: t('common.activity'),
-        icon: 'i-mdi-bulletin-board',
+        icon: 'i-mdi-pulse',
         permission: 'CitizenStoreService.ListUserActivity' as Perms,
     },
 ].filter((item) => can(item.permission).value);

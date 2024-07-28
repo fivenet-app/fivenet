@@ -21,6 +21,7 @@ import { RectorConfigServiceClient } from '~~/gen/ts/services/rector/config.clie
 import { RectorFilestoreServiceClient } from '~~/gen/ts/services/rector/filestore.client';
 import { RectorLawsServiceClient } from '~~/gen/ts/services/rector/laws.client';
 import { RectorServiceClient } from '~~/gen/ts/services/rector/rector.client';
+import { StatsServiceClient } from '~~/gen/ts/services/stats/stats.client';
 import { useGRPCWebsocketTransport } from './grpcws';
 
 const logger = useLogger('GRPC-WS');
@@ -231,4 +232,9 @@ export function getGRPCCalendarClient(): CalendarServiceClient {
 // Messenger
 export function getGRPCMessengerClient(): MessengerServiceClient {
     return new MessengerServiceClient(grpcWebsocketTransport);
+}
+
+// Stats
+export function getGRPCStatsClient(): StatsServiceClient {
+    return new StatsServiceClient(grpcWebTransport);
 }

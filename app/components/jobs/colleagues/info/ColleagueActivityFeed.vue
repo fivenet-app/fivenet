@@ -166,7 +166,7 @@ watchDebounced(query, async () => refresh(), {
     />
     <DataNoDataBlock
         v-else-if="data?.activity.length === 0"
-        icon="i-mdi-bulletin-board"
+        icon="i-mdi-pulse"
         :type="`${$t('common.colleague', 1)} ${$t('common.activity')}`"
         class="flex-1"
     />

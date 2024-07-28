@@ -26,7 +26,6 @@ import { useSettingsStore } from '~/store/settings';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
 import DisponentsInfo from '../disponents/DisponentsInfo.vue';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import StreamControl from '../StreamControl.vue';
 
 const modal = useModal();
 
@@ -297,10 +296,6 @@ defineShortcuts({
 <template>
     <UDashboardPanel grow>
         <UDashboardNavbar :title="$t('common.livemap')">
-            <template #center>
-                <StreamControl />
-            </template>
-
             <template #right>
                 <DisponentsInfo :hide-join="true" />
             </template>

@@ -49,6 +49,7 @@ import (
 	pbnotificator "github.com/fivenet-app/fivenet/gen/go/proto/services/notificator"
 	pbqualifications "github.com/fivenet-app/fivenet/gen/go/proto/services/qualifications"
 	pbrector "github.com/fivenet-app/fivenet/gen/go/proto/services/rector"
+	pbstats "github.com/fivenet-app/fivenet/gen/go/proto/services/stats"
 
 	// Modules
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/bot"
@@ -176,6 +177,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 			grpc.AsService(pbnotificator.NewServer),
 			grpc.AsService(pbqualifications.NewServer),
 			grpc.AsService(pbrector.NewServer),
+			grpc.AsService(pbstats.NewServer),
 		),
 
 		fx.Invoke(func(*bluemonday.Policy) {}),

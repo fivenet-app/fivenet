@@ -67,7 +67,7 @@ watch(offset, async () => refresh());
         <DataNoDataBlock
             v-else-if="!data || data?.activity.length === 0"
             :type="`${$t('common.citizen', 1)} ${$t('common.activity')}`"
-            icon="i-mdi-bulletin-board"
+            icon="i-mdi-pulse"
         />
 
         <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">

@@ -39,6 +39,10 @@ export interface AppConfig {
      * @generated from protobuf field: resources.rector.Discord discord = 6;
      */
     discord?: Discord;
+    /**
+     * @generated from protobuf field: bool stats_page = 7;
+     */
+    statsPage: boolean;
 }
 /**
  * @generated from protobuf message resources.rector.Auth
@@ -174,11 +178,13 @@ class AppConfig$Type extends MessageType<AppConfig> {
             { no: 3, name: "website", kind: "message", T: () => Website },
             { no: 4, name: "job_info", kind: "message", T: () => JobInfo },
             { no: 5, name: "user_tracker", kind: "message", T: () => UserTracker },
-            { no: 6, name: "discord", kind: "message", T: () => Discord }
+            { no: 6, name: "discord", kind: "message", T: () => Discord },
+            { no: 7, name: "stats_page", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.statsPage = false;
         if (value !== undefined)
             reflectionMergePartial<AppConfig>(this, message, value);
         return message;
@@ -205,6 +211,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
                     break;
                 case /* resources.rector.Discord discord */ 6:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
+                    break;
+                case /* bool stats_page */ 7:
+                    message.statsPage = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -236,6 +245,9 @@ class AppConfig$Type extends MessageType<AppConfig> {
         /* resources.rector.Discord discord = 6; */
         if (message.discord)
             Discord.internalBinaryWrite(message.discord, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* bool stats_page = 7; */
+        if (message.statsPage !== false)
+            writer.tag(7, WireType.Varint).bool(message.statsPage);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

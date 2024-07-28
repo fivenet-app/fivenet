@@ -234,6 +234,17 @@
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
   
+- [resources/users/users.proto](#resources_users_users-proto)
+    - [CitizenAttribute](#resources-users-CitizenAttribute)
+    - [CitizenAttributes](#resources-users-CitizenAttributes)
+    - [License](#resources-users-License)
+    - [User](#resources-users-User)
+    - [UserActivity](#resources-users-UserActivity)
+    - [UserProps](#resources-users-UserProps)
+    - [UserShort](#resources-users-UserShort)
+  
+    - [UserActivityType](#resources-users-UserActivityType)
+  
 - [resources/users/jobs.proto](#resources_users_jobs-proto)
     - [DiscordSyncChange](#resources-users-DiscordSyncChange)
     - [DiscordSyncChanges](#resources-users-DiscordSyncChanges)
@@ -250,17 +261,6 @@
     - [UserInfoSyncSettings](#resources-users-UserInfoSyncSettings)
   
     - [UserInfoSyncUnemployedMode](#resources-users-UserInfoSyncUnemployedMode)
-  
-- [resources/users/users.proto](#resources_users_users-proto)
-    - [CitizenAttribute](#resources-users-CitizenAttribute)
-    - [CitizenAttributes](#resources-users-CitizenAttributes)
-    - [License](#resources-users-License)
-    - [User](#resources-users-User)
-    - [UserActivity](#resources-users-UserActivity)
-    - [UserProps](#resources-users-UserProps)
-    - [UserShort](#resources-users-UserShort)
-  
-    - [UserActivityType](#resources-users-UserActivityType)
   
 - [resources/vehicles/vehicles.proto](#resources_vehicles_vehicles-proto)
     - [Vehicle](#resources-vehicles-Vehicle)
@@ -304,6 +304,9 @@
   
 - [resources/messenger/user.proto](#resources_messenger_user-proto)
     - [UserStatus](#resources-messenger-UserStatus)
+  
+- [resources/stats/stats.proto](#resources_stats_stats-proto)
+    - [Stat](#resources-stats-Stat)
   
 - [services/auth/auth.proto](#services_auth_auth-proto)
     - [ChangePasswordRequest](#services-auth-ChangePasswordRequest)
@@ -697,6 +700,13 @@
     - [SetThreadUserStateResponse](#services-messenger-SetThreadUserStateResponse)
   
     - [MessengerService](#services-messenger-MessengerService)
+  
+- [services/stats/stats.proto](#services_stats_stats-proto)
+    - [GetStatsRequest](#services-stats-GetStatsRequest)
+    - [GetStatsResponse](#services-stats-GetStatsResponse)
+    - [GetStatsResponse.StatsEntry](#services-stats-GetStatsResponse-StatsEntry)
+  
+    - [StatsService](#services-stats-StatsService)
   
 - [Scalar Value Types](#scalar-value-types)
 
@@ -3841,6 +3851,7 @@
 | job_info | [JobInfo](#resources-rector-JobInfo) |  |  |
 | user_tracker | [UserTracker](#resources-rector-UserTracker) |  |  |
 | discord | [Discord](#resources-rector-Discord) |  |  |
+| stats_page | [bool](#bool) |  |  |
 
 
 
@@ -4028,6 +4039,193 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 
 
  
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_users_users-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/users/users.proto
+
+
+
+<a name="resources-users-CitizenAttribute"></a>
+
+### CitizenAttribute
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
+| job | [string](#string) | optional |  |
+| name | [string](#string) |  |  |
+| color | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-CitizenAttributes"></a>
+
+### CitizenAttributes
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
+
+
+
+
+
+
+<a name="resources-users-License"></a>
+
+### License
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [string](#string) |  |  |
+| label | [string](#string) |  |  |
+
+
+
+
+
+
+<a name="resources-users-User"></a>
+
+### User
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
+| identifier | [string](#string) | optional |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| sex | [string](#string) | optional |  |
+| height | [string](#string) | optional |  |
+| phone_number | [string](#string) | optional |  |
+| visum | [int32](#int32) | optional |  |
+| playtime | [int32](#int32) | optional |  |
+| props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:&#34;fivenet_user_props&#34; |
+| licenses | [License](#resources-users-License) | repeated | @gotags: alias:&#34;user_licenses&#34; |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserActivity"></a>
+
+### UserActivity
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| id | [uint64](#uint64) |  | @gotags: alias:&#34;fivenet_user_activity.id&#34; |
+| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:&#34;fivenet_user_activity.type&#34; |
+| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:&#34;fivenet_user_activity.created_at&#34; |
+| source_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;source_user&#34; |
+| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;target_user&#34; |
+| key | [string](#string) |  | @sanitize
+
+@gotags: alias:&#34;fivenet_user_activity.key&#34; |
+| old_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.old_value&#34; |
+| new_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.new_value&#34; |
+| reason | [string](#string) |  | @sanitize
+
+@gotags: alias:&#34;fivenet_user_activity.reason&#34; |
+
+
+
+
+
+
+<a name="resources-users-UserProps"></a>
+
+### UserProps
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  |  |
+| wanted | [bool](#bool) | optional |  |
+| job_name | [string](#string) | optional | @gotags: alias:&#34;job&#34; |
+| job | [Job](#resources-users-Job) | optional |  |
+| job_grade_number | [int32](#int32) | optional | @gotags: alias:&#34;job_grade&#34; |
+| job_grade | [JobGrade](#resources-users-JobGrade) | optional |  |
+| traffic_infraction_points | [uint32](#uint32) | optional |  |
+| open_fines | [int64](#int64) | optional |  |
+| blood_type | [string](#string) | optional |  |
+| mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
+| attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
+
+
+
+
+
+
+<a name="resources-users-UserShort"></a>
+
+### UserShort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
+| identifier | [string](#string) | optional |  |
+| job | [string](#string) |  |  |
+| job_label | [string](#string) | optional |  |
+| job_grade | [int32](#int32) |  |  |
+| job_grade_label | [string](#string) | optional |  |
+| firstname | [string](#string) |  |  |
+| lastname | [string](#string) |  |  |
+| dateofbirth | [string](#string) |  |  |
+| phone_number | [string](#string) | optional |  |
+| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-users-UserActivityType"></a>
+
+### UserActivityType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
+| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
+| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
+| USER_ACTIVITY_TYPE_CREATED | 3 |  |
+
 
  
 
@@ -4281,193 +4479,6 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | USER_INFO_SYNC_UNEMPLOYED_MODE_UNSPECIFIED | 0 |  |
 | USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE | 1 |  |
 | USER_INFO_SYNC_UNEMPLOYED_MODE_KICK | 2 |  |
-
-
- 
-
- 
-
- 
-
-
-
-<a name="resources_users_users-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/users/users.proto
-
-
-
-<a name="resources-users-CitizenAttribute"></a>
-
-### CitizenAttribute
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
-| job | [string](#string) | optional |  |
-| name | [string](#string) |  |  |
-| color | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-CitizenAttributes"></a>
-
-### CitizenAttributes
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| list | [CitizenAttribute](#resources-users-CitizenAttribute) | repeated |  |
-
-
-
-
-
-
-<a name="resources-users-License"></a>
-
-### License
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| type | [string](#string) |  |  |
-| label | [string](#string) |  |  |
-
-
-
-
-
-
-<a name="resources-users-User"></a>
-
-### User
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) | optional |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| sex | [string](#string) | optional |  |
-| height | [string](#string) | optional |  |
-| phone_number | [string](#string) | optional |  |
-| visum | [int32](#int32) | optional |  |
-| playtime | [int32](#int32) | optional |  |
-| props | [UserProps](#resources-users-UserProps) |  | @gotags: alias:&#34;fivenet_user_props&#34; |
-| licenses | [License](#resources-users-License) | repeated | @gotags: alias:&#34;user_licenses&#34; |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserActivity"></a>
-
-### UserActivity
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| id | [uint64](#uint64) |  | @gotags: alias:&#34;fivenet_user_activity.id&#34; |
-| type | [UserActivityType](#resources-users-UserActivityType) |  | @gotags: alias:&#34;fivenet_user_activity.type&#34; |
-| created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: alias:&#34;fivenet_user_activity.created_at&#34; |
-| source_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;source_user&#34; |
-| target_user | [UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;target_user&#34; |
-| key | [string](#string) |  | @sanitize
-
-@gotags: alias:&#34;fivenet_user_activity.key&#34; |
-| old_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.old_value&#34; |
-| new_value | [string](#string) |  | @gotags: alias:&#34;fivenet_user_activity.new_value&#34; |
-| reason | [string](#string) |  | @sanitize
-
-@gotags: alias:&#34;fivenet_user_activity.reason&#34; |
-
-
-
-
-
-
-<a name="resources-users-UserProps"></a>
-
-### UserProps
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  |  |
-| wanted | [bool](#bool) | optional |  |
-| job_name | [string](#string) | optional | @gotags: alias:&#34;job&#34; |
-| job | [Job](#resources-users-Job) | optional |  |
-| job_grade_number | [int32](#int32) | optional | @gotags: alias:&#34;job_grade&#34; |
-| job_grade | [JobGrade](#resources-users-JobGrade) | optional |  |
-| traffic_infraction_points | [uint32](#uint32) | optional |  |
-| open_fines | [int64](#int64) | optional |  |
-| blood_type | [string](#string) | optional |  |
-| mug_shot | [resources.filestore.File](#resources-filestore-File) | optional |  |
-| attributes | [CitizenAttributes](#resources-users-CitizenAttributes) | optional |  |
-
-
-
-
-
-
-<a name="resources-users-UserShort"></a>
-
-### UserShort
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) |  | @gotags: alias:&#34;id&#34; |
-| identifier | [string](#string) | optional |  |
-| job | [string](#string) |  |  |
-| job_label | [string](#string) | optional |  |
-| job_grade | [int32](#int32) |  |  |
-| job_grade_label | [string](#string) | optional |  |
-| firstname | [string](#string) |  |  |
-| lastname | [string](#string) |  |  |
-| dateofbirth | [string](#string) |  |  |
-| phone_number | [string](#string) | optional |  |
-| avatar | [resources.filestore.File](#resources-filestore-File) | optional |  |
-
-
-
-
-
- 
-
-
-<a name="resources-users-UserActivityType"></a>
-
-### UserActivityType
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| USER_ACTIVITY_TYPE_UNSPECIFIED | 0 |  |
-| USER_ACTIVITY_TYPE_CHANGED | 1 |  |
-| USER_ACTIVITY_TYPE_MENTIONED | 2 |  |
-| USER_ACTIVITY_TYPE_CREATED | 3 |  |
 
 
  
@@ -5055,6 +5066,37 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | user_id | [int32](#int32) |  |  |
 | last_seen | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | status | [string](#string) | optional | @sanitize: method=StripTags |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_stats_stats-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/stats/stats.proto
+
+
+
+<a name="resources-stats-Stat"></a>
+
+### Stat
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| value | [int32](#int32) | optional |  |
 
 
 
@@ -10452,6 +10494,73 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | GetThreadMessages | [GetThreadMessagesRequest](#services-messenger-GetThreadMessagesRequest) | [GetThreadMessagesResponse](#services-messenger-GetThreadMessagesResponse) | @perm: Name=ListThreads |
 | PostMessage | [PostMessageRequest](#services-messenger-PostMessageRequest) | [PostMessageResponse](#services-messenger-PostMessageResponse) | @perm |
 | DeleteMessage | [DeleteMessageRequest](#services-messenger-DeleteMessageRequest) | [DeleteMessageResponse](#services-messenger-DeleteMessageResponse) | @perm: Name=SuperUser |
+
+ 
+
+
+
+<a name="services_stats_stats-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/stats/stats.proto
+
+
+
+<a name="services-stats-GetStatsRequest"></a>
+
+### GetStatsRequest
+
+
+
+
+
+
+
+<a name="services-stats-GetStatsResponse"></a>
+
+### GetStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| stats | [GetStatsResponse.StatsEntry](#services-stats-GetStatsResponse-StatsEntry) | repeated |  |
+
+
+
+
+
+
+<a name="services-stats-GetStatsResponse-StatsEntry"></a>
+
+### GetStatsResponse.StatsEntry
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| key | [string](#string) |  |  |
+| value | [resources.stats.Stat](#resources-stats-Stat) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-stats-StatsService"></a>
+
+### StatsService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| GetStats | [GetStatsRequest](#services-stats-GetStatsRequest) | [GetStatsResponse](#services-stats-GetStatsResponse) |  |
 
  
 

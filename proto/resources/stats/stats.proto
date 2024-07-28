@@ -1,0 +1,9 @@
+syntax = "proto3";
+
+package resources.stats;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/stats;stats";
+
+message Stat {
+  optional int32 value = 1;
+}

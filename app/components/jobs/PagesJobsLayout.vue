@@ -19,7 +19,7 @@ const links = [
     {
         label: t('common.activity'),
         to: { name: 'jobs-activity' },
-        icon: 'i-mdi-bulletin-board',
+        icon: 'i-mdi-pulse',
         permission: 'JobsService.ListColleagueActivity' as Perms,
     },
     {

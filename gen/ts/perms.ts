@@ -37,6 +37,7 @@
 // source: resources/qualifications/qualifications.proto
 // source: resources/rector/audit.proto
 // source: resources/rector/config.proto
+// source: resources/stats/stats.proto
 // source: resources/timestamp/timestamp.proto
 // source: resources/users/jobs.proto
 // source: resources/users/users.proto
@@ -59,6 +60,7 @@
 // source: services/rector/filestore.proto
 // source: services/rector/laws.proto
 // source: services/rector/rector.proto
+// source: services/stats/stats.proto
 
 export type Perms =
     | 'CanBeSuper'

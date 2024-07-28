@@ -144,6 +144,18 @@
             "subtitle": "You are leaving FiveNet.",
             "description": "Please note that you will be redirected to a website for whose content we are not responsible and to which our privacy policy does not apply.",
             "goto": "If the automatic forwarding does not work, please click here!"
+        },
+        "stats": {
+            "title": "Statistics",
+            "subtitle": "FiveNet in numbers.",
+            "stats": {
+                "users_registered": "Users registered",
+                "documents_created": "Documents created",
+                "dispatches_created": "Dispatches sent",
+                "citizen_activity": "Citizen activity logged",
+                "timeclock_tracked": "Service time tracked",
+                "citizens_total": "Citizen files maintained"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt All rights reserved.",
@@ -789,10 +801,6 @@
                     "description": "Timings for dispatch and unit status updates/pings.",
                     "dispatch_max_wait": "Dispatch: Max Wait (in seconds)"
                 }
-            },
-            "StreamControl": {
-                "pause": "Pause",
-                "start": "Start"
             }
         },
         "jobs": {

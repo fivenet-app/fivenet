@@ -168,6 +168,11 @@ const links = computed(() =>
 
 const footerLinks = [
     {
+        label: t('pages.stats.title'),
+        icon: 'i-mdi-analytics',
+        to: '/stats',
+    },
+    {
         label: t('common.help'),
         icon: 'i-mdi-question-mark-circle-outline',
         click: () => (isHelpSlideoverOpen.value = true),

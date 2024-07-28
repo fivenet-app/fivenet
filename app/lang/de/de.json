@@ -144,6 +144,18 @@
             "subtitle": "Sie verlassen nun FiveNet.",
             "description": "Bitte beachten Sie, dass Sie auf eine Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
             "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!"
+        },
+        "stats": {
+            "title": "Statistik",
+            "subtitle": "FiveNet in Zahlen.",
+            "stats": {
+                "users_registered": "Benutzer registriert",
+                "documents_created": "Dokumente erstellt",
+                "dispatches_created": "Notrufe abgesetzt",
+                "citizen_activity": "Bürgeraktivitäten protokolliert",
+                "timeclock_tracked": "Dienstzeit erfasst",
+                "citizens_total": "Bürgerakten geführt"
+            }
         }
     },
     "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
@@ -789,10 +801,6 @@
                     "description": "Zeitangaben für Einsatz- und Einheit-Status-Pings.",
                     "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)"
                 }
-            },
-            "StreamControl": {
-                "pause": "Pausieren",
-                "start": "Start"
             }
         },
         "jobs": {

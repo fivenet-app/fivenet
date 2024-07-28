@@ -25,6 +25,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                 hash: url.hash,
             });
         }
+
         return true;
     }
 
