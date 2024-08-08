@@ -38,6 +38,11 @@ export type DiscordConfig = {
     botInviteURL?: string;
 };
 
+export type Website = {
+    links: Links;
+    statsPage: boolean;
+};
+
 export type Links = {
     imprint?: string;
     privacyPolicy?: string;
@@ -45,12 +50,17 @@ export type Links = {
 
 export type FeatureGates = {};
 
+export type Game = {
+    unemployedJobName: string;
+};
+
 export type AppConfig = {
     version: string;
     login: LoginConfig;
     discord: DiscordConfig;
-    links: Links;
+    website: Website;
     featureGates: FeatureGates;
+    game: Game;
 };
 
 // It is always important to ensure you import/export something when augmenting a type

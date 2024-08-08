@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import CountUp from 'vue-countup-v3';
+import { useAuthStore } from '~/store/auth';
 import { type Stat } from '~~/gen/ts/resources/stats/stats';
 
 useHead({
@@ -13,6 +14,9 @@ definePageMeta({
     showCookieOptions: true,
     redirectIfAuthed: false,
 });
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 type Stats = { [key: string]: Stat & { type?: string; unit?: string; icon?: string } };
 
@@ -42,7 +46,6 @@ const state = useState('stats', () => ({ stats: defaultStats, fetchedAt: undefin
 
 const { data: stats, pending: loading } = useLazyAsyncData('stats', () => getStats(), {
     getCachedData() {
-        console.log(state.value.fetchedAt, state.value);
         if (!state.value.fetchedAt) {
             return;
         }
@@ -80,6 +83,20 @@ async function getStats(): Promise<Stats> {
         throw e;
     }
 }
+
+const { website } = useAppConfig();
+
+onBeforeMount(async () => {
+    if (website.statsPage) {
+        return;
+    }
+
+    if (activeChar.value === null) {
+        await navigateTo('/');
+    } else {
+        await navigateTo('/overview');
+    }
+});
 </script>
 
 <template>

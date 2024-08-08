@@ -3851,7 +3851,6 @@
 | job_info | [JobInfo](#resources-rector-JobInfo) |  |  |
 | user_tracker | [UserTracker](#resources-rector-UserTracker) |  |  |
 | discord | [Discord](#resources-rector-Discord) |  |  |
-| stats_page | [bool](#bool) |  |  |
 
 
 
@@ -3998,6 +3997,7 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | links | [Links](#resources-rector-Links) |  |  |
+| stats_page | [bool](#bool) |  |  |
 
 
 

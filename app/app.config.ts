@@ -1,4 +1,4 @@
-import type { DiscordConfig, FeatureGates, Links, LoginConfig } from '~/shims';
+import type { DiscordConfig, FeatureGates, LoginConfig, Website } from '~/shims';
 
 export default defineAppConfig({
     version: '',
@@ -10,11 +10,12 @@ export default defineAppConfig({
     discord: {
         botInviteURL: '',
     } as DiscordConfig,
-    links: {} as Links,
+    website: {} as Website,
     featureGates: {} as FeatureGates,
     game: {
         unemployedJobName: 'unemployed',
     },
+    statsPage: false,
 
     // File upload related config
     fileUpload: {
@@ -28,7 +29,7 @@ export default defineAppConfig({
     },
     timeouts: {
         grpc: {
-            unary: 8500,
+            unary: 9000,
         },
         notification: 3500,
     },

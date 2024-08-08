@@ -10,12 +10,12 @@ definePageMeta({
     showCookieOptions: true,
 });
 
-const { links } = useAppConfig();
+const { website } = useAppConfig();
 
-if (links.privacyPolicy === undefined) {
+if (website.links.privacyPolicy === undefined) {
     navigateTo({ name: 'index' });
 } else {
-    useTimeoutFn(() => navigateTo(links.privacyPolicy!, { external: true }), 1750);
+    useTimeoutFn(() => navigateTo(website.links.privacyPolicy!, { external: true }), 1750);
 }
 </script>
 
@@ -26,7 +26,9 @@ if (links.privacyPolicy === undefined) {
         <div class="w-full flex-1">
             <ULandingHero
                 :title="$t('common.redirecting_to', [$t('common.privacy_policy')])"
-                :links="[{ label: $t('common.privacy_policy'), icon: 'i-mdi-link-variant', size: 'lg', to: links.imprint }]"
+                :links="[
+                    { label: $t('common.privacy_policy'), icon: 'i-mdi-link-variant', size: 'lg', to: website.links.imprint },
+                ]"
             />
         </div>
     </div>

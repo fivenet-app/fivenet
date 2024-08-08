@@ -2,7 +2,10 @@ package stats
 
 import (
 	"context"
+	"database/sql"
 	"errors"
+	sync "sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/stats"
@@ -21,21 +24,70 @@ var (
 	tUsers           = table.Users
 )
 
-func (s *Server) calculateStats(ctx context.Context) {
+type worker struct {
+	sync.Mutex
+
+	logger *zap.Logger
+	db     *sql.DB
+
+	cancel context.CancelFunc
+
+	active atomic.Bool
+	stats  atomic.Pointer[map[string]*stats.Stat]
+}
+
+func newWorker(logger *zap.Logger, db *sql.DB) *worker {
+	return &worker{
+		logger: logger,
+		db:     db,
+		active: atomic.Bool{},
+	}
+}
+
+func (s *worker) Start() {
+	s.Lock()
+	defer s.Unlock()
+
+	// Enable stats calculation when enabled and not active yet
+	if s.active.Load() {
+		return
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+	s.cancel = cancel
+	go s.calculateStats(ctx)
+
+	s.active.Store(true)
+}
+
+func (s *worker) Stop() {
+	s.Lock()
+	defer s.Unlock()
+
+	if !s.active.Load() {
+		return
+	}
+
+	s.cancel()
+
+	s.active.Store(false)
+}
+
+func (s *worker) calculateStats(ctx context.Context) {
 	for {
 		if err := s.loadStats(ctx); err != nil {
 			s.logger.Error("error while calculating stats", zap.Error(err))
 		}
 
 		select {
-		case <-time.After(1 * time.Hour):
+		case <-time.After(30 * time.Minute):
 		case <-ctx.Done():
 			return
 		}
 	}
 }
 
-func (s *Server) loadStats(ctx context.Context) error {
+func (s *worker) loadStats(ctx context.Context) error {
 	data := Stats{}
 
 	queries := map[string]jet.Statement{
@@ -71,4 +123,8 @@ func (s *Server) loadStats(ctx context.Context) error {
 	s.stats.Store(&data)
 
 	return nil
+}
+
+func (s *worker) GetStats() *Stats {
+	return s.stats.Load()
 }

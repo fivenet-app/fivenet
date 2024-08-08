@@ -56,6 +56,7 @@ const schema = z.object({
             privacyPolicy: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
             imprint: z.union([z.string().min(1).max(255).url().startsWith('https://'), z.string().length(0).optional()]),
         }),
+        statsPage: z.boolean(),
     }),
     jobInfo: z.object({
         unemployedJob: z.object({
@@ -93,6 +94,7 @@ const state = reactive<Schema>({
     },
     website: {
         links: {},
+        statsPage: false,
     },
     jobInfo: {
         hiddenJobs: [],
@@ -412,6 +414,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     />
                                 </UFormGroup>
 
+                                <UFormGroup
+                                    name="website.links.imprint"
+                                    :label="$t('common.imprint')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.website.links.imprint"
+                                        type="text"
+                                        :placeholder="$t('common.imprint')"
+                                        maxlength="255"
+                                        @focusin="focusTablet(true)"
+                                        @focusout="focusTablet(false)"
+                                    />
+                                </UFormGroup>
+                            </UDashboardSection>
+
+                            <UDashboardSection
+                                :title="$t('components.rector.app_config.website.title')"
+                                :description="$t('components.rector.app_config.website.description')"
+                            >
                                 <UFormGroup
                                     name="website.links.imprint"
                                     :label="$t('common.imprint')"

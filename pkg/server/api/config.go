@@ -8,7 +8,7 @@ type ClientConfig struct {
 	Version      string       `json:"version"`
 	Login        LoginConfig  `json:"login"`
 	Discord      Discord      `json:"discord"`
-	Links        Links        `json:"links"`
+	Website      Website      `json:"website"`
 	FeatureGates FeatureGates `json:"featureGates"`
 	Game         Game         `json:"game"`
 }
@@ -27,6 +27,11 @@ type ProviderConfig struct {
 
 type Discord struct {
 	BotInviteURL *string `json:"botInviteURL"`
+}
+
+type Website struct {
+	Links     Links `json:"links"`
+	StatsPage bool  `json:"statsPage"`
 }
 
 type Links struct {

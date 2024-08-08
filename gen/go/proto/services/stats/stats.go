@@ -3,9 +3,9 @@ package stats
 import (
 	"context"
 	"database/sql"
-	"sync/atomic"
 
 	stats "github.com/fivenet-app/fivenet/gen/go/proto/resources/stats"
+	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -18,10 +18,9 @@ type Server struct {
 	StatsServiceServer
 
 	logger *zap.Logger
-	db     *sql.DB
 	js     *events.JSWrapper
 
-	stats atomic.Pointer[Stats]
+	worker *worker
 }
 
 type Params struct {
@@ -29,23 +28,41 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	DB     *sql.DB
-	JS     *events.JSWrapper
+	Logger    *zap.Logger
+	DB        *sql.DB
+	JS        *events.JSWrapper
+	AppConfig appconfig.IConfig
 }
 
 func NewServer(p Params) *Server {
 	s := &Server{
 		logger: p.Logger.Named("stats_worker"),
-		db:     p.DB,
 		js:     p.JS,
 
-		stats: atomic.Pointer[map[string]*stats.Stat]{},
+		worker: newWorker(p.Logger, p.DB),
 	}
+
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		go s.calculateStats(ctx)
+		go func() {
+			configUpdateCh := p.AppConfig.Subscribe()
+
+			for {
+				select {
+				case <-ctx.Done():
+					p.AppConfig.Unsubscribe(configUpdateCh)
+					return
+
+				case cfg := <-configUpdateCh:
+					if cfg.Website.StatsPage {
+						s.worker.Start()
+					} else {
+						s.worker.Stop()
+					}
+				}
+			}
+		}()
 
 		return nil
 	}))
@@ -67,7 +84,8 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 }
 
 func (s *Server) GetStats(ctx context.Context, req *GetStatsRequest) (*GetStatsResponse, error) {
-	stats := s.stats.Load()
+	stats := s.worker.GetStats()
+
 	return &GetStatsResponse{
 		Stats: *stats,
 	}, nil

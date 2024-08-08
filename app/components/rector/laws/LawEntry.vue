@@ -53,19 +53,6 @@ async function deleteLaw(id: string): Promise<void> {
 }
 
 async function saveLaw(lawBookId: string, id: string, values: Schema): Promise<void> {
-    console.log(
-        'law',
-        {
-            id: parseInt(id) < 0 ? '0' : id,
-            lawbookId: lawBookId,
-            name: values.name,
-            description: values.description,
-            fine: values.fine,
-            detentionTime: values.detentionTime,
-            stvoPoints: values.stvoPoints,
-        },
-        values,
-    );
     try {
         const call = getGRPCRectorLawsClient().createOrUpdateLaw({
             law: {

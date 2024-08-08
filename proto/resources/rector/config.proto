@@ -14,7 +14,6 @@ message AppConfig {
   JobInfo job_info = 4;
   UserTracker user_tracker = 5;
   Discord discord = 6;
-  bool stats_page = 7;
 }
 
 message Auth {
@@ -33,6 +32,7 @@ message Perm {
 
 message Website {
   Links links = 1;
+  bool stats_page = 2;
 }
 
 message Links {

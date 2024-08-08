@@ -231,8 +231,6 @@ func (m *AppConfig) validate(all bool) error {
 		}
 	}
 
-	// no validation rules for StatsPage
-
 	if len(errors) > 0 {
 		return AppConfigMultiError(errors)
 	}
@@ -724,6 +722,8 @@ func (m *Website) validate(all bool) error {
 			}
 		}
 	}
+
+	// no validation rules for StatsPage
 
 	if len(errors) > 0 {
 		return WebsiteMultiError(errors)

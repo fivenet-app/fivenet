@@ -34,6 +34,10 @@ export default defineNuxtConfig({
         },
     },
 
+    site: {
+        indexable: false,
+    },
+
     ui: {
         icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],

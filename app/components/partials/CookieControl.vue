@@ -5,7 +5,7 @@ import { useCookiesStore } from '~/store/cookies';
 const cookiesStore = useCookiesStore();
 const { cookiesState } = storeToRefs(cookiesStore);
 
-const { links } = useAppConfig();
+const { website } = useAppConfig();
 
 const open = ref(cookiesState.value === null);
 </script>
@@ -40,17 +40,24 @@ const open = ref(cookiesState.value === null);
 
                 <UButtonGroup class="inline-flex w-full flex-1">
                     <UButton
-                        v-if="links.privacyPolicy"
+                        v-if="website.links.privacyPolicy"
                         variant="link"
                         block
                         class="flex-1"
-                        :to="links.privacyPolicy"
+                        :to="website.links.privacyPolicy"
                         :external="true"
                     >
                         {{ $t('common.privacy_policy') }}
                     </UButton>
 
-                    <UButton v-if="links.imprint" variant="link" block class="flex-1" :to="links.imprint" :external="true">
+                    <UButton
+                        v-if="website.links.imprint"
+                        variant="link"
+                        block
+                        class="flex-1"
+                        :to="website.links.imprint"
+                        :external="true"
+                    >
                         {{ $t('common.imprint') }}
                     </UButton>
 

@@ -90,8 +90,11 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 			LastCharLock:  appCfg.Auth.LastCharLock,
 			Providers:     providers,
 		},
-		Discord:      Discord{},
-		Links:        Links{},
+		Discord: Discord{},
+		Website: Website{
+			Links:     Links{},
+			StatsPage: appCfg.Website.StatsPage,
+		},
 		FeatureGates: FeatureGates{},
 		Game: Game{
 			UnemployedJobName: "unemployed",
@@ -101,10 +104,10 @@ func (r *Routes) buildClientConfig(providers []*ProviderConfig, appCfg *appconfi
 	clientCfg.Discord.BotInviteURL = appCfg.Discord.InviteUrl
 
 	if appCfg.Website.Links.Imprint != nil {
-		clientCfg.Links.Imprint = appCfg.Website.Links.Imprint
+		clientCfg.Website.Links.Imprint = appCfg.Website.Links.Imprint
 	}
 	if appCfg.Website.Links.PrivacyPolicy != nil {
-		clientCfg.Links.PrivacyPolicy = appCfg.Website.Links.PrivacyPolicy
+		clientCfg.Website.Links.PrivacyPolicy = appCfg.Website.Links.PrivacyPolicy
 	}
 
 	if appCfg.JobInfo.UnemployedJob != nil {
