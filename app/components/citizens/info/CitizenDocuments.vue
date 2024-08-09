@@ -48,6 +48,7 @@ async function listUserDocuments(): Promise<ListUserDocumentsResponse> {
             },
             userId: props.userId,
             relations: [],
+            closed: query.value.closed,
         });
         const { response } = await call;
 

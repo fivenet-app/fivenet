@@ -52,6 +52,12 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 		),
 	)
 
+	if req.Closed != nil {
+		condition = condition.AND(tDocument.Closed.EQ(
+			jet.Bool(*req.Closed),
+		))
+	}
+
 	countStmt := tDocRel.
 		SELECT(
 			jet.COUNT(jet.DISTINCT(tDocRel.DocumentID)).AS("datacount.totalcount"),
