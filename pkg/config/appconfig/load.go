@@ -120,6 +120,9 @@ func (c *Config) Update(ctx context.Context, val *Cfg) error {
 		return err
 	}
 
+	// Retrieve config and publish event to "self" (we don't want to rely on nats echo functionality)
+	c.broker.Publish(c.Get())
+
 	return nil
 }
 
