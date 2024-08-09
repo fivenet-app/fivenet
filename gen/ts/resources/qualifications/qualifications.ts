@@ -257,7 +257,7 @@ export interface QualificationRequest {
     /**
      * @generated from protobuf field: uint64 qualification_id = 3 [jstype = JS_STRING];
      */
-    qualificationId: string;
+    qualificationId: string; // @gotags: sql:"primary_key" alias:"qualification_id"
     /**
      * @generated from protobuf field: optional resources.qualifications.QualificationShort qualification = 4;
      */
@@ -265,7 +265,7 @@ export interface QualificationRequest {
     /**
      * @generated from protobuf field: int32 user_id = 5;
      */
-    userId: number;
+    userId: number; // @gotags: sql:"primary_key"
     /**
      * @generated from protobuf field: resources.users.UserShort user = 6;
      */

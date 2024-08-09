@@ -4182,9 +4182,9 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | created_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | deleted_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| qualification_id | [uint64](#uint64) |  |  |
+| qualification_id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;qualification_id&#34; |
 | qualification | [QualificationShort](#resources-qualifications-QualificationShort) | optional |  |
-| user_id | [int32](#int32) |  |  |
+| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; |
 | user | [resources.users.UserShort](#resources-users-UserShort) |  | @gotags: alias:&#34;user&#34; |
 | user_comment | [string](#string) | optional | @sanitize: method=StripTags |
 | status | [RequestStatus](#resources-qualifications-RequestStatus) | optional |  |

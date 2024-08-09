@@ -774,10 +774,10 @@ type QualificationRequest struct {
 
 	CreatedAt       *timestamp.Timestamp `protobuf:"bytes,1,opt,name=created_at,json=createdAt,proto3,oneof" json:"created_at,omitempty"`
 	DeletedAt       *timestamp.Timestamp `protobuf:"bytes,2,opt,name=deleted_at,json=deletedAt,proto3,oneof" json:"deleted_at,omitempty"`
-	QualificationId uint64               `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty"`
+	QualificationId uint64               `protobuf:"varint,3,opt,name=qualification_id,json=qualificationId,proto3" json:"qualification_id,omitempty" sql:"primary_key" alias:"qualification_id"` // @gotags: sql:"primary_key" alias:"qualification_id"
 	Qualification   *QualificationShort  `protobuf:"bytes,4,opt,name=qualification,proto3,oneof" json:"qualification,omitempty"`
-	UserId          int32                `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty"`
-	User            *users.UserShort     `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty" alias:"user"` // @gotags: alias:"user"
+	UserId          int32                `protobuf:"varint,5,opt,name=user_id,json=userId,proto3" json:"user_id,omitempty" sql:"primary_key"` // @gotags: sql:"primary_key"
+	User            *users.UserShort     `protobuf:"bytes,6,opt,name=user,proto3" json:"user,omitempty" alias:"user"`                    // @gotags: alias:"user"
 	// @sanitize: method=StripTags
 	UserComment *string              `protobuf:"bytes,7,opt,name=user_comment,json=userComment,proto3,oneof" json:"user_comment,omitempty"`
 	Status      *RequestStatus       `protobuf:"varint,8,opt,name=status,proto3,enum=resources.qualifications.RequestStatus,oneof" json:"status,omitempty"`
