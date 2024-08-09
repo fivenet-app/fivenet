@@ -7,6 +7,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import type { OpenClose } from '~/shims';
 import { useCompletorStore } from '~/store/completor';
 import { useSettingsStore } from '~/store/settings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
@@ -20,8 +21,6 @@ const completorStore = useCompletorStore();
 
 const settingsStore = useSettingsStore();
 const { design } = storeToRefs(settingsStore);
-
-type OpenClose = { id: number; label: string; closed?: boolean };
 
 const openclose: OpenClose[] = [
     { id: 0, label: t('common.not_selected') },

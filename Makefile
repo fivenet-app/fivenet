@@ -40,6 +40,9 @@ protoc-gen-customizer:
 protoc-gen-fronthelper:
 	$(GO) build -o ./internal/cmd/protoc-gen-fronthelper ./internal/cmd/protoc-gen-fronthelper
 
+protoc-gen-doc:
+	$(GO) install github.com/pseudomuto/protoc-gen-doc/cmd/protoc-gen-doc@latest
+
 go-licenses:
 ifeq (, $(shell which go-licenses))
 	@GO111MODULE=on $(GO) install github.com/google/go-licenses@latest
@@ -103,7 +106,7 @@ gen-sql:
 	find ./query/fivenet/table -type f -iname '*.go' -exec sed -i 's~("fivenet", ~("", ~g' {} \;
 
 .PHONY: gen-proto
-gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper
+gen-proto: protoc-gen-validate protoc-gen-customizer protoc-gen-fronthelper protoc-gen-doc
 	mkdir -p ./gen/go/proto
 	PATH="$$PATH:./internal/cmd/protoc-gen-customizer/" \
 	$(PROTOC) \

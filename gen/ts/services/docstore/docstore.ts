@@ -760,6 +760,10 @@ export interface ListUserDocumentsRequest {
      * @generated from protobuf field: repeated resources.documents.DocRelation relations = 3;
      */
     relations: DocRelation[];
+    /**
+     * @generated from protobuf field: optional bool closed = 8;
+     */
+    closed?: boolean;
 }
 /**
  * @generated from protobuf message services.docstore.ListUserDocumentsResponse
@@ -3783,7 +3787,8 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
         super("services.docstore.ListUserDocumentsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } },
-            { no: 3, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "validate.rules": { repeated: { maxItems: "3" } } } }
+            { no: 3, name: "relations", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.documents.DocRelation", DocRelation, "DOC_RELATION_"], options: { "validate.rules": { repeated: { maxItems: "3" } } } },
+            { no: 8, name: "closed", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListUserDocumentsRequest>): ListUserDocumentsRequest {
@@ -3812,6 +3817,9 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
                     else
                         message.relations.push(reader.int32());
                     break;
+                case /* optional bool closed */ 8:
+                    message.closed = reader.bool();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -3837,6 +3845,9 @@ class ListUserDocumentsRequest$Type extends MessageType<ListUserDocumentsRequest
                 writer.int32(message.relations[i]);
             writer.join();
         }
+        /* optional bool closed = 8; */
+        if (message.closed !== undefined)
+            writer.tag(8, WireType.Varint).bool(message.closed);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

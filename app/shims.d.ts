@@ -63,5 +63,7 @@ export type AppConfig = {
     game: Game;
 };
 
+export type OpenClose = { id: number; label: string; closed?: boolean };
+
 // It is always important to ensure you import/export something when augmenting a type
 export {};

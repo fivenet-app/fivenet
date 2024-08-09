@@ -74,10 +74,13 @@ require (
 	filippo.io/edwards25519 v1.1.0 // indirect
 	github.com/Azure/go-ansiterm v0.0.0-20230124172434-306776ec8161 // indirect
 	github.com/Masterminds/goutils v1.1.1 // indirect
+	github.com/Masterminds/semver v1.5.0 // indirect
 	github.com/Masterminds/semver/v3 v3.2.1 // indirect
+	github.com/Masterminds/sprig v2.22.0+incompatible // indirect
 	github.com/Microsoft/go-winio v0.6.2 // indirect
 	github.com/Nvveen/Gotty v0.0.0-20120604004816-cd527374f1e5 // indirect
 	github.com/RoaringBitmap/roaring v1.9.4 // indirect
+	github.com/aokoli/goutils v1.1.1 // indirect
 	github.com/aymerick/douceur v0.2.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
 	github.com/bits-and-blooms/bitset v1.13.0 // indirect
@@ -164,6 +167,7 @@ require (
 	github.com/mschoch/smat v0.2.0 // indirect
 	github.com/muesli/smartcrop v0.3.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
+	github.com/mwitkow/go-proto-validators v0.3.2 // indirect
 	github.com/nats-io/jwt/v2 v2.5.8 // indirect
 	github.com/nats-io/nkeys v0.4.7 // indirect
 	github.com/nats-io/nuid v1.0.1 // indirect
@@ -176,6 +180,8 @@ require (
 	github.com/prometheus/client_model v0.6.1 // indirect
 	github.com/prometheus/common v0.55.0 // indirect
 	github.com/prometheus/procfs v0.15.1 // indirect
+	github.com/pseudomuto/protoc-gen-doc v1.5.1 // indirect
+	github.com/pseudomuto/protokit v0.2.1 // indirect
 	github.com/rs/xid v1.5.0 // indirect
 	github.com/rwcarlsen/goexif v0.0.0-20190401172101-9e8deecbddbd // indirect
 	github.com/sagikazarmark/locafero v0.6.0 // indirect
@@ -202,8 +208,8 @@ require (
 	golang.org/x/sys v0.23.0 // indirect
 	golang.org/x/text v0.17.0 // indirect
 	golang.org/x/time v0.5.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240709173604-40e1e62336c5 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240709173604-40e1e62336c5 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240808171019-573a1156607a // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240730163845-b1a4ccb954bf // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	willnorris.com/go/gifresize v1.0.0 // indirect

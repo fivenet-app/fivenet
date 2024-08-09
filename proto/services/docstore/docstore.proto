@@ -317,6 +317,7 @@ message ListUserDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   int32 user_id = 2 [(validate.rules).int32.gt = 0];
   repeated resources.documents.DocRelation relations = 3 [(validate.rules).repeated.max_items = 3];
+  optional bool closed = 8;
 }
 
 message ListUserDocumentsResponse {

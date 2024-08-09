@@ -7763,6 +7763,10 @@ func (m *ListUserDocumentsRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.Closed != nil {
+		// no validation rules for Closed
+	}
+
 	if len(errors) > 0 {
 		return ListUserDocumentsRequestMultiError(errors)
 	}
