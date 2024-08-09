@@ -10,21 +10,32 @@ const appConfig = useAppConfig();
 const authStore = useAuthStore();
 const { username } = storeToRefs(authStore);
 
-const links = computed(() => [
-    !username.value
-        ? {
-              label: t('common.home'),
-              to: '/',
-          }
-        : {
-              label: t('common.overview'),
-              to: '/overview',
-          },
-    {
-        label: t('common.about'),
-        to: '/about',
-    },
-]);
+const { website } = useAppConfig();
+
+const links = computed(() =>
+    [
+        !username.value
+            ? {
+                  label: t('common.home'),
+                  to: '/',
+              }
+            : {
+                  label: t('common.overview'),
+                  to: '/overview',
+              },
+        website.statsPage
+            ? {
+                  label: t('pages.stats.title'),
+                  icon: 'i-mdi-analytics',
+                  to: '/stats',
+              }
+            : undefined,
+        {
+            label: t('common.about'),
+            to: '/about',
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 
 const modal = useModal();
 </script>
