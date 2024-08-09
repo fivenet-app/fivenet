@@ -21,6 +21,8 @@ const { isHelpSlideoverOpen } = useDashboard();
 
 const modal = useModal();
 
+const { website } = useAppConfig();
+
 const unreadThreadCount = useDexieLiveQuery(() => messengerDB.threads.filter((t) => !!t.userState?.unread).count(), {
     initialValue: 0,
 });
@@ -166,23 +168,27 @@ const links = computed(() =>
     ].flatMap((item) => (item.permission === undefined || can(item.permission).value ? [item] : [])),
 );
 
-const footerLinks = [
-    {
-        label: t('pages.stats.title'),
-        icon: 'i-mdi-analytics',
-        to: '/stats',
-    },
-    {
-        label: t('common.help'),
-        icon: 'i-mdi-question-mark-circle-outline',
-        click: () => (isHelpSlideoverOpen.value = true),
-    },
-    {
-        label: t('common.about'),
-        icon: 'i-mdi-about-circle-outline',
-        to: '/about',
-    },
-];
+const footerLinks = computed(() =>
+    [
+        website.statsPage
+            ? {
+                  label: t('pages.stats.title'),
+                  icon: 'i-mdi-analytics',
+                  to: '/stats',
+              }
+            : undefined,
+        {
+            label: t('common.help'),
+            icon: 'i-mdi-question-mark-circle-outline',
+            click: () => (isHelpSlideoverOpen.value = true),
+        },
+        {
+            label: t('common.about'),
+            icon: 'i-mdi-about-circle-outline',
+            to: '/about',
+        },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
 
 const groups = computed(() => [
     {

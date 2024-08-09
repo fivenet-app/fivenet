@@ -247,7 +247,7 @@ defineShortcuts({
                                 v-model="query.trafficInfractionPoints"
                                 type="number"
                                 name="trafficInfractionPoints"
-                                min="0"
+                                :smin="0"
                                 :placeholder="$t('common.traffic_infraction_points')"
                                 block
                                 @focusin="focusTablet(true)"
@@ -265,7 +265,7 @@ defineShortcuts({
                                 v-model="query.openFines"
                                 type="number"
                                 name="openFines"
-                                min="0"
+                                :min="0"
                                 :placeholder="`${$t('common.fine')}`"
                                 block
                                 @focusin="focusTablet(true)"

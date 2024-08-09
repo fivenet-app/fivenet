@@ -33,7 +33,11 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                 class="mt-5"
             />
             <UPageGrid v-else>
-                <UPageCard v-for="disponent in disponents" :key="disponent.userId" :title="disponent.firstname">
+                <UPageCard
+                    v-for="disponent in disponents"
+                    :key="disponent.userId"
+                    :title="`${disponent.firstname} ${disponent.lastname}`"
+                >
                     <PhoneNumberBlock :number="disponent.phoneNumber" />
                 </UPageCard>
             </UPageGrid>

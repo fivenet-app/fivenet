@@ -260,7 +260,7 @@ function changeQuestionType(qt: string): void {
                             <UInput
                                 v-model="question.data!.data.multipleChoice.limit"
                                 type="number"
-                                min="1"
+                                :min="1"
                                 :max="question.data!.data.multipleChoice.choices.length"
                                 @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"

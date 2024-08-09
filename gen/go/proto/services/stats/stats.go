@@ -45,6 +45,10 @@ func NewServer(p Params) *Server {
 	ctx, cancel := context.WithCancel(context.Background())
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
+		if p.AppConfig.Get().Website.StatsPage {
+			s.worker.Start()
+		}
+
 		go func() {
 			configUpdateCh := p.AppConfig.Subscribe()
 
@@ -85,6 +89,9 @@ func (s *Server) PermissionUnaryFuncOverride(ctx context.Context, info *grpc.Una
 
 func (s *Server) GetStats(ctx context.Context, req *GetStatsRequest) (*GetStatsResponse, error) {
 	stats := s.worker.GetStats()
+	if stats == nil {
+		return &GetStatsResponse{}, nil
+	}
 
 	return &GetStatsResponse{
 		Stats: *stats,

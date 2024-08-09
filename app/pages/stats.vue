@@ -18,7 +18,7 @@ definePageMeta({
 const authStore = useAuthStore();
 const { activeChar } = storeToRefs(authStore);
 
-type Stats = { [key: string]: Stat & { type?: string; unit?: string; icon?: string } };
+type Stats = { [key: string]: Stat & { unit?: string; icon?: string } };
 
 const defaultStats: Stats = {
     users_registered: {
@@ -132,27 +132,17 @@ onBeforeMount(async () => {
                                         class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
                                     >
                                         <USkeleton v-if="stat.value === undefined" class="h-8 w-[175px]" />
-                                        <template v-else>
-                                            <template v-if="stat.type === 'seconds'">
-                                                {{
-                                                    fromSecondsToFormattedDuration(stat.value, {
-                                                        seconds: false,
-                                                        emptyText: 'common.none',
-                                                    })
-                                                }}
-                                            </template>
-                                            <template v-else-if="stat.type === 'unit'">
-                                                {{ stat.value }}
+                                        <ClientOnly v-else>
+                                            <CountUp
+                                                :start-val="0"
+                                                :end-val="stat.value"
+                                                :options="{ enableScrollSpy: true, scrollSpyOnce: true }"
+                                            />
+
+                                            <span v-if="stat.unit !== undefined">
                                                 {{ $t(stat.unit ?? 'common.time_ago.week', 2) }}
-                                            </template>
-                                            <ClientOnly v-else>
-                                                <CountUp
-                                                    :start-val="0"
-                                                    :end-val="stat.value"
-                                                    :options="{ enableScrollSpy: true, scrollSpyOnce: true }"
-                                                />
-                                            </ClientOnly>
-                                        </template>
+                                            </span>
+                                        </ClientOnly>
                                     </p>
                                 </template>
                             </ULandingCard>

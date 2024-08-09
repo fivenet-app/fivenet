@@ -174,6 +174,7 @@ function setSettingsValues(): void {
         state.perms = config.value.config.perms;
     }
     if (config.value.config.website) {
+        state.website.statsPage = config.value.config.website.statsPage;
         if (config.value.config.website.links) {
             state.website.links = config.value.config.website.links;
         }
@@ -289,7 +290,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <DataNoDataBlock v-else-if="!config" icon="i-mdi-office-building-cog" :type="$t('common.setting', 2)" />
 
             <template v-else>
-                <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
+                <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }" :unmount="false">
                     <template #default="{ item, selected }">
                         <div class="relative flex items-center gap-2 truncate">
                             <UIcon :name="item.icon" class="size-4 shrink-0" />
@@ -431,24 +432,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 </UFormGroup>
                             </UDashboardSection>
 
-                            <UDashboardSection
-                                :title="$t('components.rector.app_config.website.title')"
-                                :description="$t('components.rector.app_config.website.description')"
-                            >
+                            <UDashboardSection :title="$t('pages.stats.title')" :description="$t('pages.stats.subtitle')">
                                 <UFormGroup
-                                    name="website.links.imprint"
-                                    :label="$t('common.imprint')"
+                                    name="website.statsPage"
+                                    :label="$t('common.stats')"
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <UInput
-                                        v-model="state.website.links.imprint"
-                                        type="text"
-                                        :placeholder="$t('common.imprint')"
-                                        maxlength="255"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
+                                    <UToggle v-model="state.website.statsPage">
+                                        <span class="sr-only">
+                                            {{ $t('common.enabled') }}
+                                        </span>
+                                    </UToggle>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>
@@ -485,8 +480,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     <UInput
                                         v-model="state.jobInfo.unemployedJob.grade"
                                         type="number"
-                                        min="1"
-                                        max="99"
+                                        :min="1"
+                                        :max="99"
                                         name="jobInfoUnemployedGrade"
                                         :placeholder="$t('common.rank')"
                                         :label="$t('common.rank')"
@@ -576,6 +571,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.userTracker.refreshTime"
                                         type="number"
                                         :min="1"
+                                        :step="0.01"
                                         :placeholder="$t('common.duration')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -596,6 +592,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.userTracker.dbRefreshTime"
                                         type="number"
                                         :min="1"
+                                        :step="0.01"
                                         :placeholder="$t('common.duration')"
                                         @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
@@ -669,6 +666,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.discord.syncInterval"
                                         type="number"
                                         :min="1"
+                                        :step="0.01"
                                         name="discord.syncInterval"
                                         :placeholder="$t('common.duration')"
                                         @focusin="focusTablet(true)"

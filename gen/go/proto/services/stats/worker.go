@@ -4,6 +4,7 @@ import (
 	"context"
 	"database/sql"
 	"errors"
+	"fmt"
 	sync "sync"
 	"sync/atomic"
 	"time"
@@ -12,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -80,9 +82,10 @@ func (s *worker) calculateStats(ctx context.Context) {
 		}
 
 		select {
-		case <-time.After(30 * time.Minute):
 		case <-ctx.Done():
 			return
+
+		case <-time.After(30 * time.Minute):
 		}
 	}
 }
@@ -91,13 +94,15 @@ func (s *worker) loadStats(ctx context.Context) error {
 	data := Stats{}
 
 	queries := map[string]jet.Statement{
-		"users_registered":   tAccounts.SELECT(jet.COUNT(tAccounts.ID).AS("value")),
-		"documents_created":  tDocuments.SELECT(jet.COUNT(tDocuments.ID).AS("value")),
-		"dispatches_created": tDispatches.SELECT(jet.COUNT(tDispatches.ID).AS("value")),
+		"users_registered":   tAccounts.SELECT(jet.COUNT(tAccounts.ID).AS("value")).WHERE(tAccounts.Enabled.IS_TRUE()),
+		"documents_created":  tDocuments.SELECT(jet.COUNT(tDocuments.ID).AS("value")).WHERE(tDocuments.DeletedAt.IS_NULL()),
+		"dispatches_created": tDispatches.SELECT(jet.MAX(tDispatches.ID).AS("value")),
 		"citizen_activity":   tCitizenActivity.SELECT(jet.COUNT(tCitizenActivity.ID).AS("value")),
-		"timeclock_tracked":  tJobsTimeclock.SELECT(jet.SUM(tJobsTimeclock.SpentTime).AS("value")),
+		"timeclock_tracked":  tJobsTimeclock.SELECT(jet.CAST(jet.SUM(tJobsTimeclock.SpentTime)).AS_SIGNED().AS("value")),
 		"citizens_total":     tUsers.SELECT(jet.COUNT(tUsers.ID).AS("value")),
 	}
+
+	errs := multierr.Combine()
 
 	zero := int32(0)
 	for key, query := range queries {
@@ -108,7 +113,8 @@ func (s *worker) loadStats(ctx context.Context) error {
 		}
 		if err := query.QueryContext(ctx, s.db, dest); err != nil {
 			if !errors.Is(err, qrm.ErrNoRows) {
-				return err
+				errs = multierr.Append(errs, fmt.Errorf("error during %q stats query. %w", key, err))
+				continue
 			}
 		}
 		if (*dest.Value % 10) != 0 {
@@ -122,7 +128,7 @@ func (s *worker) loadStats(ctx context.Context) error {
 
 	s.stats.Store(&data)
 
-	return nil
+	return errs
 }
 
 func (s *worker) GetStats() *Stats {

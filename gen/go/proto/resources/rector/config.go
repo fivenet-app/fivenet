@@ -52,7 +52,8 @@ func (x *AppConfig) Default() {
 
 	if x.Website == nil {
 		x.Website = &Website{
-			Links: &Links{},
+			Links:     &Links{},
+			StatsPage: false,
 		}
 	}
 	if x.Website.Links == nil {

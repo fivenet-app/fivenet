@@ -101,8 +101,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         <UInput
                             v-model="state.trafficInfractionPoints"
                             type="number"
-                            min="0"
-                            max="9999999"
+                            :min="0"
+                            :max="9999999"
                             :placeholder="$t('common.traffic_infraction_points')"
                             @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
