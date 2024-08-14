@@ -282,7 +282,11 @@ func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int3
 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if errors.Is(err, qrm.ErrNoRows) {
+			return nil, nil
+		} else {
+			return nil, err
+		}
 	}
 
 	return &dest, nil

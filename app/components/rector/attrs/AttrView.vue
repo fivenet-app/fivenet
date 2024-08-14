@@ -272,7 +272,7 @@ const accordionCategories = computed(() =>
 async function deleteFaction(id: string): Promise<void> {
     try {
         await getGRPCRectorClient().deleteFaction({
-            id: id,
+            roleId: id,
         });
 
         notifications.add({

@@ -173,7 +173,13 @@ const onSubmitThrottle = useThrottleFn(async () => {
                 </div>
                 <div class="ml-2 flex w-full basis-2/3">
                     <template v-if="selectedRole">
-                        <AttrView :role-id="selectedRole.id" @deleted="refresh()" />
+                        <AttrView
+                            :role-id="selectedRole.id"
+                            @deleted="
+                                selectedRole = undefined;
+                                refresh();
+                            "
+                        />
                     </template>
                     <template v-else>
                         <DataNoDataBlock icon="i-mdi-select" :message="$t('common.none_selected', [$t('common.job', 2)])" />
