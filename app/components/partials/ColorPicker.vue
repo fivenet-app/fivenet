@@ -27,7 +27,7 @@ const color = computed({
 </script>
 
 <template>
-    <UPopover :popper="{ placement: 'bottom-start' }">
+    <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
         <UButton
             variant="outline"
             color="white"

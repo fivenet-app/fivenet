@@ -134,7 +134,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div class="flex flex-col gap-1 sm:flex-row">
                         <UFormGroup class="flex-1" name="absenceBegin" :label="$t('common.from')">
-                            <UPopover :popper="{ placement: 'bottom-start' }">
+                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                 <UButton
                                     variant="outline"
                                     color="gray"
@@ -150,7 +150,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup class="flex-1" name="absenceEnd" :label="$t('common.to')">
-                            <UPopover :popper="{ placement: 'bottom-start' }">
+                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                 <UButton
                                     variant="outline"
                                     color="gray"

@@ -250,7 +250,7 @@ defineShortcuts({
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
-                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                     <UButton
                                         variant="outline"
                                         color="gray"
@@ -272,7 +272,7 @@ defineShortcuts({
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
-                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                     <UButton
                                         variant="outline"
                                         color="gray"

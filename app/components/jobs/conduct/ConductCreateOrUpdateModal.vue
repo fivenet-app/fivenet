@@ -241,7 +241,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="expiresAt">
-                                    <UPopover :popper="{ placement: 'bottom-start' }">
+                                    <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                         <UButton
                                             variant="outline"
                                             color="gray"

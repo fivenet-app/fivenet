@@ -77,7 +77,7 @@ watchOnce(opened, async () => {
             <slot name="after" />
         </span>
     </template>
-    <UPopover v-else>
+    <UPopover v-else mode="click">
         <UButton
             v-bind="$attrs"
             variant="link"

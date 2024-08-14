@@ -171,7 +171,7 @@ const columns = [
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
                     <UFormGroup name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`" class="flex-1">
-                        <UPopover :popper="{ placement: 'bottom-start' }">
+                        <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
                                 color="gray"
@@ -187,7 +187,7 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`" class="flex-1">
-                        <UPopover :popper="{ placement: 'bottom-start' }">
+                        <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                             <UButton
                                 variant="outline"
                                 color="gray"

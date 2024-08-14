@@ -37,6 +37,9 @@ const { disponents, getCurrentMode } = storeToRefs(centrumStore);
                     v-for="disponent in disponents"
                     :key="disponent.userId"
                     :title="`${disponent.firstname} ${disponent.lastname}`"
+                    :ui="{
+                        title: 'text-gray-900 dark:text-white text-base font-semibold flex items-center gap-1.5 line-clamp-2 whitespace-break-spaces',
+                    }"
                 >
                     <PhoneNumberBlock :number="disponent.phoneNumber" />
                 </UPageCard>

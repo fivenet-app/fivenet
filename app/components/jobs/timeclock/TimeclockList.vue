@@ -222,7 +222,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                 :label="perDayView ? $t('common.date') : `${$t('common.time_range')} ${$t('common.from')}`"
                                 class="flex-1"
                             >
-                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                     <UButton
                                         variant="outline"
                                         color="gray"
@@ -243,7 +243,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                 :label="`${$t('common.time_range')} ${$t('common.to')}`"
                                 class="flex-1"
                             >
-                                <UPopover :popper="{ placement: 'bottom-start' }">
+                                <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                     <UButton
                                         variant="outline"
                                         color="gray"

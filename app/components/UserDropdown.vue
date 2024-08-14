@@ -76,13 +76,13 @@ const items = computed(() => [
 const { game } = useAppConfig();
 
 const name = computed(() =>
-    activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : username.value ?? t('common.na'),
+    activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : (username.value ?? t('common.na')),
 );
 </script>
 
 <template>
     <UDropdown
-        mode="hover"
+        mode="click"
         :items="items"
         :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
         :popper="{ strategy: 'absolute', placement: 'top' }"

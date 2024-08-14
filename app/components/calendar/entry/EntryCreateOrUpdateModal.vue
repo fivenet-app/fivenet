@@ -238,7 +238,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
-                            <UPopover :popper="{ placement: 'bottom-start' }">
+                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                 <UButton
                                     variant="outline"
                                     color="gray"
@@ -254,7 +254,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
-                            <UPopover :popper="{ placement: 'bottom-start' }">
+                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
                                 <UButton
                                     variant="outline"
                                     color="gray"

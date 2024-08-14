@@ -132,7 +132,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div class="min-w-0">
                     <div class="font-medium text-gray-500 dark:text-gray-400">
-                        <UPopover>
+                        <UPopover mode="click">
                             <UButton block variant="link" :padded="false">
                                 <UAvatarGroup size="sm" :max="5">
                                     <ProfilePictureImg
