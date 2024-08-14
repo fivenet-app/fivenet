@@ -3106,3 +3106,209 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = UpdateRoleLimitsResponseValidationError{}
+
+// Validate checks the field values on DeleteFactionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteFactionRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteFactionRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteFactionRequestMultiError, or nil if none found.
+func (m *DeleteFactionRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteFactionRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for RoleId
+
+	if len(errors) > 0 {
+		return DeleteFactionRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteFactionRequestMultiError is an error wrapping multiple validation
+// errors returned by DeleteFactionRequest.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteFactionRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteFactionRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteFactionRequestMultiError) AllErrors() []error { return m }
+
+// DeleteFactionRequestValidationError is the validation error returned by
+// DeleteFactionRequest.Validate if the designated constraints aren't met.
+type DeleteFactionRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteFactionRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteFactionRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteFactionRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteFactionRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteFactionRequestValidationError) ErrorName() string {
+	return "DeleteFactionRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteFactionRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteFactionRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteFactionRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteFactionRequestValidationError{}
+
+// Validate checks the field values on DeleteFactionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DeleteFactionResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DeleteFactionResponse with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DeleteFactionResponseMultiError, or nil if none found.
+func (m *DeleteFactionResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DeleteFactionResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if len(errors) > 0 {
+		return DeleteFactionResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// DeleteFactionResponseMultiError is an error wrapping multiple validation
+// errors returned by DeleteFactionResponse.ValidateAll() if the designated
+// constraints aren't met.
+type DeleteFactionResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DeleteFactionResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DeleteFactionResponseMultiError) AllErrors() []error { return m }
+
+// DeleteFactionResponseValidationError is the validation error returned by
+// DeleteFactionResponse.Validate if the designated constraints aren't met.
+type DeleteFactionResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DeleteFactionResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DeleteFactionResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DeleteFactionResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DeleteFactionResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DeleteFactionResponseValidationError) ErrorName() string {
+	return "DeleteFactionResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DeleteFactionResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDeleteFactionResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DeleteFactionResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DeleteFactionResponseValidationError{}

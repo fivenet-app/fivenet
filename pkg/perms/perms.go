@@ -67,6 +67,7 @@ type Permissions interface {
 
 	GetJobAttrMaxVals(job string, attrId uint64) (*permissions.AttributeValues, bool)
 	UpdateJobAttributeMaxValues(ctx context.Context, job string, attrId uint64, maxValues *permissions.AttributeValues) error
+	ClearJobAttributes(ctx context.Context, job string) error
 
 	Attr(userInfo *userinfo.UserInfo, category Category, name Name, key Key) (any, error)
 
@@ -280,7 +281,9 @@ func (p *Perms) loadPermissions(ctx context.Context) error {
 
 	var dest []*cachePerm
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for _, perm := range dest {
@@ -315,7 +318,9 @@ func (p *Perms) loadAttributes(ctx context.Context) error {
 		ValidValues  *permissions.AttributeValues
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for _, attr := range dest {
@@ -347,7 +352,9 @@ func (p *Perms) loadRoles(ctx context.Context, id uint64) error {
 		Grade int32
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for _, role := range dest {
@@ -391,7 +398,9 @@ func (p *Perms) loadRolePermissions(ctx context.Context, roleId uint64) error {
 		Val    bool
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
 	for _, rolePerms := range dest {
@@ -428,14 +437,21 @@ func (p *Perms) loadJobAttrs(ctx context.Context, job string) error {
 		MaxValues *permissions.AttributeValues
 	}
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
 	}
 
-	for _, jobAttrs := range dest {
-		attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() *xsync.MapOf[uint64, *permissions.AttributeValues] {
-			return xsync.NewMapOf[uint64, *permissions.AttributeValues]()
-		})
-		attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
+	// No attributes? Delete cached data
+	if len(dest) == 0 {
+		p.attrsJobMaxValuesMap.Delete(job)
+	} else {
+		for _, jobAttrs := range dest {
+			attrs, _ := p.attrsJobMaxValuesMap.LoadOrCompute(jobAttrs.Job, func() *xsync.MapOf[uint64, *permissions.AttributeValues] {
+				return xsync.NewMapOf[uint64, *permissions.AttributeValues]()
+			})
+			attrs.Store(jobAttrs.AttrID, jobAttrs.MaxValues)
+		}
 	}
 
 	return nil

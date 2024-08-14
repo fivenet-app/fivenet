@@ -282,6 +282,20 @@ export interface UpdateRoleLimitsRequest {
  */
 export interface UpdateRoleLimitsResponse {
 }
+/**
+ * @generated from protobuf message services.rector.DeleteFactionRequest
+ */
+export interface DeleteFactionRequest {
+    /**
+     * @generated from protobuf field: uint64 role_id = 1 [jstype = JS_STRING];
+     */
+    roleId: string;
+}
+/**
+ * @generated from protobuf message services.rector.DeleteFactionResponse
+ */
+export interface DeleteFactionResponse {
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class GetJobPropsRequest$Type extends MessageType<GetJobPropsRequest> {
     constructor() {
@@ -1416,6 +1430,78 @@ class UpdateRoleLimitsResponse$Type extends MessageType<UpdateRoleLimitsResponse
  * @generated MessageType for protobuf message services.rector.UpdateRoleLimitsResponse
  */
 export const UpdateRoleLimitsResponse = new UpdateRoleLimitsResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteFactionRequest$Type extends MessageType<DeleteFactionRequest> {
+    constructor() {
+        super("services.rector.DeleteFactionRequest", [
+            { no: 1, name: "role_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DeleteFactionRequest>): DeleteFactionRequest {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.roleId = "0";
+        if (value !== undefined)
+            reflectionMergePartial<DeleteFactionRequest>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteFactionRequest): DeleteFactionRequest {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* uint64 role_id = 1 [jstype = JS_STRING];*/ 1:
+                    message.roleId = reader.uint64().toString();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DeleteFactionRequest, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* uint64 role_id = 1 [jstype = JS_STRING]; */
+        if (message.roleId !== "0")
+            writer.tag(1, WireType.Varint).uint64(message.roleId);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.DeleteFactionRequest
+ */
+export const DeleteFactionRequest = new DeleteFactionRequest$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DeleteFactionResponse$Type extends MessageType<DeleteFactionResponse> {
+    constructor() {
+        super("services.rector.DeleteFactionResponse", []);
+    }
+    create(value?: PartialMessage<DeleteFactionResponse>): DeleteFactionResponse {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DeleteFactionResponse>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DeleteFactionResponse): DeleteFactionResponse {
+        return target ?? this.create();
+    }
+    internalBinaryWrite(message: DeleteFactionResponse, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.rector.DeleteFactionResponse
+ */
+export const DeleteFactionResponse = new DeleteFactionResponse$Type();
 /**
  * @generated ServiceType for protobuf service services.rector.RectorService
  */
@@ -1429,5 +1515,6 @@ export const RectorService = new ServiceType("services.rector.RectorService", [
     { name: "UpdateRolePerms", options: {}, I: UpdateRolePermsRequest, O: UpdateRolePermsResponse },
     { name: "GetPermissions", options: {}, I: GetPermissionsRequest, O: GetPermissionsResponse },
     { name: "ViewAuditLog", options: {}, I: ViewAuditLogRequest, O: ViewAuditLogResponse },
-    { name: "UpdateRoleLimits", options: {}, I: UpdateRoleLimitsRequest, O: UpdateRoleLimitsResponse }
+    { name: "UpdateRoleLimits", options: {}, I: UpdateRoleLimitsRequest, O: UpdateRoleLimitsResponse },
+    { name: "DeleteFaction", options: {}, I: DeleteFactionRequest, O: DeleteFactionResponse }
 ]);

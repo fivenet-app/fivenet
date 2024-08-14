@@ -10,6 +10,8 @@ import (
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
+	"github.com/pkg/errors"
 )
 
 var tPerms = table.FivenetPermissions
@@ -118,7 +120,9 @@ func (p *Perms) GetAllPermissions(ctx context.Context) ([]*permissions.Permissio
 
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest, nil

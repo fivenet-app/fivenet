@@ -603,6 +603,10 @@ func (p *Perms) addOrUpdateAttributesToRole(ctx context.Context, roleId uint64, 
 }
 
 func (p *Perms) RemoveAttributesFromRole(ctx context.Context, roleId uint64, attrs ...*permissions.RoleAttribute) error {
+	if len(attrs) == 0 {
+		return nil
+	}
+
 	ids := make([]jet.Expression, len(attrs))
 	for i := 0; i < len(attrs); i++ {
 		ids[i] = jet.Uint64(attrs[i].AttrId)
@@ -686,6 +690,24 @@ func (p *Perms) UpdateJobAttributeMaxValues(ctx context.Context, job string, att
 		if !dbutils.IsDuplicateError(err) {
 			return err
 		}
+	}
+
+	if err := p.publishMessage(ctx, JobAttrUpdateSubject, JobAttrUpdateEvent{
+		Job: job,
+	}); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (p *Perms) ClearJobAttributes(ctx context.Context, job string) error {
+	stmt := tJobAttrs.
+		DELETE().
+		WHERE(tJobAttrs.Job.EQ(jet.String(job)))
+
+	if _, err := stmt.ExecContext(ctx, p.db); err != nil {
+		return err
 	}
 
 	if err := p.publishMessage(ctx, JobAttrUpdateSubject, JobAttrUpdateEvent{

@@ -29,6 +29,7 @@ const (
 	RectorService_GetPermissions_FullMethodName   = "/services.rector.RectorService/GetPermissions"
 	RectorService_ViewAuditLog_FullMethodName     = "/services.rector.RectorService/ViewAuditLog"
 	RectorService_UpdateRoleLimits_FullMethodName = "/services.rector.RectorService/UpdateRoleLimits"
+	RectorService_DeleteFaction_FullMethodName    = "/services.rector.RectorService/DeleteFaction"
 )
 
 // RectorServiceClient is the client API for RectorService service.
@@ -55,6 +56,8 @@ type RectorServiceClient interface {
 	ViewAuditLog(ctx context.Context, in *ViewAuditLogRequest, opts ...grpc.CallOption) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(ctx context.Context, in *UpdateRoleLimitsRequest, opts ...grpc.CallOption) (*UpdateRoleLimitsResponse, error)
+	// @perm: Name=SuperUser
+	DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error)
 }
 
 type rectorServiceClient struct {
@@ -155,6 +158,15 @@ func (c *rectorServiceClient) UpdateRoleLimits(ctx context.Context, in *UpdateRo
 	return out, nil
 }
 
+func (c *rectorServiceClient) DeleteFaction(ctx context.Context, in *DeleteFactionRequest, opts ...grpc.CallOption) (*DeleteFactionResponse, error) {
+	out := new(DeleteFactionResponse)
+	err := c.cc.Invoke(ctx, RectorService_DeleteFaction_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // RectorServiceServer is the server API for RectorService service.
 // All implementations must embed UnimplementedRectorServiceServer
 // for forward compatibility
@@ -179,6 +191,8 @@ type RectorServiceServer interface {
 	ViewAuditLog(context.Context, *ViewAuditLogRequest) (*ViewAuditLogResponse, error)
 	// @perm: Name=SuperUser
 	UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error)
+	// @perm: Name=SuperUser
+	DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error)
 	mustEmbedUnimplementedRectorServiceServer()
 }
 
@@ -215,6 +229,9 @@ func (UnimplementedRectorServiceServer) ViewAuditLog(context.Context, *ViewAudit
 }
 func (UnimplementedRectorServiceServer) UpdateRoleLimits(context.Context, *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UpdateRoleLimits not implemented")
+}
+func (UnimplementedRectorServiceServer) DeleteFaction(context.Context, *DeleteFactionRequest) (*DeleteFactionResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method DeleteFaction not implemented")
 }
 func (UnimplementedRectorServiceServer) mustEmbedUnimplementedRectorServiceServer() {}
 
@@ -409,6 +426,24 @@ func _RectorService_UpdateRoleLimits_Handler(srv interface{}, ctx context.Contex
 	return interceptor(ctx, in, info, handler)
 }
 
+func _RectorService_DeleteFaction_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(DeleteFactionRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(RectorServiceServer).DeleteFaction(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: RectorService_DeleteFaction_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(RectorServiceServer).DeleteFaction(ctx, req.(*DeleteFactionRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 // RectorService_ServiceDesc is the grpc.ServiceDesc for RectorService service.
 // It's only intended for direct use with grpc.RegisterService,
 // and not to be introspected or modified (even as a copy)
@@ -455,6 +490,10 @@ var RectorService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "UpdateRoleLimits",
 			Handler:    _RectorService_UpdateRoleLimits_Handler,
+		},
+		{
+			MethodName: "DeleteFaction",
+			Handler:    _RectorService_DeleteFaction_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

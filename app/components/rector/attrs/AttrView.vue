@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
+import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -268,6 +269,25 @@ const accordionCategories = computed(() =>
     }),
 );
 
+async function deleteFaction(id: string): Promise<void> {
+    try {
+        await getGRPCRectorClient().deleteFaction({
+            id: id,
+        });
+
+        notifications.add({
+            title: { key: 'notifications.rector.role_deleted.title', parameters: {} },
+            description: { key: 'notifications.rector.role_deleted.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+
+        emit('deleted');
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
     canSubmit.value = false;
@@ -287,6 +307,17 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <h2 class="text-3xl" :title="`ID: ${role.id}`">
                         {{ role?.jobLabel! }}
                     </h2>
+
+                    <UButton
+                        v-if="can('SuperUser').value"
+                        variant="link"
+                        icon="i-mdi-trash-can"
+                        @click="
+                            modal.open(ConfirmModal, {
+                                confirm: async () => deleteFaction(role!.id),
+                            })
+                        "
+                    />
                 </div>
 
                 <UDivider :label="$t('common.attributes', 2)" />

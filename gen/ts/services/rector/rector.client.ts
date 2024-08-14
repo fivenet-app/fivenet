@@ -4,6 +4,8 @@
 import type { RpcTransport } from "@protobuf-ts/runtime-rpc";
 import type { ServiceInfo } from "@protobuf-ts/runtime-rpc";
 import { RectorService } from "./rector";
+import type { DeleteFactionResponse } from "./rector";
+import type { DeleteFactionRequest } from "./rector";
 import type { UpdateRoleLimitsResponse } from "./rector";
 import type { UpdateRoleLimitsRequest } from "./rector";
 import type { ViewAuditLogResponse } from "./rector";
@@ -91,6 +93,12 @@ export interface IRectorServiceClient {
      * @generated from protobuf rpc: UpdateRoleLimits(services.rector.UpdateRoleLimitsRequest) returns (services.rector.UpdateRoleLimitsResponse);
      */
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>;
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: DeleteFaction(services.rector.DeleteFactionRequest) returns (services.rector.DeleteFactionResponse);
+     */
+    deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse>;
 }
 /**
  * @generated from protobuf service services.rector.RectorService
@@ -190,5 +198,14 @@ export class RectorServiceClient implements IRectorServiceClient, ServiceInfo {
     updateRoleLimits(input: UpdateRoleLimitsRequest, options?: RpcOptions): UnaryCall<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse> {
         const method = this.methods[9], opt = this._transport.mergeOptions(options);
         return stackIntercept<UpdateRoleLimitsRequest, UpdateRoleLimitsResponse>("unary", this._transport, method, opt, input);
+    }
+    /**
+     * @perm: Name=SuperUser
+     *
+     * @generated from protobuf rpc: DeleteFaction(services.rector.DeleteFactionRequest) returns (services.rector.DeleteFactionResponse);
+     */
+    deleteFaction(input: DeleteFactionRequest, options?: RpcOptions): UnaryCall<DeleteFactionRequest, DeleteFactionResponse> {
+        const method = this.methods[10], opt = this._transport.mergeOptions(options);
+        return stackIntercept<DeleteFactionRequest, DeleteFactionResponse>("unary", this._transport, method, opt, input);
     }
 }

@@ -113,6 +113,12 @@ message UpdateRoleLimitsRequest {
 
 message UpdateRoleLimitsResponse {}
 
+message DeleteFactionRequest {
+  uint64 role_id = 1 [jstype = JS_STRING];
+}
+
+message DeleteFactionResponse {}
+
 service RectorService {
   // @perm
   rpc GetJobProps(GetJobPropsRequest) returns (GetJobPropsResponse);
@@ -139,4 +145,6 @@ service RectorService {
 
   // @perm: Name=SuperUser
   rpc UpdateRoleLimits(UpdateRoleLimitsRequest) returns (UpdateRoleLimitsResponse);
+  // @perm: Name=SuperUser
+  rpc DeleteFaction(DeleteFactionRequest) returns (DeleteFactionResponse);
 }

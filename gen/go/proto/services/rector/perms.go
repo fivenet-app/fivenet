@@ -17,6 +17,7 @@ import (
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
+	"go.uber.org/multierr"
 )
 
 var (
@@ -469,4 +470,36 @@ func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequ
 	}
 
 	return &UpdateRoleLimitsResponse{}, nil
+}
+
+func (s *Server) DeleteFaction(ctx context.Context, req *DeleteFactionRequest) (*DeleteFactionResponse, error) {
+	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
+
+	role, err := s.ps.GetRole(ctx, req.RoleId)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
+	roles, err := s.ps.GetJobRoles(ctx, role.Job)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
+	}
+
+	errs := multierr.Combine()
+	for _, role := range roles {
+		if err := s.ps.DeleteRole(ctx, role.ID); err != nil {
+			errs = multierr.Append(errs, err)
+			continue
+		}
+	}
+
+	if err := s.ps.ClearJobAttributes(ctx, role.Job); err != nil {
+		errs = multierr.Append(errs, err)
+	}
+
+	if errs != nil {
+		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
+	}
+
+	return &DeleteFactionResponse{}, nil
 }

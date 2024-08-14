@@ -45,7 +45,9 @@ func (p *Perms) GetJobRoles(ctx context.Context, job string) (collections.Roles,
 
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest, nil
@@ -71,7 +73,9 @@ func (p *Perms) GetJobRolesUpTo(ctx context.Context, job string, grade int32) (c
 
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest, nil
@@ -97,7 +101,9 @@ func (p *Perms) GetRoles(ctx context.Context, excludeSystem bool) (collections.R
 
 	var dest collections.Roles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest, nil
@@ -120,7 +126,9 @@ func (p *Perms) GetClosestJobRole(ctx context.Context, job string, grade int32) 
 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return &dest, nil
@@ -138,7 +146,9 @@ func (p *Perms) CountRolesForJob(ctx context.Context, job string) (int64, error)
 
 	var dest database.DataCount
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return -1, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return -1, err
+		}
 	}
 
 	return dest.TotalCount, nil
@@ -272,11 +282,7 @@ func (p *Perms) GetRoleByJobAndGrade(ctx context.Context, job string, grade int3
 
 	var dest model.FivenetRoles
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		if errors.Is(err, qrm.ErrNoRows) {
-			return nil, nil
-		} else {
-			return nil, err
-		}
+		return nil, err
 	}
 
 	return &dest, nil
@@ -309,7 +315,9 @@ func (p *Perms) GetRolePermissions(ctx context.Context, id uint64) ([]*permissio
 
 	var dest []*permissions.Permission
 	if err := stmt.QueryContext(ctx, p.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return dest, nil
