@@ -48,8 +48,15 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             },
             actions: [
                 {
+                    label: t('common.retrying'),
+                    icon: 'i-mdi-circle-arrows',
+                    loading: true,
+                    active: true,
+                    disabled: true,
+                },
+                {
                     label: t('common.refresh'),
-                    icon: 'i-mdi-refresh',
+                    icon: 'i-mdi-reload',
                     click: () => reloadNuxtApp({}),
                 },
             ],

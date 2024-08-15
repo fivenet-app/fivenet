@@ -78,7 +78,7 @@ func New(p Params) (ITracker, error) {
 
 		go t.broker.Start(ctx)
 
-		userIDs, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](ctx, p.Logger, p.JS, "tracker", nil,
+		userIDs, err := store.NewWithLocks(ctx, p.Logger, p.JS, "tracker", nil,
 			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
 				s.OnUpdate = func(um *livemap.UserMarker) (*livemap.UserMarker, error) {
 					if um == nil || um.Info == nil {
@@ -88,7 +88,7 @@ func New(p Params) (ITracker, error) {
 					jobUsers, _ := t.usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
 						return xsync.NewMapOf[int32, *livemap.UserMarker]()
 					})
-					// Maybe we can be smarted about updating the user marker here, but
+					// Maybe we can be smarter about updating the user marker here, but
 					// without mutexes it will be problematic
 					jobUsers.Store(um.UserId, um)
 

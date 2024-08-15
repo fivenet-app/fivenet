@@ -18,6 +18,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
 	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
+	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -150,8 +151,8 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, found map[int32]interface{
 			continue
 		}
 
-		// Marker has been updated in the latest 30 seconds, skip it
-		if marker.Info.UpdatedAt != nil && time.Since(marker.Info.UpdatedAt.AsTime()) <= 30*time.Second {
+		// Marker has been updated in the latest 15 seconds, skip it
+		if marker.Info.UpdatedAt != nil && time.Since(marker.Info.UpdatedAt.AsTime()) <= 15*time.Second {
 			continue
 		}
 
@@ -204,8 +205,23 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
 		))
 
+	// Begin transaction
+	tx, err := m.db.BeginTx(ctx, nil)
+	if err != nil {
+		return err
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
+
 	var dest []*livemap.UserMarker
 	if err := stmt.QueryContext(ctx, m.db, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return err
+		}
+	}
+
+	// Commit the transaction
+	if err := tx.Commit(); err != nil {
 		return err
 	}
 

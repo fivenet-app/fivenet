@@ -120,7 +120,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 			tUser.Lastname,
 			tUser.Dateofbirth,
 			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("user_short.avatar"),
+			tUserProps.Avatar.AS("colleague.avatar"),
 			tJobsUserProps.UserID,
 			tJobsUserProps.Job,
 			tJobsUserProps.AbsenceBegin,
