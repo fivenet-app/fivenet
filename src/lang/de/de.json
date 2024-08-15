@@ -1,0 +1,2455 @@
+{
+    "pages": {
+        "index": {
+            "welcome": "Willkommen bei FiveNet!",
+            "subtext": "Von der Suche in der Bürger- und Fahrzeugdatenbank des Staates über das Ausfüllen von Dokumenten für Untersuchungen, Gerichtsverfahren und einer Karte Ihrer Kollegen und Einsätze. All das und mehr ist (weitestgehend) in diesem Netzwerk, dem FiveNet, bereit.",
+            "whats_new_in": "Siehe die Neuerungen in Version {version}"
+        },
+        "overview": {
+            "features": {
+                "citizens": "Suche und finde Informationen über Bürger, einschließlich grundlegender Informationen, Lizenzen und zugehörigen Dokumenten.",
+                "vehicles": "Suche und finde Informationen zu Fahrzeugen.",
+                "documents": "Suche und erstelle Dokumente, entweder mit Vorlagen oder von Grund auf neu.",
+                "jobs": "Infos über deinen Job und Mitarbeitermanagement.",
+                "livemap": "Live-Positionen von Einsätzen und Kollegen.",
+                "centrum": "Leitstelle, für das Zuweisen von Einsätze.",
+                "qualifications": "Erweitern Sie ihr Wissen durch Qualifizierungen von Ihrer eigenen oder anderen Fraktionen.",
+                "calendar": "Öffentliche, private und Berufstermine, alle in einem Kalender.",
+                "messenger": "Chat-Messenger für schnelle Konversationen mit Kollegen."
+            }
+        },
+        "documents": {
+            "templates": {
+                "create_template": "Vorlage erstellen",
+                "title": "Vorlagen",
+                "edit": {
+                    "title": "Vorlage editieren"
+                },
+                "view": {
+                    "title": "Vorlagenansicht"
+                }
+            },
+            "title": "Dokumente",
+            "create": {
+                "title": "Dokument erstellen"
+            },
+            "edit": {
+                "title": "Dokument editieren"
+            },
+            "id": {
+                "title": "Dokument anzeigen"
+            },
+            "categories": {
+                "title": "Dokumentkategorien"
+            }
+        },
+        "rector": {
+            "features": {
+                "properties": "Stelle deine Job Eigenschaften ein (e.g., Mitarbeiter-Marker-Farbe).",
+                "jobs": "Richten Sie die Rollen, Job Ränge und Berechtigungen für Ihre Fraktion ein.",
+                "audit_log": "Eine Überprüfung der Schritte, die von Ihren Kollegen unternommen wurden.",
+                "limiter": "Begrenzen was Fraktionen sehen können (Mitarbeiter Standorte, Einsätze...).",
+                "laws": "Erstelle und aktualisiere die Gesetzbücher des Staates.",
+                "units": "Anzeigen, Erstellen und Aktualisieren von Einheiten für die Leitstelle.",
+                "filestore": "Auflisten und verwalten aller Dateien.",
+                "settings": "Verwalten von FiveNet-Einstellungen."
+            },
+            "roles": {
+                "title": "Rollen",
+                "id": {
+                    "title": "Rolle anzeigen"
+                }
+            },
+            "limiter": {
+                "title": "Begrenzer"
+            },
+            "laws": {
+                "title": "Gesetzbücher",
+                "add_new_law": "Gesetz hinzufügen",
+                "add_new_law_book": "Gesetzbuch erstellen"
+            },
+            "filestore": {
+                "title": "Datenspeicher"
+            },
+            "settings": {
+                "title": "FiveNet-Einstellungen"
+            }
+        },
+        "notfound": {
+            "title": "404 Nicht gefunden",
+            "page_not_found": "Seite nicht gefunden",
+            "error": "4😵‍💫4 Fehler",
+            "fun_error": "Es scheint, als hätten Sie sich verirrt. Lass uns zurück zum Anfang gehen!"
+        },
+        "citizens": {
+            "title": "Bürger",
+            "id": {
+                "title": "Bürger Akte"
+            }
+        },
+        "jobs": {
+            "title": "Beruf",
+            "colleagues": {
+                "title": "Kollegen",
+                "single": {
+                    "title": "Kollegen-Info",
+                    "activity": "Kollegen-Info: Aktivität",
+                    "conduct": "Kollegen-Info: Führungsregister",
+                    "qualifications": "Kollegen-Info: Qualifizierungen",
+                    "timeclock": "Kollegen-Info: Stempeluhr"
+                }
+            },
+            "conduct": {
+                "title": "Führungsregister"
+            },
+            "timeclock": {
+                "title": "Stempeluhr"
+            },
+            "overview": {
+                "title": "Berufsübersicht"
+            }
+        },
+        "vehicles": {
+            "title": "Fahrzeuge"
+        },
+        "error": {
+            "title": "Fehler aufgetreten",
+            "subtitle": "Ein fataler Fehler ist aufgetreten, bitte versuche es erneut.",
+            "error_message": "Fehlermeldung:",
+            "copy_error": "Fehlerbericht kopieren"
+        },
+        "qualifications": {
+            "title": "Qualifizierungen",
+            "single": {
+                "title": "Qualifizierung",
+                "exam": {
+                    "title": "Qualifizierungsprüfung",
+                    "edit": {
+                        "title": "Aktualisiere Qualifizierungsprüfung"
+                    }
+                }
+            },
+            "edit": {
+                "title": "Qualifizierung bearbeiten"
+            }
+        },
+        "auth": {
+            "logout": {
+                "subtitle": "Sie werden in wenigen Sekunden zur Homepage weitergeleitet.",
+                "header": "Abgemeldet"
+            }
+        },
+        "dereferer": {
+            "title": "Weiterleitung",
+            "subtitle": "Sie verlassen nun FiveNet.",
+            "description": "Bitte beachten Sie, dass Sie auf eine Website weitergeleitet werden, für deren Inhalt wir nicht verantwortlich sind und für die unsere Datenschutzbestimmungen nicht gelten.",
+            "goto": "Sollte die automatische Weiterleitung nicht funktionieren, klicken Sie bitte hier!"
+        },
+        "stats": {
+            "title": "Statistik",
+            "subtitle": "FiveNet in Zahlen.",
+            "stats": {
+                "users_registered": "Benutzer registriert",
+                "documents_created": "Dokumente erstellt",
+                "dispatches_created": "Notrufe abgesetzt",
+                "citizen_activity": "Bürgeraktivitäten protokolliert",
+                "timeclock_tracked": "Dienstzeit erfasst",
+                "citizens_total": "Bürgerakten geführt"
+            }
+        }
+    },
+    "copyright": "Copyright © {year} Galexrt Alle Rechte vorbehalten.",
+    "common": {
+        "login": "Anmelden",
+        "logout": "Abmelden",
+        "sign_out": "Abmelden",
+        "username": "Benutzername",
+        "password": "Passwort",
+        "overview": "Übersicht",
+        "citizen": "Bürger | Bürger",
+        "vehicle": "Fahrzeug | Fahrzeuge",
+        "document": "Dokument | Dokumente",
+        "job": "Beruf",
+        "livemap": "Karte",
+        "control_panel": "Einstellungen",
+        "about": "Über",
+        "search": "Suche",
+        "phone": "Telefon",
+        "number": "Nummer",
+        "name": "Name",
+        "sex": "Geschlecht",
+        "height": "Größe",
+        "action": "Aktion | Aktionen",
+        "date_of_birth": "Geburtsdatum",
+        "next": "Weiter",
+        "previous": "Zurück",
+        "wanted": "Gesucht",
+        "loading": "Lade {0}...",
+        "unable_to_load": "{0} konnte nicht geladen werden!",
+        "profile": "Profil",
+        "activity": "Aktivität",
+        "home": "Startseite",
+        "not_found": "Keine {0} gefunden!",
+        "visum": "Visum",
+        "license": "Lizenz | Lizenzen",
+        "not": "Nicht",
+        "close": "Schließen | Geschlossen",
+        "open": "Öffnen | Offen",
+        "last_used": "Zuletzt Genutzt",
+        "rank": "Rang",
+        "playtime": "Spielzeit",
+        "choose": "Auswählen",
+        "clipboard": "Zwischenablage",
+        "select": "Auswählen | Ausgewählt",
+        "title": "Titel",
+        "creator": "Ersteller",
+        "plate": "Kennzeichen",
+        "model": "Modell",
+        "owner": "Eigentümer",
+        "category": "Kategorie | Kategorien",
+        "description": "Beschreibung",
+        "create": "Erstellen",
+        "account": "Konto",
+        "info": "Info",
+        "data": "Daten",
+        "your": "deine",
+        "character": "Charakter | Charaktere",
+        "user": "Benutzer | Benutzer",
+        "delete": "Löschen",
+        "require": "Erfordert",
+        "max": "Maximal",
+        "template": "Vorlage | Vorlagen",
+        "go_back": "Zurück",
+        "content": "Inhalt",
+        "schema": "Schema",
+        "edit": "Editieren",
+        "post": "Veröffentlichen",
+        "state": "Zustand",
+        "reference": "Referenz | Referenzen",
+        "relation": "Beziehung | Beziehungen",
+        "access": "Zugriff",
+        "submit": "Absenden",
+        "save": "Speichern",
+        "remove": "Entfernen",
+        "add": "Hinzufügen",
+        "created": "Erstellt",
+        "created_at": "Erstellt am",
+        "created_by": "Erstellt von",
+        "updated_at": "Aktualisiert am",
+        "target": "Ziel",
+        "source": "Quelle",
+        "date": "Datum",
+        "comment": "Kommentar | Kommentare",
+        "employee": "Mitarbeiter",
+        "dispatch": "Einsatz | Einsätze",
+        "latitude": "Breitengrad",
+        "longitude": "Längengrad",
+        "filter": "Filter",
+        "postal": "PLZ | PLZs",
+        "retry": "Erneut versuchen",
+        "time_range": "Zeitspanne",
+        "from": "Von",
+        "to": "Bis",
+        "audit_log": "Auditprotokoll",
+        "id": "ID | IDs",
+        "time": "Zeit",
+        "service": "Service",
+        "copy": "Kopieren",
+        "prop": "Eigenschaft",
+        "theme": "Design",
+        "job_grade": "Arbeitsgrad",
+        "role": "Rolle | Rollen",
+        "permission": "Berechtigung | Berechtigungen",
+        "license_plate": "Kennzeichen",
+        "type": "Art",
+        "propertie": "Eigenschaft | Eigenschaften",
+        "connect": "Verbinden",
+        "disconnect": "Trennen",
+        "time_ago": {
+            "just-now": "gerade jetzt",
+            "ago": "vor {0}",
+            "in": "in {0}",
+            "last-month": "Letzter Monat",
+            "next-month": "Nächster Monat",
+            "month": "Monat | Monate",
+            "last-year": "Letztes Jahr",
+            "next-year": "Nächstes Jahr",
+            "year": "Jahr | Jahre",
+            "yesterday": "gestern",
+            "tomorrow": "morgen",
+            "day": "Tag | Tage",
+            "last-week": "Letzte Woche",
+            "next-week": "Nächste Woche",
+            "week": "Woche | Wochen",
+            "hour": "Stunde | Stunden",
+            "minute": "Minute | Minuten",
+            "second": "Sekunde | Sekunden"
+        },
+        "min": "Minimum",
+        "count": "Anzahl",
+        "other": "Andere",
+        "result": "Ergebnis | Ergebnisse",
+        "total_count": "Gesamtanzahl",
+        "none_selected": "Keine {0} ausgewählt",
+        "no_licenses": "Keine Lizenzen",
+        "available": "verfügbar",
+        "reason": "Grund | Gründe",
+        "preview": "Vorschau",
+        "option": "Option | Optionen",
+        "weight": "Gewichtung",
+        "notification": "Benachrichtigung | Benachrichtigungen",
+        "received": "Erhalten",
+        "advanced_search": "Erweiterte Suche",
+        "method": "Methode",
+        "law": "Gesetz | Gesetze",
+        "law_book": "Gesetzbuch | Gesetzbücher",
+        "traffic_infraction_points": "StVo Punkt | StVo Punkte",
+        "point": "Keine Punkte | {n} Punkt | {n} Punkte",
+        "deleted": "Gelöscht",
+        "summary": "Zusammenfassung",
+        "update": "Aktualisieren",
+        "dispatch_center": "Leitstelle",
+        "reset": "Zurücksetzen",
+        "assign": "Zuweisen",
+        "detail": "Detail | Details",
+        "not_selected": "Nicht ausgewählt | Nichts ausgewählt",
+        "crime": "Verbrechen",
+        "fine": "Strafe",
+        "detention_time": "Gefängniszeit",
+        "money": "Geld",
+        "no_open_fine": "Keine offenen Geldstrafen",
+        "location": "Standort | Standorte",
+        "units": "Keine Einheiten | {n} Einheit | {n} Einheiten",
+        "unit": "Einheit | Einheiten",
+        "color": "Farbe",
+        "initials": "Initialen",
+        "updated": "Aktualisiert",
+        "members": "Mitglieder",
+        "anon": "Anonym",
+        "setting": "Einstellung | Einstellungen",
+        "cancel": "Abbrechen",
+        "enabled": "Aktiviert",
+        "status": "Status",
+        "mode": "Modus | Modi",
+        "join": "Beitreten | Beigetreten",
+        "leave": "Verlassen | Verlassen",
+        "message": "Nachricht | Nachrichten",
+        "unknown": "Unbekannt",
+        "code": "Code | Codes",
+        "accept": "Akzeptieren | Akzeptiert",
+        "decline": "Ablehnen | Abgelehnt",
+        "licenses": "Lizenzen",
+        "sent_by": "Gesendet von",
+        "sent_at": "Gesendet am",
+        "go_to_location": "Gehe zu Koordinaten",
+        "no_location": "Keine Koordinaten",
+        "your_dispatches": "Ihre Einsätze",
+        "no_assigned_dispatches": "Keine zugewiesenen Einsätze.",
+        "join_unit": "Einheit beitreten",
+        "leave_unit": "Einheit wechseln/ verlassen",
+        "no_own_unit": "In keiner Einheit.",
+        "member": "Keine Mitglieder | {n} Mitglied | {n} Mitglieder",
+        "attributes": "Attribut | Attribute",
+        "last_update": "Letzte Aktualisierung",
+        "disponents": "Disponent | Disponenten",
+        "disponent": "Keine Disponenten | {n} Disponent | {n} Disponenten",
+        "confirm": "Bestätigen | Bestätigt",
+        "word": "Wort | Wörter",
+        "marker": "Markierung | Markierungen",
+        "radius": "Radius",
+        "opacity": "Deckkraft",
+        "char": "Charakter | Charaktere",
+        "self_assign": "Selbst zuweisen",
+        "expires_in": "Läuft ab in",
+        "colleague": "Kollege | Kollegen",
+        "colleagues": "Keine Kollegen | {n} Kollege | {n} Kollegen",
+        "expires_at": "Läuft ab am",
+        "expired": "Abgelaufen",
+        "conduct_register": "Führungsregister",
+        "call": "Anruf",
+        "phone_number": "Telefonnummer",
+        "back": "Zurück",
+        "timeclock": "Stempeluhr",
+        "active": "Aktiv",
+        "sum": "Summe",
+        "avg": "Durchschnitt",
+        "read_more": "Mehr Lesen",
+        "read_less": "Weniger Lesen",
+        "request": "Anfrage | Anfragen",
+        "requests": "Keine Anfragen | {n} Anfrage | {n} Anfragen",
+        "begins_at": "Beginnt am",
+        "ends_at": "Endet am",
+        "hide": "Verstecken",
+        "approve": "Genehmigen | Genehmigt",
+        "na": "Nicht angegeben",
+        "privacy_policy": "Datenschutzerklärung",
+        "imprint": "Impressum",
+        "comments": "Keine Kommentare | {n} Kommentar | {n} Kommentare",
+        "dispatches": "Einsätze",
+        "refresh": "Neuladen",
+        "forward": "Vorwärts",
+        "points": "Punkt | Punkte",
+        "hints": "Hinweis | Hinweise",
+        "icon": "Icon",
+        "disabled": "Deaktiviert",
+        "legend": "Legende",
+        "radio_frequency": "Funk-Frequenz",
+        "click_here": "Klicke hier",
+        "yes": "Ja",
+        "no": "Nein",
+        "page": "Seite",
+        "department": "Dienststelle",
+        "none": "Keine {0}",
+        "department_postal": "Postleitzahl der Dienststelle",
+        "blood_type": "Blutgruppe",
+        "motd": "MOTD",
+        "fallback_mode": "Fallback-Modus",
+        "volume": "Lautstärke",
+        "avatar": "Profilbild",
+        "image": "Bild",
+        "logo": "Logo",
+        "absence_date": "Abwesenheit",
+        "mug_shot": "Fahndungsfoto",
+        "file_size": "Dateigröße",
+        "predefined": "Vordefiniert | Vordefinierte",
+        "discord": "Discord",
+        "redirecting_to": "Sie werden weitergeleitet zu {0}...",
+        "absent": "Abwesend",
+        "upload": "Hochladen",
+        "postal_code": "Postleitzahl | Postleitzahlen",
+        "duration": "Dauer",
+        "inactive_colleagues": "Inaktive Kollegen",
+        "qualifications": "Qualifizierung | Qualifizierungen",
+        "score": "Ergebnis",
+        "calendar_week": "KW",
+        "requirements": "Anforderung | Anforderungen",
+        "read": "Gelesen",
+        "abbreviation": "Abkürzung",
+        "approver": "Genehmiger",
+        "approved_at": "Genehmigt am",
+        "superuser": "SuperUser",
+        "restore": "Wiederherstellen",
+        "mark": "Markieren",
+        "goto": "Gehe zu",
+        "goto_item": "Gehe zu {0}",
+        "help": "Hilfe",
+        "shortcuts": "Abkürzungen",
+        "commandpalette": "Befehlspalette",
+        "language": "Sprache | Sprachen",
+        "query_not_found": "nicht gefunden.",
+        "file": "Datei | Dateien",
+        "entry": "Eintrag | Einträge",
+        "qualification": "Qualifizierung | Qualifizierungen",
+        "toc": "Inhaltsverzeichnis",
+        "dialog": "Dialog | Dialogs",
+        "annul": "Aufheben | Aufgehoben",
+        "search_field": "Suche...",
+        "settings": "Einstellungen",
+        "timings": "Zeitangaben",
+        "stats": "Statistik",
+        "tutor": "Tutor",
+        "approved_by": "Genehmigt von",
+        "clear": "Löschen",
+        "calendar": "Kalender",
+        "rsvp": "RSVP",
+        "maybe": "Vielleicht",
+        "appointment": "Termin | Termine",
+        "public": "Öffentlich",
+        "subscribe": "Abonnieren",
+        "unsubscribe": "Abbestellen",
+        "guest": "Gast | Gäste",
+        "response": "Antwort | Antworten",
+        "invited": "Eingeladen",
+        "note": "Notiz",
+        "weekly_view": "Wöchentliche Ansicht",
+        "today": "Heute",
+        "all": "Alle",
+        "unread": "Ungelesen",
+        "archive": "Archiv",
+        "paste": "Einfügen",
+        "messenger": "Konversationen",
+        "diff": "Unterschiede",
+        "exam": "Prüfung | Prüfungen",
+        "question": "Frage | Fragen",
+        "answer": "Antwort | Antworten",
+        "chars": "Zeichen",
+        "pinned": "Angeheftet",
+        "pin": "Anheften",
+        "unpin": "Lösen",
+        "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente",
+        "or": "ODER",
+        "retrying": "Erneuter Versuch..."
+    },
+    "components": {
+        "partials": {
+            "sidebar": {
+                "change_character": "Charakter wechseln"
+            },
+            "data_error_block": {
+                "default_title": "Ihre Daten konnten nicht geladen werden!",
+                "default_message": "Bitte versuche es gleich noch einmal."
+            },
+            "sidebar_notifications": "Zu Benachrichtigungen gehen",
+            "confirm_dialog": {
+                "title": "Gefährliche Aktion",
+                "description": "Sind Sie sicher, dass Sie diese potenziell gefährlichen Aktionen durchführen wollen? Alle damit verbundenen Daten werden für immer von unseren Servern gelöscht. Diese Aktion kann nicht rückgängig gemacht werden."
+            },
+            "table_pagination": {
+                "page_count": "Seite {current} von {maxPage} à {size} Einträge (Gesamt {total})"
+            }
+        },
+        "clipboard": {
+            "clipboard_button": {
+                "add": "Zur Zwischenablage hinzufügen"
+            },
+            "clipboard_modal": {
+                "clear": "Zwischenablage leeren",
+                "no_data": "Keine {0} in der Zwischenablage",
+                "title": "Deine Zwischenablagen Inhalte"
+            }
+        },
+        "documents": {
+            "document_comment_entry": {
+                "edit_comment": "Bearbeite deinen Kommentar"
+            },
+            "document_comments": {
+                "add_comment": "Füge deinen Kommentar hinzu",
+                "no_comments": "Noch keine Kommentare veröffentlicht"
+            },
+            "document_editor": {
+                "add_permission": "Berechtigung hinzufügen",
+                "quill": {
+                    "msg": "Das HTML des Editors kann hier bearbeitet werden, nach Klicken von \"OK\" wird der Inhalt dadurch ersetzt.",
+                    "okText": "Ok"
+                }
+            },
+            "document_managers": {
+                "view_current": "Aktuelles anzeigen",
+                "add_new": "Neu hinzufügen",
+                "links": "Verlinkungen",
+                "solves": "Löst",
+                "closes": "Schließt",
+                "deprecates": "veraltet",
+                "open_document": "Dokument öffnen",
+                "remove_reference": "Referenz entfernen",
+                "add_reference": "Referenz hinzufügen",
+                "open_citizen": "Bürger öffnen",
+                "remove_relation": "Beziehung entfernen",
+                "add_relation": "Beziehung hinzufügen",
+                "mentioned": "Erwähnt",
+                "targets": "Zielt",
+                "caused": "Verursacht"
+            },
+            "document_list": {
+                "no_documents_hint": "Entweder aktualisieren Sie Ihre Suchanfrage oder erstellen Sie das erste Dokument mit der oben stehenden Schaltfläche \"Erstellen\"."
+            },
+            "categories": {
+                "modal": {
+                    "create_category": "Kategorie Erstellen",
+                    "update_category": "Kategorie Aktualisieren"
+                }
+            },
+            "templates": {
+                "modal": {
+                    "no_template": "Ohne Vorlage"
+                },
+                "templates_modal": {
+                    "no_template": "Ohne Vorlage"
+                }
+            },
+            "activity_list": {
+                "legend": {
+                    "added": "Hinzugefügt",
+                    "removed": "Entfernt",
+                    "changed": "Geändert"
+                },
+                "difference": "Unterschied"
+            },
+            "document_view": {
+                "take_ownership": "Besitz übernehmen"
+            },
+            "document_request_access": {
+                "title": "Sie haben keinen Zugriff auf das Dokument",
+                "message": "Jedoch können Sie Zugriff auf das Dokument per unterem Knopf beanfragen.",
+                "callback_message": "Hier Zugriff beanfragen"
+            }
+        },
+        "livemap": {
+            "starting_datastream": "Starte Karten-Datenstrom...",
+            "failed_datastream": "Karten-Datenstrom fehlgeschlagen!",
+            "center_selected_marker": "Zentriere ausgewählten Marker",
+            "paused_datastream": "Karten-Datenstrom pausiert (Fenster nicht im Fokus).",
+            "settings": {
+                "marker_size": "Größe der Kartenmarkierung"
+            },
+            "create_marker": {
+                "title": "Markierung erstellen",
+                "subtitle": "Erstelle eine neue Markierung."
+            },
+            "update_marker": {
+                "title": "Markierung aktualisieren",
+                "subtitle": "Aktualisiere eine existierende Markierung."
+            },
+            "show_unit_names": "Zeige Einheiten Namen (gilt nur für Karten-Ansicht)",
+            "show_unit_status": "Zeige Einheiten Status Farbe",
+            "show_all_dispatches": "Zeige alle Einsätze an (gilt nur für Karten-Ansicht)",
+            "restarting_datastream": "Wiederherstellung des Datenstroms..."
+        },
+        "rector": {
+            "job_props": {
+                "job_properties": "Job Eigenschaften",
+                "your_job_properties": "Deine FiveNet Job Eigenschaften.",
+                "livemap_marker_color": "Karten-Marker-Farbe",
+                "quick_buttons": "Schnellzugriff Knöpfe",
+                "discord_sync_settings": {
+                    "title": "Discord-Bot-Synchronisations-Einstellungen",
+                    "subtitle": "Verwalte die Discord-Bot-Synchronisations-Einstellungen.",
+                    "discord_guild_id": "Discord Guild/Server ID",
+                    "invite_bot": "Bot einladen",
+                    "last_sync": "Letzte Synchronisation",
+                    "user_info_sync": "Mitarbeiter Sync (Namen und Ränge-Rollen)",
+                    "user_info_sync_settings": {
+                        "employee_role_enabled": "Erstelle und Verwalte Mitarbeiter Rolle",
+                        "employee_role_format": "Mitarbeiter-Rollen-Format (%s wird durch den Job Namen erstetzt)",
+                        "grade_role_format": "Rang-Rollen-Format (%grade% wird durch die Rang-Nummer, %grade_label% durch das Rang-Label ersetzt)",
+                        "unemployed_enabled": "Verwalte die Rolle für Arbeitslose",
+                        "unemployed_mode": "Modus für das Behandeln von Arbeitslosen",
+                        "unemployed_role_name": "Arbeitslosen Rolle",
+                        "sync_nicknames": "Nicknames synchronisieren",
+                        "group_mapping": {
+                            "title": "Zuordnung von Gruppenrollen",
+                            "description": "Gruppieren von einer oder mehreren Rängen in einer \"Gruppen\"-Rolle.",
+                            "name": "Rollen-Name",
+                            "from_grade": "Von Rang",
+                            "to_grade": "Bis Rang"
+                        }
+                    },
+                    "status_log": "Statusprotokoll",
+                    "status_log_settings": {
+                        "channel_id": "Channel-ID"
+                    },
+                    "jobs_absence_settings": {
+                        "jobs_absence_role_enabled": "Verwalte die Abwesenheitsrolle",
+                        "jobs_absence_role_name": "Abwesenheitsrolle"
+                    },
+                    "group_sync_settings": {
+                        "title": "Gruppen-Synchronisierungseinstellungen",
+                        "subtitle": "Einstellungen für die Gruppen-Synchronisierung.",
+                        "ignored_role_ids": {
+                            "title": "Ignorierte Rollen IDs",
+                            "description": "Bei Benutzern mit einer dieser Rollen werden keine Gruppen synchronisiert (dies betrifft nur die Gruppensynchronisierung und nicht die Synchronisierung der Benutzerinfos).",
+                            "field": "Ignorierte Rollen ID"
+                        }
+                    },
+                    "dry_run": "Trockenlaufmodus",
+                    "qualifications_role_format": {
+                        "title": "Qualifizierungen-Rollen-Format",
+                        "description": "Nutze %name% für das Rollen-Namen-Format für Qualifizierungen."
+                    }
+                },
+                "citizen_attributes": {
+                    "title": "Bürger-Attribute"
+                }
+            },
+            "role_view": {
+                "add_permission": "Berechtigung hinzufügen"
+            },
+            "app_config": {
+                "auth": {
+                    "title": "Authentifizierung",
+                    "description": "Authentifizierung Einstellungen",
+                    "sign_up": "Registrierung",
+                    "last_char_lock": "Spieler auf ihren letzten aktiven Charakter sperren"
+                },
+                "perms": {
+                    "title": "Berechtigungen",
+                    "description": "Berechtigungssystem Optionen.",
+                    "default_perms": "Standardberechtigungen"
+                },
+                "website": {
+                    "title": "Website",
+                    "description": "Website Einstellunge, wie zum Beispiel die Fußzeilen Verlinkungen.",
+                    "links": {
+                        "title": "Verlinkungen"
+                    }
+                },
+                "job_info": {
+                    "title": "Berufs-Info",
+                    "description": "Arbeitslosen-Beruf-Info für das System und Liste der öffentlichen und versteckten Berufe.",
+                    "unemployed_job": "Beruf der Arbeitslosen",
+                    "public_jobs": "Öffentliche Berufe",
+                    "hidden_jobs": "Versteckte Berufe"
+                },
+                "user_tracker": {
+                    "title": "Spieler-Tracker",
+                    "description": "Liste der über die Livemap getrackten Berufe, und welche Berufe in der Stempeluhr getrackt werden sollen.",
+                    "refresh_time": "Aktualisierungszeit",
+                    "db_refresh_time": "Datenbank-Aktualisierungszeit",
+                    "livemap_jobs": "Livemap-Berufe"
+                },
+                "discord": {
+                    "description": "FiveNet Discord-Bot-Einstellungen.",
+                    "bot_invite_url": "Bot-Einladungs-URL",
+                    "sync_interval": "Synchronisierungsinterval",
+                    "ignored_jobs": "Ignorierte Berufe (e.g., Insassen-Beruf)"
+                },
+                "save": {
+                    "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
+                }
+            }
+        },
+        "debug_info": {
+            "title": "Debug-Informationen",
+            "subtitle": "Wichtige Informationen bei der Meldung von Problemen mit FiveM.",
+            "perms": "Aktuelle Berechtigungen",
+            "active_char_id": "ID des aktiven Charakters",
+            "access_token_expiration": "Ablauf des Zugangstokens",
+            "reset_clipboard": "Zwischenablage zurücksetzen",
+            "debug_functions": "Debug-Funktionen",
+            "reset_local_storage": "Lokalen Browser-Speicher zurücksetzen",
+            "factory_reset": "FiveNet App auf Standard zurücksetzen",
+            "version": "Version",
+            "nui_info": "NUI-Info",
+            "no_char_selected": "Kein Charakter ausgewählt, bitte wählen Sie einen Charakter aus und probieren Sie es erneut.",
+            "test_notifications": "Teste Benachrichtigungen",
+            "trigger_error": "Fehlerseite auslösen"
+        },
+        "penaltycalculator": {
+            "title": "Strafenrechner"
+        },
+        "centrum": {
+            "create_dispatch": {
+                "title": "Einsatz Erstellen",
+                "subtitle": "Erstelle einen neuen Einsatz."
+            },
+            "assign_dispatch": {
+                "title": "Einsatz Zuweisen"
+            },
+            "take_dispatch": {
+                "title": "Einsatz Annehmen",
+                "subtitle": "Übernehme zugewiesene Einsätze schnell und einfach."
+            },
+            "update_dispatch_status": {
+                "title": "Aktualisiere Einsatz Status"
+            },
+            "assign_unit": {
+                "title": "Benutzer einer Einheit zuordnen"
+            },
+            "update_unit_status": {
+                "title": "Aktualisiere Einheit Status"
+            },
+            "dispatch_center": {
+                "starting_datastream": "Start Leitstellen Datenstrom...",
+                "failed_datastream": "Leistellen Datenstrom fehlgeschlagen!",
+                "join_center": "Trete der Leitstelle bei, indem du hier klickst."
+            },
+            "livemap": {
+                "mark_on_gps": "Auf GPS markieren",
+                "total_dispatches": "Gesamtanzahl Einsätze"
+            },
+            "units": {
+                "create_unit": "Einheit erstellen",
+                "update_unit": "Einheit aktualisieren",
+                "feed": {
+                    "item": {
+                        "UNKNOWN": "Unbekannter Einheiten-Status",
+                        "USER_ADDED": "Mitglied zu Einheit hinzugefügt",
+                        "USER_REMOVED": "Mitglied von Einheit entfernt",
+                        "UNAVAILABLE": "Einheit nicht verfügbar",
+                        "AVAILABLE": "Einheit verfügbar",
+                        "ON_BREAK": "Einheit auf Pause",
+                        "BUSY": "Einheit beschäftigt"
+                    }
+                },
+                "attributes": {
+                    "static": "Statisch",
+                    "no_dispatch_auto_assign": "Keine automatische Einsatz Zuweisung"
+                }
+            },
+            "dispatches": {
+                "feed": {
+                    "item": {
+                        "NEW": "Einsatz erstellt",
+                        "UNASSIGNED": "Keine Einheiten an Einsatz zugewiesen",
+                        "UNIT_ASSIGNED": "Einheit an Einsatz zugewiesen",
+                        "UNIT_UNASSIGNED": "Einheit von Einsatz abgezogen",
+                        "EN_ROUTE": "Auf dem Weg zum Einsatz",
+                        "ON_SCENE": "Vor Ort zum Einsatz",
+                        "NEED_ASSISTANCE": "Einheit benötigt Verstärkung",
+                        "COMPLETED": "Einsatz abgeschlossen",
+                        "CANCELLED": "Einsatz abgebrochen",
+                        "ARCHIVED": "Einsatz archiviert",
+                        "UNIT_ACCEPTED": "Einsatz von Einheit akzeptiert",
+                        "UNIT_DECLINED": "Einsatz von Einheit abgelehnt",
+                        "UNSPECIFIED": "Unbekannter Einsatz-Status"
+                    }
+                },
+                "attributes": {
+                    "multiple": "Mehrere Einsätze",
+                    "too_old": "Abgebrochen, Einsatz zu alt",
+                    "duplicate": "Duplikat"
+                }
+            },
+            "settings": {
+                "title": "Leitstellen-Einstellungen",
+                "description": "Leitstellen-Einstellungen die die Nutzung und vordefinierten Status betreffen.",
+                "predefined": {
+                    "title": "Vordefinierte Status",
+                    "description": "Verwalte vordefinierte Einsatz- und Einheit-Status-Gründe."
+                },
+                "timings": {
+                    "title": "Zeitangaben",
+                    "description": "Zeitangaben für Einsatz- und Einheit-Status-Pings.",
+                    "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)"
+                }
+            }
+        },
+        "jobs": {
+            "conduct": {
+                "List": {
+                    "show_expired": "Zeige Abgelaufene",
+                    "no_expiration": "Kein Verfallsdatum."
+                },
+                "CreateOrUpdateModal": {
+                    "create": {
+                        "title": "Erstelle neuen Führungsregister Eintrag"
+                    },
+                    "update": {
+                        "title": "Aktualisiere Führungsregister Eintrag"
+                    }
+                }
+            },
+            "timeclock": {
+                "List": {
+                    "per_day": "Pro Tag"
+                },
+                "Stats": {
+                    "7_days": "Letzten 7 Tage",
+                    "weekly": "Wöchentliche Zusammenfassung",
+                    "sum": "Gesamte Dienstzeit",
+                    "avg": "Durchschnittliche Dienstzeit",
+                    "max": "Längste Dienstzeit"
+                }
+            },
+            "self_service": {
+                "title": "Eigenverwaltung",
+                "set_absence_date": "Urlaub eintragen",
+                "set_profile_picture": "Profilbild aktualisieren"
+            }
+        },
+        "bodycheckup": {
+            "title": "Körper Untersuchung",
+            "no_points": "Keine Punkte ausgewählt!",
+            "bmi_calculator": "BMI-Rechner",
+            "bmi": "Body-Mass-Index",
+            "mass": "Gewicht (in KG)",
+            "height": "Größe (in Metern)"
+        },
+        "hints": {
+            "start_text": "Wussten Sie schon...?",
+            "click_me": "Klicke hier.",
+            "startpage": {
+                "content": "Die Startseite von FiveNet können Sie in Ihren Kontoinformationen festlegen."
+            },
+            "documenteditor": {
+                "content": "Sie können in den Konto-Einstellungen einen dunklen Modus für den Editor aktivieren."
+            },
+            "rector_roles_list": {
+                "content": "Die Berechtigungen werden von den unteren auf die oberen Ränge vererbt. Wenn Rang 1 Dokumente einsehen kann, können alle Ränge einschließlich Rang 1 dies ebenfalls tun. Wird Rang 4 die Einsichtnahme in Dokumente verweigert, können die Ränge 4 und höher keine Dokumente einsehen."
+            },
+            "template_editor_templating": {
+                "content": "Sie können Golang HTML Templating im oberen Feld benutzen. Für kopierbereite-Ausschnitte und Tricks folgen Sie dem Link."
+            },
+            "commandpalette": {
+                "content": "FiveNet hat eine Befehlspalette für Power-User! Sie können diese mit folgenden Tastenkombination öffnen:",
+                "keyboard": "STRG+K"
+            },
+            "rector_roles_superuser": {
+                "content": "Sollten Sie bestimmte Berechtigungen vermissen oder eine leere Berechtigungsliste haben, kontaktieren Sie einen FiveNet Administrator damit dieser die Berechtigungen für ihre Fraktion einstellt."
+            }
+        },
+        "notifications": {
+            "title": "Benachrichtigungen",
+            "mark_read": "Als gelesen markieren",
+            "mark_all_read": "Alle als gelesen markieren",
+            "include_read": "Gelesene Benachrichtigungen",
+            "unread": "Ungelesen"
+        },
+        "about": {
+            "introduction": {
+                "pre_title": "Mehr Zeit für GTA V Roleplay.",
+                "title": "Ein besserer Arbeitsablauf",
+                "content": "Einfaches Suchen nach Bürgern und Fahrzeugen. Mit dem Dokumentzugriffssystem ist es einfach, Dokumente zu erstellen und sicher mit Ihren Kollegen zu teilen. Eine Karte, die die letzten Einsätze und die Standorte Ihrer Kollegen anzeigt.",
+                "feature_one": {
+                    "title": "Suche nach Zustandsdaten.",
+                    "content": "Sie können nach Bürgern und Fahrzeugen suchen. Sie können auch einen Bürger als gesucht markieren."
+                },
+                "feature_two": {
+                    "title": "Sichere Dokumentenfreigabe.",
+                    "content": "Dokumente können einfach mit Ihren Kollegen und anderen Fraktionen auf dem Server geteilt werden."
+                },
+                "feature_three": {
+                    "title": "Karte.",
+                    "content": "Sehen Sie den Standort Ihrer Kollegen und Einsätze live. Es stehen verschiedene Kartentypen zur Verfügung."
+                }
+            },
+            "faq": {
+                "title": "Häufig gestellte Fragen",
+                "one": {
+                    "question": "Wer hat FiveNet erstellt?",
+                    "answer": "Galexrt und Clover sind derzeit die Hauptverantwortlichen, die an FiveNet arbeiten."
+                },
+                "two": {
+                    "question": "Warum wurde FiveNet erstellt?",
+                    "answer": "Es begann als eine Möglichkeit für Galexrt, die Frontend-Entwicklung zu erlernen, und entwickelte sich dann zu einer Möglichkeit für den ModernV Server, eine Alternative zu VPC CopNet/ MedicNet zu haben."
+                },
+                "three": {
+                    "question": "Wo kann ich die Entwicklungs-Roadmap von FiveNet finden?",
+                    "answer": "<a class=\"underline\" href=\"{repoLink}/#readme\">Klicken Sie hier (GitHub galexrt/fivenet README)</a>."
+                },
+                "four": {
+                    "question": "Ich habe einen Fehler oder ein anderes Problem mit FiveNet gefunden. Wo melde ich es?",
+                    "answer": "Bitte melden Sie Probleme entweder auf <a class=\"underline\" href=\"{discordLink}\">dem Galexrt Discord-Server</a> oder auf <a class=\"underline\" href=\"{repoLink}\">dem FiveNet GitHub-Projekt</a>."
+                }
+            },
+            "questions_or_issues": {
+                "title": "Haben Sie Fragen oder Probleme?",
+                "content": "Stellen Sie sicher, dass Sie dem Discord-Server beitreten, falls Sie Probleme oder Fragen zu FiveNet haben."
+            },
+            "join_discord": "Tritt dem Discord-Server von Galexrt bei",
+            "licenses_list": "FiveNet Lizenz und Liste der genutzten Third-Party Lizenzen",
+            "subtitle": "Über FiveNet und seine Ersteller.",
+            "licenses": {
+                "subtitle": "Liste und Informationen zu den Lizenzen des in FiveNet verwendeten Code, Bibliotheken und Medien."
+            }
+        },
+        "qualifications": {
+            "create_new_qualification": "Erstelle neue Qualifizierungen",
+            "user_qualifications": "Ihre Qualifizierungen",
+            "all_qualifications": "Alle Qualifizierungen",
+            "user_requests": "Angefragte Qualifizierungen",
+            "take_test": "Prüfung ablegen",
+            "request_modal": {
+                "title": "Qualifizierung anfragen"
+            },
+            "content_unavailable": "Der Inhalt der Qualifizierung wird verfügbar sein, sobald Ihr Antrag angenommen wurde.",
+            "exam_editor": {
+                "question_types": {
+                    "separator": "Trenner",
+                    "yesno": "Ja/Nein",
+                    "freeText": "Freitext",
+                    "singleChoice": "Einfachauswahl",
+                    "multipleChoice": "Mehrfachauswahl"
+                }
+            },
+            "result_modal": {
+                "title": "Qualifizierungsergebnis"
+            },
+            "exam_view": {
+                "times_up": "Die Zeit ist um! Ihre Prüfung wird bald benotet werden."
+            },
+            "correct_question": "Richtig"
+        },
+        "language_switcher": {
+            "title": "Sprache wechseln"
+        },
+        "auth": {
+            "AccountInfo": {
+                "title": "Konto-Informationen",
+                "subtitle": "Deine FiveNet Konto-Informationen.",
+                "license": "Identifier/ Lizenz",
+                "change_password": "Passwort ändern",
+                "change_password_button": "Konto-Passwort ändern",
+                "change_username": "Benutzername ändern",
+                "change_username_button": "Konto-Benutzername ändern"
+            },
+            "LoginForm": {
+                "register_account": "Konto mit Token erstellen",
+                "login_error": "Es gab einen Fehler beim Login, bitte versuche es erneut!",
+                "title": "Anmeldung",
+                "forgot_password": "Passwort vergessen",
+                "social_login_disabled": "Um den Social Login Login zu nutzen müssen Cookies akzeptiert werden.",
+                "login_with": "Anmelden mit {0}"
+            },
+            "ChangePasswordModal": {
+                "change_password": "Passwort ändern",
+                "current_password": "Momentanes Passwort",
+                "new_password": "Neues Passwort"
+            },
+            "OAuth2Connections": {
+                "title": "Social Login-Verbindungen",
+                "subtitle": "Ihr Social Login Login, für schnelleres Anmelden und coole zusätzliche Funktionen."
+            },
+            "ForgotPassword": {
+                "title": "Passwort vergessen",
+                "subtitle": "Um Ihr Passwort zurückzusetzen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein, um einen neuen Registrierungstoken zu erhalten.",
+                "registration_token": "Registrierungstoken",
+                "submit_button": "Neues Passwort festlegen",
+                "back_to_login_button": "Zurück zur Anmeldung",
+                "create_error": "Es ist ein Fehler beim Festlegen Ihres neuen Passworts aufgetreten, bitte versuchen Sie es erneut!"
+            },
+            "RegistrationForm": {
+                "title": "Konto erstellen",
+                "registration_token": "Registrierungstoken",
+                "submit_button": "Konto erstellen",
+                "back_to_login_button": "Zurück zur Anmeldung",
+                "create_error": "Es gab einen Fehler während dein Konto erstellt wurde, bitte versuche es erneut!",
+                "subtitle": "Um ein Konto zu erstellen, treten Sie dem FiveM-Server bei und geben Sie den Befehl {command} ein."
+            },
+            "UserSettingsPanel": {
+                "title": "Eigene FiveNet-Einstellungen",
+                "subtitle": "Eigene FiveNet-Einstellungen.",
+                "set_startpage": {
+                    "title": "Startseite nach Charakterauswahl",
+                    "no_char_selected": "Um eine Startseite auszuwählen, müssen Sie zuerst einen Charakter auswählen."
+                },
+                "editor_theme": {
+                    "title": "Dokumenten-Editor-Design",
+                    "dark_mode": "Dunkler Modus"
+                },
+                "app_theme": {
+                    "job_default_theme": "Nutze das durch den Beruf vorgegebene Design"
+                },
+                "volumes": {
+                    "title": "Lautstärke-Einstellungen",
+                    "subtitle": "Stelle die Lautstärke von Sounds ein.",
+                    "notifications_volume": "Benachrichtungsvolumen"
+                },
+                "streamer_mode": {
+                    "title": "Streamer-Modus",
+                    "description": "Bilder standardmäßig unscharf machen und andere Informationen ausblenden."
+                },
+                "background_color": "Hintergrund-Farbe",
+                "customization": "Passen Sie das Aussehen von FiveNet an.",
+                "documents_lists_style": {
+                    "title": "Dokumenten-Listen-Stil",
+                    "single": "Einzelspalte",
+                    "double": "Doppelspalte (Großansicht)"
+                }
+            },
+            "ChangeUsernameModal": {
+                "change_username": "Benutzername ändern",
+                "current_username": "Momentaner Benutzername",
+                "new_username": "Neuer Benutzername"
+            },
+            "CharacterSelector": {
+                "title": "Charakter Auswahl"
+            },
+            "CharacterSelectorCard": {
+                "char_lock_alert": {
+                    "title": "Charakter-Sperre ist aktiv!",
+                    "description": "Nur auf Ihren letzten Online-Charakter, der auf dem Server aktiv war, kann zugegriffen werden."
+                },
+                "disabled_char": "Charakter-Sperre ist aktiv!"
+            }
+        },
+        "citizens": {
+            "CitizensList": {
+                "only_wanted": "Nur Gesuchte",
+                "no_citizens": "Benutze das obige Suchfeld, um erneut zu suchen oder die Anfrage zu aktualisieren.",
+                "open_fine": "Offene Geldstrafen"
+            },
+            "CitizenInfoProfile": {
+                "create_new_document": "Neues Dokument erstellen",
+                "copy_profile_link": "Profil-Link kopieren",
+                "revoke_wanted": "Fahndungsstatus aufheben",
+                "set_wanted": "Person zur Fahndung ausschreiben",
+                "set_job": "Job der Person setzen",
+                "set_traffic_points": "Setze StVo Punkte",
+                "set_mug_shot": "Setze Fahndungsfoto",
+                "go_to_colleague_info": "Gehe zu Kollegen-Info"
+            },
+            "CitizenInfoActivityFeedEntry": {
+                "traffic_infraction_points": {
+                    "action_text": "Setzte Verkehrspunkte von"
+                },
+                "bool_set_citizen": "Setzte den Bürger als",
+                "document_relation": {
+                    "added": "Bürger zugehörig zu",
+                    "removed": "Bürger nicht mehr zugehörig zu"
+                },
+                "userprops_job_set": "Setzte den Beruf des Bürgers zu ",
+                "plugin_license": {
+                    "added": "Lizenz hinzugefügt",
+                    "removed": "Lizenz entfernt"
+                },
+                "plugin_jail": {
+                    "jailed": "Inhaftiert",
+                    "unjailed": "Freigelassen",
+                    "escaped": "Entkommen"
+                },
+                "plugin_billing_fines": {
+                    "paid": "Strafe bezahlt",
+                    "removed": "Strafe entfernt",
+                    "created": "Strafe erstellt"
+                },
+                "userprops_mug_shot_set": "Setzte das Fahndungsfoto der Person",
+                "userprops_attributes_updated": "Bürger-Attribute aktualisiert"
+            },
+            "CitizenInfoActivityFeed": {
+                "own": {
+                    "title": "Sie können Ihren eigenen Aktivitätsfeed nicht sehen",
+                    "message": "Ihnen fehlen die Berechtigungen diesen sehen zu können."
+                }
+            }
+        },
+        "CookieControl": {
+            "title": "Wir nutzen Cookies!",
+            "subtitle": "Der Hauptzweck unserer Cookies besteht darin, Ihnen die Anmeldung über unsere Social-Login-Anbieter zu ermöglichen. Weitere Informationen zu Cookies und Ihren Daten finden Sie in unserer Datenschutzerklärung.",
+            "description": "Bitte beachten Sie, dass die Funktion \"Lokale Daten entfernen\" je nach der Funktionalität Ihres Browsers möglicherweise nicht alle Daten entfernen kann.",
+            "clear_data": "Lokale Daten entfernen"
+        },
+        "UserDropdown": {
+            "signed_in_as": "Angemeldet als"
+        },
+        "calendar": {
+            "CalendarCreateOrUpdateModal": {
+                "create": {
+                    "title": "Kalender erstellen"
+                },
+                "update": {
+                    "title": "Kalender aktualisieren"
+                },
+                "private": "Privater Kalender",
+                "public": "Öffentlicher Kalender"
+            },
+            "EntryCreateOrUpdateModal": {
+                "create": {
+                    "title": "Kalendereintrag erstellen"
+                },
+                "update": {
+                    "title": "Kalendereintrag aktualisieren"
+                }
+            },
+            "FindCalendarsModal": {
+                "title": "Kalender finden"
+            },
+            "EntryShareModal": {
+                "title": "Kalender Eintrag teilen"
+            }
+        },
+        "messenger": {
+            "mark_unread": "Als ungelesen markieren",
+            "mark_important": "Als wichtig markieren",
+            "star_thread": "Favorisieren",
+            "mute_thread": "Stummschalten",
+            "reply": "Antworten",
+            "send": "Absenden",
+            "create_thread": "Konversation erstellen",
+            "prev_thread": "Vorherige Konversation",
+            "next_thread": "Nächste Konversation",
+            "ThreadCreateOrUpdateModal": {
+                "create": {
+                    "title": "Neue Konversation erstellen"
+                },
+                "update": {
+                    "title": "Konversation aktualisieren"
+                }
+            }
+        }
+    },
+    "notifications": {
+        "clipboard": {
+            "document_added": {
+                "title": "Zwischenablage: Dokument hinzugefügt",
+                "content": "Dokument zur Zwischenablage hinzugefügt"
+            },
+            "document_removed": {
+                "title": "Zwischenablage: Dokument entfernt",
+                "content": "Ausgewähltes Dokument wurde aus der Zwischenablage entfernt"
+            },
+            "documents_removed": {
+                "title": "Zwischenablage: Dokumente entfernt",
+                "content": "Alle Dokumente wurden aus der Zwischenablage entfernt"
+            },
+            "citizen_add": {
+                "title": "Zwischenablage: Bürger hinzugefügt",
+                "content": "Bürger wurde der Zwischenablage hinzugefügt"
+            },
+            "citizen_removed": {
+                "title": "Zwischenablage: Bürger entfernt",
+                "content": "Ausgewählter Bürger wurde aus der Zwischenablage entfernt"
+            },
+            "citizens_removed": {
+                "title": "Zwischenablage: Bürger entfernt",
+                "content": "Alle Bürger wurden aus der Zwischenablage entfernt"
+            },
+            "vehicle_added": {
+                "title": "Zwischenablage: Fahrzeug hinzugefügt",
+                "content": "Fahrzeug zur Zwischenablage hinzugefügt"
+            },
+            "vehicle_removed": {
+                "title": "Zwischenablage: Fahrzeug entfernt",
+                "content": "Ausgewähltes Fahrzeug wurde aus der Zwischenablage entfernt"
+            },
+            "vehicles_removed": {
+                "title": "Zwischenablage: Fahrzeuge entfernt",
+                "content": "Alle Fahrzeuge wurden aus der Zwischenablage entfernt"
+            },
+            "link_copied": {
+                "title": "Link in die Zwischenablage kopiert",
+                "content": "Link wurde in die Zwischenablage ihres Computers kopiert."
+            }
+        },
+        "action_successfull": {
+            "title": "Erfolg!",
+            "content": "Ihre Aktion wurde erfolgreich übermittelt"
+        },
+        "category_deleted": {
+            "title": "Kategorie gelöscht!",
+            "content": "Kategorie wurde erfolgreich gelöscht"
+        },
+        "category_updated": {
+            "title": "Kategorie aktualisiert!",
+            "content": "Kategorie wurde erfolgreich aktualisiert"
+        },
+        "max_access_entry": {
+            "title": "Maximale Anzahl an Zugriffseinträgen überschritten",
+            "content": "Es können maximal {max} Zugriffseinträge auf einem Dokument vorhanden sein"
+        },
+        "document_created": {
+            "title": "Dokument erstellt!",
+            "content": "Dokument wurde erstellt."
+        },
+        "document_updated": {
+            "title": "Dokument aktualisiert!",
+            "content": "Dokument wurde aktualisiert."
+        },
+        "grpc_errors": {
+            "unauthenticated": {
+                "title": "Bitte erneut anmelden",
+                "content": "Sie sind nicht mehr angemeldet."
+            },
+            "permission_denied": {
+                "title": "Zugriff verweigert"
+            },
+            "internal": {
+                "title": "Ein interner Serverfehler ist aufgetreten"
+            },
+            "unavailable": {
+                "title": "Server ist nicht erreichbar",
+                "content": "FiveNet-Server kann nicht erreicht werden, bitte überprüfen Sie ihre Internetverbindung."
+            },
+            "default": {
+                "title": "Unbekannter Fehler ist aufgetreten",
+                "content": "{msg} (Code: {code})"
+            },
+            "not_found": {
+                "title": "Nicht gefunden",
+                "content": "Inhalt nicht gefunden."
+            },
+            "available": {
+                "title": "Verbindung wiederhergestellt",
+                "content": "FiveNet Server Verbindung wiederhergestellt."
+            }
+        },
+        "rector": {
+            "role_created": {
+                "title": "Rolle: Erstellt",
+                "content": "Rolle wurde erstellt."
+            },
+            "role_deleted": {
+                "title": "Rolle: Gelöscht",
+                "content": "Rolle wurde gelöscht."
+            },
+            "role_updated": {
+                "title": "Rolle: Berechtigungen gespeichert",
+                "content": "Berechtigungen wurden gespeichert."
+            },
+            "job_props": {
+                "title": "Job Eigenschaften aktualisiert",
+                "content": "Die Job Eigenschaften wurden gespeichert."
+            },
+            "audit_log": {
+                "title": "Audit Protokoll: Eintrag kopiert",
+                "content": "Eintrag in die Zwischenablage kopiert."
+            },
+            "app_config": {
+                "title": "FiveNet-Einstellungen aktualisiert",
+                "content": "FiveNet-Einstellungen wurden aktualisiert."
+            }
+        },
+        "document_deleted": {
+            "title": "Dokument gelöscht!",
+            "content": "Dokument wurde gelöscht."
+        },
+        "renewed_token": {
+            "title": "Zugangstokens erneuert",
+            "content": "Dein Zugangstokens wurde automatisch erneuert."
+        },
+        "auth": {
+            "changed_password": {
+                "title": "Passwort wurde geändert",
+                "content": "Ihr neues Passwort wurde festgelegt"
+            },
+            "account_created": {
+                "title": "Konto erstellt!",
+                "content": "Dein Konto wurde erfolgreich erstellt"
+            },
+            "error_logout": {
+                "title": "Abmeldung: Ein Fehler ist aufgetreten",
+                "content": "Fehlermeldung: {0}"
+            },
+            "oauth2_login": {
+                "success": {
+                    "title": "Erfolgreich angemeldet",
+                    "content": "Social Login Anmeldung erfolgreich."
+                },
+                "failed": {
+                    "title": "Anmeldung fehlgeschlagen",
+                    "content": "Social Login Anmeldung fehlgeschlagen ({msg}), bitte erneut versuchen."
+                }
+            },
+            "no_permission": {
+                "title": "Du hast keine Berechtigung dazu!",
+                "content": "Keine Berechtigung um zu {path} gehen."
+            },
+            "oauth2_connect": {
+                "success": {
+                    "title": "Erfolgreich mit Social Login verbunden",
+                    "content": "Verbindung mit Social Login erfolgreich hergestellt."
+                },
+                "failed": {
+                    "title": "Fehler beim verbinden deines Kontos",
+                    "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen Sie es erneut."
+                }
+            },
+            "change_username": {
+                "title": "Benutzername wurde geändert",
+                "content": "Neuer Benutzername gesetzt. Bitte erneut anmelden."
+            },
+            "forgot_password": {
+                "title": "Passwort zurückgesetzt",
+                "content": "Ihr Passwort wurde zurückgesetzt."
+            }
+        },
+        "language_switched": {
+            "title": "Sprache gewechselt",
+            "content": "Sprache wird zu {name} gewechselt."
+        },
+        "penaltycalculator": {
+            "title": "Strafenrechner: Kopiert",
+            "content": "Zusammenfassung in die Zwischenablage kopiert."
+        },
+        "document_view": {
+            "copy_document_id": {
+                "title": "Dokument ID",
+                "content": "Dokument ID in die Zwischenablage kopiert."
+            }
+        },
+        "templates": {
+            "created": {
+                "title": "Vorlage: Erstellt",
+                "content": "Vorlage erfolgreich erstellt."
+            },
+            "updated": {
+                "title": "Vorlage: Aktualisiert",
+                "content": "Vorlage erfoglreich aktualisiert."
+            },
+            "deleted": {
+                "title": "Vorlage: Gelöscht",
+                "content": "Vorlage erfolgreich gelöscht."
+            }
+        },
+        "citizen_info": {
+            "copy_citizen_id": {
+                "title": "Bürger-ID",
+                "content": "Bürger-ID in die Zwischenablage kopiert."
+            }
+        },
+        "document_toggled": {
+            "open": {
+                "title": "Dokument geöffnet!",
+                "content": "Dokument wurde geöffnet."
+            },
+            "closed": {
+                "title": "Dokument geschlossen!",
+                "content": "Dokument wurde geschlossen."
+            }
+        },
+        "centrum": {
+            "sidebar": {
+                "no_dispatch_selected": {
+                    "title": "Kein Einsatz ausgewählt!",
+                    "content": "Bitte wähle den Einsatz aus, den du aktualisieren willst."
+                },
+                "dispatch_status_updated": {
+                    "title": "Einsatz Status aktualisiert",
+                    "content": "Status wurde aktualisiert."
+                },
+                "unit_status_updated": {
+                    "title": "Einheit Status aktualisiert",
+                    "content": "Status wurde aktualisiert."
+                }
+            },
+            "store": {
+                "assigned_dispatch": {
+                    "title": "Neuer Einsatz zugewiesen",
+                    "content": "Nutze die Einsatz-Liste um den Einsatz anzunehmen."
+                }
+            },
+            "unitUpdated": {
+                "joined": {
+                    "title": "Einheit beigetreten",
+                    "content": "Sie sind einer Einheit beigetreten."
+                },
+                "removed": {
+                    "title": "Einheit verlassen",
+                    "content": "Sie haben die Einheit verlassen."
+                },
+                "not_in_unit": {
+                    "title": "Sie sind in keiner Einheit!",
+                    "content": "Sie müssen in einer Einheit sein, um das zu tun."
+                },
+                "checkup": {
+                    "title": "Status Check",
+                    "content": "Bitte stellen Sie sicher, dass ihr Einheiten Status aktuell ist."
+                }
+            }
+        },
+        "components": {
+            "partials": {
+                "users": {
+                    "PhoneNumber": {
+                        "copied": {
+                            "title": "Telefonnummer kopiert",
+                            "content": "Telefonnummer in die Zwischenablage kopiert."
+                        }
+                    }
+                }
+            }
+        },
+        "category_created": {
+            "title": "Kategorie erstellt!",
+            "content": "Kategorie wurde erfolgreich erstellt"
+        },
+        "bodycheckup": {
+            "title": "Körper Untersuchung: Zusammenfassung kopiert",
+            "content": "Zusammenfassung wurde zur Zwischenablage hinzugefügt."
+        },
+        "document_take_ownership": {
+            "title": "Dokument-Besitzer geändert",
+            "content": "Das Dokument wurde ihnen übertragen."
+        },
+        "livemap": {
+            "failed_loading_postals": {
+                "title": "Laden der Postleitzahlen fehlgeschlagen",
+                "content": "Postleitzahlen konnten nicht geladen werden"
+            }
+        },
+        "docstore": {
+            "requests": {
+                "created": {
+                    "title": "Dokumentenanfrage erstellt",
+                    "content": "Die Dokumentenanfrage wurde erfolgreich erstellt."
+                },
+                "deleted": {
+                    "title": "Dokumentenanfrage gelöscht!",
+                    "content": "Die Dokumentenanfrage wurde erfolgreich gelöscht."
+                },
+                "updated": {
+                    "title": "Dokumentenanfrage aktualisiert!",
+                    "content": "Die Dokumentenanfrage wurde erfolgreich aktualisiert."
+                }
+            }
+        },
+        "superuser_menu": {
+            "setsuperusermode": {
+                "title": "SuperUser Modus",
+                "content": "SuperUser Modus gewechselt (current job: {job})."
+            }
+        },
+        "system": {
+            "test_notification": {
+                "title": "Test-Benachrichtigung {index}",
+                "content": "Dies ist eine Test-Benachrichtigung der {type} Art."
+            }
+        },
+        "qualifications": {
+            "copy_qualification": {
+                "title": "Qualifizierungs-ID kopiert",
+                "content": "Qualifizierungs-ID wurde in die Zwischenablage kopiert."
+            },
+            "result_updated": {
+                "title": "Qualifizierungsergebnis verfügbar",
+                "content": "Ein Qualifizierungsergebnis wurde für Sie erstellt."
+            },
+            "request_updated": {
+                "title": "Qualifizierungsanfrage wurde aktualisiert",
+                "content": "Deine Qualifizierungsanfrage wurde aktualisiert."
+            },
+            "time_low": {
+                "title": "Ihre Prüfungszeit ist fast vorbei!",
+                "content": "Bitte achten Sie auf die Zeit oben."
+            },
+            "times_up": {
+                "title": "Ihre Prüfungszeit ist vorbei!",
+                "content": "Ihre aktuellen Antworten wurden übermittelt."
+            }
+        },
+        "calendar": {
+            "entry_shared_with_you": {
+                "title": "Eingeladen zu \"{title}\" von {name}",
+                "content": "Sie wurden zu \"{title}\" eingeladen, schaue im Kalendar nach um zu Antworten."
+            }
+        },
+        "document_relation_mentioned": {
+            "title": "Dokument: Sie wurden erwähnt",
+            "content": "Sie wurden in Dokument \"{title}\" erwähnt. Klicke hier um zum Dokument zu gelangen."
+        },
+        "document_request_added": {
+            "title": "Dokument: Anfrage wurde erstellt",
+            "content": "Eine Anfrage an ihr Dokument \"{title}\" wurde erstellt."
+        },
+        "document_comment_added": {
+            "title": "Dokument: Neuer Kommentar",
+            "content": "Ein neuer Kommentar wurde im Dokument \"{title}\" veröffentlicht."
+        }
+    },
+    "perms": {
+        "AuthService": {
+            "category": "Authentifizierung",
+            "ChooseCharacter": {
+                "key": "Charakter Auswählen",
+                "description": "Berechtigung zur Charakterauswahl, um den Zugriff auf FiveNet zu erlauben oder zu verweigern."
+            }
+        },
+        "CitizenStoreService": {
+            "category": "Bürger",
+            "ListCitizens": {
+                "key": "Bürger auflisten",
+                "description": "Bürger auflisten und suchen.",
+                "attrs": {
+                    "PhoneNumber": "Telefonnummer",
+                    "Licenses": "Lizenzen",
+                    "UserProps_Wanted": "Gesuchten Status",
+                    "UserProps_Job": "Job",
+                    "UserProps_TrafficInfractionPoints": "Verkehrspunkte",
+                    "UserProps_OpenFines": "Offene Geldstrafen",
+                    "UserProps_BloodType": "Blutgruppe",
+                    "UserProps_MugShot": "Fahndungsfoto",
+                    "UserProps_Attributes": "Attribute"
+                },
+                "attrs_types": {
+                    "Fields": "Felder"
+                }
+            },
+            "ListUserActivity": {
+                "key": "Nutzeraktivität auflisten",
+                "description": "Aktivitäten-Feed für Bürgerinformationen",
+                "attrs": {
+                    "SourceUser": "Quellbenutzer",
+                    "Own": "Eigene Aktivitäten"
+                },
+                "attrs_types": {
+                    "Fields": "Felder"
+                }
+            },
+            "SetUserProps": {
+                "key": "Bürger-Eigenschaften festlegen",
+                "description": "Bürger-Eigenschaften festlegen (z.B. Fahndungsstatus).",
+                "attrs": {
+                    "Wanted": "Gesuchter Status",
+                    "Job": "Job",
+                    "TrafficInfractionPoints": "Verkehrspunkte",
+                    "MugShot": "Fahndungsfoto",
+                    "Attributes": "Attribute"
+                },
+                "attrs_types": {
+                    "Fields": "Bürger Eigenschaften"
+                }
+            },
+            "GetUser": {
+                "key": "Nutzer abrufen",
+                "description": "Einen Bürger ansehen.",
+                "attrs_types": {
+                    "Jobs": "Fraktionen"
+                }
+            },
+            "ManageCitizenAttributes": {
+                "key": "Verwalte Bürger-Attribute",
+                "description": "Erstellen, Aktualisieren und Löschen von Bürger-Attribute."
+            }
+        },
+        "CompletorService": {
+            "category": "Autovervollständigung",
+            "CompleteCitizens": {
+                "key": "Bürger-Namen",
+                "description": "Vollständige Bürger-Namen."
+            },
+            "CompleteJobs": {
+                "key": "Vollständige Job-Namen und Ränge",
+                "description": "Vollständige Job-Namen und Ränge."
+            },
+            "CompleteDocumentCategories": {
+                "key": "Auflisten von Dokumentkategorien",
+                "description": "Auflisten der Dokumentkategorien von bestimmten Jobs.",
+                "attrs_types": {
+                    "Jobs": "Fraktionen"
+                }
+            },
+            "CompleteCitizenAttributes": {
+                "key": "Auflisten von Bürger-Attributen zur Autovervollständigung",
+                "description": "Autovervollständigen von Bürger-Attributen von mehreren Fraktionen.",
+                "attrs_types": {
+                    "Jobs": "Fraktionen"
+                }
+            }
+        },
+        "DMVService": {
+            "category": "Fahrzeuge",
+            "ListVehicles": {
+                "key": "Fahrzeuge suchen",
+                "description": "Suchen und Finden von Fahrzeugen von Bürgern."
+            }
+        },
+        "DocStoreService": {
+            "category": "Dokumenten-System",
+            "AddDocumentReference": {
+                "key": "Dokument-Referenzen erstellen",
+                "description": "Hinzufügen von Dokument-Referenzen."
+            },
+            "AddDocumentRelation": {
+                "key": "Dokumenten-Bürger-Beziehungen hinzufügen",
+                "description": "Bürgerbeziehung hinzufügen/ entfernen."
+            },
+            "CreateDocument": {
+                "key": "Dokument Erstellen",
+                "description": "Ein neues Dokument erstellen."
+            },
+            "ListDocuments": {
+                "key": "Dokumente suchen und auflisten",
+                "description": "Dokumente auflisten/ suchen."
+            },
+            "GetDocument": {
+                "key": "Dokumente Anzeigen können",
+                "description": "Ein Dokument anzeigen."
+            },
+            "ListUserDocuments": {
+                "key": "Bürger-Dokumente Sehen",
+                "description": "Die mit einem Bürger verknüpften Dokumente anzeigen."
+            },
+            "ListTemplates": {
+                "key": "Vorlagen auflisten",
+                "description": "Verfügbare Vorlagen auflisten."
+            },
+            "UpdateDocument": {
+                "key": "Dokument aktualisieren",
+                "description": "Ein vorhandenes Dokument bearbeiten/ aktualisieren.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                }
+            },
+            "CreateTemplate": {
+                "key": "Vorlage erstellen",
+                "description": "Erstellen von Dokumentenvorlagen."
+            },
+            "DeleteTemplate": {
+                "key": "Vorlage löschen",
+                "description": "Dokumentenvorlagen löschen."
+            },
+            "DeleteDocument": {
+                "key": "Dokumenten Löschung",
+                "description": "Dokumente löschen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                }
+            },
+            "ToggleDocument": {
+                "key": "Dokument per Knopf öffnen/ schließen",
+                "description": "Dokument per Knopf öffnen/ schließen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                }
+            },
+            "DeleteComment": {
+                "key": "Dokumenten Kommentare löschen",
+                "description": "Eigenen Dokumentenkommentar löschen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                }
+            },
+            "PostComment": {
+                "key": "Kommentar zum Dokument posten",
+                "description": "Dokumentkommentare posten."
+            },
+            "CreateCategory": {
+                "key": "Dokumentenkategorie erstellen",
+                "description": "Dokumentenkategorien erstellen/ aktualisieren."
+            },
+            "DeleteCategory": {
+                "key": "Dokumentenkategorie löschen",
+                "description": "Dokumentenkategorien löschen."
+            },
+            "ListCategories": {
+                "key": "Auflisten der Dokumentenkategorien",
+                "description": "Liste der Dokumentkategorien."
+            },
+            "ListDocumentActivity": {
+                "key": "Dokumenten-Aktivität anzeigen",
+                "description": "Dokumenten-Aktivität von Dokumente mit Status oder höher Zugriff sehen können."
+            },
+            "ListDocumentReqs": {
+                "key": "Auflistung der Dokumentenanfragen",
+                "description": "Liste die Dokumentenanfragen auf."
+            },
+            "ChangeDocumentOwner": {
+                "key": "Änderung des Dokumentenbesitzers",
+                "description": "Übernimm den Besitz des Dokumentes.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Dokumente"
+                }
+            },
+            "CreateDocumentReq": {
+                "key": "Erstelle eine Dokumenten-Anfrage",
+                "description": "Aktionen für Dokumente anfordern",
+                "attrs_types": {
+                    "Types": "Verfügbare Aktionen"
+                },
+                "attrs": {
+                    "Access": "Zugriffsanfrage",
+                    "Closure": "Schließungsanfrage",
+                    "Update": "Aktualisierungsanfrage",
+                    "Deletion": "Löschungsanfrage",
+                    "OwnerChange": "Besitzerwechsel"
+                }
+            },
+            "DeleteDocumentReq": {
+                "key": "Dokument-Anforderungen löschen",
+                "description": "Dokument-Anforderungen löschen"
+            },
+            "ToggleDocumentPin": {
+                "key": "Dokument Anheften oder Lösen",
+                "description": "Erlaubt es Dokumente anzuheften oder zulösen für die Gesamte Fraktion."
+            }
+        },
+        "LivemapperService": {
+            "category": "Karte",
+            "Stream": {
+                "key": "Aufrufen",
+                "description": "Karte aufrufen können.",
+                "attrs_types": {
+                    "Players": "Spieler Positionen",
+                    "Markers": "Markierungen"
+                }
+            },
+            "CreateOrUpdateMarker": {
+                "key": "Erstellen und Aktualisieren von Markierungen",
+                "description": "Markierungen auf der Karte erstellen und aktualisieren können.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Markierungen"
+                }
+            },
+            "DeleteMarker": {
+                "key": "Markierung Löschen",
+                "description": "Markierungen auf der Karte löschen können.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Markierungen"
+                }
+            }
+        },
+        "RectorService": {
+            "category": "Einstellungen",
+            "GetJobProps": {
+                "key": "Job Eigenschaften ansehen",
+                "description": "Die Eigenschaften deines Jobs anzeigen."
+            },
+            "SetJobProps": {
+                "key": "Job Eigenschaften ändern",
+                "description": "Setze Eigenschaften deines Jobs."
+            },
+            "GetRoles": {
+                "key": "Rollen ansehen",
+                "description": "FiveNet-Jobrollen abrufen/ auflisten."
+            },
+            "CreateRole": {
+                "key": "Rollen erstellen",
+                "description": "FiveNet-Jobrollen erstellen."
+            },
+            "DeleteRole": {
+                "key": "Rollen löschen",
+                "description": "FiveNet-Jobrollen löschen."
+            },
+            "ViewAuditLog": {
+                "key": "Zugriff auf Audit Log",
+                "description": "Audit-Protokoll anzeigen."
+            },
+            "UpdateRolePerms": {
+                "key": "Berechtigungen für Rollen verwalten",
+                "description": "Hinzufügen/ Löschen von Berechtigungen für FiveNet-Jobrollen."
+            }
+        },
+        "CentrumService": {
+            "category": "Leitstelle",
+            "CreateDispatch": {
+                "key": "Einsätze erstellen",
+                "description": "Neue Einsätze per Karte/ Leitstelle erstellen."
+            },
+            "Stream": {
+                "key": "Zugriff auf Einsätze und Einheiten.",
+                "description": "Basiszugang für Einsätze und Einheiten."
+            },
+            "UpdateDispatch": {
+                "key": "Einsätze aktualisieren",
+                "description": "Aktualisieren von Einsatz-Informationen."
+            },
+            "CreateOrUpdateUnit": {
+                "key": "Erstellen und Aktualisieren von Einheiten",
+                "description": "Erlaubt das Erstellen und Aktualisieren von Einheiten via der Leistellen-Einstellungen."
+            },
+            "DeleteUnit": {
+                "key": "Einheiten löschen",
+                "description": "Erstellen von Einheiten per Leitstellen-Einstellungen."
+            },
+            "TakeDispatch": {
+                "key": "Einsätze annehmen",
+                "description": "Basiszugang um Einsätze annehmen zu können."
+            },
+            "TakeControl": {
+                "key": "Leitstelle beitreten",
+                "description": "Erlaubt es der Leitstelle beizutreten."
+            },
+            "UpdateSettings": {
+                "key": "Aktualisieren der Leitstellen Einstellungen",
+                "description": "Erlaubt es die Einstellungen der Leitstelle zu aktualisieren."
+            },
+            "DeleteDispatch": {
+                "key": "Einsätze löschen",
+                "description": "Erlaubt es Einsätze zu löschen."
+            }
+        },
+        "JobsService": {
+            "category": "Beruf",
+            "ListColleagues": {
+                "key": "Kollegen anzeigen",
+                "description": "Liste der Kollegen (vom eigenen Beruf) sehen können."
+            },
+            "SetMOTD": {
+                "key": "Beruf's MOTD aktualisieren",
+                "description": "Die Beruf's MOTD der Übersicht aktualisieren können."
+            },
+            "GetColleague": {
+                "key": "Detailierte Kollegen-Info anzeigen",
+                "description": "Rufe die detailierte Kollegen-Info Übersicht auf.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal",
+                    "Note": "Notiz",
+                    "AbsenceDate": "Abwesenheitsdatum"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf Kollegen",
+                    "Types": "Kollegen-Eigenschaften"
+                }
+            },
+            "SetJobsUserProps": {
+                "key": "Setzte die Eigenschaften eines Kollegen",
+                "description": "E.g., Abwesenheitsdatum.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal",
+                    "Note": "Notiz",
+                    "AbsenceDate": "Abwesenheitsdatum"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf Kollegen Eigenschaften",
+                    "Types": "Kollegen-Eigenschaften"
+                }
+            },
+            "ListColleagueActivity": {
+                "key": "Zeige Aktivitäten deiner Kollegen an",
+                "description": "Zeige Aktivitäten deiner Kollegen an",
+                "attrs": {
+                    "HIRED": "Angestellt",
+                    "FIRED": "Gefeuert",
+                    "PROMOTED": "Befördert",
+                    "DEMOTED": "Degradiert",
+                    "ABSENCE_DATE": "Abwesenheitsdatum",
+                    "NOTE": "Notiz"
+                },
+                "attrs_types": {
+                    "Types": "Aktivitäts-Arten"
+                }
+            }
+        },
+        "JobsConductService": {
+            "CreateConductEntry": {
+                "key": "Führungsregister: Einträge erstellen",
+                "description": "Erstellen von Führungsregister Einträgen."
+            },
+            "DeleteConductEntry": {
+                "key": "Führungsregister: Einträge löschen",
+                "description": "Löschen von Führungsregister Einträgen."
+            },
+            "ListConductEntries": {
+                "key": "Führungsregister: Einträge anzeigen",
+                "description": "Anzeigen von Führungsregister Einträgen.",
+                "attrs": {
+                    "Own": "Eigene",
+                    "All": "Alle"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf Führungsregister-Einträge"
+                }
+            },
+            "UpdateConductEntry": {
+                "key": "Führungsregister: Einträge bearbeiten",
+                "description": "Aktualisieren von Führungsregister Einträgen."
+            },
+            "category": "Beruf Führungsregister"
+        },
+        "JobsTimeclockService": {
+            "ListTimeclock": {
+                "key": "Stempeluhr Einträge: Anzeigen",
+                "description": "Stempeluhr Einträge anzeigen lassen.",
+                "attrs": {
+                    "All": "Alle"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf Stempeluhr-Einträge"
+                }
+            },
+            "category": "Beruf Stempeluhr",
+            "ListInactiveEmployees": {
+                "key": "Zeige inaktive Kollegen an",
+                "description": "Zeige inaktive Kollegen nach Tagen an."
+            }
+        },
+        "QualificationsService": {
+            "category": "Qualifizierungen",
+            "CreateOrUpdateQualificationRequest": {
+                "description": "Erstellen und aktualisieren von Qualifizierungsanfragen"
+            },
+            "ListQualifications": {
+                "key": "Auflisten von Qualifizierungen",
+                "description": "Auflisten verfügbarer Qualifizierungen"
+            },
+            "GetQualification": {
+                "key": "Qualifizierung aufrufen",
+                "description": "Rufe Qualifizierungsinformationen ab"
+            },
+            "CreateQualification": {
+                "key": "Qualifizierungen erstellen",
+                "description": "Erstelle Qualifizierungen"
+            },
+            "UpdateQualification": {
+                "key": "Qualifizierung aktualisieren",
+                "description": "Aktualisiere Qualifizierungen",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Qualifizierungen"
+                }
+            },
+            "DeleteQualification": {
+                "key": "Qualifizierungen löschen",
+                "description": "Lösche Qualifizierungen",
+                "attrs": {
+                    "Own": "Eigene",
+                    "Lower_Rank": "Niedrigerer Rang",
+                    "Same_Rank": "Gleicher Rang",
+                    "Any": "Egal"
+                },
+                "attrs_types": {
+                    "Access": "Zugriff auf fraktionseigene Qualifizierungen"
+                }
+            },
+            "ListQualificationsResults": {
+                "key": "Auflisten von Qualifizierungsergebnissen",
+                "description": "Auflisten von Qualifizierungsergebnissen"
+            },
+            "CreateOrUpdateQualificationResult": {
+                "key": "Erstellen und aktualisieren von Qualifizierungsergebnissen",
+                "description": "Erstellen und aktualisieren von Qualifizierungsergebnissen"
+            },
+            "DeleteQualificationResult": {
+                "key": "Löschen von Qualifizierungsergebnissen",
+                "description": "Löschen von Qualifizierungsergebnissen"
+            },
+            "ListQualificationRequests": {
+                "key": "Auflisten von Qualifizierungsanfragen",
+                "description": "Auflisten von Qualifizierungsanfragen"
+            },
+            "DeleteQualificationReq": {
+                "key": "Löschen von Qualifizierungsanfragen",
+                "description": "Löschen von Qualifizierungsanfragen"
+            }
+        },
+        "CalendarService": {
+            "category": "Kalender",
+            "CreateOrUpdateCalendar": {
+                "key": "Erstellen und aktualisieren von Kalendern",
+                "description": "Verwalten von Kalendern.",
+                "attrs": {
+                    "Job": "Kalender für Nutzer seinen Beruf",
+                    "Public": "Öffentliche Kalender, die jede Person abonnieren kann"
+                },
+                "attrs_types": {
+                    "Fields": "Zugriff Fraktionseigene Kalender zu erstellen"
+                }
+            },
+            "DeleteCalendar": {
+                "key": "Löschen von Kalendern",
+                "description": "Löschen von Kalendern."
+            },
+            "CreateOrUpdateCalendarEntry": {
+                "key": "Erstellen und aktualisieren ",
+                "description": "Erstellen und aktualisieren von Kalendereinträgen (teilen von Einträgen benötigt Teilen-Zugriff und erstellen Editieren-Zugriff.)"
+            },
+            "DeleteCalendarEntry": {
+                "key": "Löschen von Kalendereinträgen",
+                "description": "Löschen von Kalendereinträgen (benötigt Verwaltungs-Zugriff.)"
+            }
+        },
+        "MessengerService": {
+            "category": "Konversationen",
+            "CreateOrUpdateThread": {
+                "key": "Erstellen und Aktualisieren",
+                "description": "Aktualisieren von Konversationen benötigt Verwaltung oder höher Zugriff auf die Konversation."
+            },
+            "DeleteThread": {
+                "key": "Konversationen löschen",
+                "description": "Benötigt Admin Zugriff auf die Konversation."
+            },
+            "ListThreads": {
+                "key": "Konversationen auflisten/sehen",
+                "description": "Minimum Berechtigung um die Konversationen sehen zu können."
+            },
+            "PostMessage": {
+                "key": "Nachrichten schreiben",
+                "description": "Erlauben das User Nachrichten schreiben können zu Konversationen auf die Sie Zugriff haben."
+            }
+        }
+    },
+    "errors": {
+        "pkg-auth": {
+            "ErrNoToken": "Anfrage Header \"Authorization\" darf nicht leer sein! Bitte erneut anmelden.",
+            "ErrInvalidToken": "Token ungültig/ abgelaufen!",
+            "ErrCheckToken": "Token Überprüfung fehlgeschlagen!",
+            "ErrUserNoPerms": "Ihr Nutzeraccount hat keine Berechtigungen!",
+            "ErrNoUserInfo": "Ein Fehler ist aufgetrete, bitte ausloggen und erneut einloggen!",
+            "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!"
+        },
+        "AuthService": {
+            "ErrGenericAccount": "Fehler beim Anzeigen/ Aktualisieren ihres Accounts.",
+            "ErrAccountCreateFailed": "Bitte überprüfen sie ihren Registrierungstoken!",
+            "ErrInvalidLogin": "Falscher Username oder Passwort!",
+            "ErrNoAccount": "Sie müssen zuerst einen Account mit ihrem Registrierungstoken erstellen.",
+            "ErrNoCharFound": "Keine(n) Charakter für deinen Account gefunden.",
+            "ErrGenericLogin": "Fehler bei der Anmeldung, bitte versuche es erneut.",
+            "ErrUnableToChooseChar": "Sie haben nicht genug Berechtigungen um den Charakter auszuwählen!",
+            "ErrUpdateAccount": "Fehler beim Aktualisieren Ihres Benutzers!",
+            "ErrChangePassword": "Fehler beim Ändern Ihres Passworts!",
+            "ErrForgotPassword": "Fehler beim zurücksetzen ihres Passworts!",
+            "ErrAccountExistsFailed": "Bitte nutzen Sie die Passwort vergessen Funktion!",
+            "ErrSignupDisabled": "Konto-Erstellung ist deaktiviert!",
+            "ErrAccountDuplicate": "Benutzername bereits verwendet, bitte nutzen Sie einen anderen Benutzernamen.",
+            "ErrChangeUsername": "Fehler beim Ändern des Benutzernamen!",
+            "ErrBadUsername": "Bitte stellen Sie sicher, dass der jetzige Benutzername korrekt ist! Versuchen es mit einem anderen neuen Benutzernamen erneut.",
+            "ErrCharLock": {
+                "title": "Charakter-Sperre ist aktiv!",
+                "content": "Bitte wählen Sie einen verfügbaren Charakter aus und versuchen Sie es erneut."
+            }
+        },
+        "CitizenStoreService": {
+            "ErrFailedQuery": "Fehler beim Laden von Bürger Daten!",
+            "ErrJobGradeNoPermission": "Keine Berechtigung um auf diesen Bürger zuzugreifen (basierend auf dem Job des Bürgers)",
+            "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+            "ErrPropsWantedDenied": "Sie haben keine Berechtigung den Bürger zur Fahndung auszuschreiben!",
+            "ErrPropsJobDenied": "Sie haben keine Berechtigung den Beruf des Bürgers zusetzen!",
+            "ErrPropsJobPublic": "Sie können keinen Staatsberuf für den Bürger-Beruf setzen!",
+            "ErrPropsJobInvalid": "Ungültiger Beruf oder Rang angegeben!",
+            "ErrPropsTrafficPointsDenied": "Sie haben keine Berechtigung die StVo Punkte des Bürger zu setzen!",
+            "ErrPropsMugShotDenied": "Sie dürfen nicht das Fahndungsfoto der Person ändern!",
+            "ErrPropsAttributesDenied": "Sie haben keine Berechtigung die Bürger-Attribute zusetzen!"
+        },
+        "CompletorService": {
+            "ErrFailedSearch": "Fehler beim Laden der Autovervollständigung!"
+        },
+        "DMVService": {
+            "ErrFailedQuery": "Fehler beim Laden von Fahrzeug Daten!"
+        },
+        "DocStoreService": {
+            "ErrFailedQuery": "Fehlen beim Anzeigen/ Erstellen/ Aktualisieren von Dokumenten!",
+            "ErrNotFoundOrNoPerms": "Kein Dokument gefunden oder keine Berechtigungen um auf das Dokument zuzugreifen!",
+            "ErrTemplateNoPerms": "Keine Berechtigungen Vorlagen anzuzeigen/ aktualisieren/ zu löschen!",
+            "ErrPermissionDenied": "Du hast keine Berechtigung das zu tun!",
+            "ErrClosedDoc": "Dokument ist geschlossen und kann nicht editiert werden!",
+            "ErrDocAccessEditDenied": "Sie haben keine Rechte den Dokumenten Zugriff zu verwalten!",
+            "ErrDocAccessViewDenied": "Sie haben keine Rechte die Zugangsinfo des Dokumentes zu sehen!",
+            "ErrTemplateFailed": "Fehler beim Laden der Dokumenten Vorlage! Bitte spreche deine Fraktionsführung darauf an.",
+            "ErrDocViewDenied": "Sie haben keinen Zugriff auf das Dokument!",
+            "ErrDocUpdateDenied": "Sie dürfen das Dokument nicht bearbeiten!",
+            "ErrDocDeleteDenied": "Sie dürfen das Dokument nicht löschen!",
+            "ErrDocToggleDenied": "Sie dürfen das Dokument nicht schließen/öffnen!",
+            "ErrCommentViewDenied": "Sie haben keine Berechtigung Dokumenten Kommentare zu sehen!",
+            "ErrCommentPostDenied": "Sie haben keine Berechtigung Kommentare zu schreiben!",
+            "ErrCommentEditDenied": "Sie haben keine Berechtigung diesen Kommentar zu bearbeiten!",
+            "ErrCommentDeleteDenied": "Sie können den Kommentar nicht löschen!",
+            "ErrFeedRefsViewDenied": "Sie haben keine Berechtigung die Dokumenten-Referenzen zusehen!",
+            "ErrFeedRelsViewDenied": "Sie haben keine Berechtigung die Bürger-Dokumenten-Beziehungen zusehen!",
+            "ErrFeedRefSelf": "Sie können das Dokument nicht mit sich selbst referenzieren!",
+            "ErrFeedRefAddDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen zum Dokument hinzuzufügen!",
+            "ErrFeedRefRemoveDenied": "Sie haben keine Berechtigung Dokumenten-Referenzen vom Dokument zu entfernen!",
+            "ErrFeedRelAddDenied": "Sie haben keine Berechtigung Bürger-Dokumenten-Beziehungen zu erstellen!",
+            "ErrFeedRelRemoveDenied": "You don't have permission to remove references from this document!",
+            "ErrDocReqAlreadyCreated": {
+                "title": "Dokumenten Anfrage existiert bereits!",
+                "content": "Eine Dokumenten Anfrage für diese Art von Anfrage existiert bereits oder wurde in den letzten 24 Stunden schon gestellt."
+            },
+            "ErrDocSameOwner": "Sie sind bereits Ersteller des Dokumentes!",
+            "ErrDocOwnerWrongJob": "Der neue Ersteller muss Teil ihres Jobs sein!",
+            "ErrDocReqOwnDoc": "Sie können keine Anfragen für Ihr eigenes Dokument erstellen!",
+            "ErrDocReqAlreadyCompleted": {
+                "title": "Dokumenten Anfrage bereits angenommen/abgelehnt!",
+                "content": "Die zu aktualisierende Dokumenten Anfrage wurde bereits angenommen/abgelehnt."
+            },
+            "ErrDocRequiredAccessTemplate": {
+                "title": "Erforderlicher Dokumenten-Zugriff verändert/entfernt!",
+                "content": "Stellen Sie sicher, dass Sie keine erforderlichen Dokumenten-Zugriffe verändert oder entfernt haben."
+            },
+            "ErrDocOwnerFailed": "Sie müssen Editier-Rechte auf das Dokument haben!",
+            "ErrDocAccessDuplicate": "Dokumenten-Zugriff: Ein Beruf Rang/ Bürger kann nur einen Zugriff haben, und nicht mehrere!",
+            "ErrTemplateAccessDuplicate": "Vorlagen-Zugriff: Ein Beruf Rang kann nur einen Zugriff haben, und nicht mehrere!"
+        },
+        "LivemapperService": {
+            "ErrStreamFailed": "Karten-Datenstrom fehlgeschlagen!",
+            "ErrMarkerFailed": "Fehler beim Erstellen/ Aktualisieren/ Löschen der Markierung!"
+        },
+        "NotificatorService": {
+            "ErrFailedRequest": "Laden von Benachrichtigungs-Daten fehlgeschlagen!",
+            "ErrFailedStream": "Fehler beim Benachrichtigungs-Datenstrom!"
+        },
+        "RectorService": {
+            "ErrFailedQuery": "Fehler beim Zugriff auf die Einstellungen!",
+            "ErrInvalidRequest": "Ungültige Rollen Anfrage!",
+            "ErrNoPermission": "Keine Berechtigung um Rollen zu erstellen/ ändern/ löschen!",
+            "ErrRoleAlreadyExists": "Rolle existiert bereits!",
+            "ErrOwnRoleDeletion": "Eigene Rolle kann nicht gelöscht werden!",
+            "ErrInvalidPerms": "Fehler beim Aktualisieren der Rollen Berechtigungen!",
+            "ErrInvalidAttrs": "Fehler beim Aktualisieren der Rollen Attributen!",
+            "ErrInvalidJPQuickButton": "Fehlerhafter Schnellzugriff-Knopf!"
+        },
+        "CentrumService": {
+            "ErrFailedQuery": "Fehler beim Anzeigen/ Aktualisieren von Leitstellen Daten!",
+            "ErrNotPartOfDispatch": "Sie sind nicht Teil dieses Einsatzes!",
+            "ErrNotOnDuty": {
+                "title": "Sie sind nicht im Dienst!",
+                "content": "Stellen Sie sicher, dass Sie im Dienst sind."
+            },
+            "ErrModeForbidsAction": {
+                "title": "Leitstelle verbietet diese Aktion!",
+                "content": "Kontaktiere die Leitstelle."
+            },
+            "ErrDispatchAlreadyCompleted": {
+                "title": "Einsatz ist bereits abgeschlossen!",
+                "content": "Abgeschlossene Einsätze können nicht akzeptiert/abgelehnt werden!"
+            },
+            "ErrNotPartOfUnit": "Sie sind nicht Teil der Einheit!",
+            "ErrStaticUnit": "Eine statische Einheit kann nicht verfügbar gesetzt werden!"
+        },
+        "general": {
+            "internal_error": {
+                "title": "Interner Serverfehler",
+                "content": "Ein interner Serverfehler ist aufgetreten. Bitte versuchen Sie es erneut."
+            }
+        },
+        "JobsService": {
+            "ErrFailedQuery": "Fehler beim laden der Berufsdaten!",
+            "ErrReasonRequired": "Ein Grund muss gegeben sein!",
+            "ErrPropsNoteDenied": "Sie haben keine Berechtigung die Notiz des Kollegen zusetzen!",
+            "ErrPropsAbsenceDenied": "Sie haben keine Berechtigung die Abwesenheit des Kollegen einzutragen!"
+        },
+        "QualificationsService": {
+            "ErrFailedQuery": "Fehler beim Laden der Qualifizierungsdaten!",
+            "ErrRequirementsMissing": {
+                "title": "Qualifizierungsanforderungen nicht erfüllt",
+                "content": "Ihnen fehlen Qualifizierungen die für diese Qualifizierung benötigt sind."
+            },
+            "ErrQualificationClosed": "Sie können keine Anfrage an eine geschlossene Qualifizierung stellen!"
+        },
+        "CalendarService": {
+            "ErrFailedQuery": "Fehler beim Laden der Kalender Daten!",
+            "ErrNoPerms": "Sie haben keinen Zugriff auf diese Kalender Daten!",
+            "ErrOnePrivateCal": "Sie können nur einen privaten Kalender haben!",
+            "ErrCalendarClosed": {
+                "title": "Kalender ist geschlossen",
+                "content": "Der Kalender ist geschlossen und kann nicht mehr genutzt werden."
+            },
+            "ErrEntryClosed": {
+                "title": "Kalendar Eintrag ist geschlossen",
+                "content": "Der Kalendar Eintrag ist geschlossen. Auf diesen Eintrag kann man nicht mehr antworten."
+            }
+        }
+    },
+    "system": {
+        "update_available": {
+            "title": "Neue FiveNet Version verfügbar ({version})!",
+            "content": "Um das FiveNet weiter nutzen zu können, müssen Sie die Seite neu laden, wenn Sie dazu gerade in der Lage sind."
+        },
+        "streamer_mode": {
+            "title": "Streamer-Modus aktiviert!",
+            "description": "Um dies zu sehen, müssen Sie den Streamer-Modus in Ihren Benutzereinstellungen deaktivieren."
+        },
+        "not_supported_on_tablet": {
+            "title": "Diese Funktion ist im Tablet leider nicht verfügbar. Bitte nutze deinen Browser um diese Funktion zu nutzen!"
+        }
+    },
+    "enums": {
+        "docstore": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "COMMENT": "Kommentieren",
+                "ACCESS": "Zugriffsmanagement",
+                "EDIT": "Editieren",
+                "STATUS": "Status"
+            },
+            "DocReference": {
+                "UNSPECIFIED": "Unbestimmt",
+                "LINKED": "verlinkt",
+                "SOLVES": "löst",
+                "CLOSES": "schließt",
+                "DEPRECATES": "veraltet"
+            },
+            "DocRelation": {
+                "UNSPECIFIED": "Unbestimmt",
+                "MENTIONED": "erwähnt",
+                "TARGETS": "zielt auf",
+                "CAUSED": "verursacht"
+            },
+            "DocActivityType": {
+                "CREATED": "Dokument erstellt",
+                "STATUS_OPEN": "Dokument geöffnet",
+                "STATUS_CLOSED": "Dokument geschlossen",
+                "UPDATED": "Dokument aktualisiert",
+                "RELATIONS_UPDATED": "Dokument Beziehungen aktualisiert",
+                "REFERENCES_UPDATED": "Dokument Referenzen aktualisiert",
+                "ACCESS_UPDATED": "Dokument Zugriff aktualisiert",
+                "OWNER_CHANGED": "Dokument Besitzer geändert",
+                "DELETED": "Dokument gelöscht",
+                "REQUESTED_ACCESS": "Zugriff auf Dokument beanfragt | Zugriff auf Dokument",
+                "REQUESTED_CLOSURE": "Schließung des Dokument beanfragt | Schließung des Dokument",
+                "REQUESTED_UPDATE": "Aktualisierung des Dokument beanfragt | Aktualisierung des Dokument",
+                "REQUESTED_DELETION": "Löschung des Dokument beanfragt | Löschung des Dokument",
+                "COMMENT_ADDED": "Kommentar hinzugefügt",
+                "COMMENT_UPDATED": "Kommentar aktualisiert",
+                "COMMENT_DELETED": "Kommentar gelöscht",
+                "UNSPECIFIED": "Unbekannte Aktivität",
+                "REQUESTED_OWNER_CHANGE": "Dokument-Besitzer Wechsel beanfragt | Dokument-Besitzer Wechsel",
+                "REQUESTED_OPENING": "Öffnung des Dokumentes angefordert | Öffnung des Dokument"
+            }
+        },
+        "centrum": {
+            "CentrumMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "MANUAL": "Manuell",
+                "CENTRAL_COMMAND": "Zentrale Stelle",
+                "AUTO_ROUND_ROBIN": "Automatisch: Round Robin",
+                "SIMPLIFIED": "Vereinfachter Modus"
+            },
+            "StatusDispatch": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NEW": "Neu",
+                "UNASSIGNED": "Nicht zugewiesen",
+                "UPDATED": "Aktualisiert",
+                "UNIT_ASSIGNED": "Einheit zugewiesen",
+                "UNIT_UNASSIGNED": "Einheit entfernt",
+                "EN_ROUTE": "Auf dem Weg",
+                "ON_SCENE": "Vor Ort",
+                "NEED_ASSISTANCE": "Verstärkung Benötigt",
+                "COMPLETED": "Abgeschlossen",
+                "CANCELLED": "Abgebrochen",
+                "ARCHIVED": "Archiviert",
+                "UNIT_ACCEPTED": "Einsatz von Einheit akzeptiert",
+                "UNIT_DECLINED": "Einsatz von Einheit abgelehnt"
+            },
+            "StatusUnit": {
+                "UNSPECIFIED": "Unbestimmt",
+                "USER_ADDED": "Mitglied hinzugefügt",
+                "USER_REMOVED": "Mitglied entfernt",
+                "UNAVAILABLE": "Nicht verfügbar",
+                "AVAILABLE": "Verfügbar",
+                "ON_BREAK": "Pause",
+                "BUSY": "Beschäftigt",
+                "UNKNOWN": "Unbekannt"
+            },
+            "DispatchReferenceType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "REFERENCED": "Referenziert",
+                "DUPLICATED_BY": "Dupliziert",
+                "DUPLICATE_OF": "Duplikat von"
+            }
+        },
+        "livemap": {
+            "MarkerType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "DOT": "Punkt",
+                "CIRCLE": "Kreis",
+                "ICON": "Icon"
+            }
+        },
+        "jobs": {
+            "ConductType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "NEUTRAL": "Neutral",
+                "POSITIVE": "Positiv",
+                "NEGATIVE": "Negativ",
+                "WARNING": "Verwarnung",
+                "SUSPENSION": "Suspendierung",
+                "NOTE": "Notiz"
+            },
+            "JobsUserActivityType": {
+                "UNSPECIFIED": "Unbestimmt",
+                "ABSENCE_DATE": "Abwesenheitsdatum",
+                "FIRED": "Gefeuert",
+                "HIRED": "Angestellt",
+                "PROMOTED": "Befördert",
+                "DEMOTED": "Degradiert",
+                "NOTE": "Notiz aktualisiert"
+            }
+        },
+        "qualifications": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "REQUEST": "Anfragen",
+                "TAKE": "Prüfung absolvieren",
+                "GRADE": "Benoten",
+                "MANAGE": "Verwalten",
+                "EDIT": "Editieren"
+            },
+            "ResultStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "FAILED": "Misslungen",
+                "SUCCESSFUL": "Erfolgreich"
+            },
+            "RequestStatus": {
+                "UNSPECIFIED": "Unbestimmt",
+                "PENDING": "Ausstehend",
+                "DENIED": "Abgelehnt",
+                "ACCEPTED": "Akzeptiert",
+                "COMPLETED": "Abgeschlossen",
+                "EXAM_STARTED": "Prüfung begonnen",
+                "EXAM_GRADING": "Prüfungsbenotung"
+            },
+            "QualificationExamMode": {
+                "UNSPECIFIED": "Unbestimmt",
+                "DISABLED": "Deaktiviert",
+                "ENABLED": "Aktiviert",
+                "REQUEST_NEEDED": "Anfrage benötigt"
+            }
+        },
+        "rector": {
+            "UserInfoSyncUnemployedMode": {
+                "GIVE_ROLE": "Rolle vergeben",
+                "KICK": "Kick",
+                "UNSPECIFIED": "Unbestimmt"
+            }
+        },
+        "calendar": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "SHARE": "Teilen",
+                "EDIT": "Editieren",
+                "MANAGE": "Verwalten"
+            }
+        },
+        "notifications": {
+            "NotificationCategory": {
+                "UNSPECIFIED": "Unbestimmt",
+                "GENERAL": "Allgemein",
+                "DOCUMENT": "Dokumente",
+                "CALENDAR": "Kalender"
+            }
+        },
+        "messenger": {
+            "AccessLevel": {
+                "UNSPECIFIED": "Unbestimmt",
+                "BLOCKED": "Blockiert",
+                "VIEW": "Ansehen",
+                "MESSAGE": "Schreiben",
+                "MANAGE": "Verwalten",
+                "ADMIN": "Admin"
+            }
+        }
+    },
+    "commandpalette": {
+        "empty": {
+            "title": "Keine Ergebnisse gefunden.",
+            "content": "Wir konnten keine Ergebnisse zu Ihrer Anfrage finden. Bitte versuchen Sie es erneut."
+        },
+        "categories": {
+            "general": "Allgemein",
+            "navigation": "Navigation"
+        },
+        "footer": "Tippe {key1} für Bürger,- {key2} für Dokumenten-Suche."
+    },
+    "zodI18n": {
+        "custom": {
+            "duration": {
+                "invalid": "Ungültiges Dauerformat, muss im Format \"1.23s\" sein und mindestens \"0.01s\" betragen"
+            },
+            "filelist": {
+                "required": "Datei muss ausgewählt sein",
+                "wrong_file_type": "Die Datei muss einer der gültigen Dateitypen sein: {types}",
+                "size_too_big": "Datei darf nicht größer als {size}MB sein."
+            }
+        }
+    }
+}
