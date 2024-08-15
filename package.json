@@ -78,7 +78,7 @@
         "@types/uuid": "10.0.0",
         "@types/zxcvbn": "4.4.4",
         "@vueuse/core": "10.11.1",
-        "@vueuse/nuxt": "10.11.1",
+        "@vueuse/nuxt": "11.0.0",
         "@vueuse/router": "10.11.1",
         "autoprefixer": "10.4.20",
         "cssnano": "7.0.5",
