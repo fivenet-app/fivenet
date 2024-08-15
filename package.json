@@ -105,9 +105,9 @@
         "sass": "1.77.8",
         "tailwindcss": "3.4.10",
         "typescript": "5.5.4",
-        "vue": "3.4.37",
+        "vue": "3.4.38",
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.0.29"
     },
-    "packageManager": "pnpm@9.7.0"
+    "packageManager": "pnpm@9.7.1"
 }

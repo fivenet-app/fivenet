@@ -38,7 +38,7 @@ require (
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.19.1
+	github.com/prometheus/client_golang v1.20.0
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
 	github.com/rs/cors v1.11.0
 	github.com/spf13/viper v1.19.0
