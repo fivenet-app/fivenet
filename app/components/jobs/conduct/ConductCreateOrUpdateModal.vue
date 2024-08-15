@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { format } from 'date-fns';
 import { z } from 'zod';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -241,19 +240,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="expiresAt">
-                                    <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                        <UButton
-                                            variant="outline"
-                                            color="gray"
-                                            block
-                                            icon="i-mdi-calendar-month"
-                                            :label="state.expiresAt ? format(state.expiresAt, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                        />
-
-                                        <template #panel="{ close }">
-                                            <DatePickerClient v-model="state.expiresAt" clearable @close="close" />
-                                        </template>
-                                    </UPopover>
+                                    <DatePickerPopoverClient
+                                        v-model="state.expiresAt"
+                                        :popover="{ popper: { placement: 'bottom-start' } }"
+                                        :date-picker="{ clearable: true }"
+                                    />
                                 </UFormGroup>
                             </dd>
                         </div>

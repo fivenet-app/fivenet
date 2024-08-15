@@ -1,11 +1,9 @@
 <script lang="ts" setup>
 import { watchDebounced } from '@vueuse/shared';
-import { format } from 'date-fns';
 import { z } from 'zod';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import type { OpenClose } from '~/shims';
 import { useCompletorStore } from '~/store/completor';
@@ -14,6 +12,7 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import { Category } from '~~/gen/ts/resources/documents/category';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 
 const { t } = useI18n();
 
@@ -250,41 +249,19 @@ defineShortcuts({
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">
-                                <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                    <UButton
-                                        variant="outline"
-                                        color="gray"
-                                        block
-                                        icon="i-mdi-calendar-month"
-                                        :label="query.from ? format(query.from, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
-                                    />
-
-                                    <template #panel="{ close }">
-                                        <DatePickerClient
-                                            v-model="query.from"
-                                            clearable
-                                            mode="dateTime"
-                                            is24hr
-                                            @close="close"
-                                        />
-                                    </template>
-                                </UPopover>
+                                <DatePickerPopoverClient
+                                    v-model="query.from"
+                                    :popover="{ popper: { placement: 'bottom-start' } }"
+                                    :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                                />
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`">
-                                <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                    <UButton
-                                        variant="outline"
-                                        color="gray"
-                                        block
-                                        icon="i-mdi-calendar-month"
-                                        :label="query.to ? format(query.to, 'dd.MM.yyyy HH:mm') : 'dd.mm.yyyy HH:mm'"
-                                    />
-
-                                    <template #panel="{ close }">
-                                        <DatePickerClient v-model="query.to" clearable mode="dateTime" is24hr @close="close" />
-                                    </template>
-                                </UPopover>
+                                <DatePickerPopoverClient
+                                    v-model="query.to"
+                                    :popover="{ popper: { placement: 'bottom-start' } }"
+                                    :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                                />
                             </UFormGroup>
                         </div>
                     </template>

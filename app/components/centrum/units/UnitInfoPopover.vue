@@ -27,7 +27,7 @@ withDefaults(
             <span>{{ $t('common.na') }}</span>
         </span>
     </template>
-    <UPopover v-else mode="click">
+    <UPopover v-else>
         <UButton variant="outline" :padded="false" size="xs" class="inline-flex items-center gap-1 p-0.5">
             <slot name="before" />
 

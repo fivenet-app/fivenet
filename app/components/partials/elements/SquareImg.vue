@@ -43,7 +43,7 @@ function toggleBlur(): void {
     <template v-if="!src || !enablePopup">
         <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="src" :alt="alt" :text="text" @click="toggleBlur()" />
     </template>
-    <UPopover v-else mode="click">
+    <UPopover v-else>
         <UButton variant="link" :padded="false">
             <UAvatar :size="size" :class="[visible ? '' : 'blur']" :src="src" :alt="alt" :text="text" />
         </UButton>

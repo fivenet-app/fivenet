@@ -57,7 +57,7 @@ const counts = computedAsync(() => {
 </script>
 
 <template>
-    <UPopover mode="click">
+    <UPopover>
         <UButton
             :ui="{ icon: { base: 'max-md:!hidden' } }"
             variant="ghost"

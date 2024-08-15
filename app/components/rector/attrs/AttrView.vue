@@ -333,7 +333,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                             {{ $t('common.save', 1) }}
                         </UButton>
 
-                        <UPopover mode="click">
+                        <UPopover>
                             <UButton :disabled="changed" color="gray" icon="i-mdi-form-textarea">{{
                                 $t('common.paste')
                             }}</UButton>

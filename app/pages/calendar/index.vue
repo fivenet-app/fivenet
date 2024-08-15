@@ -310,7 +310,7 @@ const isOpen = ref(false);
             <UDashboardToolbar>
                 <template #default>
                     <div class="flex flex-1 items-center justify-between">
-                        <UPopover mode="click" :popper="{ placement: 'bottom-end', offsetDistance: 10 }">
+                        <UPopover :popper="{ placement: 'bottom-end', offsetDistance: 10 }">
                             <UButton
                                 color="white"
                                 icon="i-mdi-calendar"

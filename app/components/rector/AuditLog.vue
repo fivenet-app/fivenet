@@ -1,12 +1,11 @@
 <script lang="ts" setup>
-import { format } from 'date-fns';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
@@ -171,35 +170,19 @@ const columns = [
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row flex-wrap gap-2">
                     <UFormGroup name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`" class="flex-1">
-                        <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                            <UButton
-                                variant="outline"
-                                color="gray"
-                                block
-                                icon="i-mdi-calendar-month"
-                                :label="query.from ? format(query.from, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                            />
-
-                            <template #panel="{ close }">
-                                <DatePickerClient v-model="query.from" clearable @close="close" />
-                            </template>
-                        </UPopover>
+                        <DatePickerPopoverClient
+                            v-model="query.from"
+                            :popover="{ popper: { placement: 'bottom-start' } }"
+                            :date-picker="{ clearable: true }"
+                        />
                     </UFormGroup>
 
                     <UFormGroup name="to" :label="`${$t('common.time_range')} ${$t('common.to')}`" class="flex-1">
-                        <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                            <UButton
-                                variant="outline"
-                                color="gray"
-                                block
-                                icon="i-mdi-calendar-month"
-                                :label="query.to ? format(query.to, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                            />
-
-                            <template #panel="{ close }">
-                                <DatePickerClient v-model="query.to" clearable @close="close" />
-                            </template>
-                        </UPopover>
+                        <DatePickerPopoverClient
+                            v-model="query.to"
+                            :popover="{ popper: { placement: 'bottom-start' } }"
+                            :date-picker="{ clearable: true }"
+                        />
                     </UFormGroup>
 
                     <UFormGroup name="user" :label="$t('common.user')" class="flex-1">

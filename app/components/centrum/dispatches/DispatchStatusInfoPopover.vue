@@ -18,7 +18,7 @@ const modal = useModal();
         </span>
     </template>
     <template v-else>
-        <UPopover mode="click">
+        <UPopover>
             <UButton
                 variant="outline"
                 :padded="false"

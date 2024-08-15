@@ -79,7 +79,7 @@ watchOnce(opened, async () => {
             {{ $t('common.na') }}
         </span>
     </template>
-    <UPopover v-else mode="click" :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">
+    <UPopover v-else :ui="{ trigger: 'inline-flex w-auto', wrapper: 'inline-block' }">
         <UButton
             v-bind="$attrs"
             variant="link"

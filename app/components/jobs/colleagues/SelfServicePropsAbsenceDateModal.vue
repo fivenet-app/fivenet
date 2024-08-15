@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { addDays, format, isFuture } from 'date-fns';
+import { addDays, isFuture } from 'date-fns';
 import { z } from 'zod';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { JobsUserProps } from '~~/gen/ts/resources/jobs/colleagues';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -134,35 +134,17 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div class="flex flex-col gap-1 sm:flex-row">
                         <UFormGroup class="flex-1" name="absenceBegin" :label="$t('common.from')">
-                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                <UButton
-                                    variant="outline"
-                                    color="gray"
-                                    block
-                                    icon="i-mdi-calendar-month"
-                                    :label="state.absenceBegin ? format(state.absenceBegin, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                />
-
-                                <template #panel="{ close }">
-                                    <DatePickerClient v-model="state.absenceBegin" @close="close" />
-                                </template>
-                            </UPopover>
+                            <PartialsDatePickerPopover
+                                v-model="state.absenceBegin"
+                                :popover="{ popper: { placement: 'bottom-start' } }"
+                            />
                         </UFormGroup>
 
                         <UFormGroup class="flex-1" name="absenceEnd" :label="$t('common.to')">
-                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                <UButton
-                                    variant="outline"
-                                    color="gray"
-                                    block
-                                    icon="i-mdi-calendar-month"
-                                    :label="state.absenceEnd ? format(state.absenceEnd, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
-                                />
-
-                                <template #panel="{ close }">
-                                    <DatePickerClient v-model="state.absenceEnd" @close="close" />
-                                </template>
-                            </UPopover>
+                            <DatePickerPopoverClient
+                                v-model="state.absenceEnd"
+                                :popover="{ popper: { placement: 'bottom-start' } }"
+                            />
                         </UFormGroup>
                     </div>
                 </div>

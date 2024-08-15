@@ -82,7 +82,6 @@ const name = computed(() =>
 
 <template>
     <UDropdown
-        mode="click"
         :items="items"
         :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
         :popper="{ strategy: 'absolute', placement: 'top' }"

@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { format } from 'date-fns';
 import { HelpIcon } from 'mdi-vue3';
 import type { DefineComponent } from 'vue';
 import { z } from 'zod';
 import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { type MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -33,7 +32,7 @@ defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 
 const schema = z.object({
     name: z.string().min(3).max(255),
     description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
-    expiresAt: z.date().nullish(),
+    expiresAt: z.date().optional(),
     color: z.string().length(7),
     markerType: z.nativeEnum(MarkerType),
     circleRadius: z.number().gte(5).lte(250),
@@ -225,29 +224,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="expiresAt">
-                                    <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                        <UButton
-                                            variant="outline"
-                                            color="gray"
-                                            block
-                                            icon="i-mdi-calendar-month"
-                                            :label="
-                                                state.expiresAt
-                                                    ? format(state.expiresAt, 'dd.MM.yyyy HH:mm')
-                                                    : 'dd.mm.yyyy HH:mm'
-                                            "
-                                        />
-
-                                        <template #panel="{ close }">
-                                            <DatePickerClient
-                                                v-model="state.expiresAt"
-                                                mode="dateTime"
-                                                is24hr
-                                                clearable
-                                                @close="close"
-                                            />
-                                        </template>
-                                    </UPopover>
+                                    <DatePickerPopoverClient
+                                        v-model="state.expiresAt"
+                                        :popover="{ popper: { placement: 'bottom-start' } }"
+                                        :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                                    />
                                 </UFormGroup>
                             </dd>
                         </div>

@@ -63,7 +63,7 @@ watchOnce(opened, async () => {
             {{ $t('common.na') }}
         </span>
     </template>
-    <UPopover v-else mode="click" :ui="{ container: 'max-w-[50%]' }">
+    <UPopover v-else :ui="{ container: 'max-w-[50%]' }">
         <UButton
             v-bind="$attrs"
             variant="link"

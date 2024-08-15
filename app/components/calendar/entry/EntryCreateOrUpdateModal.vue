@@ -1,12 +1,12 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { addHours, addMinutes, format, isSameDay, isSameHour, isSameMinute } from 'date-fns';
+import { addHours, addMinutes, isSameDay, isSameHour, isSameMinute } from 'date-fns';
 import { z } from 'zod';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
+import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import DocEditor from '~/components/partials/DocEditor.vue';
 import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
@@ -238,35 +238,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
-                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                <UButton
-                                    variant="outline"
-                                    color="gray"
-                                    block
-                                    icon="i-mdi-calendar-month"
-                                    :label="state.startTime ? format(state.startTime, 'dd.MM.yyyy HH:mm') : 'dd.MM.yyyy HH:mm'"
-                                />
-
-                                <template #panel="{ close }">
-                                    <DatePickerClient v-model="state.startTime" mode="dateTime" is24hr @close="close" />
-                                </template>
-                            </UPopover>
+                            <DatePickerPopoverClient
+                                v-model="state.startTime"
+                                :popover="{ popper: { placement: 'bottom-start' } }"
+                                :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                            />
                         </UFormGroup>
 
                         <UFormGroup name="endTime" :label="$t('common.ends_at')" class="flex-1" required>
-                            <UPopover mode="click" :popper="{ placement: 'bottom-start' }">
-                                <UButton
-                                    variant="outline"
-                                    color="gray"
-                                    block
-                                    icon="i-mdi-calendar-month"
-                                    :label="state.endTime ? format(state.endTime, 'dd.MM.yyyy HH:mm') : 'dd.MM.yyyy HH:mm'"
-                                />
-
-                                <template #panel="{ close }">
-                                    <DatePickerClient v-model="state.endTime" mode="dateTime" is24hr @close="close" />
-                                </template>
-                            </UPopover>
+                            <DatePickerPopoverClient
+                                v-model="state.endTime"
+                                :popover="{ popper: { placement: 'bottom-start' } }"
+                                :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                            />
                         </UFormGroup>
 
                         <UFormGroup name="content" :label="$t('common.content')" class="flex-1" required>
