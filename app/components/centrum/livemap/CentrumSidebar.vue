@@ -322,12 +322,13 @@ defineShortcuts({
 
                     <template v-if="canStream" #afterMap>
                         <div>
-                            <transition
+                            <Transition
+                            v-if="open"
                                 enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
                                 enter-from-class="translate-x-full" enter-to-class="translate-x-0"
                                 leave-active-class="transform transition ease-in-out duration-100 sm:duration-200"
                                 leave-from-class="translate-x-0" leave-to-class="translate-x-full">
-                                <div v-if="open"
+                                <div
                                     class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-1"
                                     :class="open || getOwnUnit !== undefined ? 'px-2' : ''">
                                     <nav class="flex min-w-48 max-w-48 flex-1 flex-col md:min-w-64 md:max-w-64">
@@ -498,18 +499,17 @@ defineShortcuts({
 
                                                 <li>
                                                     <div class="mb-0.5 mt-1 flex w-full">
-                                                        <DispatchStatusBreakdown class="mx-auto" />
+                                                        <DispatchStatusBreakdown size="xs" />
                                                     </div>
                                                 </li>
                                             </template>
                                         </ul>
                                     </nav>
                                 </div>
-                            </transition>
+                            </Transition>
 
                             <!-- "Take Dispatches" Button -->
-                            <template v-if="open && getOwnUnit !== undefined">
-                                <span class="fixed bottom-2 right-1/2 z-30 inline-flex">
+                                <span v-if="open && getOwnUnit !== undefined" class="fixed bottom-2 right-1/2 z-30 inline-flex">
                                     <UChip :ui="{
                                         base: 'absolute rounded-full ring-0 ring-white dark:ring-gray-900 flex items-center justify-center text-white dark:text-gray-900 font-medium whitespace-nowrap animate-ping duration-750',
                                     }" position="top-left" size="xl" color="red"
@@ -532,7 +532,6 @@ defineShortcuts({
                                             @click="setWaypointPLZ(getOwnUnit.homePostal)" />
                                     </UTooltip>
                                 </span>
-                            </template>
                         </div>
                     </template>
                 </LivemapBase>

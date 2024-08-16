@@ -30,7 +30,7 @@ const defaultExpiresAt = ref<Date>(new Date());
 defaultExpiresAt.value.setTime(defaultExpiresAt.value.getTime() + 1 * 60 * 60 * 1000);
 
 const schema = z.object({
-    name: z.string().min(3).max(255),
+    name: z.string().min(1).max(255),
     description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
     expiresAt: z.date().optional(),
     color: z.string().length(7),

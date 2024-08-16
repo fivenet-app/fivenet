@@ -11,11 +11,11 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        modelValue: DatePickerDate | DatePickerRangeObject | null;
+        modelValue: DatePickerDate | DatePickerRangeObject | undefined;
         clearable?: boolean;
     }>(),
     {
-        modelValue: null,
+        modelValue: undefined,
         clearable: false,
     },
 );
@@ -26,8 +26,8 @@ const emit = defineEmits<{
 }>();
 
 const date = computed({
-    get: () => props.modelValue,
-    set: (value) => emit('update:model-value', value),
+    get: () => (props.modelValue === undefined ? null : props.modelValue),
+    set: (value) => emit('update:model-value', value === null ? undefined : value),
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);

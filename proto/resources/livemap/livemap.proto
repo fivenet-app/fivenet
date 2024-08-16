@@ -23,7 +23,10 @@ message MarkerInfo {
   string job = 4;
   string job_label = 12;
   // @sanitize
-  string name = 5;
+  string name = 5 [(validate.rules).string = {
+    min_len: 1,
+    max_len: 255,
+  }];
   // @sanitize
   optional string description = 6;
   double x = 7;

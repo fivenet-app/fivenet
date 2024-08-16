@@ -54,15 +54,21 @@ const counts = computedAsync(() => {
 
     return count;
 });
+
+defineOptions({
+    inheritAttrs: false,
+});
 </script>
 
 <template>
-    <UPopover>
+    <UPopover class="flex-1">
         <UButton
+            v-bind="$attrs"
             :ui="{ icon: { base: 'max-md:!hidden' } }"
             variant="ghost"
-            class="inline-flex items-center"
+            class="items-center"
             trailing-icon="i-mdi-chevron-down"
+            block
         >
             {{ $t('components.centrum.livemap.total_dispatches') }}: {{ dispatches.size }}
         </UButton>
