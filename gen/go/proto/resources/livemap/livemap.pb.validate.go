@@ -63,7 +63,16 @@ func (m *MarkerInfo) validate(all bool) error {
 
 	// no validation rules for JobLabel
 
-	// no validation rules for Name
+	if l := utf8.RuneCountInString(m.GetName()); l < 1 || l > 255 {
+		err := MarkerInfoValidationError{
+			field:  "Name",
+			reason: "value length must be between 1 and 255 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for X
 

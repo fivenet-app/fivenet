@@ -214,7 +214,7 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
             { no: 3, name: "updated_at", kind: "message", T: () => Timestamp },
             { no: 4, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 12, name: "job_label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 5, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "255" } } } },
             { no: 6, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 7, name: "x", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 8, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
