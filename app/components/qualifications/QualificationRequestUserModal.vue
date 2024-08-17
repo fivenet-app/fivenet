@@ -19,7 +19,7 @@ const { isOpen } = useModal();
 const notifications = useNotificatorStore();
 
 const schema = z.object({
-    userComment: z.string().min(3).max(255),
+    userComment: z.string().min(0).max(255),
 });
 
 type Schema = z.output<typeof schema>;

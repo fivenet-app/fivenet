@@ -99,8 +99,8 @@ message UserActivity {
     min_len: 1,
     max_len: 64
   }]; // @gotags: alias:"fivenet_user_activity.key"
-  string old_value = 7 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.old_value"
-  string new_value = 8 [(validate.rules).string.max_len = 256]; // @gotags: alias:"fivenet_user_activity.new_value"
+  string old_value = 7 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.old_value"
+  string new_value = 8 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.new_value"
   // @sanitize
   string reason = 9 [(validate.rules).string.max_len = 255]; // @gotags: alias:"fivenet_user_activity.reason"
 }

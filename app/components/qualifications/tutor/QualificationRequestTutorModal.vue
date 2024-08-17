@@ -32,7 +32,7 @@ const availableStatus = [
 
 const schema = z.object({
     status: z.nativeEnum(RequestStatus),
-    approverComment: z.string().min(3).max(255),
+    approverComment: z.string().max(255),
 });
 
 type Schema = z.output<typeof schema>;

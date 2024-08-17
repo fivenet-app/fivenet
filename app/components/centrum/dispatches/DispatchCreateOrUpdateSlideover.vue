@@ -20,7 +20,7 @@ const { location: storeLocation } = storeToRefs(livemapStore);
 
 const schema = z.object({
     message: z.string().min(3).max(255),
-    description: z.union([z.string().min(6).max(512), z.string().length(0).optional()]),
+    description: z.union([z.string().min(3).max(512), z.string().length(0).optional()]),
     anon: z.boolean(),
 });
 
