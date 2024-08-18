@@ -32,7 +32,7 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
 
         <div
             ref="splitpanesContainer"
-            class="max-h-[calc(100vh-var(--header-height))] min-h-[calc(100vh-var(--header-height))] w-full overflow-hidden"
+            class="max-h-[calc(100dvh-var(--header-height))] min-h-[calc(100dvh-var(--header-height))] w-full overflow-hidden"
         >
             <Splitpanes v-if="mount" class="relative">
                 <Pane :min-size="25">

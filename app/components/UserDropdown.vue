@@ -86,6 +86,7 @@ const name = computed(() =>
         :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
         :popper="{ strategy: 'absolute', placement: 'top' }"
         class="w-full"
+        mode="hover"
     >
         <template #default="{ open }">
             <UButton color="gray" variant="ghost" class="w-full" :label="name" :class="[open && 'bg-gray-50 dark:bg-gray-800']">

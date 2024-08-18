@@ -35,9 +35,6 @@ useHead({
     htmlAttrs: {
         lang: 'en',
     },
-    bodyAttrs: {
-        class: 'h-full',
-    },
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
             title = t(title);
