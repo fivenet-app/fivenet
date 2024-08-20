@@ -78,27 +78,36 @@ const { game } = useAppConfig();
 const name = computed(() =>
     activeChar.value ? `${activeChar.value?.firstname} ${activeChar.value?.lastname}` : (username.value ?? t('common.na')),
 );
+
+const open = ref(false);
 </script>
 
 <template>
     <UDropdown
+        v-model:open="open"
         :items="items"
         :ui="{ width: 'w-full', item: { disabled: 'cursor-text select-text' } }"
         :popper="{ strategy: 'absolute', placement: 'top' }"
         class="w-full"
         mode="hover"
     >
-        <template #default="{ open }">
-            <UButton color="gray" variant="ghost" class="w-full" :label="name" :class="[open && 'bg-gray-50 dark:bg-gray-800']">
-                <template #leading>
-                    <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
-                </template>
+        <UButton
+            color="gray"
+            variant="ghost"
+            class="w-full"
+            :label="name"
+            :class="[open && 'bg-gray-50 dark:bg-gray-800']"
+            @click="open = !open"
+            @touchstart.passive="open = !open"
+        >
+            <template #leading>
+                <UAvatar :src="activeChar?.avatar?.url" :alt="$t('common.avatar')" :text="getInitials(name)" size="2xs" />
+            </template>
 
-                <template #trailing>
-                    <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
-                </template>
-            </UButton>
-        </template>
+            <template #trailing>
+                <UIcon name="i-mdi-ellipsis-vertical" class="ml-auto size-5" />
+            </template>
+        </UButton>
 
         <template #account>
             <div class="truncate text-left">
