@@ -12,10 +12,10 @@ import (
 	"sync"
 	"time"
 
+	"github.com/coder/websocket"
 	"github.com/desertbit/timer"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/grpcws"
 	"google.golang.org/protobuf/proto"
-	"nhooyr.io/websocket"
 )
 
 type WebsocketChannel struct {
@@ -50,19 +50,32 @@ type GrpcStream struct {
 	// TODO add a context to return to close the connection
 }
 
+var framePingResponse = &grpcws.GrpcFrame{
+	StreamId: 0,
+	Payload: &grpcws.GrpcFrame_Ping{
+		Ping: &grpcws.Ping{
+			Pong: true,
+		},
+	},
+}
+
 func NewWebsocketChannel(websocket *websocket.Conn, handler http.Handler, ctx context.Context, maxStreamCount int, req *http.Request) *WebsocketChannel {
-	return &WebsocketChannel{
+	wsCh := &WebsocketChannel{
 		mutex: sync.RWMutex{},
 
-		wsConn:          websocket,
-		activeStreams:   make(map[uint32]*GrpcStream),
-		timeOutInterval: 10 * time.Second,
+		wsConn: websocket,
+		activeStreams: make(
+			map[uint32]*GrpcStream),
+		timeOutInterval: 12 * time.Second,
 		timer:           nil,
 		context:         ctx,
 		handler:         handler,
 		maxStreamCount:  maxStreamCount,
 		req:             req,
 	}
+	wsCh.activeStreams[0] = newGrpcStream(0, wsCh, maxStreamCount)
+
+	return wsCh
 }
 
 func newGrpcStream(streamId uint32, channel *WebsocketChannel, streamBufferSize int) *GrpcStream {
@@ -132,7 +145,7 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 			return stream.Read(p)
 		case *grpcws.GrpcFrame_Failure:
 			// TODO how to propagate this to the server?
-			return 0, errors.New("Grpc Client Error")
+			return 0, errors.New("grpc client error")
 		}
 	}
 	return 0, io.EOF
@@ -324,13 +337,14 @@ func (w *WebsocketChannel) enablePing(timeOutInterval time.Duration) {
 
 func (w *WebsocketChannel) ping() {
 	defer w.timer.Stop()
+
 	for {
 		select {
 		case <-w.context.Done():
 			return
 		case <-w.timer.C:
 			w.timer.Reset(w.timeOutInterval)
-			w.wsConn.Ping(w.context)
+			w.activeStreams[0].channel.write(framePingResponse)
 		}
 	}
 }
@@ -371,7 +385,7 @@ func (stream *GrpcStream) Close() error {
 		stream.WriteHeader(http.StatusOK)
 	}
 
-	stream.cancel()
+	defer stream.cancel()
 	stream.channel.write(&grpcws.GrpcFrame{StreamId: stream.id, Payload: &grpcws.GrpcFrame_Complete{Complete: &grpcws.Complete{}}})
 	stream.channel.deleteStream(stream.id)
 	return nil

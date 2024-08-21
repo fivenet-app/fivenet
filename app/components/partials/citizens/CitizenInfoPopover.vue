@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import { useAuthStore } from '~/store/auth';
 import { ClipboardUser } from '~/store/clipboard';
 import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '../IDCopyBadge.vue';
@@ -24,6 +25,9 @@ const props = withDefaults(
 );
 
 const { popover } = useAppConfig();
+
+const authStore = useAuthStore();
+const { activeChar } = storeToRefs(authStore);
 
 const userId = computed(() => {
     if (typeof props.userId === 'string') {
@@ -116,6 +120,18 @@ watchOnce(opened, async () => {
                         :to="{ name: 'citizens-id', params: { id: userId ?? user?.userId ?? 0 } }"
                     >
                         {{ $t('common.profile') }}
+                    </UButton>
+
+                    <UButton
+                        v-if="can('JobsService.GetColleague').value && user?.job === activeChar?.job"
+                        variant="link"
+                        icon="i-mdi-briefcase"
+                        :padded="false"
+                        :to="{ name: 'jobs-colleagues-id-info', params: { id: userId ?? user?.userId ?? 0 } }"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.colleague') }}
+                        </span>
                     </UButton>
 
                     <PhoneNumberBlock

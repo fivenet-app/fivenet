@@ -9,6 +9,7 @@ require (
 	github.com/alecthomas/kong v0.9.0
 	github.com/blevesearch/bleve/v2 v2.4.2
 	github.com/bwmarrin/discordgo v0.28.1
+	github.com/coder/websocket v1.8.12
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
@@ -64,7 +65,6 @@ require (
 	google.golang.org/protobuf v1.34.2
 	gopkg.in/yaml.v3 v3.0.1
 	gotest.tools/v3 v3.5.1
-	nhooyr.io/websocket v1.8.17
 	willnorris.com/go/imageproxy v0.11.2
 )
 
@@ -206,6 +206,7 @@ require (
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20240814211410-ddb44dafa142 // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
+	nhooyr.io/websocket v1.8.17 // indirect
 	willnorris.com/go/gifresize v1.0.0 // indirect
 )
 

@@ -117,6 +117,18 @@ const unitStatusColor = computed(() => unitStatusToBGColor(unit.value?.status?.s
                         </span>
                     </UButton>
 
+                    <UButton
+                        v-if="can('JobsService.GetColleague').value && marker.user?.job === activeChar?.job"
+                        variant="link"
+                        icon="i-mdi-briefcase"
+                        :padded="false"
+                        :to="{ name: 'jobs-colleagues-id-info', params: { id: marker.user?.userId ?? 0 } }"
+                    >
+                        <span class="truncate">
+                            {{ $t('common.colleague') }}
+                        </span>
+                    </UButton>
+
                     <PhoneNumberBlock
                         v-if="marker.user?.phoneNumber"
                         :number="marker.user?.phoneNumber"

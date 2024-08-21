@@ -1174,10 +1174,10 @@ func (m *UserActivity) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetOldValue()) > 256 {
+	if utf8.RuneCountInString(m.GetOldValue()) > 255 {
 		err := UserActivityValidationError{
 			field:  "OldValue",
-			reason: "value length must be at most 256 runes",
+			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err
@@ -1185,10 +1185,10 @@ func (m *UserActivity) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if utf8.RuneCountInString(m.GetNewValue()) > 256 {
+	if utf8.RuneCountInString(m.GetNewValue()) > 255 {
 		err := UserActivityValidationError{
 			field:  "NewValue",
-			reason: "value length must be at most 256 runes",
+			reason: "value length must be at most 255 runes",
 		}
 		if !all {
 			return err

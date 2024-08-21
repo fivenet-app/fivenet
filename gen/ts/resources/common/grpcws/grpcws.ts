@@ -22,6 +22,12 @@ export interface GrpcFrame {
      * @generated from protobuf oneof: payload
      */
     payload: {
+        oneofKind: "ping";
+        /**
+         * @generated from protobuf field: resources.common.grpcws.Ping ping = 2;
+         */
+        ping: Ping;
+    } | {
         oneofKind: "header";
         /**
          * @generated from protobuf field: resources.common.grpcws.Header header = 3;
@@ -54,6 +60,15 @@ export interface GrpcFrame {
     } | {
         oneofKind: undefined;
     };
+}
+/**
+ * @generated from protobuf message resources.common.grpcws.Ping
+ */
+export interface Ping {
+    /**
+     * @generated from protobuf field: bool pong = 1;
+     */
+    pong: boolean;
 }
 /**
  * @generated from protobuf message resources.common.grpcws.Header
@@ -132,6 +147,7 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
     constructor() {
         super("resources.common.grpcws.GrpcFrame", [
             { no: 1, name: "streamId", kind: "scalar", T: 13 /*ScalarType.UINT32*/ },
+            { no: 2, name: "ping", kind: "message", oneof: "payload", T: () => Ping },
             { no: 3, name: "header", kind: "message", oneof: "payload", T: () => Header },
             { no: 4, name: "body", kind: "message", oneof: "payload", T: () => Body },
             { no: 5, name: "complete", kind: "message", oneof: "payload", T: () => Complete },
@@ -154,6 +170,12 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
             switch (fieldNo) {
                 case /* uint32 streamId */ 1:
                     message.streamId = reader.uint32();
+                    break;
+                case /* resources.common.grpcws.Ping ping */ 2:
+                    message.payload = {
+                        oneofKind: "ping",
+                        ping: Ping.internalBinaryRead(reader, reader.uint32(), options, (message.payload as any).ping)
+                    };
                     break;
                 case /* resources.common.grpcws.Header header */ 3:
                     message.payload = {
@@ -200,6 +222,9 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
         /* uint32 streamId = 1; */
         if (message.streamId !== 0)
             writer.tag(1, WireType.Varint).uint32(message.streamId);
+        /* resources.common.grpcws.Ping ping = 2; */
+        if (message.payload.oneofKind === "ping")
+            Ping.internalBinaryWrite(message.payload.ping, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* resources.common.grpcws.Header header = 3; */
         if (message.payload.oneofKind === "header")
             Header.internalBinaryWrite(message.payload.header, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
@@ -225,6 +250,53 @@ class GrpcFrame$Type extends MessageType<GrpcFrame> {
  * @generated MessageType for protobuf message resources.common.grpcws.GrpcFrame
  */
 export const GrpcFrame = new GrpcFrame$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class Ping$Type extends MessageType<Ping> {
+    constructor() {
+        super("resources.common.grpcws.Ping", [
+            { no: 1, name: "pong", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+        ]);
+    }
+    create(value?: PartialMessage<Ping>): Ping {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.pong = false;
+        if (value !== undefined)
+            reflectionMergePartial<Ping>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Ping): Ping {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* bool pong */ 1:
+                    message.pong = reader.bool();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: Ping, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* bool pong = 1; */
+        if (message.pong !== false)
+            writer.tag(1, WireType.Varint).bool(message.pong);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.common.grpcws.Ping
+ */
+export const Ping = new Ping$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class Header$Type extends MessageType<Header> {
     constructor() {

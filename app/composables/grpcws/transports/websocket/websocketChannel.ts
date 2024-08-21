@@ -33,7 +33,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     private logger: ILogger;
     protected ws: UseWebSocketReturn<any>;
     readonly activeStreams = new Map<number, [TransportOptions, GrpcStream]>();
-    protected streamId = 0;
+    protected streamId = 1;
 
     constructor(logger: ILogger, ws: UseWebSocketReturn<any>) {
         this.logger = logger;
@@ -48,6 +48,11 @@ class WebsocketChannelImpl implements WebsocketChannel {
     async onMessage(data: ArrayBuffer): Promise<void> {
         const frame = GrpcFrame.fromBinary(new Uint8Array(data));
         const streamId = frame.streamId;
+        if (frame.payload.oneofKind === 'ping') {
+            this.logger.debug('Received websocket ping, pong:', frame.payload.ping.pong);
+            return;
+        }
+
         const stream = this.activeStreams.get(streamId);
 
         if (stream) {

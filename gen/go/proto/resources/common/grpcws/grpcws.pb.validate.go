@@ -60,6 +60,47 @@ func (m *GrpcFrame) validate(all bool) error {
 	// no validation rules for StreamId
 
 	switch v := m.Payload.(type) {
+	case *GrpcFrame_Ping:
+		if v == nil {
+			err := GrpcFrameValidationError{
+				field:  "Payload",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetPing()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GrpcFrameValidationError{
+						field:  "Ping",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GrpcFrameValidationError{
+						field:  "Ping",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetPing()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GrpcFrameValidationError{
+					field:  "Ping",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	case *GrpcFrame_Header:
 		if v == nil {
 			err := GrpcFrameValidationError{
@@ -345,6 +386,106 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = GrpcFrameValidationError{}
+
+// Validate checks the field values on Ping with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Ping) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on Ping with the rules defined in the
+// proto definition for this message. If any rules are violated, the result is
+// a list of violation errors wrapped in PingMultiError, or nil if none found.
+func (m *Ping) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *Ping) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Pong
+
+	if len(errors) > 0 {
+		return PingMultiError(errors)
+	}
+
+	return nil
+}
+
+// PingMultiError is an error wrapping multiple validation errors returned by
+// Ping.ValidateAll() if the designated constraints aren't met.
+type PingMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m PingMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m PingMultiError) AllErrors() []error { return m }
+
+// PingValidationError is the validation error returned by Ping.Validate if the
+// designated constraints aren't met.
+type PingValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e PingValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e PingValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e PingValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e PingValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e PingValidationError) ErrorName() string { return "PingValidationError" }
+
+// Error satisfies the builtin error interface
+func (e PingValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sPing.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = PingValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = PingValidationError{}
 
 // Validate checks the field values on Header with the rules defined in the
 // proto definition for this message. If any rules are violated, the first

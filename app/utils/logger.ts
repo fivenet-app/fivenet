@@ -1,4 +1,4 @@
-import { LogLevels, consola, type ConsolaInstance } from 'consola';
+import { LogLevels, consola, type ConsolaInstance, type LogLevel } from 'consola';
 
 export interface ILogger {
     log(message?: any, ...optionalParams: any[]): void;
@@ -12,7 +12,7 @@ export class Logger {
     readonly consola: ConsolaInstance;
     readonly prefix?: string;
 
-    constructor(prefix?: string) {
+    constructor(prefix?: string, level?: LogLevel) {
         this.prefix = prefix?.trim();
 
         if (this.prefix !== undefined) {
@@ -21,11 +21,16 @@ export class Logger {
             this.consola = consola;
         }
 
-        if (import.meta.dev) {
-            this.consola.level = LogLevels.debug;
-        } else {
-            this.consola.level = LogLevels.info;
+        if (level === undefined) {
+            // Debug level for dev env if unset
+            if (import.meta.dev) {
+                level = LogLevels.debug;
+            } else {
+                level = LogLevels.info;
+            }
         }
+
+        this.consola.level = level;
     }
 
     log(message?: any, ...optionalParams: any[]): void {

@@ -7,12 +7,17 @@ message GrpcFrame {
   uint32 streamId = 1;
 
   oneof payload {
+    Ping ping = 2;
     Header header = 3;
     Body body = 4;
     Complete complete = 5;
     Failure failure = 6;
     Cancel cancel = 7;
   }
+}
+
+message Ping {
+  bool pong = 1;
 }
 
 message Header {
