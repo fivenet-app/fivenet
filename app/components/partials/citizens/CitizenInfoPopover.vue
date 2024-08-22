@@ -107,10 +107,9 @@ watchOnce(opened, async () => {
                     <IDCopyBadge
                         :id="userId ?? user?.userId ?? 0"
                         prefix="CIT"
-                        :title="{ key: 'notifications.document_view.copy_document_id.title', parameters: {} }"
-                        :content="{ key: 'notifications.document_view.copy_document_id.content', parameters: {} }"
+                        :title="{ key: 'notifications.citizen_info.copy_citizen_id.title', parameters: {} }"
+                        :content="{ key: 'notifications.citizen_info.copy_citizen_id.content', parameters: {} }"
                         size="xs"
-                        variant="link"
                     />
 
                     <UButton
@@ -126,7 +125,6 @@ watchOnce(opened, async () => {
                         v-if="can('JobsService.GetColleague').value && user?.job === activeChar?.job"
                         variant="link"
                         icon="i-mdi-briefcase"
-                        :padded="false"
                         :to="{ name: 'jobs-colleagues-id-info', params: { id: userId ?? user?.userId ?? 0 } }"
                     >
                         <span class="truncate">

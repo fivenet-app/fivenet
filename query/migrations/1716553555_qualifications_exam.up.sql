@@ -12,6 +12,7 @@ CREATE TABLE
         `data` longtext,
         `answer` longtext,
         PRIMARY KEY (`id`),
+        KEY `fk_fivenet_qualifications_exam_questions_quali_id` (`qualification_id`),
         CONSTRAINT `fk_fivenet_qualifications_exam_questions_quali_id` FOREIGN KEY (`qualification_id`) REFERENCES `fivenet_qualifications` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
     ) ENGINE = InnoDB;
 

@@ -316,6 +316,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
     } else {
         await updateQualification(event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
     }
+
+    notifications.add({
+        title: { key: 'notifications.action_successfull.title', parameters: {} },
+        description: { key: 'notifications.action_successfull.content', parameters: {} },
+        type: NotificationType.SUCCESS,
+    });
 }, 1000);
 
 function addAccessEntry(): void {
