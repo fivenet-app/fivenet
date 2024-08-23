@@ -43,7 +43,7 @@ func (s *Manager) UpdateDispatchStatus(ctx context.Context, job string, dspId ui
 		if dsp.Status.Status == in.Status &&
 			(in.Status == centrum.StatusDispatch_STATUS_DISPATCH_NEW ||
 				in.Status == centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED) {
-			s.logger.Debug("skipping dispatch status update due to same status", zap.Uint64("dispatch_id", dsp.Id), zap.String("status", in.Status.String()))
+			s.logger.Debug("skipping dispatch status update due to being new or same status", zap.Uint64("dispatch_id", dsp.Id), zap.String("status", in.Status.String()))
 			return in, nil
 		}
 

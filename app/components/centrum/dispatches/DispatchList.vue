@@ -119,7 +119,7 @@ const columns = [
                 />
             </h2>
 
-            <DispatchStatusBreakdown v-if="dispatches === undefined" class="text-base font-semibold text-gray-100" />
+            <DispatchStatusBreakdown v-if="dispatches === undefined" class="font-semibold text-gray-100" />
         </div>
 
         <div class="flex-1">

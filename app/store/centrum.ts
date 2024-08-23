@@ -64,8 +64,8 @@ export const useCentrumStore = defineStore('centrum', {
     getters: {
         getCurrentMode: (state: CentrumState) =>
             state.disponents.length > 0
-                ? state.settings?.mode ?? CentrumMode.UNSPECIFIED
-                : state.settings?.fallbackMode ?? CentrumMode.UNSPECIFIED,
+                ? (state.settings?.mode ?? CentrumMode.UNSPECIFIED)
+                : (state.settings?.fallbackMode ?? CentrumMode.UNSPECIFIED),
         getOwnUnit: (state: CentrumState) => (state.ownUnitId !== undefined ? state.units.get(state.ownUnitId) : undefined),
         getSortedUnits: (state: CentrumState) => {
             const filtered: Unit[] = [];
@@ -136,7 +136,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const u = this.units.get(status.unitId);
             if (u === undefined) {
-                logger.warn('Processed Unit Status for unknown Unit', status.unitId);
+                logger.warn('Processed Unit Status for unknown unit:', status.unitId);
                 return;
             }
 
@@ -229,7 +229,7 @@ export const useCentrumStore = defineStore('centrum', {
 
             const d = this.dispatches.get(status.dispatchId);
             if (d === undefined) {
-                logger.warn('Processed Dispatch Status for unknown Dispatch', status.dispatchId, status);
+                logger.warn('Processed Dispatch Status for unknown dispatch:', status.dispatchId, status);
                 return;
             }
 

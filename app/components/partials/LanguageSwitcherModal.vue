@@ -25,7 +25,7 @@ onMounted(async () => {
         languages.value.push({
             code: lang.code,
             name: lang.name!,
-            iso: lang.iso!,
+            language: lang.language!,
             icon: lang.icon ?? 'i-mdi-question',
         });
     });
@@ -34,16 +34,16 @@ onMounted(async () => {
 const preventClose = ref(false);
 
 async function switchLanguage(lang: LocaleObject): Promise<void> {
-    if (locale.value === lang.iso) {
+    if (locale.value === lang.language) {
         return;
     }
 
     useLogger('⚙️ Settings').info('Switching language to:', lang.name);
     preventClose.value = true;
 
-    userLocale.value = lang.iso!;
-    locale.value = lang.iso!;
-    await setLocale(lang.iso!);
+    userLocale.value = lang.language!;
+    locale.value = lang.language!;
+    await setLocale(lang.language!);
 
     notifications.add({
         title: { key: 'notifications.language_switched.title', parameters: {} },

@@ -324,6 +324,10 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 		}
 	}
 
+	if len(dsps) == 0 {
+		return nil
+	}
+
 	publicJobs := s.appCfg.Get().JobInfo.PublicJobs
 	for i := 0; i < len(dsps); i++ {
 		var err error
@@ -358,20 +362,20 @@ func (s *Manager) LoadDispatchesFromDB(ctx context.Context, cond jet.BoolExpress
 
 		// Ensure dispatch has a status
 		if dsps[i].Status == nil {
-			dsps[i].Status, err = s.UpdateDispatchStatus(ctx, dsps[i].Job, dsps[i].Id, &centrum.DispatchStatus{
+			dsps[i].Status, err = s.AddDispatchStatus(ctx, s.db, dsps[i].Job, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
 				DispatchId: dsps[i].Id,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_NEW,
 				Postal:     dsps[i].Postal,
 				X:          &dsps[i].X,
 				Y:          &dsps[i].Y,
-			})
+			}, false)
 			if err != nil {
 				return err
 			}
 		}
 
-		if err := s.State.UpdateDispatch(ctx, dsps[i].Job, dsps[i].Id, dsps[i]); err != nil {
+		if _, err := s.UpdateDispatch(ctx, dsps[i].Job, dsps[i].CreatorId, dsps[i], true); err != nil {
 			return err
 		}
 	}
