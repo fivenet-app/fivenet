@@ -13,7 +13,7 @@ export const logger = useLogger('🔑 Auth');
 export interface AuthState {
     accessTokenExpiration: null | Date;
     username: null | string;
-    lastCharID: number;
+    lastCharID: undefined | number;
     activeChar: null | User;
     loggingIn: boolean;
     loginError: null | string;
@@ -93,14 +93,14 @@ export const useAuthStore = defineStore('auth', {
             this.setPermissions([]);
 
             try {
-                const call = getGRPCAuthClient().login({ username, password });
+                const call = getGRPCAuthClient().login({ username: username, password: password });
                 const { response } = await call;
 
                 this.loginStop(null);
 
                 this.username = username;
 
-                if (!response.char) {
+                if (response.char === undefined) {
                     logger.info('Login response without included char, redirecting to char selector');
                     this.setAccessTokenExpiration(toDate(response.expires));
 
@@ -154,6 +154,16 @@ export const useAuthStore = defineStore('auth', {
         },
         async chooseCharacter(charId?: number, redirect?: boolean): Promise<void> {
             if (charId === undefined) {
+                if (!this.lastCharID) {
+                    const route = useRoute();
+
+                    await navigateTo({
+                        name: 'auth-character-selector',
+                        query: route.query,
+                    });
+                    return;
+                }
+
                 charId = this.lastCharID;
             }
 
