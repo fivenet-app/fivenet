@@ -468,16 +468,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
         </UDashboardNavbar>
 
         <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
-            <template #default="{ item, selected }">
-                <div class="relative flex items-center gap-2 truncate">
-                    <UIcon :name="item.icon" class="size-4 shrink-0" />
-
-                    <span class="truncate">{{ item.label }}</span>
-
-                    <span v-if="selected" class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full" />
-                </div>
-            </template>
-
             <template #edit>
                 <div v-if="loading" class="flex flex-col gap-2">
                     <USkeleton v-for="_ in 6" class="size-24 w-full" />

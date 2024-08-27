@@ -121,19 +121,6 @@ function removeReference(id: string): void {
 
             <div>
                 <UTabs :items="tabs">
-                    <template #default="{ item, selected }">
-                        <div class="relative flex items-center gap-2 truncate">
-                            <UIcon :name="item.icon" class="size-4 shrink-0" />
-
-                            <span class="truncate">{{ item.label }}</span>
-
-                            <span
-                                v-if="selected"
-                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
-                            />
-                        </div>
-                    </template>
-
                     <template #item="{ item }">
                         <template v-if="item.key === 'current'">
                             <div class="flow-root">

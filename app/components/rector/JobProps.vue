@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { vMaska } from "maska/vue"
+import { vMaska } from 'maska/vue';
 import { CodeDiff } from 'v-code-diff';
 import { z } from 'zod';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
@@ -284,19 +284,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <template v-else-if="loading || jobProps">
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
-                    <template #default="{ item, selected }">
-                        <div class="relative flex items-center gap-2 truncate">
-                            <UIcon :name="item.icon" class="size-4 shrink-0" />
-
-                            <span class="truncate">{{ item.label }}</span>
-
-                            <span
-                                v-if="selected"
-                                class="bg-primary-500 dark:bg-primary-400 absolute -right-4 size-2 rounded-full"
-                            />
-                        </div>
-                    </template>
-
                     <template #jobprops>
                         <div v-if="loading" class="space-y-1 px-4">
                             <USkeleton v-for="_ in 5" class="h-20 w-full" />
