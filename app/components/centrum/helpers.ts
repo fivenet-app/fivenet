@@ -137,18 +137,18 @@ export function dispatchTimeToTextColor(
     const time = (Date.now() - toDate(date).getTime()) / 1000;
 
     const over = time / maxTime;
-    if (over >= 0.1) {
-        return 'text-yellow-100';
-    } else if (over >= 0.2) {
-        return 'text-yellow-300';
-    } else if (over >= 0.35) {
-        return 'text-orange-300';
-    } else if (over >= 0.55) {
-        return 'text-orange-400';
+    if (over >= 0.85) {
+        return 'text-red-700 animate-bounce';
     } else if (over >= 0.7) {
         return 'text-red-400';
-    } else if (over > 0.85) {
-        return 'text-red-700 animate-bounce';
+    } else if (over >= 0.55) {
+        return 'text-orange-400';
+    } else if (over >= 0.35) {
+        return 'text-orange-300';
+    } else if (over >= 0.2) {
+        return 'text-yellow-300';
+    } else if (over >= 0.1) {
+        return 'text-yellow-100';
     }
 
     return '';
