@@ -129,26 +129,29 @@ export function dispatchTimeToTextColor(
     status: StatusDispatch = StatusDispatch.UNSPECIFIED,
     maxTime: number = 600,
 ): string {
+    if (isStatusDispatchCompleted(status)) {
+        return 'text-success-300';
+    }
+
+    // Get passed time in minutes
     const time = (Date.now() - toDate(date).getTime()) / 1000;
 
-    if (isStatusDispatchCompleted(status)) {
-        return '';
-    }
-
     const over = time / maxTime;
-    if (over <= 0.15) {
-        return '';
-    } else if (over <= 0.2) {
-        return 'text-orange-300';
-    } else if (over <= 0.3) {
+    if (over >= 0.1) {
+        return 'text-yellow-100';
+    } else if (over >= 0.2) {
         return 'text-yellow-300';
-    } else if (over <= 0.5) {
-        return 'text-orange-500';
-    } else if (over <= 0.8) {
+    } else if (over >= 0.35) {
+        return 'text-orange-300';
+    } else if (over >= 0.55) {
+        return 'text-orange-400';
+    } else if (over >= 0.7) {
         return 'text-red-400';
+    } else if (over > 0.85) {
+        return 'text-red-700 animate-bounce';
     }
 
-    return 'text-red-700 animate-bounce';
+    return '';
 }
 
 export function dispatchTimeToTextColorSidebar(

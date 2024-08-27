@@ -228,7 +228,7 @@ if (props.registerShortcuts) {
 
         <UDivider />
 
-        <UButton block icon="i-mdi-link" @click="copyLinkToClipboard()">
+        <UButton block icon="i-mdi-link-variant" @click="copyLinkToClipboard()">
             {{ $t('components.citizens.CitizenInfoProfile.copy_profile_link') }}
         </UButton>
     </div>

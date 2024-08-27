@@ -76,6 +76,10 @@ const columns = [
         sortable: false,
     },
     {
+        key: 'preview',
+        label: t('common.preview'),
+    },
+    {
         key: 'name',
         label: t('common.name'),
     },
@@ -92,6 +96,8 @@ const columns = [
         label: t('common.type'),
     },
 ];
+
+const previewTypes = ['jpg', 'jpeg', 'png', 'webp'];
 </script>
 
 <template>
@@ -146,7 +152,13 @@ const columns = [
             class="flex-1"
         >
             <template #actions-data="{ row: file }">
-                <UButton variant="link" icon="i-mdi-eye" :external="true" target="_blank" :to="`/api/filestore/${file.name}`" />
+                <UButton
+                    variant="link"
+                    icon="i-mdi-link-variant"
+                    :external="true"
+                    target="_blank"
+                    :to="`/api/filestore/${file.name}`"
+                />
                 <UButton
                     variant="link"
                     icon="i-mdi-trash-can"
@@ -156,6 +168,15 @@ const columns = [
                         })
                     "
                 />
+            </template>
+            <template #name-data="{ row: file }">
+                <span class="text-gray-900 dark:text-white">
+                    {{ file.name }}
+                </span>
+            </template>
+            <template #preview-data="{ row: file }">
+                <span v-if="!previewTypes.some((ext) => file.name.endsWith(ext))"> </span>
+                <img v-else :src="`/api/filestore/${file.name}`" class="max-h-24 max-w-32" />
             </template>
             <template #fileSize-data="{ row: file }">
                 {{ formatBytes(file.size) }}
