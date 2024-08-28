@@ -14,6 +14,16 @@ export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSock
         opts.debug && logger.debug('Websocket factory triggered');
         if (webSocket.status.value === 'CLOSED') {
             webSocket.open();
+
+            if (wsChannel.activeStreams.size > 0) {
+                wsChannel.activeStreams.forEach((stream) => {
+                    if (!stream[1].isStream) {
+                        return;
+                    }
+
+                    stream[1].start(new Metadata());
+                });
+            }
         }
 
         return wsChannel.getStream(opts);
@@ -22,6 +32,9 @@ export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSock
 
 interface GrpcStream extends Transport {
     readonly streamId: number;
+    readonly service: string;
+    readonly method: string;
+    readonly isStream: boolean;
 }
 
 interface WebsocketChannel {
@@ -33,7 +46,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     private logger: ILogger;
     protected ws: UseWebSocketReturn<any>;
     readonly activeStreams = new Map<number, [TransportOptions, GrpcStream]>();
-    protected streamId = 1;
+    protected lastStreamId = 1;
 
     constructor(logger: ILogger, ws: UseWebSocketReturn<any>) {
         this.logger = logger;
@@ -127,7 +140,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     getStream(opts: TransportOptions): GrpcStream {
-        let currentStreamId = this.streamId++;
+        let currentStreamId = this.lastStreamId++;
         const self = this;
 
         async function sendToWebsocket(toSend: GrpcFrame): Promise<void> {
@@ -149,9 +162,12 @@ class WebsocketChannelImpl implements WebsocketChannel {
             return frame;
         }
 
-        //question: can this structure be reused or is it one time use?
+        // Question: can this structure be reused or is it one time use?
         const stream = {
             streamId: currentStreamId,
+            service: opts.methodDefinition.service.typeName,
+            method: opts.methodDefinition.name,
+            isStream: opts.methodDefinition.serverStreaming || opts.methodDefinition.clientStreaming,
 
             start: (metadata: Metadata) => {
                 opts.debug &&

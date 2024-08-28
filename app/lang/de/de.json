@@ -477,7 +477,8 @@
         "pin": "Anheften",
         "unpin": "Lösen",
         "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente",
-        "or": "ODER"
+        "or": "ODER",
+        "retrying": "Erneuter Versuch..."
     },
     "components": {
         "partials": {
