@@ -38,22 +38,21 @@ export default defineAppConfig({
     ui: {
         primary: 'blue',
         gray: 'neutral',
-        tooltip: {
-            default: {
-                openDelay: 500,
-            },
-        },
+
         button: {
             default: {
                 loadingIcon: 'i-mdi-loading',
             },
         },
-        table: {
-            tr: {
-                base: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+        input: {
+            default: {
+                loadingIcon: 'i-mdi-loading',
             },
-            td: {
-                padding: 'px-1.5 py-1.5',
+        },
+        select: {
+            default: {
+                loadingIcon: 'i-mdi-loading',
+                trailingIcon: 'i-octicon-chevron-down-24',
             },
         },
         selectMenu: {
@@ -61,14 +60,55 @@ export default defineAppConfig({
                 selectedIcon: 'i-mdi-check',
             },
         },
-        card: {
-            footer: {
-                padding: 'px-2 py-3 sm:px-4',
+        commandPalette: {
+            default: {
+                icon: 'i-octicon-search-24',
+                loadingIcon: 'i-mdi-loading',
+                selectedIcon: 'i-octicon-check-24',
+                emptyState: {
+                    icon: 'i-octicon-search-24',
+                },
             },
         },
+        table: {
+            default: {
+                sortAscIcon: 'i-octicon-sort-asc-24',
+                sortDescIcon: 'i-octicon-sort-desc-24',
+                sortButton: {
+                    icon: 'i-octicon-arrow-switch-24',
+                },
+                loadingState: {
+                    icon: 'i-mdi-loading',
+                },
+                emptyState: {
+                    icon: 'i-octicon-database-24',
+                },
+            },
+            tr: {
+                base: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',
+            },
+            td: {
+                padding: 'px-1.5 py-1.5',
+            },
+        },
+        pagination: {
+            default: {
+                firstButton: {
+                    icon: 'i-octicon-chevron-left-24',
+                },
+                prevButton: {
+                    icon: 'i-octicon-arrow-left-24',
+                },
+                nextButton: {
+                    icon: 'i-octicon-arrow-right-24',
+                },
+                lastButton: {
+                    icon: 'i-octicon-chevron-right-24',
+                },
+            },
+        },
+        // Nuxt UI Pro Icons
         icons: {
-            dynamic: false,
-            // Nuxt UI Pro Icons
             dark: 'i-mdi-moon-and-stars',
             light: 'i-mdi-weather-sunny',
             system: 'i-mdi-computer',
@@ -80,9 +120,19 @@ export default defineAppConfig({
             close: 'i-mdi-window-close',
             check: 'i-mdi-check-circle',
         },
+        accordion: {
+            default: {
+                openIcon: 'i-octicon-chevron-down-24',
+            },
+        },
         breadcrumb: {
             default: {
                 divider: 'i-mdi-chevron-right',
+            },
+        },
+        card: {
+            footer: {
+                padding: 'px-2 py-3 sm:px-4',
             },
         },
         // Nuxt UI Pro
@@ -90,12 +140,6 @@ export default defineAppConfig({
             page: {
                 wrapper: 'flex w-full min-h-screen min-w-screen max-w-full overflow-y-auto',
             },
-        },
-    },
-    nuxtIcon: {
-        iconifyApiOptions: {
-            url: '/api/icons',
-            publicApiFallback: false,
         },
     },
 

@@ -39,8 +39,14 @@ export default defineNuxtConfig({
     },
 
     ui: {
-        icons: ['simple-icons', 'mdi', 'flagpack'],
         safelistColors: ['primary', 'gray', 'red', 'orange', 'green', 'error', 'warn', 'info', 'success'],
+    },
+
+    icon: {
+        collections: ['simple-icons', 'mdi', 'flagpack'],
+        provider: 'iconify',
+        iconifyApiEndpoint: '/api/icons',
+        fallbackToApi: true,
     },
 
     fonts: {

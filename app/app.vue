@@ -11,15 +11,6 @@ const { t, setLocale, locale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
-if (!appConfig.nuxtIcon.iconifyApiOptions) {
-    appConfig.nuxtIcon.iconifyApiOptions = {
-        url: window.location.protocol + '//' + window.location.host + '/api/icons',
-        publicApiFallback: false,
-    };
-} else {
-    appConfig.nuxtIcon.iconifyApiOptions.url = window.location.protocol + '//' + window.location.host + '/api/icons';
-}
-
 const toast = useToast();
 
 const colorMode = useColorMode();
