@@ -52,7 +52,7 @@ export default defineAppConfig({
         select: {
             default: {
                 loadingIcon: 'i-mdi-loading',
-                trailingIcon: 'i-octicon-chevron-down-24',
+                trailingIcon: 'i-mdi-chevron-down',
             },
         },
         selectMenu: {
@@ -62,26 +62,26 @@ export default defineAppConfig({
         },
         commandPalette: {
             default: {
-                icon: 'i-octicon-search-24',
+                icon: 'i-mdi-search',
                 loadingIcon: 'i-mdi-loading',
-                selectedIcon: 'i-octicon-check-24',
+                selectedIcon: 'i-mdi-check',
                 emptyState: {
-                    icon: 'i-octicon-search-24',
+                    icon: 'i-mdi-search',
                 },
             },
         },
         table: {
             default: {
-                sortAscIcon: 'i-octicon-sort-asc-24',
-                sortDescIcon: 'i-octicon-sort-desc-24',
+                sortAscIcon: 'i-mdi-sort-ascending',
+                sortDescIcon: 'i-mdi-sort-descending',
                 sortButton: {
-                    icon: 'i-octicon-arrow-switch-24',
+                    icon: 'i-mdi-sort',
                 },
                 loadingState: {
                     icon: 'i-mdi-loading',
                 },
                 emptyState: {
-                    icon: 'i-octicon-database-24',
+                    icon: 'i-mdi-database',
                 },
             },
             tr: {
@@ -94,16 +94,16 @@ export default defineAppConfig({
         pagination: {
             default: {
                 firstButton: {
-                    icon: 'i-octicon-chevron-left-24',
+                    icon: 'i-mdi-chevron-left-first',
                 },
                 prevButton: {
-                    icon: 'i-octicon-arrow-left-24',
+                    icon: 'i-mdi-chevron-left',
                 },
                 nextButton: {
-                    icon: 'i-octicon-arrow-right-24',
+                    icon: 'i-mdi-chevron-right',
                 },
                 lastButton: {
-                    icon: 'i-octicon-chevron-right-24',
+                    icon: 'i-mdi-chevron-right-last',
                 },
             },
         },
@@ -122,7 +122,7 @@ export default defineAppConfig({
         },
         accordion: {
             default: {
-                openIcon: 'i-octicon-chevron-down-24',
+                openIcon: 'i-mdi-chevron-down',
             },
         },
         breadcrumb: {
