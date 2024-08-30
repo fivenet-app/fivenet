@@ -83,8 +83,7 @@ async function setFromProps(): Promise<void> {
     }
 }
 
-onMounted(async () => setFromProps());
-
+setFromProps();
 watch(props, () => setFromProps());
 
 watch(selectedAccessType, async () => {
@@ -171,6 +170,7 @@ watch(selectedAccessRole, () => {
                     :disabled="readOnly"
                     class="flex-1"
                     option-attribute="label"
+                    searchable
                     :search-attributes="['name', 'label']"
                     :options="jobs ?? []"
                     :placeholder="$t('common.job')"
@@ -191,6 +191,7 @@ watch(selectedAccessRole, () => {
                     :disabled="readOnly || !selectedJob"
                     class="flex-1"
                     option-attribute="label"
+                    searchable
                     :search-attributes="['name', 'label']"
                     :options="selectedJob?.grades ?? []"
                     :placeholder="$t('common.rank')"
@@ -212,6 +213,7 @@ watch(selectedAccessRole, () => {
                 :disabled="readOnly"
                 class="flex-1"
                 option-attribute="label"
+                searchable
                 :search-attributes="['label']"
                 :options="entriesAccessRoles"
                 :placeholder="$t('common.access')"
