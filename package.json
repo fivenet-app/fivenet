@@ -55,7 +55,7 @@
         "uuid": "10.0.0",
         "v-calendar": "3.1.2",
         "v-code-diff": "1.13.1",
-        "vue-countup-v3": "^1.4.2",
+        "vue-countup-v3": "1.4.2",
         "vue-draggable-plus": "0.5.3",
         "vue-json-pretty": "2.4.0",
         "vue3-colorpicker": "2.3.0",
@@ -107,6 +107,9 @@
         "vue": "3.4.38",
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.1.2"
+    },
+    "overrides": {
+        "@nuxt/icon": "1.5.0"
     },
     "packageManager": "pnpm@9.9.0"
 }

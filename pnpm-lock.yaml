@@ -111,7 +111,7 @@ importers:
         specifier: 1.13.1
         version: 1.13.1(vue@3.4.38(typescript@5.5.4))
       vue-countup-v3:
-        specifier: ^1.4.2
+        specifier: 1.4.2
         version: 1.4.2(vue@3.4.38(typescript@5.5.4))
       vue-draggable-plus:
         specifier: 0.5.3
