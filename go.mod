@@ -4,7 +4,7 @@ go 1.22.6
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
-	github.com/Masterminds/sprig/v3 v3.2.3
+	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.33.0
 	github.com/alecthomas/kong v0.9.0
 	github.com/blevesearch/bleve/v2 v2.4.2
@@ -34,14 +34,14 @@ require (
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/minio/minio-go/v7 v7.0.76
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
-	github.com/nats-io/nats-server/v2 v2.10.19
+	github.com/nats-io/nats-server/v2 v2.10.20
 	github.com/nats-io/nats.go v1.37.0
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
 	github.com/prometheus/client_golang v1.20.2
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
-	github.com/rs/cors v1.11.0
+	github.com/rs/cors v1.11.1
 	github.com/spf13/viper v1.19.0
 	github.com/stretchr/testify v1.9.0
 	go.eigsys.de/gin-cachecontrol/v2 v2.1.0
@@ -143,7 +143,6 @@ require (
 	github.com/hashicorp/go-multierror v1.1.1 // indirect
 	github.com/hashicorp/hcl v1.0.0 // indirect
 	github.com/huandu/xstrings v1.5.0 // indirect
-	github.com/imdario/mergo v1.0.1 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgtype v1.14.3 // indirect
 	github.com/klauspost/compress v1.17.9 // indirect
