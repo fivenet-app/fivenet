@@ -13,10 +13,19 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) error {
+func (s *Manager) registerStream(ctx context.Context) (jetstream.StreamConfig, error) {
 	streamCfg, err := eventscentrum.RegisterStream(ctx, s.js)
 	if err != nil {
-		return fmt.Errorf("failed to register events: %w", err)
+		return streamCfg, fmt.Errorf("failed to register stream: %w", err)
+	}
+
+	return streamCfg, nil
+}
+
+func (s *Manager) registerSubscriptions(ctx context.Context, c context.Context) error {
+	streamCfg, err := s.registerStream(c)
+	if err != nil {
+		return err
 	}
 
 	consumer, err := s.js.CreateConsumer(ctx, streamCfg.Name, jetstream.ConsumerConfig{

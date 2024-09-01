@@ -73,11 +73,15 @@ func New(p Params) *Manager {
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		if err := s.registerSubscriptions(c, ctx); err != nil {
+		if _, err := s.registerStream(c); err != nil {
 			return err
 		}
 
 		if err := s.loadData(ctx); err != nil {
+			return err
+		}
+
+		if err := s.registerSubscriptions(c, ctx); err != nil {
 			return err
 		}
 
