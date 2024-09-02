@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@galexrt/nuxt-update':
+        specifier: 1.0.0
+        version: 1.0.0(magicast@0.3.4)(rollup@4.21.0)
       '@iconify-json/flagpack':
         specifier: 1.2.0
         version: 1.2.0
@@ -86,9 +89,6 @@ importers:
       mdi-vue3:
         specifier: 7.4.47
         version: 7.4.47(vue@3.4.38(typescript@5.5.4))
-      nuxt-update:
-        specifier: 1.0.0
-        version: 1.0.0(magicast@0.3.4)(rollup@4.21.0)
       nuxt-zod-i18n:
         specifier: 1.9.0
         version: 1.9.0(magicast@0.3.4)(rollup@4.21.0)
@@ -981,6 +981,9 @@ packages:
   '@fastify/busboy@2.1.1':
     resolution: {integrity: sha512-vBZP4NlzfOlerQTnba4aqZoMhE/a9HY7HRqoOPaETQcSQuWEIyZMHGfVu6w9wGtGK5fED5qRs2DteVCjOH60sA==}
     engines: {node: '>=14'}
+
+  '@galexrt/nuxt-update@1.0.0':
+    resolution: {integrity: sha512-1KuJi1TBWH29R13x87W9sY+tVYAdw3f9PWxsXK+DSORbNIyp4iobCzLL5eVC2JoGtEo9nizwQ17BYdNkuoJthA==}
 
   '@gulpjs/to-absolute-glob@4.0.0':
     resolution: {integrity: sha512-kjotm7XJrJ6v+7knhPaRgaT6q8F8K2jiafwYdNHLzmV0uGLuZY43FK6smNSHUPrhq5kX2slCUy+RGG/xGqmIKA==}
@@ -4495,9 +4498,6 @@ packages:
     peerDependencies:
       prettier: ^2.5.x || 3.x
 
-  nuxt-update@1.0.0:
-    resolution: {integrity: sha512-MZqBOJAWSGFhJCanXqPjMf6YHdv/EuKPs5FYzjo8QQ/HXJ37+1Eko4NQ+abiWejaQAZMpRZI6A85oEaHzKQddQ==}
-
   nuxt-zod-i18n@1.9.0:
     resolution: {integrity: sha512-DpOZFIGlW5fFCSc/6Lp9Ot7GOYo+dz2vqDe96P9gZPMgMx4xMlb/XoHUwULLJt8XoUtnUVGoN4YCmJX5chVMZg==}
 
@@ -6946,6 +6946,16 @@ snapshots:
   '@eslint/object-schema@2.1.4': {}
 
   '@fastify/busboy@2.1.1': {}
+
+  '@galexrt/nuxt-update@1.0.0(magicast@0.3.4)(rollup@4.21.0)':
+    dependencies:
+      '@nuxt/kit': 3.13.0(magicast@0.3.4)(rollup@4.21.0)
+      defu: 6.1.4
+      mitt: 3.0.1
+    transitivePeerDependencies:
+      - magicast
+      - rollup
+      - supports-color
 
   '@gulpjs/to-absolute-glob@4.0.0':
     dependencies:
@@ -11274,16 +11284,6 @@ snapshots:
       nanoid: 5.0.7
       pathe: 1.1.2
       prettier: 3.3.3
-    transitivePeerDependencies:
-      - magicast
-      - rollup
-      - supports-color
-
-  nuxt-update@1.0.0(magicast@0.3.4)(rollup@4.21.0):
-    dependencies:
-      '@nuxt/kit': 3.13.0(magicast@0.3.4)(rollup@4.21.0)
-      defu: 6.1.4
-      mitt: 3.0.1
     transitivePeerDependencies:
       - magicast
       - rollup

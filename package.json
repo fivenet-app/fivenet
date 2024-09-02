@@ -21,6 +21,7 @@
         "i18next-scanner": "npx i18next-scanner --config ./internal/scripts/i18next-scanner.config.cjs"
     },
     "dependencies": {
+        "@galexrt/nuxt-update": "1.0.0",
         "@iconify-json/flagpack": "1.2.0",
         "@iconify-json/mdi": "1.2.0",
         "@iconify-json/simple-icons": "1.2.1",
@@ -47,7 +48,6 @@
         "leaflet-contextmenu": "1.4.0",
         "maska": "3.0.2",
         "mdi-vue3": "7.4.47",
-        "nuxt-update": "1.0.0",
         "nuxt-zod-i18n": "1.9.0",
         "pinia": "2.2.2",
         "slugify": "1.6.6",

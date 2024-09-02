@@ -19,7 +19,7 @@ export default defineNuxtConfig({
         '@pinia-plugin-persistedstate/nuxt',
         'nuxt-zod-i18n',
         '@nuxtjs/i18n',
-        'nuxt-update',
+        '@galexrt/nuxt-update',
     ],
 
     future: {
