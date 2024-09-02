@@ -68,8 +68,8 @@ const state = reactive<Schema>({
     category: undefined,
 });
 
-const access = ref<
-    Map<
+const access = ref(
+    new Map<
         string,
         {
             id: string;
@@ -82,18 +82,18 @@ const access = ref<
             };
             required?: boolean;
         }
-    >
->(new Map());
+    >(),
+);
 const docAccess = ref<DocumentAccess>();
 const docCreator = ref<UserShort | undefined>();
 
 const openRelationManager = ref<boolean>(false);
-const relationManagerData = ref<Map<string, DocumentRelation>>(new Map());
+const relationManagerData = ref(new Map<string, DocumentRelation>());
 const currentRelations = ref<Readonly<DocumentRelation>[]>([]);
 watch(currentRelations, () => currentRelations.value.forEach((e) => relationManagerData.value.set(e.id!, e)));
 
 const openReferenceManager = ref<boolean>(false);
-const referenceManagerData = ref<Map<string, DocumentReference>>(new Map());
+const referenceManagerData = ref(new Map<string, DocumentReference>());
 const currentReferences = ref<Readonly<DocumentReference>[]>([]);
 watch(currentReferences, () => currentReferences.value.forEach((e) => referenceManagerData.value.set(e.id!, e)));
 

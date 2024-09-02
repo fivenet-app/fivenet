@@ -3,16 +3,16 @@ import FiveNetLogo from '~/components/partials/logos/FiveNetLogo.vue';
 
 const { t } = useI18n();
 
-const { links } = useAppConfig();
+const { website } = useAppConfig();
 
 const footerLinks = [
     {
         label: t('common.privacy_policy'),
-        to: links?.privacyPolicy,
+        to: website.links?.privacyPolicy,
     },
     {
         label: t('common.imprint'),
-        to: links?.imprint,
+        to: website.links?.imprint,
     },
 ].filter((l) => l.to !== undefined);
 

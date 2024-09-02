@@ -80,8 +80,8 @@ const schemaEditor = ref<SchemaEditorValue>({
         max: 0,
     },
 });
-const access = ref<
-    Map<
+const access = ref(
+    new Map<
         string,
         {
             id: string;
@@ -92,8 +92,8 @@ const access = ref<
                 minimumGrade?: number;
             };
         }
-    >
->(new Map());
+    >(),
+);
 
 const accessTypes = [{ id: 1, name: t('common.job', 2) }];
 
@@ -162,8 +162,8 @@ function updateDocumentAccessEntryAccess(event: { id: string; access: AccessLeve
     access.value.set(event.id, accessEntry);
 }
 
-const contentAccess = ref<
-    Map<
+const contentAccess = ref(
+    new Map<
         string,
         {
             id: string;
@@ -176,8 +176,8 @@ const contentAccess = ref<
             };
             required?: boolean;
         }
-    >
->(new Map());
+    >(),
+);
 
 const contentAccessTypes = [
     { id: 0, name: t('common.citizen', 2) },

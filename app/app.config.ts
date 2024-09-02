@@ -1,4 +1,4 @@
-import type { DiscordConfig, FeatureGates, LoginConfig, Website } from '~/shims';
+import type { DiscordConfig, FeatureGates, GameConfig, LoginConfig, WebsiteConfig } from '~/typings';
 
 export default defineAppConfig({
     version: '',
@@ -10,12 +10,11 @@ export default defineAppConfig({
     discord: {
         botInviteURL: '',
     } as DiscordConfig,
-    website: {} as Website,
+    website: {} as WebsiteConfig,
     featureGates: {} as FeatureGates,
     game: {
         unemployedJobName: 'unemployed',
-    },
-    statsPage: false,
+    } as GameConfig,
 
     // File upload related config
     fileUpload: {

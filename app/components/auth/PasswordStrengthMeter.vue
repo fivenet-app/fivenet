@@ -19,6 +19,11 @@ watch(result, () => {
     percent.value = (result.value.score * 100) / 3;
     feedback.value = result.value.feedback.warning;
 
+    if (props.input.trimEnd() === '') {
+        color.value = 'base';
+        return;
+    }
+
     switch (result.value.score) {
         case 0:
         case 1:
@@ -35,16 +40,14 @@ watch(result, () => {
             color.value = 'base';
             break;
     }
-
-    if (props.input === '') {
-        color.value = 'base';
-    }
 });
 </script>
 
 <template>
     <div>
+        <!-- @vue-expect-error seems that the `color` prop is not using the `ProgressColor` type -->
         <UProgress :color="color" :value="percent" />
+
         <p v-if="showFeedback && feedback !== null" class="my-1 text-sm">
             {{ feedback }}
         </p>

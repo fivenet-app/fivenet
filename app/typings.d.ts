@@ -1,16 +1,5 @@
 import type { Perms } from '~~/gen/ts/perms';
-
-declare module '#app' {
-    interface PageMeta {
-        title?: string;
-        requiresAuth?: boolean;
-        redirectIfAuthed?: boolean;
-        permission?: Perms | Perms[];
-        authTokenOnly?: boolean;
-        showCookieOptions?: boolean;
-    }
-}
-
+import 'vue-router';
 declare module 'vue-router' {
     interface RouteMeta {
         title?: string;
@@ -38,9 +27,9 @@ export type DiscordConfig = {
     botInviteURL?: string;
 };
 
-export type Website = {
+export type WebsiteConfig = {
     links: Links;
-    statsPage: boolean;
+    statsPage: boolean = false;
 };
 
 export type Links = {
@@ -50,17 +39,8 @@ export type Links = {
 
 export type FeatureGates = {};
 
-export type Game = {
+export type GameConfig = {
     unemployedJobName: string;
-};
-
-export type AppConfig = {
-    version: string;
-    login: LoginConfig;
-    discord: DiscordConfig;
-    website: Website;
-    featureGates: FeatureGates;
-    game: Game;
 };
 
 export type OpenClose = { id: number; label: string; closed?: boolean };

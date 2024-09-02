@@ -73,8 +73,8 @@ const contentAccessTypes = [
     { id: 1, name: t('common.job', 2) },
 ];
 
-const templateAccess = ref<
-    Map<
+const templateAccess = ref(
+    new Map<
         string,
         {
             id: string;
@@ -85,11 +85,11 @@ const templateAccess = ref<
                 minimumGrade?: number;
             };
         }
-    >
->(new Map());
+    >(),
+);
 
-const contentAccess = ref<
-    Map<
+const contentAccess = ref(
+    new Map<
         string,
         {
             id: string;
@@ -102,8 +102,8 @@ const contentAccess = ref<
             };
             required?: boolean;
         }
-    >
->(new Map());
+    >(),
+);
 
 watch(template, () => {
     if (!template.value) {

@@ -19,7 +19,7 @@ const completorStore = useCompletorStore();
 const { jobs } = storeToRefs(completorStore);
 const { listJobs } = completorStore;
 
-const jobGrades = ref<Map<string, JobGrade>>(new Map());
+const jobGrades = ref(new Map<string, JobGrade>());
 
 const states = ref<typeof props.states>(props.states);
 const id = ref<string>(props.attribute.attrId);

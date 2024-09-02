@@ -95,7 +95,14 @@ const isDev = import.meta.dev;
                         </div>
 
                         <div class="inline-flex w-full gap-2">
-                            <UButton block class="flex-1" size="lg" :disabled="buttonDisabled" @click="handleError()">
+                            <UButton
+                                color="primary"
+                                block
+                                class="flex-1"
+                                size="lg"
+                                :disabled="buttonDisabled"
+                                @click="handleError()"
+                            >
                                 {{ $t('common.home') }}
                             </UButton>
 

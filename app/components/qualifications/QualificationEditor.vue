@@ -93,8 +93,8 @@ const state = reactive<Schema>({
     },
 });
 
-const access = ref<
-    Map<
+const access = ref(
+    new Map<
         string,
         {
             id: string;
@@ -105,8 +105,8 @@ const access = ref<
                 minimumGrade?: number;
             };
         }
-    >
->(new Map());
+    >(),
+);
 const qualiAccess = ref<QualificationAccess>();
 const qualiRequirements = ref<QualificationRequirement[]>([]);
 

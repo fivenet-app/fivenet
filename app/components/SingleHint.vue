@@ -1,12 +1,12 @@
 <script lang="ts" setup generic="T extends RoutesNamesList, P extends string, E extends boolean = false">
 import type { NuxtRoute, RoutesNamesList } from '@typed-router';
 
-defineProps<{
+const props = defineProps<{
     hintId: string;
-    keyboard?: boolean;
+    showKey?: boolean;
     to?: NuxtRoute<T, P, E>;
     external?: E;
-    linkTarget?: '_blank' | null;
+    linkTarget?: '_blank';
 }>();
 </script>
 
@@ -30,10 +30,10 @@ defineProps<{
             <div class="mx-auto mb-2 flex items-center gap-1 text-base">
                 <span class="grow">{{ $t(`components.hints.${hintId}.content`) }} </span>
 
-                <div v-if="keyboard || to" class="flex-initial">
-                    <UKbd v-if="keyboard" :value="$t(`components.hints.${hintId}.keyboard`)" />
+                <div v-if="showKey || to" class="flex-initial">
+                    <UKbd v-if="showKey" :value="$t(`components.hints.${hintId}.keyboard`)" />
 
-                    <UButton v-else-if="to" variant="soft" :to="to" :external="external" :target="linkTarget ?? null">
+                    <UButton v-else-if="to" variant="soft" :to="to" :external="props.external" :target="linkTarget">
                         {{ $t('components.hints.click_me') }}
                     </UButton>
                 </div>

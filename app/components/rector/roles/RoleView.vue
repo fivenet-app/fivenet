@@ -34,10 +34,10 @@ const changed = ref(false);
 
 const permList = ref<Permission[]>([]);
 const permCategories = ref<Set<string>>(new Set());
-const permStates = ref<Map<string, boolean | undefined>>(new Map());
+const permStates = ref(new Map<string, boolean | undefined>());
 
 const attrList = ref<RoleAttribute[]>([]);
-const attrStates = ref<Map<string, AttributeValues | undefined>>(new Map());
+const attrStates = ref(new Map<string, AttributeValues | undefined>());
 
 async function getRole(id: string): Promise<Role> {
     try {

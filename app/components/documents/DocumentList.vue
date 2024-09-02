@@ -5,7 +5,7 @@ import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { OpenClose } from '~/shims';
+import type { OpenClose } from '~/typings';
 import { useCompletorStore } from '~/store/completor';
 import { useSettingsStore } from '~/store/settings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
