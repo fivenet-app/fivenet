@@ -91,7 +91,7 @@
         "nuxi": "3.13.1",
         "nuxt": "3.13.0",
         "nuxt-typed-router": "3.6.5",
-        "postcss": "8.4.41",
+        "postcss": "8.4.44",
         "postcss-custom-properties": "14.0.1",
         "postcss-import": "16.1.0",
         "postcss-nesting": "13.0.0",
