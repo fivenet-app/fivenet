@@ -40,7 +40,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
         // If the user has an acitve char, check for perms otherwise, redirect to char selector
         if (activeChar.value === null) {
             // If we don't have an active char, but a last char ID set, try to choose it and immidiately continue
-            if (lastCharID.value > 0) {
+            if (lastCharID.value !== undefined && lastCharID.value > 0) {
                 const { setActiveChar, setPermissions, setJobProps } = authStore;
                 try {
                     await authStore.chooseCharacter(authStore.lastCharID);

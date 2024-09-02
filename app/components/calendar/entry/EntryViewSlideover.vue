@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { BadgeColor } from '#ui/types';
 import { isSameDay } from 'date-fns';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
@@ -39,7 +40,7 @@ const {
 const entry = computed(() => data.value?.entry);
 const access = computed(() => data.value?.entry?.calendar?.access);
 
-const color = computed(() => entry.value?.calendar?.color ?? 'primary');
+const color = computed(() => (entry.value?.calendar?.color ?? 'primary') as BadgeColor);
 
 function copyLinkToClipboard(): void {
     copyToClipboardWrapper(`${w.location.href}?entry_id=${props.entryId}`);

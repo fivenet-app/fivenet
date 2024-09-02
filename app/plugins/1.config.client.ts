@@ -11,10 +11,11 @@ async function loadConfig(): Promise<void> {
         signal: abort.signal,
     })
         .catch((e) => {
+            const err = e as Error;
             throw createError({
                 statusCode: 500,
                 statusMessage: 'Failed to get FiveNet config from backend',
-                message: e,
+                message: err.message + '(Cause: ' + err.cause + ')',
                 fatal: true,
                 unhandled: false,
             });

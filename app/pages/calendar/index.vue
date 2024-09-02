@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { ButtonColor } from '#ui/types';
 import { useRouteQuery } from '@vueuse/router';
 import { addDays, isFuture, isPast, isSameDay, isToday } from 'date-fns';
 import type { DateRangeSource } from 'v-calendar/dist/types/src/utils/date/range.js';
@@ -345,10 +346,14 @@ const isOpen = ref(false);
                                                     @change="calendarIdChange(calendar.id, $event)"
                                                 />
 
-                                                <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+                                                <UBadge
+                                                    :color="calendar.color as ButtonColor"
+                                                    :ui="{ rounded: 'rounded-full' }"
+                                                    size="lg"
+                                                />
 
                                                 <UButton
-                                                    :color="calendar.color"
+                                                    :color="calendar.color as ButtonColor"
                                                     size="sm"
                                                     variant="link"
                                                     :padded="false"
@@ -421,7 +426,7 @@ const isOpen = ref(false);
                                     >
                                         <span class="inline-flex items-center gap-1">
                                             <UBadge
-                                                :color="attr.customData.color"
+                                                :color="attr.customData.color as ButtonColor"
                                                 :ui="{ rounded: 'rounded-full' }"
                                                 size="lg"
                                             />
@@ -461,7 +466,7 @@ const isOpen = ref(false);
                                     >
                                         <span class="inline-flex items-center gap-1">
                                             <UBadge
-                                                :color="attr.customData.color"
+                                                :color="attr.customData.color as ButtonColor"
                                                 :ui="{ rounded: 'rounded-full' }"
                                                 size="lg"
                                             />
@@ -566,10 +571,10 @@ const isOpen = ref(false);
                                 @change="calendarIdChange(calendar.id, $event)"
                             />
 
-                            <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" />
+                            <UBadge :color="calendar.color as ButtonColor" :ui="{ rounded: 'rounded-full' }" />
 
                             <UButton
-                                :color="calendar.color"
+                                :color="calendar.color as ButtonColor"
                                 :padded="false"
                                 variant="link"
                                 size="sm"

@@ -42,7 +42,7 @@ const links = computed(
                       to: '/auth/registration',
                   }
                 : undefined,
-        ].flatMap((item) => (item !== undefined ? [item] : [])) as (Button & { click?: Function })[],
+        ].flatMap((item) => (item !== undefined ? [item] : [])) as (Button & { click?: (...args: any[]) => void })[],
 );
 </script>
 

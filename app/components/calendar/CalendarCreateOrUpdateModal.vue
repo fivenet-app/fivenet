@@ -176,8 +176,8 @@ function setFromProps(): void {
 watch(data, () => setFromProps());
 watch(props, async () => refresh());
 
-const access = ref<
-    Map<
+const access = ref(
+    new Map<
         string,
         {
             id: string;
@@ -189,8 +189,8 @@ const access = ref<
                 minimumGrade?: number;
             };
         }
-    >
->(new Map());
+    >(),
+);
 
 function addAccessEntry(): void {
     if (access.value.size > maxAccessEntries - 1) {

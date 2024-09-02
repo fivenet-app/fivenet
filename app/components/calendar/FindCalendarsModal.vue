@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import type { BadgeColor } from '#ui/types';
 import { useCalendarStore } from '~/store/calendar';
 import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
 import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
@@ -85,7 +86,7 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
                         class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 flex flex-initial items-center justify-between gap-1 border-white py-1 dark:border-gray-900"
                     >
                         <div class="inline-flex gap-1">
-                            <UBadge :color="calendar.color" :ui="{ rounded: 'rounded-full' }" size="lg" />
+                            <UBadge :color="calendar.color as BadgeColor" :ui="{ rounded: 'rounded-full' }" size="lg" />
 
                             <span>{{ calendar.name }}</span>
                             <span v-if="calendar.description" class="hidden sm:block"

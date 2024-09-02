@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import type { ButtonColor } from '#ui/types';
 import { useSettingsStore } from '~/store/settings';
 
 const { isHelpSlideoverOpen } = useDashboard();
@@ -18,7 +19,7 @@ const links = computed(() =>
             label: t('common.shortcuts'),
             icon: 'i-mdi-key',
             trailingIcon: 'i-mdi-arrow-right',
-            color: 'gray',
+            color: 'gray' as ButtonColor,
             onClick: () => {
                 shortcuts.value = true;
             },
