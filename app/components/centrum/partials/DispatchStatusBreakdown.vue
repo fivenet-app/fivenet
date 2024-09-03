@@ -75,7 +75,7 @@ defineOptions({
 
         <template #panel>
             <div class="p-4">
-                <ul class="text-nowrap text-sm font-normal">
+                <ul role="list" class="text-nowrap text-sm font-normal">
                     <li>
                         <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.NEW)"
                             >{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}:</span

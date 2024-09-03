@@ -162,7 +162,7 @@ const canSubmit = ref(true);
         <DataNoDataBlock v-else-if="data?.notifications.length === 0" :type="$t('common.notification', 2)" icon="i-mdi-bell" />
 
         <div v-else class="relative overflow-x-auto">
-            <ul class="my-1 flex flex-col">
+            <ul role="list" class="my-1 flex flex-col">
                 <li
                     v-for="not in data?.notifications"
                     :key="not.id"
