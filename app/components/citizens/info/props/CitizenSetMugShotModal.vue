@@ -108,7 +108,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-model="state.reason"
                             type="text"
                             :placeholder="$t('common.reason')"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
@@ -124,10 +123,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 accept="image/jpeg,image/jpg,image/png"
                                 :placeholder="$t('common.image')"
                                 @change="state.mugShot = $event"
-                                @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                        </template>
+                        </templa
                     </UFormGroup>
 
                     <div class="mt-4 flex flex-1 items-center">

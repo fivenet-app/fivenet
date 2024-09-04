@@ -79,8 +79,6 @@ watch(attributes, () => (state.value = attributes.value ?? []));
                                     type="text"
                                     class="w-full flex-1"
                                     :placeholder="$t('common.attributes', 1)"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 

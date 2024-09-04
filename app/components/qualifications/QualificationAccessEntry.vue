@@ -130,14 +130,7 @@ watch(selectedAccessRole, () => {
 <template>
     <div class="my-2 flex flex-row items-center gap-1">
         <UFormGroup class="w-60 flex-initial">
-            <UInput
-                v-if="accessTypes.length === 1"
-                type="text"
-                disabled
-                :value="accessTypes[0]?.name"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
+            <UInput v-if="accessTypes.length === 1" type="text" disabled :value="accessTypes[0]?.name" />
             <USelectMenu
                 v-else
                 v-model="selectedAccessType"
@@ -145,8 +138,6 @@ watch(selectedAccessRole, () => {
                 :options="accessTypes"
                 :placeholder="$t('common.type')"
                 :searchable-placeholder="$t('common.search_field')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             >
                 <template #label>
                     <span v-if="selectedAccessType" class="truncate">{{ selectedAccessType.name }}</span>
@@ -175,8 +166,6 @@ watch(selectedAccessRole, () => {
                     :options="jobs ?? []"
                     :placeholder="$t('common.job')"
                     :searchable-placeholder="$t('common.search_field')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 >
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -196,8 +185,6 @@ watch(selectedAccessRole, () => {
                     :options="selectedJob?.grades ?? []"
                     :placeholder="$t('common.rank')"
                     :searchable-placeholder="$t('common.search_field')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 >
                     <template #option-empty="{ query: search }">
                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -218,8 +205,6 @@ watch(selectedAccessRole, () => {
                 :options="entriesAccessRoles"
                 :placeholder="$t('common.access')"
                 :searchable-placeholder="$t('common.search_field')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             >
                 <template #option-empty="{ query: search }">
                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

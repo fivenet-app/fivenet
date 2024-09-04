@@ -81,8 +81,8 @@ const filteredUnits = computed(() =>
                             type="text"
                             name="search"
                             :placeholder="$t('common.search')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         />
                     </UFormGroup>
 

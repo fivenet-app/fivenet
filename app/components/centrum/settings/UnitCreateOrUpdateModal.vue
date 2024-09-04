@@ -120,8 +120,8 @@ onMounted(async () => updateUnitInForm());
                             name="name"
                             type="text"
                             :placeholder="$t('common.name')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         />
                     </UFormGroup>
 
@@ -131,8 +131,8 @@ onMounted(async () => updateUnitInForm());
                             name="initials"
                             type="text"
                             :placeholder="$t('common.initials')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         />
                     </UFormGroup>
 
@@ -142,8 +142,8 @@ onMounted(async () => updateUnitInForm());
                             name="description"
                             type="text"
                             :placeholder="$t('common.description')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         />
                     </UFormGroup>
 
@@ -155,8 +155,8 @@ onMounted(async () => updateUnitInForm());
                             :options="availableAttributes"
                             :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         >
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -181,8 +181,8 @@ onMounted(async () => updateUnitInForm());
                             name="homePostal"
                             type="text"
                             :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         />
                     </UFormGroup>
                 </div>

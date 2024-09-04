@@ -108,7 +108,6 @@ onBeforeMount(async () => listJobs());
                             v-model="state.reason"
                             type="text"
                             :placeholder="$t('common.reason')"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
@@ -119,10 +118,9 @@ onBeforeMount(async () => listJobs());
                             :options="jobs"
                             by="label"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >
-                            <template #label>
+
                                 <template v-if="state.job">
                                     <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
                                 </template>
@@ -146,11 +144,10 @@ onBeforeMount(async () => listJobs());
                             :options="state.job?.grades"
                             by="grade"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >
                             <template #label>
-                                <template v-if="state.grade">
+                            e">
                                     <span class="truncate">{{ state.grade?.label }} ({{ state.grade?.grade }})</span>
                                 </template>
                             </template>

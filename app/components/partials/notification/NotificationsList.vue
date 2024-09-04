@@ -123,8 +123,8 @@ const canSubmit = ref(true);
                             option-attribute="label"
                             value-attribute="chip"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         >
                             <template #label>
                                 <template v-if="query.categories">

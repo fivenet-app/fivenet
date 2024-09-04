@@ -82,20 +82,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     pattern="[0-9]*"
                     autocomplete="registrationToken"
                     :placeholder="$t('components.auth.ForgotPassword.registration_token')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 />
             </UFormGroup>
 
             <UFormGroup name="username" :label="$t('common.username')">
-                <UInput
-                    v-model="state.username"
-                    type="text"
-                    autocomplete="username"
-                    :placeholder="$t('common.username')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
+                <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
             </UFormGroup>
 
             <UFormGroup name="password" :label="$t('common.password')">
@@ -104,8 +95,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     type="password"
                     autocomplete="new-password"
                     :placeholder="$t('common.password')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 />
                 <PasswordStrengthMeter :input="state.password" class="mt-2" />
             </UFormGroup>

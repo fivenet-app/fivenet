@@ -233,8 +233,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     size="xl"
                     :rows="4"
                     :placeholder="$t('components.messenger.reply')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 >
                     <UButton
                         type="submit"

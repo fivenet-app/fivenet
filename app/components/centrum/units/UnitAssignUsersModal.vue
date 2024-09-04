@@ -109,8 +109,8 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     :placeholder="$t('common.owner')"
                                     trailing
                                     by="userId"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
+
+                                    
                                 >
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

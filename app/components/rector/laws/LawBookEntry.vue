@@ -155,14 +155,7 @@ const editing = ref(props.startInEdit);
                 />
 
                 <UFormGroup name="name" :label="$t('common.law_book')" class="flex-initial">
-                    <UInput
-                        v-model="state.name"
-                        name="name"
-                        type="text"
-                        :placeholder="$t('common.law_book')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.law_book')" />
                 </UFormGroup>
 
                 <UFormGroup name="description" :label="$t('common.description')" class="flex-auto">
@@ -171,8 +164,6 @@ const editing = ref(props.startInEdit);
                         name="description"
                         type="text"
                         :placeholder="$t('common.description')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </UFormGroup>
             </UForm>

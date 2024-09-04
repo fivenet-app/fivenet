@@ -47,14 +47,7 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
 <template>
     <UForm :schema="schema" :state="state" class="space-y-4" @submit="onSubmitThrottle">
         <UFormGroup name="username" :label="$t('common.username')">
-            <UInput
-                v-model="state.username"
-                type="text"
-                autocomplete="username"
-                :placeholder="$t('common.username')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
+            <UInput v-model="state.username" type="text" autocomplete="username" :placeholder="$t('common.username')" />
         </UFormGroup>
 
         <UFormGroup name="password" :label="$t('common.password')">
@@ -63,8 +56,6 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
                 type="password"
                 autocomplete="current-password"
                 :placeholder="$t('common.password')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             />
         </UFormGroup>
 

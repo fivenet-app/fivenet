@@ -92,8 +92,8 @@ const nuiAvailable = ref(isNUIAvailable());
                             name="avatar"
                             class="flex-1"
                             :label="$t('common.avatar')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
+
+                            
                         >
                             <p v-if="nuiAvailable" class="text-sm">
                                 {{ $t('system.not_supported_on_tablet.title') }}
@@ -105,8 +105,8 @@ const nuiAvailable = ref(isNUIAvailable());
                                 :placeholder="$t('common.image')"
                                 accept="image/jpeg,image/jpg,image/png"
                                 @change="state.avatar = $event"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
+
+                                
                             />
                         </UFormGroup>
                     </div>

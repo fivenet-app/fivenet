@@ -88,13 +88,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="reason" :label="$t('common.reason')">
-                        <UInput
-                            v-model="state.reason"
-                            type="text"
-                            :placeholder="$t('common.reason')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                     </UFormGroup>
 
                     <UFormGroup name="trafficInfractionPoints" :label="$t('common.traffic_infraction_points')">
@@ -104,8 +98,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :min="0"
                             :max="9999999"
                             :placeholder="$t('common.traffic_infraction_points')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
                 </div>

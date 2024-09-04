@@ -153,8 +153,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 ref="commentInput"
                                 :rows="5"
                                 :placeholder="$t('components.documents.document_comments.add_comment')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 

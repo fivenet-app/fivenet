@@ -122,8 +122,6 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                                 by="grade"
                                                 searchable
                                                 :searchable-placeholder="$t('common.search_field')"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
                                             >
                                                 <template #label>
                                                     <template v-if="state.jobGrade">

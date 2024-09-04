@@ -197,8 +197,6 @@ const input = ref<{ input: HTMLInputElement }>();
                                     :placeholder="$t('common.colleague', 2)"
                                     trailing
                                     by="userId"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 >
                                     <template #label>
                                         <span v-if="query.users?.length" class="truncate">

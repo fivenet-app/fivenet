@@ -271,8 +271,6 @@ function removeRelation(id: string): void {
                                     type="text"
                                     name="name"
                                     :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 

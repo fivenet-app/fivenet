@@ -118,8 +118,6 @@ function changeQuestionType(qt: string): void {
                 :options="questionTypes"
                 class="w-40 max-w-40"
                 @update:model-value="changeQuestionType($event)"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             >
                 <template #label>
                     <span class="truncate">
@@ -141,25 +139,11 @@ function changeQuestionType(qt: string): void {
         <div class="flex flex-1 flex-col gap-2 p-4">
             <div class="flex flex-1 flex-col gap-2">
                 <UFormGroup name="title" :label="$t('common.title')" required>
-                    <UInput
-                        v-model="question.title"
-                        type="text"
-                        :placeholder="$t('common.title')"
-                        size="xl"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UInput v-model="question.title" type="text" :placeholder="$t('common.title')" size="xl" />
                 </UFormGroup>
 
                 <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
-                    <UTextarea
-                        v-model="question.description"
-                        type="text"
-                        :rows="3"
-                        :placeholder="$t('common.description')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UTextarea v-model="question.description" type="text" :rows="3" :placeholder="$t('common.description')" />
                 </UFormGroup>
             </div>
             <div class="flex-1">
@@ -189,8 +173,6 @@ function changeQuestionType(qt: string): void {
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 
@@ -200,8 +182,6 @@ function changeQuestionType(qt: string): void {
                                     type="number"
                                     :min="0"
                                     :max="Number.MAX_SAFE_INTEGER"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
                         </div>
@@ -230,8 +210,6 @@ function changeQuestionType(qt: string): void {
                                             v-model="question.data!.data.singleChoice.choices[idx]"
                                             type="text"
                                             class="w-full"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
 
@@ -262,8 +240,6 @@ function changeQuestionType(qt: string): void {
                                 type="number"
                                 :min="1"
                                 :max="question.data!.data.multipleChoice.choices.length"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 
@@ -280,8 +256,6 @@ function changeQuestionType(qt: string): void {
                                         type="text"
                                         block
                                         class="w-full"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
 
                                     <UButton

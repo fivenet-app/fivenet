@@ -55,8 +55,6 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
                     "
                     search-lazy
                     :search-placeholder="$t('common.search_field')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 >
                     <template #label>
                         <span v-if="query.user" class="truncate">

@@ -115,13 +115,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
-                        <UInput
-                            v-model="state.title"
-                            type="text"
-                            name="title"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="state.title" type="text" name="title" />
                     </UFormGroup>
 
                     <UFormGroup name="users" class="flex-1" required>
@@ -153,8 +147,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             searchable-lazy
                                             :searchable-placeholder="$t('common.search_field')"
                                             :search-attributes="['firstname', 'lastname']"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 <template v-if="state.users[idx]!.user">
@@ -184,8 +176,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             :options="accessLevels"
                                             value-attribute="mode"
                                             :searchable-placeholder="$t('common.search_field')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 <span class="truncate">{{

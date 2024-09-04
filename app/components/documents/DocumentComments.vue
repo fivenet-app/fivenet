@@ -151,8 +151,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     v-model="state.comment"
                                     :rows="3"
                                     :placeholder="$t('components.documents.document_comments.add_comment')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 

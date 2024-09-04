@@ -132,8 +132,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :placeholder="$t('common.citizen', 1)"
                         trailing
                         by="userId"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     >
                         <template #label>
                             <template v-if="selectedUser">
@@ -157,8 +155,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         value-attribute="status"
                         :placeholder="$t('common.status')"
                         :searchable-placeholder="$t('common.search_field')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     >
                         <template #label>
                             <span v-if="state.status" class="truncate">
@@ -188,20 +184,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :max="100"
                         :placeholder="$t('common.score')"
                         :label="$t('common.score')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </UFormGroup>
 
                 <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
-                    <UTextarea
-                        v-model="state.summary"
-                        name="summary"
-                        :rows="3"
-                        :placeholder="$t('common.summary')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
                 </UFormGroup>
             </div>
 

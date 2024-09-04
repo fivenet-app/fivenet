@@ -111,8 +111,8 @@ watchDebounced(query, async () => refresh(), {
                     :placeholder="$t('common.colleague', 2)"
                     trailing
                     by="userId"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
+
+                    
                 >
                     <template #label>
                         <template v-if="query.colleagues.length">

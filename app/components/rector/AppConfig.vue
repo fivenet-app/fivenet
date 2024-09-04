@@ -345,8 +345,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     v-model="state.perms.default[idx]!.category"
                                                     type="text"
                                                     :placeholder="$t('common.category')"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
                                                 />
                                             </UFormGroup>
 
@@ -355,8 +353,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     v-model="state.perms.default[idx]!.name"
                                                     type="text"
                                                     :placeholder="$t('common.name')"
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
                                                 />
                                             </UFormGroup>
 
@@ -397,8 +393,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('common.privacy_policy')"
                                         maxlength="255"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
 
@@ -413,8 +407,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('common.imprint')"
                                         maxlength="255"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
                             </UDashboardSection>
@@ -453,8 +445,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('common.job')"
                                         maxlength="255"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
 
@@ -472,8 +462,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         name="jobInfoUnemployedGrade"
                                         :placeholder="$t('common.rank')"
                                         :label="$t('common.rank')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
 
@@ -489,8 +477,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="jobs ?? []"
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <template v-if="state.jobInfo.publicJobs.length">
@@ -520,8 +506,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="jobs ?? []"
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <template v-if="state.jobInfo.hiddenJobs.length">
@@ -560,8 +544,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :min="1"
                                         :step="0.01"
                                         :placeholder="$t('common.duration')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #trailing>
                                             <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
@@ -581,8 +563,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :min="1"
                                         :step="0.01"
                                         :placeholder="$t('common.duration')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #trailing>
                                             <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
@@ -602,8 +582,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="jobs ?? []"
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <template v-if="state.userTracker.livemapJobs.length">
@@ -656,8 +634,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :step="0.01"
                                         name="discord.syncInterval"
                                         :placeholder="$t('common.duration')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #trailing>
                                             <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
@@ -675,8 +651,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         v-model="state.discord.inviteUrl"
                                         type="text"
                                         :placeholder="$t('components.rector.app_config.discord.bot_invite_url')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
 
@@ -692,8 +666,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="jobs ?? []"
                                         value-attribute="name"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <template v-if="state.discord.ignoredJobs.length > 0">

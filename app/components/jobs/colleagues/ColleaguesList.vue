@@ -137,9 +137,8 @@ defineShortcuts({
                     name="name"
                     :placeholder="$t('common.name')"
                     block
-                    @focusin="focusTablet(true)"
                     @focusout="focusTablet(false)"
-                    @keydown.esc="$event.target.blur()"
+                    ur()"
                 >
                     <template #trailing>
                         <UKbd value="/" />

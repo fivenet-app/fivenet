@@ -546,31 +546,15 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         :min="0"
                         :max="999999"
                         :placeholder="$t('common.weight')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </UFormGroup>
 
                 <UFormGroup name="title" :label="`${$t('common.template')} ${$t('common.title')}`" required>
-                    <UTextarea
-                        v-model="state.title"
-                        name="title"
-                        :rows="1"
-                        :placeholder="$t('common.title')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UTextarea v-model="state.title" name="title" :rows="1" :placeholder="$t('common.title')" />
                 </UFormGroup>
 
                 <UFormGroup name="description" :label="`${$t('common.template')} ${$t('common.description')}`" required>
-                    <UTextarea
-                        v-model="state.description"
-                        name="description"
-                        :rows="4"
-                        :label="$t('common.description')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UTextarea v-model="state.description" name="description" :rows="4" :label="$t('common.description')" />
                 </UFormGroup>
             </div>
 
@@ -609,13 +593,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
             <div>
                 <UFormGroup name="contentTitle" :label="`${$t('common.content')} ${$t('common.title')}`" required>
-                    <UTextarea
-                        v-model="state.contentTitle"
-                        name="contentTitle"
-                        :rows="2"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UTextarea v-model="state.contentTitle" name="contentTitle" :rows="2" />
                 </UFormGroup>
 
                 <UFormGroup name="category" :label="$t('common.category', 1)">
@@ -642,8 +620,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                         "
                         search-lazy
                         :search-placeholder="$t('common.search_field')"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     >
                         <template #option-empty="{ query: search }">
                             <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -653,13 +629,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 </UFormGroup>
 
                 <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">
-                    <UTextarea
-                        v-model="state.contentState"
-                        name="contentState"
-                        :rows="2"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UTextarea v-model="state.contentState" name="contentState" :rows="2" />
                 </UFormGroup>
 
                 <UFormGroup name="content" :label="`${$t('common.content')} ${$t('common.template')}`" required>

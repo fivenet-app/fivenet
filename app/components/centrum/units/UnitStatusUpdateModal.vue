@@ -154,8 +154,8 @@ function updateReasonField(value: string): void {
                                         name="code"
                                         :placeholder="$t('common.code')"
                                         :label="$t('common.code')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
+
+                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -173,8 +173,8 @@ function updateReasonField(value: string): void {
                                         type="text"
                                         name="reason"
                                         :placeholder="$t('common.reason')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
+
+                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -194,8 +194,8 @@ function updateReasonField(value: string): void {
                                     name="unitStatus"
                                     :options="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
                                     :searchable-placeholder="$t('common.search_field')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
+
+                                    
                                     @change="updateReasonField($event)"
                                 >
                                     <template #option="{ option }">

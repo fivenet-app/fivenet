@@ -87,13 +87,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="reason" :label="$t('common.reason')">
-                        <UInput
-                            v-model="state.reason"
-                            type="text"
-                            :placeholder="$t('common.reason')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                     </UFormGroup>
 
                     <UFormGroup name="requestType" :label="$t('common.access')" class="flex-1">
@@ -102,8 +96,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             :options="accessLevels"
                             :placeholder="$t('common.access')"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         >
                             <template #label>
                                 <span v-if="state.accessLevel" class="truncate">{{

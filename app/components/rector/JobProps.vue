@@ -317,8 +317,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         :placeholder="$t('common.radio_frequency')"
                                         :label="$t('common.radio_frequency')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
 
@@ -369,8 +367,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 block
                                                 :placeholder="$t('common.image')"
                                                 @change="state.logoUrl = $event"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
                                             />
                                         </template>
 
@@ -410,8 +406,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :disabled="appConfig.discord.botInviteURL === undefined"
                                         :placeholder="$t('components.rector.job_props.discord_sync_settings.discord_guild_id')"
                                         maxlength="70"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                     <UButton
                                         v-if="appConfig.discord.botInviteURL !== undefined"
@@ -462,8 +456,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 'components.rector.job_props.discord_sync_settings.status_log_settings.channel_id',
                                             )
                                         "
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
 
@@ -501,8 +493,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.grade_role_format',
                                                 )
                                             "
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
 
@@ -551,8 +541,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.employee_role_format',
                                                 )
                                             "
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
 
@@ -606,8 +594,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 },
                                             ]"
                                             :searchable-placeholder="$t('common.search_field')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 {{
@@ -655,8 +641,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.unemployed_role_name',
                                                 )
                                             "
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
 
@@ -719,8 +703,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                     'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.name',
                                                                 )
                                                             "
-                                                            @focusin="focusTablet(true)"
-                                                            @focusout="focusTablet(false)"
                                                         />
                                                     </UFormGroup>
 
@@ -749,8 +731,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                         'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.from_grade',
                                                                     )
                                                                 "
-                                                                @focusin="focusTablet(true)"
-                                                                @focusout="focusTablet(false)"
                                                             />
                                                         </UFormGroup>
                                                         <UFormGroup
@@ -777,8 +757,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                                         'components.rector.job_props.discord_sync_settings.user_info_sync_settings.group_mapping.to_grade',
                                                                     )
                                                                 "
-                                                                @focusin="focusTablet(true)"
-                                                                @focusout="focusTablet(false)"
                                                             />
                                                         </UFormGroup>
                                                     </div>
@@ -863,8 +841,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                         'components.rector.job_props.discord_sync_settings.jobs_absence_settings.jobs_absence_role_name',
                                                     )
                                                 "
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
                                             />
                                         </UFormGroup>
                                     </template>
@@ -893,8 +869,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                     'components.rector.job_props.discord_sync_settings.qualifications_role_format.title',
                                                 )
                                             "
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
                                 </template>
@@ -909,8 +883,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             v-model="selectedChange"
                                             :options="jobProps.discordSyncChanges.changes"
                                             :searchable-placeholder="$t('common.search_field')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         >
                                             <template #label>
                                                 <span class="truncate">{{ $d(toDate(selectedChange?.time), 'short') }}</span>
@@ -978,8 +950,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                             'components.rector.job_props.discord_sync_settings.group_sync_settings.ignored_role_ids.field',
                                                         )
                                                     "
-                                                    @focusin="focusTablet(true)"
-                                                    @focusout="focusTablet(false)"
                                                 />
                                             </UFormGroup>
 

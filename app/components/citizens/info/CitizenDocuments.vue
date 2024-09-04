@@ -94,8 +94,6 @@ const columns = [
                 :options="openclose"
                 value-attribute="closed"
                 :searchable-placeholder="$t('common.search_field')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             />
         </UFormGroup>
     </div>

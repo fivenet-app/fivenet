@@ -107,8 +107,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             value-attribute="status"
                             :placeholder="$t('common.status')"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         >
                             <template #label>
                                 <span v-if="state.status" class="truncate">{{
@@ -135,8 +133,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             name="approverComment"
                             :rows="3"
                             :placeholder="$t('common.message')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
                 </div>

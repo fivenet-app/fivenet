@@ -43,8 +43,8 @@ const schema = z.object({
                         :min="14"
                         :max="32"
                         :step="2"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
+
+                        
                     />
                     <span class="text-sm">{{ livemap.markerSize }}</span>
                 </UFormGroup>

@@ -206,8 +206,6 @@ const columns = [
                             :placeholder="$t('common.user', 2)"
                             trailing
                             by="userId"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         >
                             <template #label>
                                 <span v-if="query.users.length" class="truncate">
@@ -227,39 +225,15 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup name="service" :label="$t('common.service')" class="flex-1">
-                        <UInput
-                            v-model="query.service"
-                            type="text"
-                            name="service"
-                            :placeholder="$t('common.service')"
-                            block
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="query.service" type="text" name="service" :placeholder="$t('common.service')" block />
                     </UFormGroup>
 
                     <UFormGroup name="method" :label="$t('common.method')" class="flex-1">
-                        <UInput
-                            v-model="query.method"
-                            type="text"
-                            name="method"
-                            block
-                            :placeholder="$t('common.method')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="query.method" type="text" name="method" block :placeholder="$t('common.method')" />
                     </UFormGroup>
 
                     <UFormGroup name="data" :label="$t('common.data')" class="flex-1">
-                        <UInput
-                            v-model="query.search"
-                            type="text"
-                            name="data"
-                            block
-                            :placeholder="$t('common.search')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="query.search" type="text" name="data" block :placeholder="$t('common.search')" />
                     </UFormGroup>
                 </div>
             </UForm>

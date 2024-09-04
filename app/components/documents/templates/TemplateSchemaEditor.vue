@@ -44,8 +44,6 @@ defineEmits<{
                         :min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
@@ -59,8 +57,6 @@ defineEmits<{
                         :min="0"
                         oninput="validity.valid||(value='');"
                         name="users"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>
@@ -89,8 +85,6 @@ defineEmits<{
                         :min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
@@ -104,8 +98,6 @@ defineEmits<{
                         :min="0"
                         oninput="validity.valid||(value='');"
                         name="documents"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>
@@ -134,8 +126,6 @@ defineEmits<{
                         :min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </div>
                 <div class="flex flex-row">
@@ -149,8 +139,6 @@ defineEmits<{
                         :min="0"
                         oninput="validity.valid||(value='');"
                         name="vehicles"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </div>
             </div>

@@ -66,16 +66,32 @@ const onBeforeEnter = async () => {
     await finalizePendingLocaleChange();
 };
 
-// NUI message handling
 onMounted(async () => {
-    if (import.meta.client && isNUIAvailable.value) {
+    if (!import.meta.client) {
+        return;
+    }
+
+    if (isNUIAvailable.value) {
+        // NUI message handling
         window.addEventListener('message', onNUIMessage);
     }
+
+    window.addEventListener('focusin', onFocusHandler, true);
+    window.addEventListener('focusout', onFocusHandler, true);
 });
+
 onBeforeUnmount(async () => {
-    if (import.meta.client && isNUIAvailable.value) {
+    if (!import.meta.client) {
+        return;
+    }
+
+    if (isNUIAvailable.value) {
+        // NUI message handling
         window.removeEventListener('message', onNUIMessage);
     }
+
+    window.removeEventListener('focusin', onFocusHandler);
+    window.removeEventListener('focusout', onFocusHandler);
 });
 
 watch(updateAvailable, async () => {

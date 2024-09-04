@@ -78,8 +78,6 @@ watch(design.value, () => {
                     option-attribute="label"
                     value-attribute="chip"
                     :searchable-placeholder="$t('common.search_field')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 >
                     <template #label>
                         <span
@@ -108,8 +106,6 @@ watch(design.value, () => {
                     option-attribute="label"
                     value-attribute="chip"
                     :searchable-placeholder="$t('common.search_field')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 >
                     <template #label>
                         <span class="size-2 rounded-full" :class="`bg-${design.ui.gray}-500 dark:bg-${design.ui.gray}-400`" />
@@ -169,8 +165,6 @@ watch(design.value, () => {
                     :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
                     option-attribute="name"
                     :searchable-placeholder="$t('common.search_field')"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
                 />
                 <p v-else class="text-sm">
                     {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
@@ -189,14 +183,7 @@ watch(design.value, () => {
                 :label="$t('components.auth.UserSettingsPanel.volumes.notifications_volume')"
                 class="grid grid-cols-2 items-center gap-2"
             >
-                <URange
-                    v-model="audio.notificationsVolume"
-                    :step="0.01"
-                    :min="0"
-                    :max="1"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
+                <URange v-model="audio.notificationsVolume" :step="0.01" :min="0" :max="1" />
                 {{ audio.notificationsVolume <= 0 ? 0 : (audio.notificationsVolume * 100).toFixed(0) }}%
             </UFormGroup>
         </UDashboardSection>

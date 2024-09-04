@@ -242,14 +242,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             {{ $t('common.template', 2) }} {{ $t('common.weight') }}
                         </h3>
                         <div class="my-2">
-                            <UInput
-                                type="text"
-                                name="weight"
-                                disabled
-                                :value="template.weight"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
+                            <UInput type="text" name="weight" disabled :value="template.weight" />
                         </div>
                     </div>
                     <div v-if="template.jobAccess" class="my-2">
@@ -278,8 +271,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 disabled
                                 :rows="4"
                                 :value="template.contentTitle"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </div>
                     </div>
@@ -294,8 +285,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 class="block w-full whitespace-pre-wrap rounded-md border-0 bg-base-900 py-1.5 focus:ring-1 focus:ring-inset focus:ring-base-300 sm:text-sm sm:leading-6"
                                 disabled
                                 :value="template.state"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </div>
                     </div>
@@ -321,8 +310,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 disabled
                                 :rows="4"
                                 :value="template.content"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </div>
                     </div>

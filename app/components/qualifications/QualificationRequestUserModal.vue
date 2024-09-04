@@ -87,13 +87,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="userComment" :label="$t('common.message')" class="flex-1">
-                        <UTextarea
-                            v-model="state.userComment"
-                            name="userComment"
-                            :placeholder="$t('common.message')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UTextarea v-model="state.userComment" name="userComment" :placeholder="$t('common.message')" />
                     </UFormGroup>
                 </div>
 

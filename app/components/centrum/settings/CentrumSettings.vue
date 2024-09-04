@@ -198,8 +198,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :options="modes"
                                     value-attribute="mode"
                                     :searchable-placeholder="$t('common.search_field')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
+
+                                    
                                 >
                                     <template #label>
                                         <span class="truncate">{{
@@ -225,8 +225,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :options="modes"
                                     value-attribute="mode"
                                     :searchable-placeholder="$t('common.search_field')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
+
+                                    
                                 >
                                     <template #label>
                                         <span class="truncate">{{
@@ -269,8 +269,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
+
+                                                
                                             />
                                         </UFormGroup>
 
@@ -310,8 +310,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
+
+                                                
                                             />
                                         </UFormGroup>
 
@@ -354,8 +354,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     type="number"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
+
+                                    
                                 />
                             </UFormGroup>
                         </UDashboardSection>

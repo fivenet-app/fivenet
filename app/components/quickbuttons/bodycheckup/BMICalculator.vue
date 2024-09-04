@@ -40,8 +40,6 @@ onBeforeMount(() => bmiCalculate());
                             type="text"
                             :placeholder="$t('components.bodycheckup.height')"
                             :label="$t('components.bodycheckup.height')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         />
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <span class="sm:text-sm">cm</span>
@@ -64,8 +62,6 @@ onBeforeMount(() => bmiCalculate());
                             type="text"
                             :placeholder="$t('components.bodycheckup.mass')"
                             :label="$t('components.bodycheckup.mass')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         />
                         <div class="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-3">
                             <span class="sm:text-sm">kg</span>

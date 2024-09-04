@@ -196,7 +196,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 option-attribute="name"
                                 by="id"
                                 :placeholder="$t('common.calendar')"
-                                @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >
                                 <template #label>
@@ -232,10 +231,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 name="title"
                                 type="text"
                                 :placeholder="$t('common.title')"
-                                @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             />
-                        </UFormGroup>
+                        </UFormG
 
                         <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
                             <DatePickerPopoverClient
@@ -288,11 +286,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.citizen', 2)"
                                 trailing
                                 by="userId"
-                                @focusin="focusTablet(true)"
                                 @focusout="focusTablet(false)"
                             >
                                 <template #option="{ option: user }">
-                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                ser?.lastname} (${user?.dateofbirth})` }}
                                 </template>
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

@@ -170,8 +170,8 @@ watch(editing, () => {
                                             :rows="6"
                                             :maxrows="10"
                                             name="note"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
+
+                                            
                                         />
                                     </UFormGroup>
 

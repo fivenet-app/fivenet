@@ -309,14 +309,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <template v-else>
                         <UFormGroup name="title" :label="$t('common.name')" class="flex-1" required>
-                            <UInput
-                                v-model="state.name"
-                                name="name"
-                                type="text"
-                                :placeholder="$t('common.name')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
+                            <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
                         </UFormGroup>
 
                         <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
@@ -327,8 +320,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 option-attribute="label"
                                 value-attribute="chip"
                                 :searchable-placeholder="$t('common.search_field')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             >
                                 <template #label>
                                     <span
@@ -349,13 +340,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
-                            <UTextarea
-                                v-model="state.description"
-                                name="description"
-                                :placeholder="$t('common.description')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
+                            <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
                         </UFormGroup>
 
                         <UFormGroup

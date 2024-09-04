@@ -672,8 +672,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             size="xl"
                             :placeholder="$t('common.title')"
                             :disabled="!canEdit || !canDo.edit"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
 
@@ -702,8 +700,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 "
                                 search-lazy
                                 :search-placeholder="$t('common.search_field')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             >
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -718,8 +714,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 type="text"
                                 :placeholder="`${$t('common.document', 1)} ${$t('common.state')}`"
                                 :disabled="!canEdit || !canDo.edit"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 
@@ -733,8 +727,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                 ]"
                                 value-attribute="closed"
                                 :searchable-placeholder="$t('common.search_field')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             >
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

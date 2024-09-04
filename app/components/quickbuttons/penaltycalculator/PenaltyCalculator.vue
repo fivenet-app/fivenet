@@ -197,14 +197,7 @@ const columns = [
 
                 <div v-else>
                     <UFormGroup name="search">
-                        <UInput
-                            v-model="querySearchRaw"
-                            type="text"
-                            name="search"
-                            :placeholder="$t('common.filter')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="querySearchRaw" type="text" name="search" :placeholder="$t('common.filter')" />
                     </UFormGroup>
 
                     <dl class="mt-4">
@@ -232,8 +225,6 @@ const columns = [
                                                     state.selectedPenalties.find((p) => p.law.id === law.id)?.count ?? 0
                                                 "
                                                 @change="calculate({ law: law, count: parseInt($event) })"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
                                             />
                                         </template>
                                     </UTable>

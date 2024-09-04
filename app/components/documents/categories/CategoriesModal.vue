@@ -141,19 +141,11 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.category', 1)"
                                 :label="$t('common.category', 1)"
                                 :value="category?.name"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 
                         <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
-                            <UTextarea
-                                v-model="state.description"
-                                name="description"
-                                :placeholder="$t('common.description')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
+                            <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
                         </UFormGroup>
                     </div>
                 </div>

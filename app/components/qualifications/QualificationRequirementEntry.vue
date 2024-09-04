@@ -58,8 +58,6 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
                 search-lazy
                 :search-placeholder="$t('common.search_field')"
                 :loading="qualificationsLoading"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             >
                 <template #option-empty="{ query: search }">
                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

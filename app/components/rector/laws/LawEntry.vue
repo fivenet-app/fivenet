@@ -137,14 +137,7 @@ const editing = ref(props.startInEdit);
             </UButtonGroup>
         </UFormGroup>
         <UFormGroup class="table-cell py-2 pl-4 pr-3 text-sm font-medium sm:pl-1">
-            <UInput
-                v-model="state.name"
-                name="name"
-                type="text"
-                :placeholder="$t('common.crime')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
+            <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.crime')" />
         </UFormGroup>
         <UFormGroup class="table-cell whitespace-nowrap p-1 text-left">
             <UInput
@@ -153,8 +146,6 @@ const editing = ref(props.startInEdit);
                 type="number"
                 :placeholder="$t('common.fine')"
                 :label="$t('common.fine')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             />
         </UFormGroup>
         <UFormGroup class="table-cell whitespace-nowrap p-1 text-left">
@@ -163,8 +154,6 @@ const editing = ref(props.startInEdit);
                 name="detentionTime"
                 type="number"
                 :placeholder="$t('common.detention_time')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             />
         </UFormGroup>
         <UFormGroup class="table-cell whitespace-nowrap p-1 text-left">
@@ -173,19 +162,10 @@ const editing = ref(props.startInEdit);
                 name="stvoPoints"
                 type="number"
                 :placeholder="$t('common.traffic_infraction_points')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             />
         </UFormGroup>
         <UFormGroup class="table-cell p-1 text-left">
-            <UInput
-                v-model="state.description"
-                name="description"
-                type="text"
-                :placeholder="$t('common.description')"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
-            />
+            <UInput v-model="state.description" name="description" type="text" :placeholder="$t('common.description')" />
         </UFormGroup>
     </UForm>
 </template>

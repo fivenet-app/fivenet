@@ -84,19 +84,10 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-model="state.category"
                             :options="categories"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
                         />
                     </UFormGroup>
                     <UFormGroup name="name" :label="$t('common.name')" class="flex-1" required>
-                        <UInput
-                            v-model="state.name"
-                            type="text"
-                            name="name"
-                            :placeholder="$t('common.name')"
-                            @focusin="focusTablet(true)"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
                     </UFormGroup>
                     <UFormGroup name="file" :label="$t('common.file')" class="flex-1">
                         <p v-if="isNUIAvailable()" class="text-sm">
@@ -109,8 +100,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 accept="image/jpeg,image/jpg,image/png"
                                 :placeholder="$t('common.image')"
                                 @change="state.file = $event"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </template>
                     </UFormGroup>

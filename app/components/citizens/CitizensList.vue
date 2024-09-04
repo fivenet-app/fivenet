@@ -174,8 +174,6 @@ defineShortcuts({
                         name="name"
                         :placeholder="`${$t('common.citizen', 1)} ${$t('common.name')}`"
                         block
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                         @keydown.esc="$event.target.blur()"
                     >
                         <template #trailing>
@@ -193,8 +191,6 @@ defineShortcuts({
                         data-maska="##.##.####"
                         :placeholder="`${$t('common.date_of_birth')} (DD.MM.YYYY)`"
                         block
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     />
                 </UFormGroup>
 
@@ -232,8 +228,6 @@ defineShortcuts({
                                 name="phoneNumber"
                                 :placeholder="$t('common.phone_number')"
                                 block
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 
@@ -250,8 +244,6 @@ defineShortcuts({
                                 :smin="0"
                                 :placeholder="$t('common.traffic_infraction_points')"
                                 block
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
 
@@ -268,8 +260,6 @@ defineShortcuts({
                                 :min="0"
                                 :placeholder="`${$t('common.fine')}`"
                                 block
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             />
                         </UFormGroup>
                     </div>

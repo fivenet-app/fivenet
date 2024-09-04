@@ -244,8 +244,6 @@ onBeforeMount(async () => {
                                 :placeholder="$t('common.rank')"
                                 :searchable-placeholder="$t('common.search_field')"
                                 @update:model-value="updateJobGradeValue(job, $event)"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
                             >
                                 <template #label>
                                     <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">

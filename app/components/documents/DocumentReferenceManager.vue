@@ -309,8 +309,6 @@ function removeReference(id: string): void {
                                     type="text"
                                     name="title"
                                     :placeholder="`${$t('common.document', 1)} ${$t('common.title')}`"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 

@@ -150,8 +150,6 @@ defineShortcuts({
                         name="licensePlate"
                         :placeholder="$t('common.license_plate')"
                         block
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     >
                         <template #trailing>
                             <UKbd value="/" />
@@ -160,15 +158,7 @@ defineShortcuts({
                 </UFormGroup>
 
                 <UFormGroup v-if="!hideVehicleModell" name="model" :label="$t('common.model')" class="flex-1">
-                    <UInput
-                        v-model="query.model"
-                        type="text"
-                        name="model"
-                        :placeholder="$t('common.model')"
-                        block
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
-                    />
+                    <UInput v-model="query.model" type="text" name="model" :placeholder="$t('common.model')" block />
                 </UFormGroup>
 
                 <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.owner')" class="flex-1">
@@ -193,8 +183,6 @@ defineShortcuts({
                         :placeholder="$t('common.owner')"
                         trailing
                         by="userId"
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                     >
                         <template #option="{ option: user }">
                             {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

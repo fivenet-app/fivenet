@@ -76,8 +76,8 @@ const dispatchesFiltered = computedAsync(async () =>
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
                 autocomplete="off"
                 :ui="{ icon: { trailing: { pointer: '' } } }"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
+
+                
             >
                 <template #trailing>
                     <UButton

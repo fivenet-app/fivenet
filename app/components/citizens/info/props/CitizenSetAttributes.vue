@@ -156,7 +156,6 @@ watch(state, () => {
                 option-attribute="name"
                 by="name"
                 clear-search-on-close
-                @focusin="focusTablet(true)"
                 @focusout="focusTablet(false)"
             >
                 <template #option="{ option }">
@@ -174,13 +173,7 @@ watch(state, () => {
 
         <template v-if="changed">
             <UFormGroup name="reason" :label="$t('common.reason')">
-                <UInput
-                    v-model="state.reason"
-                    type="text"
-                    name="reason"
-                    @focusin="focusTablet(true)"
-                    @focusout="focusTablet(false)"
-                />
+                <UInput v-model="state.reason" type="text" name="reason" @focusout="focusTablet(false)" />
             </UFormGroup>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">

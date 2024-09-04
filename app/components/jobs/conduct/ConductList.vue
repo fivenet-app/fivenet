@@ -202,9 +202,8 @@ defineShortcuts({
                             :placeholder="$t('common.colleague')"
                             trailing
                             by="userId"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
-                            @keydown.esc="$event.target.blur()"
+                            ur()"
                         >
                             <template #option="{ option: user }">
                                 {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
@@ -231,10 +230,9 @@ defineShortcuts({
                             value-attribute="status"
                             :placeholder="$t('common.na')"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         >
-                            <template #option="{ option }">
+                            >
                                 <span class="truncate" :class="conductTypesToBGColor(option.status)">
                                     {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
                                 </span>

@@ -199,7 +199,6 @@ function reset(): void {
                                 focusTablet(true);
                                 selectPin(pin);
                             "
-                            @focusout="focusTablet(false)"
                         />
 
                         <UButton variant="link" icon="i-mdi-trash-can" class="ml-1" @click="removePin(idx)" />

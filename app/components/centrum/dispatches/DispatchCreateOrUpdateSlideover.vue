@@ -114,8 +114,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         name="message"
                                         :placeholder="$t('common.message')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
+
+                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -133,8 +133,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
+
+                                        
                                     />
                                 </UFormGroup>
                             </dd>

@@ -139,13 +139,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div>
                     <template v-if="canDo.create">
                         <UFormGroup name="reason" :label="$t('common.reason')">
-                            <UInput
-                                v-model="state.reason"
-                                type="text"
-                                :placeholder="$t('common.reason')"
-                                @focusin="focusTablet(true)"
-                                @focusout="focusTablet(false)"
-                            />
+                            <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                         </UFormGroup>
 
                         <div class="my-2">
@@ -156,8 +150,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     value-attribute="key"
                                     :placeholder="$t('common.type')"
                                     :searchable-placeholder="$t('common.search_field')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 >
                                     <template #option="{ option }">
                                         <span class="truncate">{{

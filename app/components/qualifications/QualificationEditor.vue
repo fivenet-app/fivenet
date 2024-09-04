@@ -491,8 +491,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             size="xl"
                                             :placeholder="$t('common.abbreviation')"
                                             :disabled="!canDo.edit"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
 
@@ -504,8 +502,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             size="xl"
                                             :placeholder="$t('common.title')"
                                             :disabled="!canDo.edit"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
                                 </div>
@@ -518,8 +514,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             block
                                             :placeholder="$t('common.description')"
                                             :disabled="!canDo.edit"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
 
@@ -533,8 +527,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                             ]"
                                             value-attribute="closed"
                                             :searchable-placeholder="$t('common.search_field')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         >
                                             <template #option-empty="{ query: search }">
                                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -632,8 +624,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                                 type="text"
                                                 :placeholder="$t('common.role')"
                                                 :disabled="!canDo.edit"
-                                                @focusin="focusTablet(true)"
-                                                @focusout="focusTablet(false)"
                                             />
                                         </UFormGroup>
                                     </UContainer>
@@ -652,8 +642,6 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                     :options="examModes"
                                     value-attribute="mode"
                                     class="w-40 max-w-40"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 >
                                     <template #label>
                                         <span class="truncate">

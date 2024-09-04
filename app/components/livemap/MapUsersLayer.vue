@@ -79,8 +79,6 @@ const playerMarkersFiltered = computedAsync(async () =>
                 :placeholder="`${$t('common.employee', 1)} ${$t('common.filter')}`"
                 autocomplete="off"
                 :ui="{ icon: { trailing: { pointer: '' } } }"
-                @focusin="focusTablet(true)"
-                @focusout="focusTablet(false)"
             >
                 <template #trailing>
                     <UButton

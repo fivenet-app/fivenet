@@ -12,6 +12,27 @@ function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';
 }
 
+const focusNUITargets = ['input'];
+
+/**
+ *
+ * @param event FocusEvent `focusin`/`focusout` event
+ * @returns void promise
+ */
+export async function onFocusHandler(event: FocusEvent): Promise<void> {
+    if (event.target === window) {
+        return;
+    }
+
+    event.stopPropagation();
+    const element = event.target as HTMLElement;
+    if (!focusNUITargets.includes(element.tagName.toLowerCase())) {
+        return;
+    }
+
+    focusTablet(event.type === 'focusin');
+}
+
 export async function fetchNUI<T = any, V = any>(method: string, data: T): Promise<V> {
     const body = JSON.stringify(data);
     logger.debug(`Fetch ${method}:`, body);

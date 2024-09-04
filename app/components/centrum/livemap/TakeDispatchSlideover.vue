@@ -127,8 +127,8 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             type="text"
                                             name="search"
                                             :placeholder="$t('common.search')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
+
+                                            
                                         />
                                     </UFormGroup>
                                 </dd>

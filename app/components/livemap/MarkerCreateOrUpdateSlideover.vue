@@ -186,14 +186,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="name">
-                                    <UInput
-                                        v-model="state.name"
-                                        type="text"
-                                        name="name"
-                                        :placeholder="$t('common.name')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
-                                    />
+                                    <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />
                                 </UFormGroup>
                             </dd>
                         </div>
@@ -210,8 +203,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
                             </dd>
@@ -259,8 +250,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="markerTypes"
                                         value-attribute="type"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <span class="truncate">{{
@@ -294,8 +283,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :min="5"
                                         :max="250"
                                         :placeholder="$t('common.radius')"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
                             </dd>
@@ -317,8 +304,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         searchable-lazy
                                         :searchable-placeholder="$t('common.search_field')"
                                         value-attribute="name"
-                                        @focusin="focusTablet(true)"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <component

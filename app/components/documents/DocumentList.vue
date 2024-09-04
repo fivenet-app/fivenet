@@ -125,8 +125,6 @@ defineShortcuts({
                         name="title"
                         :placeholder="$t('common.title')"
                         block
-                        @focusin="focusTablet(true)"
-                        @focusout="focusTablet(false)"
                         @keydown.esc="$event.target.blur()"
                     >
                         <template #trailing>
@@ -155,8 +153,6 @@ defineShortcuts({
                                     name="documentIds"
                                     placeholder="DOC-..."
                                     block
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 
@@ -185,8 +181,6 @@ defineShortcuts({
                                     "
                                     search-lazy
                                     :search-placeholder="$t('common.category', 1)"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 >
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -217,8 +211,6 @@ defineShortcuts({
                                     :placeholder="$t('common.creator')"
                                     trailing
                                     by="userId"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 >
                                     <template #label>
                                         <template v-if="query.creators.length">
@@ -243,8 +235,6 @@ defineShortcuts({
                                     :options="openclose"
                                     value-attribute="closed"
                                     :searchable-placeholder="$t('common.search_field')"
-                                    @focusin="focusTablet(true)"
-                                    @focusout="focusTablet(false)"
                                 />
                             </UFormGroup>
 

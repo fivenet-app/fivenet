@@ -115,7 +115,6 @@ const columns = [
                             :min="1"
                             :max="31"
                             :placeholder="$t('common.time_ago.day', 2)"
-                            @focusin="focusTablet(true)"
                             @focusout="focusTablet(false)"
                         />
                     </UFormGroup>

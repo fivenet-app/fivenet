@@ -38,8 +38,6 @@ watch(selectedJob, () => {
         "
         search-lazy
         :search-placeholder="$t('common.search_field')"
-        @focusin="focusTablet(true)"
-        @focusout="focusTablet(false)"
     >
         <template #option-empty="{ query: search }">
             <q>{{ search }}</q> {{ $t('common.query_not_found') }}

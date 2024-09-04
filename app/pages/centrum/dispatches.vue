@@ -129,8 +129,6 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                             type="text"
                                             name="postal"
                                             :placeholder="$t('common.postal')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         >
                                             <template #trailing>
                                                 <UKbd value="/" />
@@ -145,8 +143,6 @@ onMounted(async () => useTimeoutFn(() => (mount.value = true), 35));
                                             :min="1"
                                             :max="99999999999"
                                             :placeholder="$t('common.id')"
-                                            @focusin="focusTablet(true)"
-                                            @focusout="focusTablet(false)"
                                         />
                                     </UFormGroup>
                                 </UForm>

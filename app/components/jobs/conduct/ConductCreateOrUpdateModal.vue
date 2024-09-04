@@ -148,7 +148,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="cTypes"
                                         value-attribute="status"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
                                         <template #label>
@@ -192,10 +191,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.colleague')"
                                         trailing
                                         by="userId"
-                                        @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     >
-                                        <template #label>
+
                                             <template v-if="state.targetUser">
                                                 {{ userToLabel(state.targetUser) }}
                                             </template>
@@ -226,7 +224,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         name="message"
                                         :rows="6"
                                         :placeholder="$t('common.message')"
-                                        @focusin="focusTablet(true)"
                                         @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
