@@ -12,7 +12,7 @@ function getParentResourceName(): string {
     return useSettingsStore().nuiResourceName ?? 'fivenet';
 }
 
-const focusNUITargets = ['input'];
+const focusNUITargets = ['input', 'textarea'];
 
 /**
  *

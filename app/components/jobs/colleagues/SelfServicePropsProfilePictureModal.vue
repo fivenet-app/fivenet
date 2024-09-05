@@ -88,13 +88,7 @@ const nuiAvailable = ref(isNUIAvailable());
 
                 <div>
                     <div>
-                        <UFormGroup
-                            name="avatar"
-                            class="flex-1"
-                            :label="$t('common.avatar')"
-
-                            
-                        >
+                        <UFormGroup name="avatar" class="flex-1" :label="$t('common.avatar')">
                             <p v-if="nuiAvailable" class="text-sm">
                                 {{ $t('system.not_supported_on_tablet.title') }}
                             </p>
@@ -105,8 +99,6 @@ const nuiAvailable = ref(isNUIAvailable());
                                 :placeholder="$t('common.image')"
                                 accept="image/jpeg,image/jpg,image/png"
                                 @change="state.avatar = $event"
-
-                                
                             />
                         </UFormGroup>
                     </div>

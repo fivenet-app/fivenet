@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
+import { format } from 'date-fns';
 import { z } from 'zod';
-import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
+import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
@@ -9,6 +10,7 @@ import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { UserShort } from '~~/gen/ts/resources/users/users';
 import { conductTypesToBGColor } from './helpers';
+import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 
 const props = defineProps<{
     entry?: ConductEntry;
@@ -148,7 +150,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :options="cTypes"
                                         value-attribute="status"
                                         :searchable-placeholder="$t('common.search_field')"
-                                        @focusout="focusTablet(false)"
                                     >
                                         <template #label>
                                             <span class="truncate">{{
@@ -191,9 +192,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         :placeholder="$t('common.colleague')"
                                         trailing
                                         by="userId"
-                                        @focusout="focusTablet(false)"
                                     >
-
+                                        <template #label>
                                             <template v-if="state.targetUser">
                                                 {{ userToLabel(state.targetUser) }}
                                             </template>
@@ -224,7 +224,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         name="message"
                                         :rows="6"
                                         :placeholder="$t('common.message')"
-                                        @focusout="focusTablet(false)"
                                     />
                                 </UFormGroup>
                             </dd>

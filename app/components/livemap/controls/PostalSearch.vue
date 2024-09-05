@@ -88,8 +88,6 @@ watchDebounced(postalQuery, () => findPostal(), {
         :searchable-placeholder="$t('common.search_field')"
         :popper="{ placement: 'top-start' }"
         size="xs"
-
-        
     >
         <template #option-empty="{ query: search }">
             <q>{{ search }}</q> {{ $t('common.query_not_found') }}

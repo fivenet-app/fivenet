@@ -156,7 +156,6 @@ watch(state, () => {
                 option-attribute="name"
                 by="name"
                 clear-search-on-close
-                @focusout="focusTablet(false)"
             >
                 <template #option="{ option }">
                     <span class="truncate" :style="{ backgroundColor: option.color }">{{ option.name }}</span>
@@ -173,7 +172,7 @@ watch(state, () => {
 
         <template v-if="changed">
             <UFormGroup name="reason" :label="$t('common.reason')">
-                <UInput v-model="state.reason" type="text" name="reason" @focusout="focusTablet(false)" />
+                <UInput v-model="state.reason" type="text" name="reason" />
             </UFormGroup>
 
             <UButton type="submit" block icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">

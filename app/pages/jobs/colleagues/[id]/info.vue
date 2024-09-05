@@ -18,7 +18,10 @@ definePageMeta({
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-info'>;
         // Check if the id is made up of digits
-        return /^\d+$/.test(route.params.id);
+        if (typeof route.params.id !== 'string') {
+            return false;
+        }
+        return idParamRegex.test(route.params.id as string);
     },
 });
 
@@ -164,15 +167,7 @@ watch(editing, () => {
                                 </template>
                                 <template v-else>
                                     <UFormGroup name="note" class="w-full">
-                                        <UTextarea
-                                            v-model="state.note"
-                                            block
-                                            :rows="6"
-                                            :maxrows="10"
-                                            name="note"
-
-                                            
-                                        />
+                                        <UTextarea v-model="state.note" block :rows="6" :maxrows="10" name="note" />
                                     </UFormGroup>
 
                                     <UFormGroup name="reason" :label="$t('common.reason')" class="w-full" required>

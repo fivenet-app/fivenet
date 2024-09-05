@@ -12,7 +12,10 @@ definePageMeta({
     validate: async (route) => {
         route = route as TypedRouteFromName<'jobs-colleagues-id-conduct'>;
         // Check if the id is made up of digits
-        return /^\d+$/.test(route.params.id);
+        if (typeof route.params.id !== 'string') {
+            return false;
+        }
+        return idParamRegex.test(route.params.id as string);
     },
 });
 
@@ -21,6 +24,6 @@ const route = useRoute('jobs-colleagues-id-conduct');
 
 <template>
     <div>
-        <ConductList :user-id="parseInt(route.params.id)" :hide-user-search="true" />
+        <ConductList :user-id="parseInt(route.params.id as string)" :hide-user-search="true" />
     </div>
 </template>

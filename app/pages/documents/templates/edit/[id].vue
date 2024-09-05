@@ -12,7 +12,10 @@ definePageMeta({
     validate: async (route) => {
         route = route as TypedRouteFromName<'documents-templates-edit-id'>;
         // Check if the id is made up of digits
-        return /^\d+$/.test(route.params.id);
+        if (typeof route.params.id !== 'string') {
+            return false;
+        }
+        return idParamRegex.test(route.params.id as string);
     },
 });
 

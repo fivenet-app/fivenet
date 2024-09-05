@@ -196,7 +196,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 option-attribute="name"
                                 by="id"
                                 :placeholder="$t('common.calendar')"
-                                @focusout="focusTablet(false)"
                             >
                                 <template #label>
                                     <template v-if="state.calendar">
@@ -226,14 +225,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
-                            <UInput
-                                v-model="state.title"
-                                name="title"
-                                type="text"
-                                :placeholder="$t('common.title')"
-                                @focusout="focusTablet(false)"
-                            />
-                        </UFormG
+                            <UInput v-model="state.title" name="title" type="text" :placeholder="$t('common.title')" />
+                        </UFormGroup>
 
                         <UFormGroup name="startTime" :label="$t('common.begins_at')" class="flex-1" required>
                             <DatePickerPopoverClient
@@ -286,10 +279,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :placeholder="$t('common.citizen', 2)"
                                 trailing
                                 by="userId"
-                                @focusout="focusTablet(false)"
                             >
                                 <template #option="{ option: user }">
-                                ser?.lastname} (${user?.dateofbirth})` }}
+                                    {{ `${user?.lastname} (${user?.dateofbirth})` }}
                                 </template>
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}

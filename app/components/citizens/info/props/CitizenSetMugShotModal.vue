@@ -104,12 +104,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="reason" :label="$t('common.reason')">
-                        <UInput
-                            v-model="state.reason"
-                            type="text"
-                            :placeholder="$t('common.reason')"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                     </UFormGroup>
 
                     <UFormGroup name="mugShot" :label="$t('common.image')">
@@ -123,9 +118,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 accept="image/jpeg,image/jpg,image/png"
                                 :placeholder="$t('common.image')"
                                 @change="state.mugShot = $event"
-                                @focusout="focusTablet(false)"
                             />
-                        </templa
+                        </template>
                     </UFormGroup>
 
                     <div class="mt-4 flex flex-1 items-center">

@@ -104,12 +104,7 @@ onBeforeMount(async () => listJobs());
 
                 <div>
                     <UFormGroup class="flex-1" name="reason" :label="$t('common.reason')">
-                        <UInput
-                            v-model="state.reason"
-                            type="text"
-                            :placeholder="$t('common.reason')"
-                            @focusout="focusTablet(false)"
-                        />
+                        <UInput v-model="state.reason" type="text" :placeholder="$t('common.reason')" />
                     </UFormGroup>
 
                     <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
@@ -118,9 +113,8 @@ onBeforeMount(async () => listJobs());
                             :options="jobs"
                             by="label"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusout="focusTablet(false)"
                         >
-
+                            <template #label>
                                 <template v-if="state.job">
                                     <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
                                 </template>
@@ -144,12 +138,11 @@ onBeforeMount(async () => listJobs());
                             :options="state.job?.grades"
                             by="grade"
                             :searchable-placeholder="$t('common.search_field')"
-                            @focusout="focusTablet(false)"
                         >
                             <template #label>
-                            e">
-                                    <span class="truncate">{{ state.grade?.label }} ({{ state.grade?.grade }})</span>
-                                </template>
+                                <span v-if="state.grade" class="truncate"
+                                    >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
+                                >
                             </template>
                             <template #option="{ option: jobGrade }">
                                 <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
