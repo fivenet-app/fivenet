@@ -159,7 +159,14 @@ fmt-js:
 
 .PHONY: gen-licenses
 gen-licenses: go-licenses
-	yarn licenses generate-disclaimer > ./public/licenses/frontend.txt
+	$(MAKE) gen-licenses-js gen-licenses-go
+
+gen-licenses-js:
+	pnpm licenses list --prod --json | \
+		pnpx @quantco/pnpm-licenses generate-disclaimer --json-input \
+			--output-file=./public/licenses/frontend.txt
+
+gen-licenses-go:
 	go-licenses report ./... --ignore $$($(GO) list -m) --include_tests \
 		--ignore $$($(GO) list std | awk 'NR > 1 { printf(",") } { printf("%s",$$0) } END { print "" }') \
 		--template internal/scripts/go-licenses-backend.txt.tpl > ./public/licenses/backend.txt
