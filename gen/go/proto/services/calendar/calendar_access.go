@@ -26,7 +26,10 @@ func (s *Server) getAccess(ctx context.Context, calendarId uint64) (*calendar.Ca
 		).
 		FROM(tCJobAccess).
 		WHERE(tCJobAccess.CalendarID.EQ(jet.Uint64(calendarId))).
-		ORDER_BY(tCJobAccess.ID.ASC())
+		ORDER_BY(
+			tCJobAccess.Job.ASC(),
+			tCJobAccess.MinimumGrade.ASC(),
+		)
 
 	if err := jobStmt.QueryContext(ctx, s.db, &dest.Jobs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {

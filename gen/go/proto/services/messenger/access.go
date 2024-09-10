@@ -27,7 +27,8 @@ func (s *Server) getThreadAccess(ctx context.Context, threadId uint64) (*messeng
 			tThreadsJobAccess.ThreadID.EQ(jet.Uint64(threadId)),
 		).
 		ORDER_BY(
-			tThreadsJobAccess.ID.ASC(),
+			tThreadsJobAccess.Job.ASC(),
+			tThreadsJobAccess.MinimumGrade.ASC(),
 		)
 
 	var jobAccess []*messenger.ThreadJobAccess

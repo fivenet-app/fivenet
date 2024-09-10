@@ -36,32 +36,12 @@ export function checkDocAccess(
 }
 
 function checkBaseDocAccess(
-    activeChar: User,
-    docAccess: DocumentAccess | undefined,
+    activeChar: UserShort,
+    access: DocumentAccess | undefined,
     creator: UserShort | undefined,
     level: AccessLevel,
 ): boolean {
-    if (docAccess === undefined) {
-        return false;
-    }
-
-    if (creator !== undefined && activeChar.userId === creator.userId) {
-        return true;
-    }
-
-    const ju = docAccess.users.find((ua) => ua.userId === activeChar.userId && level <= ua.access);
-    if (ju !== undefined) {
-        return true;
-    }
-
-    const ja = docAccess.jobs.find(
-        (ja) => ja.job === activeChar.job && ja.minimumGrade <= activeChar.jobGrade && level <= ja.access,
-    );
-    if (ja !== undefined) {
-        return true;
-    }
-
-    return false;
+    return checkAccess(activeChar, access, creator, level);
 }
 
 function checkIfCanAccessOwnJobDocument(activeChar: User, creator: UserShort, perm: Perms): boolean {

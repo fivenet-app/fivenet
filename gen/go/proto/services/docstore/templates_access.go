@@ -31,7 +31,8 @@ func (s *Server) getTemplateJobAccess(ctx context.Context, templateId uint64) ([
 			tDTemplatesJobAccess.TemplateID.EQ(jet.Uint64(templateId)),
 		).
 		ORDER_BY(
-			tDTemplatesJobAccess.ID.ASC(),
+			tDTemplatesJobAccess.Job.ASC(),
+			tDTemplatesJobAccess.MinimumGrade.ASC(),
 		)
 
 	var jobAccess []*documents.TemplateJobAccess

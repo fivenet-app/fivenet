@@ -118,7 +118,8 @@ func (s *Server) getDocumentAccess(ctx context.Context, documentId uint64) (*doc
 			tDJobAccess.DocumentID.EQ(jet.Uint64(documentId)),
 		).
 		ORDER_BY(
-			tDJobAccess.ID.ASC(),
+			tDJobAccess.Job.ASC(),
+			tDJobAccess.MinimumGrade.ASC(),
 		)
 
 	var jobAccess []*documents.DocumentJobAccess

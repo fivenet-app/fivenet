@@ -109,7 +109,8 @@ func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uin
 			tQJobAccess.QualificationID.EQ(jet.Uint64(qualificationId)),
 		).
 		ORDER_BY(
-			tQJobAccess.ID.ASC(),
+			tQJobAccess.Job.ASC(),
+			tQJobAccess.MinimumGrade.ASC(),
 		)
 
 	var jobAccess []*qualifications.QualificationJobAccess
