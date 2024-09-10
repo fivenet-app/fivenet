@@ -47,7 +47,7 @@ func (s *Server) GetExamInfo(ctx context.Context, req *GetExamInfoRequest) (*Get
 
 	check, err = s.checkIfUserCanTakeExam(ctx, quali, userInfo)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !check {
 		return nil, errorsqualifications.ErrExamDisabled
@@ -80,7 +80,7 @@ func (s *Server) checkIfUserCanTakeExam(ctx context.Context, quali *qualificatio
 		}
 
 		if request == nil || request.Status == nil || (*request.Status != qualifications.RequestStatus_REQUEST_STATUS_ACCEPTED && *request.Status != qualifications.RequestStatus_REQUEST_STATUS_EXAM_STARTED) {
-			return false, errorsqualifications.ErrExamDisabled
+			return false, nil
 		}
 	}
 
@@ -147,7 +147,7 @@ func (s *Server) TakeExam(ctx context.Context, req *TakeExamRequest) (*TakeExamR
 
 	check, err = s.checkIfUserCanTakeExam(ctx, quali, userInfo)
 	if err != nil {
-		return nil, err
+		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 	if !check {
 		return nil, errorsqualifications.ErrExamDisabled
