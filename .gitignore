@@ -26,6 +26,8 @@ target/
 *.sln
 *.sw?
 
+.direnv/
+
 # Golang relevant files
 vendor/
 __debug_bin*
