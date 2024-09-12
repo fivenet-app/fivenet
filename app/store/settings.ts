@@ -69,7 +69,7 @@ export const useSettingsStore = defineStore('settings', {
             featureGates: {},
         }) as SettingsState,
     persist: {
-        paths: [
+        pick: [
             'version',
             'locale',
             'nuiEnabled',

@@ -26,6 +26,9 @@
 
       devShells = forEachSupportedSystem ({ pkgs }: {
         default = pkgs.mkShell {
+          # Workaround CGO issue https://nixos.wiki/wiki/Go#Using_cgo_on_NixOS
+          hardeningDisable = [ "fortify" ];
+
           packages = with pkgs; [
             # go (version is specified by overlay)
             go

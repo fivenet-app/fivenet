@@ -42,7 +42,7 @@ export const useAuthStore = defineStore('auth', {
             } as JobProps,
         }) as AuthState,
     persist: {
-        paths: ['accessTokenExpiration', 'lastCharID', 'username'],
+        pick: ['accessTokenExpiration', 'lastCharID', 'username'],
     },
     actions: {
         loginStart(): void {

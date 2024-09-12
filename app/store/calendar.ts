@@ -43,10 +43,8 @@ export const useCalendarStore = defineStore('calendar', {
             entries: [],
         }) as CalendarState,
     persist: {
-        key(id) {
-            return `state-${useAuthStore().activeChar?.userId}-${id}`;
-        },
-        paths: ['activeCalendarIds', 'weeklyView'],
+        key: (id: string) => `state-${useAuthStore().activeChar?.userId}-${id}`,
+        pick: ['activeCalendarIds', 'weeklyView'],
     },
     actions: {
         // Calendars

@@ -16,7 +16,7 @@ export default defineNuxtConfig({
         '@nuxtjs/fontaine',
         '@vueuse/nuxt',
         '@pinia/nuxt',
-        '@pinia-plugin-persistedstate/nuxt',
+        'pinia-plugin-persistedstate/nuxt',
         'nuxt-zod-i18n',
         '@nuxtjs/i18n',
         '@galexrt/nuxt-update',

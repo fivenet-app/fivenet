@@ -66,7 +66,7 @@
         "@nuxt/eslint-config": "0.5.7",
         "@nuxtjs/fontaine": "0.4.3",
         "@nuxtjs/i18n": "8.5.3",
-        "@pinia-plugin-persistedstate/nuxt": "1.2.1",
+        "pinia-plugin-persistedstate": "4.0.1",
         "@protobuf-ts/plugin": "2.9.4",
         "@total-typescript/ts-reset": "0.6.1",
         "@types/google-protobuf": "3.15.12",

@@ -77,5 +77,7 @@ export function checkAccess<L = number>(
         }
     }
 
-    return (lowestAccess ?? 0) >= level;
+    console.log('level', level, 'lowestAccess', lowestAccess, activeChar.firstname, activeChar.jobGrade);
+
+    return level <= (lowestAccess ?? 0);
 }
