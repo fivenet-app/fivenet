@@ -45,7 +45,7 @@ func replaceInVals(key, old, new string) copyOption {
 		opts.replacers = append(
 			opts.replacers,
 			func(k string, vv []string) (string, []string, bool) {
-				if strings.ToLower(key) == strings.ToLower(k) {
+				if strings.EqualFold(key, k) {
 					vv2 := make([]string, 0, len(vv))
 					for _, v := range vv {
 						vv2 = append(
@@ -86,20 +86,6 @@ func keyCase(fn func(string) string) copyOption {
 			opts.replacers,
 			func(k string, vv []string) (string, []string, bool) {
 				return fn(k), vv, true
-			},
-		)
-	}
-}
-
-// keyTrim returns an option to unconditionally trim the keys of the
-// destination header with function fn. Typically fn can be
-// strings.Trim, strings.TrimLeft/TrimRight, strings.TrimPrefix/TrimSuffix
-func keyTrim(fn func(string, string) string, cut string) copyOption {
-	return func(opts *copyOptions) {
-		opts.replacers = append(
-			opts.replacers,
-			func(k string, vv []string) (string, []string, bool) {
-				return fn(k, cut), vv, true
 			},
 		)
 	}

@@ -392,6 +392,7 @@ func (s *GrpcWebWrapperTestSuite) TestPingStream_NormalGrpcWorks() {
 	bidiClient.Send(&testproto.PingRequest{Value: "one"})
 	bidiClient.Send(&testproto.PingRequest{Value: "two"})
 	resp, err := bidiClient.CloseAndRecv()
+	assert.NoError(s.T(), err, "no error during execution")
 	assert.Equal(s.T(), "one,two", resp.GetValue(), "expected concatenated value must be received")
 	recvHeaders, err := bidiClient.Header()
 	require.NoError(s.T(), err, "no error during execution")
