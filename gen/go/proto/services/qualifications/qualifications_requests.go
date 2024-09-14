@@ -218,7 +218,7 @@ func (s *Server) CreateOrUpdateQualificationRequest(ctx context.Context, req *Cr
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
 
-	quali, err := s.getQualification(ctx, req.Request.QualificationId, nil, userInfo, false)
+	quali, err := s.getQualification(ctx, req.Request.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Request.QualificationId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}

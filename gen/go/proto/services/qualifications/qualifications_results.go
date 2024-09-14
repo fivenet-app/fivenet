@@ -297,7 +297,7 @@ func (s *Server) CreateOrUpdateQualificationResult(ctx context.Context, req *Cre
 		auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 	}
 
-	quali, err := s.getQualification(ctx, req.Result.QualificationId, nil, userInfo, false)
+	quali, err := s.getQualification(ctx, req.Result.QualificationId, tQuali.ID.EQ(jet.Uint64(req.Result.QualificationId)), userInfo, false)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -474,9 +474,10 @@ func (s *Server) DeleteQualificationResult(ctx context.Context, req *DeleteQuali
 		SET(
 			jet.CURRENT_TIMESTAMP(),
 		).
-		WHERE(
+		WHERE(jet.AND(
 			tQualiResults.ID.EQ(jet.Uint64(result.Id)),
-		)
+			tQualiResults.ID.EQ(jet.Uint64(req.ResultId)),
+		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

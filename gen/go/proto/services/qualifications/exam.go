@@ -40,7 +40,7 @@ func (s *Server) GetExamInfo(ctx context.Context, req *GetExamInfoRequest) (*Get
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualificationShort(ctx, req.QualificationId, nil, userInfo)
+	quali, err := s.getQualificationShort(ctx, req.QualificationId, tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
@@ -140,7 +140,7 @@ func (s *Server) TakeExam(ctx context.Context, req *TakeExamRequest) (*TakeExamR
 		return nil, errorsqualifications.ErrFailedQuery
 	}
 
-	quali, err := s.getQualificationShort(ctx, req.QualificationId, nil, userInfo)
+	quali, err := s.getQualificationShort(ctx, req.QualificationId, tQuali.ID.EQ(jet.Uint64(req.QualificationId)), userInfo)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 	}
