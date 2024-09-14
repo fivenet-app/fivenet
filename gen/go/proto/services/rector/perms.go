@@ -20,9 +20,7 @@ import (
 	"go.uber.org/multierr"
 )
 
-var (
-	ignoredGuardPermissions = []string{}
-)
+var ignoredGuardPermissions = []string{}
 
 func (s *Server) ensureUserCanAccessRole(ctx context.Context, roleId uint64) (*model.FivenetRoles, bool, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

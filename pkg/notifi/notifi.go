@@ -13,9 +13,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var (
-	tNots = table.FivenetNotifications
-)
+var tNots = table.FivenetNotifications
 
 type INotifi interface {
 	NotifyUser(ctx context.Context, not *notifications.Notification) error

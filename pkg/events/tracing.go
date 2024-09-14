@@ -59,7 +59,7 @@ func GetJetstreamMsgContext(msg jetstream.Msg) (spanContext trace.SpanContext, e
 	var spanContextConfig trace.SpanContextConfig
 	spanContextConfig.TraceID = traceID
 	spanContextConfig.SpanID = spanID
-	spanContextConfig.TraceFlags = 01
+	spanContextConfig.TraceFlags = 0o1
 	spanContextConfig.Remote = true
 	spanContext = trace.NewSpanContext(spanContextConfig)
 
@@ -81,7 +81,7 @@ func GetNatsMsgContext(msg *nats.Msg) (spanContext trace.SpanContext, err error)
 	var spanContextConfig trace.SpanContextConfig
 	spanContextConfig.TraceID = traceID
 	spanContextConfig.SpanID = spanID
-	spanContextConfig.TraceFlags = 01
+	spanContextConfig.TraceFlags = 0o1
 	spanContextConfig.Remote = true
 	spanContext = trace.NewSpanContext(spanContextConfig)
 

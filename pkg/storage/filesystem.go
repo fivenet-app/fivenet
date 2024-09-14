@@ -31,7 +31,7 @@ func NewFilesystem(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 		basePath: cfg.Storage.Filesystem.Path,
 	}
 
-	if err := os.MkdirAll(f.basePath, 0770); err != nil {
+	if err := os.MkdirAll(f.basePath, 0o770); err != nil {
 		return nil, err
 	}
 
@@ -39,7 +39,7 @@ func NewFilesystem(lc fx.Lifecycle, cfg *config.Config) (IStorage, error) {
 }
 
 func (s *Filesystem) WithPrefix(prefix string) (IStorage, error) {
-	if err := os.MkdirAll(filepath.Join(s.basePath, prefix), 0770); err != nil {
+	if err := os.MkdirAll(filepath.Join(s.basePath, prefix), 0o770); err != nil {
 		return nil, err
 	}
 
@@ -61,7 +61,7 @@ func (s *Filesystem) Get(ctx context.Context, filePathIn string) (IObject, IObje
 		return nil, nil, ErrNotFound
 	}
 
-	f, err := os.OpenFile(filePath, os.O_RDONLY, 0600)
+	f, err := os.OpenFile(filePath, os.O_RDONLY, 0o600)
 	if err != nil {
 		return nil, nil, err
 	}
@@ -106,12 +106,12 @@ func (s *Filesystem) Put(ctx context.Context, filePathIn string, reader io.Reade
 			return "", err
 		}
 
-		if err := os.MkdirAll(dir, 0770); err != nil {
+		if err := os.MkdirAll(dir, 0o770); err != nil {
 			return "", err
 		}
 	}
 
-	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0600)
+	f, err := os.OpenFile(filePath, os.O_WRONLY|os.O_TRUNC|os.O_CREATE, 0o600)
 	if err != nil {
 		return "", err
 	}

@@ -5,6 +5,4 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.MessengerService.ErrFailedQuery")
-)
+var ErrFailedQuery = status.Error(codes.Internal, "errors.MessengerService.ErrFailedQuery")

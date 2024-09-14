@@ -21,9 +21,7 @@ import (
 
 type Cfg = rector.AppConfig
 
-var (
-	tConfig = table.FivenetConfig.AS("appconfig")
-)
+var tConfig = table.FivenetConfig.AS("appconfig")
 
 type IConfig interface {
 	Get() *Cfg

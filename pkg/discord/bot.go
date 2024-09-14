@@ -33,9 +33,7 @@ const (
 	disconnectRestartCountThreshold = 5
 )
 
-var (
-	tJobProps = table.FivenetJobProps.AS("jobprops")
-)
+var tJobProps = table.FivenetJobProps.AS("jobprops")
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
 	return log.Named("discord_bot")

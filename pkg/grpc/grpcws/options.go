@@ -1,4 +1,4 @@
-//Copyright 2017 Improbable. All Rights Reserved.
+// Copyright 2017 Improbable. All Rights Reserved.
 // See LICENSE for licensing terms.
 
 package grpcws
@@ -8,17 +8,15 @@ import (
 	"time"
 )
 
-var (
-	defaultOptions = &options{
-		allowedRequestHeaders:          []string{"*"},
-		corsForRegisteredEndpointsOnly: true,
-		originFunc:                     func(origin string) bool { return false },
-		allowNonRootResources:          false,
-		corsMaxAge:                     10 * time.Minute,
-		websocketReadLimit:             8 * 1024 * 1024, // 8 MB
-		websocketChannelMaxStreamCount: 25,
-	}
-)
+var defaultOptions = &options{
+	allowedRequestHeaders:          []string{"*"},
+	corsForRegisteredEndpointsOnly: true,
+	originFunc:                     func(origin string) bool { return false },
+	allowNonRootResources:          false,
+	corsMaxAge:                     10 * time.Minute,
+	websocketReadLimit:             8 * 1024 * 1024, // 8 MB
+	websocketChannelMaxStreamCount: 25,
+}
 
 type options struct {
 	allowedRequestHeaders          []string

@@ -39,8 +39,7 @@ type Links struct {
 	PrivacyPolicy *string `json:"privacyPolicy"`
 }
 
-type FeatureGates struct {
-}
+type FeatureGates struct{}
 
 type Game struct {
 	UnemployedJobName string `json:"unemployedJobName"`

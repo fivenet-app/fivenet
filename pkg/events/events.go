@@ -18,14 +18,12 @@ import (
 // Default `defaultAsyncPubAckInflight` is `4000` (`nats.go`)
 const DefaultDefaultAsyncPubAckInflight = 256
 
-var (
-	metricNATSAsyncPending = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: admin.MetricsNamespace,
-		Subsystem: "nats",
-		Name:      "jetstream_async_pending_count",
-		Help:      "NATS JetStreamn async pending count.",
-	})
-)
+var metricNATSAsyncPending = promauto.NewGauge(prometheus.GaugeOpts{
+	Namespace: admin.MetricsNamespace,
+	Subsystem: "nats",
+	Name:      "jetstream_async_pending_count",
+	Help:      "NATS JetStreamn async pending count.",
+})
 
 type Subject string
 

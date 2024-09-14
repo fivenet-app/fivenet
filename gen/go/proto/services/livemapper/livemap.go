@@ -35,9 +35,7 @@ const (
 	userMarkerChunkSize = 20
 )
 
-var (
-	ErrStreamFailed = status.Error(codes.Internal, "errors.LivemapperService.ErrStreamFailed")
-)
+var ErrStreamFailed = status.Error(codes.Internal, "errors.LivemapperService.ErrStreamFailed")
 
 type Server struct {
 	LivemapperServiceServer

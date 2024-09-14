@@ -21,9 +21,7 @@ import (
 	"google.golang.org/protobuf/proto"
 )
 
-var (
-	tJobProps = table.FivenetJobProps
-)
+var tJobProps = table.FivenetJobProps
 
 func (s *Server) GetJobProps(ctx context.Context, req *GetJobPropsRequest) (*GetJobPropsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

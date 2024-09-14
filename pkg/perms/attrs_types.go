@@ -4,5 +4,7 @@ type Key string
 
 type StringList []string
 
-type JobList []string
-type JobGradeList map[string]int32
+type (
+	JobList      []string
+	JobGradeList map[string]int32
+)

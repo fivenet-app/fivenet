@@ -31,9 +31,7 @@ import (
 
 const QualificationsPageSize = 6
 
-var (
-	tQuali = table.FivenetQualifications.AS("qualification")
-)
+var tQuali = table.FivenetQualifications.AS("qualification")
 
 type Server struct {
 	QualificationsServiceServer

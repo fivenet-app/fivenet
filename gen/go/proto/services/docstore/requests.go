@@ -27,9 +27,7 @@ import (
 
 const DocRequestMinimumWaitTime = 24 * time.Hour
 
-var (
-	tDocRequest = table.FivenetDocumentsRequests.AS("doc_request")
-)
+var tDocRequest = table.FivenetDocumentsRequests.AS("doc_request")
 
 func (s *Server) ListDocumentReqs(ctx context.Context, req *ListDocumentReqsRequest) (*ListDocumentReqsResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))

@@ -18,9 +18,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tDCategory = table.FivenetDocumentsCategories.AS("category")
-)
+var tDCategory = table.FivenetDocumentsCategories.AS("category")
 
 func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest) (*ListCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

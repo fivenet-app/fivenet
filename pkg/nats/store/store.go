@@ -51,9 +51,11 @@ type Store[T any, U protoMessage[T]] struct {
 
 type Option[T any, U protoMessage[T]] func(s *Store[T, U]) error
 
-type OnUpdateFn[T any, U protoMessage[T]] func(U) (U, error)
-type OnDeleteFn[T any, U protoMessage[T]] func(jetstream.KeyValueEntry, U) error
-type OnNotFoundFn[T any, U protoMessage[T]] func(ctx context.Context, key string) (U, error)
+type (
+	OnUpdateFn[T any, U protoMessage[T]]   func(U) (U, error)
+	OnDeleteFn[T any, U protoMessage[T]]   func(jetstream.KeyValueEntry, U) error
+	OnNotFoundFn[T any, U protoMessage[T]] func(ctx context.Context, key string) (U, error)
+)
 
 func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}

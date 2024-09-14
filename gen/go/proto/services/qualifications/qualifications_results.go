@@ -22,9 +22,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tQualiResults = table.FivenetQualificationsResults.AS("qualificationresult")
-)
+var tQualiResults = table.FivenetQualificationsResults.AS("qualificationresult")
 
 func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualificationsResultsRequest) (*ListQualificationsResultsResponse, error) {
 	if req.QualificationId != nil {

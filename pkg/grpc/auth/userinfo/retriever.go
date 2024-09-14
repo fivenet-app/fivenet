@@ -17,9 +17,7 @@ import (
 
 const cacheTTL = 20 * time.Second
 
-var (
-	ErrAccountError = fmt.Errorf("failed to retrieve account data")
-)
+var ErrAccountError = fmt.Errorf("failed to retrieve account data")
 
 type UserInfoRetriever interface {
 	GetUserInfo(ctx context.Context, userId int32, accountId uint64) (*UserInfo, error)

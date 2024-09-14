@@ -1,4 +1,4 @@
-//Copyright 2017 Improbable. All Rights Reserved.
+// Copyright 2017 Improbable. All Rights Reserved.
 // See LICENSE for licensing terms.
 
 package grpcws_test
@@ -633,8 +633,7 @@ func headerWithFlag(flags ...string) http.Header {
 	return h
 }
 
-type testServiceImpl struct {
-}
+type testServiceImpl struct{}
 
 func (s *testServiceImpl) PingEmpty(ctx context.Context, _ *google_protobuf.Empty) (*testproto.PingResponse, error) {
 	grpc.SendHeader(ctx, expectedHeaders)

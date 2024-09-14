@@ -744,7 +744,6 @@ func (s *Server) ChangeDocumentOwner(ctx context.Context, req *ChangeDocumentOwn
 
 		if doc.CreatorId != nil && *doc.CreatorId == userInfo.UserId {
 			return nil, errorsdocstore.ErrDocSameOwner
-
 		}
 	}
 

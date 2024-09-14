@@ -61,6 +61,7 @@ func (s *Manager) CheckIfUserPartOfUnit(ctx context.Context, job string, userId 
 
 	return false
 }
+
 func (s *Manager) CheckIfBotNeeded(ctx context.Context, job string) bool {
 	settings := s.GetSettings(ctx, job)
 

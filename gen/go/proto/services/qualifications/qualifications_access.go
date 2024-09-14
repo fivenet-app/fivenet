@@ -126,7 +126,6 @@ func (s *Server) getQualificationAccess(ctx context.Context, qualificationId uin
 }
 
 func (s *Server) handleQualificationAccessChanges(ctx context.Context, tx qrm.DB, mode qualifications.AccessLevelUpdateMode, qualificationId uint64, access *qualifications.QualificationAccess) error {
-
 	switch mode {
 	case qualifications.AccessLevelUpdateMode_ACCESS_LEVEL_UPDATE_MODE_UNSPECIFIED:
 		fallthrough
@@ -302,7 +301,7 @@ func (s *Server) deleteQualificationAccess(ctx context.Context, tx qrm.DB, quali
 		return nil
 	}
 
-	if access.Jobs != nil && len(access.Jobs) > 0 {
+	if len(access.Jobs) > 0 {
 		jobIds := []jet.Expression{}
 		for i := 0; i < len(access.Jobs); i++ {
 			if access.Jobs[i].Id == 0 {

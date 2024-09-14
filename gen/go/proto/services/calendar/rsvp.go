@@ -184,7 +184,6 @@ func (s *Server) RSVPCalendarEntry(ctx context.Context, req *RSVPCalendarEntryRe
 	return &RSVPCalendarEntryResponse{
 		Entry: rsvpEntry,
 	}, nil
-
 }
 
 func (s *Server) getRSVPCalendarEntry(ctx context.Context, entryId uint64, userId int32) (*calendar.CalendarEntryRSVP, error) {

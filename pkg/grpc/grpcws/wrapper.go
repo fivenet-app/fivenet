@@ -1,4 +1,4 @@
-//Copyright 2017 Improbable. All Rights Reserved.
+// Copyright 2017 Improbable. All Rights Reserved.
 // See LICENSE for licensing terms.
 
 package grpcws
@@ -18,16 +18,16 @@ import (
 	"google.golang.org/grpc/grpclog"
 )
 
-var (
-	internalRequestHeadersWhitelist = []string{
-		"U-A", // for gRPC-Web User Agent indicator.
-	}
-)
+var internalRequestHeadersWhitelist = []string{
+	"U-A", // for gRPC-Web User Agent indicator.
+}
 
 // https://github.com/grpc/grpc/blob/master/doc/PROTOCOL-WEB.md#protocol-differences-vs-grpc-over-http2
-const grpcContentType = "application/grpc"
-const grpcWebContentType = "application/grpc-web"
-const grpcWebTextContentType = "application/grpc-web-text"
+const (
+	grpcContentType        = "application/grpc"
+	grpcWebContentType     = "application/grpc-web"
+	grpcWebTextContentType = "application/grpc-web-text"
+)
 
 type WrappedGrpcServer struct {
 	handler             http.Handler
@@ -233,6 +233,7 @@ type readerCloser struct {
 func (r *readerCloser) Read(dest []byte) (int, error) {
 	return r.reader.Read(dest)
 }
+
 func (r *readerCloser) Close() error {
 	return r.closer.Close()
 }

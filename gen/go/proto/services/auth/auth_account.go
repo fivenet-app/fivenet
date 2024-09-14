@@ -15,9 +15,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	ErrGenericAccount = status.Error(codes.Internal, "errors.AuthService.ErrGenericAccount")
-)
+var ErrGenericAccount = status.Error(codes.Internal, "errors.AuthService.ErrGenericAccount")
 
 func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest) (*GetAccountInfoResponse, error) {
 	token, err := auth.GetTokenFromGRPCContext(ctx)

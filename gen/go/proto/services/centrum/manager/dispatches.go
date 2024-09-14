@@ -877,6 +877,7 @@ func (s *Manager) AddAttributeToDispatch(ctx context.Context, dsp *centrum.Dispa
 
 	return nil
 }
+
 func (s *Manager) AddReferencesToDispatch(ctx context.Context, dsp *centrum.Dispatch, refs ...*centrum.DispatchReference) error {
 	update := false
 	if dsp.References == nil {

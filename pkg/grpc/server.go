@@ -35,9 +35,7 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error.title;errors.general.internal_error.content")
-)
+var ErrInternalServer = status.Error(codes.Internal, "errors.general.internal_error.title;errors.general.internal_error.content")
 
 // Setup metric for panic recoveries
 var panicsTotal = promauto.With(prometheus.DefaultRegisterer).NewCounter(prometheus.CounterOpts{

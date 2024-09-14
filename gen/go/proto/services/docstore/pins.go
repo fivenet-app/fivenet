@@ -19,9 +19,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tDPins = table.FivenetDocumentsPins
-)
+var tDPins = table.FivenetDocumentsPins
 
 func (s *Server) ListDocumentPins(ctx context.Context, req *ListDocumentPinsRequest) (*ListDocumentPinsResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
@@ -35,9 +33,8 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *ListDocumentPinsRequ
 			WHERE(tDPins.Job.EQ(jet.String(userInfo.Job))),
 	)
 
-	countStmt :=
-		s.listDocumentsQuery(
-			condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocumentShort.ID)).AS("datacount.totalcount")}, userInfo)
+	countStmt := s.listDocumentsQuery(
+		condition, jet.ProjectionList{jet.COUNT(jet.DISTINCT(tDocumentShort.ID)).AS("datacount.totalcount")}, userInfo)
 
 	var count database.DataCount
 	if err := countStmt.QueryContext(ctx, s.db, &count); err != nil {

@@ -20,9 +20,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tConduct = table.FivenetJobsConduct.AS("conduct_entry")
-)
+var tConduct = table.FivenetJobsConduct.AS("conduct_entry")
 
 func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntriesRequest) (*ListConductEntriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

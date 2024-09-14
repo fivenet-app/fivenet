@@ -30,9 +30,7 @@ const (
 	CommentsDefaultPageSize = 8
 )
 
-var (
-	tDComments = table.FivenetDocumentsComments
-)
+var tDComments = table.FivenetDocumentsComments
 
 func (s *Server) GetComments(ctx context.Context, req *GetCommentsRequest) (*GetCommentsResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.id", int64(req.DocumentId)))

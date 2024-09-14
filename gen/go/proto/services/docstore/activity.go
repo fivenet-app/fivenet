@@ -23,9 +23,7 @@ const (
 	ActivityDefaultPageSize = 10
 )
 
-var (
-	tDocActivity = table.FivenetDocumentsActivity
-)
+var tDocActivity = table.FivenetDocumentsActivity
 
 func (s *Server) addDocumentActivity(ctx context.Context, tx qrm.DB, activitiy *documents.DocActivity) (uint64, error) {
 	stmt := tDocActivity.

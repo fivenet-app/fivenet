@@ -16,9 +16,7 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	tAudit = table.FivenetAuditLog
-)
+var tAudit = table.FivenetAuditLog
 
 var json = jsoniter.ConfigCompatibleWithStandardLibrary
 

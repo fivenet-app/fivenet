@@ -23,8 +23,10 @@ var (
 	permsList = []*Perm{}
 )
 
-type Category string
-type Name string
+type (
+	Category string
+	Name     string
+)
 
 type Perm struct {
 	Category Category

@@ -17,9 +17,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tUserAct = table.FivenetUserActivity
-)
+var tUserAct = table.FivenetUserActivity
 
 func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRequest) (*ListUserDocumentsResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.docstore.user_id", int64(req.UserId)))

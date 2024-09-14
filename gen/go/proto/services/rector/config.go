@@ -11,9 +11,7 @@ import (
 	jet "github.com/go-jet/jet/v2/mysql"
 )
 
-var (
-	tConfig = table.FivenetConfig
-)
+var tConfig = table.FivenetConfig
 
 func (s *Server) GetAppConfig(ctx context.Context, req *GetAppConfigRequest) (*GetAppConfigResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)

@@ -21,9 +21,7 @@ import (
 	"go.opentelemetry.io/otel/trace"
 )
 
-var (
-	tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
-)
+var tTimeClock = table.FivenetJobsTimeclock.AS("timeclock_entry")
 
 func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (*ListTimeclockResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.IntSlice("fivenet.jobs.timeclock.user_ids", utils.SliceInt32ToInt(req.UserIds)))

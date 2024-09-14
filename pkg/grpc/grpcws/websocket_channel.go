@@ -109,7 +109,7 @@ func (stream *GrpcStream) close() {
 }
 
 func (stream *GrpcStream) Read(p []byte) (int, error) {
-	//grpclog.Infof("reading from channel %v", stream.id)
+	// grpclog.Infof("reading from channel %v", stream.id)
 	if stream.remainingBuffer != nil {
 
 		// If the remaining buffer fits completely inside the argument slice then read all of it and return any error
@@ -137,7 +137,7 @@ func (stream *GrpcStream) Read(p []byte) (int, error) {
 	}
 
 	frame, more := <-stream.inputFrames
-	//grpclog.Infof("received message %v more: %v", frame, more)
+	// grpclog.Infof("received message %v more: %v", frame, more)
 	if more {
 		switch op := frame.Payload.(type) {
 		case *grpcws.GrpcFrame_Body:
@@ -170,7 +170,6 @@ func (ws *WebsocketChannel) writeError(streamId uint32, message string) error {
 			},
 		},
 	)
-
 }
 
 func (ws *WebsocketChannel) getStream(streamId uint32) *GrpcStream {
@@ -201,7 +200,7 @@ func (ws *WebsocketChannel) poll() error {
 
 	switch op := frame.Payload; op.(type) {
 	case *grpcws.GrpcFrame_Header:
-		//grpclog.Infof("received Header for stream %v %v", frame.StreamId, frame.GetHeader().Operation)
+		// grpclog.Infof("received Header for stream %v %v", frame.StreamId, frame.GetHeader().Operation)
 		if stream != nil {
 			ws.writeError(frame.StreamId, "stream already exists")
 		}
@@ -232,20 +231,20 @@ func (ws *WebsocketChannel) poll() error {
 		for key, element := range frame.GetHeader().Headers {
 			req.Header[key] = element.Value
 		}
-		//grpclog.Infof("starting grpc request to %v", url)
+		// grpclog.Infof("starting grpc request to %v", url)
 
 		// TODO add handler to the websocket channel and then forward it to this.
 		interceptedRequest := makeGrpcRequest(req.WithContext(stream.ctx))
-		//grpclog.Infof("starting call to http server %q", interceptedRequest.Method)
+		// grpclog.Infof("starting call to http server %q", interceptedRequest.Method)
 		go ws.handler.ServeHTTP(stream, interceptedRequest)
 
 	case *grpcws.GrpcFrame_Body:
-		//grpclog.Infof("received Body for stream %v", frame.StreamId)
+		// grpclog.Infof("received Body for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		//grpclog.Infof("received body %v", frame)
+		// grpclog.Infof("received body %v", frame)
 		stream.inputFrames <- frame
 
 		body := frame.Payload.(*grpcws.GrpcFrame_Body)
@@ -254,33 +253,33 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 	case *grpcws.GrpcFrame_Cancel:
-		//grpclog.Infof("received Cancel for stream %v", frame.StreamId)
+		// grpclog.Infof("received Cancel for stream %v", frame.StreamId)
 		if stream == nil {
 			// If a stream is being cancelled and it's not there anymore, no error here
 			return nil
 		}
 
-		//grpclog.Infof("stream %v is canceled", frame.StreamId)
+		// grpclog.Infof("stream %v is canceled", frame.StreamId)
 		stream.cancel()
 		stream.close()
 		ws.deleteStream(frame.StreamId)
 
 	case *grpcws.GrpcFrame_Complete:
-		//grpclog.Infof("received Complete for stream %v", frame.StreamId)
+		// grpclog.Infof("received Complete for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		//grpclog.Infof("completing stream %v", frame.StreamId)
+		// grpclog.Infof("completing stream %v", frame.StreamId)
 		stream.close()
 
 	case *grpcws.GrpcFrame_Failure:
-		//grpclog.Infof("received Failure for stream %v", frame.StreamId)
+		// grpclog.Infof("received Failure for stream %v", frame.StreamId)
 		if stream == nil {
 			return ws.writeError(frame.StreamId, "stream does not exist")
 		}
 
-		//grpclog.Infof("error on stream %v: %v", frame.StreamId, frame.GetFailure().ErrorMessage)
+		// grpclog.Infof("error on stream %v: %v", frame.StreamId, frame.GetFailure().ErrorMessage)
 		stream.inputFrames <- frame
 		ws.deleteStream(frame.StreamId)
 
@@ -304,7 +303,7 @@ func makeGrpcRequest(req *http.Request) *http.Request {
 }
 
 func (ws *WebsocketChannel) readFrame() (*grpcws.GrpcFrame, error) {
-	//we assume a large limit is set for the websocket to avoid handling multiple frames.
+	// we assume a large limit is set for the websocket to avoid handling multiple frames.
 	typ, bytesValue, err := ws.wsConn.Read(ws.context)
 	if err != nil {
 		return nil, err
@@ -393,7 +392,7 @@ func (stream *GrpcStream) Close() error {
 
 func (stream *GrpcStream) Write(data []byte) (int, error) {
 	stream.WriteHeader(http.StatusOK)
-	//grpclog.Infof("write body %v", len(data))
+	// grpclog.Infof("write body %v", len(data))
 
 	// Not sure if it is enough to check the writeBuffer length
 	if stream.bytesToWrite == 0 && !stream.readHeader {

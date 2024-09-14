@@ -20,9 +20,7 @@ import (
 
 const listFilesPageSize = 50
 
-var (
-	tUserProps = table.FivenetUserProps
-)
+var tUserProps = table.FivenetUserProps
 
 func (s *Server) ListFiles(ctx context.Context, req *ListFilesRequest) (*ListFilesResponse, error) {
 	if req.Path != nil {

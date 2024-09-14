@@ -6,11 +6,9 @@ import (
 	"github.com/prometheus/client_golang/prometheus/promauto"
 )
 
-var (
-	metricDispatchLastID = promauto.NewGaugeVec(prometheus.GaugeOpts{
-		Namespace: admin.MetricsNamespace,
-		Subsystem: "centrum",
-		Name:      "dispatch_last_id",
-		Help:      "Last dispatch ID.",
-	}, []string{"job_name"})
-)
+var metricDispatchLastID = promauto.NewGaugeVec(prometheus.GaugeOpts{
+	Namespace: admin.MetricsNamespace,
+	Subsystem: "centrum",
+	Name:      "dispatch_last_id",
+	Help:      "Last dispatch ID.",
+}, []string{"job_name"})

@@ -30,9 +30,7 @@ var (
 	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )
 
-var (
-	ErrFailedSearch = status.Error(codes.Internal, "errors.CompletorService.ErrFailedSearch")
-)
+var ErrFailedSearch = status.Error(codes.Internal, "errors.CompletorService.ErrFailedSearch")
 
 type Server struct {
 	CompletorServiceServer

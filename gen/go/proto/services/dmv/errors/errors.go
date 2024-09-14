@@ -5,6 +5,4 @@ import (
 	"google.golang.org/grpc/status"
 )
 
-var (
-	ErrFailedQuery = status.Error(codes.Internal, "errors.DMVService.ErrFailedQuery")
-)
+var ErrFailedQuery = status.Error(codes.Internal, "errors.DMVService.ErrFailedQuery")

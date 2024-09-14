@@ -18,8 +18,10 @@ import (
 // If error is returned, its `grpc.Code()` will be returned to the user as well as the verbatim message.
 // Please make sure you use `codes.Unauthenticated` (lacking auth) and `codes.PermissionDenied`
 // (authed, but lacking perms) appropriately.
-type PermissionUnaryFunc func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
-type PermissionStreamFunc func(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error)
+type (
+	PermissionUnaryFunc  func(ctx context.Context, info *grpc.UnaryServerInfo) (context.Context, error)
+	PermissionStreamFunc func(ctx context.Context, srv interface{}, info *grpc.StreamServerInfo) (context.Context, error)
+)
 
 // ServiceUnaryPermissionFuncOverride
 type ServiceUnaryPermissionFuncOverride interface {

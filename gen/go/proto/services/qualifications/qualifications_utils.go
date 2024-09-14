@@ -515,7 +515,8 @@ func (s *Server) checkRequirementsMetForQualification(ctx context.Context, quali
 	dest = slices.DeleteFunc(dest, func(s *struct {
 		QualiID uint64
 		UserID  int32
-	}) bool {
+	},
+	) bool {
 		return s.UserID > 0
 	})
 

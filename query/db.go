@@ -19,10 +19,8 @@ import (
 	"go.uber.org/zap"
 )
 
-var (
-	//go:embed migrations/*.sql
-	migrationsFS embed.FS
-)
+//go:embed migrations/*.sql
+var migrationsFS embed.FS
 
 type Params struct {
 	fx.In
