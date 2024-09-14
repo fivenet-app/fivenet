@@ -58,7 +58,6 @@ appConfig.ui.primary = design.value.ui.primary;
 appConfig.ui.gray = design.value.ui.gray;
 
 if (userLocale.value !== null) {
-    locale.value = userLocale.value;
     await setLocale(userLocale.value);
 }
 

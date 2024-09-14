@@ -42,7 +42,6 @@ async function switchLanguage(lang: LocaleObject): Promise<void> {
     preventClose.value = true;
 
     userLocale.value = lang.language!;
-    locale.value = lang.language!;
     await setLocale(lang.language!);
 
     notifications.add({
