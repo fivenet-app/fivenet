@@ -146,6 +146,7 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
                         v-for="choice in question.data!.data.multipleChoice?.choices"
                         :label="choice"
                         :disabled="disabled"
+                        :value="response.response?.response.multipleChoice.choices.includes(choice) ?? false"
                         @update:model-value="updateMultipleChoices(choice, $event)"
                     />
                 </div>

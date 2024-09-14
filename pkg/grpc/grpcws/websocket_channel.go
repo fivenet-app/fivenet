@@ -212,7 +212,12 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 		stream := newGrpcStream(frame.StreamId, ws, 1000)
-		ws.activeStreams[frame.StreamId] = stream
+		func() {
+			ws.mutex.Lock()
+			defer ws.mutex.Unlock()
+
+			ws.activeStreams[frame.StreamId] = stream
+		}()
 
 		url, err := url.Parse("http://localhost/")
 		url.Scheme = ws.req.URL.Scheme
