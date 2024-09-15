@@ -10,7 +10,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits<{
-    (e: 'update:model-value', value: string): void;
+    (e: 'update:modelValue', value: string): void;
     (e: 'close'): void;
 }>();
 
@@ -21,7 +21,7 @@ defineOptions({
 const color = computed({
     get: () => props.modelValue,
     set: (value) => {
-        emit('update:model-value', value);
+        emit('update:modelValue', value);
         emit('close');
     },
 });

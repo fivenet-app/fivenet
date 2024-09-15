@@ -14,7 +14,7 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'update:model-value', value: Thread | undefined): void;
+    (e: 'update:modelValue', value: Thread | undefined): void;
 }>();
 
 const threadRefs = ref(new Map<string, Element>());
@@ -24,7 +24,7 @@ const selectedThread = computed({
         return props.modelValue;
     },
     set(value: Thread | undefined) {
-        emit('update:model-value', value);
+        emit('update:modelValue', value);
     },
 });
 

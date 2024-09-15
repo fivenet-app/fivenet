@@ -3,8 +3,8 @@ import type { ExamQuestion, ExamResponse } from '~~/gen/ts/resources/qualificati
 
 const props = withDefaults(
     defineProps<{
-        question: ExamQuestion | undefined;
-        modelValue: ExamResponse;
+        modelValue: ExamResponse | undefined;
+        question: ExamQuestion;
         disabled?: boolean;
     }>(),
     {
@@ -13,34 +13,17 @@ const props = withDefaults(
 );
 
 const emits = defineEmits<{
-    (e: 'update:model-value', value: ExamResponse | undefined): void;
+    (e: 'update:modelValue', value: ExamResponse | undefined): void;
 }>();
 
 const response = useVModel(props, 'modelValue', emits);
-
-function updateMultipleChoices(value: string, remove?: boolean): void {
-    if (response.value.response?.response.oneofKind !== 'multipleChoice') {
-        return;
-    }
-
-    if (!remove) {
-        if (!response.value.response?.response.multipleChoice.choices.includes(value)) {
-            return;
-        }
-
-        response.value.response?.response.multipleChoice.choices.push(value);
-    } else {
-        response.value.response.response.multipleChoice.choices =
-            response.value.response?.response.multipleChoice.choices.filter((c) => c !== value);
-    }
-}
 </script>
 
 <template>
     <div v-if="question" class="flex flex-1 justify-between py-4">
         <div v-if="question.data!.data.oneofKind === 'separator'">
             <UDivider class="mb-2 mt-2 text-xl">
-                <h4 class="text-xl">{{ question.title }}</h4>
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
             </UDivider>
 
             <p>{{ question.description }}</p>
@@ -50,7 +33,7 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
             v-else-if="question.data!.data.oneofKind === 'yesno' && response?.response?.response.oneofKind === 'yesno'"
             class="flex flex-col gap-2"
         >
-            <h4 class="text-xl">{{ question.title }}</h4>
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
             <p>{{ question.description }}</p>
 
             <UButtonGroup>
@@ -84,11 +67,11 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
         </div>
 
         <div
-            v-else-if="question.data!.data.oneofKind === 'freeText' && response.response?.response.oneofKind === 'freeText'"
+            v-else-if="question.data!.data.oneofKind === 'freeText' && response?.response?.response.oneofKind === 'freeText'"
             class="flex flex-col gap-2"
         >
             <div class="flex flex-col gap-2">
-                <h4 class="text-xl">{{ question.title }}</h4>
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
                 <p>{{ question.description }}</p>
 
                 <div>
@@ -108,11 +91,11 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
 
         <div
             v-else-if="
-                question.data!.data.oneofKind === 'singleChoice' && response.response?.response.oneofKind === 'singleChoice'
+                question.data!.data.oneofKind === 'singleChoice' && response?.response?.response.oneofKind === 'singleChoice'
             "
             class="flex flex-col gap-2"
         >
-            <h4 class="text-xl">{{ question.title }}</h4>
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
             <p>{{ question.description }}</p>
 
             <UFormGroup name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
@@ -126,11 +109,12 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
 
         <div
             v-else-if="
-                question.data!.data.oneofKind === 'multipleChoice' && response.response?.response.oneofKind === 'multipleChoice'
+                question.data?.data.oneofKind === 'multipleChoice' &&
+                response?.response?.response.oneofKind === 'multipleChoice'
             "
             class="flex flex-col gap-2"
         >
-            <h4 class="text-xl">{{ question.title }}</h4>
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
             <p>{{ question.description }}</p>
 
             <div>
@@ -140,17 +124,16 @@ function updateMultipleChoices(value: string, remove?: boolean): void {
                 </UBadge>
             </div>
 
-            <UFormGroup :label="$t('common.option', 2)" required class="flex-1">
-                <div class="flex flex-col gap-2">
-                    <UCheckbox
-                        v-for="choice in question.data!.data.multipleChoice?.choices"
-                        :label="choice"
-                        :disabled="disabled"
-                        :value="response.response?.response.multipleChoice.choices.includes(choice) ?? false"
-                        @update:model-value="updateMultipleChoices(choice, $event)"
-                    />
-                </div>
-            </UFormGroup>
+            <UFormGroup :label="$t('common.option', 2)" required class="flex-1"> </UFormGroup>
+            <div class="flex flex-col gap-2">
+                <UCheckbox
+                    v-for="choice in question.data.data.multipleChoice.choices"
+                    v-model="response.response.response.multipleChoice.choices"
+                    :label="choice"
+                    :disabled="disabled"
+                    :value="choice"
+                />
+            </div>
         </div>
 
         <slot name="question-after" :question="question"></slot>

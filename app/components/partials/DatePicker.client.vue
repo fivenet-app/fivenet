@@ -21,13 +21,13 @@ const props = withDefaults(
 );
 
 const emit = defineEmits<{
-    (e: 'update:model-value', value: typeof props.modelValue): void;
+    (e: 'update:modelValue', value: typeof props.modelValue): void;
     (e: 'close'): void;
 }>();
 
 const date = computed({
     get: () => (props.modelValue === undefined ? null : props.modelValue),
-    set: (value) => emit('update:model-value', value === null ? undefined : value),
+    set: (value) => emit('update:modelValue', value === null ? undefined : value),
 });
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
