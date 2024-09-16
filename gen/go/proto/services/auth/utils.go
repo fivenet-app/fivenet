@@ -19,7 +19,7 @@ func (s *Server) getCookieBase(name string) http.Cookie {
 		Path:     "/",
 		HttpOnly: true,
 		Secure:   true,
-		SameSite: http.SameSiteLaxMode,
+		SameSite: http.SameSiteNoneMode,
 	}
 }
 
