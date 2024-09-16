@@ -153,6 +153,7 @@ func NewEngine(p EngineParams) *gin.Engine {
 		MaxAge:   int((6 * time.Hour).Seconds()),
 		HttpOnly: true,
 		Secure:   true,
+		SameSite: http.SameSiteLaxMode,
 	})
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 
