@@ -170,7 +170,7 @@ export default defineNuxtConfig({
         useModuleLocale: true,
     },
 
-    piniaPersistedstate: {
+    piniaPluginPersistedstate: {
         storage: 'localStorage',
     },
 
