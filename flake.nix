@@ -30,15 +30,22 @@
           hardeningDisable = [ "fortify" ];
 
           packages = with pkgs; [
-            # go (version is specified by overlay)
+            # go and tools
             go
-
             # goimports, godoc, etc.
             gotools
             gofumpt
-
             # https://github.com/golangci/golangci-lint
             golangci-lint
+
+            # NodeJS stuff
+            nodejs_22
+            corepack
+
+            # protoc + Protobuf
+            protobuf
+            protoc-gen-go
+            protoc-gen-go-grpc
           ];
         };
       });
