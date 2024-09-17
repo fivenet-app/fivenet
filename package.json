@@ -36,7 +36,7 @@
         "@zxcvbn-ts/core": "3.0.4",
         "browser-headers": "0.4.1",
         "consola": "3.2.3",
-        "date-fns": "3.6.0",
+        "date-fns": "4.1.0",
         "dexie": "4.0.8",
         "emoji-blast": "0.10.1",
         "google-protobuf": "3.21.4",
