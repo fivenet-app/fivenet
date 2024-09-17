@@ -324,7 +324,8 @@ func (s *Server) getQualificationRequirements(ctx context.Context, qualification
 				tQualiResults.QualificationID.EQ(tQReqs.TargetQualificationID),
 			),
 		).
-		WHERE(tQReqs.QualificationID.EQ(jet.Uint64(qualificationId)))
+		WHERE(tQReqs.QualificationID.EQ(jet.Uint64(qualificationId))).
+		GROUP_BY(tQuali.ID)
 
 	var dest []*qualifications.QualificationRequirement
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
