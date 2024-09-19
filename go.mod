@@ -5,7 +5,7 @@ go 1.23.1
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/Masterminds/sprig/v3 v3.3.0
-	github.com/XSAM/otelsql v0.33.0
+	github.com/XSAM/otelsql v0.34.0
 	github.com/alecthomas/kong v1.2.1
 	github.com/blevesearch/bleve/v2 v2.4.2
 	github.com/bwmarrin/discordgo v0.28.1
@@ -39,7 +39,7 @@ require (
 	github.com/ory/dockertest/v3 v3.11.0
 	github.com/paulmach/orb v0.11.1
 	github.com/pkg/errors v0.9.1
-	github.com/prometheus/client_golang v1.20.3
+	github.com/prometheus/client_golang v1.20.4
 	github.com/puzpuzpuz/xsync/v3 v3.4.0
 	github.com/rs/cors v1.11.1
 	github.com/spf13/viper v1.19.0
