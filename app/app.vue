@@ -7,7 +7,7 @@ import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useSettingsStore } from '~/store/settings';
 import { useAuthStore } from './store/auth';
 
-const { t, setLocale, locale, finalizePendingLocaleChange } = useI18n();
+const { t, setLocale, finalizePendingLocaleChange } = useI18n();
 
 const appConfig = useAppConfig();
 
@@ -18,14 +18,21 @@ const colorMode = useColorMode();
 const color = computed(() => (colorMode.value === 'dark' ? '#111827' : 'white'));
 
 useHead({
+    htmlAttrs: {
+        lang: 'en',
+    },
     meta: [
         { charset: 'utf-8' },
         { name: 'viewport', content: 'width=device-width, initial-scale=1' },
         { key: 'theme-color', name: 'theme-color', content: color },
     ],
-    htmlAttrs: {
-        lang: 'en',
-    },
+    link: [
+        {
+            rel: 'icon',
+            type: 'image/png',
+            href: '/favicon.png',
+        },
+    ],
     titleTemplate: (title?: string) => {
         if (title?.includes('.')) {
             title = t(title);
@@ -33,6 +40,7 @@ useHead({
         return title ? `${title} - FiveNet` : 'FiveNet';
     },
 });
+
 useSeoMeta({
     applicationName: 'FiveNet',
     title: 'FiveNet',
