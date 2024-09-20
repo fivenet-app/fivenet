@@ -3,7 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
-import type { CitizenAttributes , UserActivity } from '~~/gen/ts/resources/users/users';
+import type { CitizenAttributes, UserActivity } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     activity: UserActivity;

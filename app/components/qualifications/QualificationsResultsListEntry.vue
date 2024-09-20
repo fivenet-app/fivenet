@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { QualificationResult} from '~~/gen/ts/resources/qualifications/qualifications';
+import type { QualificationResult } from '~~/gen/ts/resources/qualifications/qualifications';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import { resultStatusToBadgeColor } from './helpers';
 

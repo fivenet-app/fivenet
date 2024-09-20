@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
-import type { ConductEntry} from '~~/gen/ts/resources/jobs/conduct';
+import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';

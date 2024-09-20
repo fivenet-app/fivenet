@@ -175,43 +175,42 @@ watchDebounced(query, async () => refresh(), {
                 <li v-for="idx in 10" :key="idx" class="px-2 py-4">
                     <div class="flex space-x-3">
                         <div class="my-auto flex size-10 items-center justify-center rounded-full">
-                        <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
-                    </div>
-
-                    <div class="flex-1 space-y-1">
-                        <div class="flex items-center justify-between">
-                            <h3 class="text-sm font-medium">
-                                <USkeleton class="h-5 w-[350px]" />
-                            </h3>
-
-                            <p>
-                                <USkeleton class="h-5 w-[175px]" />
-                            </p>
+                            <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
                         </div>
 
-                        <div class="flex items-center justify-between">
-                            <p class="flex flex-col gap-1 text-sm">
-                                <USkeleton class="h-8 w-[200px]" />
-                            </p>
-                            <p class="inline-flex items-center gap-1 text-sm">
-                                <USkeleton class="h-5 w-[175px]" />
-                            </p>
+                        <div class="flex-1 space-y-1">
+                            <div class="flex items-center justify-between">
+                                <h3 class="text-sm font-medium">
+                                    <USkeleton class="h-5 w-[350px]" />
+                                </h3>
+
+                                <p>
+                                    <USkeleton class="h-5 w-[175px]" />
+                                </p>
+                            </div>
+
+                            <div class="flex items-center justify-between">
+                                <p class="flex flex-col gap-1 text-sm">
+                                    <USkeleton class="h-8 w-[200px]" />
+                                </p>
+                                <p class="inline-flex items-center gap-1 text-sm">
+                                    <USkeleton class="h-5 w-[175px]" />
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
-            </li>
-        </template>
+                </li>
+            </template>
 
-        <template v-else>
-            <li
-            v-for="activity in data?.activity"
-
-            :key="activity.id"
-            class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
-            >
-            <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
-        </li>
-    </template>
+            <template v-else>
+                <li
+                    v-for="activity in data?.activity"
+                    :key="activity.id"
+                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
+                >
+                    <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
+                </li>
+            </template>
         </ul>
     </div>
 

@@ -7,7 +7,7 @@ import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import type { Dispatch} from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(

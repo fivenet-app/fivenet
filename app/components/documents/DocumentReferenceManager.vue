@@ -4,7 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { ClipboardDocument} from '~/store/clipboard';
+import type { ClipboardDocument } from '~/store/clipboard';
 import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import type { DocumentReference, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import { DocReference } from '~~/gen/ts/resources/documents/documents';

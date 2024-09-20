@@ -56,11 +56,6 @@ function selected(idx: number): TemplateShort | undefined {
     <DataNoDataBlock v-else-if="templates && templates.length === 0" :type="$t('common.template', 2)" />
 
     <div v-else class="flex justify-center">
-        <CardsList
-            :class="$attrs.class"
-            :items="items"
-            :show-icon="false"
-            @selected="$emit('selected', selected($event))"
-        />
+        <CardsList :class="$attrs.class" :items="items" :show-icon="false" @selected="$emit('selected', selected($event))" />
     </div>
 </template>

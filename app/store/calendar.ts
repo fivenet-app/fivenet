@@ -106,7 +106,7 @@ export const useCalendarStore = defineStore('calendar', {
                 this.activeCalendarIds.push(response.calendar.id);
             }
 
-                return response;
+            return response;
         },
         async deleteCalendar(id: string): Promise<void> {
             try {

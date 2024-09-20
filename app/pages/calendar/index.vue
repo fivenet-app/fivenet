@@ -443,7 +443,8 @@ const isOpen = ref(false);
                                     <UDivider
                                         v-if="
                                             calendarEntries.isToday &&
-                                            (calendarEntries.entries.past.length > 0 || calendarEntries.entries.upcoming.length > 0)
+                                            (calendarEntries.entries.past.length > 0 ||
+                                                calendarEntries.entries.upcoming.length > 0)
                                         "
                                         size="sm"
                                         :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"

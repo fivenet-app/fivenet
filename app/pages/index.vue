@@ -22,27 +22,26 @@ const { username } = storeToRefs(authStore);
 
 const appVersion = APP_VERSION.split('-')[0];
 
-const links = computed(
-    () =>
-        [
-            username.value
-                ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg' as ButtonSize, to: '/overview' }
-                : {
-                      label: t('components.auth.LoginForm.title'),
-                      icon: 'i-mdi-login',
-                      size: 'lg' as ButtonSize,
-                      to: '/auth/login',
-                  },
-            appConfig.login.signupEnabled
-                ? {
-                      label: t('components.auth.RegistrationForm.title'),
-                      trailingIcon: 'i-mdi-account-plus',
-                      color: 'gray' as ButtonColor,
-                      size: 'lg' as ButtonSize,
-                      to: '/auth/registration',
-                  }
-                : undefined,
-        ].flatMap((item) => (item !== undefined ? [item] : [])),
+const links = computed(() =>
+    [
+        username.value
+            ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg' as ButtonSize, to: '/overview' }
+            : {
+                  label: t('components.auth.LoginForm.title'),
+                  icon: 'i-mdi-login',
+                  size: 'lg' as ButtonSize,
+                  to: '/auth/login',
+              },
+        appConfig.login.signupEnabled
+            ? {
+                  label: t('components.auth.RegistrationForm.title'),
+                  trailingIcon: 'i-mdi-account-plus',
+                  color: 'gray' as ButtonColor,
+                  size: 'lg' as ButtonSize,
+                  to: '/auth/registration',
+              }
+            : undefined,
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
 

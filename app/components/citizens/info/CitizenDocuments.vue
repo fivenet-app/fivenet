@@ -91,10 +91,10 @@ const columns = [
         <div class="flex flex-row flex-wrap gap-2">
             <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
                 <USelectMenu
-                v-model="query.closed"
-                :options="openclose"
-                value-attribute="closed"
-                :searchable-placeholder="$t('common.search_field')"
+                    v-model="query.closed"
+                    :options="openclose"
+                    value-attribute="closed"
+                    :searchable-placeholder="$t('common.search_field')"
                 />
             </UFormGroup>
         </div>

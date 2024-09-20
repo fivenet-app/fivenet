@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import type { ClipboardUser} from '~/store/clipboard';
+import type { ClipboardUser } from '~/store/clipboard';
 import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';

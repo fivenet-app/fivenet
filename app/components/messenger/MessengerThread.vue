@@ -32,10 +32,9 @@ const state = reactive<Schema>({
     message: '',
 });
 
-const {
-    data: thread,
-    pending: loading,
-} = useLazyAsyncData(`messenger-thread:${props.threadId}`, async () => messengerStore.getThread(props.threadId));
+const { data: thread, pending: loading } = useLazyAsyncData(`messenger-thread:${props.threadId}`, async () =>
+    messengerStore.getThread(props.threadId),
+);
 
 onBeforeMount(async () => {
     const count = await messengerDB.threads.count();

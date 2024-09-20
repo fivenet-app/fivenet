@@ -3,7 +3,7 @@ import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import type { Dispatch, DispatchStatus} from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch, DispatchStatus } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import type { Settings } from '~~/gen/ts/resources/centrum/settings';
 import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';

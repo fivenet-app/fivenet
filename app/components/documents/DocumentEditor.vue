@@ -14,14 +14,8 @@ import { useNotificatorStore } from '~/store/notificator';
 import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Category } from '~~/gen/ts/resources/documents/category';
-import type {
-    DocumentReference,
-    DocumentRelation} from '~~/gen/ts/resources/documents/documents';
-import {
-    DocContentType,
-    DocReference,
-    DocRelation
-} from '~~/gen/ts/resources/documents/documents';
+import type { DocumentReference, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocContentType, DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';

@@ -11,7 +11,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import type { AuditEntry} from '~~/gen/ts/resources/rector/audit';
+import type { AuditEntry } from '~~/gen/ts/resources/rector/audit';
 import { EventType } from '~~/gen/ts/resources/rector/audit';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ViewAuditLogRequest, ViewAuditLogResponse } from '~~/gen/ts/services/rector/rector';

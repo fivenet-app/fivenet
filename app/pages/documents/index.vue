@@ -151,24 +151,24 @@ const isOpen = ref(false);
                                 </template>
 
                                 <template v-else>
-                                <li v-for="doc in data?.documents" :key="doc.id" class="flex flex-col px-1">
-                                    <DocumentInfoPopover :document="doc">
-                                        <template #title="{ document, loading: docLoading }">
-                                            <USkeleton v-if="!document && docLoading" class="h-8 w-[125px]" />
+                                    <li v-for="doc in data?.documents" :key="doc.id" class="flex flex-col px-1">
+                                        <DocumentInfoPopover :document="doc">
+                                            <template #title="{ document, loading: docLoading }">
+                                                <USkeleton v-if="!document && docLoading" class="h-8 w-[125px]" />
 
-                                            <div v-else class="flex flex-col">
-                                                <UBadge v-if="document?.category">
-                                                    {{ document.category.name }}
-                                                </UBadge>
+                                                <div v-else class="flex flex-col">
+                                                    <UBadge v-if="document?.category">
+                                                        {{ document.category.name }}
+                                                    </UBadge>
 
-                                                <span class="line-clamp-3 hyphens-auto break-words text-left">
-                                                    {{ document?.title }}
-                                                </span>
-                                            </div>
-                                        </template>
-                                    </DocumentInfoPopover>
-                                </li>
-                            </template>
+                                                    <span class="line-clamp-3 hyphens-auto break-words text-left">
+                                                        {{ document?.title }}
+                                                    </span>
+                                                </div>
+                                            </template>
+                                        </DocumentInfoPopover>
+                                    </li>
+                                </template>
                             </ul>
                         </div>
                     </UDashboardSection>

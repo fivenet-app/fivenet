@@ -124,7 +124,12 @@ export const useNotificatorStore = defineStore('notifications', {
                                                 });
                                             }
                                         } catch (e) {
-                                            logger.warn('Error while retrieving calendar/entry for calendar notification, Notification ID:', n.id, 'Error:', e)
+                                            logger.warn(
+                                                'Error while retrieving calendar/entry for calendar notification, Notification ID:',
+                                                n.id,
+                                                'Error:',
+                                                e,
+                                            );
                                         }
                                     }
                                 }
@@ -144,7 +149,7 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
                             continue;
                         } else if (resp.data.oneofKind === 'systemEvent') {
-                            logger.warn('No systemEvent handlers available.', resp.data)
+                            logger.warn('No systemEvent handlers available.', resp.data);
                         } else {
                             // @ts-expect-error this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             logger.warn('Unknown data received - Kind: ', resp.data.oneofKind, resp.data);

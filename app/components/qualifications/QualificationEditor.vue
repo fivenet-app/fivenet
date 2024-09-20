@@ -11,10 +11,13 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
-import type { Qualification, QualificationExamSettings, QualificationRequirement, QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
-import {
-    QualificationExamMode
+import type {
+    Qualification,
+    QualificationExamSettings,
+    QualificationRequirement,
+    QualificationShort,
 } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
     CreateQualificationResponse,

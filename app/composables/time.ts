@@ -1,6 +1,6 @@
 import { useI18n } from '#i18n';
-import type { ComputedRef } from 'vue';
 import { useTimeAgo, type UseTimeAgoMessages, type UseTimeAgoOptions, type UseTimeAgoUnitNamesDefault } from '@vueuse/core';
+import type { ComputedRef } from 'vue';
 
 // Based on https://github.com/vueuse/vueuse/issues/1592#issuecomment-1341786344
 // https://github.com/vueuse/vueuse/issues/1592#issuecomment-1381020982

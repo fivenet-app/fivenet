@@ -6,7 +6,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCalendarStore } from '~/store/calendar';
-import type { CalendarEntryRSVP} from '~~/gen/ts/resources/calendar/calendar';
+import type { CalendarEntryRSVP } from '~~/gen/ts/resources/calendar/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import EntryShareForm from './EntryShareForm.vue';
@@ -65,7 +65,10 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
     }
 }
 
-async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean): Promise<undefined | RSVPCalendarEntryResponse> {
+async function rsvpCalendarEntry(
+    rsvpResponse: RsvpResponses,
+    remove?: boolean,
+): Promise<undefined | RSVPCalendarEntryResponse> {
     if (ownEntry.value?.response === rsvpResponse) {
         return;
     }

@@ -3,7 +3,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import type { Dispatch} from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor } from '../helpers';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
