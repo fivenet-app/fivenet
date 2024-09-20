@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import DispatchDetailsByIDSlideover from '~/components/centrum/dispatches/DispatchDetailsByIDSlideover.vue';
-import type { DispatchReferences, DispatchReferenceType } from '~~/gen/ts/resources/centrum/dispatches';
+import type { DispatchReferences } from '~~/gen/ts/resources/centrum/dispatches';
+import { DispatchReferenceType } from '~~/gen/ts/resources/centrum/dispatches';
 
 defineProps<{
     references?: DispatchReferences;

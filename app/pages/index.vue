@@ -1,6 +1,7 @@
 <script lang="ts" setup>
-import '~/assets/css/herofull-pattern.css';
+import type { ButtonColor, ButtonSize } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
+import '~/assets/css/herofull-pattern.css';
 
 useHead({
     title: 'common.home',
@@ -25,19 +26,19 @@ const links = computed(
     () =>
         [
             username.value
-                ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg', to: '/overview' }
+                ? { label: t('common.overview'), icon: 'i-mdi-home', size: 'lg' as ButtonSize, to: '/overview' }
                 : {
                       label: t('components.auth.LoginForm.title'),
                       icon: 'i-mdi-login',
-                      size: 'lg',
+                      size: 'lg' as ButtonSize,
                       to: '/auth/login',
                   },
             appConfig.login.signupEnabled
                 ? {
                       label: t('components.auth.RegistrationForm.title'),
                       trailingIcon: 'i-mdi-account-plus',
-                      color: 'gray',
-                      size: 'lg',
+                      color: 'gray' as ButtonColor,
+                      size: 'lg' as ButtonSize,
                       to: '/auth/registration',
                   }
                 : undefined,

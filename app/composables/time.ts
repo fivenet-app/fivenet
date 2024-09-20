@@ -5,7 +5,7 @@ import { useTimeAgo, type UseTimeAgoMessages, type UseTimeAgoOptions, type UseTi
 // Based on https://github.com/vueuse/vueuse/issues/1592#issuecomment-1341786344
 // https://github.com/vueuse/vueuse/issues/1592#issuecomment-1381020982
 
-export function useLocaleTimeAgo(date: Date, options?: UseTimeAgoOptions<false, any>): ComputedRef<string> {
+export function useLocaleTimeAgo(date: Date, options?: UseTimeAgoOptions<false>): ComputedRef<string> {
     const { t } = useI18n();
 
     const I18N_MESSAGES: UseTimeAgoMessages<UseTimeAgoUnitNamesDefault> = {

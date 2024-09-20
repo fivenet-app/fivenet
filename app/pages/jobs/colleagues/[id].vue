@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import type { RoutesNamedLocations, type TypedRouteFromName } from '@typed-router';
+import type { RoutesNamedLocations, TypedRouteFromName } from '@typed-router';
 import ColleagueInfo from '~/components/jobs/colleagues/info/ColleagueInfo.vue';
 import PagesJobsLayout from '~/components/jobs/PagesJobsLayout.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';

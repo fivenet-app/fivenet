@@ -30,10 +30,12 @@ export class GrpcWSTransport implements RpcTransport {
     constructor(defaultOptions: GrpcWSOptions) {
         this.defaultOptions = defaultOptions;
 
-        this.logger = useLogger('📡 GRPC-WS');
+        const logger = useLogger('📡 GRPC-WS');
+        this.logger = logger;
 
-        this.wsInitiated = ref(false);
-        const self = this;
+        const wsInitiated = ref(false);
+        this.wsInitiated = wsInitiated;
+
         const webSocket = useWebSocket(defaultOptions.wsUrl, {
             immediate: false,
             autoReconnect: {
@@ -42,15 +44,15 @@ export class GrpcWSTransport implements RpcTransport {
             protocols: ['grpc-websocket-channel'],
             onConnected(ws) {
                 ws.binaryType = 'arraybuffer';
-                self.wsInitiated.value = true;
-                self.logger.info('Websocket connected');
+                wsInitiated.value = true;
+                logger.info('Websocket connected');
             },
             onDisconnected(_, event) {
                 if (event.wasClean) {
                     return;
                 }
 
-                self.logger.error('Websocket disconnected, code:', event.code, 'reason:', event.reason);
+                logger.error('Websocket disconnected, code:', event.code, 'reason:', event.reason);
             },
         });
         this.webSocket = webSocket;

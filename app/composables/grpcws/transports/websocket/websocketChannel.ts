@@ -7,7 +7,7 @@ import { Metadata } from '../../metadata';
 import type { Transport, TransportFactory, TransportOptions } from '../transport';
 import { createRpcError } from './utils';
 
-export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSocketReturn<any>): TransportFactory {
+export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSocketReturn<ArrayBuffer>): TransportFactory {
     const wsChannel = new WebsocketChannelImpl(logger, webSocket);
 
     return (opts: TransportOptions) => {

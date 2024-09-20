@@ -9,9 +9,9 @@ defineOptions({
 
 const props = defineProps<{
     modelValue?: Date | undefined;
-    popover?: any;
-    button?: any;
-    datePicker?: any;
+    popover?: object;
+    button?: object;
+    datePicker?: object;
 }>();
 
 const emit = defineEmits<{
@@ -65,7 +65,7 @@ const open = ref(false);
         </UModal>
     </template>
 
-    <UPopover v-else v-bind="props.popover" v-model:open="open">
+    <UPopover v-else v-bind="popover" v-model:open="open">
         <UButton
             v-bind="button"
             variant="outline"

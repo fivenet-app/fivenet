@@ -82,7 +82,7 @@ async function createRole(): Promise<void> {
     }
 }
 
-const sortedRoles = computed(() => [...roles.value].sort((a, b) => a.grade - b.grade));
+const sortedRoles = computed(() => [...(roles.value ?? [])].sort((a, b) => a.grade - b.grade));
 
 const selectedRole = ref<Role | undefined>();
 

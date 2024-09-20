@@ -10,7 +10,7 @@ import { useLivemapStore } from '~/store/livemap';
 import type { ValueOf } from '~/utils/types';
 
 defineProps<{
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any can really be "anything"
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     mapOptions?: Record<string, any>;
 }>();
 

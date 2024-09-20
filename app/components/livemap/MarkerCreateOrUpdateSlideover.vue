@@ -6,7 +6,8 @@ import { z } from 'zod';
 import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import { useLivemapStore } from '~/store/livemap';
-import type { MarkerMarker, MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
 import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 
 const props = defineProps<{

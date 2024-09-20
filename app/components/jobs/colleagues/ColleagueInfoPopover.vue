@@ -6,12 +6,13 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { ClassProp } from '~/typings';
 
 const props = withDefaults(
     defineProps<{
         userId?: number | string;
         user?: Colleague;
-        textClass?: unknown;
+        textClass?: ClassProp;
         showAvatar?: boolean;
         trailing?: boolean;
         hideProps?: boolean;
@@ -19,7 +20,7 @@ const props = withDefaults(
     {
         userId: undefined,
         user: undefined,
-        textClass: '' as any,
+        textClass: '',
         showAvatar: undefined,
         trailing: true,
         hideProps: false,

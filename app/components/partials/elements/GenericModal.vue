@@ -1,12 +1,14 @@
 <script lang="ts" setup>
+import type { ClassProp } from '~/typings';
+
 withDefaults(
     defineProps<{
         open: boolean;
-        dialogClass?: unknown;
+        dialogClass?: ClassProp;
         title?: string;
     }>(),
     {
-        dialogClass: '' as any,
+        dialogClass: '',
         title: undefined,
     },
 );

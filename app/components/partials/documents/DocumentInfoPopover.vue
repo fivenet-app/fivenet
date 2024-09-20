@@ -2,7 +2,7 @@
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import type { Document, type DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
 
 defineOptions({

@@ -3,15 +3,16 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
 import type { ClipboardUser } from '~/store/clipboard';
-import type { User, type UserShort } from '~~/gen/ts/resources/users/users';
+import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '../IDCopyBadge.vue';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
+import type { ClassProp } from '~/typings';
 
 const props = withDefaults(
     defineProps<{
         userId?: number | string;
         user?: ClipboardUser | User | UserShort;
-        textClass?: unknown;
+        textClass?: ClassProp;
         showAvatar?: boolean;
         showAvatarInName?: boolean;
         trailing?: boolean;
@@ -19,7 +20,7 @@ const props = withDefaults(
     {
         userId: undefined,
         user: undefined,
-        textClass: '' as any,
+        textClass: '',
         showAvatar: undefined,
         showAvatarInName: false,
         trailing: true,

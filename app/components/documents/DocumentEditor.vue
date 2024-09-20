@@ -453,7 +453,7 @@ async function createDocument(values: Schema): Promise<void> {
         const call = getGRPCDocStoreClient().createDocument(req);
         const { response } = await call;
 
-        const promises: Promise<any>[] = [];
+        const promises: Promise<unknown>[] = [];
         if (canDo.value.references) {
             referenceManagerData.value.forEach((ref) => {
                 ref.sourceDocumentId = response.documentId;

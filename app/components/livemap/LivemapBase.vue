@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LControl } from '@vue-leaflet/vue-leaflet';
-import type { ContextMenuItemClickEvent, type MapOptions } from 'leaflet';
+import type { ContextMenuItemClickEvent, MapOptions } from 'leaflet';
 import DispatchCreateOrUpdateSlideover from '~/components/centrum/dispatches/DispatchCreateOrUpdateSlideover.vue';
 import BaseMap from '~/components/livemap/BaseMap.vue';
 import MapMarkersLayer from '~/components/livemap/MapMarkersLayer.vue';

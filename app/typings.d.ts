@@ -46,5 +46,7 @@ export type GameConfig = {
 
 export type OpenClose = { id: number; label: string; closed?: boolean };
 
+export type ClassProp = undefined | string | Record<string, boolean> | (string | Record<string, boolean>)[];
+
 // It is always important to ensure you import/export something when augmenting a type
 export {};

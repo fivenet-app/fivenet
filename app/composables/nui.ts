@@ -54,6 +54,7 @@ export async function fetchNUI<T = NUIRequest, V = NUIResponse>(method: string, 
 type NUIMessage =
     | {
           type: 'navigateTo';
+          /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
           route: TypedRouteFromName<any>;
       }
     | {

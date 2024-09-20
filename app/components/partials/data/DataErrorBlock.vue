@@ -2,7 +2,7 @@
 defineProps<{
     title?: string;
     message?: string;
-    retry?: () => Promise<any>;
+    retry?: () => Promise<unknown>;
     retryMessage?: string;
 }>();
 
