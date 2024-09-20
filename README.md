@@ -101,6 +101,10 @@ Container images are available via [GHCR.io fivenet-app/fivenet image](https://g
 
 Helm chart is available in the separate [GitHub fivenet-app/charts repository](https://github.com/fivenet-app/charts).
 
+### Plugins
+
+Gameserver plugins are available in the separate [GitHub fivenet-app/plugins repository](https://github.com/fivenet-app/plugins).
+
 ## Development
 
 Please see [development documentation](https://fivenet.app/development).
