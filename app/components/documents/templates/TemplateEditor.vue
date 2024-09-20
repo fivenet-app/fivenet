@@ -558,7 +558,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 </UFormGroup>
             </div>
 
-            <div class="my-3">
+            <div class="my-2">
                 <h2 class="text-sm">{{ $t('common.template') }} {{ $t('common.access') }}</h2>
 
                 <DocumentAccessEntry
@@ -584,7 +584,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
             </div>
 
             <SingleHint
-                class="my-2 flex"
+                class="my-2"
                 hint-id="template_editor_templating"
                 to="https://fivenet.app/user-guides/documents/templates"
                 :external="true"
@@ -639,9 +639,13 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 </UFormGroup>
             </div>
 
-            <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+            <div class="my-2">
+                <h2 class="text-sm">{{ $t('common.requirements', 2) }}</h2>
 
-            <div class="my-3">
+                <TemplateSchemaEditor v-model="schemaEditor" class="mt-2" />
+            </div>
+
+            <div class="my-2">
                 <h2 class="text-sm">{{ $t('common.content') }} {{ $t('common.access') }}</h2>
 
                 <DocumentAccessEntry
