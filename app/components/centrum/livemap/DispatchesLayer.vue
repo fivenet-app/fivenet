@@ -76,8 +76,6 @@ const dispatchesFiltered = computedAsync(async () =>
                 :placeholder="`${$t('common.dispatch', 2)} ${$t('common.filter')}`"
                 autocomplete="off"
                 :ui="{ icon: { trailing: { pointer: '' } } }"
-
-                
             >
                 <template #trailing>
                     <UButton

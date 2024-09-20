@@ -111,8 +111,6 @@ watchDebounced(query, async () => refresh(), {
                     :placeholder="$t('common.colleague', 2)"
                     trailing
                     by="userId"
-
-                    
                 >
                     <template #label>
                         <template v-if="query.colleagues.length">

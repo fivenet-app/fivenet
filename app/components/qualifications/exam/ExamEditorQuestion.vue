@@ -4,7 +4,7 @@ import { z } from 'zod';
 import type { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = defineProps<{
-    modelValue: ExamQuestion;
+    modelValue?: ExamQuestion;
 }>();
 
 const emits = defineEmits<{
@@ -47,9 +47,23 @@ const schema = z.object({
     }),
 });
 
+watch(question, () => {
+    if (question.value === undefined) {
+        question.value = {
+            id: '0',
+            qualificationId: '0',
+            title: '',
+        };
+    }
+});
+
 const questionTypes = ['separator', 'yesno', 'freeText', 'singleChoice', 'multipleChoice'];
 
 function changeQuestionType(qt: string): void {
+    if (question.value === undefined) {
+        return;
+    }
+
     switch (qt) {
         case 'yesno':
             question.value.data = {
@@ -109,7 +123,7 @@ function changeQuestionType(qt: string): void {
 </script>
 
 <template>
-    <UForm :schema="schema" :state="question" class="flex items-center gap-2">
+    <UForm v-if="question" :schema="schema" :state="question" class="flex items-center gap-2">
         <UIcon name="i-mdi-drag-horizontal" class="size-7" />
 
         <UFormGroup name="data.data.oneofKind">

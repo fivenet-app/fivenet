@@ -18,7 +18,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
             const path = redirect || '/overview';
             const url = new URL('https://example.com' + path);
 
-            // @ts-ignore the route should be valid, as we test it against a valid URL list
+            // @ts-expect-error route should be valid, as we test it against a valid URL list
             return navigateTo({
                 path: url.pathname,
                 query: parseQuery(url.search),
@@ -48,14 +48,14 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                     if (redirect !== undefined) {
                         const path = redirect || '/overview';
                         const url = new URL('https://example.com' + path);
-                        // @ts-ignore the route should be valid, as we test it against a valid list of URLs
+                        // @ts-expect-error route should be valid, as we test it against a valid list of URLs
                         return await navigateTo({
                             path: url.pathname,
                             query: parseQuery(url.search),
                             hash: url.hash,
                         });
                     } else {
-                        // @ts-ignore the route should be valid, as we test it against a valid list of URLs
+                        // @ts-expect-error route should be valid, as we test it against a valid list of URLs
                         const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                         return await navigateTo(target);
                     }

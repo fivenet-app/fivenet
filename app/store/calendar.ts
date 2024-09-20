@@ -17,7 +17,6 @@ import type {
     RSVPCalendarEntryRequest,
     RSVPCalendarEntryResponse,
 } from '~~/gen/ts/services/calendar/calendar';
-import { useAuthStore } from './auth';
 
 export interface CalendarState {
     activeCalendarIds: string[];
@@ -43,7 +42,6 @@ export const useCalendarStore = defineStore('calendar', {
             entries: [],
         }) as CalendarState,
     persist: {
-        key: (id: string) => `state-${useAuthStore().activeChar?.userId}-${id}`,
         pick: ['activeCalendarIds', 'weeklyView'],
     },
     actions: {

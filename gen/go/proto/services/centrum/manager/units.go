@@ -394,11 +394,11 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}
 
-	// A new unit shouldn't have a status, so we make sure it has one
+	// A new unit shouldn't have a status, so we make sure we add one
 	if unit.Status, err = s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
 		UnitId:    uint64(lastId),
-		Status:    centrum.StatusUnit_STATUS_UNIT_UNKNOWN,
+		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}); err != nil {
 		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
 	}

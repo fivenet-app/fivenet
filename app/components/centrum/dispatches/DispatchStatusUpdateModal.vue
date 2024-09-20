@@ -146,14 +146,7 @@ function updateReasonField(value: string): void {
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="code" class="flex-1">
-                                    <UInput
-                                        v-model="state.code"
-                                        type="text"
-                                        name="code"
-                                        :placeholder="$t('common.code')"
-
-                                        
-                                    />
+                                    <UInput v-model="state.code" type="text" name="code" :placeholder="$t('common.code')" />
                                 </UFormGroup>
                             </dd>
                         </div>
@@ -170,8 +163,6 @@ function updateReasonField(value: string): void {
                                         type="text"
                                         name="reason"
                                         :placeholder="$t('common.reason')"
-
-                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -192,8 +183,6 @@ function updateReasonField(value: string): void {
                                     name="dispatchStatus"
                                     :options="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
                                     :searchable-placeholder="$t('common.search_field')"
-
-                                    
                                     @change="updateReasonField($event)"
                                 >
                                     <template #option="{ option }">

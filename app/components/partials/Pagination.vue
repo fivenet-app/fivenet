@@ -101,7 +101,7 @@ watchDebounced(
             <UPagination
                 v-model="page"
                 :page-count="pagination?.pageSize ?? 0"
-                :total="!infinite ? pagination?.totalCount ?? 0 : (page + 1) * (pagination?.pageSize ?? 0)"
+                :total="!infinite ? (pagination?.totalCount ?? 0) : (page + 1) * (pagination?.pageSize ?? 0)"
             />
         </div>
     </div>

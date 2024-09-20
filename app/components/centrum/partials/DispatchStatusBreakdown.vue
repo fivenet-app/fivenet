@@ -75,12 +75,13 @@ defineOptions({
 
         <template #panel>
             <div class="p-4">
-                <ul role="list" class="text-nowrap text-sm font-normal">
+                <UIcon v-if="!counts" name="i-mdi-refresh" class="size-4 animate-spin" />
+                <ul v-else role="list" class="text-nowrap text-sm font-normal">
                     <li>
                         <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.NEW)"
                             >{{ $t('enums.centrum.StatusDispatch.UNASSIGNED') }}:</span
                         >
-                        {{ counts.unassigned }}
+                        {{ counts?.unassigned }}
                     </li>
                     <li>
                         <span class="text-black" :class="dispatchStatusToBGColor(StatusDispatch.EN_ROUTE)">{{

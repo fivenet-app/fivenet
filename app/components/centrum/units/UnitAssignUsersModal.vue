@@ -109,8 +109,6 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                     :placeholder="$t('common.owner')"
                                     trailing
                                     by="userId"
-
-                                    
                                 >
                                     <template #option="{ option: user }">
                                         {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}

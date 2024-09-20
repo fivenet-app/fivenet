@@ -117,7 +117,7 @@ export const useAuthStore = defineStore('auth', {
                     this.setPermissions(response.char.permissions);
                     this.setJobProps(response.char.jobProps);
 
-                    // @ts-ignore the route should be valid, as we test it against a valid URL list
+                    // @ts-expect-error route should be valid, as we test it against a valid URL list
                     const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                     await navigateTo(target);
                 }
@@ -185,7 +185,7 @@ export const useAuthStore = defineStore('auth', {
                     const path = redirect || '/overview';
                     const url = new URL('https://example.com' + path);
 
-                    // @ts-ignore the route should be valid, as we test it against a valid URL list
+                    // @ts-expect-error route should be valid, as we test it against a valid URL list
                     await navigateTo({
                         path: url.pathname,
                         query: parseQuery(url.search),

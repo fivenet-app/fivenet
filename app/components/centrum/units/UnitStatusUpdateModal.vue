@@ -154,8 +154,6 @@ function updateReasonField(value: string): void {
                                         name="code"
                                         :placeholder="$t('common.code')"
                                         :label="$t('common.code')"
-
-                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -173,8 +171,6 @@ function updateReasonField(value: string): void {
                                         type="text"
                                         name="reason"
                                         :placeholder="$t('common.reason')"
-
-                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -194,8 +190,6 @@ function updateReasonField(value: string): void {
                                     name="unitStatus"
                                     :options="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
                                     :searchable-placeholder="$t('common.search_field')"
-
-                                    
                                     @change="updateReasonField($event)"
                                 >
                                     <template #option="{ option }">

@@ -46,8 +46,8 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
                 job: '',
                 name: values.name,
                 initials: values.initials,
-                color: values.color,
                 description: values.description,
+                color: values.color,
                 attributes: {
                     list: values.attributes,
                 },
@@ -85,8 +85,8 @@ async function updateUnitInForm(): Promise<void> {
     state.initials = props.unit.initials;
     state.description = props.unit.description;
     state.color = props.unit.color;
-    state.homePostal = props.unit.homePostal;
     state.attributes = props.unit.attributes?.list ?? [];
+    state.homePostal = props.unit.homePostal;
 }
 
 watch(props, async () => updateUnitInForm());
@@ -115,25 +115,11 @@ onMounted(async () => updateUnitInForm());
 
                 <div>
                     <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
-                        <UInput
-                            v-model="state.name"
-                            name="name"
-                            type="text"
-                            :placeholder="$t('common.name')"
-
-                            
-                        />
+                        <UInput v-model="state.name" name="name" type="text" :placeholder="$t('common.name')" />
                     </UFormGroup>
 
                     <UFormGroup name="initials" :label="$t('common.initials')" class="flex-1">
-                        <UInput
-                            v-model="state.initials"
-                            name="initials"
-                            type="text"
-                            :placeholder="$t('common.initials')"
-
-                            
-                        />
+                        <UInput v-model="state.initials" name="initials" type="text" :placeholder="$t('common.initials')" />
                     </UFormGroup>
 
                     <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
@@ -142,8 +128,6 @@ onMounted(async () => updateUnitInForm());
                             name="description"
                             type="text"
                             :placeholder="$t('common.description')"
-
-                            
                         />
                     </UFormGroup>
 
@@ -155,8 +139,6 @@ onMounted(async () => updateUnitInForm());
                             :options="availableAttributes"
                             :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
                             :searchable-placeholder="$t('common.search_field')"
-
-                            
                         >
                             <template #option-empty="{ query: search }">
                                 <q>{{ search }}</q> {{ $t('common.query_not_found') }}
@@ -181,8 +163,6 @@ onMounted(async () => updateUnitInForm());
                             name="homePostal"
                             type="text"
                             :placeholder="`${$t('common.department')} ${$t('common.postal_code')}`"
-
-                            
                         />
                     </UFormGroup>
                 </div>

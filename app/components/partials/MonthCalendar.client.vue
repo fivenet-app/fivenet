@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { Calendar as VCalendar } from 'v-calendar';
-// @ts-ignore
 import 'v-calendar/dist/style.css';
 import type { CalendarView } from 'v-calendar/dist/types/src/use/calendar.js';
 import type { CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';

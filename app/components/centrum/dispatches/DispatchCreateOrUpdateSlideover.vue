@@ -114,8 +114,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         name="message"
                                         :placeholder="$t('common.message')"
-
-                                        
                                     />
                                 </UFormGroup>
                             </dd>
@@ -133,8 +131,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         type="text"
                                         name="description"
                                         :placeholder="$t('common.description')"
-
-                                        
                                     />
                                 </UFormGroup>
                             </dd>

@@ -36,7 +36,6 @@ export async function onFocusHandler(event: FocusEvent): Promise<void> {
 export async function fetchNUI<T = any, V = any>(method: string, data: T): Promise<V> {
     const body = JSON.stringify(data);
     logger.debug(`Fetch ${method}:`, body);
-    // @ts-ignore FiveM NUI functions
     const resp = await fetch(`https://${getParentResourceName()}/${method}`, {
         method: 'POST',
         headers: {

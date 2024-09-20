@@ -123,8 +123,6 @@ const canSubmit = ref(true);
                             option-attribute="label"
                             value-attribute="chip"
                             :searchable-placeholder="$t('common.search_field')"
-
-                            
                         >
                             <template #label>
                                 <template v-if="query.categories">
@@ -171,25 +169,26 @@ const canSubmit = ref(true);
                     <div class="flex flex-1 gap-x-2">
                         <div class="min-w-0 flex-auto">
                             <p class="py-2 pr-3 text-sm font-medium">
-                                <template v-if="not.data && not.data.link">
-                                    <!-- @vue-ignore the route should be valid... at least in most cases -->
-                                    <UButton
-                                        variant="link"
-                                        :to="not.data.link.to"
-                                        :icon="notificationCategoryToIcon(not.category)"
-                                        trailing-icon="i-mdi-link-variant"
-                                        class="inline-flex items-center gap-1"
-                                        @click="
-                                            markRead(not.id);
-                                            $emit('clicked');
-                                        "
-                                    >
-                                        {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                    </UButton>
-                                </template>
-                                <template v-else>
+                                <UButton
+                                    v-if="not.data && not.data.link"
+                                    variant="link"
+                                    :to="
+                                        // @ts-expect-error route should be valid, as we test it against a valid list of URLs
+                                        not.data.link.to
+                                    "
+                                    :icon="notificationCategoryToIcon(not.category)"
+                                    trailing-icon="i-mdi-link-variant"
+                                    class="inline-flex items-center gap-1"
+                                    @click="
+                                        markRead(not.id);
+                                        $emit('clicked');
+                                    "
+                                >
                                     {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
-                                </template>
+                                </UButton>
+                                <span v-else>
+                                    {{ $t(not.title!.key, not.title?.parameters ?? {}) }}
+                                </span>
                             </p>
                             <p class="mt-1 flex text-xs leading-5 text-gray-200">
                                 {{ $t(not.content!.key, not.content?.parameters ?? {}) }}

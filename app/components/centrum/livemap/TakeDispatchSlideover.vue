@@ -127,8 +127,6 @@ const onSubmitThrottle = useThrottleFn(async (resp: TakeDispatchResp) => {
                                             type="text"
                                             name="search"
                                             :placeholder="$t('common.search')"
-
-                                            
                                         />
                                     </UFormGroup>
                                 </dd>

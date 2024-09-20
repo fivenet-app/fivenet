@@ -198,8 +198,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :options="modes"
                                     value-attribute="mode"
                                     :searchable-placeholder="$t('common.search_field')"
-
-                                    
                                 >
                                     <template #label>
                                         <span class="truncate">{{
@@ -225,8 +223,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :options="modes"
                                     value-attribute="mode"
                                     :searchable-placeholder="$t('common.search_field')"
-
-                                    
                                 >
                                     <template #label>
                                         <span class="truncate">{{
@@ -269,8 +265,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
-
-                                                
                                             />
                                         </UFormGroup>
 
@@ -310,8 +304,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 type="text"
                                                 class="w-full flex-1"
                                                 :placeholder="$t('common.reason')"
-
-                                                
                                             />
                                         </UFormGroup>
 
@@ -354,8 +346,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     type="number"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"
-
-                                    
                                 />
                             </UFormGroup>
                         </UDashboardSection>

@@ -47,6 +47,9 @@ export default defineNuxtConfig({
         provider: 'iconify',
         iconifyApiEndpoint: '/api/icons',
         fallbackToApi: false,
+        clientBundle: {
+            scan: true,
+        },
     },
 
     fonts: {

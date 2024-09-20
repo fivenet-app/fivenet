@@ -6,35 +6,21 @@ import LawEntry from '~/components/rector/laws/LawEntry.vue';
 import { Law, LawBook } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
-    modelValue: LawBook;
+    modelValue: LawBook | undefined;
     laws: Law[];
     startInEdit?: boolean;
 }>();
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'deleted', id: string): void;
-    (e: 'update:modelValue', book: LawBook): void;
+    (e: 'update:modelValue', book?: LawBook): void;
     (e: 'update:laws', laws: Law[]): void;
     (e: 'update:law', update: { id: string; law: Law }): void;
 }>();
 
-async function deleteLawBook(id: string): Promise<void> {
-    const i = parseInt(id);
-    if (i < 0) {
-        emit('deleted', id);
-        return;
-    }
+const lawBook = useVModel(props, 'modelValue', emits);
 
-    try {
-        const call = getGRPCRectorLawsClient().deleteLawBook({ id });
-        await call;
-
-        emit('deleted', id);
-    } catch (e) {
-        handleGRPCError(e as RpcError);
-        throw e;
-    }
-}
+const modal = useModal();
 
 const schema = z.object({
     name: z.string().min(3).max(128),
@@ -44,9 +30,27 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    name: props.modelValue.name,
-    description: props.modelValue.description,
+    name: '',
+    description: '',
 });
+
+async function deleteLawBook(id: string): Promise<void> {
+    const i = parseInt(id);
+    if (i < 0) {
+        emits('deleted', id);
+        return;
+    }
+
+    try {
+        const call = getGRPCRectorLawsClient().deleteLawBook({ id });
+        await call;
+
+        emits('deleted', id);
+    } catch (e) {
+        handleGRPCError(e as RpcError);
+        throw e;
+    }
+}
 
 async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
     const i = parseInt(id);
@@ -64,7 +68,7 @@ async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
 
         editing.value = false;
 
-        emit('update:modelValue', response.lawBook!);
+        lawBook.value = response.lawBook;
 
         return response.lawBook!;
     } catch (e) {
@@ -75,12 +79,16 @@ async function saveLawBook(id: string, values: Schema): Promise<LawBook> {
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
+    if (!lawBook.value) {
+        return;
+    }
+
     canSubmit.value = false;
-    await saveLawBook(props.modelValue.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
+    await saveLawBook(lawBook.value.id, event.data).finally(() => useTimeoutFn(() => (canSubmit.value = true), 400));
 }, 1000);
 
 function deletedLaw(id: string): void {
-    emit(
+    emits(
         'update:laws',
         props.laws.filter((b) => b.id !== id),
     );
@@ -89,10 +97,14 @@ function deletedLaw(id: string): void {
 const lastNewId = ref(-1);
 
 function addLaw(): void {
-    emit('update:laws', [
+    if (!lawBook.value) {
+        return;
+    }
+
+    emits('update:laws', [
         ...props.laws,
         {
-            lawbookId: props.modelValue.id,
+            lawbookId: lawBook.value.id,
             id: lastNewId.value.toString(),
             name: '',
             fine: 0,
@@ -103,13 +115,19 @@ function addLaw(): void {
     lastNewId.value--;
 }
 
-const modal = useModal();
+function resetForm(): void {
+    state.name = lawBook.value?.name ?? '';
+    state.description = lawBook.value?.description;
+}
+
+onMounted(() => resetForm());
+watch(props, () => resetForm());
 
 const editing = ref(props.startInEdit);
 </script>
 
 <template>
-    <UCard>
+    <UCard v-if="lawBook">
         <template #header>
             <div v-if="!editing" class="flex items-center gap-x-2">
                 <UButtonGroup class="inline-flex w-full">
@@ -120,16 +138,16 @@ const editing = ref(props.startInEdit);
                         :title="$t('common.delete')"
                         @click="
                             modal.open(ConfirmModal, {
-                                confirm: async () => deleteLawBook(modelValue.id),
+                                confirm: async () => deleteLawBook(lawBook!.id),
                             })
                         "
                     />
                 </UButtonGroup>
 
                 <div class="inline-flex flex-col">
-                    <h2 class="text-xl">{{ modelValue.name }}</h2>
+                    <h2 class="text-xl">{{ lawBook.name }}</h2>
 
-                    <p v-if="modelValue.description">{{ $t('common.description') }}: {{ modelValue.description }}</p>
+                    <p v-if="lawBook.description">{{ $t('common.description') }}: {{ lawBook.description }}</p>
                 </div>
 
                 <UButton @click="addLaw">
@@ -150,7 +168,7 @@ const editing = ref(props.startInEdit);
                     icon="i-mdi-cancel"
                     @click="
                         editing = false;
-                        parseInt(modelValue.id) < 0 && $emit('deleted', modelValue.id);
+                        parseInt(lawBook.id) < 0 && $emit('deleted', lawBook.id);
                     "
                 />
 

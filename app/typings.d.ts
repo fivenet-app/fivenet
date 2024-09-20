@@ -1,5 +1,5 @@
-import type { Perms } from '~~/gen/ts/perms';
 import 'vue-router';
+import type { Perms } from '~~/gen/ts/perms';
 declare module 'vue-router' {
     interface RouteMeta {
         title?: string;
@@ -29,7 +29,10 @@ export type DiscordConfig = {
 
 export type WebsiteConfig = {
     links: Links;
-    statsPage: boolean = false;
+    /**
+     * @default false
+     */
+    statsPage: boolean;
 };
 
 export type Links = {

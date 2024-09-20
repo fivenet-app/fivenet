@@ -20,7 +20,7 @@ const props = withDefaults(
     },
 );
 
-const date = computed<Date>(() => (props.value instanceof Date ? props.value : toDate(props.value) ?? new Date()));
+const date = computed<Date>(() => (props.value instanceof Date ? props.value : (toDate(props.value) ?? new Date())));
 
 const timeClass = ref('');
 if (props.updateCallback) {

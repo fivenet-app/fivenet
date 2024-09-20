@@ -72,18 +72,18 @@ const isDev = import.meta.dev;
                                 <pre
                                     v-if="error.statusMessage"
                                     v-text="
-                                        // @ts-ignore
+                                        // @ts-expect-error
                                         error.statusMessage
                                     "
                                 />
                                 <!-- @vue-ignore -->
                                 <pre
                                     v-else-if="
-                                        // @ts-ignore
+                                        // @ts-expect-error
                                         error.message
                                     "
                                     v-text="
-                                        // @ts-ignore
+                                        // @ts-expect-error
                                         error.message
                                     "
                                 />

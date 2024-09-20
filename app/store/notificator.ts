@@ -143,7 +143,7 @@ export const useNotificatorStore = defineStore('notifications', {
                             continue;
                         } else if (resp.data.oneofKind === 'systemEvent') {
                         } else {
-                            // @ts-ignore this is a catch all "unknown", so okay if it is technically "never" reached till it is..
+                            // @ts-expect-error this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             logger.warn('Unknown data received - Kind: ', resp.data.oneofKind, resp.data);
                         }
                     }

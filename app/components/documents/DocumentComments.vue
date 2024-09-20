@@ -100,13 +100,13 @@ async function addComment(documentId: string, values: Schema): Promise<void> {
     }
 }
 
-async function removeComment(comment: Comment): Promise<void> {
+async function removeComment(id: string): Promise<void> {
     if (!data.value) {
         return;
     }
 
     const idx = data.value.comments.findIndex((c) => {
-        return c.id === comment.id;
+        return c.id === id;
     });
 
     if (idx > -1) {
@@ -184,7 +184,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     v-for="(comment, idx) in data.comments"
                     :key="comment.id"
                     v-model="data.comments[idx]"
-                    @deleted="removeComment($event)"
+                    @deleted="removeComment(comment.id)"
                 />
             </ul>
 

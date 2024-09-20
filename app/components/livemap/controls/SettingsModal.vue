@@ -43,8 +43,6 @@ const schema = z.object({
                         :min="14"
                         :max="32"
                         :step="2"
-
-                        
                     />
                     <span class="text-sm">{{ livemap.markerSize }}</span>
                 </UFormGroup>
