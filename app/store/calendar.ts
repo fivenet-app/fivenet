@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia';
-import { CalendarEntry, RsvpResponses, type Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
+import { CalendarEntry, RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
     CreateOrUpdateCalendarEntryResponse,

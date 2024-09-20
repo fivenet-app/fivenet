@@ -4,8 +4,8 @@ import { z } from 'zod';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import { User, UserProps } from '~~/gen/ts/resources/users/users';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import type { User, UserProps } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     user: User;

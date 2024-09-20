@@ -6,7 +6,8 @@ import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateMo
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import UnitAttributes from '../partials/UnitAttributes.vue';
 
 const props = defineProps<{

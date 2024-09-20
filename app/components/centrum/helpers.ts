@@ -1,5 +1,6 @@
 import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 export type GroupedUnits = { status: StatusUnit; key: string; units: Unit[] }[];

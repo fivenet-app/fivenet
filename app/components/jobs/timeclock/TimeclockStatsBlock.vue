@@ -2,7 +2,7 @@
 import TimeclockStatsChart from '~/components/jobs/timeclock/TimeclockStatsChart.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
+import type { TimeclockStats, TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
 
 const props = withDefaults(
     defineProps<{

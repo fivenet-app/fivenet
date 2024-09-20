@@ -1,9 +1,10 @@
 import { type BadgeColor } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
-import { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
-import { QualificationRequirement, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
+import type { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
+import type { QualificationRequirement} from '~~/gen/ts/resources/qualifications/qualifications';
+import { RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export function checkQualificationAccess(
     qualiAccess: QualificationAccess | undefined,

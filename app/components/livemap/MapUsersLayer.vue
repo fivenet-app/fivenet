@@ -3,7 +3,7 @@ import { LControl, LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import MapUserMarker from '~/components/livemap/MapUserMarker.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 withDefaults(
     defineProps<{

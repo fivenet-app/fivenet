@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
-import { ExamQuestion, type ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
+import { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import type { QualificationExamSettings } from '~~/gen/ts/resources/qualifications/qualifications';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
 
@@ -60,8 +61,8 @@ const schema = z.object({
                 >
                     <ExamEditorQuestion
                         v-for="(question, idx) in questions?.questions"
-                        v-model="questions.questions[idx]"
                         :key="idx"
+                        v-model="questions.questions[idx]"
                         :question="question"
                         @delete="questions.questions.splice(idx, 1)"
                     />

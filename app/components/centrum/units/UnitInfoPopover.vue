@@ -1,8 +1,8 @@
 <script lang="ts" setup>
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
-import { Unit } from '~~/gen/ts/resources/centrum/units';
+import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Unit } from '~~/gen/ts/resources/centrum/units';
 
 const centrumStore = useCentrumStore();
 const { timeCorrection } = storeToRefs(centrumStore);

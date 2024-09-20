@@ -100,7 +100,7 @@ watch(state, () => {
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle" class="flex flex-col gap-2">
+    <UForm :schema="schema" :state="state" class="flex flex-col gap-2" @submit="onSubmitThrottle">
         <p v-if="!state.attributes.length" class="text-sm leading-6">
             {{ $t('common.none', [$t('common.attributes', 2)]) }}
         </p>

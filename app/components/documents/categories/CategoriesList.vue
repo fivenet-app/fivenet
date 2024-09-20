@@ -4,7 +4,7 @@ import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import { type CardElements } from '~/utils/types';
-import { Category } from '~~/gen/ts/resources/documents/category';
+import type { Category } from '~~/gen/ts/resources/documents/category';
 
 const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 

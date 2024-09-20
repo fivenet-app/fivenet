@@ -8,7 +8,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useSettingsStore } from '~/store/settings';
-import { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
+import type { GetAccountInfoResponse } from '~~/gen/ts/services/auth/auth';
 
 const { t } = useI18n();
 

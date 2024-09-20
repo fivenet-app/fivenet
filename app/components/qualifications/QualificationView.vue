@@ -350,8 +350,8 @@ const accordionItems = computed(() =>
                             <!-- eslint-disable vue/no-v-html -->
                             <div
                                 v-if="qualification.content"
-                                v-html="qualification.content"
                                 class="prose dark:prose-invert min-w-full px-4 py-2"
+                                v-html="qualification.content"
                             ></div>
                             <p v-else>
                                 {{ $t('components.qualifications.content_unavailable') }}

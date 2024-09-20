@@ -8,7 +8,7 @@ import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPop
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { OpenClose } from '~/typings';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
-import { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { ListUserDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const { t } = useI18n();
 

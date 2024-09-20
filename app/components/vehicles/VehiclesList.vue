@@ -9,7 +9,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
-import { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
+import type { ListVehiclesResponse } from '~~/gen/ts/services/dmv/vehicles';
 
 const { t } = useI18n();
 

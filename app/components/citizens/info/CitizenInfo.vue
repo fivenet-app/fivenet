@@ -13,7 +13,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Perms } from '~~/gen/ts/perms';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { User } from '~~/gen/ts/resources/users/users';
+import type { User } from '~~/gen/ts/resources/users/users';
 import CitizenActions from './CitizenActions.vue';
 import CitizenSetAttributes from './props/CitizenSetAttributes.vue';
 
@@ -268,7 +268,7 @@ const isOpen = ref(false);
                             }"
                             :title="$t('common.attributes', 2)"
                         >
-                            <CitizenSetAttributes :user-id="user.userId" v-model="user.props!.attributes" />
+                            <CitizenSetAttributes v-model="user.props!.attributes" :user-id="user.userId" />
                         </UDashboardSection>
                     </template>
                 </div>

@@ -8,7 +8,7 @@ useHead({
 });
 
 const props = defineProps<{
-    error: Error | Object;
+    error: Error | object;
 }>();
 
 const router = useRouter();
@@ -132,11 +132,11 @@ const isDev = import.meta.dev;
 
                         <UButton
                             v-if="isDev"
+                            class="mt-4"
                             @click="
                                 updateAppConfig({ version: 'UNKNOWN' });
                                 clearError();
                             "
-                            class="mt-4"
                         >
                             Set Dev App Config
                         </UButton>

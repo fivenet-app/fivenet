@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useCompletorStore } from '~/store/completor';
-import { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import type { AttributeValues, Permission, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const props = defineProps<{
     attribute: RoleAttribute;

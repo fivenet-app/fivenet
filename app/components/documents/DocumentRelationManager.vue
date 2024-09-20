@@ -5,8 +5,9 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { getUser, useClipboardStore } from '~/store/clipboard';
-import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
-import { User } from '~~/gen/ts/resources/users/users';
+import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation } from '~~/gen/ts/resources/documents/documents';
+import type { User } from '~~/gen/ts/resources/users/users';
 
 const props = defineProps<{
     open: boolean;

@@ -4,7 +4,8 @@ import { z } from 'zod';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
-import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
+import type { Settings } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
 
 const { t } = useI18n();
 

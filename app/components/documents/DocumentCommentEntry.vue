@@ -6,7 +6,7 @@ import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { Comment } from '~~/gen/ts/resources/documents/comment';
+import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
@@ -158,8 +158,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UForm :schema="schema" :state="state" class="relative" @submit="onSubmitThrottle">
                         <UFormGroup name="comment">
                             <UTextarea
-                                v-model="state.comment"
                                 ref="commentInput"
+                                v-model="state.comment"
                                 :rows="5"
                                 :placeholder="$t('components.documents.document_comments.add_comment')"
                             />

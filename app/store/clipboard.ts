@@ -1,10 +1,11 @@
 import { defineStore } from 'pinia';
-import { Category } from '~~/gen/ts/resources/documents/category';
-import { DocContentType, Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
+import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import { DocContentType } from '~~/gen/ts/resources/documents/documents';
+import type { ObjectSpecs, TemplateData } from '~~/gen/ts/resources/documents/templates';
 import type { File } from '~~/gen/ts/resources/filestore/file';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
-import { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
+import type { User, UserShort } from '~~/gen/ts/resources/users/users';
+import type { Vehicle } from '~~/gen/ts/resources/vehicles/vehicles';
 
 export class ClipboardUser {
     public userId: number | undefined;

@@ -1,5 +1,5 @@
 import { type MethodInfo } from '@protobuf-ts/runtime-rpc';
-import { Metadata } from '../metadata';
+import type { Metadata } from '../metadata';
 
 export interface Transport {
     sendMessage(msgBytes: Uint8Array, complete?: boolean): Promise<void>;

@@ -245,8 +245,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <div class="flex flex-col gap-4">
                     <ExamViewQuestion
                         v-for="(question, idx) in exam.questions"
-                        v-model="state.responses[idx]"
                         :key="question.id"
+                        v-model="state.responses[idx]"
                         :question="question"
                         :disabled="disabled"
                     >

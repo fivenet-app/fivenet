@@ -9,9 +9,9 @@ import type { OpenClose } from '~/typings';
 import { useCompletorStore } from '~/store/completor';
 import { useSettingsStore } from '~/store/settings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
-import { Category } from '~~/gen/ts/resources/documents/category';
-import { UserShort } from '~~/gen/ts/resources/users/users';
-import { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 
 const { t } = useI18n();
@@ -270,7 +270,7 @@ defineShortcuts({
                 class="my-1 flex flex-initial flex-col divide-y divide-gray-100 dark:divide-gray-800"
                 :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
             >
-                <li v-if="loading" v-for="_ in 8" class="flex-initial">
+                <li v-for="_ in 8" v-if="loading" class="flex-initial">
                     <div class="m-2">
                         <div class="flex flex-row gap-2 truncate">
                             <div class="flex flex-1 flex-row items-center justify-start">
@@ -312,7 +312,7 @@ defineShortcuts({
                     </div>
                 </li>
 
-                <DocumentListEntry v-else v-for="doc in data?.documents" :key="doc.id" :document="doc" />
+                <DocumentListEntry v-for="doc in data?.documents" v-else :key="doc.id" :document="doc" />
             </ul>
         </div>
     </UDashboardPanelContent>

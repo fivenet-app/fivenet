@@ -10,7 +10,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { User } from '~~/gen/ts/resources/users/users';
-import { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
+import type { ListCitizensRequest, ListCitizensResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
 const { t } = useI18n();
 

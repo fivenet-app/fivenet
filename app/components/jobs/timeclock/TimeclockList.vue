@@ -10,7 +10,7 @@ import { useCompletorStore } from '~/store/completor';
 import { getWeekNumber } from '~/utils/time';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
+import type { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 

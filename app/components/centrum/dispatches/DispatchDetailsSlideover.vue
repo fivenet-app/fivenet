@@ -13,7 +13,8 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
 import { useNotificatorStore } from '~/store/notificator';
-import { Dispatch, StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch} from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch, TakeDispatchResp } from '~~/gen/ts/resources/centrum/dispatches';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 defineOptions({
     inheritAttrs: false,

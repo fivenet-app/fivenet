@@ -6,9 +6,10 @@ import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import { ConductEntry, ConductType } from '~~/gen/ts/resources/jobs/conduct';
+import type { ConductEntry} from '~~/gen/ts/resources/jobs/conduct';
+import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import { conductTypesToBGColor } from './helpers';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 

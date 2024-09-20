@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import UnitFeedItem from '~/components/centrum/units/UnitFeedItem.vue';
-import { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
+import type { ListUnitActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     unitId: string;

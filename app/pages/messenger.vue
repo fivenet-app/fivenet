@@ -186,7 +186,7 @@ onMounted(async () => {
             </UDashboardToolbar>
         </UDashboardPanel>
 
-        <UDashboardPanel v-model="isMessengerPanelOpen" id="messengerthreadview" collapsible grow side="right">
+        <UDashboardPanel id="messengerthreadview" v-model="isMessengerPanelOpen" collapsible grow side="right">
             <template v-if="selectedThread">
                 <UDashboardNavbar>
                     <template #toggle>

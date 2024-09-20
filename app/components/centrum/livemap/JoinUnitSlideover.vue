@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { useCentrumStore } from '~/store/centrum';
-import { Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Unit } from '~~/gen/ts/resources/centrum/units';
 
 const emit = defineEmits<{
     (e: 'joined', unit: Unit): void;

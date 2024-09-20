@@ -3,7 +3,8 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch} from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 import { dispatchStatusAnimate, dispatchStatusToBGColor, dispatchTimeToTextColor } from '../helpers';
 import DispatchAttributes from '../partials/DispatchAttributes.vue';
 import DispatchStatusBreakdown from '../partials/DispatchStatusBreakdown.vue';
@@ -127,7 +128,7 @@ const columns = [
                 <USkeleton v-for="_ in 7" class="h-9 w-full" />
             </div>
 
-            <template v-else v-for="(group, idx) in grouped" :key="group.key">
+            <template v-for="(group, idx) in grouped" v-else :key="group.key">
                 <h3 v-if="alwaysShowDay || idx !== 0"><GenericTime :value="group.date" type="date" /></h3>
                 <UTable
                     :columns="columns"

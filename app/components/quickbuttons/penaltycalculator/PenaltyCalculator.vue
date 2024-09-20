@@ -6,7 +6,7 @@ import PenaltyStats from '~/components/quickbuttons/penaltycalculator/PenaltySta
 import PenaltySummaryTable from '~/components/quickbuttons/penaltycalculator/PenaltySummaryTable.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import { Law } from '~~/gen/ts/resources/laws/laws';
+import type { Law } from '~~/gen/ts/resources/laws/laws';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const completorStore = useCompletorStore();

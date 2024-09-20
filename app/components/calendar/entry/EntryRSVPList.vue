@@ -6,7 +6,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCalendarStore } from '~/store/calendar';
-import { CalendarEntryRSVP, RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
+import type { CalendarEntryRSVP} from '~~/gen/ts/resources/calendar/calendar';
+import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { ListCalendarEntryRSVPResponse, RSVPCalendarEntryResponse } from '~~/gen/ts/services/calendar/calendar';
 import EntryShareForm from './EntryShareForm.vue';
 

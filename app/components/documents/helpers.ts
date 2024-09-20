@@ -1,10 +1,10 @@
 import type { BadgeColor, ButtonColor } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
-import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import type { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { DocActivityType } from '~~/gen/ts/resources/documents/activity';
 import { DocReference, DocRelation } from '~~/gen/ts/resources/documents/documents';
-import { User, UserShort } from '~~/gen/ts/resources/users/users';
+import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 export const logger = useLogger('📃 Docstore');
 

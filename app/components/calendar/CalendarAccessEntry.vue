@@ -3,8 +3,8 @@ import { listEnumValues } from '@protobuf-ts/runtime';
 import { useCompletorStore } from '~/store/completor';
 import { type ArrayElement } from '~/utils/types';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
-import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 type AccessType = { id: number; name: string };
 

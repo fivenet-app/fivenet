@@ -3,12 +3,15 @@ import { statusOrder } from '~/components/centrum/helpers';
 import type { NotificationActionI18n } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
-import { Dispatch, DispatchStatus, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
-import { CentrumMode, Settings } from '~~/gen/ts/resources/centrum/settings';
-import { StatusUnit, Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
+import type { Dispatch, DispatchStatus} from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Settings } from '~~/gen/ts/resources/centrum/settings';
+import { CentrumMode } from '~~/gen/ts/resources/centrum/settings';
+import type { Unit, UnitStatus } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 
 export const logger = useLogger('⛑️ Centrum');
 

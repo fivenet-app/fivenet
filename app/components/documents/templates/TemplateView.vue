@@ -8,8 +8,8 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
-import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
+import type { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import type { Template, TemplateRequirements } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{

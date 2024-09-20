@@ -4,7 +4,8 @@ import { dispatchStatusToBGColor, dispatchTimeToTextColorSidebar } from '~/compo
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useCentrumStore } from '~/store/centrum';
 import { useLivemapStore } from '~/store/livemap';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch} from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = defineProps<{
     dispatch: Dispatch;

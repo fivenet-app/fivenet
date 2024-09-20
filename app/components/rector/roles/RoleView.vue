@@ -6,8 +6,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import RoleViewAttr from '~/components/rector/roles/RoleViewAttr.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
+import type { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const props = defineProps<{
     roleId: string;

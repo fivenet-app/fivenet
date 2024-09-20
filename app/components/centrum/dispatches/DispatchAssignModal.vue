@@ -4,7 +4,8 @@ import type { GroupedUnits } from '~/components/centrum/helpers';
 import { statusOrder, unitStatusToBGColor } from '~/components/centrum/helpers';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import { useCentrumStore } from '~/store/centrum';
-import { StatusUnit, Unit } from '~~/gen/ts/resources/centrum/units';
+import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
 
 const centrumStore = useCentrumStore();
 const { dispatches, getSortedUnits } = storeToRefs(centrumStore);
@@ -152,9 +153,9 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 ]"
                                 @click="selectUnit(unit)"
                             >
-                                <UIcon name="i-mdi-check" v-if="state.units.includes(unit.id)" class="size-5" />
-                                <UIcon name="i-mdi-checkbox-blank-outline" v-else-if="unit.users.length > 0" class="size-5" />
-                                <UIcon name="i-mdi-cancel" v-else class="size-5" />
+                                <UIcon v-if="state.units.includes(unit.id)" name="i-mdi-check" class="size-5" />
+                                <UIcon v-else-if="unit.users.length > 0" name="i-mdi-checkbox-blank-outline" class="size-5" />
+                                <UIcon v-else name="i-mdi-cancel" class="size-5" />
 
                                 <div class="ml-0.5 flex w-full flex-col place-items-start">
                                     <span class="font-bold">

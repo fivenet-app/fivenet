@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
+import type { OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
 
 defineProps<{
     provider: OAuth2Provider;

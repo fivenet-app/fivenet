@@ -64,7 +64,7 @@ const grouped = computedAsync(async () => {
                 <USkeleton v-for="_ in 8" class="h-9 w-full" />
             </div>
 
-            <template v-else v-for="group in grouped" :key="group.key">
+            <template v-for="group in grouped" v-else :key="group.key">
                 <p class="-mb-1.5 text-sm">
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[group.status]}`) }}
                 </p>

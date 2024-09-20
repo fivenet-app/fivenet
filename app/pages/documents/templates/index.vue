@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import TemplatesList from '~/components/documents/templates/TemplatesList.vue';
-import { TemplateShort } from '~~/gen/ts/resources/documents/templates';
+import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 useHead({
     title: 'pages.documents.templates.title',

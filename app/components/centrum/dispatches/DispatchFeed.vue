@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import DispatchFeedItem from '~/components/centrum/dispatches/DispatchFeedItem.vue';
-import { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum';
+import type { ListDispatchActivityResponse } from '~~/gen/ts/services/centrum/centrum';
 
 const props = defineProps<{
     dispatchId?: string;

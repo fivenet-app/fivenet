@@ -5,7 +5,7 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useClipboardStore } from '~/store/clipboard';
-import { Template } from '~~/gen/ts/resources/documents/templates';
+import type { Template } from '~~/gen/ts/resources/documents/templates';
 
 const props = defineProps<{
     templateId: string;

@@ -87,7 +87,7 @@ watchOnce(opened, async () => {
             @click="opened = true"
         >
             <slot name="before" />
-            <template #leading v-if="showAvatar">
+            <template v-if="showAvatar" #leading>
                 <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
                 <ProfilePictureImg v-else :src="user?.avatar?.url" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>

@@ -7,8 +7,8 @@ import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { Role } from '~~/gen/ts/resources/permissions/permissions';
-import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import type { Role } from '~~/gen/ts/resources/permissions/permissions';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 
 const { t } = useI18n();
 

@@ -8,14 +8,15 @@ import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
+import type { QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
+import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
+import type Qualification from '~~/gen/ts/resources/qualifications/qualifications';
 import {
-    type Qualification,
-    QualificationExamMode,
     QualificationExamSettings,
     QualificationRequirement,
     QualificationShort,
+    QualificationExamMode
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type {
@@ -436,7 +437,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 </script>
 
 <template>
-    <UForm :schema="schema" :state="state" @submit="onSubmitThrottle" class="pb-24">
+    <UForm :schema="schema" :state="state" class="pb-24" @submit="onSubmitThrottle">
         <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
             <template #right>
                 <UButtonGroup class="inline-flex">

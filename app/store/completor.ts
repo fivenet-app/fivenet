@@ -1,12 +1,11 @@
 import { defineStore } from 'pinia';
-import { Category } from '~~/gen/ts/resources/documents/category';
-import { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
-import { LawBook } from '~~/gen/ts/resources/laws/laws';
-import { Job } from '~~/gen/ts/resources/users/jobs';
-import type { CitizenAttribute } from '~~/gen/ts/resources/users/users';
-import { UserShort } from '~~/gen/ts/resources/users/users';
-import { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
-import { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
+import type { Category } from '~~/gen/ts/resources/documents/category';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { LawBook } from '~~/gen/ts/resources/laws/laws';
+import type { Job } from '~~/gen/ts/resources/users/jobs';
+import type { CitizenAttribute , UserShort } from '~~/gen/ts/resources/users/users';
+import type { CompleteCitizensRequest, CompleteJobsRequest } from '~~/gen/ts/services/completor/completor';
+import type { ListColleaguesRequest } from '~~/gen/ts/services/jobs/jobs';
 
 export interface CompletorState {
     jobs: Job[];

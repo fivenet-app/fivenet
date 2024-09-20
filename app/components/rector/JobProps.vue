@@ -12,7 +12,8 @@ import { useAuthStore } from '~/store/auth';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { DiscordSyncChange, JobProps, UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
+import type { DiscordSyncChange, JobProps} from '~~/gen/ts/resources/users/jobs';
+import { UserInfoSyncUnemployedMode } from '~~/gen/ts/resources/users/jobs';
 
 const { t } = useI18n();
 

@@ -1,8 +1,9 @@
 <script lang="ts" setup>
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { ClipboardUser, useClipboardStore } from '~/store/clipboard';
+import type { ClipboardUser} from '~/store/clipboard';
+import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
-import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
+import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = withDefaults(

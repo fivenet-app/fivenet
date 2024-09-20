@@ -1,4 +1,4 @@
-import * as googleProtobufDuration from '~~/gen/ts/google/protobuf/duration';
+import type * as googleProtobufDuration from '~~/gen/ts/google/protobuf/duration';
 
 export function toDuration(input: string | number): googleProtobufDuration.Duration {
     if (typeof input === 'number') {

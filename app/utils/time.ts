@@ -1,5 +1,5 @@
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
-import * as resourcesTimestampTimestamp from '~~/gen/ts/resources/timestamp/timestamp';
+import type * as resourcesTimestampTimestamp from '~~/gen/ts/resources/timestamp/timestamp';
 
 const secondsPerMinute = 60;
 const secondsPerHour = secondsPerMinute * 60;
@@ -57,7 +57,7 @@ export function toDate(ts: resourcesTimestampTimestamp.Timestamp | undefined, co
     return new Date(googleProtobufTimestamp.Timestamp.toDate(ts.timestamp!).getTime() - -correction);
 }
 
-export function toDateLocaleString(ts: resourcesTimestampTimestamp.Timestamp | undefined, d?: Function): string {
+export function toDateLocaleString(ts: resourcesTimestampTimestamp.Timestamp | undefined, d?: (date: Date, format: string) => string): string {
     if (ts === undefined || typeof ts === 'undefined') {
         return '-';
     }

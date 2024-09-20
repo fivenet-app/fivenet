@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { LControl, LControlLayers, LMap, LTileLayer } from '@vue-leaflet/vue-leaflet';
 import { useRouteHash } from '@vueuse/router';
-import L, { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type PointExpression } from 'leaflet';
+import type L from 'leaflet';
+import { CRS, extend, LatLng, latLngBounds, Projection, Transformation, type PointExpression } from 'leaflet';
 import 'leaflet-contextmenu';
 import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';

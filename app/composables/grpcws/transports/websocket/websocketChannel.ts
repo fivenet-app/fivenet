@@ -140,7 +140,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
     }
 
     getStream(opts: TransportOptions): GrpcStream {
-        let currentStreamId = this.lastStreamId++;
+        const currentStreamId = this.lastStreamId++;
         const self = this;
 
         async function sendToWebsocket(toSend: GrpcFrame): Promise<void> {

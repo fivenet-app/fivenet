@@ -557,8 +557,8 @@ defineShortcuts({
                                                         </li>
 
                                                         <OwnDispatchEntry
-                                                            v-else
                                                             v-for="id in getSortedOwnDispatches.slice().reverse()"
+                                                            v-else
                                                             :key="id"
                                                             v-model:selected-dispatch="selectedDispatch"
                                                             :dispatch="dispatches.get(id)!"

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { VisArea, VisAxis, VisCrosshair, VisLine, VisTooltip, VisXYContainer } from '@unovis/vue';
 import { parse } from 'date-fns';
-import { TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
+import type { TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
 
 const { d, n, t } = useI18n();
 

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
+import type { ObjectSpecs } from '~~/gen/ts/resources/documents/templates';
 
 defineProps<{
     name: string;

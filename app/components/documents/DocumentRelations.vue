@@ -4,7 +4,8 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { DocRelation, DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
+import { DocRelation } from '~~/gen/ts/resources/documents/documents';
 import { relationToBadge } from './helpers';
 
 const props = withDefaults(

@@ -4,7 +4,7 @@ import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { type Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
+import type { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
 import { useCalendarStore } from './calendar';
 import { useMessengerStore } from './messenger';
 

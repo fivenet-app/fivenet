@@ -8,8 +8,8 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import AttrViewAttr from '~/components/rector/attrs/AttrViewAttr.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
-import { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
+import type { AttributeValues, Permission, Role, RoleAttribute } from '~~/gen/ts/resources/permissions/permissions';
+import type { AttrsUpdate, PermItem, PermsUpdate } from '~~/gen/ts/services/rector/rector';
 
 const props = defineProps<{
     roleId: string;
@@ -340,7 +340,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                             <template #panel>
                                 <div class="p-4">
-                                    <UForm :state="state" @submit="pasteRole" class="flex flex-col gap-1">
+                                    <UForm :state="state" class="flex flex-col gap-1" @submit="pasteRole">
                                         <UFormGroup name="input">
                                             <UInput v-model="state.input" type="text" name="input" />
                                         </UFormGroup>

@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
-import { Job } from '~~/gen/ts/resources/users/jobs';
+import type { Job } from '~~/gen/ts/resources/users/jobs';
 
 const authStore = useAuthStore();
 const { setSuperUserMode } = authStore;

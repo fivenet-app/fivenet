@@ -1,5 +1,5 @@
 import { defineStore } from 'pinia';
-import { Category } from '~~/gen/ts/resources/documents/category';
+import type { Category } from '~~/gen/ts/resources/documents/category';
 
 export interface DocumentEditorState {
     title: string;

@@ -148,11 +148,11 @@ const isOpen = ref(false);
                             />
 
                             <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
-                                <li v-if="loading" v-for="_ in 10">
+                                <li v-for="_ in 10" v-if="loading">
                                     <USkeleton class="h-16 w-full" />
                                 </li>
 
-                                <li v-else v-for="document in data?.documents" class="flex flex-col px-1">
+                                <li v-for="document in data?.documents" v-else class="flex flex-col px-1">
                                     <DocumentInfoPopover :document="document">
                                         <template #title="{ document, loading }">
                                             <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />

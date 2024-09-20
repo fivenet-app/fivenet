@@ -3,8 +3,8 @@ import { z } from 'zod';
 import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
 import { useCompletorStore } from '~/store/completor';
-import { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
-import { UserShort } from '~~/gen/ts/resources/users/users';
+import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import QualificationResultTutorModal from './QualificationResultTutorModal.vue';
 
 defineProps<{

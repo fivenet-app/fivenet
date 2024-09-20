@@ -7,7 +7,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import Pagination from '~/components/partials/Pagination.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationCategory } from '~~/gen/ts/resources/notifications/notifications';
-import { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
+import type { GetNotificationsResponse } from '~~/gen/ts/services/notificator/notificator';
 import { notificationCategoryToIcon } from './helpers';
 
 defineEmits<{

@@ -2,7 +2,7 @@
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
-import { ClipboardUser } from '~/store/clipboard';
+import type { ClipboardUser } from '~/store/clipboard';
 import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '../IDCopyBadge.vue';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
@@ -92,7 +92,7 @@ watchOnce(opened, async () => {
             :trailing-icon="trailing ? 'i-mdi-chevron-down' : undefined"
             @click="opened = true"
         >
-            <template #leading v-if="showAvatarInName">
+            <template v-if="showAvatarInName" #leading>
                 <USkeleton v-if="!user && loading" class="h-6 w-6" :ui="{ rounded: 'rounded-full' }" />
                 <ProfilePictureImg v-else :src="user?.avatar?.url" :name="`${user?.firstname} ${user?.lastname}`" size="3xs" />
             </template>

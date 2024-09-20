@@ -7,7 +7,8 @@ import DispatchAttributes from '~/components/centrum/partials/DispatchAttributes
 import UnitInfoPopover from '~/components/centrum/units/UnitInfoPopover.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import { useLivemapStore } from '~/store/livemap';
-import { Dispatch, StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
+import type { Dispatch} from '~~/gen/ts/resources/centrum/dispatches';
+import { StatusDispatch } from '~~/gen/ts/resources/centrum/dispatches';
 
 const props = withDefaults(
     defineProps<{

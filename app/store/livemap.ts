@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { type Coordinate } from '~/composables/livemap';
-import { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
-import { Job } from '~~/gen/ts/resources/users/jobs';
+import type { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { Job } from '~~/gen/ts/resources/users/jobs';
 import { type UserShort } from '~~/gen/ts/resources/users/users';
 import { useSettingsStore } from './settings';
 

@@ -11,19 +11,21 @@ import { getDocument, getUser, useClipboardStore } from '~/store/clipboard';
 import { useCompletorStore } from '~/store/completor';
 import { useDocumentEditorStore } from '~/store/documenteditor';
 import { useNotificatorStore } from '~/store/notificator';
-import { AccessLevel, DocumentAccess } from '~~/gen/ts/resources/documents/access';
-import { Category } from '~~/gen/ts/resources/documents/category';
+import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
+import { AccessLevel } from '~~/gen/ts/resources/documents/access';
+import type { Category } from '~~/gen/ts/resources/documents/category';
+import type {
+    DocumentReference,
+    DocumentRelation} from '~~/gen/ts/resources/documents/documents';
 import {
     DocContentType,
     DocReference,
-    DocRelation,
-    DocumentReference,
-    DocumentRelation,
+    DocRelation
 } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
-import { UserShort } from '~~/gen/ts/resources/users/users';
-import { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
+import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
+import type { CreateDocumentRequest, UpdateDocumentRequest } from '~~/gen/ts/services/docstore/docstore';
 
 const props = defineProps<{
     documentId?: string;

@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
-import { Law } from '~~/gen/ts/resources/laws/laws';
+import type { Law } from '~~/gen/ts/resources/laws/laws';
 
 const props = defineProps<{
     law: Law;
