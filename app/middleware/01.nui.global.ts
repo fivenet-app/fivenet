@@ -1,4 +1,4 @@
-import { type RouteLocationNormalized } from 'vue-router';
+import type { RouteLocationNormalized } from 'vue-router';
 import { logger } from '~/composables/nui';
 import { useSettingsStore } from '~/store/settings';
 

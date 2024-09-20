@@ -128,6 +128,7 @@ const response = useVModel(props, 'modelValue', emits);
             <div class="flex flex-col gap-2">
                 <UCheckbox
                     v-for="choice in question.data.data.multipleChoice.choices"
+                    :key="choice"
                     v-model="response.response.response.multipleChoice.choices"
                     :label="choice"
                     :disabled="disabled"

@@ -74,7 +74,7 @@ const nuiAvailable = ref(isNUIAvailable());
 
 <template>
     <UModal :ui="{ width: 'w-full sm:max-w-5xl' }">
-        <UForm :state="state" @submit="onSubmitThrottle">
+        <UForm :state="state" :schema="schema" @submit="onSubmitThrottle">
             <UCard :ui="{ ring: '', divide: 'divide-y divide-gray-100 dark:divide-gray-800' }">
                 <template #header>
                     <div class="flex items-center justify-between">

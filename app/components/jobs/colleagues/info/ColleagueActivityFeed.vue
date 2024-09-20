@@ -171,9 +171,10 @@ watchDebounced(query, async () => refresh(), {
 
     <div v-else-if="loading || data?.activity" class="relative flex-1 overflow-x-auto">
         <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-            <li v-for="_ in 10" v-if="loading" class="px-2 py-4">
-                <div class="flex space-x-3">
-                    <div class="my-auto flex size-10 items-center justify-center rounded-full">
+            <template v-if="loading">
+                <li v-for="idx in 10" :key="idx" class="px-2 py-4">
+                    <div class="flex space-x-3">
+                        <div class="my-auto flex size-10 items-center justify-center rounded-full">
                         <USkeleton class="size-full" :ui="{ rounded: 'rounded-full' }" />
                     </div>
 
@@ -199,15 +200,18 @@ watchDebounced(query, async () => refresh(), {
                     </div>
                 </div>
             </li>
+        </template>
 
+        <template v-else>
             <li
-                v-for="activity in data?.activity"
-                v-else
-                :key="activity.id"
-                class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
+            v-for="activity in data?.activity"
+
+            :key="activity.id"
+            class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white px-2 py-4 dark:border-gray-900"
             >
-                <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
-            </li>
+            <ColleagueActivityFeedEntry :activity="activity" :show-target-user="showTargetUser" />
+        </li>
+    </template>
         </ul>
     </div>
 

@@ -1,4 +1,4 @@
-import { type TypedRouteFromName } from '@typed-router';
+import type { TypedRouteFromName } from '@typed-router';
 import { useSettingsStore } from '~/store/settings';
 
 export const logger = useLogger('🎮 NUI');
@@ -33,7 +33,10 @@ export async function onFocusHandler(event: FocusEvent): Promise<void> {
     focusTablet(event.type === 'focusin');
 }
 
-export async function fetchNUI<T = any, V = any>(method: string, data: T): Promise<V> {
+type NUIRequest = boolean | string | object;
+type NUIResponse = boolean | string | object;
+
+export async function fetchNUI<T = NUIRequest, V = NUIResponse>(method: string, data: T): Promise<V> {
     const body = JSON.stringify(data);
     logger.debug(`Fetch ${method}:`, body);
     const resp = await fetch(`https://${getParentResourceName()}/${method}`, {

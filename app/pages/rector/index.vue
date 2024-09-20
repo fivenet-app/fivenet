@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import CardsList from '~/components/partials/CardsList.vue';
-import { type CardElements } from '~/utils/types';
+import type { CardElements } from '~/utils/types';
 
 const { t } = useI18n();
 

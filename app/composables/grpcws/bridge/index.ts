@@ -23,7 +23,7 @@ import { createGrpcStatus, createGrpcTrailers } from './utils';
 export class GrpcWSTransport implements RpcTransport {
     private readonly defaultOptions;
     private logger: ILogger;
-    webSocket: UseWebSocketReturn<any>;
+    webSocket: UseWebSocketReturn<ArrayBuffer>;
     wsInitiated: Ref<boolean>;
     private wsTs: TransportFactory;
 
@@ -75,7 +75,7 @@ export class GrpcWSTransport implements RpcTransport {
                     defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err) {
+                    if (err && err instanceof Error) {
                         defHeader.rejectPending(err);
                         defMessage.rejectPending(err);
                         defStatus.rejectPending(err);
@@ -201,7 +201,7 @@ export class GrpcWSTransport implements RpcTransport {
                     defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err) {
+                    if (err && err instanceof Error) {
                         defHeader.rejectPending(err);
                         defMessage.rejectPending(err);
                         defStatus.rejectPending(err);
@@ -257,7 +257,7 @@ export class GrpcWSTransport implements RpcTransport {
                     outStream.notifyMessage(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err) {
+                    if (err && err instanceof Error) {
                         defHeader.rejectPending(err);
                         outStream.notifyError(err);
                         defStatus.rejectPending(err);

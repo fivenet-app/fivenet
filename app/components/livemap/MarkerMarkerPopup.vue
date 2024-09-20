@@ -4,7 +4,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
-import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import MarkerCreateOrUpdateSlideover from './MarkerCreateOrUpdateSlideover.vue';
 
 defineProps<{

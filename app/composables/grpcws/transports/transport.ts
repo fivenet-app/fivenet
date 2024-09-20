@@ -1,4 +1,4 @@
-import { type MethodInfo } from '@protobuf-ts/runtime-rpc';
+import type { MethodInfo } from '@protobuf-ts/runtime-rpc';
 import type { Metadata } from '../metadata';
 
 export interface Transport {
@@ -14,7 +14,7 @@ export interface TransportOptions {
     url: string;
     onHeaders: (headers: Metadata, status: number) => void;
     onChunk: (chunkBytes: Uint8Array, flush?: boolean) => void;
-    onEnd: (err?: Error | any) => void;
+    onEnd: (err?: Error) => void;
 }
 
 export interface TransportFactory {

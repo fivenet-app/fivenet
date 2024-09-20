@@ -17,6 +17,8 @@ const props = withDefaults(
         hideProps?: boolean;
     }>(),
     {
+        userId: undefined,
+        user: undefined,
         textClass: '' as any,
         showAvatar: undefined,
         trailing: true,

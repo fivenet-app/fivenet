@@ -59,7 +59,7 @@ export default defineNuxtRouteMiddleware(async (to: RouteLocationNormalized, fro
                         const target = useRouter().resolve(useSettingsStore().startpage ?? '/overview');
                         return await navigateTo(target);
                     }
-                } catch (e) {
+                } catch (_) {
                     setActiveChar(null);
                     setPermissions([]);
                     setJobProps(undefined);

@@ -9,6 +9,7 @@ const props = withDefaults(
         loaded: boolean;
     }>(),
     {
+        modelValue: undefined,
         threads: () => [],
     },
 );

@@ -1,4 +1,4 @@
-import { type RpcMetadata, type RpcStatus } from '@protobuf-ts/runtime-rpc';
+import type { RpcMetadata, type RpcStatus } from '@protobuf-ts/runtime-rpc';
 import { Metadata } from '~/composables/grpcws/metadata';
 import type { HeaderValue } from '~~/gen/ts/resources/common/grpcws/grpcws';
 

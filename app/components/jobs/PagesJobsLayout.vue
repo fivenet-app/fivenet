@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type RoutesNamedLocations } from '@typed-router';
+import type { RoutesNamedLocations } from '@typed-router';
 import type { Perms } from '~~/gen/ts/perms';
 
 const { t } = useI18n();

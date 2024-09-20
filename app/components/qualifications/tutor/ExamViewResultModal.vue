@@ -20,19 +20,15 @@ const { data } = useLazyAsyncData(`qualification-${props.qualificationId}-result
 );
 
 async function getUserExam(): Promise<GetUserExamResponse> {
-    try {
-        const call = getGRPCQualificationsClient().getUserExam({
-            qualificationId: props.qualificationId,
-            userId: props.userId,
-        });
-        const { response } = await call;
+    const call = getGRPCQualificationsClient().getUserExam({
+        qualificationId: props.qualificationId,
+        userId: props.userId,
+    });
+    const { response } = await call;
 
-        totalQuestions.value = response.exam?.questions.filter((q) => q.data?.data.oneofKind !== 'separator').length ?? 0;
+    totalQuestions.value = response.exam?.questions.filter((q) => q.data?.data.oneofKind !== 'separator').length ?? 0;
 
-        return response;
-    } catch (e) {
-        throw e;
-    }
+    return response;
 }
 
 const totalQuestions = ref(0);

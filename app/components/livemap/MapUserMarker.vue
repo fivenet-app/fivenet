@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LIcon, LMarker, LPopup } from '@vue-leaflet/vue-leaflet';
-import { type PointExpression } from 'leaflet';
+import type { PointExpression } from 'leaflet';
 import { MapMarkerIcon } from 'mdi-vue3';
 import UnitDetailsSlideover from '~/components//centrum/units/UnitDetailsSlideover.vue';
 import { unitStatusToBGColor } from '~/components/centrum/helpers';

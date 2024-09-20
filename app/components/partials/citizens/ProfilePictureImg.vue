@@ -13,7 +13,7 @@ withDefaults(
         disableBlurToggle?: boolean;
     }>(),
     {
-        url: undefined,
+        src: undefined,
         size: 'lg',
         enablePopup: false,
         noBlur: undefined,

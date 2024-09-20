@@ -7,9 +7,10 @@ import 'leaflet-contextmenu';
 import 'leaflet/dist/leaflet.css';
 import ZoomControls from '~/components/livemap/controls/ZoomControls.vue';
 import { useLivemapStore } from '~/store/livemap';
-import { type ValueOf } from '~/utils/types';
+import type { ValueOf } from '~/utils/types';
 
 defineProps<{
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any can really be "anything"
     mapOptions?: Record<string, any>;
 }>();
 
@@ -102,7 +103,7 @@ watch(selectedMarker, async () => {
         return;
     }
 
-    map?.panTo([selectedMarker.value?.info?.y!, selectedMarker.value?.info?.x! + getZoomOffset(zoom.value)], {
+    map?.panTo([selectedMarker.value.info!.y!, selectedMarker.value.info!.x! + getZoomOffset(zoom.value)], {
         animate: true,
         duration: 0.75,
     });
@@ -178,9 +179,7 @@ function parseHash(hash: string): { latlng: L.LatLng; zoom: number } | undefined
     };
 }
 
-async function onMapReady($event: any): Promise<void> {
-    map = $event as L.Map;
-
+async function onMapReady(map: L.Map): Promise<void> {
     map.invalidateSize();
 
     const startPos = parseHash(currentHash.value as string);

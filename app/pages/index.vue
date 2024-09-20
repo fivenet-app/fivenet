@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import type { Button } from '#ui/types';
 import '~/assets/css/herofull-pattern.css';
 import { useAuthStore } from '~/store/auth';
 
@@ -42,7 +41,7 @@ const links = computed(
                       to: '/auth/registration',
                   }
                 : undefined,
-        ].flatMap((item) => (item !== undefined ? [item] : [])) as (Button & { click?: (...args: any[]) => void })[],
+        ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 </script>
 

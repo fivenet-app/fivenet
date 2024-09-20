@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type CardElement } from '~/utils/types';
+import type { CardElement } from '~/utils/types';
 
 withDefaults(
     defineProps<{

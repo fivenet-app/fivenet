@@ -40,8 +40,6 @@ export type Links = {
     privacyPolicy?: string;
 };
 
-export type FeatureGates = {};
-
 export type GameConfig = {
     unemployedJobName: string;
 };

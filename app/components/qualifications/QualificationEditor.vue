@@ -11,11 +11,8 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { QualificationAccess } from '~~/gen/ts/resources/qualifications/access';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
-import type Qualification from '~~/gen/ts/resources/qualifications/qualifications';
+import type { Qualification, QualificationExamSettings, QualificationRequirement, QualificationShort } from '~~/gen/ts/resources/qualifications/qualifications';
 import {
-    QualificationExamSettings,
-    QualificationRequirement,
-    QualificationShort,
     QualificationExamMode
 } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
@@ -471,7 +468,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
         <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
             <template #edit>
                 <div v-if="loading" class="flex flex-col gap-2">
-                    <USkeleton v-for="_ in 6" class="size-24 w-full" />
+                    <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                 </div>
 
                 <template v-else>
@@ -675,7 +672,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 
             <template #exam>
                 <div v-if="loading" class="flex flex-col gap-2">
-                    <USkeleton v-for="_ in 6" class="size-24 w-full" />
+                    <USkeleton v-for="idx in 6" :key="idx" class="size-24 w-full" />
                 </div>
 
                 <ExamEditor v-else v-model:settings="state.examSettings" v-model:questions="state.exam" />

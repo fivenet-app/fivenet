@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import CountUp from 'vue-countup-v3';
 import { useAuthStore } from '~/store/auth';
-import { type Stat } from '~~/gen/ts/resources/stats/stats';
+import type { Stat } from '~~/gen/ts/resources/stats/stats';
 
 useHead({
     title: 'pages.stats.title',
@@ -131,7 +131,7 @@ onBeforeMount(async () => {
                                     <p
                                         class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
                                     >
-                                        <USkeleton v-if="stat.value === undefined" class="h-8 w-[175px]" />
+                                        <USkeleton v-if="loading || stat.value === undefined" class="h-8 w-[175px]" />
                                         <ClientOnly v-else>
                                             <CountUp
                                                 :start-val="0"

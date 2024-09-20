@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type TypedRouteFromName } from '@typed-router';
+import type { TypedRouteFromName } from '@typed-router';
 import ExamView from '~/components/qualifications/exam/ExamView.vue';
 
 useHead({

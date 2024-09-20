@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type LocaleObject } from 'vue-i18n-routing';
+import type { LocaleObject } from 'vue-i18n-routing';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';

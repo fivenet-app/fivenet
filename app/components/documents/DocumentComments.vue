@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import { type Comment } from '~~/gen/ts/resources/documents/comment';
+import type { Comment } from '~~/gen/ts/resources/documents/comment';
 import type { GetCommentsResponse } from '~~/gen/ts/services/docstore/docstore';
 
 const props = withDefaults(

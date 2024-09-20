@@ -3,7 +3,7 @@ import { LLayerGroup } from '@vue-leaflet/vue-leaflet';
 import MapMarkerMarker from '~/components/livemap/MapMarkerMarker.vue';
 import { useLivemapStore } from '~/store/livemap';
 import { useSettingsStore } from '~/store/settings';
-import { type MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
+import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 
 defineEmits<{
     (e: 'markerSelected', marker: MarkerMarker): void;

@@ -30,7 +30,6 @@ export interface SettingsState {
         notificationsVolume: number;
     };
     streamerMode: boolean;
-    featureGates: {};
 }
 
 export const useSettingsStore = defineStore('settings', {
@@ -66,7 +65,6 @@ export const useSettingsStore = defineStore('settings', {
                 notificationsVolume: 0.15,
             },
             streamerMode: false,
-            featureGates: {},
         }) as SettingsState,
     persist: {
         pick: [
@@ -80,7 +78,6 @@ export const useSettingsStore = defineStore('settings', {
             'theme',
             'audio',
             'streamerMode',
-            'featureGates',
         ],
     },
     actions: {

@@ -18,7 +18,7 @@ withDefaults(
     },
 );
 
-const emits = defineEmits<{
+defineEmits<{
     (e: 'selected', entry: CalendarEntry): void;
 }>();
 

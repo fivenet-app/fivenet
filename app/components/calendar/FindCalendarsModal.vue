@@ -18,42 +18,34 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 const { data, pending: loading, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
-    try {
-        const response = await calendarStore.listCalendars({
-            pagination: {
-                offset: offset.value,
-            },
-            onlyPublic: true,
-        });
+    const response = await calendarStore.listCalendars({
+        pagination: {
+            offset: offset.value,
+        },
+        onlyPublic: true,
+    });
 
-        return response;
-    } catch (e) {
-        throw e;
-    }
+    return response;
 }
 
 async function subscribeToCalendar(calendarId: string, subscribe: boolean): Promise<SubscribeToCalendarResponse> {
-    try {
-        const call = getGRPCCalendarClient().subscribeToCalendar({
-            delete: !subscribe,
-            sub: {
-                calendarId: calendarId,
-                confirmed: true,
-                muted: false,
-                userId: 0,
-            },
-        });
-        const { response } = await call;
+    const call = getGRPCCalendarClient().subscribeToCalendar({
+        delete: !subscribe,
+        sub: {
+            calendarId: calendarId,
+            confirmed: true,
+            muted: false,
+            userId: 0,
+        },
+    });
+    const { response } = await call;
 
-        const calendar = data.value?.calendars.find((c) => c.id === calendarId);
-        if (calendar) {
-            calendar.subscription = response.sub;
-        }
-
-        return response;
-    } catch (e) {
-        throw e;
+    const calendar = data.value?.calendars.find((c) => c.id === calendarId);
+    if (calendar) {
+        calendar.subscription = response.sub;
     }
+
+    return response;
 }
 </script>
 

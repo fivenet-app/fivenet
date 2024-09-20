@@ -215,6 +215,7 @@ function changeQuestionType(qt: string): void {
                             <VueDraggable v-model="question.data!.data.singleChoice.choices" class="flex flex-col gap-2">
                                 <div
                                     v-for="(_, idx) in question.data!.data.singleChoice?.choices"
+                                    :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
                                     <UIcon name="i-mdi-drag-horizontal" class="size-6" />
@@ -261,6 +262,7 @@ function changeQuestionType(qt: string): void {
                             <VueDraggable v-model="question.data!.data.multipleChoice.choices" class="flex flex-col gap-2">
                                 <div
                                     v-for="(_, idx) in question.data!.data.multipleChoice?.choices"
+                                    :key="idx"
                                     class="inline-flex items-center gap-2"
                                 >
                                     <UIcon name="i-mdi-drag-horizontal" class="size-6" />

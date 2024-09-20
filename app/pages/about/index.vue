@@ -138,7 +138,7 @@ const faqs = [
                                     <UAccordion :items="faqs" multiple>
                                         <template #item="{ item: faq }">
                                             <UContainer>
-                                                <!-- eslint-disable-next-line vue/no-v-html -->
+                                                <!-- eslint-disable vue/no-v-html -->
                                                 <p
                                                     class="text-base leading-7 text-gray-900 dark:text-white"
                                                     v-html="faq.content"

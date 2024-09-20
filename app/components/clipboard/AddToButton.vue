@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 withDefaults(
     defineProps<{
-        callback: Function;
+        callback: () => void;
         title?: string;
     }>(),
     {

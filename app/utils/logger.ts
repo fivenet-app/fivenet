@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 import { LogLevels, consola, type ConsolaInstance, type LogLevel } from 'consola';
 
 export interface ILogger {

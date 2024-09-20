@@ -65,7 +65,7 @@ async function listCalendarEntryRSVP(): Promise<ListCalendarEntryRSVPResponse> {
     }
 }
 
-async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean): Promise<void | RSVPCalendarEntryResponse> {
+async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean): Promise<undefined | RSVPCalendarEntryResponse> {
     if (ownEntry.value?.response === rsvpResponse) {
         return;
     }
@@ -75,7 +75,7 @@ async function rsvpCalendarEntry(rsvpResponse: RsvpResponses, remove?: boolean):
             entry: {
                 entryId: props.entryId,
                 response: rsvpResponse,
-                userId: activeChar.value?.userId!,
+                userId: activeChar.value!.userId!,
             },
             subscribe: true,
             remove: remove,
@@ -200,7 +200,7 @@ const onSubmitThrottle = useThrottleFn(async (rsvpResponse: RsvpResponses) => {
                                 <div v-if="!rsvp || rsvp?.length > 0">
                                     <h3 class="font-bold text-black dark:text-white">{{ $t(`common.${key}`) }}</h3>
                                     <div class="grid grid-cols-2 gap-2 lg:grid-cols-4">
-                                        <CitizenInfoPopover v-for="entry in rsvp" :user="entry.user" />
+                                        <CitizenInfoPopover v-for="entry in rsvp" :key="entry.userId" :user="entry.user" />
                                     </div>
                                 </div>
                             </template>

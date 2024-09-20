@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { listEnumValues } from '@protobuf-ts/runtime';
 import { useCompletorStore } from '~/store/completor';
-import { type ArrayElement } from '~/utils/types';
+import type { ArrayElement } from '~/utils/types';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';

@@ -63,7 +63,7 @@ function selectUnit(item: Unit): void {
     if (idx === -1) {
         state.units.push(item.id);
     } else {
-        delete state.units[idx];
+        state.units.splice(idx, 1);
     }
 }
 

@@ -270,7 +270,8 @@ defineShortcuts({
                 class="my-1 flex flex-initial flex-col divide-y divide-gray-100 dark:divide-gray-800"
                 :class="design.documents.listStyle === 'double' ? '2xl:grid 2xl:grid-cols-2' : ''"
             >
-                <li v-for="_ in 8" v-if="loading" class="flex-initial">
+            <template v-if="loading">
+                <li  v-for="idx in 8" :key="idx"  class="flex-initial">
                     <div class="m-2">
                         <div class="flex flex-row gap-2 truncate">
                             <div class="flex flex-1 flex-row items-center justify-start">
@@ -311,8 +312,11 @@ defineShortcuts({
                         </div>
                     </div>
                 </li>
+            </template>
 
-                <DocumentListEntry v-for="doc in data?.documents" v-else :key="doc.id" :document="doc" />
+            <template v-else>
+                <DocumentListEntry v-for="doc in data?.documents" :key="doc.id" :document="doc" />
+            </template>
             </ul>
         </div>
     </UDashboardPanelContent>

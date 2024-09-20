@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type TypedRouteFromName } from '@typed-router';
+import type { TypedRouteFromName } from '@typed-router';
 import DocumentView from '~/components/documents/DocumentView.vue';
 
 useHead({

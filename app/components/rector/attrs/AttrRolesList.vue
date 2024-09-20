@@ -82,7 +82,7 @@ onBeforeMount(async () => await listJobs());
 
 const selectedRole = ref<Role | undefined>();
 
-const sortedRoles = computed(() => roles.value?.sort((a, b) => (a.jobLabel ?? '').localeCompare(b.jobLabel ?? '')));
+const sortedRoles = computed(() => [...roles.value].sort((a, b) => (a.jobLabel ?? '').localeCompare(b.jobLabel ?? '')));
 
 const columns = [
     {

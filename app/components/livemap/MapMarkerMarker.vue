@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { LCircle, LIcon, LMarker } from '@vue-leaflet/vue-leaflet';
-import { type PointExpression } from 'leaflet';
+import type { PointExpression } from 'leaflet';
 import { convertDynamicIconNameToComponent, markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import MarkerMarkerPopup from '~/components/livemap/MarkerMarkerPopup.vue';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';

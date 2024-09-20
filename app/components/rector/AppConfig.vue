@@ -8,7 +8,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { toDuration } from '~/utils/duration';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { type GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
+import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 
 const { t } = useI18n();
 
@@ -280,7 +280,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <div v-if="loading" class="space-y-1 px-4">
                 <USkeleton class="mb-6 h-11 w-full" />
-                <USkeleton v-for="_ in 5" class="h-20 w-full" />
+                <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
             </div>
             <DataErrorBlock
                 v-else-if="error"

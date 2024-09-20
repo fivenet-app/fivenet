@@ -3,7 +3,7 @@ import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vu
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import { useAuthStore } from '~/store/auth';
 import type { ClipboardUser } from '~/store/clipboard';
-import { type User, type UserShort } from '~~/gen/ts/resources/users/users';
+import type { User, type UserShort } from '~~/gen/ts/resources/users/users';
 import IDCopyBadge from '../IDCopyBadge.vue';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
 
@@ -17,6 +17,8 @@ const props = withDefaults(
         trailing?: boolean;
     }>(),
     {
+        userId: undefined,
+        user: undefined,
         textClass: '' as any,
         showAvatar: undefined,
         showAvatarInName: false,
@@ -60,7 +62,7 @@ async function getCitizen(id: number): Promise<User | undefined> {
         }
 
         return response.user!;
-    } catch (e) {
+    } catch (_) {
         return undefined;
     }
 }

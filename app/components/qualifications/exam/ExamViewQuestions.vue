@@ -250,7 +250,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         :question="question"
                         :disabled="disabled"
                     >
-                        <template #question-after="{ question }">
+                        <template #question-after>
                             <slot name="question-after" :question="{ question }" />
                         </template>
                     </ExamViewQuestion>

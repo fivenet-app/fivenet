@@ -125,7 +125,7 @@ const columns = [
 
         <div class="flex-1">
             <div v-if="!dispatches && abort === undefined && !reconnecting" class="space-y-1">
-                <USkeleton v-for="_ in 7" class="h-9 w-full" />
+                <USkeleton v-for="idx in 7" :key="idx" class="h-9 w-full" />
             </div>
 
             <template v-for="(group, idx) in grouped" v-else :key="group.key">

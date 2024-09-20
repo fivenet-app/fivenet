@@ -1,3 +1,4 @@
+/* eslint-disable  @typescript-eslint/no-explicit-any */
 export function wrapRows(rows: { [key: string]: any }[], columns: { key: string; rowClass?: string }[]): any[] {
     return rows.map((row) => {
         columns.forEach((column) => {

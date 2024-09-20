@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import FiveNetHints from '~/components/FiveNetHints.vue';
 import CardsList from '~/components/partials/CardsList.vue';
-import { type CardElements } from '~/utils/types';
+import type { CardElements } from '~/utils/types';
 
 useHead({
     title: 'common.overview',

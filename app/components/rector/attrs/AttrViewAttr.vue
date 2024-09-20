@@ -117,6 +117,7 @@ async function toggleJobGradeValue(job: Job, checked: boolean): Promise<void> {
         map[job.name] = 1;
         jobGrades.value.set(job.name, job.grades[0]);
     } else if (!checked && map[job.name]) {
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete map[job.name];
         jobGrades.value.set(job.name, job.grades[0]);
     } else {

@@ -1,6 +1,6 @@
 import { defineStore } from 'pinia';
-import type { Calendar } from '~~/gen/ts/resources/calendar/calendar';
-import { CalendarEntry, RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
+import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
+import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
     CreateOrUpdateCalendarEntryResponse,
@@ -48,23 +48,19 @@ export const useCalendarStore = defineStore('calendar', {
     actions: {
         // Calendars
         async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {
-            try {
-                const call = getGRPCCalendarClient().getCalendar(req);
-                const { response } = await call;
+            const call = getGRPCCalendarClient().getCalendar(req);
+            const { response } = await call;
 
-                if (response.calendar) {
-                    const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
-                    if (idx > -1) {
-                        this.calendars[idx] = response.calendar;
-                    } else {
-                        this.calendars.push(response.calendar);
-                    }
+            if (response.calendar) {
+                const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
+                if (idx > -1) {
+                    this.calendars[idx] = response.calendar;
+                } else {
+                    this.calendars.push(response.calendar);
                 }
-
-                return response;
-            } catch (e) {
-                throw e;
             }
+
+            return response;
         },
         async listCalendars(req: ListCalendarsRequest): Promise<ListCalendarsResponse> {
             try {
@@ -94,27 +90,23 @@ export const useCalendarStore = defineStore('calendar', {
             }
         },
         async createOrUpdateCalendar(calendar: Calendar): Promise<CreateOrUpdateCalendarResponse> {
-            try {
-                const call = getGRPCCalendarClient().createOrUpdateCalendar({
-                    calendar: calendar,
-                });
-                const { response } = await call;
+            const call = getGRPCCalendarClient().createOrUpdateCalendar({
+                calendar: calendar,
+            });
+            const { response } = await call;
 
-                if (response.calendar) {
-                    const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
-                    if (idx > -1) {
-                        this.calendars[idx] = response.calendar;
-                    } else {
-                        this.calendars.push(response.calendar);
-                    }
-
-                    this.activeCalendarIds.push(response.calendar.id);
+            if (response.calendar) {
+                const idx = this.calendars.findIndex((c) => c.id === response.calendar!.id);
+                if (idx > -1) {
+                    this.calendars[idx] = response.calendar;
+                } else {
+                    this.calendars.push(response.calendar);
                 }
 
-                return response;
-            } catch (e) {
-                throw e;
+                this.activeCalendarIds.push(response.calendar.id);
             }
+
+                return response;
         },
         async deleteCalendar(id: string): Promise<void> {
             try {
@@ -135,23 +127,19 @@ export const useCalendarStore = defineStore('calendar', {
 
         // Entries
         async getCalendarEntry(req: GetCalendarEntryRequest): Promise<GetCalendarEntryResponse> {
-            try {
-                const call = getGRPCCalendarClient().getCalendarEntry(req);
-                const { response } = await call;
+            const call = getGRPCCalendarClient().getCalendarEntry(req);
+            const { response } = await call;
 
-                if (response.entry) {
-                    const idx = this.entries.findIndex((c) => c.id === response.entry!.id);
-                    if (idx > -1) {
-                        this.entries[idx] = response.entry;
-                    } else {
-                        this.entries.push(response.entry);
-                    }
+            if (response.entry) {
+                const idx = this.entries.findIndex((c) => c.id === response.entry!.id);
+                if (idx > -1) {
+                    this.entries[idx] = response.entry;
+                } else {
+                    this.entries.push(response.entry);
                 }
-
-                return response;
-            } catch (e) {
-                throw e;
             }
+
+            return response;
         },
         async listCalendarEntries(req?: ListCalendarEntriesRequest): Promise<ListCalendarEntriesResponse> {
             if (req === undefined) {
@@ -189,26 +177,22 @@ export const useCalendarStore = defineStore('calendar', {
             entry: CalendarEntry,
             users?: UserShort[],
         ): Promise<CreateOrUpdateCalendarEntryResponse> {
-            try {
-                const call = getGRPCCalendarClient().createOrUpdateCalendarEntry({
-                    entry: entry,
-                    userIds: users?.map((u) => u.userId) ?? [],
-                });
-                const { response } = await call;
+            const call = getGRPCCalendarClient().createOrUpdateCalendarEntry({
+                entry: entry,
+                userIds: users?.map((u) => u.userId) ?? [],
+            });
+            const { response } = await call;
 
-                if (response.entry) {
-                    const idx = this.entries.findIndex((e) => e.id === response.entry?.id);
-                    if (idx > -1) {
-                        this.entries[idx] = response.entry;
-                    } else {
-                        this.entries.push(response.entry);
-                    }
+            if (response.entry) {
+                const idx = this.entries.findIndex((e) => e.id === response.entry?.id);
+                if (idx > -1) {
+                    this.entries[idx] = response.entry;
+                } else {
+                    this.entries.push(response.entry);
                 }
-
-                return response;
-            } catch (e) {
-                throw e;
             }
+
+            return response;
         },
 
         async deleteCalendarEntry(entryId: string): Promise<void> {

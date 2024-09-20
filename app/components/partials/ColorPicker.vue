@@ -63,7 +63,7 @@ const open = ref(false);
                 <div class="flex flex-1 items-center">
                     <div class="mx-auto">
                         <ColorPicker
-                            v-model:pureColor="color"
+                            v-model:pure-color="color"
                             is-widget
                             format="hex"
                             picker-type="chrome"
@@ -96,7 +96,7 @@ const open = ref(false);
         />
 
         <template #panel>
-            <ColorPicker v-model:pureColor="color" is-widget format="hex" picker-type="chrome" disable-alpha disable-history />
+            <ColorPicker v-model:pure-color="color" is-widget format="hex" picker-type="chrome" disable-alpha disable-history />
         </template>
     </UPopover>
 </template>

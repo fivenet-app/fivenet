@@ -4,7 +4,7 @@ import { Body, Cancel, Complete, GrpcFrame, Header, HeaderValue } from '~~/gen/t
 import { headersToMetadata } from '../../bridge/utils';
 import { errCancelled, errInternal, errUnavailable } from '../../errors';
 import { Metadata } from '../../metadata';
-import { type Transport, type TransportFactory, type TransportOptions } from '../transport';
+import type { Transport, TransportFactory, TransportOptions } from '../transport';
 import { createRpcError } from './utils';
 
 export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSocketReturn<any>): TransportFactory {
@@ -44,21 +44,25 @@ interface WebsocketChannel {
 
 class WebsocketChannelImpl implements WebsocketChannel {
     private logger: ILogger;
-    protected ws: UseWebSocketReturn<any>;
+    protected ws: UseWebSocketReturn<ArrayBuffer>;
     readonly activeStreams = new Map<number, [TransportOptions, GrpcStream]>();
     protected lastStreamId = 1;
 
-    constructor(logger: ILogger, ws: UseWebSocketReturn<any>) {
+    constructor(logger: ILogger, ws: UseWebSocketReturn<ArrayBuffer>) {
         this.logger = logger;
         this.ws = ws;
-        watch(ws.data, async (val) => this.onMessage(val as any));
+        watch(ws.data, async (val) => this.onMessage(val));
     }
 
     async close() {
         this.ws.close();
     }
 
-    async onMessage(data: ArrayBuffer): Promise<void> {
+    async onMessage(data: ArrayBuffer | null): Promise<void> {
+        if (data === null) {
+            return;
+        }
+
         const frame = GrpcFrame.fromBinary(new Uint8Array(data));
         const streamId = frame.streamId;
         if (frame.payload.oneofKind === 'ping') {

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type TypedRouteFromName } from '@typed-router';
+import type { TypedRouteFromName } from '@typed-router';
 import TemplateEditor from '~/components/documents/templates/TemplateEditor.vue';
 
 useHead({

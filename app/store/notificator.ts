@@ -1,7 +1,7 @@
 import { defineStore } from 'pinia';
 import { v4 as uuidv4 } from 'uuid';
 import { useGRPCWebsocketTransport } from '~/composables/grpcws';
-import { type Notification } from '~/composables/notifications';
+import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { MarkNotificationsRequest } from '~~/gen/ts/services/notificator/notificator';
@@ -123,7 +123,9 @@ export const useNotificatorStore = defineStore('notifications', {
                                                     entryId: n.data?.calendar.calendarEntryId,
                                                 });
                                             }
-                                        } catch (e) {}
+                                        } catch (e) {
+                                            logger.warn('Error while retrieving calendar/entry for calendar notification, Notification ID:', n.id, 'Error:', e)
+                                        }
                                     }
                                 }
 
@@ -142,6 +144,7 @@ export const useNotificatorStore = defineStore('notifications', {
                             }
                             continue;
                         } else if (resp.data.oneofKind === 'systemEvent') {
+                            logger.warn('No systemEvent handlers available.', resp.data)
                         } else {
                             // @ts-expect-error this is a catch all "unknown", so okay if it is technically "never" reached till it is..
                             logger.warn('Unknown data received - Kind: ', resp.data.oneofKind, resp.data);

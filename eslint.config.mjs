@@ -8,12 +8,6 @@ export default withNuxt(
     {
         ignores: ['gen/', 'proto/'],
     },
-    {
-        files: ['app/pages/', 'app/layouts/'],
-        rules: {
-            'vue/multi-word-component-names': 'off',
-        },
-    },
     ...pluginVue.configs['flat/recommended'],
     eslintPluginPrettierRecommended,
     {
@@ -29,6 +23,20 @@ export default withNuxt(
                     caughtErrorsIgnorePattern: '^_',
                 },
             ],
+            'vue/no-unused-vars': [
+                'warn',
+                {
+                    ignorePattern: '^_',
+                },
+            ],
+            '@typescript-eslint/unified-signatures': 'off',
+            '@typescript-eslint/no-unused-expressions': 'off',
+        },
+    },
+    {
+        files: ['app/pages/**', 'app/layouts/**'],
+        rules: {
+            'vue/multi-word-component-names': 'off',
         },
     },
 );

@@ -33,28 +33,24 @@ const state = reactive<Schema>({
     users: [],
 });
 
-async function shareCalendarEntry(values: Schema): Promise<ShareCalendarEntryResponse | void> {
+async function shareCalendarEntry(values: Schema): Promise<undefined | ShareCalendarEntryResponse> {
     if (values.users.length === 0) {
         emits('close');
         return;
     }
 
-    try {
-        const call = getGRPCCalendarClient().shareCalendarEntry({
-            entryId: props.entryId,
-            userIds: values.users.map((u) => u.userId),
-        });
-        const { response } = await call;
+    const call = getGRPCCalendarClient().shareCalendarEntry({
+        entryId: props.entryId,
+        userIds: values.users.map((u) => u.userId),
+    });
+    const { response } = await call;
 
-        emits('refresh');
-        emits('close');
+    emits('refresh');
+    emits('close');
 
-        values.users.length = 0;
+    values.users.length = 0;
 
-        return response;
-    } catch (e) {
-        throw e;
-    }
+    return response;
 }
 
 const canSubmit = ref(true);

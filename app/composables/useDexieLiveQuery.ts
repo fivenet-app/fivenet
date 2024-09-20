@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /**
  * [MIT license](https://github.com/devweissmikhail/useDexieLiveQuery/blob/main/LICENSE)
  *

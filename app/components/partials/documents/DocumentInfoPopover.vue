@@ -2,7 +2,7 @@
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
-import { type Document, type DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import type { Document, type DocumentShort } from '~~/gen/ts/resources/documents/documents';
 import DataErrorBlock from '../data/DataErrorBlock.vue';
 
 defineOptions({
@@ -17,6 +17,8 @@ const props = withDefaults(
         hideCategory?: boolean;
     }>(),
     {
+        documentId: undefined,
+        document: undefined,
         trailing: true,
         hideCategory: false,
     },
@@ -34,17 +36,13 @@ const {
 } = useLazyAsyncData(`document-info-${documentId.value}`, () => getDocument(documentId.value), { immediate: !props.document });
 
 async function getDocument(id: string): Promise<Document> {
-    try {
-        const call = getGRPCDocStoreClient().getDocument({
-            documentId: id,
-            infoOnly: true,
-        });
-        const { response } = await call;
+    const call = getGRPCDocStoreClient().getDocument({
+        documentId: id,
+        infoOnly: true,
+    });
+    const { response } = await call;
 
-        return response.document!;
-    } catch (e) {
-        throw e;
-    }
+    return response.document!;
 }
 
 const document = computed(() => data.value || props.document);

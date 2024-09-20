@@ -1,4 +1,4 @@
-import { type RoutesNamedLocations } from '@typed-router';
+import type { RoutesNamedLocations } from '@typed-router';
 import type { Perms } from '~~/gen/ts/perms';
 
 export type ArrayElement<ArrayType extends readonly unknown[]> = ArrayType extends readonly (infer ElementType)[]

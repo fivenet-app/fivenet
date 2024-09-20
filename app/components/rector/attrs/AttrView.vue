@@ -340,7 +340,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
 
                             <template #panel>
                                 <div class="p-4">
-                                    <UForm :state="state" class="flex flex-col gap-1" @submit="pasteRole">
+                                    <UForm :state="state" :schema="schema" class="flex flex-col gap-1" @submit="pasteRole">
                                         <UFormGroup name="input">
                                             <UInput v-model="state.input" type="text" name="input" />
                                         </UFormGroup>

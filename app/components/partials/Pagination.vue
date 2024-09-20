@@ -14,6 +14,7 @@ const props = withDefaults(
     {
         infinite: false,
         disableBorder: false,
+        refresh: undefined,
         loading: false,
     },
 );

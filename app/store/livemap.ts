@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
-import { type Coordinate } from '~/composables/livemap';
+import type { Coordinate } from '~/composables/livemap';
 import type { MarkerInfo, MarkerMarker, UserMarker } from '~~/gen/ts/resources/livemap/livemap';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
-import { type UserShort } from '~~/gen/ts/resources/users/users';
+import type { UserShort } from '~~/gen/ts/resources/users/users';
 import { useSettingsStore } from './settings';
 
 const logger = useLogger('🗺️ Livemap');

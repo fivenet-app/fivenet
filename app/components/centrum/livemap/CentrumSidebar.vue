@@ -326,7 +326,6 @@ defineShortcuts({
                     <template v-if="canStream" #afterMap>
                         <div>
                             <Transition
-                                v-if="open"
                                 enter-active-class="transform transition ease-in-out duration-100 sm:duration-200"
                                 enter-from-class="translate-x-full"
                                 enter-to-class="translate-x-0"
@@ -335,6 +334,7 @@ defineShortcuts({
                                 leave-to-class="translate-x-full"
                             >
                                 <div
+                                    v-if="open"
                                     class="bg-background flex h-full grow gap-y-5 overflow-y-auto overflow-x-hidden py-1"
                                     :class="open || getOwnUnit !== undefined ? 'px-2' : ''"
                                 >

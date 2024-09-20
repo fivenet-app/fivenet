@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { type RoutesNamedLocations } from '@typed-router';
+import type { RoutesNamedLocations } from '@typed-router';
 
 type Hint = { id: string; keyboard?: boolean; to?: RoutesNamedLocations };
 

@@ -287,7 +287,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 <UTabs v-model="selectedTab" :items="items" class="w-full" :ui="{ list: { rounded: '' } }">
                     <template #jobprops>
                         <div v-if="loading" class="space-y-1 px-4">
-                            <USkeleton v-for="_ in 5" class="h-20 w-full" />
+                            <USkeleton v-for="idx in 5" :key="idx" class="h-20 w-full" />
                         </div>
 
                         <UDashboardPanelContent v-else class="pb-24">
@@ -387,7 +387,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <template #discord>
                         <div v-if="loading" class="space-y-1 px-4">
-                            <USkeleton v-for="_ in 10" class="h-20 w-full" />
+                            <USkeleton v-for="idx in 10" :key="idx" class="h-20 w-full" />
                         </div>
 
                         <UDashboardPanelContent v-else-if="jobProps.discordSyncSettings" class="pb-24">

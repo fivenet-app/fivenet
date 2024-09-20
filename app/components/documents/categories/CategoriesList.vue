@@ -3,7 +3,7 @@ import CategoriesModal from '~/components/documents/categories/CategoriesModal.v
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { type CardElements } from '~/utils/types';
+import type { CardElements } from '~/utils/types';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 
 const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
@@ -62,7 +62,7 @@ const modal = useModal();
     <UDashboardPanelContent>
         <div v-if="loading" class="flex justify-center">
             <UPageGrid>
-                <UPageCard v-for="_ in 6">
+                <UPageCard v-for="idx in 6" :key="idx">
                     <template #title>
                         <USkeleton class="h-6 w-[275px]" />
                     </template>

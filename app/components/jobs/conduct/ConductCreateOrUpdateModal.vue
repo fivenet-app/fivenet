@@ -1,8 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { format } from 'date-fns';
 import { z } from 'zod';
-import DatePickerClient from '~/components/partials/DatePicker.client.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import { useNotificatorStore } from '~/store/notificator';

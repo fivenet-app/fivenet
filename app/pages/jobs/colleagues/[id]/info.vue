@@ -55,7 +55,7 @@ watch(props, () => {
     state.note = props.colleague.props.note ?? '';
 });
 
-async function setJobsUserNote(values: Schema): Promise<void | SetJobsUserPropsResponse> {
+async function setJobsUserNote(values: Schema): Promise<undefined | SetJobsUserPropsResponse> {
     if (!props.colleague) {
         return;
     }

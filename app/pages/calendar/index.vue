@@ -46,24 +46,20 @@ const {
 } = useLazyAsyncData(`calendars:${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListCalendarsResponse> {
-    try {
-        const response = await calendarStore.listCalendars({
-            pagination: {
-                offset: offset.value,
-            },
-            onlyPublic: false,
-        });
+    const response = await calendarStore.listCalendars({
+        pagination: {
+            offset: offset.value,
+        },
+        onlyPublic: false,
+    });
 
-        if (activeCalendarIds.value.length === 0) {
-            activeCalendarIds.value = response.calendars.map((c) => c.id);
-        }
-
-        refresh();
-
-        return response;
-    } catch (e) {
-        throw e;
+    if (activeCalendarIds.value.length === 0) {
+        activeCalendarIds.value = response.calendars.map((c) => c.id);
     }
+
+    refresh();
+
+    return response;
 }
 
 const {
@@ -398,14 +394,14 @@ const isOpen = ref(false);
                     <DataErrorBlock v-if="error" :title="$t('common.not_found', [$t('common.entry', 2)])" :retry="refresh" />
 
                     <template v-else>
-                        <template v-for="entries in groupedCalendarEntries" :key="entries.key">
+                        <template v-for="calendarEntries in groupedCalendarEntries" :key="calendarEntries.key">
                             <UDivider>
                                 <div class="inline-flex items-center gap-1">
                                     <span class="text-lg font-semibold">
-                                        {{ $d(entries.date, 'date') }}
+                                        {{ $d(calendarEntries.date, 'date') }}
                                     </span>
                                     <UBadge
-                                        v-if="entries.isToday"
+                                        v-if="calendarEntries.isToday"
                                         id="today"
                                         size="xs"
                                         color="amber"
@@ -415,7 +411,7 @@ const isOpen = ref(false);
                             </UDivider>
 
                             <ul role="list">
-                                <li v-for="attr in entries.entries.past" :key="attr.key">
+                                <li v-for="attr in calendarEntries.entries.past" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="
@@ -446,8 +442,8 @@ const isOpen = ref(false);
                                 <li>
                                     <UDivider
                                         v-if="
-                                            entries.isToday &&
-                                            (entries.entries.past.length > 0 || entries.entries.upcoming.length > 0)
+                                            calendarEntries.isToday &&
+                                            (calendarEntries.entries.past.length > 0 || calendarEntries.entries.upcoming.length > 0)
                                         "
                                         size="sm"
                                         :ui="{ border: { base: 'border-red-300 dark:border-red-600' } }"
@@ -455,7 +451,7 @@ const isOpen = ref(false);
                                     />
                                 </li>
 
-                                <li v-for="attr in entries.entries.upcoming" :key="attr.key">
+                                <li v-for="attr in calendarEntries.entries.upcoming" :key="attr.key">
                                     <ULink
                                         class="inline-flex w-full items-center justify-between gap-1"
                                         @click="

@@ -1,4 +1,4 @@
-import { type BadgeColor } from '#ui/types';
+import type { BadgeColor } from '#ui/types';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import type { AccessLevel, QualificationAccess } from '~~/gen/ts/resources/qualifications/access';

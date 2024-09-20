@@ -20,7 +20,7 @@ import { useClipboardStore } from '~/store/clipboard';
 import { useNotificatorStore } from '~/store/notificator';
 import type { DocumentAccess } from '~~/gen/ts/resources/documents/access';
 import { AccessLevel } from '~~/gen/ts/resources/documents/access';
-import { type Document } from '~~/gen/ts/resources/documents/documents';
+import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
 import OpenClosedBadge from '../partials/OpenClosedBadge.vue';

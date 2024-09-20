@@ -49,7 +49,7 @@ const {
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc}`, () => listDocuments());
+} = useLazyAsyncData(`document-${props.documentId}-references-docs-${queryDoc.value}`, () => listDocuments());
 
 watchDebounced(queryDoc, async () => await refresh(), {
     debounce: 200,

@@ -4,8 +4,7 @@ import { useGRPCWebsocketTransport } from '~/composables/grpcws';
 import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { Job } from '~~/gen/ts/resources/users/jobs';
-import type { JobProps } from '~~/gen/ts/resources/users/jobs';
+import type { Job, JobProps } from '~~/gen/ts/resources/users/jobs';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { SetSuperUserModeRequest } from '~~/gen/ts/services/auth/auth';
 

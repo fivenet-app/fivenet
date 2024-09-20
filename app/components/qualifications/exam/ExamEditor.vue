@@ -1,8 +1,7 @@
 <script lang="ts" setup>
 import { VueDraggable } from 'vue-draggable-plus';
 import { z } from 'zod';
-import { ExamQuestion } from '~~/gen/ts/resources/qualifications/exam';
-import type { ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamQuestion, ExamQuestions } from '~~/gen/ts/resources/qualifications/exam';
 import type { QualificationExamSettings } from '~~/gen/ts/resources/qualifications/qualifications';
 import ExamEditorQuestion from './ExamEditorQuestion.vue';
 

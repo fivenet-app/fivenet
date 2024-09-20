@@ -17,6 +17,7 @@ const props = withDefaults(
         type: 'short',
         ago: false,
         updateInterval: 1000,
+        updateCallback: undefined,
     },
 );
 

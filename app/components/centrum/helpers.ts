@@ -99,7 +99,6 @@ export const statusOrder = [
 export const unitStatuses: {
     icon: string;
     name: string;
-    action?: Function;
     status?: StatusUnit;
 }[] = [
     { icon: 'i-mdi-cancel', name: 'Unavailable', status: StatusUnit.UNAVAILABLE },
@@ -111,7 +110,6 @@ export const unitStatuses: {
 export const dispatchStatuses: {
     icon: string;
     name: string;
-    action?: Function;
     status?: StatusDispatch;
 }[] = [
     { icon: 'i-mdi-car-back', name: 'En Route', status: StatusDispatch.EN_ROUTE },

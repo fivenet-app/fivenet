@@ -24,18 +24,14 @@ const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pa
 const { data, pending: loading, error, refresh } = useLazyAsyncData(`calendars-${page.value}`, () => listCalendars());
 
 async function listCalendars(): Promise<ListDocumentPinsResponse> {
-    try {
-        const call = getGRPCDocStoreClient().listDocumentPins({
-            pagination: {
-                offset: offset.value,
-            },
-        });
-        const { response } = await call;
+    const call = getGRPCDocStoreClient().listDocumentPins({
+        pagination: {
+            offset: offset.value,
+        },
+    });
+    const { response } = await call;
 
-        return response;
-    } catch (e) {
-        throw e;
-    }
+    return response;
 }
 
 const isOpen = ref(false);
@@ -148,14 +144,17 @@ const isOpen = ref(false);
                             />
 
                             <ul v-else role="list" class="my-1 flex flex-col divide-y divide-gray-100 dark:divide-gray-800">
-                                <li v-for="_ in 10" v-if="loading">
-                                    <USkeleton class="h-16 w-full" />
-                                </li>
+                                <template v-if="loading">
+                                    <li v-for="idx in 10" :key="idx">
+                                        <USkeleton class="h-16 w-full" />
+                                    </li>
+                                </template>
 
-                                <li v-for="document in data?.documents" v-else class="flex flex-col px-1">
-                                    <DocumentInfoPopover :document="document">
-                                        <template #title="{ document, loading }">
-                                            <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />
+                                <template v-else>
+                                <li v-for="doc in data?.documents" :key="doc.id" class="flex flex-col px-1">
+                                    <DocumentInfoPopover :document="doc">
+                                        <template #title="{ document, loading: docLoading }">
+                                            <USkeleton v-if="!document && docLoading" class="h-8 w-[125px]" />
 
                                             <div v-else class="flex flex-col">
                                                 <UBadge v-if="document?.category">
@@ -169,6 +168,7 @@ const isOpen = ref(false);
                                         </template>
                                     </DocumentInfoPopover>
                                 </li>
+                            </template>
                             </ul>
                         </div>
                     </UDashboardSection>

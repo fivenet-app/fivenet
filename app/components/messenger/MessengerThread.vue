@@ -35,7 +35,6 @@ const state = reactive<Schema>({
 const {
     data: thread,
     pending: loading,
-    error,
 } = useLazyAsyncData(`messenger-thread:${props.threadId}`, async () => messengerStore.getThread(props.threadId));
 
 onBeforeMount(async () => {
@@ -73,7 +72,7 @@ const messages = useDexieLiveQueryWithDeps(
 );
 
 const groupedMessages = computed(() => {
-    return messages.value.messages
+    return [...messages.value.messages]
         .sort((a, b) => toDate(a.createdAt).getTime() - toDate(b.createdAt).getTime())
         .reduce((acc: { [key: string]: Message[] }, msg) => {
             const k = toDate(msg.createdAt).toDateString();
@@ -144,6 +143,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                                     <ProfilePictureImg
                                         v-for="user in thread.access?.users"
+                                        :key="user.userId"
                                         :src="user.user?.avatar?.url"
                                         :name="`${user.user?.firstname} ${user.user?.lastname}`"
                                         disable-blur-toggle
@@ -157,7 +157,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         <li v-if="thread.creator">
                                             <CitizenInfoPopover :user="thread.creator" show-avatar-in-name />
                                         </li>
-                                        <li v-for="ua in thread.access?.users">
+                                        <li v-for="ua in thread.access?.users" :key="ua.userId">
                                             <CitizenInfoPopover :user="ua.user" show-avatar-in-name />
                                         </li>
                                     </ul>
@@ -179,7 +179,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                 </div>
             </template>
             <template v-else>
-                <template v-for="msgs in groupedMessages">
+                <template v-for="(msgs, key) in groupedMessages" :key="key">
                     <UDivider class="text-xs">
                         <GenericTime :value="msgs[0]?.createdAt" :type="'date'" />
                     </UDivider>

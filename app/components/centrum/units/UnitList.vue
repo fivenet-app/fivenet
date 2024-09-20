@@ -61,7 +61,7 @@ const grouped = computedAsync(async () => {
                 v-if="abort === undefined && !reconnecting"
                 class="@md:grid-cols-2 @3xl:grid-cols-3 mt-3 grid grid-cols-1 gap-2"
             >
-                <USkeleton v-for="_ in 8" class="h-9 w-full" />
+                <USkeleton v-for="idx in 8" :key="idx" class="h-9 w-full" />
             </div>
 
             <template v-for="group in grouped" v-else :key="group.key">

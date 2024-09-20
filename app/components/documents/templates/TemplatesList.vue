@@ -2,7 +2,7 @@
 import CardsList from '~/components/partials/CardsList.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
-import { type CardElements } from '~/utils/types';
+import type { CardElements } from '~/utils/types';
 import type { TemplateShort } from '~~/gen/ts/resources/documents/templates';
 
 defineEmits<{
@@ -42,7 +42,7 @@ function selected(idx: number): TemplateShort | undefined {
 <template>
     <div v-if="loading" class="flex justify-center">
         <UPageGrid>
-            <UPageCard v-for="_ in 6">
+            <UPageCard v-for="idx in 6" :key="idx">
                 <template #title>
                     <USkeleton class="h-6 w-[275px]" />
                 </template>
@@ -57,7 +57,7 @@ function selected(idx: number): TemplateShort | undefined {
 
     <div v-else class="flex justify-center">
         <CardsList
-            v-bind:class="$attrs.class"
+            :class="$attrs.class"
             :items="items"
             :show-icon="false"
             @selected="$emit('selected', selected($event))"

@@ -169,7 +169,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <div>
                         <ul v-if="loading" role="list" class="mb-6 divide-y divide-gray-800 rounded-md dark:divide-gray-500">
-                            <li v-for="_ in 2" class="flex justify-between gap-x-4 py-4">
+                            <li v-for="idx in 2" :key="idx" class="flex justify-between gap-x-4 py-4">
                                 <div class="flex min-w-0 gap-x-2 px-2">
                                     <div class="min-w-0 flex-auto">
                                         <p class="text-base font-semibold leading-6 text-gray-100">
