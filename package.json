@@ -16,7 +16,7 @@
         "postinstall": "COMMIT_REF=$(git describe --tags --exclude='fivenet-*') pnpm nuxi prepare",
         "pretty": "pnpm prettier --write ./app/",
         "analyze": "pnpm nuxi analyze",
-        "typecheck": "pnpm nuxi typecheck",
+        "typecheck": "pnpm vue-tsc --noEmit -p tsconfig.vue-tsc.json",
         "lint": "pnpm eslint .",
         "i18next-scanner": "npx i18next-scanner --config ./internal/scripts/i18next-scanner.config.cjs"
     },
@@ -63,7 +63,7 @@
     },
     "devDependencies": {
         "@nuxt/devtools": "1.4.2",
-        "@nuxt/eslint-config": "0.5.7",
+        "@nuxt/eslint": "^0.5.7",
         "@nuxtjs/fontaine": "0.4.3",
         "@nuxtjs/i18n": "8.5.3",
         "@protobuf-ts/plugin": "2.9.4",
@@ -85,7 +85,6 @@
         "eslint": "9.10.0",
         "eslint-config-prettier": "9.1.0",
         "eslint-plugin-prettier": "5.2.1",
-        "eslint-plugin-tailwindcss": "3.17.4",
         "eslint-plugin-vue": "9.28.0",
         "i18next-scanner": "4.5.0",
         "nuxi": "3.13.2",

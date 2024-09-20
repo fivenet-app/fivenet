@@ -20,6 +20,7 @@ export default defineNuxtConfig({
         'nuxt-zod-i18n',
         '@nuxtjs/i18n',
         '@galexrt/nuxt-update',
+        '@nuxt/eslint',
     ],
 
     future: {
