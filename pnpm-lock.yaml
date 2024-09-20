@@ -183,6 +183,9 @@ importers:
       cssnano:
         specifier: 7.0.6
         version: 7.0.6(postcss@8.4.47)
+      dts-gen:
+        specifier: ^0.10.3
+        version: 0.10.3
       eslint:
         specifier: 9.10.0
         version: 9.10.0(jiti@1.21.6)
@@ -3099,6 +3102,14 @@ packages:
   download@8.0.0:
     resolution: {integrity: sha512-ASRY5QhDk7FK+XrQtQyvhpDKanLluEEQtWl/J7Lxuf/b+i8RYh997QeXvL85xitrmRKVlx9c7eTrcRdq2GS4eA==}
     engines: {node: '>=10'}
+
+  dts-dom@3.7.0:
+    resolution: {integrity: sha512-WnmiiHfhtcYS+DyGd2Rq3J6QA3ATVBdKtlrhutc/VzQVFoBgNDm+gnYc5gZizsXAI0xQ2frZntT5IJFeB2qQIg==}
+
+  dts-gen@0.10.3:
+    resolution: {integrity: sha512-ohQuRaXGCMLcGnJsTZh4Odsg8phWne0+O9bkUuiQ8ac5u51bI2Qia2ojBPE2VpPJijIxZRYyRc3ZM+ZZFjBU1w==}
+    engines: {node: '>=18.18.0'}
+    hasBin: true
 
   duplexer2@0.1.4:
     resolution: {integrity: sha512-asLFVfWWtJ90ZyOUHMqk7/S2w2guQKxUI2itj3d92ADHhxUSbCMGi1f1cBcJ7xM1To+pE/Khbwo1yuNbMEPKeA==}
@@ -9765,6 +9776,15 @@ snapshots:
       make-dir: 2.1.0
       p-event: 2.3.1
       pify: 4.0.1
+
+  dts-dom@3.7.0: {}
+
+  dts-gen@0.10.3:
+    dependencies:
+      dts-dom: 3.7.0
+      parse-git-config: 3.0.0
+      typescript: 5.6.2
+      yargs: 17.7.2
 
   duplexer2@0.1.4:
     dependencies:

@@ -172,10 +172,7 @@ const canSubmit = ref(true);
                                 <UButton
                                     v-if="not.data && not.data.link"
                                     variant="link"
-                                    :to="
-                                        // @ts-expect-error route should be valid, as we test it against a valid list of URLs
-                                        not.data.link.to
-                                    "
+                                    :to="not.data.link.to"
                                     :icon="notificationCategoryToIcon(not.category)"
                                     trailing-icon="i-mdi-link-variant"
                                     class="inline-flex items-center gap-1"
