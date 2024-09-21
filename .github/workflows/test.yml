@@ -40,8 +40,8 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run Nuxt typecheck
-        run: pnpm typecheck
+      - name: Run Lint
+        run: pnpm lint
 
       - name: Run pnpm build
         env:

@@ -4,15 +4,15 @@ import { z } from 'zod';
 import DocumentListEntry from '~/components/documents/DocumentListEntry.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
-import type { OpenClose } from '~/typings';
 import { useCompletorStore } from '~/store/completor';
 import { useSettingsStore } from '~/store/settings';
+import type { OpenClose } from '~/typings';
 import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
-import DatePickerPopoverClient from '../partials/DatePickerPopover.client.vue';
 
 const { t } = useI18n();
 

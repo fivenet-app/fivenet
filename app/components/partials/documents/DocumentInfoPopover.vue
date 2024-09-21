@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import DataErrorBlock from '../data/DataErrorBlock.vue';
 
 defineOptions({
     inheritAttrs: false,

@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import ConductCreateOrUpdateModal from '~/components/jobs/conduct/ConductCreateOrUpdateModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -10,7 +11,6 @@ import type { ConductEntry } from '~~/gen/ts/resources/jobs/conduct';
 import { ConductType } from '~~/gen/ts/resources/jobs/conduct';
 import type { User } from '~~/gen/ts/resources/users/users';
 import type { ListConductEntriesResponse } from '~~/gen/ts/services/jobs/conduct';
-import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 import ConductViewSlideover from './ConductViewSlideover.vue';
 import { conductTypesToBadgeColor, conductTypesToBGColor } from './helpers';
 

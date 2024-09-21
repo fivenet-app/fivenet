@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import type { BadgeColor } from '#ui/types';
 import { isSameDay } from 'date-fns';
+import EntryCreateOrUpdateModal from '~/components/calendar/entry/EntryCreateOrUpdateModal.vue';
+import { checkCalendarAccess } from '~/components/calendar/helpers';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -12,8 +14,6 @@ import { useCalendarStore } from '~/store/calendar';
 import { useNotificatorStore } from '~/store/notificator';
 import { AccessLevel } from '~~/gen/ts/resources/calendar/access';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
-import { checkCalendarAccess } from '../helpers';
-import EntryCreateOrUpdateModal from './EntryCreateOrUpdateModal.vue';
 import EntryRSVPList from './EntryRSVPList.vue';
 
 const props = defineProps<{

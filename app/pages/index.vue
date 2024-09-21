@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { ButtonColor, ButtonSize } from '#ui/types';
-import { useAuthStore } from '~/store/auth';
 import '~/assets/css/herofull-pattern.css';
+import { useAuthStore } from '~/store/auth';
 
 useHead({
     title: 'common.home',

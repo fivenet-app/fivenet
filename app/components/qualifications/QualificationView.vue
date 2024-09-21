@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -18,7 +19,6 @@ import {
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
-import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 import QualificationTutorView from './tutor/QualificationTutorView.vue';
 
 const props = defineProps<{

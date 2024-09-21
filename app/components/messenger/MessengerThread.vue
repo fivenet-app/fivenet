@@ -2,12 +2,12 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { isToday } from 'date-fns';
 import { z } from 'zod';
+import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { messengerDB, useMessengerStore } from '~/store/messenger';
 import { AccessLevel } from '~~/gen/ts/resources/messenger/access';
 import type { Message } from '~~/gen/ts/resources/messenger/message';
-import CitizenInfoPopover from '../partials/citizens/CitizenInfoPopover.vue';
-import GenericTime from '../partials/elements/GenericTime.vue';
 import { canAccessThread } from './helpers';
 
 const props = withDefaults(

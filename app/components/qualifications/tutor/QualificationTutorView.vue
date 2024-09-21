@@ -1,11 +1,11 @@
 <script lang="ts" setup>
 import { z } from 'zod';
+import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
 import QualificationsRequestsList from '~/components/qualifications/tutor/QualificationsRequestsList.vue';
 import QualificationsResultsList from '~/components/qualifications/tutor/QualificationsResultsList.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { Qualification } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
-import QualificationResultTutorModal from './QualificationResultTutorModal.vue';
 
 defineProps<{
     qualification: Qualification;

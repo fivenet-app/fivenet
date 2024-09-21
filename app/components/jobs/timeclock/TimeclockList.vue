@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import { addDays, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
+import ColleagueInfoPopover from '~/components/jobs/colleagues/ColleagueInfoPopover.vue';
 import TimeclockStatsBlock from '~/components/jobs/timeclock/TimeclockStatsBlock.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import Pagination from '~/components/partials/Pagination.vue';
@@ -12,7 +13,6 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
-import ColleagueInfoPopover from '../colleagues/ColleagueInfoPopover.vue';
 
 const { t } = useI18n();
 

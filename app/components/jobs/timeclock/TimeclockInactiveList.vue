@@ -1,6 +1,7 @@
 <script lang="ts" setup>
 import type { Form } from '#ui/types';
 import { z } from 'zod';
+import { checkIfCanAccessColleague } from '~/components/jobs/colleagues/helpers';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
@@ -8,7 +9,6 @@ import Pagination from '~/components/partials/Pagination.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Perms } from '~~/gen/ts/perms';
 import type { ListInactiveEmployeesResponse } from '~~/gen/ts/services/jobs/timeclock';
-import { checkIfCanAccessColleague } from '../colleagues/helpers';
 
 const { t } = useI18n();
 

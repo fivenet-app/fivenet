@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
-import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 defineProps<{
     document: DocumentShort;

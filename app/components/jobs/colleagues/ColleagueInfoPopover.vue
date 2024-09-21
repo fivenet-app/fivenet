@@ -5,8 +5,8 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
-import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ClassProp } from '~/typings';
+import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 
 const props = withDefaults(
     defineProps<{

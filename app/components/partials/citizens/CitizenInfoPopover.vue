@@ -1,12 +1,12 @@
 <script lang="ts" setup>
+import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.vue';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import type { ClipboardUser } from '~/store/clipboard';
-import type { User, UserShort } from '~~/gen/ts/resources/users/users';
-import IDCopyBadge from '../IDCopyBadge.vue';
-import DataErrorBlock from '../data/DataErrorBlock.vue';
 import type { ClassProp } from '~/typings';
+import type { User, UserShort } from '~~/gen/ts/resources/users/users';
 
 const props = withDefaults(
     defineProps<{

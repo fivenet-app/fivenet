@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { unitStatusToBGColor } from '~/components/centrum//helpers';
+import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
 import UnitAssignUsersModal from '~/components/centrum/units/UnitAssignUsersModal.vue';
 import UnitFeed from '~/components/centrum/units/UnitFeed.vue';
 import UnitStatusUpdateModal from '~/components/centrum/units/UnitStatusUpdateModal.vue';
@@ -8,7 +9,6 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useLivemapStore } from '~/store/livemap';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 import { StatusUnit } from '~~/gen/ts/resources/centrum/units';
-import UnitAttributes from '../partials/UnitAttributes.vue';
 
 const props = defineProps<{
     unit: Unit;

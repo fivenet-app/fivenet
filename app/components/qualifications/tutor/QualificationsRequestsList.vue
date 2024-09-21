@@ -4,6 +4,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
+import { requestStatusToTextColor } from '~/components/qualifications/helpers';
 import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
 import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
@@ -11,7 +12,6 @@ import type {
     DeleteQualificationReqResponse,
     ListQualificationRequestsResponse,
 } from '~~/gen/ts/services/qualifications/qualifications';
-import { requestStatusToTextColor } from '../helpers';
 import ExamViewResultModal from './ExamViewResultModal.vue';
 
 const props = withDefaults(

@@ -2,6 +2,9 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import { primaryColors } from '~/components/auth/account/settings';
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import { useAuthStore } from '~/store/auth';
 import { useCalendarStore } from '~/store/calendar';
 import { useCompletorStore } from '~/store/completor';
@@ -11,9 +14,6 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
-import DataErrorBlock from '../partials/data/DataErrorBlock.vue';
-import DataNoDataBlock from '../partials/data/DataNoDataBlock.vue';
-import DataPendingBlock from '../partials/data/DataPendingBlock.vue';
 
 const props = defineProps<{
     calendarId?: string;

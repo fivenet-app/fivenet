@@ -10,6 +10,7 @@ import DocumentRequestAccess from '~/components/documents/requests/DocumentReque
 import DocumentRequestsModal from '~/components/documents/requests/DocumentRequestsModal.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import IDCopyBadge from '~/components/partials/IDCopyBadge.vue';
+import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
@@ -23,7 +24,6 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
-import OpenClosedBadge from '../partials/OpenClosedBadge.vue';
 
 const props = defineProps<{
     documentId: string;

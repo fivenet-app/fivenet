@@ -15,6 +15,7 @@ export function WebsocketChannelTransport(logger: ILogger, webSocket: UseWebSock
         if (webSocket.status.value === 'CLOSED') {
             webSocket.open();
 
+            // (Re-)start any active stream channels
             if (wsChannel.activeStreams.size > 0) {
                 wsChannel.activeStreams.forEach((stream) => {
                     if (!stream[1].isStream) {
@@ -143,112 +144,124 @@ class WebsocketChannelImpl implements WebsocketChannel {
         }
     }
 
+    async sendToWebsocket(opts: TransportOptions, toSend: GrpcFrame): Promise<void> {
+        if (!this.activeStreams.has(toSend.streamId)) {
+            opts.debug && this.logger.debug('Stream does not exist', toSend.streamId);
+            return;
+        }
+
+        if (this.ws.status.value === 'CLOSED') {
+            throw errUnavailable;
+        }
+
+        this.ws.send(GrpcFrame.toBinary(toSend), true);
+    }
+
     getStream(opts: TransportOptions): GrpcStream {
         const currentStreamId = this.lastStreamId++;
-        const self = this;
 
-        async function sendToWebsocket(toSend: GrpcFrame): Promise<void> {
-            if (!self.activeStreams.has(toSend.streamId)) {
-                opts.debug && self.logger.debug('Stream does not exist', toSend.streamId);
-                return;
-            }
+        return new WebsocketChannelStream(this, this.logger, currentStreamId, opts);
+    }
+}
 
-            if (self.ws.status.value === 'CLOSED') {
-                throw errUnavailable;
-            }
+class WebsocketChannelStream {
+    wsChannel: WebsocketChannelImpl;
+    logger: ILogger;
+    streamId: number;
+    opts: TransportOptions;
+    service: string;
+    method: string;
+    isStream: boolean;
 
-            self.ws.send(GrpcFrame.toBinary(toSend), true);
-        }
+    constructor(wsChannel: WebsocketChannelImpl, logger: ILogger, streamId: number, opts: TransportOptions) {
+        this.wsChannel = wsChannel;
+        this.logger = logger;
+        this.streamId = streamId;
+        this.opts = opts;
+        this.service = opts.methodDefinition.service.typeName;
+        this.method = opts.methodDefinition.name;
+        this.isStream = opts.methodDefinition.serverStreaming || opts.methodDefinition.clientStreaming;
+    }
 
-        function newFrame(): GrpcFrame {
-            const frame = GrpcFrame.create();
-            frame.streamId = currentStreamId;
-            return frame;
-        }
+    start(metadata: Metadata) {
+        this.opts.debug && this.logger.debug('Stream start', this.streamId, `${this.service}/${this.method}`);
 
-        // Question: can this structure be reused or is it one time use?
-        const stream = {
-            streamId: currentStreamId,
-            service: opts.methodDefinition.service.typeName,
-            method: opts.methodDefinition.name,
-            isStream: opts.methodDefinition.serverStreaming || opts.methodDefinition.clientStreaming,
+        this.wsChannel.activeStreams.set(this.streamId, [this.opts, this]);
 
-            start: (metadata: Metadata) => {
-                opts.debug &&
-                    this.logger.debug(
-                        'Stream start',
-                        currentStreamId,
-                        `${opts.methodDefinition.service.typeName}/${opts.methodDefinition.name}`,
-                    );
+        const header = Header.create();
+        header.operation = `${this.service}/${this.method}`;
+        const headerMap = header.headers;
+        metadata.forEach((key, values) => {
+            const headerValue = HeaderValue.create();
+            headerValue.value = values;
+            headerMap[key] = headerValue;
+        });
 
-                self.activeStreams.set(currentStreamId, [opts, stream]);
-
-                const header = Header.create();
-                header.operation = `${opts.methodDefinition.service.typeName}/${opts.methodDefinition.name}`;
-                const headerMap = header.headers;
-                metadata.forEach((key, values) => {
-                    const headerValue = HeaderValue.create();
-                    headerValue.value = values;
-                    headerMap[key] = headerValue;
-                });
-
-                const frame = newFrame();
-                frame.payload = {
+        this.wsChannel.sendToWebsocket(
+            this.opts,
+            GrpcFrame.create({
+                streamId: this.streamId,
+                payload: {
                     oneofKind: 'header',
                     header: header,
-                };
+                },
+            }),
+        );
+    }
 
-                sendToWebsocket(frame);
-            },
+    async sendMessage(msgBytes: Uint8Array, complete?: boolean) {
+        this.opts.debug && this.logger.debug('Stream send', this.streamId);
 
-            sendMessage: async (msgBytes: Uint8Array, complete?: boolean) => {
-                opts.debug && this.logger.debug('Stream send', currentStreamId);
+        const output = new Uint8Array(msgBytes.length + 5);
+        output[0] = 0; // Compression none
+        writeUInt32BE(output, msgBytes.length, 1);
+        output.set(msgBytes, 5);
 
-                const output = new Uint8Array(msgBytes.length + 5);
-                output[0] = 0; // Compression none
-                writeUInt32BE(output, msgBytes.length, 1);
-                output.set(msgBytes, 5);
+        const body = Body.create();
+        body.data = output;
+        body.complete = !!complete;
 
-                const body = Body.create();
-                body.data = output;
-                body.complete = !!complete;
-
-                const frame = newFrame();
-                frame.payload = {
+        this.wsChannel.sendToWebsocket(
+            this.opts,
+            GrpcFrame.create({
+                streamId: this.streamId,
+                payload: {
                     oneofKind: 'body',
                     body: body,
-                };
+                },
+            }),
+        );
+    }
 
-                sendToWebsocket(frame);
-            },
+    async finishSend() {
+        this.opts.debug && this.logger.debug('Stream complete', this.streamId);
 
-            finishSend: async () => {
-                opts.debug && this.logger.debug('Stream complete', currentStreamId);
-
-                const frame = newFrame();
-                frame.payload = {
+        this.wsChannel.sendToWebsocket(
+            this.opts,
+            GrpcFrame.create({
+                streamId: this.streamId,
+                payload: {
                     oneofKind: 'complete',
                     complete: Complete.create(),
-                };
+                },
+            }),
+        );
+    }
 
-                sendToWebsocket(frame);
-            },
+    async cancel() {
+        this.opts.debug && this.logger.debug('Stream cancel', this.streamId);
 
-            cancel: async () => {
-                opts.debug && this.logger.debug('Stream cancel', currentStreamId);
+        this.opts.onEnd(errCancelled);
 
-                const frame = newFrame();
-                frame.payload = {
+        this.wsChannel.sendToWebsocket(
+            this.opts,
+            GrpcFrame.create({
+                streamId: this.streamId,
+                payload: {
                     oneofKind: 'cancel',
                     cancel: Cancel.create(),
-                };
-
-                opts.onEnd(errCancelled);
-
-                sendToWebsocket(frame);
-            },
-        };
-
-        return stream;
+                },
+            }),
+        );
     }
 }
