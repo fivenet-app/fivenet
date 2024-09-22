@@ -7,6 +7,13 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
 )
 
+func (m *CitizenAttribute) Sanitize() error {
+
+	m.Color = htmlsanitizer.StripTags(m.Color)
+
+	return nil
+}
+
 func (m *UserActivity) Sanitize() error {
 
 	m.Key = htmlsanitizer.Sanitize(m.Key)

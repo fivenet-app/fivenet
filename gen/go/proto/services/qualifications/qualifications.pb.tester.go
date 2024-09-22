@@ -27,7 +27,7 @@ func NewTestQualificationsServiceClient(srv QualificationsServiceServer) (Qualif
 		}
 	}()
 
-	conn, err := grpc.NewClient("",
+	conn, err := grpc.DialContext(ctx, "",
 		grpc.WithContextDialer(func(context.Context, string) (net.Conn, error) {
 			return lis.Dial()
 		}), grpc.WithTransportCredentials(insecure.NewCredentials()))

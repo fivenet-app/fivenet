@@ -1181,7 +1181,7 @@
 | job | [string](#string) |  |  |
 | name | [string](#string) |  | @sanitize |
 | initials | [string](#string) |  | @sanitize |
-| color | [string](#string) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
 | description | [string](#string) | optional | @sanitize |
 | status | [UnitStatus](#resources-centrum-UnitStatus) | optional |  |
 | users | [UnitAssignment](#resources-centrum-UnitAssignment) | repeated |  |
@@ -1826,6 +1826,8 @@
 | name | [string](#string) |  | @sanitize |
 | description | [string](#string) | optional | @sanitize |
 | job | [string](#string) | optional |  |
+| color | [string](#string) | optional | @sanitize: method=StripTags |
+| icon | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -2763,8 +2765,8 @@
 | x | [double](#double) |  |  |
 | y | [double](#double) |  |  |
 | postal | [string](#string) | optional | @sanitize |
-| color | [string](#string) | optional |  |
-| icon | [string](#string) | optional |  |
+| color | [string](#string) | optional | @sanitize: method=StripTags |
+| icon | [string](#string) | optional | @sanitize: method=StripTags |
 
 
 
@@ -4339,7 +4341,7 @@ https://golang.org/pkg/database/sql/driver/#Valuer
 | id | [uint64](#uint64) |  | @gotags: sql:&#34;primary_key&#34; alias:&#34;id&#34; |
 | job | [string](#string) | optional |  |
 | name | [string](#string) |  |  |
-| color | [string](#string) |  |  |
+| color | [string](#string) |  | @sanitize: method=StripTags |
 
 
 

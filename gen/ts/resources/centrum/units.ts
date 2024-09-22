@@ -46,6 +46,8 @@ export interface Unit {
      */
     initials: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string color = 7;
      */
     color: string;

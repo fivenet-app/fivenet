@@ -24,6 +24,7 @@ message Unit {
     min_len: 2,
     max_len: 4
   }];
+  // @sanitize: method=StripTags
   string color = 7 [(validate.rules).string = {
     len: 7,
     pattern: "^#[A-Fa-f0-9]{6}$",

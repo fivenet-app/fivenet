@@ -34,6 +34,18 @@ export interface Category {
      * @generated from protobuf field: optional string job = 4;
      */
     job?: string;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string color = 5;
+     */
+    color?: string;
+    /**
+     * @sanitize: method=StripTags
+     *
+     * @generated from protobuf field: optional string icon = 6;
+     */
+    icon?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Category$Type extends MessageType<Category> {
@@ -42,7 +54,9 @@ class Category$Type extends MessageType<Category> {
             { no: 1, name: "id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } }
+            { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 5, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 6, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<Category>): Category {
@@ -70,6 +84,12 @@ class Category$Type extends MessageType<Category> {
                 case /* optional string job */ 4:
                     message.job = reader.string();
                     break;
+                case /* optional string color */ 5:
+                    message.color = reader.string();
+                    break;
+                case /* optional string icon */ 6:
+                    message.icon = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -94,6 +114,12 @@ class Category$Type extends MessageType<Category> {
         /* optional string job = 4; */
         if (message.job !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.job);
+        /* optional string color = 5; */
+        if (message.color !== undefined)
+            writer.tag(5, WireType.LengthDelimited).string(message.color);
+        /* optional string icon = 6; */
+        if (message.icon !== undefined)
+            writer.tag(6, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

@@ -191,7 +191,18 @@ func (m *MarkerInfo) validate(all bool) error {
 	}
 
 	if m.Icon != nil {
-		// no validation rules for Icon
+
+		if utf8.RuneCountInString(m.GetIcon()) > 128 {
+			err := MarkerInfoValidationError{
+				field:  "Icon",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
 	}
 
 	if len(errors) > 0 {

@@ -16,4 +16,11 @@ message Category {
   // @sanitize
   optional string description = 3 [(validate.rules).string.max_len = 255];
   optional string job = 4 [(validate.rules).string.max_len = 20];
+  // @sanitize: method=StripTags
+  optional string color = 5 [(validate.rules).string = {
+    len: 7,
+    pattern: "^#[A-Fa-f0-9]{6}$",
+  }];
+  // @sanitize: method=StripTags
+  optional string icon = 6 [(validate.rules).string.max_len = 128];
 }
