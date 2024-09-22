@@ -26,7 +26,7 @@ import (
 
 var (
 	tUsers                = table.Users.AS("usershort")
-	tCategory             = table.FivenetDocumentsCategories.AS("category")
+	tDCategory            = table.FivenetDocumentsCategories.AS("category")
 	tJobCitizenAttributes = table.FivenetJobCitizenAttributes.AS("citizen_attribute")
 )
 
@@ -200,25 +200,27 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 		jobsExp[i] = jet.String(jobs[i])
 	}
 
-	condition := tCategory.Job.IN(jobsExp...)
+	condition := tDCategory.Job.IN(jobsExp...)
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
 		condition = condition.AND(
-			tCategory.Name.LIKE(jet.String(req.Search)),
+			tDCategory.Name.LIKE(jet.String(req.Search)),
 		)
 	}
 
-	stmt := tCategory.
+	stmt := tDCategory.
 		SELECT(
-			tCategory.ID,
-			tCategory.Name,
-			tCategory.Description,
-			tCategory.Job,
+			tDCategory.ID,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
+			tDCategory.Color,
+			tDCategory.Icon,
 		).
-		FROM(tCategory).
+		FROM(tDCategory).
 		WHERE(condition).
 		ORDER_BY(
-			tCategory.Name.DESC(),
+			tDCategory.Name.DESC(),
 		).
 		LIMIT(15)
 

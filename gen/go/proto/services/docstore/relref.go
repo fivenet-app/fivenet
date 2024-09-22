@@ -598,6 +598,8 @@ func (s *Server) getDocumentRelations(ctx context.Context, userInfo *userinfo.Us
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
+			tDCategory.Color,
+			tDCategory.Icon,
 			tSourceUser.ID,
 			tSourceUser.Job,
 			tSourceUser.JobGrade,

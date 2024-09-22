@@ -23,13 +23,14 @@ var tDCategory = table.FivenetDocumentsCategories.AS("category")
 func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest) (*ListCategoriesResponse, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	stmt := tDCategory.
 		SELECT(
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
+			tDCategory.Color,
+			tDCategory.Icon,
 		).
 		FROM(
 			tDCategory,
@@ -38,7 +39,7 @@ func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest)
 			tDCategory.Job.EQ(jet.String(userInfo.Job)),
 		).
 		ORDER_BY(
-			tDCategory.Name,
+			tDCategory.Name.DESC(),
 		)
 
 	resp := &ListCategoriesResponse{}
@@ -54,13 +55,14 @@ func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest)
 func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Category, error) {
 	userInfo := auth.MustGetUserInfoFromContext(ctx)
 
-	tDCategory := table.FivenetDocumentsCategories.AS("category")
 	stmt := tDCategory.
 		SELECT(
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
+			tDCategory.Color,
+			tDCategory.Icon,
 		).
 		FROM(
 			tDCategory,
@@ -92,12 +94,12 @@ func (s *Server) CreateCategory(ctx context.Context, req *CreateCategoryRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	dCategory := table.FivenetDocumentsCategories
-	stmt := dCategory.
+	tDCategory := table.FivenetDocumentsCategories
+	stmt := tDCategory.
 		INSERT(
-			dCategory.Name,
-			dCategory.Description,
-			dCategory.Job,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
 		).
 		VALUES(
 			req.Category.Name,
@@ -136,21 +138,25 @@ func (s *Server) UpdateCategory(ctx context.Context, req *UpdateCategoryRequest)
 	}
 	defer s.aud.Log(auditEntry, req)
 
-	dCategory := table.FivenetDocumentsCategories
-	stmt := dCategory.
+	tDCategory := table.FivenetDocumentsCategories
+	stmt := tDCategory.
 		UPDATE(
-			dCategory.Name,
-			dCategory.Description,
-			dCategory.Job,
+			tDCategory.Name,
+			tDCategory.Description,
+			tDCategory.Job,
+			tDCategory.Color,
+			tDCategory.Icon,
 		).
 		SET(
 			req.Category.Name,
 			req.Category.Description,
 			userInfo.Job,
+			req.Category.Color,
+			req.Category.Icon,
 		).
 		WHERE(jet.AND(
-			dCategory.ID.EQ(jet.Uint64(req.Category.Id)),
-			dCategory.Job.EQ(jet.String(userInfo.Job)),
+			tDCategory.ID.EQ(jet.Uint64(req.Category.Id)),
+			tDCategory.Job.EQ(jet.String(userInfo.Job)),
 		))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
@@ -181,13 +187,13 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 		ids[i] = jet.Uint64(req.Ids[i])
 	}
 
-	dCategory := table.FivenetDocumentsCategories
-	stmt := dCategory.
+	tDCategory := table.FivenetDocumentsCategories
+	stmt := tDCategory.
 		DELETE().
 		WHERE(
 			jet.AND(
-				dCategory.Job.EQ(jet.String(userInfo.Job)),
-				dCategory.ID.IN(ids...),
+				tDCategory.Job.EQ(jet.String(userInfo.Job)),
+				tDCategory.ID.IN(ids...),
 			),
 		)
 

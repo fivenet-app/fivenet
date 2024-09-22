@@ -12,4 +12,6 @@ type FivenetDocumentsCategories struct {
 	Name        string  `json:"name"`
 	Description *string `json:"description"`
 	Job         string  `json:"job"`
+	Color       *string `json:"color"`
+	Icon        *string `json:"icon"`
 }

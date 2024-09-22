@@ -4,6 +4,7 @@ import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopove
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { Document, DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import DocumentCategoryBadge from './DocumentCategoryBadge.vue';
 
 defineOptions({
     inheritAttrs: false,
@@ -74,9 +75,7 @@ watchOnce(opened, async () => {
                 <USkeleton v-if="!document && loading" class="h-8 w-[125px]" />
 
                 <template v-else>
-                    <UBadge v-if="document?.category && !hideCategory">
-                        {{ document.category.name }}
-                    </UBadge>
+                    <DocumentCategoryBadge v-if="document?.category && !hideCategory" :category="document?.category" />
 
                     <span v-bind="$attrs"> {{ document?.title }} </span>
                 </template>
@@ -120,9 +119,7 @@ watchOnce(opened, async () => {
 
                 <div v-else-if="document" class="flex flex-col gap-2 text-gray-900 dark:text-white">
                     <UButton variant="link" :padded="false" :to="{ name: 'documents-id', params: { id: document.id ?? 0 } }">
-                        <UBadge v-if="document?.category" class="xs">
-                            {{ document.category.name }}
-                        </UBadge>
+                        <DocumentCategoryBadge v-if="document?.category" :category="document?.category" size="xs" />
 
                         <span class="line-clamp-1 text-lg hover:line-clamp-2">{{ document.title }}</span>
                     </UButton>

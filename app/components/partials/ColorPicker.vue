@@ -4,12 +4,13 @@ import { ColorPicker } from 'vue3-colorpicker';
 import 'vue3-colorpicker/style.css';
 
 const props = defineProps<{
-    modelValue: string;
+    modelValue: string | undefined;
     disabled?: boolean;
     hideIcon?: boolean;
+    block?: boolean;
 }>();
 
-const emit = defineEmits<{
+const emits = defineEmits<{
     (e: 'update:modelValue', value: string): void;
     (e: 'close'): void;
 }>();
@@ -19,10 +20,10 @@ defineOptions({
 });
 
 const color = computed({
-    get: () => props.modelValue,
+    get: () => props.modelValue ?? '',
     set: (value) => {
-        emit('update:modelValue', value);
-        emit('close');
+        emits('update:modelValue', value);
+        emits('close');
     },
 });
 
@@ -36,10 +37,11 @@ const open = ref(false);
 <template>
     <template v-if="smallerBreakpoint">
         <UButton
+            v-bind="$attrs"
             variant="outline"
             color="white"
             :disabled="disabled"
-            block
+            :block="block"
             :icon="!hideIcon ? 'i-mdi-palette' : ''"
             :label="!hideIcon ? '' : '&nbsp;'"
             :style="{ backgroundColor: color }"
@@ -82,12 +84,13 @@ const open = ref(false);
         </UModal>
     </template>
 
-    <UPopover v-else v-model:open="open" :popper="{ placement: 'bottom-start' }">
+    <UPopover v-else v-bind="$attrs" v-model:open="open" :popper="{ placement: 'bottom-start' }">
         <UButton
+            v-bind="$attrs"
             variant="outline"
             color="white"
             :disabled="disabled"
-            block
+            :block="block"
             :icon="!hideIcon ? 'i-mdi-palette' : ''"
             :label="!hideIcon ? '' : '&nbsp;'"
             :style="{ backgroundColor: color }"

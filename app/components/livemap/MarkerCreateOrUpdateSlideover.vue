@@ -1,14 +1,13 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { HelpIcon } from 'mdi-vue3';
-import type { DefineComponent } from 'vue';
 import { z } from 'zod';
-import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import ColorPicker from '~/components/partials/ColorPicker.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useLivemapStore } from '~/store/livemap';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
 import { MarkerType } from '~~/gen/ts/resources/livemap/livemap';
+import IconSelectMenu from '../partials/IconSelectMenu.vue';
 
 const props = defineProps<{
     location?: Coordinate;
@@ -118,19 +117,6 @@ async function createOrUpdateMarker(values: Schema): Promise<void> {
         handleGRPCError(e as RpcError);
         throw e;
     }
-}
-
-async function markerIconSearch(query: string): Promise<DefineComponent[]> {
-    // Remove spaces from query as icon names don't have spaces
-    query = query.toLowerCase().replaceAll(' ', '').trim();
-    let count = 0;
-    return markerIcons.filter((icon) => {
-        if (count < 35 && icon.name?.toLowerCase()?.startsWith(query)) {
-            count++;
-            return true;
-        }
-        return false;
-    });
 }
 
 const canSubmit = ref(true);
@@ -299,28 +285,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="icon">
-                                    <USelectMenu
-                                        v-model="state.icon"
-                                        :searchable="markerIconSearch"
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        value-attribute="name"
-                                    >
-                                        <template #label>
-                                            <component
-                                                :is="markerIcons.find((icon) => icon.name === state.icon) ?? markerFallbackIcon"
-                                                class="size-5"
-                                                :style="{ fill: state.color }"
-                                            />
-                                            <span class="truncate">{{
-                                                camelCaseToTitleCase(state.icon ?? $t('common.unknown'))
-                                            }}</span>
-                                        </template>
-                                        <template #option="{ option }">
-                                            <component :is="option" class="size-5" :style="{ color: state.color }" />
-                                            <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
-                                        </template>
-                                    </USelectMenu>
+                                    <IconSelectMenu v-model="state.icon" />
                                 </UFormGroup>
                             </dd>
                         </div>

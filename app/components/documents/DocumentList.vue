@@ -13,6 +13,7 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
 
 const { t } = useI18n();
 
@@ -186,6 +187,14 @@ defineShortcuts({
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                     </template>
                                     <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                                    <template #option="{ option }">
+                                        <component
+                                            :is="markerIcons.find((item) => item.name === option.icon) ?? markerFallbackIcon"
+                                            v-if="option.icon"
+                                            class="size-5"
+                                        />
+                                        <span class="truncate">{{ option.name }}</span>
+                                    </template>
                                 </UInputMenu>
                             </UFormGroup>
 

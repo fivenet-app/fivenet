@@ -154,6 +154,8 @@ func (s *Server) ListUserDocuments(ctx context.Context, req *ListUserDocumentsRe
 			tDCategory.ID,
 			tDCategory.Name,
 			tDCategory.Description,
+			tDCategory.Color,
+			tDCategory.Icon,
 			tDCreator.ID,
 			tDCreator.Job,
 			tDCreator.JobGrade,

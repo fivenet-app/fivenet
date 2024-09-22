@@ -184,6 +184,8 @@ export interface Coords {
  */
 export interface IconMarker {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string icon = 1;
      */
     icon: string;
@@ -668,7 +670,7 @@ export const Coords = new Coords$Type();
 class IconMarker$Type extends MessageType<IconMarker> {
     constructor() {
         super("resources.livemap.IconMarker", [
-            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<IconMarker>): IconMarker {

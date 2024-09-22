@@ -7,6 +7,13 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
 )
 
+func (m *IconMarker) Sanitize() error {
+
+	m.Icon = htmlsanitizer.StripTags(m.Icon)
+
+	return nil
+}
+
 func (m *MarkerInfo) Sanitize() error {
 
 	if m.Color != nil {

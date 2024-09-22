@@ -169,52 +169,50 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
 <template>
     <UDashboardNavbar :title="$t('pages.documents.templates.view.title')">
         <template #right>
-            <UButtonGroup class="inline-flex">
-                <UButton color="black" icon="i-mdi-arrow-back" to="/documents/templates">
-                    {{ $t('common.back') }}
+            <UButton color="black" icon="i-mdi-arrow-back" to="/documents/templates">
+                {{ $t('common.back') }}
+            </UButton>
+
+            <UButtonGroup v-if="template" class="inline-flex">
+                <UButton
+                    v-if="can('DocStoreService.CreateTemplate').value"
+                    block
+                    class="flex-1"
+                    color="white"
+                    trailing-icon="i-mdi-print-preview"
+                    @click="
+                        modal.open(TemplatePreviewModal, {
+                            templateId: templateId,
+                        })
+                    "
+                >
+                    {{ $t('common.preview') }}
                 </UButton>
 
-                <template v-if="template">
-                    <UButton
-                        v-if="can('DocStoreService.CreateTemplate').value"
-                        block
-                        class="flex-1"
-                        color="white"
-                        trailing-icon="i-mdi-print-preview"
-                        @click="
-                            modal.open(TemplatePreviewModal, {
-                                templateId: templateId,
-                            })
-                        "
-                    >
-                        {{ $t('common.preview') }}
-                    </UButton>
+                <UButton
+                    v-if="can('DocStoreService.CreateTemplate').value"
+                    block
+                    class="flex-1"
+                    trailing-icon="i-mdi-pencil"
+                    :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
+                >
+                    {{ $t('common.edit') }}
+                </UButton>
 
-                    <UButton
-                        v-if="can('DocStoreService.CreateTemplate').value"
-                        block
-                        class="flex-1"
-                        trailing-icon="i-mdi-pencil"
-                        :to="{ name: 'documents-templates-edit-id', params: { id: templateId } }"
-                    >
-                        {{ $t('common.edit') }}
-                    </UButton>
-
-                    <UButton
-                        v-if="can('DocStoreService.DeleteTemplate').value"
-                        block
-                        class="flex-1"
-                        color="red"
-                        trailing-icon="i-mdi-trash-can"
-                        @click="
-                            modal.open(ConfirmModal, {
-                                confirm: async () => deleteTemplate(templateId),
-                            })
-                        "
-                    >
-                        {{ $t('common.delete') }}
-                    </UButton>
-                </template>
+                <UButton
+                    v-if="can('DocStoreService.DeleteTemplate').value"
+                    block
+                    class="flex-1"
+                    color="red"
+                    trailing-icon="i-mdi-trash-can"
+                    @click="
+                        modal.open(ConfirmModal, {
+                            confirm: async () => deleteTemplate(templateId),
+                        })
+                    "
+                >
+                    {{ $t('common.delete') }}
+                </UButton>
             </UButtonGroup>
         </template>
     </UDashboardNavbar>

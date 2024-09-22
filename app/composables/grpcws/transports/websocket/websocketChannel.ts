@@ -109,6 +109,8 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     stream[0].debug && this.logger.debug('Received complete for stream', streamId);
 
                     stream[0].onEnd();
+                    // Remove completed stream
+                    this.activeStreams.delete(streamId);
                     break;
                 }
 

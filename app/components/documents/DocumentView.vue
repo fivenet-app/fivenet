@@ -24,6 +24,7 @@ import { AccessLevel } from '~~/gen/ts/resources/documents/access';
 import type { Document } from '~~/gen/ts/resources/documents/documents';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { ToggleDocumentPinResponse } from '~~/gen/ts/services/docstore/docstore';
+import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 
 const props = defineProps<{
     documentId: string;
@@ -252,11 +253,11 @@ defineShortcuts({
 <template>
     <UDashboardNavbar :title="$t('pages.documents.id.title')">
         <template #right>
-            <UButtonGroup class="inline-flex">
-                <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                    {{ $t('common.back') }}
-                </UButton>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
+                {{ $t('common.back') }}
+            </UButton>
 
+            <UButtonGroup class="inline-flex">
                 <IDCopyBadge
                     :id="doc?.id ?? documentId"
                     prefix="DOC"
@@ -376,6 +377,7 @@ defineShortcuts({
                         "
                         class="flex-1"
                         block
+                        :color="!doc.deletedAt ? 'red' : undefined"
                         :icon="!doc.deletedAt ? 'i-mdi-trash-can' : 'i-mdi-restore'"
                         @click="
                             modal.open(ConfirmModal, {
@@ -403,12 +405,7 @@ defineShortcuts({
                 </div>
 
                 <div class="mb-2 flex gap-2">
-                    <UBadge v-if="doc.category" class="inline-flex gap-1" size="md">
-                        <UIcon name="i-mdi-shape" class="size-5" />
-                        <span :title="doc.category.description ?? $t('common.na')">
-                            {{ doc.category.name }}
-                        </span>
-                    </UBadge>
+                    <DocumentCategoryBadge :category="doc.category" />
 
                     <OpenClosedBadge :closed="doc.closed" />
 

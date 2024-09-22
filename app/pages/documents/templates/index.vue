@@ -25,11 +25,11 @@ async function selected(t: TemplateShort | undefined): Promise<void> {
         <UDashboardPanel grow>
             <UDashboardNavbar :title="$t('pages.documents.templates.title')">
                 <template #right>
-                    <UButtonGroup class="inline-flex">
-                        <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                            {{ $t('common.back') }}
-                        </UButton>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
+                        {{ $t('common.back') }}
+                    </UButton>
 
+                    <UButtonGroup class="inline-flex">
                         <UButton
                             v-if="can('DocStoreService.CreateTemplate').value"
                             :to="{ name: 'documents-templates-create' }"

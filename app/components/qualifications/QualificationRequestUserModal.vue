@@ -28,13 +28,9 @@ const state = reactive<Schema>({
     userComment: '',
 });
 
-interface FormData {
-    userComment: string;
-}
-
 async function createOrUpdateQualificationRequest(
     qualificationId: string,
-    values: FormData,
+    values: Schema,
 ): Promise<CreateOrUpdateQualificationRequestResponse> {
     try {
         const call = getGRPCQualificationsClient().createOrUpdateQualificationRequest({

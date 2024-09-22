@@ -2724,7 +2724,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| icon | [string](#string) |  |  |
+| icon | [string](#string) |  | @sanitize: method=StripTags |
 
 
 

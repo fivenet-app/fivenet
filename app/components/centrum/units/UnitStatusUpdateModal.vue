@@ -33,13 +33,7 @@ const state = reactive<Schema>({
     status: props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN,
 });
 
-interface FormData {
-    status: number;
-    code?: string;
-    reason?: string;
-}
-
-async function updateUnitStatus(id: string, values: FormData): Promise<void> {
+async function updateUnitStatus(id: string, values: Schema): Promise<void> {
     try {
         const call = getGRPCCentrumClient().updateUnitStatus({
             unitId: id,

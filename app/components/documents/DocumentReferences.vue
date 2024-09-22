@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentReference } from '~~/gen/ts/resources/documents/documents';
 import { DocReference } from '~~/gen/ts/resources/documents/documents';
+import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import { refToBadge } from './helpers';
 
 const props = withDefaults(
@@ -148,12 +149,7 @@ const columns = computed(() =>
                                         }"
                                         class="inline-flex items-center gap-1 truncate"
                                     >
-                                        <UBadge v-if="reference.targetDocument?.category" class="inline-flex gap-1" size="md">
-                                            <UIcon name="i-mdi-shape" class="size-5" />
-                                            <span :title="reference.targetDocument?.category.description ?? $t('common.na')">
-                                                {{ reference.targetDocument?.category.name }}
-                                            </span>
-                                        </UBadge>
+                                        <DocumentCategoryBadge :category="reference.targetDocument.category" />
 
                                         <span>
                                             {{ reference.targetDocument?.title }}
@@ -175,12 +171,7 @@ const columns = computed(() =>
                                         }"
                                         class="inline-flex items-center gap-1 truncate"
                                     >
-                                        <UBadge v-if="reference.sourceDocument?.category" class="inline-flex gap-1" size="md">
-                                            <UIcon name="i-mdi-shape" class="size-5" />
-                                            <span :title="reference.sourceDocument?.category.description ?? $t('common.na')">
-                                                {{ reference.sourceDocument?.category.name }}
-                                            </span>
-                                        </UBadge>
+                                        <DocumentCategoryBadge :category="reference.sourceDocument.category" />
 
                                         <span>
                                             {{ reference.sourceDocument?.title }}
