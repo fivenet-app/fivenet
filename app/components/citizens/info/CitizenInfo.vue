@@ -174,6 +174,7 @@ const isOpen = ref(false);
                                     <template v-if="user.jobGrade > 0 && user.job !== game.unemployedJobName">
                                         ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
                                     </template>
+                                    {{ user.props?.jobGrade ? '*' : '' }}
                                 </UBadge>
 
                                 <UBadge v-if="user?.props?.wanted" color="red">
