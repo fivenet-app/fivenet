@@ -72,7 +72,7 @@
         "@types/howler": "2.2.12",
         "@types/leaflet": "1.9.12",
         "@types/leaflet-contextmenu": "1.4.3",
-        "@types/node": "22.7.1",
+        "@types/node": "22.7.2",
         "@types/splitpanes": "2.2.6",
         "@types/uuid": "10.0.0",
         "@types/zxcvbn": "4.4.5",
