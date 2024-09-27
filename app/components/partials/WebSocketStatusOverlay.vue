@@ -15,6 +15,8 @@ const status = useDebounce(webSocket.status, 150);
 
 const notificationId = ref<string | undefined>();
 
+const overlay = ref<HTMLDivElement | null>(null);
+
 async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: WebSocketStatus): Promise<void> {
     if (notificationId.value !== undefined && status === 'OPEN') {
         toast.remove(notificationId.value);
@@ -28,6 +30,8 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
             description: t('notifications.grpc_errors.available.content'),
             timeout: timeouts.notification,
         });
+
+        overlay.value?.blur();
     } else if (previousStatus === 'CONNECTING' && status === 'CLOSED') {
         if (notificationId.value !== undefined) {
             return;
@@ -61,6 +65,8 @@ async function checkWebSocketStatus(previousStatus: WebSocketStatus, status: Web
                 },
             ],
         });
+
+        overlay.value?.focus();
     }
 }
 
@@ -84,7 +90,7 @@ useTimeoutFn(() => {
 </script>
 
 <template>
-    <div v-if="notificationId" class="relative z-150">
+    <div v-if="notificationId" ref="overlay" class="relative z-150">
         <div class="fixed inset-0 bg-gray-200/75 transition-opacity dark:bg-gray-800/75" />
 
         <div class="fixed inset-0 overflow-y-auto">

@@ -129,28 +129,34 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 				phoneNumber := strings.ReplaceAll(strings.ReplaceAll(*req.PhoneNumber, "%", ""), " ", "") + "%"
 				condition = condition.AND(tUser.PhoneNumber.LIKE(jet.String(phoneNumber)))
 			}
+
 		case "UserProps.Wanted":
 			selectors = append(selectors, tUserProps.Wanted)
 
 			if req.Wanted != nil && *req.Wanted {
 				condition = condition.AND(tUserProps.Wanted.IS_TRUE())
 			}
+
 		case "UserProps.Job":
 			selectors = append(selectors, tUserProps.Job, tUserProps.JobGrade)
+
 		case "UserProps.TrafficInfractionPoints":
 			selectors = append(selectors, tUserProps.TrafficInfractionPoints)
 
 			if req.TrafficInfractionPoints != nil && *req.TrafficInfractionPoints > 0 {
 				condition = condition.AND(tUserProps.TrafficInfractionPoints.GT_EQ(jet.Uint32(*req.TrafficInfractionPoints)))
 			}
+
 		case "UserProps.OpenFines":
 			selectors = append(selectors, tUserProps.OpenFines)
 
 			if req.OpenFines != nil && *req.OpenFines > 0 {
 				condition = condition.AND(tUserProps.OpenFines.GT_EQ(jet.Uint64(*req.OpenFines)))
 			}
+
 		case "UserProps.BloodType":
 			selectors = append(selectors, tUserProps.BloodType)
+
 		case "UserProps.MugShot":
 			selectors = append(selectors, tUserProps.MugShot)
 		}
@@ -159,6 +165,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 	req.Search = strings.TrimSpace(req.Search)
 	req.Search = strings.ReplaceAll(req.Search, "%", "")
 	req.Search = strings.ReplaceAll(req.Search, " ", "%")
+	req.Search = strings.ReplaceAll(req.Search, "\t", " ")
 	if req.Search != "" {
 		req.Search = "%" + req.Search + "%"
 		condition = condition.AND(
