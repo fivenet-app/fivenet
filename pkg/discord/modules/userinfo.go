@@ -151,6 +151,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		grade := job.Grades[i]
 		name := strings.ReplaceAll(g.settings.UserInfoSyncSettings.GradeRoleFormat, "%grade_label%", grade.Label)
 		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
+		name = strings.ReplaceAll(name, "%grade_single%", fmt.Sprintf("%d", grade.Grade))
 
 		if _, ok := jobRoles[grade.Grade]; ok {
 			continue
