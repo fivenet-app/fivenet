@@ -13,7 +13,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	pbusers "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -83,10 +82,10 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 				}
 
 				switch g.settings.UserInfoSyncSettings.UnemployedMode {
-				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+				case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
 					user.Roles.Sum = append(user.Roles.Sum, role)
 
-				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+				case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 					kick := true
 					user.Kick = &kick
 					user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)

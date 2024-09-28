@@ -199,13 +199,7 @@ func (b *Bot) start(ctx context.Context) error {
 	})
 
 	if err := b.discord.Open(); err != nil {
-		return fmt.Errorf("error opening connection: %w", err)
-	}
-
-	if b.cfg.Commands.Enabled {
-		if err := b.cmds.RegisterGlobalCommands(); err != nil {
-			return fmt.Errorf("failed to register global commands. %w", err)
-		}
+		return fmt.Errorf("error opening discord connection: %w", err)
 	}
 
 	for {
@@ -214,7 +208,7 @@ func (b *Bot) start(ctx context.Context) error {
 				return fmt.Errorf("failed to refresh bot user guilds. %w", err)
 			}
 
-			return b.setBotPresence()
+			break
 		}
 
 		select {
@@ -224,6 +218,18 @@ func (b *Bot) start(ctx context.Context) error {
 		case <-time.After(750 * time.Millisecond):
 		}
 	}
+
+	if err := b.setBotPresence(); err != nil {
+		return fmt.Errorf("failed to set bot presence. %w", err)
+	}
+
+	if b.cfg.Commands.Enabled {
+		if err := b.cmds.RegisterGlobalCommands(); err != nil {
+			return fmt.Errorf("failed to register global commands. %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (b *Bot) setBotPresence() error {
