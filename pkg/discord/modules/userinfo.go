@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -69,7 +70,11 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 	}
 
 	handlers := []types.UserProcessorHandler{}
-	for _, role := range roles {
+	if idx := slices.IndexFunc(roles.ToSlice(), func(role *types.Role) bool {
+		return role.Module == userInfoRoleModuleUnemployed
+	}); idx > -1 {
+		role := roles[idx]
+
 		if role.Module == userInfoRoleModuleUnemployed {
 			handlers = append(handlers, func(ctx context.Context, guildId string, member *discordgo.Member, user *types.User) (*types.User, []*discordgo.MessageEmbed, error) {
 				if user.Job == g.job {
@@ -93,7 +98,6 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 
 				return user, nil, nil
 			})
-			break
 		}
 	}
 

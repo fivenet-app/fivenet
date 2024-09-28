@@ -143,7 +143,7 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
-		// Cause discord client disconnects to cause bot restart
+		// Cause discord client disconnects to cause bot restart after so many tries
 		b.discord.AddHandler(func(discord *discordgo.Session, r *discordgo.Disconnect) {
 			b.logger.Warn("discord client disconnected")
 
@@ -194,8 +194,6 @@ func (b *Bot) start(ctx context.Context) error {
 
 	b.discord.AddHandler(func(s *discordgo.Session, g *discordgo.GuildCreate) {
 		b.logger.Info("discord server joined", zap.String("discord_guild_id", g.ID))
-
-		b.discord.RequestGuildMembers(g.ID, "", 0, "", false)
 	})
 
 	if err := b.discord.Open(); err != nil {
@@ -351,6 +349,7 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 		FROM(tJobProps).
 		WHERE(jet.AND(
 			tJobProps.DiscordGuildID.IS_NOT_NULL(),
+			tJobProps.Job.EQ(jet.String("mechanic")),
 		))
 
 	var dest []*struct {

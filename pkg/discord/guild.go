@@ -68,16 +68,6 @@ func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (
 	}, nil
 }
 
-func (g *Guild) setup() error {
-	g.logger.Info("setting up guild")
-
-	if _, err := g.bot.discord.Guild(g.guild.ID); err != nil {
-		return fmt.Errorf("failed to retrieve guild info from discord api. %w", err)
-	}
-
-	return nil
-}
-
 func (g *Guild) Run() error {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
@@ -100,6 +90,10 @@ func (g *Guild) Run() error {
 	}
 	if planDiff == nil {
 		planDiff = &users.DiscordSyncChanges{}
+	}
+
+	if err := g.bot.discord.RequestGuildMembers(g.guild.ID, "", 0, "", false); err != nil {
+		g.logger.Error("failed to request guild members. %w", zap.Error(err))
 	}
 
 	errs := multierr.Combine()

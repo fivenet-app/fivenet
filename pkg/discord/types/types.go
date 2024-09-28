@@ -6,6 +6,16 @@ import (
 
 type Roles []*Role
 
+func (r Roles) ToSlice() []*Role {
+	list := make([]*Role, 0, len(r))
+
+	for _, value := range r {
+		list = append(list, value)
+	}
+
+	return list
+}
+
 type Role struct {
 	ID          string `yaml:"id"`
 	Name        string `yaml:"name"`
