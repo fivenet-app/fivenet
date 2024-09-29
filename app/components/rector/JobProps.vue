@@ -3,7 +3,7 @@ import type { FormSubmitEvent } from '#ui/types';
 import { vMaska } from 'maska/vue';
 import { CodeDiff } from 'v-code-diff';
 import { z } from 'zod';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
@@ -301,7 +301,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <ColorPicker v-model="state.livemapMarkerColor" />
+                                    <ColorPickerClient v-model="state.livemapMarkerColor" />
                                 </UFormGroup>
 
                                 <UFormGroup
@@ -577,46 +577,47 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="grid grid-cols-2 items-center gap-2"
                                         :ui="{ container: '' }"
                                     >
-                                        <USelectMenu
-                                            v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedMode"
-                                            :disabled="
-                                                !state.discordSyncSettings.userInfoSync ||
-                                                !state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
-                                            "
-                                            value-attribute="value"
-                                            :options="[
-                                                {
-                                                    label: $t('enums.rector.UserInfoSyncUnemployedMode.GIVE_ROLE'),
-                                                    value: UserInfoSyncUnemployedMode.GIVE_ROLE,
-                                                },
-                                                {
-                                                    label: $t('enums.rector.UserInfoSyncUnemployedMode.GIVE_ROLE'),
-                                                    value: UserInfoSyncUnemployedMode.KICK,
-                                                },
-                                            ]"
-                                            :searchable-placeholder="$t('common.search_field')"
-                                        >
-                                            <template #label>
-                                                {{
-                                                    $t(
-                                                        `enums.rector.UserInfoSyncUnemployedMode.${
-                                                            UserInfoSyncUnemployedMode[
-                                                                state.discordSyncSettings.userInfoSyncSettings.unemployedMode ??
-                                                                    0
-                                                            ]
-                                                        }`,
-                                                    )
-                                                }}
-                                            </template>
-
-                                            <template #option="{ option }">
-                                                <span class="truncate">{{
-                                                    $t(
-                                                        `enums.rector.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[option.value]}`,
-                                                    )
-                                                }}</span>
-                                            </template>
-                                        </USelectMenu>
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.discordSyncSettings.userInfoSyncSettings.unemployedMode"
+                                                :disabled="
+                                                    !state.discordSyncSettings.userInfoSync ||
+                                                    !state.discordSyncSettings.userInfoSyncSettings.unemployedEnabled
+                                                "
+                                                value-attribute="value"
+                                                :options="[
+                                                    {
+                                                        label: $t('enums.rector.UserInfoSyncUnemployedMode.GIVE_ROLE'),
+                                                        value: UserInfoSyncUnemployedMode.GIVE_ROLE,
+                                                    },
+                                                    {
+                                                        label: $t('enums.rector.UserInfoSyncUnemployedMode.GIVE_ROLE'),
+                                                        value: UserInfoSyncUnemployedMode.KICK,
+                                                    },
+                                                ]"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #label>
+                                                    {{
+                                                        $t(
+                                                            `enums.rector.UserInfoSyncUnemployedMode.${
+                                                                UserInfoSyncUnemployedMode[
+                                                                    state.discordSyncSettings.userInfoSyncSettings
+                                                                        .unemployedMode ?? 0
+                                                                ]
+                                                            }`,
+                                                        )
+                                                    }}
+                                                </template>
+                                                <template #option="{ option }">
+                                                    <span class="truncate">{{
+                                                        $t(
+                                                            `enums.rector.UserInfoSyncUnemployedMode.${UserInfoSyncUnemployedMode[option.value]}`,
+                                                        )
+                                                    }}</span>
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
                                     </UFormGroup>
 
                                     <UFormGroup
@@ -880,19 +881,22 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     :items="[{ label: $t('common.diff'), slot: 'diff', icon: 'i-mdi-difference-left' }]"
                                 >
                                     <template #diff>
-                                        <USelectMenu
-                                            v-model="selectedChange"
-                                            :options="jobProps.discordSyncChanges.changes"
-                                            :searchable-placeholder="$t('common.search_field')"
-                                        >
-                                            <template #label>
-                                                <span class="truncate">{{ $d(toDate(selectedChange?.time), 'short') }}</span>
-                                            </template>
-
-                                            <template #option="{ option }">
-                                                <span class="truncate">{{ $d(toDate(option.time), 'short') }}</span>
-                                            </template>
-                                        </USelectMenu>
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="selectedChange"
+                                                :options="jobProps.discordSyncChanges.changes"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #label>
+                                                    <span class="truncate">{{
+                                                        $d(toDate(selectedChange?.time), 'short')
+                                                    }}</span>
+                                                </template>
+                                                <template #option="{ option }">
+                                                    <span class="truncate">{{ $d(toDate(option.time), 'short') }}</span>
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
 
                                         <CodeDiff
                                             class="codediff"

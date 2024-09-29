@@ -187,42 +187,44 @@ const columns = [
                     </UFormGroup>
 
                     <UFormGroup name="user" :label="$t('common.user')" class="flex-1">
-                        <USelectMenu
-                            v-model="query.users"
-                            multiple
-                            :searchable="
-                                async (query: string) => {
-                                    usersLoading = true;
-                                    const users = await completorStore.completeCitizens({
-                                        search: query,
-                                    });
-                                    usersLoading = false;
-                                    return users;
-                                }
-                            "
-                            searchable-lazy
-                            :searchable-placeholder="$t('common.search_field')"
-                            :search-attributes="['firstname', 'lastname']"
-                            block
-                            :placeholder="$t('common.user', 2)"
-                            trailing
-                            by="userId"
-                        >
-                            <template #label>
-                                <span v-if="query.users.length" class="truncate">
-                                    {{ usersToLabel(query.users) }}
-                                </span>
-                            </template>
-                            <template #option="{ option: user }">
-                                <span class="truncate">
-                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                </span>
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.users"
+                                multiple
+                                :searchable="
+                                    async (query: string) => {
+                                        usersLoading = true;
+                                        const users = await completorStore.completeCitizens({
+                                            search: query,
+                                        });
+                                        usersLoading = false;
+                                        return users;
+                                    }
+                                "
+                                searchable-lazy
+                                :searchable-placeholder="$t('common.search_field')"
+                                :search-attributes="['firstname', 'lastname']"
+                                block
+                                :placeholder="$t('common.user', 2)"
+                                trailing
+                                by="userId"
+                            >
+                                <template #label>
+                                    <span v-if="query.users.length" class="truncate">
+                                        {{ usersToLabel(query.users) }}
+                                    </span>
+                                </template>
+                                <template #option="{ option: user }">
+                                    <span class="truncate">
+                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                    </span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup name="service" :label="$t('common.service')" class="flex-1">

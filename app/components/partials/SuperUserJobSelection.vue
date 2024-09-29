@@ -3,6 +3,10 @@ import { useAuthStore } from '~/store/auth';
 import { useCompletorStore } from '~/store/completor';
 import type { Job } from '~~/gen/ts/resources/users/jobs';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const authStore = useAuthStore();
 const { setSuperUserMode } = authStore;
 const { activeChar, isSuperuser } = storeToRefs(authStore);
@@ -25,23 +29,27 @@ watch(selectedJob, () => {
 </script>
 
 <template>
-    <UInputMenu
-        v-model="selectedJob"
-        class="relative"
-        option-attribute="label"
-        :search-attributes="['name', 'label']"
-        :options="jobs"
-        :popper="{ placement: 'top' }"
-        :placeholder="$t('common.job')"
-        :search="
-            async (q?: string) => (await listJobs()).filter((j) => q === undefined || j.name.includes(q) || j.label.includes(q))
-        "
-        search-lazy
-        :search-placeholder="$t('common.search_field')"
-    >
-        <template #option-empty="{ query: search }">
-            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-        </template>
-        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-    </UInputMenu>
+    <ClientOnly>
+        <UInputMenu
+            v-bind="$attrs"
+            v-model="selectedJob"
+            class="relative"
+            option-attribute="label"
+            :search-attributes="['name', 'label']"
+            :options="jobs"
+            :popper="{ placement: 'top' }"
+            :placeholder="$t('common.job')"
+            :search="
+                async (q?: string) =>
+                    (await listJobs()).filter((j) => q === undefined || j.name.includes(q) || j.label.includes(q))
+            "
+            search-lazy
+            :search-placeholder="$t('common.search_field')"
+        >
+            <template #option-empty="{ query: search }">
+                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+            </template>
+            <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+        </UInputMenu>
+    </ClientOnly>
 </template>

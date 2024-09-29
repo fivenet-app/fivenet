@@ -471,27 +471,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <USelectMenu
-                                        v-model="state.jobInfo.publicJobs"
-                                        multiple
-                                        :options="jobs ?? []"
-                                        value-attribute="name"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <template v-if="state.jobInfo.publicJobs.length">
-                                                <span class="truncate">{{ state.jobInfo.publicJobs.join(',') }}</span>
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.jobInfo.publicJobs"
+                                            multiple
+                                            :options="jobs ?? []"
+                                            value-attribute="name"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                        >
+                                            <template #label>
+                                                <template v-if="state.jobInfo.publicJobs.length">
+                                                    <span class="truncate">{{ state.jobInfo.publicJobs.join(',') }}</span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="truncate">{{
+                                                        $t('common.none_selected', [$t('common.job')])
+                                                    }}</span>
+                                                </template>
                                             </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
+                                            <template #option="{ option: job }">
+                                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                             </template>
-                                        </template>
-                                        <template #option="{ option: job }">
-                                            <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                        </template>
-                                    </USelectMenu>
+                                        </USelectMenu>
+                                    </ClientOnly>
                                 </UFormGroup>
 
                                 <UFormGroup
@@ -500,27 +502,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <USelectMenu
-                                        v-model="state.jobInfo.hiddenJobs"
-                                        multiple
-                                        :options="jobs ?? []"
-                                        value-attribute="name"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <template v-if="state.jobInfo.hiddenJobs.length">
-                                                <span class="truncate">{{ state.jobInfo.hiddenJobs.join(',') }}</span>
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.jobInfo.hiddenJobs"
+                                            multiple
+                                            :options="jobs ?? []"
+                                            value-attribute="name"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                        >
+                                            <template #label>
+                                                <template v-if="state.jobInfo.hiddenJobs.length">
+                                                    <span class="truncate">{{ state.jobInfo.hiddenJobs.join(',') }}</span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="truncate">{{
+                                                        $t('common.none_selected', [$t('common.job')])
+                                                    }}</span>
+                                                </template>
                                             </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
+                                            <template #option="{ option: job }">
+                                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                             </template>
-                                        </template>
-                                        <template #option="{ option: job }">
-                                            <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                        </template>
-                                    </USelectMenu>
+                                        </USelectMenu>
+                                    </ClientOnly>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>
@@ -576,27 +580,33 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <USelectMenu
-                                        v-model="state.userTracker.livemapJobs"
-                                        multiple
-                                        :options="jobs ?? []"
-                                        value-attribute="name"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <template v-if="state.userTracker.livemapJobs.length">
-                                                <span class="truncate">{{ state.userTracker.livemapJobs.join(',') }}</span>
-                                            </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
-                                            </template>
-                                        </template>
-                                        <template #option="{ option: job }">
-                                            <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                        </template>
-                                    </USelectMenu>
+                                    <ClientOnly>
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.userTracker.livemapJobs"
+                                                multiple
+                                                :options="jobs ?? []"
+                                                value-attribute="name"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #label>
+                                                    <template v-if="state.userTracker.livemapJobs.length">
+                                                        <span class="truncate">{{
+                                                            state.userTracker.livemapJobs.join(',')
+                                                        }}</span>
+                                                    </template>
+                                                    <template v-else>
+                                                        <span class="truncate">{{
+                                                            $t('common.none_selected', [$t('common.job')])
+                                                        }}</span>
+                                                    </template>
+                                                </template>
+                                                <template #option="{ option: job }">
+                                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
+                                    </ClientOnly>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>
@@ -660,27 +670,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <USelectMenu
-                                        v-model="state.discord.ignoredJobs"
-                                        multiple
-                                        :options="jobs ?? []"
-                                        value-attribute="name"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <template v-if="state.discord.ignoredJobs.length > 0">
-                                                <span class="truncate">{{ state.discord.ignoredJobs.join(',') }}</span>
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.discord.ignoredJobs"
+                                            multiple
+                                            :options="jobs ?? []"
+                                            value-attribute="name"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                        >
+                                            <template #label>
+                                                <template v-if="state.discord.ignoredJobs.length > 0">
+                                                    <span class="truncate">{{ state.discord.ignoredJobs.join(',') }}</span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="truncate">{{
+                                                        $t('common.none_selected', [$t('common.job')])
+                                                    }}</span>
+                                                </template>
                                             </template>
-                                            <template v-else>
-                                                <span class="truncate">{{
-                                                    $t('common.none_selected', [$t('common.job')])
-                                                }}</span>
+                                            <template #option="{ option: job }">
+                                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
                                             </template>
-                                        </template>
-                                        <template #option="{ option: job }">
-                                            <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                                        </template>
-                                    </USelectMenu>
+                                        </USelectMenu>
+                                    </ClientOnly>
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>

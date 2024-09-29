@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import { primaryColors } from '~/components/auth/account/settings';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -14,6 +13,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import type { Job, JobGrade } from '~~/gen/ts/resources/users/jobs';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateCalendarResponse } from '~~/gen/ts/services/calendar/calendar';
+import ColorPickerTW from '../partials/ColorPickerTW.vue';
 
 const props = defineProps<{
     calendarId?: string;
@@ -124,11 +124,6 @@ async function createOrUpdateCalendar(values: Schema): Promise<CreateOrUpdateCal
         throw e;
     }
 }
-
-const availableColorOptions = primaryColors.map((color) => ({
-    label: color,
-    chip: color,
-}));
 
 function setFromProps(): void {
     if (!data.value?.calendar) {
@@ -313,30 +308,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
-                            <USelectMenu
-                                v-model="state.color"
-                                name="color"
-                                :options="availableColorOptions"
-                                option-attribute="label"
-                                value-attribute="chip"
-                                :searchable-placeholder="$t('common.search_field')"
-                            >
-                                <template #label>
-                                    <span
-                                        class="size-2 rounded-full"
-                                        :class="`bg-${state.color}-500 dark:bg-${state.color}-400`"
-                                    />
-                                    <span class="truncate">{{ state.color }}</span>
-                                </template>
-
-                                <template #option="{ option }">
-                                    <span
-                                        class="size-2 rounded-full"
-                                        :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`"
-                                    />
-                                    <span class="truncate">{{ option.label }}</span>
-                                </template>
-                            </USelectMenu>
+                            <ColorPickerTW v-model="state.color" />
                         </UFormGroup>
 
                         <UFormGroup name="description" :label="$t('common.description')" class="flex-1">

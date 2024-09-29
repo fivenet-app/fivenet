@@ -196,124 +196,133 @@ watch(selectedAccessRole, () => {
 
         <UFormGroup class="w-60 flex-initial">
             <UInput v-if="accessTypes.length === 1" type="text" disabled :value="accessTypes[0]?.name" />
-            <USelectMenu
-                v-else
-                v-model="selectedAccessType"
-                :disabled="readOnly"
-                :options="accessTypes"
-                :placeholder="$t('common.type')"
-                :searchable-placeholder="$t('common.search_field')"
-            >
-                <template #label>
-                    <span v-if="selectedAccessType" class="truncate">{{ selectedAccessType.name }}</span>
-                </template>
-                <template #option="{ option }">
-                    <span class="truncate">{{ option.name }}</span>
-                </template>
-                <template #option-empty="{ query: search }">
-                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                </template>
-                <template #empty>
-                    {{ $t('common.not_found', [$t('common.access', 1)]) }}
-                </template>
-            </USelectMenu>
+            <ClientOnly v-else>
+                <USelectMenu
+                    v-model="selectedAccessType"
+                    :disabled="readOnly"
+                    :options="accessTypes"
+                    :placeholder="$t('common.type')"
+                    :searchable-placeholder="$t('common.search_field')"
+                >
+                    <template #label>
+                        <span v-if="selectedAccessType" class="truncate">{{ selectedAccessType.name }}</span>
+                    </template>
+                    <template #option="{ option }">
+                        <span class="truncate">{{ option.name }}</span>
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty>
+                        {{ $t('common.not_found', [$t('common.access', 1)]) }}
+                    </template>
+                </USelectMenu>
+            </ClientOnly>
         </UFormGroup>
 
         <template v-if="selectedAccessType?.id === 1">
             <UFormGroup name="selectedJob" class="flex-1">
-                <USelectMenu
-                    v-model="selectedJob"
-                    :disabled="readOnly"
-                    class="flex-1"
-                    option-attribute="label"
-                    searchable
-                    :search-attributes="['name', 'label']"
-                    :options="jobs ?? []"
-                    :placeholder="$t('common.job')"
-                    :searchable-placeholder="$t('common.search_field')"
-                >
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                </USelectMenu>
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="selectedJob"
+                        :disabled="readOnly"
+                        class="flex-1"
+                        option-attribute="label"
+                        searchable
+                        :search-attributes="['name', 'label']"
+                        :options="jobs ?? []"
+                        :placeholder="$t('common.job')"
+                        :searchable-placeholder="$t('common.search_field')"
+                    >
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
             </UFormGroup>
 
             <UFormGroup name="selectedMinimumRank" class="flex-1">
-                <USelectMenu
-                    v-model="selectedMinimumRank"
-                    :disabled="readOnly || !selectedJob"
-                    class="flex-1"
-                    option-attribute="label"
-                    searchable
-                    :search-attributes="['name', 'label']"
-                    :options="selectedJob?.grades"
-                    :placeholder="$t('common.rank')"
-                    :searchable-placeholder="$t('common.search_field')"
-                >
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
-                </USelectMenu>
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="selectedMinimumRank"
+                        :disabled="readOnly || !selectedJob"
+                        class="flex-1"
+                        option-attribute="label"
+                        searchable
+                        :search-attributes="['name', 'label']"
+                        :options="selectedJob?.grades"
+                        :placeholder="$t('common.rank')"
+                        :searchable-placeholder="$t('common.search_field')"
+                    >
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.job', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
             </UFormGroup>
         </template>
 
         <template v-else>
             <UFormGroup name="selectedUser" class="flex-1">
-                <USelectMenu
-                    v-model="selectedUser"
-                    :searchable="
-                        async (query: string) => {
-                            usersLoading = true;
-                            const users = await completorStore.completeCitizens({
-                                search: query,
-                            });
-                            usersLoading = false;
-                            return users;
-                        }
-                    "
-                    searchable-lazy
-                    :searchable-placeholder="$t('common.search_field')"
-                    :search-attributes="['firstname', 'lastname']"
-                    class="flex-1"
-                    :placeholder="$t('common.citizen', 1)"
-                    trailing
-                    by="userId"
-                >
-                    <template #label>
-                        <template v-if="selectedUser">
-                            {{ usersToLabel([selectedUser]) }}
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="selectedUser"
+                        :searchable="
+                            async (query: string) => {
+                                usersLoading = true;
+                                const users = await completorStore.completeCitizens({
+                                    search: query,
+                                });
+                                usersLoading = false;
+                                return users;
+                            }
+                        "
+                        searchable-lazy
+                        :searchable-placeholder="$t('common.search_field')"
+                        :search-attributes="['firstname', 'lastname']"
+                        class="flex-1"
+                        :placeholder="$t('common.citizen', 1)"
+                        trailing
+                        by="userId"
+                    >
+                        <template #label>
+                            <template v-if="selectedUser">
+                                {{ usersToLabel([selectedUser]) }}
+                            </template>
                         </template>
-                    </template>
-                    <template #option="{ option: user }">
-                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                    </template>
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                </USelectMenu>
+                        <template #option="{ option: user }">
+                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
             </UFormGroup>
         </template>
 
         <UFormGroup class="w-60 flex-initial">
-            <USelectMenu
-                v-model="selectedAccessRole"
-                :disabled="readOnly"
-                class="flex-1"
-                option-attribute="label"
-                searchable
-                :search-attributes="['label']"
-                :options="entriesAccessRoles"
-                :placeholder="$t('common.na')"
-                :searchable-placeholder="$t('common.search_field')"
-            >
-                <template #option-empty="{ query: search }">
-                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                </template>
-                <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
-            </USelectMenu>
+            <ClientOnly>
+                <USelectMenu
+                    v-model="selectedAccessRole"
+                    :disabled="readOnly"
+                    class="flex-1"
+                    option-attribute="label"
+                    searchable
+                    :search-attributes="['label']"
+                    :options="entriesAccessRoles"
+                    :placeholder="$t('common.na')"
+                    :searchable-placeholder="$t('common.search_field')"
+                >
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.access', 2)]) }} </template>
+                </USelectMenu>
+            </ClientOnly>
         </UFormGroup>
 
         <UButton

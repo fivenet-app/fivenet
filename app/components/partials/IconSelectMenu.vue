@@ -18,6 +18,10 @@ const emits = defineEmits<{
     (e: 'update:modelValue', value: string | undefined): void;
 }>();
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const icon = useVModel(props, 'modelValue', emits);
 
 async function markerIconSearch(query: string): Promise<DefineComponent[]> {
@@ -35,24 +39,27 @@ async function markerIconSearch(query: string): Promise<DefineComponent[]> {
 </script>
 
 <template>
-    <USelectMenu
-        v-model="icon"
-        :searchable="markerIconSearch"
-        searchable-lazy
-        :searchable-placeholder="$t('common.search_field')"
-        value-attribute="name"
-    >
-        <template #label>
-            <component
-                :is="markerIcons.find((item) => item.name === icon) ?? fallbackIcon"
-                class="size-5"
-                :style="{ fill: color }"
-            />
-            <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
-        </template>
-        <template #option="{ option }">
-            <component :is="option" class="size-5" :style="{ color: color }" />
-            <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
-        </template>
-    </USelectMenu>
+    <ClientOnly>
+        <USelectMenu
+            v-bind="$attrs"
+            v-model="icon"
+            :searchable="markerIconSearch"
+            searchable-lazy
+            :searchable-placeholder="$t('common.search_field')"
+            value-attribute="name"
+        >
+            <template #label>
+                <component
+                    :is="markerIcons.find((item) => item.name === icon) ?? fallbackIcon"
+                    class="size-5"
+                    :style="{ fill: color }"
+                />
+                <span class="truncate">{{ camelCaseToTitleCase(icon ?? $t('common.unknown')) }}</span>
+            </template>
+            <template #option="{ option }">
+                <component :is="option" class="size-5" :style="{ color: color }" />
+                <span class="truncate">{{ camelCaseToTitleCase(option.name) }}</span>
+            </template>
+        </USelectMenu>
+    </ClientOnly>
 </template>

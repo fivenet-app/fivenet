@@ -144,25 +144,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                         <div class="my-2">
                             <UFormGroup name="requestsType" :label="$t('common.type', 2)" class="flex-1">
-                                <USelectMenu
-                                    v-model="state.requestType"
-                                    :options="availableRequestTypes"
-                                    value-attribute="key"
-                                    :placeholder="$t('common.type')"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #option="{ option }">
-                                        <span class="truncate">{{
-                                            $t(`enums.docstore.DocActivityType.${DocActivityType[option.key]}`, 2)
-                                        }}</span>
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty>
-                                        {{ $t('common.not_found', [$t('common.type', 2)]) }}
-                                    </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.requestType"
+                                        :options="availableRequestTypes"
+                                        value-attribute="key"
+                                        :placeholder="$t('common.type')"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{
+                                                $t(`enums.docstore.DocActivityType.${DocActivityType[option.key]}`, 2)
+                                            }}</span>
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.type', 2)]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
                         </div>
                     </template>

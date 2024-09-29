@@ -127,27 +127,29 @@ function changeQuestionType(qt: string): void {
         <UIcon name="i-mdi-drag-horizontal" class="size-7" />
 
         <UFormGroup name="data.data.oneofKind">
-            <USelectMenu
-                v-model="question.data!.data.oneofKind"
-                :options="questionTypes"
-                class="w-40 max-w-40"
-                @update:model-value="changeQuestionType($event)"
-            >
-                <template #label>
-                    <span class="truncate">
-                        {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
-                    </span>
-                </template>
-                <template #option="{ option }">
-                    <span class="truncate">
-                        {{ $t(`components.qualifications.exam_editor.question_types.${option}`) }}
-                    </span>
-                </template>
-                <template #option-empty="{ query: search }">
-                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                </template>
-                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-            </USelectMenu>
+            <ClientOnly>
+                <USelectMenu
+                    v-model="question.data!.data.oneofKind"
+                    :options="questionTypes"
+                    class="w-40 max-w-40"
+                    @update:model-value="changeQuestionType($event)"
+                >
+                    <template #label>
+                        <span class="truncate">
+                            {{ $t(`components.qualifications.exam_editor.question_types.${question.data!.data.oneofKind}`) }}
+                        </span>
+                    </template>
+                    <template #option="{ option }">
+                        <span class="truncate">
+                            {{ $t(`components.qualifications.exam_editor.question_types.${option}`) }}
+                        </span>
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                </USelectMenu>
+            </ClientOnly>
         </UFormGroup>
 
         <div class="flex flex-1 flex-col gap-2 p-4">

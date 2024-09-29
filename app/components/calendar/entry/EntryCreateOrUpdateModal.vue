@@ -177,51 +177,51 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                     <template v-else>
                         <UFormGroup name="calendar" :label="$t('common.calendar')" class="flex-1" required>
-                            <USelectMenu
-                                v-model="state.calendar"
-                                :disabled="!!entryId"
-                                :searchable="
-                                    async () =>
-                                        (
-                                            await calendarStore.listCalendars({
-                                                pagination: { offset: 0 },
-                                                onlyPublic: false,
-                                                minAccessLevel: AccessLevel.EDIT,
-                                            })
-                                        ).calendars?.filter((c) => !c.closed)
-                                "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['name']"
-                                option-attribute="name"
-                                by="id"
-                                :placeholder="$t('common.calendar')"
-                            >
-                                <template #label>
-                                    <template v-if="state.calendar">
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.calendar"
+                                    :disabled="!!entryId"
+                                    :searchable="
+                                        async () =>
+                                            (
+                                                await calendarStore.listCalendars({
+                                                    pagination: { offset: 0 },
+                                                    onlyPublic: false,
+                                                    minAccessLevel: AccessLevel.EDIT,
+                                                })
+                                            ).calendars?.filter((c) => !c.closed)
+                                    "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-attributes="['name']"
+                                    option-attribute="name"
+                                    by="id"
+                                    :placeholder="$t('common.calendar')"
+                                >
+                                    <template #label>
+                                        <template v-if="state.calendar">
+                                            <span
+                                                class="size-2 rounded-full"
+                                                :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                                            />
+                                            <span class="truncate">{{ state.calendar?.name }}</span>
+                                        </template>
+                                    </template>
+                                    <template #option="{ option }">
                                         <span
                                             class="size-2 rounded-full"
-                                            :class="`bg-${state.calendar?.color ?? 'primary'}-500 dark:bg-${state.calendar?.color ?? 'primary'}-400`"
+                                            :class="`bg-${option.color ?? 'primary'}-500 dark:bg-${option.color ?? 'primary'}-400`"
                                         />
-                                        <span class="truncate">{{ state.calendar?.name }}</span>
+                                        <span class="truncate">{{ option.name }}</span>
                                     </template>
-                                </template>
-
-                                <template #option="{ option }">
-                                    <span
-                                        class="size-2 rounded-full"
-                                        :class="`bg-${option.color ?? 'primary'}-500 dark:bg-${option.color ?? 'primary'}-400`"
-                                    />
-                                    <span class="truncate">{{ option.name }}</span>
-                                </template>
-
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-                                <template #empty>
-                                    {{ $t('common.not_found', [$t('common.calendar')]) }}
-                                </template>
-                            </USelectMenu>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty>
+                                        {{ $t('common.not_found', [$t('common.calendar')]) }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
                         </UFormGroup>
 
                         <UFormGroup name="title" :label="$t('common.title')" class="flex-1" required>
@@ -259,35 +259,37 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         </UFormGroup>
 
                         <UFormGroup name="users" :label="$t('common.guest', 2)" class="flex-1">
-                            <USelectMenu
-                                v-model="state.users"
-                                multiple
-                                :searchable="
-                                    async (query: string) => {
-                                        usersLoading = true;
-                                        const users = await completorStore.completeCitizens({
-                                            search: query,
-                                        });
-                                        usersLoading = false;
-                                        return users;
-                                    }
-                                "
-                                searchable-lazy
-                                :searchable-placeholder="$t('common.search_field')"
-                                :search-attributes="['firstname', 'lastname']"
-                                block
-                                :placeholder="$t('common.citizen', 2)"
-                                trailing
-                                by="userId"
-                            >
-                                <template #option="{ option: user }">
-                                    {{ `${user?.lastname} (${user?.dateofbirth})` }}
-                                </template>
-                                <template #option-empty="{ query: search }">
-                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                </template>
-                                <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                            </USelectMenu>
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="state.users"
+                                    multiple
+                                    :searchable="
+                                        async (query: string) => {
+                                            usersLoading = true;
+                                            const users = await completorStore.completeCitizens({
+                                                search: query,
+                                            });
+                                            usersLoading = false;
+                                            return users;
+                                        }
+                                    "
+                                    searchable-lazy
+                                    :searchable-placeholder="$t('common.search_field')"
+                                    :search-attributes="['firstname', 'lastname']"
+                                    block
+                                    :placeholder="$t('common.citizen', 2)"
+                                    trailing
+                                    by="userId"
+                                >
+                                    <template #option="{ option: user }">
+                                        {{ `${user?.lastname} (${user?.dateofbirth})` }}
+                                    </template>
+                                    <template #option-empty="{ query: search }">
+                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                    </template>
+                                    <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                                </USelectMenu>
+                            </ClientOnly>
                         </UFormGroup>
 
                         <div v-if="state.users.length > 0" class="mt-2 overflow-hidden rounded-md bg-base-900">

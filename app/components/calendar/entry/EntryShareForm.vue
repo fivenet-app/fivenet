@@ -81,35 +81,37 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
             <div>
                 <UFormGroup name="participants" :label="$t('common.guest', 2)" class="flex-1">
-                    <USelectMenu
-                        v-model="state.users"
-                        multiple
-                        :searchable="
-                            async (query: string) => {
-                                usersLoading = true;
-                                const users = await completorStore.completeCitizens({
-                                    search: query,
-                                });
-                                usersLoading = false;
-                                return users.filter((u) => u.userId !== activeChar?.userId);
-                            }
-                        "
-                        searchable-lazy
-                        :searchable-placeholder="$t('common.search_field')"
-                        :search-attributes="['firstname', 'lastname']"
-                        block
-                        :placeholder="$t('common.citizen', 2)"
-                        trailing
-                        by="userId"
-                    >
-                        <template #option="{ option: user }">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                        </template>
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-                        <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                    </USelectMenu>
+                    <ClientOnly>
+                        <USelectMenu
+                            v-model="state.users"
+                            multiple
+                            :searchable="
+                                async (query: string) => {
+                                    usersLoading = true;
+                                    const users = await completorStore.completeCitizens({
+                                        search: query,
+                                    });
+                                    usersLoading = false;
+                                    return users.filter((u) => u.userId !== activeChar?.userId);
+                                }
+                            "
+                            searchable-lazy
+                            :searchable-placeholder="$t('common.search_field')"
+                            :search-attributes="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.citizen', 2)"
+                            trailing
+                            by="userId"
+                        >
+                            <template #option="{ option: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                        </USelectMenu>
+                    </ClientOnly>
                 </UFormGroup>
 
                 <div class="mt-2 overflow-hidden rounded-md bg-base-900">

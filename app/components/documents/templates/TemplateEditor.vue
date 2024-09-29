@@ -518,17 +518,15 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
     <UForm :schema="schema" :state="state" @submit="onSubmitThrottle">
         <UDashboardNavbar :title="$t('pages.documents.templates.edit.title')">
             <template #right>
-                <UButtonGroup class="inline-flex">
-                    <UButton
-                        color="black"
-                        icon="i-mdi-arrow-left"
-                        :to="
-                            templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`
-                        "
-                    >
-                        {{ $t('common.back') }}
-                    </UButton>
+                <UButton
+                    color="black"
+                    icon="i-mdi-arrow-left"
+                    :to="templateId ? { name: 'documents-templates-id', params: { id: templateId } } : `/documents/templates`"
+                >
+                    {{ $t('common.back') }}
+                </UButton>
 
+                <UButtonGroup class="inline-flex">
                     <UButton type="submit" trailing-icon="i-mdi-content-save" :disabled="!canSubmit" :loading="!canSubmit">
                         {{ templateId ? $t('common.save') : $t('common.create') }}
                     </UButton>
@@ -597,35 +595,37 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                 </UFormGroup>
 
                 <UFormGroup name="category" :label="$t('common.category', 1)">
-                    <UInputMenu
-                        v-model="state.category"
-                        option-attribute="name"
-                        :search-attributes="['name']"
-                        block
-                        nullable
-                        :search="
-                            async (search: string) => {
-                                try {
-                                    categoriesLoading = true;
-                                    const categories = await completorStore.completeDocumentCategories(search);
-                                    categoriesLoading = false;
-                                    return categories;
-                                } catch (e) {
-                                    handleGRPCError(e as RpcError);
-                                    throw e;
-                                } finally {
-                                    categoriesLoading = false;
+                    <ClientOnly>
+                        <UInputMenu
+                            v-model="state.category"
+                            option-attribute="name"
+                            :search-attributes="['name']"
+                            block
+                            nullable
+                            :search="
+                                async (search: string) => {
+                                    try {
+                                        categoriesLoading = true;
+                                        const categories = await completorStore.completeDocumentCategories(search);
+                                        categoriesLoading = false;
+                                        return categories;
+                                    } catch (e) {
+                                        handleGRPCError(e as RpcError);
+                                        throw e;
+                                    } finally {
+                                        categoriesLoading = false;
+                                    }
                                 }
-                            }
-                        "
-                        search-lazy
-                        :search-placeholder="$t('common.search_field')"
-                    >
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                    </UInputMenu>
+                            "
+                            search-lazy
+                            :search-placeholder="$t('common.search_field')"
+                        >
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                        </UInputMenu>
+                    </ClientOnly>
                 </UFormGroup>
 
                 <UFormGroup name="contentState" :label="`${$t('common.content')} ${$t('common.state')}`">

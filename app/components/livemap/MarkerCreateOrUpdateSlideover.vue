@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { HelpIcon } from 'mdi-vue3';
 import { z } from 'zod';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useLivemapStore } from '~/store/livemap';
 import type { MarkerMarker } from '~~/gen/ts/resources/livemap/livemap';
@@ -219,7 +219,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="color">
-                                    <ColorPicker v-model="state.color" />
+                                    <ColorPickerClient v-model="state.color" />
                                 </UFormGroup>
                             </dd>
                         </div>
@@ -231,24 +231,26 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="markerType">
-                                    <USelectMenu
-                                        v-model="state.markerType"
-                                        name="markerType"
-                                        :options="markerTypes"
-                                        value-attribute="type"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <span class="truncate">{{
-                                                $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
-                                            }}</span>
-                                        </template>
-                                        <template #option="{ option }">
-                                            <span class="truncate">{{
-                                                $t(`enums.livemap.MarkerType.${MarkerType[option.type ?? 0]}`)
-                                            }}</span>
-                                        </template>
-                                    </USelectMenu>
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.markerType"
+                                            name="markerType"
+                                            :options="markerTypes"
+                                            value-attribute="type"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                        >
+                                            <template #label>
+                                                <span class="truncate">{{
+                                                    $t(`enums.livemap.MarkerType.${MarkerType[state.markerType ?? 0]}`)
+                                                }}</span>
+                                            </template>
+                                            <template #option="{ option }">
+                                                <span class="truncate">{{
+                                                    $t(`enums.livemap.MarkerType.${MarkerType[option.type ?? 0]}`)
+                                                }}</span>
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
                                 </UFormGroup>
                             </dd>
                         </div>

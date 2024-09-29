@@ -2,7 +2,7 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { ShapeIcon } from 'mdi-vue3';
 import { z } from 'zod';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Category } from '~~/gen/ts/resources/documents/category';
@@ -23,7 +23,7 @@ const { isOpen } = useModal();
 const schema = z.object({
     name: z.string().min(3).max(128),
     description: z.union([z.string().min(0).max(255), z.string().optional()]),
-    color: z.string().max(12).optional(),
+    color: z.string().max(7),
     icon: z.string().max(64).optional(),
 });
 
@@ -32,6 +32,7 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: '',
     description: '',
+    color: 'primary',
 });
 
 async function createCategory(values: Schema): Promise<void> {
@@ -41,6 +42,8 @@ async function createCategory(values: Schema): Promise<void> {
                 id: '0',
                 name: values.name,
                 description: values.description,
+                color: values.color,
+                icon: values.icon,
             },
         });
 
@@ -58,14 +61,15 @@ async function createCategory(values: Schema): Promise<void> {
 }
 
 async function updateCategory(values: Schema): Promise<void> {
-    props.category!.name = values.name;
-    props.category!.description = values.description;
-    props.category!.color = values.color;
-    props.category!.icon = values.icon;
-
     try {
         await getGRPCDocStoreClient().updateCategory({
-            category: props.category!,
+            category: {
+                id: props.category!.id,
+                name: values.name,
+                description: values.description,
+                color: values.color,
+                icon: values.icon,
+            },
         });
 
         notifications.add({
@@ -165,9 +169,7 @@ watch(props, () => setFromProps());
 
                         <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row">
                             <div class="flex flex-1 gap-1">
-                                <ColorPicker v-model="state.color" :block="true" class="flex-1" />
-
-                                <UButton icon="i-mdi-backspace" @click="state.color = undefined" />
+                                <ColorPickerTW v-model="state.color" class="flex-1" />
                             </div>
                         </UFormGroup>
 

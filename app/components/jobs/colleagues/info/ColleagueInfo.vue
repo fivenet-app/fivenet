@@ -36,7 +36,7 @@ const { activeChar } = storeToRefs(authStore);
             <div class="inline-flex gap-2">
                 <UBadge>
                     {{ colleague.jobLabel }}
-                    <span v-if="colleague.jobGrade > 0" class="ml-1">
+                    <span v-if="colleague.jobGrade > 0" class="ml-1 truncate">
                         ({{ $t('common.rank') }}: {{ colleague.jobGradeLabel }})</span
                     >
                 </UBadge>
@@ -53,7 +53,7 @@ const { activeChar } = storeToRefs(authStore);
             </div>
         </div>
 
-        <UButtonGroup class="inline-flex flex-initial">
+        <div class="inline-flex flex-initial flex-col gap-1 sm:flex-row">
             <UButton color="black" icon="i-mdi-arrow-back" to="/jobs/colleagues">
                 {{ $t('common.back') }}
             </UButton>
@@ -76,6 +76,6 @@ const { activeChar } = storeToRefs(authStore);
             >
                 {{ $t('components.jobs.self_service.set_absence_date') }}
             </UButton>
-        </UButtonGroup>
+        </div>
     </div>
 </template>

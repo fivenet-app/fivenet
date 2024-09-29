@@ -80,11 +80,13 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="category" :label="$t('common.category')" class="flex-1" required>
-                        <USelectMenu
-                            v-model="state.category"
-                            :options="categories"
-                            :searchable-placeholder="$t('common.search_field')"
-                        />
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.category"
+                                :options="categories"
+                                :searchable-placeholder="$t('common.search_field')"
+                            />
+                        </ClientOnly>
                     </UFormGroup>
                     <UFormGroup name="name" :label="$t('common.name')" class="flex-1" required>
                         <UInput v-model="state.name" type="text" name="name" :placeholder="$t('common.name')" />

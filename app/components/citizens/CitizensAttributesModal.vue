@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import { useCompletorStore } from '~/store/completor';
 import type { ManageCitizenAttributesResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
@@ -83,7 +83,7 @@ watch(attributes, () => (state.value = attributes.value ?? []));
                             </UFormGroup>
 
                             <UFormGroup :name="`${idx}.color`">
-                                <ColorPicker v-model="state[idx]!.color" :name="`${idx}.color`" class="min-w-16" />
+                                <ColorPickerClient v-model="state[idx]!.color" :name="`${idx}.color`" class="min-w-16" />
                             </UFormGroup>
 
                             <UButton

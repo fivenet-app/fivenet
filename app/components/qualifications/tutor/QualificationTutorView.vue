@@ -35,42 +35,44 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
     <div class="flex flex-1 flex-col gap-2">
         <UForm :schema="schema" :state="query">
             <UFormGroup class="flex-1" name="user" :label="$t('common.search')">
-                <UInputMenu
-                    v-model="query.user"
-                    nullable
-                    :search-attributes="['firstname', 'lastname']"
-                    :placeholder="$t('common.citizen', 1)"
-                    block
-                    trailing
-                    by="userId"
-                    :search="
-                        async (query: string): Promise<UserShort[]> => {
-                            usersLoading = true;
-                            const users = await completorStore.completeCitizens({
-                                search: query,
-                            });
-                            usersLoading = false;
-                            return users;
-                        }
-                    "
-                    search-lazy
-                    :search-placeholder="$t('common.search_field')"
-                >
-                    <template #label>
-                        <span v-if="query.user" class="truncate">
-                            {{ usersToLabel([query.user]) }}
-                        </span>
-                    </template>
-                    <template #option="{ option: user }">
-                        <span class="truncate">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                        </span>
-                    </template>
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                </UInputMenu>
+                <ClientOnly>
+                    <UInputMenu
+                        v-model="query.user"
+                        nullable
+                        :search-attributes="['firstname', 'lastname']"
+                        :placeholder="$t('common.citizen', 1)"
+                        block
+                        trailing
+                        by="userId"
+                        :search="
+                            async (query: string): Promise<UserShort[]> => {
+                                usersLoading = true;
+                                const users = await completorStore.completeCitizens({
+                                    search: query,
+                                });
+                                usersLoading = false;
+                                return users;
+                            }
+                        "
+                        search-lazy
+                        :search-placeholder="$t('common.search_field')"
+                    >
+                        <template #label>
+                            <span v-if="query.user" class="truncate">
+                                {{ usersToLabel([query.user]) }}
+                            </span>
+                        </template>
+                        <template #option="{ option: user }">
+                            <span class="truncate">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </span>
+                        </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                    </UInputMenu>
+                </ClientOnly>
             </UFormGroup>
         </UForm>
 

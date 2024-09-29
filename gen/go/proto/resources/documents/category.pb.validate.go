@@ -70,6 +70,17 @@ func (m *Category) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if l := utf8.RuneCountInString(m.GetColor()); l < 3 || l > 7 {
+		err := CategoryValidationError{
+			field:  "Color",
+			reason: "value length must be between 3 and 7 runes, inclusive",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
+
 	if m.Description != nil {
 
 		if utf8.RuneCountInString(m.GetDescription()) > 255 {
@@ -91,33 +102,6 @@ func (m *Category) validate(all bool) error {
 			err := CategoryValidationError{
 				field:  "Job",
 				reason: "value length must be at most 20 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-		}
-
-	}
-
-	if m.Color != nil {
-
-		if utf8.RuneCountInString(m.GetColor()) != 7 {
-			err := CategoryValidationError{
-				field:  "Color",
-				reason: "value length must be 7 runes",
-			}
-			if !all {
-				return err
-			}
-			errors = append(errors, err)
-
-		}
-
-		if !_Category_Color_Pattern.MatchString(m.GetColor()) {
-			err := CategoryValidationError{
-				field:  "Color",
-				reason: "value does not match regex pattern \"^#[A-Fa-f0-9]{6}$\"",
 			}
 			if !all {
 				return err
@@ -218,5 +202,3 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CategoryValidationError{}
-
-var _Category_Color_Pattern = regexp.MustCompile("^#[A-Fa-f0-9]{6}$")

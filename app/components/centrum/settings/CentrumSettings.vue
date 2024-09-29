@@ -195,23 +195,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
-                                <USelectMenu
-                                    v-model="state.mode"
-                                    :options="modes"
-                                    value-attribute="mode"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #label>
-                                        <span class="truncate">{{
-                                            $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                        }}</span>
-                                    </template>
-                                    <template #option="{ option }">
-                                        <span class="truncate">{{
-                                            $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
-                                        }}</span>
-                                    </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.mode"
+                                        :options="modes"
+                                        value-attribute="mode"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #label>
+                                            <span class="truncate">{{
+                                                $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{
+                                                $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
 
                             <UFormGroup
@@ -220,23 +222,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 class="grid grid-cols-2 items-center gap-2"
                                 :ui="{ container: '' }"
                             >
-                                <USelectMenu
-                                    v-model="state.fallbackMode"
-                                    :options="modes"
-                                    value-attribute="mode"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                >
-                                    <template #label>
-                                        <span class="truncate">{{
-                                            $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
-                                        }}</span>
-                                    </template>
-                                    <template #option="{ option }">
-                                        <span class="truncate">{{
-                                            $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
-                                        }}</span>
-                                    </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.fallbackMode"
+                                        :options="modes"
+                                        value-attribute="mode"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    >
+                                        <template #label>
+                                            <span class="truncate">{{
+                                                $t(`enums.centrum.CentrumMode.${CentrumMode[state.mode ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{
+                                                $t(`enums.centrum.CentrumMode.${CentrumMode[option.mode ?? 0]}`)
+                                            }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
                         </UDashboardSection>
                     </UDashboardPanelContent>

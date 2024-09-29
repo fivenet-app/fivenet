@@ -139,35 +139,36 @@ watch(state, () => {
         </template>
 
         <UFormGroup v-if="canDo.set && can('CompletorService.CompleteCitizenAttributes').value" name="attributes">
-            <USelectMenu
-                v-model="state.attributes"
-                multiple
-                :searchable="
-                    async (query: string) => {
-                        attributesLoading = true;
-                        const colleagues = await completorStore.completeCitizensAttributes(query);
-                        attributesLoading = false;
-                        return colleagues;
-                    }
-                "
-                searchable-lazy
-                :searchable-placeholder="$t('common.search_field')"
-                :search-attributes="['name']"
-                option-attribute="name"
-                by="name"
-                clear-search-on-close
-            >
-                <template #option="{ option }">
-                    <span class="truncate" :style="{ backgroundColor: option.color }">{{ option.name }}</span>
-                </template>
-
-                <template #option-empty="{ query: search }">
-                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                </template>
-                <template #empty>
-                    {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
-                </template>
-            </USelectMenu>
+            <ClientOnly>
+                <USelectMenu
+                    v-model="state.attributes"
+                    multiple
+                    :searchable="
+                        async (query: string) => {
+                            attributesLoading = true;
+                            const colleagues = await completorStore.completeCitizensAttributes(query);
+                            attributesLoading = false;
+                            return colleagues;
+                        }
+                    "
+                    searchable-lazy
+                    :searchable-placeholder="$t('common.search_field')"
+                    :search-attributes="['name']"
+                    option-attribute="name"
+                    by="name"
+                    clear-search-on-close
+                >
+                    <template #option="{ option }">
+                        <span class="truncate" :style="{ backgroundColor: option.color }">{{ option.name }}</span>
+                    </template>
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty>
+                        {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                    </template>
+                </USelectMenu>
+            </ClientOnly>
         </UFormGroup>
 
         <template v-if="changed">

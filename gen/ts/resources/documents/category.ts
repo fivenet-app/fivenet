@@ -37,9 +37,9 @@ export interface Category {
     /**
      * @sanitize: method=StripTags
      *
-     * @generated from protobuf field: optional string color = 5;
+     * @generated from protobuf field: string color = 5;
      */
-    color?: string;
+    color: string;
     /**
      * @sanitize: method=StripTags
      *
@@ -55,7 +55,7 @@ class Category$Type extends MessageType<Category> {
             { no: 2, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "128" } } } },
             { no: 3, name: "description", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
             { no: 4, name: "job", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
+            { no: 5, name: "color", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "3", maxLen: "7" } } } },
             { no: 6, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
@@ -63,6 +63,7 @@ class Category$Type extends MessageType<Category> {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.id = "0";
         message.name = "";
+        message.color = "";
         if (value !== undefined)
             reflectionMergePartial<Category>(this, message, value);
         return message;
@@ -84,7 +85,7 @@ class Category$Type extends MessageType<Category> {
                 case /* optional string job */ 4:
                     message.job = reader.string();
                     break;
-                case /* optional string color */ 5:
+                case /* string color */ 5:
                     message.color = reader.string();
                     break;
                 case /* optional string icon */ 6:
@@ -114,8 +115,8 @@ class Category$Type extends MessageType<Category> {
         /* optional string job = 4; */
         if (message.job !== undefined)
             writer.tag(4, WireType.LengthDelimited).string(message.job);
-        /* optional string color = 5; */
-        if (message.color !== undefined)
+        /* string color = 5; */
+        if (message.color !== "")
             writer.tag(5, WireType.LengthDelimited).string(message.color);
         /* optional string icon = 6; */
         if (message.icon !== undefined)

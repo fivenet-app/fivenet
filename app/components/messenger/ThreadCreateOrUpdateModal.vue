@@ -128,41 +128,43 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="flex-1"
                                         required
                                     >
-                                        <USelectMenu
-                                            v-model="state.users[idx]!.user"
-                                            :placeholder="$t('common.user')"
-                                            block
-                                            trailing
-                                            by="userId"
-                                            :searchable="
-                                                async (query: string): Promise<UserShort[]> => {
-                                                    usersLoading = true;
-                                                    const users = await completorStore.completeCitizens({
-                                                        search: query,
-                                                    });
-                                                    usersLoading = false;
-                                                    return users;
-                                                }
-                                            "
-                                            searchable-lazy
-                                            :searchable-placeholder="$t('common.search_field')"
-                                            :search-attributes="['firstname', 'lastname']"
-                                        >
-                                            <template #label>
-                                                <template v-if="state.users[idx]!.user">
-                                                    {{ usersToLabel([state.users[idx]!.user!]) }}
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.users[idx]!.user"
+                                                :placeholder="$t('common.user')"
+                                                block
+                                                trailing
+                                                by="userId"
+                                                :searchable="
+                                                    async (query: string): Promise<UserShort[]> => {
+                                                        usersLoading = true;
+                                                        const users = await completorStore.completeCitizens({
+                                                            search: query,
+                                                        });
+                                                        usersLoading = false;
+                                                        return users;
+                                                    }
+                                                "
+                                                searchable-lazy
+                                                :searchable-placeholder="$t('common.search_field')"
+                                                :search-attributes="['firstname', 'lastname']"
+                                            >
+                                                <template #label>
+                                                    <template v-if="state.users[idx]!.user">
+                                                        {{ usersToLabel([state.users[idx]!.user!]) }}
+                                                    </template>
                                                 </template>
-                                            </template>
-                                            <template #option="{ option: user }">
-                                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                            </template>
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                            </template>
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                            </template>
-                                        </USelectMenu>
+                                                <template #option="{ option: user }">
+                                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                                </template>
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
                                     </UFormGroup>
 
                                     <UFormGroup
@@ -171,25 +173,27 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         class="flex-1"
                                         required
                                     >
-                                        <USelectMenu
-                                            v-model="state.users[idx]!.access"
-                                            :options="accessLevels"
-                                            value-attribute="mode"
-                                            :searchable-placeholder="$t('common.search_field')"
-                                        >
-                                            <template #label>
-                                                <span class="truncate">{{
-                                                    $t(
-                                                        `enums.messenger.AccessLevel.${AccessLevel[state.users[idx]!.access ?? 0]}`,
-                                                    )
-                                                }}</span>
-                                            </template>
-                                            <template #option="{ option }">
-                                                <span class="truncate">{{
-                                                    $t(`enums.messenger.AccessLevel.${AccessLevel[option.mode ?? 0]}`)
-                                                }}</span>
-                                            </template>
-                                        </USelectMenu>
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.users[idx]!.access"
+                                                :options="accessLevels"
+                                                value-attribute="mode"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #label>
+                                                    <span class="truncate">{{
+                                                        $t(
+                                                            `enums.messenger.AccessLevel.${AccessLevel[state.users[idx]!.access ?? 0]}`,
+                                                        )
+                                                    }}</span>
+                                                </template>
+                                                <template #option="{ option }">
+                                                    <span class="truncate">{{
+                                                        $t(`enums.messenger.AccessLevel.${AccessLevel[option.mode ?? 0]}`)
+                                                    }}</span>
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
                                     </UFormGroup>
                                 </div>
 

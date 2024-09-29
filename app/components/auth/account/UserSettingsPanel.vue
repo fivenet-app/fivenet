@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import type { RoutePathSchema } from '@typed-router';
+import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
 import { useAuthStore } from '~/store/auth';
 import { useSettingsStore } from '~/store/settings';
 import type { Perms } from '~~/gen/ts/perms';
-import { backgroundColors, primaryColors } from './settings';
 
 const { t } = useI18n();
 
@@ -50,16 +50,11 @@ watch(designDocumentsListStyle, async () => {
     }
 });
 
-const availableColorOptions = [...primaryColors, ...backgroundColors].map((color) => ({
-    label: color,
-    chip: color,
-}));
-
-const appConfig = useAppConfig();
+const { ui } = useAppConfig();
 
 watch(design.value, () => {
-    appConfig.ui.primary = design.value.ui.primary;
-    appConfig.ui.gray = design.value.ui.gray;
+    ui.primary = design.value.ui.primary;
+    ui.gray = design.value.ui.gray;
 });
 </script>
 
@@ -71,27 +66,7 @@ watch(design.value, () => {
             </template>
 
             <UFormGroup name="primaryColor" :label="$t('common.color')" class="grid grid-cols-2 items-center gap-2">
-                <USelectMenu
-                    v-model="design.ui.primary"
-                    name="primaryColor"
-                    :options="availableColorOptions"
-                    option-attribute="label"
-                    value-attribute="chip"
-                    :searchable-placeholder="$t('common.search_field')"
-                >
-                    <template #label>
-                        <span
-                            class="size-2 rounded-full"
-                            :class="`bg-${design.ui.primary}-500 dark:bg-${design.ui.primary}-400`"
-                        />
-                        <span class="truncate">{{ design.ui.primary }}</span>
-                    </template>
-
-                    <template #option="{ option }">
-                        <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
-                        <span class="truncate">{{ option.label }}</span>
-                    </template>
-                </USelectMenu>
+                <ColorPickerTW v-model="design.ui.primary" name="primaryColor" />
             </UFormGroup>
 
             <UFormGroup
@@ -99,24 +74,7 @@ watch(design.value, () => {
                 :label="$t('components.auth.UserSettingsPanel.background_color')"
                 class="grid grid-cols-2 items-center gap-2"
             >
-                <USelectMenu
-                    v-model="design.ui.gray"
-                    name="grayColor"
-                    :options="availableColorOptions"
-                    option-attribute="label"
-                    value-attribute="chip"
-                    :searchable-placeholder="$t('common.search_field')"
-                >
-                    <template #label>
-                        <span class="size-2 rounded-full" :class="`bg-${design.ui.gray}-500 dark:bg-${design.ui.gray}-400`" />
-                        <span class="truncate">{{ design.ui.gray }}</span>
-                    </template>
-
-                    <template #option="{ option }">
-                        <span class="size-2 rounded-full" :class="`bg-${option.chip}-500 dark:bg-${option.chip}-400`" />
-                        <span class="truncate">{{ option.label }}</span>
-                    </template>
-                </USelectMenu>
+                <ColorPickerTW v-model="design.ui.gray" name="grayColor" />
             </UFormGroup>
 
             <UFormGroup
@@ -159,13 +117,14 @@ watch(design.value, () => {
                 :label="$t('components.auth.UserSettingsPanel.set_startpage.title')"
                 class="grid grid-cols-2 items-center gap-2"
             >
-                <USelectMenu
-                    v-if="activeChar"
-                    v-model="selectedHomepage"
-                    :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
-                    option-attribute="name"
-                    :searchable-placeholder="$t('common.search_field')"
-                />
+                <ClientOnly v-if="activeChar">
+                    <USelectMenu
+                        v-model="selectedHomepage"
+                        :options="homepages.filter((h) => h.permission === undefined || can(h.permission).value)"
+                        option-attribute="name"
+                        :searchable-placeholder="$t('common.search_field')"
+                    />
+                </ClientOnly>
                 <p v-else class="text-sm">
                     {{ $t('components.auth.UserSettingsPanel.set_startpage.no_char_selected') }}
                 </p>
