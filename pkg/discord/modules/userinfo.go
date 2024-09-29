@@ -293,8 +293,8 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 
 		if g.settings.UserInfoSyncSettings.SyncNicknames {
 			name := g.getUserNickname(member, u.Firstname, u.Lastname)
-			if name != "" {
-				user.Nickname = &name
+			if name != nil {
+				user.Nickname = name
 			}
 		}
 
@@ -333,9 +333,9 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 	return users, logs, errs
 }
 
-func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, lastname string) string {
+func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, lastname string) *string {
 	if g.guild.OwnerID == member.User.ID {
-		return ""
+		return nil
 	}
 
 	fullName := strings.TrimSpace(firstname + " " + lastname)
@@ -361,14 +361,14 @@ func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, l
 	}
 
 	if strings.TrimSpace(nickname) == fullName {
-		return fullName
+		return &fullName
 	}
 
 	// Last space on the name is lost due to the space trimming combined with the regex capture
 	fullName = g.nicknameRegex.ReplaceAllString(member.Nick, "${prefix}"+fullName+" ${suffix}")
 	fullName = strings.TrimSpace(fullName)
 
-	return fullName
+	return &fullName
 }
 
 func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade int32) (types.Roles, error) {

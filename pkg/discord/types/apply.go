@@ -75,7 +75,7 @@ func (p *Plan) applyUsers(ctx context.Context, dc *discordgo.Session) error {
 			continue
 		}
 
-		if user.Nickname != nil {
+		if user.Nickname != nil && *user.Nickname == "" {
 			if err := dc.GuildMemberNickname(p.GuildID, user.ID, *user.Nickname, discordgo.WithContext(ctx)); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
 				continue
