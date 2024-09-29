@@ -8,3 +8,10 @@ export function convertDynamicIconNameToComponent(search: string): string {
           ) + 'Icon'
         : search;
 }
+
+export function convertComponentIconNameToDynamic(search: string): string {
+    return (
+        'i-mdi-' +
+        search.replace(/Icon$/, '').replace(/[A-Z]+(?![a-z])|[A-Z1-9]/g, ($, ofs) => (ofs ? '-' : '') + $.toLowerCase())
+    );
+}
