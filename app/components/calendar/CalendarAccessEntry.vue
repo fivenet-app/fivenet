@@ -168,7 +168,7 @@ watch(selectedAccessRole, () => {
 <template>
     <div class="my-2 flex flex-row items-center gap-1">
         <UFormGroup class="w-60 flex-initial">
-            <UInput v-if="accessTypes.length === 1" type="text" disabled :value="accessTypes[0]?.name" />
+            <UInput v-if="accessTypes.length === 1" type="text" disabled :model-value="accessTypes[0]?.name" />
             <ClientOnly v-else>
                 <USelectMenu
                     v-model="selectedAccessType"

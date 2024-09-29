@@ -70,17 +70,6 @@ func (m *Category) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	if l := utf8.RuneCountInString(m.GetColor()); l < 3 || l > 7 {
-		err := CategoryValidationError{
-			field:  "Color",
-			reason: "value length must be between 3 and 7 runes, inclusive",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
 	if m.Description != nil {
 
 		if utf8.RuneCountInString(m.GetDescription()) > 255 {
@@ -102,6 +91,21 @@ func (m *Category) validate(all bool) error {
 			err := CategoryValidationError{
 				field:  "Job",
 				reason: "value length must be at most 20 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Color != nil {
+
+		if l := utf8.RuneCountInString(m.GetColor()); l < 3 || l > 7 {
+			err := CategoryValidationError{
+				field:  "Color",
+				reason: "value length must be between 3 and 7 runes, inclusive",
 			}
 			if !all {
 				return err

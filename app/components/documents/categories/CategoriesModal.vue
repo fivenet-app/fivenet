@@ -123,7 +123,7 @@ function setFromProps(): void {
 
     state.name = props.category.name;
     state.description = props.category.description;
-    state.color = props.category.color;
+    state.color = props.category.color ?? 'primary';
     state.icon = props.category.icon;
 }
 

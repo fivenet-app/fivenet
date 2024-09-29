@@ -1826,7 +1826,7 @@
 | name | [string](#string) |  | @sanitize |
 | description | [string](#string) | optional | @sanitize |
 | job | [string](#string) | optional |  |
-| color | [string](#string) |  | @sanitize: method=StripTags |
+| color | [string](#string) | optional | @sanitize: method=StripTags |
 | icon | [string](#string) | optional | @sanitize: method=StripTags |
 
 

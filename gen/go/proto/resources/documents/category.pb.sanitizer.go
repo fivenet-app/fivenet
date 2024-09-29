@@ -9,7 +9,9 @@ import (
 
 func (m *Category) Sanitize() error {
 
-	m.Color = htmlsanitizer.StripTags(m.Color)
+	if m.Color != nil {
+		*m.Color = htmlsanitizer.StripTags(*m.Color)
+	}
 
 	if m.Description != nil {
 		*m.Description = htmlsanitizer.Sanitize(*m.Description)

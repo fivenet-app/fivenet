@@ -122,7 +122,7 @@ func (s *Server) CompleteCitizens(ctx context.Context, req *CompleteCitizensRequ
 		FROM(tUsers).
 		WHERE(condition).
 		ORDER_BY(
-			tUsers.Lastname.DESC(),
+			tUsers.Lastname.ASC(),
 		).
 		LIMIT(15)
 
@@ -220,7 +220,7 @@ func (s *Server) CompleteDocumentCategories(ctx context.Context, req *CompleteDo
 		FROM(tDCategory).
 		WHERE(condition).
 		ORDER_BY(
-			tDCategory.Name.DESC(),
+			tDCategory.Name.ASC(),
 		).
 		LIMIT(15)
 
@@ -281,7 +281,7 @@ func (s *Server) CompleteCitizenAttributes(ctx context.Context, req *CompleteCit
 		FROM(tJobCitizenAttributes).
 		WHERE(condition).
 		ORDER_BY(
-			tJobCitizenAttributes.Name.DESC(),
+			tJobCitizenAttributes.Name.ASC(),
 		).
 		LIMIT(10)
 

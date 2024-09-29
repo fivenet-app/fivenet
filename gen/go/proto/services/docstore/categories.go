@@ -39,7 +39,7 @@ func (s *Server) ListCategories(ctx context.Context, req *ListCategoriesRequest)
 			tDCategory.Job.EQ(jet.String(userInfo.Job)),
 		).
 		ORDER_BY(
-			tDCategory.Name.DESC(),
+			tDCategory.Name.ASC(),
 		)
 
 	resp := &ListCategoriesResponse{}
@@ -72,7 +72,8 @@ func (s *Server) getCategory(ctx context.Context, id uint64) (*documents.Categor
 				tDCategory.Job.EQ(jet.String(userInfo.Job)),
 				tDCategory.ID.EQ(jet.Uint64(id)),
 			),
-		)
+		).
+		LIMIT(1)
 
 	var dest documents.Category
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -195,7 +196,8 @@ func (s *Server) DeleteCategory(ctx context.Context, req *DeleteCategoryRequest)
 				tDCategory.Job.EQ(jet.String(userInfo.Job)),
 				tDCategory.ID.IN(ids...),
 			),
-		)
+		).
+		LIMIT(int64(len(req.Ids)))
 
 	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)

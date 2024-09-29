@@ -17,7 +17,7 @@ message Category {
   optional string description = 3 [(validate.rules).string.max_len = 255];
   optional string job = 4 [(validate.rules).string.max_len = 20];
   // @sanitize: method=StripTags
-  string color = 5 [(validate.rules).string = {
+  optional string color = 5 [(validate.rules).string = {
     min_len: 3,
     max_len: 7,
   }];
