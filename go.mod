@@ -12,7 +12,7 @@ require (
 	github.com/coder/websocket v1.8.12
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1
-	github.com/diamondburned/arikawa/v2 v2.0.6
+	github.com/diamondburned/arikawa/v3 v3.2.0
 	github.com/documize/html-diff v0.0.0-20160503140253-f61c192c7796
 	github.com/envoyproxy/protoc-gen-validate v1.1.0
 	github.com/gin-contrib/cors v1.7.2
@@ -102,7 +102,7 @@ require (
 	github.com/blevesearch/zapx/v14 v14.3.10 // indirect
 	github.com/blevesearch/zapx/v15 v15.3.13 // indirect
 	github.com/blevesearch/zapx/v16 v16.1.5 // indirect
-	github.com/bytedance/sonic v1.12.2 // indirect
+	github.com/bytedance/sonic v1.12.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.3.0 // indirect
 	github.com/cespare/xxhash/v2 v2.3.0 // indirect
@@ -110,7 +110,6 @@ require (
 	github.com/cloudwego/iasm v0.2.0 // indirect
 	github.com/containerd/continuity v0.4.3 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
-	github.com/diamondburned/arikawa/v3 v3.2.0 // indirect
 	github.com/disintegration/imaging v1.6.2 // indirect
 	github.com/docker/cli v27.3.1+incompatible // indirect
 	github.com/docker/docker v27.3.1+incompatible // indirect
@@ -127,7 +126,7 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/go-playground/validator/v10 v10.22.1 // indirect
-	github.com/go-viper/mapstructure/v2 v2.2.0 // indirect
+	github.com/go-viper/mapstructure/v2 v2.2.1 // indirect
 	github.com/goccy/go-json v0.10.3 // indirect
 	github.com/gogo/protobuf v1.3.2 // indirect
 	github.com/golang/geo v0.0.0-20230421003525-6adc56603217 // indirect
@@ -150,7 +149,7 @@ require (
 	github.com/huandu/xstrings v1.5.0 // indirect
 	github.com/jackc/pgio v1.0.0 // indirect
 	github.com/jackc/pgtype v1.14.3 // indirect
-	github.com/klauspost/compress v1.17.9 // indirect
+	github.com/klauspost/compress v1.17.10 // indirect
 	github.com/klauspost/cpuid/v2 v2.2.8 // indirect
 	github.com/leodido/go-urn v1.4.0 // indirect
 	github.com/magiconair/properties v1.8.7 // indirect
@@ -205,8 +204,8 @@ require (
 	golang.org/x/arch v0.10.0 // indirect
 	golang.org/x/sys v0.25.0 // indirect
 	golang.org/x/time v0.6.0 // indirect
-	google.golang.org/genproto/googleapis/api v0.0.0-20240903143218-8af14fe29dc1 // indirect
-	google.golang.org/genproto/googleapis/rpc v0.0.0-20240903143218-8af14fe29dc1 // indirect
+	google.golang.org/genproto/googleapis/api v0.0.0-20240930140551-af27646dc61f // indirect
+	google.golang.org/genproto/googleapis/rpc v0.0.0-20240930140551-af27646dc61f // indirect
 	gopkg.in/ini.v1 v1.67.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	nhooyr.io/websocket v1.8.17 // indirect
