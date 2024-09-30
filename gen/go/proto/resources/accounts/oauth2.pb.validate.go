@@ -235,6 +235,10 @@ func (m *OAuth2Provider) validate(all bool) error {
 
 	// no validation rules for Homepage
 
+	if m.Icon != nil {
+		// no validation rules for Icon
+	}
+
 	if len(errors) > 0 {
 		return OAuth2ProviderMultiError(errors)
 	}

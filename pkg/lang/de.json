@@ -1,0 +1,22 @@
+{
+    "discord": {
+        "commands": {
+            "fivenet": {
+                "desc": "Link zur FiveNet Web App.",
+                "summary": "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
+            },
+            "help": {
+                "desc": "Hilfe-Themen rundum FiveNet.",
+                "empty": {
+                    "title": "Kein Hilfe-Thema ausgewählt!",
+                    "msg": "Verfügbare Themen:\n* `discord`"
+                },
+                "discord": {
+                    "desc": "Anleitung um Discord mit FiveNet zu verknüpfen.",
+                    "title": "Discord Account verknüpfen",
+                    "msg": "1. Navigiere zu [deiner FiveNet Konto-Informationen Seite]({{.URL}}).\n 2. Sollte der \"Social Login-Verbindungen\" Tab noch nicht ausgewählt sein, so wählen sie diesen aus.\n3. Klicken sie auf den \"Verbinden\"-Knopf für Discord.\n4. Es kann sein dass sie sich bei Discord anmelden müssen, bevor sie bestätigen dass ihr Discord Account mit FiveNet verknüpft wird.\n5. Glückwunsch, damit sollte die Verbindung hergestellt sein! Sollten sie den richtigen Discord Account verknüpft haben, wird der FiveNet Discord Sync in wenigen Minuten ihre Rollen entsprechend setzen.\n\n(Sollten sie sich mit dem falschen Discord Account verknüpft haben, so nutzen sie den \"Trennen\"-Knopf, um die Verbindung zu trennen, und fangen bei Schritt 3 erneut an)"
+                }
+            }
+        }
+    }
+}

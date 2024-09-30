@@ -6,6 +6,7 @@ import (
 
 	"github.com/bwmarrin/discordgo"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/lang"
 	"go.uber.org/zap"
 )
 
@@ -13,7 +14,7 @@ const GlobalCommandGuildID = "-1"
 
 type CommandHandler = func(s *discordgo.Session, i *discordgo.InteractionCreate)
 
-type CommandFactory = func(cfg *config.Config) (*discordgo.ApplicationCommand, CommandHandler, error)
+type CommandFactory = func(cfg *config.Config, i18n *lang.I18n) (*discordgo.ApplicationCommand, CommandHandler, error)
 
 var (
 	CommandsFactories = map[string]CommandFactory{}
@@ -25,9 +26,10 @@ type Cmds struct {
 	logger *zap.Logger
 
 	discord *discordgo.Session
+	i18n    *lang.I18n
 }
 
-func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config) (*Cmds, error) {
+func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config, i18n *lang.I18n) (*Cmds, error) {
 	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
 		if h, ok := CommandHandlers[i.ApplicationCommandData().Name]; ok {
 			h(s, i)
@@ -37,10 +39,11 @@ func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config) (*Cmds, e
 	c := &Cmds{
 		logger:  logger,
 		discord: s,
+		i18n:    i18n,
 	}
 
 	for _, factory := range CommandsFactories {
-		command, handler, err := factory(cfg)
+		command, handler, err := factory(cfg, i18n)
 		if err != nil {
 			return nil, err
 		}

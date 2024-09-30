@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
+	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -81,6 +82,7 @@ type BotParams struct {
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
 	AppConfig appconfig.IConfig
+	I18n      *lang.I18n
 }
 
 type Bot struct {
@@ -91,6 +93,7 @@ type Bot struct {
 	enricher *mstlystcdata.Enricher
 	cfg      *config.Discord
 	appCfg   appconfig.IConfig
+	i18n     *lang.I18n
 
 	cmds *commands.Cmds
 
@@ -114,7 +117,7 @@ func NewBot(p BotParams) (*Bot, error) {
 	}
 	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
 
-	cmds, err := commands.New(p.Logger, discord, p.Config)
+	cmds, err := commands.New(p.Logger, discord, p.Config, p.I18n)
 	if err != nil {
 		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
 	}
@@ -128,6 +131,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord,
 		appCfg:   p.AppConfig,
+		i18n:     p.I18n,
 
 		cmds: cmds,
 
@@ -370,6 +374,8 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 }
 
 func (b *Bot) runSync(ctx context.Context) error {
+	return nil
+
 	if err := b.getGuilds(ctx); err != nil {
 		return fmt.Errorf("failed to get guilds. %w", err)
 	}

@@ -545,9 +545,9 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 		// Sort chars for convience of the user
 		slices.SortFunc(resp.Chars, func(a, b *accounts.Character) int {
 			switch {
-			case a.Available == false && b.Available == true:
+			case !a.Available && b.Available:
 				return +1
-			case a.Available == true && b.Available == false:
+			case a.Available && !b.Available:
 				return -1
 			default:
 				return 0
