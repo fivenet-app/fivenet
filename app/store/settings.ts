@@ -1,8 +1,8 @@
 import { defineStore } from 'pinia';
 
 export interface SettingsState {
-    version: string;
     updateAvailable: false | string;
+    version: string;
     locale: string | null;
 
     nuiEnabled: boolean;
@@ -67,18 +67,7 @@ export const useSettingsStore = defineStore('settings', {
             streamerMode: false,
         }) as SettingsState,
     persist: {
-        pick: [
-            'version',
-            'locale',
-            'nuiEnabled',
-            'nuiResourceName',
-            'livemap',
-            'documents',
-            'startpage',
-            'theme',
-            'audio',
-            'streamerMode',
-        ],
+        omit: ['updateAvailable'],
     },
     actions: {
         setVersion(version: string): void {
