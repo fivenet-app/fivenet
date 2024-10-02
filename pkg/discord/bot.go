@@ -374,8 +374,6 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 }
 
 func (b *Bot) runSync(ctx context.Context) error {
-	return nil
-
 	if err := b.getGuilds(ctx); err != nil {
 		return fmt.Errorf("failed to get guilds. %w", err)
 	}
