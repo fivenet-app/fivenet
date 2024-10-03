@@ -3,25 +3,19 @@ package commands
 import (
 	"testing"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/diamondburned/arikawa/v3/api"
+	"github.com/diamondburned/arikawa/v3/api/cmdroute"
 	"github.com/diamondburned/arikawa/v3/discord"
-	"github.com/diamondburned/arikawa/v3/state"
-	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/lang"
-	"github.com/mavolin/dismock/v3/pkg/dismock"
+	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
 )
 
 func TestNewHandleFivenetCommand(t *testing.T) {
 	l, err := lang.New()
 	require.NoError(t, err)
-
-	m, s := dismock.NewSession(t)
-	state := state.New("Bot abc")
-	state.Client = s.Client
 
 	cfg, err := config.LoadTestConfig()
 	require.NoError(t, err)
@@ -31,21 +25,19 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	_, handler, err := NewFivenetCommand(cfg, l)
 	require.NoError(t, err)
 
-	interaction := &discordgo.InteractionCreate{
-		Interaction: &discordgo.Interaction{
-			ID:      discord.NullInteractionID.String(),
-			AppID:   discord.NullAppID.String(),
-			GuildID: discord.NullGuildID.String(),
-			Token:   "fivenet",
-			Type:    discordgo.InteractionApplicationCommand,
+	router := cmdroute.NewRouter()
+	router.Add("fivenet", handler)
 
-			Locale: "en",
+	interactionEvent := &discord.InteractionEvent{
+		ID: discord.NullInteractionID,
+		Data: &discord.CommandInteraction{
+			ID:   discord.NullCommandID,
+			Name: "fivenet",
 		},
+		Locale: discord.EnglishUS,
 	}
 
 	data := &api.InteractionResponseData{
-		Flags:   discord.EphemeralMessage,
-		Content: option.NewNullableString(""),
 		Embeds: &[]discord.Embed{
 			{
 				Type:        discord.LinkEmbed,
@@ -70,18 +62,16 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	}
 
 	// English
-	m.RespondInteraction(discord.NullInteractionID, "fivenet", api.InteractionResponse{
-		Type: api.MessageInteractionWithSource,
-		Data: data,
-	})
-	handler(s, interaction)
+	resp := router.HandleInteraction(interactionEvent)
+	require.NotNil(t, resp.Data)
+	assert.Len(t, *resp.Data.Embeds, 1)
+	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*data.Embeds)[0].Description)
 
 	// German
-	interaction.Locale = "de"
+	interactionEvent.Locale = "de"
 	(*data.Embeds)[0].Description = "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
-	m.RespondInteraction(discord.NullInteractionID, "fivenet", api.InteractionResponse{
-		Type: api.MessageInteractionWithSource,
-		Data: data,
-	})
-	handler(s, interaction)
+	resp = router.HandleInteraction(interactionEvent)
+	require.NotNil(t, resp.Data)
+	assert.Len(t, *resp.Data.Embeds, 1)
+	assert.Equal(t, (*resp.Data.Embeds)[0].Description, (*data.Embeds)[0].Description)
 }

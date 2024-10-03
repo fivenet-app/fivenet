@@ -32,7 +32,6 @@ require (
 	github.com/h2non/filetype v1.1.3
 	github.com/improbable-eng/grpc-web v0.15.0
 	github.com/json-iterator/go v1.1.12
-	github.com/mavolin/dismock/v3 v3.0.0
 	github.com/microcosm-cc/bluemonday v1.0.27
 	github.com/minio/minio-go/v7 v7.0.77
 	github.com/mwitkow/go-conntrack v0.0.0-20190716064945-2f068394615f
