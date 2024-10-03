@@ -115,6 +115,7 @@ func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *
 
 // Put upload the message to kv and local
 func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
+	key = events.SanitizeKey(key)
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -152,6 +153,8 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 }
 
 func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, fn func(key string, existing U) (U, bool, error)) error {
+	key = events.SanitizeKey(key)
+
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -215,6 +218,8 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 
 // Get copy of data from local data
 func (s *Store[T, U]) Get(key string) (U, bool) {
+	key = events.SanitizeKey(key)
+
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -234,6 +239,8 @@ func (s *Store[T, U]) get(key string) (U, bool) {
 // Load data from kv store (this will add/update any existing local data entry)
 // If no key is found, the original nats error is returned.
 func (s *Store[T, U]) Load(ctx context.Context, key string) (U, error) {
+	key = events.SanitizeKey(key)
+
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -251,6 +258,8 @@ func (s *Store[T, U]) load(ctx context.Context, key string) (U, error) {
 }
 
 func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
+	key = events.SanitizeKey(key)
+
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -299,6 +308,8 @@ func (s *Store[T, U]) updateFromType(key string, updated U) U {
 }
 
 func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
+	key = events.SanitizeKey(key)
+
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -325,6 +336,9 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 
 func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
 	hasPrefix := prefix != ""
+	if hasPrefix {
+		prefix = events.SanitizeKey(prefix)
+	}
 
 	keys := []string{}
 	s.data.Range(func(key string, _ U) bool {
