@@ -1,7 +1,9 @@
 package types
 
+import "github.com/diamondburned/arikawa/v3/discord"
+
 type State struct {
-	GuildID string
+	GuildID discord.GuildID
 
 	Roles Roles
 	Users Users

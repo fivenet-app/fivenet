@@ -1,6 +1,7 @@
 package types
 
 import (
+	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/pkg/utils"
 )
 
@@ -17,16 +18,16 @@ func (r Roles) ToSlice() []*Role {
 }
 
 type Role struct {
-	ID          string `yaml:"id"`
-	Name        string `yaml:"name"`
-	Color       *int   `yaml:"color,omitempty"`
-	Permissions *int64 `yaml:"permissions,omitempty"`
-	Job         string `yaml:"-"`
+	ID          discord.RoleID      `yaml:"id"`
+	Name        string              `yaml:"name"`
+	Color       discord.Color       `yaml:"color,omitempty"`
+	Permissions discord.Permissions `yaml:"permissions,omitempty"`
+	Job         string              `yaml:"-"`
 
 	Module string `yaml:"module,omitempty"`
 }
 
-type Users map[string]*User
+type Users map[discord.UserID]*User
 
 func (u Users) Add(user *User) {
 	existing, ok := u[user.ID]
@@ -48,9 +49,9 @@ func (u Users) ToSlice() []*User {
 }
 
 type User struct {
-	ID       string  `yaml:"userDiscordId"`
-	Nickname *string `yaml:",omitempty"`
-	Job      string  `yaml:"-"`
+	ID       discord.UserID `yaml:"userDiscordId"`
+	Nickname *string        `yaml:",omitempty"`
+	Job      string         `yaml:"-"`
 
 	Roles *UserRoles `yaml:"roles"`
 

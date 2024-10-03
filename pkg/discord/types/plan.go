@@ -3,14 +3,14 @@ package types
 import (
 	"context"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
 )
 
-type UserProcessorHandler func(ctx context.Context, guildId string, member *discordgo.Member, u *User) (*User, []*discordgo.MessageEmbed, error)
+type UserProcessorHandler func(ctx context.Context, guildId discord.GuildID, member discord.Member, u *User) (*User, []discord.Embed, error)
 
 type Plan struct {
-	GuildID string `yaml:"guildId"`
-	DryRun  bool   `yaml:"dryRun"`
+	GuildID discord.GuildID `yaml:"guildId"`
+	DryRun  bool            `yaml:"dryRun"`
 
 	UserProcessors []UserProcessorHandler `yaml:"-"`
 
@@ -23,7 +23,7 @@ type PlanRoles struct {
 	ToUpdate Roles `yaml:"toUpdate,omitempty"`
 }
 
-func NewPlan(guildId string, dryRun bool) *Plan {
+func NewPlan(guildId discord.GuildID, dryRun bool) *Plan {
 	return &Plan{
 		GuildID: guildId,
 		DryRun:  dryRun,

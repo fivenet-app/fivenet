@@ -12,6 +12,7 @@ import (
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
@@ -57,7 +58,7 @@ func NewUserInfo(base *BaseModule) (Module, error) {
 	}, nil
 }
 
-func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error) {
+func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
 	job := g.enricher.GetJobByName(g.job)
 	if job == nil {
 		g.logger.Warn("unknown job for discord guild, skipping")
@@ -76,7 +77,7 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 		role := roles[idx]
 
 		if role.Module == userInfoRoleModuleUnemployed {
-			handlers = append(handlers, func(ctx context.Context, guildId string, member *discordgo.Member, user *types.User) (*types.User, []*discordgo.MessageEmbed, error) {
+			handlers = append(handlers, func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *types.User) (*types.User, []discord.Embed, error) {
 				if user.Job == g.job {
 					return user, nil, nil
 				}
@@ -180,9 +181,9 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 	return roles, nil
 }
 
-func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.Users, []*discordgo.MessageEmbed, error) {
+func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.Users, []discord.Embed, error) {
 	users := types.Users{}
-	logs := []*discordgo.MessageEmbed{}
+	logs := []discord.Embed{}
 
 	var employeeRole *types.Role
 	var absenceRole *types.Role
@@ -260,8 +261,14 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 
 	errs := multierr.Combine()
 	for _, u := range dest {
+		externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err))
+			continue
+		}
+
 		user := &types.User{
-			ID:    u.ExternalID,
+			ID:    discord.UserID(externalId),
 			Roles: &types.UserRoles{},
 			Job:   u.Job,
 		}
@@ -271,16 +278,15 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 			continue
 		}
 
-		member, err := g.discord.GuildMember(g.guild.ID, u.ExternalID)
+		member, err := g.discord.Member(g.guild.ID, discord.UserID(externalId))
 		if err != nil {
 			if restErr, ok := err.(*discordgo.RESTError); ok {
 				if restErr.Response.StatusCode == http.StatusNotFound {
 
 					// Add log about employee not being on discord
-					logs = append(logs, &discordgo.MessageEmbed{
-						Type:        discordgo.EmbedTypeRich,
+					logs = append(logs, discord.Embed{
 						Title:       fmt.Sprintf("UserInfo: Employee not found on Discord: %s %s", u.Firstname, u.Lastname),
-						Description: fmt.Sprintf("Discord ID: %s, Rank: %d", u.ExternalID, u.JobGrade),
+						Description: fmt.Sprintf("Discord ID: %s, Rank: %d", externalId, u.JobGrade),
 						Author:      embeds.EmbedAuthor,
 						Color:       embeds.ColorWarn,
 					})
@@ -301,7 +307,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 
 		user.Roles.Sum, err = g.getUserRoles(gradeRoles, u.Job, u.JobGrade)
 		if err != nil {
-			g.logger.Error(fmt.Sprintf("failed to set user's job roles %s", u.ExternalID), zap.Error(err))
+			g.logger.Error(fmt.Sprintf("failed to set user's job roles %d", externalId), zap.Error(err))
 			continue
 		}
 
@@ -334,7 +340,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 	return users, logs, errs
 }
 
-func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, lastname string) *string {
+func (g *UserInfo) getUserNickname(member *discord.Member, firstname string, lastname string) *string {
 	if g.guild.OwnerID == member.User.ID {
 		return nil
 	}

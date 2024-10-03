@@ -6,6 +6,7 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
@@ -18,11 +19,9 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	l, err := lang.New()
 	require.NoError(t, err)
 
-	m := dismock.New(t)
-
-	s, _ := discordgo.New("Bot abc")
-	s.StateEnabled = false
-	s.Client = m.Client
+	m, s := dismock.NewSession(t)
+	state := state.New("Bot abc")
+	state.Client = s.Client
 
 	cfg, err := config.LoadTestConfig()
 	require.NoError(t, err)
@@ -60,7 +59,7 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 				},
 				Footer: &discord.EmbedFooter{
 					Text: embeds.EmbedFooterMadeBy.Text,
-					Icon: embeds.EmbedFooterMadeBy.IconURL,
+					Icon: embeds.EmbedFooterMadeBy.Icon,
 				},
 				Provider: &discord.EmbedProvider{
 					Name: "FiveNet",

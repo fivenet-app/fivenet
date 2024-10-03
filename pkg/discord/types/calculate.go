@@ -5,27 +5,30 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 )
 
-func (s *State) Calculate(ctx context.Context, dc *discordgo.Session, dryRun bool) (*Plan, []*discordgo.MessageEmbed, error) {
+func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*Plan, []discord.Embed, error) {
 	plan := NewPlan(s.GuildID, dryRun)
-	logs := []*discordgo.MessageEmbed{}
+	logs := []discord.Embed{}
 
-	roles, ls, err := s.calculateRoles(ctx, dc)
+	dc = dc.WithContext(ctx)
+
+	roles, ls, err := s.calculateRoles(dc)
 	logs = append(logs, ls...)
 	if err != nil {
 		return plan, logs, err
 	}
 	plan.Roles = roles
 
-	guild, err := dc.State.Guild(s.GuildID)
+	members, err := dc.Members(s.GuildID)
 	if err != nil {
-		return plan, logs, fmt.Errorf("failed to get guild state. %w", err)
+		return plan, logs, fmt.Errorf("failed to get guild members. %w", err)
 	}
 
-	for _, member := range guild.Members {
+	for _, member := range members {
 		if member.User.Bot {
 			continue
 		}
@@ -40,31 +43,29 @@ func (s *State) Calculate(ctx context.Context, dc *discordgo.Session, dryRun boo
 	}
 
 	plan.Users = slices.DeleteFunc(plan.Users, func(u *User) bool {
-		return u.ID == "" || ((u.Kick == nil || !*u.Kick) && (u.Roles == nil || (len(u.Roles.ToAdd) == 0 && len(u.Roles.ToRemove) == 0)))
+		return u.ID == discord.NullUserID || ((u.Kick == nil || !*u.Kick) && (u.Roles == nil || (len(u.Roles.ToAdd) == 0 && len(u.Roles.ToRemove) == 0)))
 	})
 
 	return plan, logs, nil
 }
 
-func (s *State) calculateRoles(ctx context.Context, dc *discordgo.Session) (*PlanRoles, []*discordgo.MessageEmbed, error) {
-	logs := []*discordgo.MessageEmbed{}
+func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, error) {
+	logs := []discord.Embed{}
 
-	roles, err := dc.GuildRoles(s.GuildID, discordgo.WithContext(ctx))
+	roles, err := dc.Roles(s.GuildID)
 	if err != nil {
 		return nil, logs, fmt.Errorf("failed to get guild roles. %w", err)
 	}
-	var botRole *discordgo.Role
-	slices.ContainsFunc(roles, func(item *discordgo.Role) bool {
-		if item.Name == "FiveNet" && item.Managed {
-			botRole = item
-			return true
-		}
-		return false
-	})
+	var botRole discord.Role
+	if idx := slices.IndexFunc(roles, func(item discord.Role) bool {
+		return item.Name == "FiveNet" && item.Managed
+	}); idx > -1 {
+		botRole = roles[idx]
+	}
 
 	pr := &PlanRoles{}
 	for _, role := range s.Roles {
-		idx := slices.IndexFunc(roles, func(a *discordgo.Role) bool {
+		idx := slices.IndexFunc(roles, func(a discord.Role) bool {
 			return a.Name == role.Name
 		})
 		if idx == -1 {
@@ -72,9 +73,8 @@ func (s *State) calculateRoles(ctx context.Context, dc *discordgo.Session) (*Pla
 		} else {
 			dcRole := roles[idx]
 
-			if botRole != nil && dcRole.Position > botRole.Position {
-				logs = append(logs, &discordgo.MessageEmbed{
-					Type:        discordgo.EmbedTypeRich,
+			if botRole.ID != discord.NullRoleID && dcRole.Position > botRole.Position {
+				logs = append(logs, discord.Embed{
 					Title:       fmt.Sprintf("Roles: Role %s (%s) can't be updated", dcRole.Name, dcRole.ID),
 					Description: "FiveNet bot role is not high enough to update the role.",
 					Author:      embeds.EmbedAuthor,
@@ -85,7 +85,7 @@ func (s *State) calculateRoles(ctx context.Context, dc *discordgo.Session) (*Pla
 
 			role.ID = roles[idx].ID
 
-			if (role.Color == nil || *role.Color == dcRole.Color) && (role.Permissions == nil || *role.Permissions == dcRole.Permissions) {
+			if role.Color == dcRole.Color && role.Permissions == dcRole.Permissions {
 				continue
 			}
 
@@ -96,7 +96,7 @@ func (s *State) calculateRoles(ctx context.Context, dc *discordgo.Session) (*Pla
 	return pr, logs, nil
 }
 
-func (s *State) calculateUserUpdates(ctx context.Context, member *discordgo.Member, user *User) (*User, error) {
+func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member, user *User) (*User, error) {
 	if user == nil {
 		user = &User{
 			ID:    member.User.ID,
@@ -109,12 +109,12 @@ func (s *State) calculateUserUpdates(ctx context.Context, member *discordgo.Memb
 	}
 
 	for _, userRole := range user.Roles.Sum {
-		if !slices.Contains(member.Roles, userRole.ID) {
+		if !slices.Contains(member.RoleIDs, userRole.ID) {
 			user.Roles.ToAdd = append(user.Roles.ToAdd, userRole)
 		}
 	}
 
-	for _, role := range member.Roles {
+	for _, role := range member.RoleIDs {
 		// If the role is bot managed, and the user is not assigned to the role, remove the role
 		if idx := slices.IndexFunc(s.Roles, func(r *Role) bool {
 			return r.ID == role

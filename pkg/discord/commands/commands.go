@@ -1,10 +1,9 @@
 package commands
 
 import (
-	"fmt"
-	"slices"
-
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/api"
+	"github.com/diamondburned/arikawa/v3/api/cmdroute"
+	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 	"go.uber.org/zap"
@@ -12,90 +11,54 @@ import (
 
 const GlobalCommandGuildID = "-1"
 
-type CommandHandler = func(s *discordgo.Session, i *discordgo.InteractionCreate)
+type CommandFactory = func(cfg *config.Config, l *lang.I18n) (api.CreateCommandData, cmdroute.CommandHandler, error)
 
-type CommandFactory = func(cfg *config.Config, i18n *lang.I18n) (*discordgo.ApplicationCommand, CommandHandler, error)
-
-var (
-	CommandsFactories = map[string]CommandFactory{}
-	Commands          = map[string]*discordgo.ApplicationCommand{}
-	CommandHandlers   = map[string]CommandHandler{}
-)
+var CommandsFactories = map[string]CommandFactory{}
 
 type Cmds struct {
 	logger *zap.Logger
 
-	discord *discordgo.Session
+	router  *cmdroute.Router
+	discord *state.State
+	cfg     *config.Config
 	i18n    *lang.I18n
 }
 
-func New(logger *zap.Logger, s *discordgo.Session, cfg *config.Config, i18n *lang.I18n) (*Cmds, error) {
-	s.AddHandler(func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		if h, ok := CommandHandlers[i.ApplicationCommandData().Name]; ok {
-			h(s, i)
-		}
-	})
-
+func New(logger *zap.Logger, s *state.State, cfg *config.Config, i18n *lang.I18n) (*Cmds, error) {
 	c := &Cmds{
 		logger:  logger,
 		discord: s,
+		cfg:     cfg,
 		i18n:    i18n,
-	}
-
-	for _, factory := range CommandsFactories {
-		command, handler, err := factory(cfg, i18n)
-		if err != nil {
-			return nil, err
-		}
-
-		Commands[command.Name] = command
-		CommandHandlers[command.Name] = handler
 	}
 
 	return c, nil
 }
 
-func (c *Cmds) RegisterGlobalCommands() error {
-	cmds, err := c.discord.ApplicationCommands(c.discord.State.User.ID, "")
-	if err != nil {
-		return err
-	}
+func (c *Cmds) RegisterCommands() error {
+	c.logger.Info("registering commands", zap.Int("count", len(CommandsFactories)))
 
-	toRegister := []*discordgo.ApplicationCommand{}
-	for _, command := range Commands {
-		if command.GuildID == GlobalCommandGuildID {
-			toRegister = append(toRegister, command)
-		}
-	}
+	c.router = cmdroute.NewRouter()
+	// Automatically defer handles if they're slow.
+	c.router.Use(cmdroute.Deferrable(c.discord, cmdroute.DeferOpts{}))
 
-	c.logger.Info("registering global commands", zap.Int("count", len(toRegister)))
-	for _, command := range toRegister {
-		if slices.ContainsFunc(cmds, func(cmd *discordgo.ApplicationCommand) bool {
-			return cmd.Name == command.Name
-		}) {
-			c.logger.Debug(fmt.Sprintf("command '%v' already registered", command.Name))
-			continue
+	commands := []api.CreateCommandData{}
+	for name, fn := range CommandsFactories {
+		cmdData, handler, err := fn(c.cfg, c.i18n)
+		if err != nil {
+			return err
 		}
 
-		if _, err := c.discord.ApplicationCommandCreate(c.discord.State.User.ID, "", command); err != nil {
-			return fmt.Errorf("cannot create '%v' global command. %w", command.Name, err)
-		}
+		commands = append(commands, cmdData)
+
+		c.router.Add(name, handler)
 	}
+
+	if err := cmdroute.OverwriteCommands(c.discord, commands); err != nil {
+		c.logger.Fatal("cannot update discord bot commands", zap.Error(err))
+	}
+
+	c.discord.AddInteractionHandler(c.router)
 
 	return nil
-}
-
-func GetDuplicateCommands(in []*discordgo.ApplicationCommand) []*discordgo.ApplicationCommand {
-	allKeys := make(map[string]bool)
-	list := []*discordgo.ApplicationCommand{}
-
-	for _, item := range in {
-		if _, value := allKeys[item.Name]; !value {
-			allKeys[item.Name] = true
-		} else {
-			list = append(list, item)
-		}
-	}
-
-	return list
 }

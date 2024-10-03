@@ -213,10 +213,10 @@ type DiscordGroupSync struct {
 }
 
 type DiscordGroupRole struct {
-	RoleName    string `yaml:"roleName"`
-	Permissions *int64 `yaml:"omitempty,permissions"`
-	Color       string `yaml:"color"`
-	NotSameJob  bool   `yaml:"notSameJob"`
+	RoleName    string  `yaml:"roleName"`
+	Permissions *uint64 `yaml:"omitempty,permissions"`
+	Color       string  `yaml:"color"`
+	NotSameJob  bool    `yaml:"notSameJob"`
 }
 
 type DiscordCommands struct {

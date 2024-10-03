@@ -5,10 +5,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"strconv"
 	"sync"
 	"time"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
@@ -30,17 +31,17 @@ type Guild struct {
 	cancel context.CancelFunc
 
 	job string
-	id  string
+	id  discord.GuildID
 
 	logger *zap.Logger
 	bot    *Bot
-	guild  *discordgo.Guild
+	guild  discord.Guild
 
 	lastVersion int
 	modules     []string
 }
 
-func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (*Guild, error) {
+func NewGuild(ctx context.Context, b *Bot, guild discord.Guild, job string) (*Guild, error) {
 	ctx, cancel := context.WithCancel(ctx)
 
 	modules := []string{}
@@ -61,7 +62,7 @@ func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (
 		job: job,
 		id:  guild.ID,
 
-		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.String("discord_guild_id", guild.ID)),
+		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.Uint64("discord_guild_id", uint64(guild.ID))),
 		bot:     b,
 		guild:   guild,
 		modules: modules,
@@ -74,15 +75,10 @@ func (g *Guild) Run() error {
 
 	start := time.Now()
 
-	if g.guild.Unavailable {
-		g.logger.Warn("discord guild is unavailable, skipping sync run")
-		return nil
+	if g.lastVersion == g.bot.discord.Ready().Version {
+		g.logger.Warn("discord state version is same", zap.Int("discord_state_last_version", g.lastVersion), zap.Int("discord_state_version", g.bot.discord.Ready().Version))
 	}
-
-	if g.lastVersion == g.bot.discord.State.Version {
-		g.logger.Warn("discord state version is same", zap.Int("discord_state_last_version", g.lastVersion), zap.Int("discord_state_version", g.bot.discord.State.Version))
-	}
-	g.lastVersion = g.bot.discord.State.Version
+	g.lastVersion = g.bot.discord.Ready().Version
 
 	settings, planDiff, err := g.getSyncSettings(g.ctx, g.job)
 	if err != nil {
@@ -92,25 +88,34 @@ func (g *Guild) Run() error {
 		planDiff = &users.DiscordSyncChanges{}
 	}
 
-	if err := g.bot.discord.RequestGuildMembers(g.guild.ID, "", 0, "", false); err != nil {
+	if _, err := g.bot.discord.Members(g.guild.ID); err != nil {
 		g.logger.Error("failed to request guild members. %w", zap.Error(err))
 	}
 
 	errs := multierr.Combine()
+	channelId := discord.NullChannelID
 	if settings.IsStatusLogEnabled() {
-		if err := g.sendStartStatusLog(settings.StatusLogSettings.ChannelId); err != nil {
-			errs = multierr.Append(errs, err)
+		chId, err := strconv.ParseUint(settings.StatusLogSettings.ChannelId, 10, 64)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("failed to parse status log channel id. %w", err))
+		}
+
+		channelId = discord.ChannelID(chId)
+		if channelId != discord.NullChannelID {
+			if err := g.sendStartStatusLog(discord.ChannelID(channelId)); err != nil {
+				errs = multierr.Append(errs, err)
+			}
 		}
 	}
 
-	base := modules.NewBaseModule(g.logger.Named("module").With(zap.String("job", g.job), zap.String("discord_guild_id", g.guild.ID)),
+	base := modules.NewBaseModule(g.logger.Named("module").With(zap.String("job", g.job), zap.Uint64("discord_guild_id", uint64(g.guild.ID))),
 		g.bot.db, g.bot.discord, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher, settings)
 
 	state := &types.State{
 		GuildID: g.guild.ID,
 		Users:   types.Users{},
 	}
-	logs := []*discordgo.MessageEmbed{}
+	logs := []discord.Embed{}
 	for _, module := range g.modules {
 		g.logger.Debug("running discord guild module", zap.String("dc_module", module))
 
@@ -158,12 +163,12 @@ func (g *Guild) Run() error {
 		}
 	}
 
-	if settings.IsStatusLogEnabled() {
-		if err := g.sendStatusLog(settings.StatusLogSettings.ChannelId, logs); err != nil {
+	if channelId != discord.NullChannelID {
+		if err := g.sendStatusLog(channelId, logs); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 
-		if err := g.sendEndStatusLog(settings.StatusLogSettings.ChannelId, time.Since(start), errs); err != nil {
+		if err := g.sendEndStatusLog(channelId, time.Since(start), errs); err != nil {
 			errs = multierr.Append(errs, err)
 		}
 	}
@@ -182,14 +187,14 @@ func (g *Guild) Stop() {
 	g.cancel()
 }
 
-func (g *Guild) sendStartStatusLog(channelId string) error {
+func (g *Guild) sendStartStatusLog(channelId discord.ChannelID) error {
 	channel, err := g.bot.discord.Channel(channelId)
 	if err != nil {
 		return fmt.Errorf("failed to get status log channel. %w", err)
 	}
 
-	if _, err := g.bot.discord.ChannelMessageSendEmbed(channel.ID, &discordgo.MessageEmbed{
-		Type:   discordgo.EmbedTypeRich,
+	if _, err := g.bot.discord.SendEmbeds(channel.ID, discord.Embed{
+		Type:   discord.NormalEmbed,
 		Title:  "Starting sync...",
 		Author: embeds.EmbedAuthor,
 		Color:  embeds.ColorInfo,
@@ -201,7 +206,7 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 	return nil
 }
 
-func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) error {
+func (g *Guild) sendStatusLog(channelId discord.ChannelID, logs []discord.Embed) error {
 	if len(logs) == 0 {
 		return nil
 	}
@@ -219,7 +224,7 @@ func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) 
 			end = len(logs)
 		}
 
-		if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs[i:end]); err != nil {
+		if _, err := g.bot.discord.SendEmbeds(channel.ID, logs[i:end]...); err != nil {
 			return fmt.Errorf("failed to send status log embeds. %w", err)
 		}
 	}
@@ -227,16 +232,15 @@ func (g *Guild) sendStatusLog(channelId string, logs []*discordgo.MessageEmbed) 
 	return nil
 }
 
-func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs error) error {
+func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Duration, errs error) error {
 	channel, err := g.bot.discord.Channel(channelId)
 	if err != nil {
 		return fmt.Errorf("failed to get status log channel. %w", err)
 	}
 
-	logs := []*discordgo.MessageEmbed{}
+	logs := []discord.Embed{}
 	if errs != nil {
-		logs = append(logs, &discordgo.MessageEmbed{
-			Type:        discordgo.EmbedTypeRich,
+		logs = append(logs, discord.Embed{
 			Title:       "Errors during sync",
 			Description: fmt.Sprintf("Following errors occured during sync:\n```\n%v\n```", errs),
 			Author:      embeds.EmbedAuthor,
@@ -244,8 +248,7 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 		})
 	}
 
-	logs = append(logs, &discordgo.MessageEmbed{
-		Type:        discordgo.EmbedTypeRich,
+	logs = append(logs, discord.Embed{
 		Title:       "Sync completed!",
 		Description: fmt.Sprintf("Completed in %s.", duration),
 		Author:      embeds.EmbedAuthor,
@@ -253,7 +256,7 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 		Footer:      embeds.EmbedFooterVersion,
 	})
 
-	if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs); err != nil {
+	if _, err := g.bot.discord.SendEmbeds(channel.ID, logs...); err != nil {
 		return fmt.Errorf("failed to send status log completed embeds. %w", err)
 	}
 

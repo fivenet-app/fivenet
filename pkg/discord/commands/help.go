@@ -1,7 +1,11 @@
 package commands
 
 import (
-	"github.com/bwmarrin/discordgo"
+	"context"
+
+	"github.com/diamondburned/arikawa/v3/api"
+	"github.com/diamondburned/arikawa/v3/api/cmdroute"
+	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/lang"
@@ -9,117 +13,87 @@ import (
 )
 
 func init() {
-	CommandsFactories["help"] = NewFivenetHelpCommand
+	CommandsFactories["help"] = NewHelpCommand
 }
 
-func NewFivenetHelpCommand(cfg *config.Config, l *lang.I18n) (*discordgo.ApplicationCommand, CommandHandler, error) {
+type HelpCommand struct {
+	l *lang.I18n
+
+	url string
+}
+
+func NewHelpCommand(cfg *config.Config, l *lang.I18n) (api.CreateCommandData, cmdroute.CommandHandler, error) {
 	lEN := l.I18n("en")
 	lDE := l.I18n("de")
 
-	url := cfg.HTTP.PublicURL
-	return &discordgo.ApplicationCommand{
+	return api.CreateCommandData{
 			Name: "help",
 			Description: lEN.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "discord.commands.help.desc",
 			}),
-			DescriptionLocalizations: &map[discordgo.Locale]string{
-				discordgo.German: lDE.MustLocalize(&i18n.LocalizeConfig{
+			DescriptionLocalizations: discord.StringLocales{
+				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
 					MessageID: "discord.commands.help.desc",
 				}),
 			},
-			Type:    discordgo.ChatApplicationCommand,
-			GuildID: GlobalCommandGuildID,
-			Options: []*discordgo.ApplicationCommandOption{
-				{
-					Name: "discord",
-					Type: discordgo.ApplicationCommandOptionSubCommand,
+			Type: discord.ChatInputCommand,
+			Options: []discord.CommandOption{
+				&discord.SubcommandOption{
+					OptionName: "discord",
 					Description: lEN.MustLocalize(&i18n.LocalizeConfig{
 						MessageID: "discord.commands.help.discord.desc",
 					}),
-					DescriptionLocalizations: map[discordgo.Locale]string{
-						discordgo.German: lDE.MustLocalize(&i18n.LocalizeConfig{
+					DescriptionLocalizations: discord.StringLocales{
+						discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
 							MessageID: "discord.commands.help.discord.desc",
 						}),
 					},
 				},
 			},
 		},
-		NewHandleHelpCommand(url, l),
-		nil
+		&HelpCommand{
+			url: cfg.HTTP.PublicURL,
+		}, nil
 }
 
-func NewHandleHelpCommand(url string, lang *lang.I18n) CommandHandler {
-	return func(s *discordgo.Session, i *discordgo.InteractionCreate) {
-		localizer := lang.I18n(string(i.Locale))
+func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
+	localizer := c.l.I18n(string(cmd.Event.Locale))
 
-		options := i.ApplicationCommandData().Options
+	options := cmd.CommandInteractionOption.Options
 
-		if len(options) == 0 {
-			s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-				Type: discordgo.InteractionResponseChannelMessageWithSource,
-				Data: &discordgo.InteractionResponseData{
-					Flags: discordgo.MessageFlagsEphemeral,
-					Embeds: []*discordgo.MessageEmbed{
-						{
-							Type:  discordgo.EmbedTypeLink,
-							Title: "FiveNet",
-							Description: localizer.MustLocalize(&i18n.LocalizeConfig{
-								MessageID: "discord.commands.help.empty",
-							}),
-							URL: url,
-							Provider: &discordgo.MessageEmbedProvider{
-								Name: "FiveNet",
-								URL:  url,
-							},
-							Thumbnail: &discordgo.MessageEmbedThumbnail{
-								URL:    "https://cdn.discordapp.com/app-icons/1101207666652618865/94429951df15108c737949ff2770cd8f.png",
-								Width:  128,
-								Height: 128,
-							},
-							Footer: embeds.EmbedFooterMadeBy,
-						},
-					},
-				},
-			})
-			return
-		}
-
-		messageId := "discord.commands.help.empty"
+	messageId := "discord.commands.help.empty"
+	if len(options) > 0 {
 		switch options[0].Name {
 		case "discord":
 			messageId = "discord.commands.help.discord"
 		}
+	}
 
-		s.InteractionRespond(i.Interaction, &discordgo.InteractionResponse{
-			Type: discordgo.InteractionResponseChannelMessageWithSource,
-			Data: &discordgo.InteractionResponseData{
-				Flags: discordgo.MessageFlagsEphemeral,
-				Embeds: []*discordgo.MessageEmbed{
-					{
-						Type: discordgo.EmbedTypeLink,
-						Title: localizer.MustLocalize(&i18n.LocalizeConfig{
-							MessageID: messageId + ".title",
-						}),
-						Description: localizer.MustLocalize(&i18n.LocalizeConfig{
-							MessageID: messageId + ".msg",
-							TemplateData: map[string]string{
-								"URL": url + "/auth/account-info?tab=oauth2Connections#",
-							},
-						}),
-						URL: url,
-						Provider: &discordgo.MessageEmbedProvider{
-							Name: "FiveNet",
-							URL:  url,
-						},
-						Thumbnail: &discordgo.MessageEmbedThumbnail{
-							URL:    "https://cdn.discordapp.com/app-icons/1101207666652618865/94429951df15108c737949ff2770cd8f.png",
-							Width:  128,
-							Height: 128,
-						},
-						Footer: embeds.EmbedFooterMadeBy,
+	return &api.InteractionResponseData{
+		Flags: discord.EphemeralMessage,
+		Embeds: &[]discord.Embed{
+			{
+				Title: localizer.MustLocalize(&i18n.LocalizeConfig{
+					MessageID: messageId + ".title",
+				}),
+				Description: localizer.MustLocalize(&i18n.LocalizeConfig{
+					MessageID: messageId + ".msg",
+					TemplateData: map[string]string{
+						"URL": c.url + "/auth/account-info?tab=oauth2Connections#",
 					},
+				}),
+				URL: c.url,
+				Provider: &discord.EmbedProvider{
+					Name: "FiveNet",
+					URL:  c.url,
 				},
+				Thumbnail: &discord.EmbedThumbnail{
+					URL:    "https://cdn.discordapp.com/app-icons/1101207666652618865/94429951df15108c737949ff2770cd8f.png",
+					Width:  128,
+					Height: 128,
+				},
+				Footer: embeds.EmbedFooterMadeBy,
 			},
-		})
+		},
 	}
 }

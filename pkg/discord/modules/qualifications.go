@@ -7,7 +7,7 @@ import (
 	"strconv"
 	"strings"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
@@ -51,7 +51,7 @@ func NewQualifications(base *BaseModule) (Module, error) {
 	}, nil
 }
 
-func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error) {
+func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
 	errs := multierr.Combine()
 
 	stmt := tQualifications.
@@ -96,16 +96,15 @@ const (
 	qualificationsRoleModulePrefix = "Qualifications-"
 )
 
-func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([]*types.Role, []*discordgo.MessageEmbed, error) {
-	logs := []*discordgo.MessageEmbed{}
+func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([]*types.Role, []discord.Embed, error) {
+	logs := []discord.Embed{}
 	roles := types.Roles{}
 
 	errs := multierr.Combine()
 
 	for _, entry := range qualifications {
 		if entry.DiscordSettings.RoleName == nil || *entry.DiscordSettings.RoleName == "" {
-			logs = append(logs, &discordgo.MessageEmbed{
-				Type:        discordgo.EmbedTypeRich,
+			logs = append(logs, discord.Embed{
 				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification Discord settings %d", entry.ID),
 				Description: fmt.Sprintf("Qualification ID: %d", entry.ID),
 				Author:      embeds.EmbedAuthor,
@@ -126,8 +125,8 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 	return roles, logs, errs
 }
 
-func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []*discordgo.MessageEmbed, error) {
-	logs := []*discordgo.MessageEmbed{}
+func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []discord.Embed, error) {
+	logs := []discord.Embed{}
 
 	qualificationRoles := map[uint64]*types.Role{}
 	for _, role := range roles {
@@ -190,8 +189,14 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 		}
 
 		for _, u := range dest {
+			externalId, err := strconv.ParseUint(u.ExternalID, 10, 64)
+			if err != nil {
+				errs = multierr.Append(errs, fmt.Errorf("failed to parse user oauth2 external id %d. %w", externalId, err))
+				continue
+			}
+
 			user := &types.User{
-				ID:    u.ExternalID,
+				ID:    discord.UserID(externalId),
 				Roles: &types.UserRoles{},
 				Job:   u.Job,
 			}

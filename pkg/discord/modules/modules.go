@@ -6,7 +6,8 @@ import (
 	"fmt"
 	"slices"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
@@ -28,7 +29,7 @@ var Modules = map[string]NewModuleFunc{}
 type NewModuleFunc func(*BaseModule) (Module, error)
 
 type Module interface {
-	Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error)
+	Plan(ctx context.Context) (*types.State, []discord.Embed, error)
 }
 
 func GetModule(name string, base *BaseModule) (Module, error) {
@@ -46,8 +47,8 @@ func GetModule(name string, base *BaseModule) (Module, error) {
 type BaseModule struct {
 	logger   *zap.Logger
 	db       *sql.DB
-	discord  *discordgo.Session
-	guild    *discordgo.Guild
+	discord  *state.State
+	guild    discord.Guild
 	job      string
 	cfg      *config.Discord
 	appCfg   appconfig.IConfig
@@ -56,7 +57,7 @@ type BaseModule struct {
 	settings *users.DiscordSyncSettings
 }
 
-func NewBaseModule(logger *zap.Logger, db *sql.DB, discord *discordgo.Session, guild *discordgo.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *users.DiscordSyncSettings) *BaseModule {
+func NewBaseModule(logger *zap.Logger, db *sql.DB, discord *state.State, guild discord.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *users.DiscordSyncSettings) *BaseModule {
 	return &BaseModule{
 		logger:   logger,
 		db:       db,

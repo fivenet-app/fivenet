@@ -4,37 +4,41 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/api"
+	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/state"
+	"github.com/diamondburned/arikawa/v3/utils/json/option"
 	"go.uber.org/multierr"
 )
 
-func (p *Plan) Apply(ctx context.Context, dc *discordgo.Session) ([]*discordgo.MessageEmbed, error) {
-	logs := []*discordgo.MessageEmbed{}
+func (p *Plan) Apply(ctx context.Context, dc *state.State) ([]discord.Embed, error) {
+	logs := []discord.Embed{}
 
 	if p.DryRun {
 		return logs, nil
 	}
 
-	if err := p.applyRoles(ctx, dc, p.GuildID); err != nil {
+	dc = dc.WithContext(ctx)
+	if err := p.applyRoles(dc); err != nil {
 		return logs, err
 	}
 
-	if err := p.applyUsers(ctx, dc); err != nil {
+	if err := p.applyUsers(dc); err != nil {
 		return logs, err
 	}
 
 	return logs, nil
 }
 
-func (p *Plan) applyRoles(ctx context.Context, dc *discordgo.Session, guildId string) error {
+func (p *Plan) applyRoles(dc *state.State) error {
 	errs := multierr.Combine()
 
 	for _, role := range p.Roles.ToCreate {
-		res, err := dc.GuildRoleCreate(guildId, &discordgo.RoleParams{
+		res, err := dc.CreateRole(p.GuildID, api.CreateRoleData{
 			Name:        role.Name,
 			Color:       role.Color,
 			Permissions: role.Permissions,
-		}, discordgo.WithContext(ctx))
+		})
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to create role %s. %w", role.Name, err))
 			continue
@@ -44,11 +48,11 @@ func (p *Plan) applyRoles(ctx context.Context, dc *discordgo.Session, guildId st
 	}
 
 	for _, role := range p.Roles.ToUpdate {
-		_, err := dc.GuildRoleEdit(guildId, role.ID, &discordgo.RoleParams{
-			Name:        role.Name,
+		_, err := dc.ModifyRole(p.GuildID, role.ID, api.ModifyRoleData{
+			Name:        option.NewNullableString(role.Name),
 			Color:       role.Color,
-			Permissions: role.Permissions,
-		}, discordgo.WithContext(ctx))
+			Permissions: &role.Permissions,
+		})
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to update role %s. %w", role.Name, err))
 			continue
@@ -58,7 +62,7 @@ func (p *Plan) applyRoles(ctx context.Context, dc *discordgo.Session, guildId st
 	return errs
 }
 
-func (p *Plan) applyUsers(ctx context.Context, dc *discordgo.Session) error {
+func (p *Plan) applyUsers(dc *state.State) error {
 	errs := multierr.Combine()
 
 	for _, user := range p.Users {
@@ -67,8 +71,7 @@ func (p *Plan) applyUsers(ctx context.Context, dc *discordgo.Session) error {
 				user.KickReason = "FiveNet Bot - Auto Kick (No reason given)"
 			}
 
-			if err := dc.GuildMemberDeleteWithReason(p.GuildID, user.ID, user.KickReason,
-				discordgo.WithContext(ctx)); err != nil {
+			if err := dc.Kick(p.GuildID, user.ID, api.AuditLogReason(user.KickReason)); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to kick user %s (reason: %q). %w", user.ID, user.KickReason, err))
 				continue
 			}
@@ -76,21 +79,25 @@ func (p *Plan) applyUsers(ctx context.Context, dc *discordgo.Session) error {
 		}
 
 		if user.Nickname != nil && *user.Nickname == "" {
-			if err := dc.GuildMemberNickname(p.GuildID, user.ID, *user.Nickname, discordgo.WithContext(ctx)); err != nil {
+			if err := dc.ModifyMember(p.GuildID, user.ID, api.ModifyMemberData{
+				Nick: user.Nickname,
+			}); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to set user %s nickname (%q). %w", user.ID, *user.Nickname, err))
 				continue
 			}
 		}
 
 		for _, role := range user.Roles.ToRemove {
-			if err := dc.GuildMemberRoleRemove(p.GuildID, user.ID, role.ID, discordgo.WithContext(ctx)); err != nil {
+			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.ID, role.Name, err))
 				continue
 			}
 		}
 
 		for _, role := range user.Roles.ToAdd {
-			if err := dc.GuildMemberRoleAdd(p.GuildID, user.ID, role.ID, discordgo.WithContext(ctx)); err != nil {
+			if err := dc.AddRole(p.GuildID, user.ID, role.ID, api.AddRoleData{
+				AuditLogReason: api.AuditLogReason(role.Module),
+			}); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to add user %s to role %s (%s). %w", user.ID, role.ID, role.Name, err))
 				continue
 			}

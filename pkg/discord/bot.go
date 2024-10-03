@@ -5,12 +5,17 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"slices"
+	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
 
 	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/gateway"
+	"github.com/diamondburned/arikawa/v3/state"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
@@ -61,13 +66,6 @@ var (
 		Name:      "guilds_total_count",
 		Help:      "Total count of Discord guilds being ready.",
 	})
-
-	metricGuildsReady = promauto.NewGauge(prometheus.GaugeOpts{
-		Namespace: admin.MetricsNamespace,
-		Subsystem: "discord_bot",
-		Name:      "guilds_ready_count",
-		Help:      "Count of Discord guilds being ready.",
-	})
 )
 
 type BotParams struct {
@@ -99,10 +97,10 @@ type Bot struct {
 
 	wg sync.WaitGroup
 
-	id              string
+	id              discord.UserID
 	disconnectCount atomic.Uint64
-	discord         *discordgo.Session
-	activeGuilds    *xsync.MapOf[string, *Guild]
+	discord         *state.State
+	activeGuilds    *xsync.MapOf[discord.GuildID, *Guild]
 }
 
 func NewBot(p BotParams) (*Bot, error) {
@@ -111,18 +109,23 @@ func NewBot(p BotParams) (*Bot, error) {
 	}
 
 	// Create a new Discord session using the provided login information.
-	discord, err := discordgo.New("Bot " + p.Config.Discord.Token)
-	if err != nil {
-		return nil, fmt.Errorf("error creating discord session. %w", err)
-	}
-	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
+	state := state.New("Bot " + p.Config.Discord.Token)
+	state.AddIntents(gateway.IntentGuilds | gateway.IntentGuildMembers | gateway.IntentGuildPresences | gateway.IntentGuildIntegrations)
+	state.AddHandler(func(*gateway.ReadyEvent) {
+		me, _ := state.Me()
+		log.Println("connected to the gateway as", me.Tag())
+	})
 
-	cmds, err := commands.New(p.Logger, discord, p.Config, p.I18n)
+	cmds, err := commands.New(p.Logger, state, p.Config, p.I18n)
 	if err != nil {
 		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
+	if err := state.Connect(ctx); err != nil {
+		p.Logger.Fatal("failed to connect to discord gateway", zap.Error(err))
+	}
+
 	b := &Bot{
 		ctx:      ctx,
 		logger:   p.Logger,
@@ -138,11 +141,11 @@ func NewBot(p BotParams) (*Bot, error) {
 		wg: sync.WaitGroup{},
 
 		disconnectCount: atomic.Uint64{},
-		discord:         discord,
-		activeGuilds:    xsync.NewMapOf[string, *Guild](),
+		discord:         state,
+		activeGuilds:    xsync.NewMapOf[discord.GuildID, *Guild](),
 	}
 
-	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+	p.LC.Append(fx.StartHook(func(_ context.Context) error {
 		if err := b.start(ctx); err != nil {
 			return err
 		}
@@ -181,6 +184,8 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
+		state.Close()
+
 		cancel()
 
 		return nil
@@ -200,12 +205,14 @@ func (b *Bot) start(ctx context.Context) error {
 		b.logger.Info("discord server joined", zap.String("discord_guild_id", g.ID))
 	})
 
-	if err := b.discord.Open(); err != nil {
-		return fmt.Errorf("error opening discord connection: %w", err)
-	}
+	go func() {
+		if err := b.discord.Open(ctx); err != nil {
+			b.logger.Error("error opening discord connection", zap.Error(err))
+		}
+	}()
 
 	for {
-		if b.discord.State.Ready.Version > 0 && ready.Load() {
+		if b.discord.Ready().Version > 0 && ready.Load() {
 			if err := b.refreshBotUserGuilds(); err != nil {
 				return fmt.Errorf("failed to refresh bot user guilds. %w", err)
 			}
@@ -215,7 +222,7 @@ func (b *Bot) start(ctx context.Context) error {
 
 		select {
 		case <-ctx.Done():
-			return fmt.Errorf("discord client failed to get ready, version %d", b.discord.State.Version)
+			return fmt.Errorf("discord client failed to get ready, version %d", b.discord.Ready().Version)
 
 		case <-time.After(750 * time.Millisecond):
 		}
@@ -226,8 +233,8 @@ func (b *Bot) start(ctx context.Context) error {
 	}
 
 	if b.cfg.Commands.Enabled {
-		if err := b.cmds.RegisterGlobalCommands(); err != nil {
-			return fmt.Errorf("failed to register global commands. %w", err)
+		if err := b.cmds.RegisterCommands(); err != nil {
+			return fmt.Errorf("failed to register commands. %w", err)
 		}
 	}
 
@@ -235,34 +242,52 @@ func (b *Bot) start(ctx context.Context) error {
 }
 
 func (b *Bot) setBotPresence() error {
+	var activity *discord.Activity
 	if b.cfg.Presence.GameStatus != nil {
-		if err := b.discord.UpdateGameStatus(0, *b.cfg.Presence.GameStatus); err != nil {
-			return err
+		activity = &discord.Activity{
+			Type: discord.GameActivity,
+			Name: *b.cfg.Presence.GameStatus,
 		}
 	} else if b.cfg.Presence.ListeningStatus != nil {
-		if err := b.discord.UpdateListeningStatus(*b.cfg.Presence.ListeningStatus); err != nil {
-			return err
+		activity = &discord.Activity{
+			Type: discord.ListeningActivity,
+			Name: *b.cfg.Presence.ListeningStatus,
 		}
 	} else if b.cfg.Presence.StreamingStatus != nil {
-		url := ""
-		if b.cfg.Presence.StreamingStatusUrl != nil {
-			url = *b.cfg.Presence.StreamingStatusUrl
+		activity = &discord.Activity{
+			Type: discord.StreamingActivity,
+			Name: *b.cfg.Presence.StreamingStatus,
 		}
-		if err := b.discord.UpdateStreamingStatus(0, *b.cfg.Presence.StreamingStatus, url); err != nil {
-			return err
+		if b.cfg.Presence.StreamingStatusUrl != nil {
+			activity.URL = *b.cfg.Presence.StreamingStatusUrl
 		}
 	} else if b.cfg.Presence.WatchStatus != nil {
-		if err := b.discord.UpdateWatchStatus(0, *b.cfg.Presence.WatchStatus); err != nil {
+		activity = &discord.Activity{
+			Type: discord.WatchingActivity,
+			Name: *b.cfg.Presence.WatchStatus,
+		}
+	}
+
+	if activity != nil {
+		if err := b.discord.PresenceSet(discord.NullGuildID, &discord.Presence{
+			Activities: []discord.Activity{
+				{
+					Type: discord.GameActivity,
+					Name: *b.cfg.Presence.GameStatus,
+				},
+			},
+		}, true); err != nil {
 			return err
 		}
 	}
+
 	b.logger.Info("bot presence has been set")
 
 	return nil
 }
 
 func (b *Bot) refreshBotUserGuilds() error {
-	usr, err := b.discord.User("@me")
+	usr, err := b.discord.Me()
 	if err != nil {
 		return fmt.Errorf("error obtaining account details: %w", err)
 	}
@@ -305,15 +330,16 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 		return nil
 	}
 
+	guilds, err := b.discord.GuildStore.Guilds()
+	if err != nil {
+		return fmt.Errorf("failed to get guilds from store. %w", err)
+	}
+
 	for job, guildID := range jobGuilds {
-		var found *discordgo.Guild
-		if !slices.ContainsFunc(b.discord.State.Ready.Guilds, func(in *discordgo.Guild) bool {
-			if in.ID == guildID {
-				found = in
-				return true
-			}
-			return false
-		}) {
+		idx := slices.IndexFunc(guilds, func(in discord.Guild) bool {
+			return in.ID == guildID
+		})
+		if idx == -1 {
 			// Make sure to stop any active stuff with the previously active guild
 			g, ok := b.activeGuilds.Load(guildID)
 			if ok {
@@ -322,11 +348,7 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 				b.activeGuilds.Delete(guildID)
 			}
 
-			continue
-		}
-
-		if found == nil {
-			b.logger.Warn("didn't find bot being in guild", zap.String("discord_guild_id", guildID), zap.String("job", job))
+			b.logger.Warn("didn't find bot in guild (anymore?)", zap.Uint64("discord_guild_id", uint64(guildID)), zap.String("job", job))
 			continue
 		}
 
@@ -334,17 +356,17 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 			continue
 		}
 
-		g, err := NewGuild(b.ctx, b, found, job)
+		g, err := NewGuild(b.ctx, b, guilds[idx], job)
 		if err != nil {
 			return err
 		}
-		b.activeGuilds.Store(g.id, g)
+		b.activeGuilds.Store(guildID, g)
 	}
 
 	return nil
 }
 
-func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error) {
+func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]discord.GuildID, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.Job.AS("job"),
@@ -365,9 +387,14 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]string, error)
 		}
 	}
 
-	guilds := map[string]string{}
+	guilds := map[string]discord.GuildID{}
 	for _, g := range dest {
-		guilds[g.Job] = g.ID
+		id, err := strconv.ParseUint(g.ID, 10, 64)
+		if err != nil {
+			return nil, fmt.Errorf("failed to parse guild id %s as uint64. %w", err)
+		}
+
+		guilds[g.Job] = discord.GuildID(id)
 	}
 
 	return guilds, nil
@@ -379,18 +406,8 @@ func (b *Bot) runSync(ctx context.Context) error {
 	}
 
 	totalCount := float64(0)
-	readyCount := float64(0)
-	b.activeGuilds.Range(func(key string, value *Guild) bool {
-		totalCount++
-		if !value.guild.Unavailable {
-			readyCount++
-		}
-
-		return true
-	})
 
 	metricGuildsTotal.Set(totalCount)
-	metricGuildsReady.Set(readyCount)
 
 	errs := multierr.Combine()
 
@@ -406,7 +423,7 @@ func (b *Bot) runSync(ctx context.Context) error {
 			b.wg.Add(1)
 			go func(g *Guild) {
 				defer b.wg.Done()
-				logger := b.logger.With(zap.String("job", g.job), zap.String("discord_guild_id", g.id))
+				logger := b.logger.With(zap.String("job", g.job), zap.Uint64("discord_guild_id", uint64(g.id)))
 
 				if err := g.Run(); err != nil {
 					logger.Error("error during sync", zap.Error(err))
@@ -420,7 +437,7 @@ func (b *Bot) runSync(ctx context.Context) error {
 		}
 	}()
 
-	b.activeGuilds.Range(func(_ string, guild *Guild) bool {
+	b.activeGuilds.Range(func(_ discord.GuildID, guild *Guild) bool {
 		workChannel <- guild
 		return true
 	})
@@ -434,7 +451,7 @@ func (b *Bot) runSync(ctx context.Context) error {
 
 func (b *Bot) stop() error {
 	errs := multierr.Combine()
-	b.activeGuilds.Range(func(key string, guild *Guild) bool {
+	b.activeGuilds.Range(func(key discord.GuildID, guild *Guild) bool {
 		guild.Stop()
 
 		return true

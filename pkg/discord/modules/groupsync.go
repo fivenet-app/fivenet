@@ -6,9 +6,10 @@ import (
 	"fmt"
 	"math/big"
 	"slices"
+	"strconv"
 	"strings"
 
-	"github.com/bwmarrin/discordgo"
+	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
@@ -41,7 +42,7 @@ func NewGroupSync(base *BaseModule) (Module, error) {
 	}, nil
 }
 
-func (g *GroupSync) Plan(ctx context.Context) (*types.State, []*discordgo.MessageEmbed, error) {
+func (g *GroupSync) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
 	roles := g.planRoles()
 
 	users, logs, err := g.planUsers(ctx, roles)
@@ -75,15 +76,19 @@ func (g *GroupSync) planRoles() []*types.Role {
 
 		n := new(big.Int)
 		n.SetString(color, 16)
-		colorDec := int(n.Int64())
+		colorDec := int32(n.Int64())
 
-		roles = append(roles, &types.Role{
-			Name:        dcRole.RoleName,
-			Permissions: dcRole.Permissions,
-			Color:       &colorDec,
+		r := &types.Role{
+			Name:  dcRole.RoleName,
+			Color: discord.Color(colorDec),
 
 			Module: "GroupSync",
-		})
+		}
+		if dcRole.Permissions != nil {
+			r.Permissions = discord.Permissions(*dcRole.Permissions)
+		}
+
+		roles = append(roles, r)
 
 		i++
 	}
@@ -91,9 +96,9 @@ func (g *GroupSync) planRoles() []*types.Role {
 	return roles
 }
 
-func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []*discordgo.MessageEmbed, error) {
+func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Users, []discord.Embed, error) {
 	users := types.Users{}
-	logs := []*discordgo.MessageEmbed{}
+	logs := []discord.Embed{}
 
 	serverGroups := []jet.Expression{}
 	for sGroup := range g.cfg.GroupSync.Mapping {
@@ -153,8 +158,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 			return role.Name == groupCfg.RoleName
 		})
 		if idx == -1 {
-			logs = append(logs, &discordgo.MessageEmbed{
-				Type:        discordgo.EmbedTypeRich,
+			logs = append(logs, discord.Embed{
 				Title:       fmt.Sprintf("Group Sync: Failed to find dc role for group %s", groupCfg.RoleName),
 				Description: fmt.Sprintf("For DC ID %s", user.ExternalID),
 				Author:      embeds.EmbedAuthor,
@@ -163,8 +167,14 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 			continue
 		}
 
+		externalId, err := strconv.ParseUint(user.ExternalID, 10, 64)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("failed to parse oauth2 external id %d. %w", externalId, err))
+			continue
+		}
+
 		users.Add(&types.User{
-			ID: user.ExternalID,
+			ID: discord.UserID(externalId),
 			Roles: &types.UserRoles{
 				Sum: []*types.Role{roles[idx]},
 			},
