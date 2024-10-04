@@ -94,7 +94,6 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                         name: 'auth-character-selector',
                         query: { redirect: route.query.redirect ?? route.fullPath },
                         replace: true,
-                        force: true,
                     });
                 }
                 break;

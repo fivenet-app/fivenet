@@ -425,7 +425,10 @@ defineShortcuts({
                                                                 <UButton
                                                                     v-for="item in unitStatuses"
                                                                     :key="item.name"
-                                                                    :ui="{ gap: 'gap-x-0.5', padding: { xs: 'px-1.5 py-1.5' } }"
+                                                                    :ui="{
+                                                                        gap: { xs: 'gap-x-0.5' },
+                                                                        padding: { xs: 'px-1.5 py-1.5' },
+                                                                    }"
                                                                     size="xs"
                                                                     :disabled="!canSubmitUnitStatus"
                                                                     :icon="item.icon"
@@ -486,7 +489,10 @@ defineShortcuts({
                                                                         (s) => s.status !== StatusDispatch.CANCELLED,
                                                                     )"
                                                                     :key="item.name"
-                                                                    :ui="{ gap: 'gap-x-0.5', padding: { xs: 'px-1.5 py-1.5' } }"
+                                                                    :ui="{
+                                                                        gap: { xs: 'gap-x-0.5' },
+                                                                        padding: { xs: 'px-1.5 py-1.5' },
+                                                                    }"
                                                                     size="xs"
                                                                     :disabled="!canSubmitDispatchStatus"
                                                                     :icon="item.icon"

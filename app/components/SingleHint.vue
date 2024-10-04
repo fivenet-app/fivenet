@@ -33,7 +33,7 @@ const props = defineProps<{
                 <div v-if="showKey || to" class="flex-initial">
                     <UKbd v-if="showKey" :value="$t(`components.hints.${hintId}.keyboard`)" />
 
-                    <UButton v-else-if="to" variant="soft" :to="to" :external="props.external" :target="linkTarget">
+                    <UButton v-else-if="to" variant="soft" :to="to.toString()" :external="props.external" :target="linkTarget">
                         {{ $t('components.hints.click_me') }}
                     </UButton>
                 </div>
