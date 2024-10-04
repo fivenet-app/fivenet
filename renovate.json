@@ -4,5 +4,8 @@
         "github>nuxt/renovate-config-nuxt"
     ],
     "baseBranches": ["develop"],
-    "postUpdateOptions": ["gomodTidy"]
+    "postUpdateOptions": ["gomodTidy"],
+    "nix": {
+        "enabled": true
+    }
 }

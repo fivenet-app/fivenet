@@ -18,6 +18,11 @@ var EmbedAuthor = &discordgo.MessageEmbedAuthor{
 	IconURL: "https://raw.githubusercontent.com/fivenet-app/fivenet/main/public/images/logo-200x200.png",
 }
 
-var EmbedFooter = &discordgo.MessageEmbedFooter{
+var EmbedFooterVersion = &discordgo.MessageEmbedFooter{
 	Text: "Version: " + version.Version,
+}
+
+var EmbedFooterMadeBy = &discordgo.MessageEmbedFooter{
+	Text:    "Made by Galexrt",
+	IconURL: "https://cdn.discordapp.com/avatars/290472392084422658/58e38b558fb3a54b4864584e7b7297f6.png",
 }

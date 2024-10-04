@@ -132,16 +132,15 @@ const columns = [
         class="flex-1"
     >
         <template #name-data="{ row: colleague }">
-            <div class="inline-flex items-center">
+            <div class="inline-flex items-center gap-1 text-gray-900 dark:text-white">
                 <ProfilePictureImg
                     :src="colleague.avatar?.url"
                     :name="`${colleague.firstname} ${colleague.lastname}`"
                     size="sm"
                     :enable-popup="true"
-                    class="mr-2"
                 />
 
-                {{ colleague.firstname }} {{ colleague.lastname }}
+                <span> {{ colleague.firstname }} {{ colleague.lastname }} </span>
             </div>
             <dl class="font-normal lg:hidden">
                 <dt class="sr-only">{{ $t('common.job_grade') }}</dt>

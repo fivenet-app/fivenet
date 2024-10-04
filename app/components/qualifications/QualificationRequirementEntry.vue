@@ -49,21 +49,23 @@ watch(selectedQualification, () => emits('update-qualification', selectedQualifi
 <template>
     <div class="my-2 flex flex-row items-center">
         <UFormGroup name="selectedQualification" class="flex-1">
-            <UInputMenu
-                v-model="selectedQualification"
-                option-attribute="title"
-                :search-attributes="['title']"
-                block
-                :search="(query: string) => listQualifications(query)"
-                search-lazy
-                :search-placeholder="$t('common.search_field')"
-                :loading="qualificationsLoading"
-            >
-                <template #option-empty="{ query: search }">
-                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                </template>
-                <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-            </UInputMenu>
+            <ClientOnly>
+                <UInputMenu
+                    v-model="selectedQualification"
+                    option-attribute="title"
+                    :search-attributes="['title']"
+                    block
+                    :search="(query: string) => listQualifications(query)"
+                    search-lazy
+                    :search-placeholder="$t('common.search_field')"
+                    :loading="qualificationsLoading"
+                >
+                    <template #option-empty="{ query: search }">
+                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                    </template>
+                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                </UInputMenu>
+            </ClientOnly>
         </UFormGroup>
 
         <UButton :ui="{ rounded: 'rounded-full' }" class="ml-2" icon="i-mdi-close" @click="$emit('remove')" />

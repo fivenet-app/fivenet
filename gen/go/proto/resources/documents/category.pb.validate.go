@@ -100,6 +100,36 @@ func (m *Category) validate(all bool) error {
 
 	}
 
+	if m.Color != nil {
+
+		if l := utf8.RuneCountInString(m.GetColor()); l < 3 || l > 7 {
+			err := CategoryValidationError{
+				field:  "Color",
+				reason: "value length must be between 3 and 7 runes, inclusive",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
+	if m.Icon != nil {
+
+		if utf8.RuneCountInString(m.GetIcon()) > 128 {
+			err := CategoryValidationError{
+				field:  "Icon",
+				reason: "value length must be at most 128 runes",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return CategoryMultiError(errors)
 	}

@@ -183,65 +183,68 @@ defineShortcuts({
             <UForm :schema="schema" :state="query" class="w-full" @submit="refresh()">
                 <div class="flex flex-row gap-2">
                     <UFormGroup v-if="hideUserSearch !== true" name="user" :label="$t('common.search')" class="flex-1">
-                        <USelectMenu
-                            ref="input"
-                            v-model="query.user"
-                            :searchable="
-                                async (query: string) => {
-                                    usersLoading = true;
-                                    const colleagues = await completorStore.listColleagues({
-                                        search: query,
-                                    });
-                                    usersLoading = false;
-                                    return colleagues;
-                                }
-                            "
-                            searchable-lazy
-                            :searchable-placeholder="$t('common.search_field')"
-                            :search-attributes="['firstname', 'lastname']"
-                            block
-                            :placeholder="$t('common.colleague')"
-                            trailing
-                            by="userId"
-                            @keydown.esc="$event.target.blur()"
-                        >
-                            <template #option="{ option: user }">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                            </template>
-
-                            <template #trailing>
-                                <UKbd value="/" />
-                            </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                ref="input"
+                                v-model="query.user"
+                                :searchable="
+                                    async (query: string) => {
+                                        usersLoading = true;
+                                        const colleagues = await completorStore.listColleagues({
+                                            search: query,
+                                        });
+                                        usersLoading = false;
+                                        return colleagues;
+                                    }
+                                "
+                                searchable-lazy
+                                :searchable-placeholder="$t('common.search_field')"
+                                :search-attributes="['firstname', 'lastname']"
+                                block
+                                :placeholder="$t('common.colleague')"
+                                trailing
+                                by="userId"
+                                @keydown.esc="$event.target.blur()"
+                            >
+                                <template #option="{ option: user }">
+                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                </template>
+                                <template #trailing>
+                                    <UKbd value="/" />
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup name="types" :label="$t('common.type')" class="flex-1">
-                        <USelectMenu
-                            v-model="query.types"
-                            multiple
-                            nullable
-                            :options="cTypes"
-                            value-attribute="status"
-                            :placeholder="$t('common.na')"
-                            :searchable-placeholder="$t('common.search_field')"
-                            @keydown.esc="$event.target.blur()"
-                        >
-                            <template #option="{ option }">
-                                <span class="truncate" :class="conductTypesToBGColor(option.status)">
-                                    {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
-                                </span>
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.types"
+                                multiple
+                                nullable
+                                :options="cTypes"
+                                value-attribute="status"
+                                :placeholder="$t('common.na')"
+                                :searchable-placeholder="$t('common.search_field')"
+                                @keydown.esc="$event.target.blur()"
+                            >
+                                <template #option="{ option }">
+                                    <span class="truncate" :class="conductTypesToBGColor(option.status)">
+                                        {{ $t(`enums.jobs.ConductType.${ConductType[option.status]}`) }}
+                                    </span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup name="id" :label="$t('common.id')" class="flex-initial">

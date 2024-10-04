@@ -30,7 +30,7 @@ func (s *State) Calculate(ctx context.Context, dc *discordgo.Session, dryRun boo
 			continue
 		}
 
-		u, _ := s.Users[member.User.ID]
+		u := s.Users[member.User.ID]
 		pu, err := s.calculateUserUpdates(ctx, member, u)
 		if err != nil {
 			return plan, logs, err
@@ -40,7 +40,7 @@ func (s *State) Calculate(ctx context.Context, dc *discordgo.Session, dryRun boo
 	}
 
 	plan.Users = slices.DeleteFunc(plan.Users, func(u *User) bool {
-		return u.ID == "" || ((u.Kick == nil || *u.Kick == false) && (u.Roles == nil || (len(u.Roles.ToAdd) == 0 && len(u.Roles.ToRemove) == 0)))
+		return u.ID == "" || ((u.Kick == nil || !*u.Kick) && (u.Roles == nil || (len(u.Roles.ToAdd) == 0 && len(u.Roles.ToRemove) == 0)))
 	})
 
 	return plan, logs, nil
@@ -103,6 +103,7 @@ func (s *State) calculateUserUpdates(ctx context.Context, member *discordgo.Memb
 			Roles: &UserRoles{},
 		}
 	}
+
 	for _, fn := range s.UserProcessors {
 		fn(ctx, s.GuildID, member, user)
 	}
@@ -117,13 +118,16 @@ func (s *State) calculateUserUpdates(ctx context.Context, member *discordgo.Memb
 		// If the role is bot managed, and the user is not assigned to the role, remove the role
 		if idx := slices.IndexFunc(s.Roles, func(r *Role) bool {
 			return r.ID == role
-		}); idx > -1 && !slices.ContainsFunc(user.Roles.Sum, func(r *Role) bool {
-			return r.ID == role
-		}) {
-			if s.Roles[idx].Job != "" && s.Roles[idx].Job == user.Job {
-				continue
+		}); idx > -1 {
+			if !slices.ContainsFunc(user.Roles.Sum, func(r *Role) bool {
+				return r.ID == role
+			}) {
+				if s.Roles[idx].Job != "" && s.Roles[idx].Job == user.Job {
+					continue
+				}
+
+				user.Roles.ToRemove = append(user.Roles.ToRemove, s.Roles[idx])
 			}
-			user.Roles.ToRemove = append(user.Roles.ToRemove, s.Roles[idx])
 		}
 	}
 

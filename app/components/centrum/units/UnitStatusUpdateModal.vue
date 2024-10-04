@@ -33,13 +33,7 @@ const state = reactive<Schema>({
     status: props.status ?? props.unit?.status?.status ?? StatusUnit.UNKNOWN,
 });
 
-interface FormData {
-    status: number;
-    code?: string;
-    reason?: string;
-}
-
-async function updateUnitStatus(id: string, values: FormData): Promise<void> {
+async function updateUnitStatus(id: string, values: Schema): Promise<void> {
     try {
         const call = getGRPCCentrumClient().updateUnitStatus({
             unitId: id,
@@ -187,18 +181,20 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <USelectMenu
-                                    name="unitStatus"
-                                    :options="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    @change="updateReasonField($event)"
-                                >
-                                    <template #option="{ option }">
-                                        <span class="truncate">
-                                            {{ option !== '' ? option : '&nbsp;' }}
-                                        </span>
-                                    </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        name="unitStatus"
+                                        :options="['&nbsp;', ...settings?.predefinedStatus.unitStatus]"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        @change="updateReasonField($event)"
+                                    >
+                                        <template #option="{ option }">
+                                            <span class="truncate">
+                                                {{ option !== '' ? option : '&nbsp;' }}
+                                            </span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </dd>
                         </div>
                     </dl>

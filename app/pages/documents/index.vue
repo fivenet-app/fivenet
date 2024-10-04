@@ -4,6 +4,7 @@ import TemplatesModal from '~/components/documents/templates/TemplatesModal.vue'
 import Pagination from '~/components/partials/Pagination.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DocumentCategoryBadge from '~/components/partials/documents/DocumentCategoryBadge.vue';
 import DocumentInfoPopover from '~/components/partials/documents/DocumentInfoPopover.vue';
 import type { ListDocumentPinsResponse } from '~~/gen/ts/services/docstore/docstore';
 
@@ -157,9 +158,10 @@ const isOpen = ref(false);
                                                 <USkeleton v-if="!document && docLoading" class="h-8 w-[125px]" />
 
                                                 <div v-else class="flex flex-col">
-                                                    <UBadge v-if="document?.category">
-                                                        {{ document.category.name }}
-                                                    </UBadge>
+                                                    <DocumentCategoryBadge
+                                                        v-if="document?.category"
+                                                        :category="document?.category"
+                                                    />
 
                                                     <span class="line-clamp-3 hyphens-auto break-words text-left">
                                                         {{ document?.title }}

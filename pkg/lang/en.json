@@ -1,0 +1,22 @@
+{
+    "discord": {
+        "commands": {
+            "fivenet": {
+                "desc": "Link to the FiveNet web app.",
+                "summary": "FiveNet is also available in your browser! Link to the FiveNet web app."
+            },
+            "help": {
+                "desc": "Help topics for FiveNet.",
+                "empty": {
+                    "title": "No help topic chosen!",
+                    "msg": "Available topics:\n* `discord`"
+                },
+                "discord": {
+                    "desc": "Steps to connect Discord with FiveNet.",
+                    "title": "Connecting Discord with FiveNet",
+                    "msg": "1. Navigate to [your FiveNet account information]({{.URL}}).\n2. If the \"Social Login Connections\" tab isn't already selected, select it.\n3. Click on the \"Connect\"-button for Discord.\n4. You might need to login to your Discord account, before Discord asks for confirmation that you want to connect Discord with FiveNet, the \"Connect\"-button should have changed to a \"Disconnect\"-button.\n5. Congrats, you are done! If you have connected the correct Discord account, the FiveNet Discord sync should give set your roles in a few minutes.\n\n(If you have connected the wrong Discord account, use the \"Disconnect\"-button to disconnect the Discord account from FiveNet, and continue with step 3)"
+                }
+            }
+        }
+    }
+}

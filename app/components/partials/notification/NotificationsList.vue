@@ -115,26 +115,28 @@ const canSubmit = ref(true);
                     </UFormGroup>
 
                     <UFormGroup name="categories" :label="$t('common.category', 2)" class="flex-1">
-                        <USelectMenu
-                            v-model="query.categories"
-                            multiple
-                            name="categories"
-                            :options="categories"
-                            option-attribute="label"
-                            value-attribute="chip"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #label>
-                                <template v-if="query.categories">
-                                    <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="query.categories"
+                                multiple
+                                name="categories"
+                                :options="categories"
+                                option-attribute="label"
+                                value-attribute="chip"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #label>
+                                    <template v-if="query.categories">
+                                        <span class="truncate">{{ notificationCategoriesToLabel(query.categories) }}</span>
+                                    </template>
                                 </template>
-                            </template>
-                            <template #option="{ option }">
-                                <span class="truncate">{{
-                                    $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)
-                                }}</span>
-                            </template>
-                        </USelectMenu>
+                                <template #option="{ option }">
+                                    <span class="truncate">{{
+                                        $t(`enums.notifications.NotificationCategory.${NotificationCategory[option.mode ?? 0]}`)
+                                    }}</span>
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup label="&nbsp;" class="flex-initial">

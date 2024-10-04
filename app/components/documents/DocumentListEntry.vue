@@ -4,6 +4,7 @@ import OpenClosedBadge from '~/components/partials/OpenClosedBadge.vue';
 import CitizenInfoPopover from '~/components/partials/citizens/CitizenInfoPopover.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentShort } from '~~/gen/ts/resources/documents/documents';
+import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 
 defineProps<{
     document: DocumentShort;
@@ -53,12 +54,7 @@ defineProps<{
 
                 <div class="flex max-w-full shrink flex-row gap-2">
                     <div class="flex items-center gap-1">
-                        <UBadge v-if="document.category" class="inline-flex flex-initial gap-1" size="md">
-                            <UIcon name="i-mdi-shape" class="size-5" />
-                            <span :title="document.category.description ?? $t('common.na')">
-                                {{ document.category.name }}
-                            </span>
-                        </UBadge>
+                        <DocumentCategoryBadge :category="document.category" />
 
                         <h2 class="my-2 mr-2 line-clamp-1 flex-1 break-all text-xl font-medium hover:line-clamp-3">
                             {{ document.title }}

@@ -143,6 +143,8 @@ func (c *Cache) refreshCategories(ctx context.Context) error {
 			tDCategory.Name,
 			tDCategory.Description,
 			tDCategory.Job,
+			tDCategory.Color,
+			tDCategory.Icon,
 		).
 		FROM(tDCategory).
 		ORDER_BY(

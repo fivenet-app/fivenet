@@ -6,6 +6,16 @@ import (
 
 type Roles []*Role
 
+func (r Roles) ToSlice() []*Role {
+	list := make([]*Role, 0, len(r))
+
+	for _, value := range r {
+		list = append(list, value)
+	}
+
+	return list
+}
+
 type Role struct {
 	ID          string `yaml:"id"`
 	Name        string `yaml:"name"`
@@ -71,10 +81,12 @@ func (u *User) Merge(user *User) {
 		u.KickReason = user.KickReason
 	}
 
+	// u.Job = user.Job
+
 	if u.Roles == nil {
 		u.Roles = &UserRoles{}
 	}
-	if user.Roles != nil && len(user.Roles.Sum) > 0 {
+	if len(user.Roles.Sum) > 0 {
 		u.Roles.Sum = append(u.Roles.Sum, user.Roles.Sum...)
 		u.Roles.Sum = utils.RemoveSliceDuplicates(u.Roles.Sum)
 	}

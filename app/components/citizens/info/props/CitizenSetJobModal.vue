@@ -108,52 +108,55 @@ onBeforeMount(async () => listJobs());
                     </UFormGroup>
 
                     <UFormGroup class="flex-1" name="job" :label="$t('common.job')">
-                        <USelectMenu
-                            v-model="state.job"
-                            :options="jobs"
-                            by="label"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #label>
-                                <template v-if="state.job">
-                                    <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.job"
+                                :options="jobs"
+                                by="label"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #label>
+                                    <template v-if="state.job">
+                                        <span class="truncate">{{ state.job?.label }} ({{ state.job.name }})</span>
+                                    </template>
                                 </template>
-                            </template>
-                            <template #option="{ option: job }">
-                                <span class="truncate">{{ job.label }} ({{ job.name }})</span>
-                            </template>
-
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.job')]) }}
-                            </template>
-                        </USelectMenu>
+                                <template #option="{ option: job }">
+                                    <span class="truncate">{{ job.label }} ({{ job.name }})</span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.job')]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup class="flex-1" name="grade" :label="$t('common.job_grade')">
-                        <USelectMenu
-                            v-model="state.grade"
-                            :options="state.job?.grades"
-                            by="grade"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #label>
-                                <span v-if="state.grade" class="truncate"
-                                    >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
-                                >
-                            </template>
-                            <template #option="{ option: jobGrade }">
-                                <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.job_grade')]) }}
-                            </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.grade"
+                                :options="state.job?.grades"
+                                by="grade"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #label>
+                                    <span v-if="state.grade" class="truncate"
+                                        >{{ state.grade?.label }} ({{ state.grade?.grade }})</span
+                                    >
+                                </template>
+                                <template #option="{ option: jobGrade }">
+                                    <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.job_grade')]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
                 </div>
 

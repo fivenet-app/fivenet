@@ -8,8 +8,6 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 
 const { data: categories, pending: loading, refresh, error } = useLazyAsyncData(`documents-categories`, () => listCategories());
 
-const items = ref<CardElements>([]);
-
 async function listCategories(): Promise<Category[]> {
     try {
         const call = getGRPCDocStoreClient().listCategories({});
@@ -22,14 +20,15 @@ async function listCategories(): Promise<Category[]> {
     }
 }
 
+const items = ref<CardElements>([]);
+
 watch(categories, () => {
     if (items.value) {
         items.value.length = 0;
     }
 
-    categories.value?.forEach((v) => {
-        items.value.push({ title: v?.name, description: v?.description });
-    });
+    items.value =
+        categories.value?.map((v) => ({ title: v?.name, description: v?.description, icon: v.icon, color: v.color })) ?? [];
 });
 
 const modal = useModal();
@@ -38,11 +37,11 @@ const modal = useModal();
 <template>
     <UDashboardNavbar :title="$t('pages.documents.categories.title')">
         <template #right>
-            <UButtonGroup class="inline-flex">
-                <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
-                    {{ $t('common.back') }}
-                </UButton>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
+                {{ $t('common.back') }}
+            </UButton>
 
+            <UButtonGroup class="inline-flex">
                 <UButton
                     v-if="can('DocStoreService.CreateCategory').value"
                     color="gray"

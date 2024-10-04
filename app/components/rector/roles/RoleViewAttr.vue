@@ -312,37 +312,39 @@ onBeforeMount(async () => {
                                 />
                                 <span class="my-auto flex-1">{{ job.label }}</span>
 
-                                <USelectMenu
-                                    :options="
-                                        job.grades.filter(
-                                            (g) =>
-                                                maxValues &&
-                                                maxValues.validValues.oneofKind === 'jobGradeList' &&
-                                                (maxValues.validValues.jobGradeList.jobs[job.name] ?? 1) + 1 > g.grade,
-                                        )
-                                    "
-                                    :search-attributes="['label']"
-                                    by="grade"
-                                    :placeholder="$t('common.rank')"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    @update:model-value="updateJobGradeValue(job, $event)"
-                                >
-                                    <template #label>
-                                        <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
-                                            <span class="truncate">{{
-                                                job.grades[(currentValue.validValues.jobGradeList.jobs[job.name] ?? 1) - 1]
-                                                    ?.label ?? $t('common.na')
-                                            }}</span>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        :options="
+                                            job.grades.filter(
+                                                (g) =>
+                                                    maxValues &&
+                                                    maxValues.validValues.oneofKind === 'jobGradeList' &&
+                                                    (maxValues.validValues.jobGradeList.jobs[job.name] ?? 1) + 1 > g.grade,
+                                            )
+                                        "
+                                        :search-attributes="['label']"
+                                        by="grade"
+                                        :placeholder="$t('common.rank')"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        @update:model-value="updateJobGradeValue(job, $event)"
+                                    >
+                                        <template #label>
+                                            <template v-if="job.grades && currentValue.validValues.jobGradeList.jobs[job.name]">
+                                                <span class="truncate">{{
+                                                    job.grades[(currentValue.validValues.jobGradeList.jobs[job.name] ?? 1) - 1]
+                                                        ?.label ?? $t('common.na')
+                                                }}</span>
+                                            </template>
                                         </template>
-                                    </template>
-                                    <template #option="{ option: grade }">
-                                        {{ grade?.label }}
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
-                                </USelectMenu>
+                                        <template #option="{ option: grade }">
+                                            {{ grade?.label }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.rank')]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </div>
                         </template>
                     </div>

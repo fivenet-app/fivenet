@@ -162,36 +162,38 @@ defineShortcuts({
                 </UFormGroup>
 
                 <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.owner')" class="flex-1">
-                    <UInputMenu
-                        v-model="selectedUser"
-                        name="selectedUser"
-                        nullable
-                        :search="
-                            async (query: string): Promise<UserShort[]> => {
-                                usersLoading = true;
-                                const { response } = await getGRPCCompletorClient().completeCitizens({
-                                    search: query,
-                                });
-                                usersLoading = false;
-                                return response.users;
-                            }
-                        "
-                        search-lazy
-                        :search-placeholder="$t('common.search_field')"
-                        :search-attributes="['firstname', 'lastname']"
-                        block
-                        :placeholder="$t('common.owner')"
-                        trailing
-                        by="userId"
-                    >
-                        <template #option="{ option: user }">
-                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                        </template>
-                        <template #option-empty="{ query: search }">
-                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                        </template>
-                        <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
-                    </UInputMenu>
+                    <ClientOnly>
+                        <UInputMenu
+                            v-model="selectedUser"
+                            name="selectedUser"
+                            nullable
+                            :search="
+                                async (query: string): Promise<UserShort[]> => {
+                                    usersLoading = true;
+                                    const { response } = await getGRPCCompletorClient().completeCitizens({
+                                        search: query,
+                                    });
+                                    usersLoading = false;
+                                    return response.users;
+                                }
+                            "
+                            search-lazy
+                            :search-placeholder="$t('common.search_field')"
+                            :search-attributes="['firstname', 'lastname']"
+                            block
+                            :placeholder="$t('common.owner')"
+                            trailing
+                            by="userId"
+                        >
+                            <template #option="{ option: user }">
+                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                            </template>
+                            <template #option-empty="{ query: search }">
+                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                            </template>
+                            <template #empty> {{ $t('common.not_found', [$t('common.owner', 2)]) }} </template>
+                        </UInputMenu>
+                    </ClientOnly>
                 </UFormGroup>
             </UForm>
         </template>

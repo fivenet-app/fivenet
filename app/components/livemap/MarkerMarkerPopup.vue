@@ -68,6 +68,7 @@ async function deleteMarker(id: string): Promise<void> {
                     :title="$t('common.delete')"
                     variant="link"
                     icon="i-mdi-trash-can"
+                    color="red"
                     @click="
                         modal.open(ConfirmModal, {
                             confirm: async () => deleteMarker(marker.info!.id),

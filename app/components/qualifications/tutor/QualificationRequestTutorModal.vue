@@ -101,30 +101,32 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
-                        <USelectMenu
-                            v-model="state.status"
-                            :options="availableStatus"
-                            value-attribute="status"
-                            :placeholder="$t('common.status')"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #label>
-                                <span v-if="state.status" class="truncate">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
-                                }}</span>
-                            </template>
-                            <template #option="{ option }">
-                                <span class="truncate">{{
-                                    $t(`enums.qualifications.RequestStatus.${RequestStatus[option.status]}`)
-                                }}</span>
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.status')]) }}
-                            </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.status"
+                                :options="availableStatus"
+                                value-attribute="status"
+                                :placeholder="$t('common.status')"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #label>
+                                    <span v-if="state.status" class="truncate">{{
+                                        $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
+                                    }}</span>
+                                </template>
+                                <template #option="{ option }">
+                                    <span class="truncate">{{
+                                        $t(`enums.qualifications.RequestStatus.${RequestStatus[option.status]}`)
+                                    }}</span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.status')]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup name="approverComment" :label="$t('common.message')" class="flex-1">

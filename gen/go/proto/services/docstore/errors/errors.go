@@ -10,7 +10,7 @@ var (
 	ErrNotFoundOrNoPerms   = status.Error(codes.NotFound, "errors.DocStoreService.ErrNotFoundOrNoPerms")
 	ErrTemplateNoPerms     = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrTemplateNoPerms")
 	ErrPermissionDenied    = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrPermissionDenied")
-	ErrClosedDoc           = status.Error(codes.Canceled, "errors.DocStoreService.ErrClosedDoc")
+	ErrClosedDoc           = status.Error(codes.InvalidArgument, "errors.DocStoreService.ErrClosedDoc")
 	ErrDocViewDenied       = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocViewDenied")
 	ErrDocUpdateDenied     = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocUpdateDenied")
 	ErrDocDeleteDenied     = status.Error(codes.PermissionDenied, "errors.DocStoreService.ErrDocDeleteDenied")

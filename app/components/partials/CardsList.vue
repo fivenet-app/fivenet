@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { markerFallbackIcon, markerIcons } from '~/components/livemap/helpers';
 import type { CardElement } from '~/utils/types';
 
 withDefaults(
@@ -24,9 +25,20 @@ defineEmits<{
             :to="module.to"
             :title="module.title"
             :description="module.description"
-            :icon="!showIcon ? undefined : module.icon"
+            :icon="showIcon && module.icon?.startsWith('i-') ? module.icon : undefined"
             @click="$emit('selected', index)"
         >
+            <template v-if="showIcon && !module.icon?.startsWith('i-')" #icon>
+                <div v-if="showIcon">
+                    <component
+                        :is="markerIcons.find((item) => item.name === module.icon) ?? markerFallbackIcon"
+                        v-if="module.icon"
+                        class="text-primary h-10 w-10 flex-shrink-0"
+                        :style="{ color: module.color }"
+                    />
+                </div>
+            </template>
+
             <template #description>
                 <span class="line-clamp-2">{{ module.description }}</span>
             </template>

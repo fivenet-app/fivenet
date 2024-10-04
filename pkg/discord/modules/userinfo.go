@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"net/http"
 	"regexp"
+	"slices"
 	"strconv"
 	"strings"
 	"time"
@@ -13,7 +14,6 @@ import (
 	"github.com/bwmarrin/discordgo"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	pbusers "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -70,7 +70,11 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 	}
 
 	handlers := []types.UserProcessorHandler{}
-	for _, role := range roles {
+	if idx := slices.IndexFunc(roles.ToSlice(), func(role *types.Role) bool {
+		return role.Module == userInfoRoleModuleUnemployed
+	}); idx > -1 {
+		role := roles[idx]
+
 		if role.Module == userInfoRoleModuleUnemployed {
 			handlers = append(handlers, func(ctx context.Context, guildId string, member *discordgo.Member, user *types.User) (*types.User, []*discordgo.MessageEmbed, error) {
 				if user.Job == g.job {
@@ -83,10 +87,10 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 				}
 
 				switch g.settings.UserInfoSyncSettings.UnemployedMode {
-				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+				case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
 					user.Roles.Sum = append(user.Roles.Sum, role)
 
-				case pbusers.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+				case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
 					kick := true
 					user.Kick = &kick
 					user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
@@ -94,7 +98,6 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []*discordgo.Message
 
 				return user, nil, nil
 			})
-			break
 		}
 	}
 
@@ -151,6 +154,7 @@ func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 		grade := job.Grades[i]
 		name := strings.ReplaceAll(g.settings.UserInfoSyncSettings.GradeRoleFormat, "%grade_label%", grade.Label)
 		name = strings.ReplaceAll(name, "%grade%", fmt.Sprintf("%02d", grade.Grade))
+		name = strings.ReplaceAll(name, "%grade_single%", fmt.Sprintf("%d", grade.Grade))
 
 		if _, ok := jobRoles[grade.Grade]; ok {
 			continue
@@ -289,8 +293,8 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 
 		if g.settings.UserInfoSyncSettings.SyncNicknames {
 			name := g.getUserNickname(member, u.Firstname, u.Lastname)
-			if name != "" {
-				user.Nickname = &name
+			if name != nil {
+				user.Nickname = name
 			}
 		}
 
@@ -329,9 +333,9 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 	return users, logs, errs
 }
 
-func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, lastname string) string {
+func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, lastname string) *string {
 	if g.guild.OwnerID == member.User.ID {
-		return ""
+		return nil
 	}
 
 	fullName := strings.TrimSpace(firstname + " " + lastname)
@@ -357,14 +361,14 @@ func (g *UserInfo) getUserNickname(member *discordgo.Member, firstname string, l
 	}
 
 	if strings.TrimSpace(nickname) == fullName {
-		return fullName
+		return &fullName
 	}
 
 	// Last space on the name is lost due to the space trimming combined with the regex capture
 	fullName = g.nicknameRegex.ReplaceAllString(member.Nick, "${prefix}"+fullName+" ${suffix}")
 	fullName = strings.TrimSpace(fullName)
 
-	return fullName
+	return &fullName
 }
 
 func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade int32) (types.Roles, error) {

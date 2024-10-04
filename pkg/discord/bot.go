@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/commands"
+	"github.com/fivenet-app/fivenet/pkg/lang"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -81,6 +82,7 @@ type BotParams struct {
 	Enricher  *mstlystcdata.Enricher
 	Config    *config.Config
 	AppConfig appconfig.IConfig
+	I18n      *lang.I18n
 }
 
 type Bot struct {
@@ -91,6 +93,7 @@ type Bot struct {
 	enricher *mstlystcdata.Enricher
 	cfg      *config.Discord
 	appCfg   appconfig.IConfig
+	i18n     *lang.I18n
 
 	cmds *commands.Cmds
 
@@ -114,7 +117,7 @@ func NewBot(p BotParams) (*Bot, error) {
 	}
 	discord.Identify.Intents = discordgo.IntentsAllWithoutPrivileged | discordgo.IntentsGuilds | discordgo.IntentsGuildMembers | discordgo.IntentsGuildPresences
 
-	cmds, err := commands.New(p.Logger, discord, p.Config)
+	cmds, err := commands.New(p.Logger, discord, p.Config, p.I18n)
 	if err != nil {
 		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
 	}
@@ -128,6 +131,7 @@ func NewBot(p BotParams) (*Bot, error) {
 		enricher: p.Enricher,
 		cfg:      &p.Config.Discord,
 		appCfg:   p.AppConfig,
+		i18n:     p.I18n,
 
 		cmds: cmds,
 
@@ -143,7 +147,7 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
-		// Cause discord client disconnects to cause bot restart
+		// Cause discord client disconnects to cause bot restart after so many tries
 		b.discord.AddHandler(func(discord *discordgo.Session, r *discordgo.Disconnect) {
 			b.logger.Warn("discord client disconnected")
 
@@ -194,18 +198,10 @@ func (b *Bot) start(ctx context.Context) error {
 
 	b.discord.AddHandler(func(s *discordgo.Session, g *discordgo.GuildCreate) {
 		b.logger.Info("discord server joined", zap.String("discord_guild_id", g.ID))
-
-		b.discord.RequestGuildMembers(g.ID, "", 0, "", false)
 	})
 
 	if err := b.discord.Open(); err != nil {
-		return fmt.Errorf("error opening connection: %w", err)
-	}
-
-	if b.cfg.Commands.Enabled {
-		if err := b.cmds.RegisterGlobalCommands(); err != nil {
-			return fmt.Errorf("failed to register global commands. %w", err)
-		}
+		return fmt.Errorf("error opening discord connection: %w", err)
 	}
 
 	for {
@@ -214,7 +210,7 @@ func (b *Bot) start(ctx context.Context) error {
 				return fmt.Errorf("failed to refresh bot user guilds. %w", err)
 			}
 
-			return b.setBotPresence()
+			break
 		}
 
 		select {
@@ -224,6 +220,18 @@ func (b *Bot) start(ctx context.Context) error {
 		case <-time.After(750 * time.Millisecond):
 		}
 	}
+
+	if err := b.setBotPresence(); err != nil {
+		return fmt.Errorf("failed to set bot presence. %w", err)
+	}
+
+	if b.cfg.Commands.Enabled {
+		if err := b.cmds.RegisterGlobalCommands(); err != nil {
+			return fmt.Errorf("failed to register global commands. %w", err)
+		}
+	}
+
+	return nil
 }
 
 func (b *Bot) setBotPresence() error {

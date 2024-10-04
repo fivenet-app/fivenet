@@ -97,6 +97,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.val
                             v-if="can('CentrumService.DeleteDispatch').value"
                             variant="link"
                             icon="i-mdi-trash-can"
+                            color="red"
                             :title="$t('common.delete')"
                             @click="
                                 modal.open(ConfirmModal, {

@@ -60,6 +60,10 @@ export interface OAuth2Provider {
      * @generated from protobuf field: string homepage = 3;
      */
     homepage: string;
+    /**
+     * @generated from protobuf field: optional string icon = 4;
+     */
+    icon?: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class OAuth2Account$Type extends MessageType<OAuth2Account> {
@@ -160,7 +164,8 @@ class OAuth2Provider$Type extends MessageType<OAuth2Provider> {
         super("resources.accounts.OAuth2Provider", [
             { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "label", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 3, name: "homepage", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 3, name: "homepage", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 4, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<OAuth2Provider>): OAuth2Provider {
@@ -186,6 +191,9 @@ class OAuth2Provider$Type extends MessageType<OAuth2Provider> {
                 case /* string homepage */ 3:
                     message.homepage = reader.string();
                     break;
+                case /* optional string icon */ 4:
+                    message.icon = reader.string();
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -207,6 +215,9 @@ class OAuth2Provider$Type extends MessageType<OAuth2Provider> {
         /* string homepage = 3; */
         if (message.homepage !== "")
             writer.tag(3, WireType.LengthDelimited).string(message.homepage);
+        /* optional string icon = 4; */
+        if (message.icon !== undefined)
+            writer.tag(4, WireType.LengthDelimited).string(message.icon);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

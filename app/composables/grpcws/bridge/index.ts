@@ -16,6 +16,7 @@ import {
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpcws/metadata';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
+import { errCancelled, errInternal } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
 import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
 import { createGrpcStatus, createGrpcTrailers } from './utils';
@@ -64,35 +65,7 @@ export class GrpcWSTransport implements RpcTransport {
     }
 
     unary<I extends object, O extends object>(method: MethodInfo<I, O>, input: I, options: RpcOptions): UnaryCall<I, O> {
-        const opt = options as GrpcWSOptions,
-            transport = this.wsTs({
-                methodDefinition: method,
-                debug: opt.debug,
-                url: '',
-
-                onChunk(chunkBytes) {
-                    defHeader.resolvePending({});
-                    defTrailer.resolvePending({});
-                    defStatus.resolvePending(createGrpcStatus(new Metadata()));
-                    defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
-                },
-                onEnd(err) {
-                    if (err && err instanceof Error) {
-                        defHeader.rejectPending(err);
-                        defMessage.rejectPending(err);
-                        defStatus.rejectPending(err);
-                        defTrailer.rejectPending(err);
-                        defMessage.rejectPending(err);
-                        return;
-                    }
-                },
-                onHeaders(headers: Metadata, _: number): void {
-                    defHeader.resolvePending(headers.headersMap);
-
-                    defStatus.resolvePending(createGrpcStatus(headers));
-                    defTrailer.resolvePending(createGrpcTrailers(headers));
-                },
-            });
+        const opt = options as GrpcWSOptions;
 
         const meta = opt.meta ?? {},
             defHeader = new Deferred<RpcMetadata>(),
@@ -111,10 +84,41 @@ export class GrpcWSTransport implements RpcTransport {
 
         const abort = opt.abort || (opt.timeout ? AbortSignal.timeout(opt.timeout) : undefined);
         if (abort) {
-            abort.addEventListener('abort', (_) => {
-                transport.cancel();
-            });
+            abort.addEventListener('abort', () => transport.cancel());
         }
+
+        const transport = this.wsTs({
+            methodDefinition: method,
+            debug: opt.debug,
+            url: '',
+
+            onChunk(chunkBytes) {
+                defHeader.resolvePending({});
+                defTrailer.resolvePending({});
+                defStatus.resolvePending(createGrpcStatus(new Metadata()));
+                defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
+            },
+            onEnd(err) {
+                if (err instanceof Error) {
+                    if (err.name === 'AbortError') {
+                        err = errCancelled;
+                    }
+                } else {
+                    err = errInternal;
+                }
+
+                defHeader.rejectPending(err);
+                defMessage.rejectPending(err);
+                defStatus.rejectPending(err);
+                defTrailer.rejectPending(err);
+            },
+            onHeaders(headers: Metadata, _: number): void {
+                defHeader.resolvePending(headers.headersMap);
+
+                defStatus.resolvePending(createGrpcStatus(headers));
+                defTrailer.resolvePending(createGrpcTrailers(headers));
+            },
+        });
 
         transport.start(new Metadata());
         transport.sendMessage(method.I.toBinary(input, opt.binaryOptions), true);
@@ -142,17 +146,24 @@ export class GrpcWSTransport implements RpcTransport {
                     outStream.notifyMessage(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err && err instanceof Error) {
-                        defHeader.rejectPending(err);
-                        outStream.notifyError(err);
-                        defStatus.rejectPending(err);
-                        defTrailer.rejectPending(err);
-                        return;
+                    if (err instanceof Error) {
+                        if (err.name === 'AbortError') {
+                            err = errCancelled;
+                        }
+                    } else {
+                        err = errInternal;
                     }
 
+                    defHeader.rejectPending(err);
+                    defStatus.rejectPending(err);
                     if (!outStream.closed) {
-                        outStream.notifyComplete();
+                        if (err) {
+                            outStream.notifyError(err);
+                        } else {
+                            outStream.notifyComplete();
+                        }
                     }
+                    defTrailer.rejectPending(err);
                 },
                 onHeaders(headers: Metadata, _: number): void {
                     defHeader.resolvePending(headers.headersMap);
@@ -203,13 +214,18 @@ export class GrpcWSTransport implements RpcTransport {
                     defMessage.resolve(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err && err instanceof Error) {
-                        defHeader.rejectPending(err);
-                        defMessage.rejectPending(err);
-                        defStatus.rejectPending(err);
-                        defTrailer.rejectPending(err);
-                        return;
+                    if (err instanceof Error) {
+                        if (err.name === 'AbortError') {
+                            err = errCancelled;
+                        }
+                    } else {
+                        err = errInternal;
                     }
+
+                    defHeader.rejectPending(err);
+                    defMessage.rejectPending(err);
+                    defStatus.rejectPending(err);
+                    defTrailer.rejectPending(err);
 
                     defMessage.resolve(method.O.create());
                 },
@@ -259,17 +275,24 @@ export class GrpcWSTransport implements RpcTransport {
                     outStream.notifyMessage(method.O.fromBinary(chunkBytes, opt.binaryOptions));
                 },
                 onEnd(err) {
-                    if (err && err instanceof Error) {
-                        defHeader.rejectPending(err);
-                        outStream.notifyError(err);
-                        defStatus.rejectPending(err);
-                        defTrailer.rejectPending(err);
-                        return;
+                    if (err instanceof Error) {
+                        if (err.name === 'AbortError') {
+                            err = errCancelled;
+                        }
+                    } else {
+                        err = errInternal;
                     }
 
+                    defHeader.rejectPending(err);
+                    defStatus.rejectPending(err);
                     if (!outStream.closed) {
-                        outStream.notifyComplete();
+                        if (err) {
+                            outStream.notifyError(err);
+                        } else {
+                            outStream.notifyComplete();
+                        }
                     }
+                    defTrailer.rejectPending(err);
                 },
                 onHeaders(headers: Metadata, _: number): void {
                     defHeader.resolvePending(headers.headersMap);

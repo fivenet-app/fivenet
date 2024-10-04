@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import UnitAttributes from '~/components/centrum/partials/UnitAttributes.vue';
 import UnitCreateOrUpdateModal from '~/components/centrum/settings/UnitCreateOrUpdateModal.vue';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import type { ListUnitsResponse } from '~~/gen/ts/services/centrum/centrum';
@@ -117,7 +117,7 @@ const columns = [
             <UnitAttributes :attributes="unit.attributes" />
         </template>
         <template #color-data="{ row: unit }">
-            <ColorPicker v-model="unit.color" disabled hide-icon />
+            <ColorPickerClient v-model="unit.color" disabled hide-icon />
         </template>
         <template #homePostal-data="{ row: unit }">
             {{ unit.homePostal ?? $t('common.na') }}

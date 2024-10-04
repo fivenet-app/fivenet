@@ -164,7 +164,7 @@ defineExpose({
                                 v-if="request.status !== RequestStatus.DENIED"
                                 variant="link"
                                 icon="i-mdi-close-thick"
-                                color="red"
+                                color="orange"
                                 @click="
                                     modal.open(QualificationRequestTutorModal, {
                                         request: request,
@@ -216,6 +216,7 @@ defineExpose({
                             <UButton
                                 v-if="can('QualificationsService.DeleteQualificationReq').value"
                                 variant="link"
+                                color="red"
                                 icon="i-mdi-trash-can"
                                 @click="
                                     modal.open(ConfirmModal, {

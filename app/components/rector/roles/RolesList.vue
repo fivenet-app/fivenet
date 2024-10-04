@@ -116,24 +116,28 @@ const onSubmitThrottle = useThrottleFn(async () => {
                                 <UForm :schema="schema" :state="state" @submit="refresh()">
                                     <div class="flex flex-row gap-2">
                                         <UFormGroup name="grade" :label="$t('common.job_grade')" class="flex-1">
-                                            <USelectMenu
-                                                v-model="state.jobGrade"
-                                                :options="availableJobGrades"
-                                                by="grade"
-                                                searchable
-                                                :searchable-placeholder="$t('common.search_field')"
-                                            >
-                                                <template #label>
-                                                    <template v-if="state.jobGrade">
+                                            <ClientOnly>
+                                                <USelectMenu
+                                                    v-model="state.jobGrade"
+                                                    :options="availableJobGrades"
+                                                    by="grade"
+                                                    searchable
+                                                    :searchable-placeholder="$t('common.search_field')"
+                                                >
+                                                    <template #label>
+                                                        <template v-if="state.jobGrade">
+                                                            <span class="truncate"
+                                                                >{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span
+                                                            >
+                                                        </template>
+                                                    </template>
+                                                    <template #option="{ option: jobGrade }">
                                                         <span class="truncate"
-                                                            >{{ state.jobGrade?.label }} ({{ state.jobGrade?.grade }})</span
+                                                            >{{ jobGrade.label }} ({{ jobGrade.grade }})</span
                                                         >
                                                     </template>
-                                                </template>
-                                                <template #option="{ option: jobGrade }">
-                                                    <span class="truncate">{{ jobGrade.label }} ({{ jobGrade.grade }})</span>
-                                                </template>
-                                            </USelectMenu>
+                                                </USelectMenu>
+                                            </ClientOnly>
                                         </UFormGroup>
 
                                         <div class="flex flex-initial flex-col justify-end">

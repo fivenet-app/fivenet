@@ -91,40 +91,42 @@ watchDebounced(query, async () => refresh(), {
     <UDashboardToolbar v-if="userId === undefined || accessAttrs.some((a) => colleagueSearchAttrs.includes(a))">
         <UForm :schema="schema" :state="query" class="flex w-full gap-2" @submit="refresh()">
             <UFormGroup v-if="userId === undefined" name="colleagues" :label="$t('common.search')" class="flex-1">
-                <USelectMenu
-                    v-model="query.colleagues"
-                    multiple
-                    :searchable="
-                        async (query: string) => {
-                            usersLoading = true;
-                            const colleagues = await completorStore.listColleagues({
-                                search: query,
-                            });
-                            usersLoading = false;
-                            return colleagues;
-                        }
-                    "
-                    searchable-lazy
-                    :searchable-placeholder="$t('common.search_field')"
-                    :search-attributes="['firstname', 'lastname']"
-                    block
-                    :placeholder="$t('common.colleague', 2)"
-                    trailing
-                    by="userId"
-                >
-                    <template #label>
-                        <template v-if="query.colleagues.length">
-                            {{ usersToLabel(query.colleagues) }}
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="query.colleagues"
+                        multiple
+                        :searchable="
+                            async (query: string) => {
+                                usersLoading = true;
+                                const colleagues = await completorStore.listColleagues({
+                                    search: query,
+                                });
+                                usersLoading = false;
+                                return colleagues;
+                            }
+                        "
+                        searchable-lazy
+                        :searchable-placeholder="$t('common.search_field')"
+                        :search-attributes="['firstname', 'lastname']"
+                        block
+                        :placeholder="$t('common.colleague', 2)"
+                        trailing
+                        by="userId"
+                    >
+                        <template #label>
+                            <template v-if="query.colleagues.length">
+                                {{ usersToLabel(query.colleagues) }}
+                            </template>
                         </template>
-                    </template>
-                    <template #option="{ option: user }">
-                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                    </template>
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                </USelectMenu>
+                        <template #option="{ option: user }">
+                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                        </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
             </UFormGroup>
             <div v-else class="flex-1" />
 
@@ -133,25 +135,27 @@ watchDebounced(query, async () => refresh(), {
                 name="types"
                 :label="$t('common.type', 2)"
             >
-                <USelectMenu
-                    v-model="query.types"
-                    class="w-48 min-w-40 flex-initial"
-                    multiple
-                    block
-                    trailing
-                    option-attribute="aType"
-                    :options="activityTypes.map((aType) => ({ aType: aType }))"
-                    value-attribute="aType"
-                    :searchable-placeholder="$t('common.type', 2)"
-                >
-                    <template #option="{ option }">
-                        {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[option.aType]}`) }}
-                    </template>
-                    <template #option-empty="{ query: search }">
-                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                    </template>
-                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                </USelectMenu>
+                <ClientOnly>
+                    <USelectMenu
+                        v-model="query.types"
+                        class="w-48 min-w-40 flex-initial"
+                        multiple
+                        block
+                        trailing
+                        option-attribute="aType"
+                        :options="activityTypes.map((aType) => ({ aType: aType }))"
+                        value-attribute="aType"
+                        :searchable-placeholder="$t('common.type', 2)"
+                    >
+                        <template #option="{ option }">
+                            {{ $t(`enums.jobs.JobsUserActivityType.${JobsUserActivityType[option.aType]}`) }}
+                        </template>
+                        <template #option-empty="{ query: search }">
+                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                        </template>
+                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                    </USelectMenu>
+                </ClientOnly>
             </UFormGroup>
         </UForm>
     </UDashboardToolbar>

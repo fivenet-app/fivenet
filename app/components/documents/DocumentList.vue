@@ -13,6 +13,7 @@ import * as googleProtobufTimestamp from '~~/gen/ts/google/protobuf/timestamp';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
+import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
 
 const { t } = useI18n();
 
@@ -157,85 +158,101 @@ defineShortcuts({
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="category" :label="$t('common.category', 1)">
-                                <UInputMenu
-                                    v-model="query.category"
-                                    nullable
-                                    option-attribute="name"
-                                    :search-attributes="['name']"
-                                    block
-                                    by="name"
-                                    :search="
-                                        async (search: string) => {
-                                            try {
-                                                categoriesLoading = true;
-                                                const categories = await completorStore.completeDocumentCategories(search);
-                                                categoriesLoading = false;
-                                                return categories;
-                                            } catch (e) {
-                                                handleGRPCError(e as RpcError);
-                                                throw e;
-                                            } finally {
-                                                categoriesLoading = false;
+                                <ClientOnly>
+                                    <UInputMenu
+                                        v-model="query.category"
+                                        nullable
+                                        option-attribute="name"
+                                        :search-attributes="['name']"
+                                        block
+                                        by="name"
+                                        :search="
+                                            async (search: string) => {
+                                                try {
+                                                    categoriesLoading = true;
+                                                    const categories = await completorStore.completeDocumentCategories(search);
+                                                    categoriesLoading = false;
+                                                    return categories;
+                                                } catch (e) {
+                                                    handleGRPCError(e as RpcError);
+                                                    throw e;
+                                                } finally {
+                                                    categoriesLoading = false;
+                                                }
                                             }
-                                        }
-                                    "
-                                    search-lazy
-                                    :search-placeholder="$t('common.category', 1)"
-                                >
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
-                                </UInputMenu>
+                                        "
+                                        search-lazy
+                                        :search-placeholder="$t('common.category', 1)"
+                                    >
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.category', 2)]) }} </template>
+                                        <template #option="{ option }">
+                                            <component
+                                                :is="
+                                                    markerIcons.find((item) => item.name === option.icon) ?? markerFallbackIcon
+                                                "
+                                                v-if="option.icon"
+                                                class="size-5"
+                                            />
+                                            <span class="truncate">{{ option.name }}</span>
+                                        </template>
+                                    </UInputMenu>
+                                </ClientOnly>
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="creator" :label="$t('common.creator')">
-                                <USelectMenu
-                                    v-model="query.creators"
-                                    multiple
-                                    nullable
-                                    block
-                                    :searchable="
-                                        async (query: string): Promise<UserShort[]> => {
-                                            usersLoading = true;
-                                            const users = await completorStore.completeCitizens({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return users;
-                                        }
-                                    "
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['firstname', 'lastname']"
-                                    :placeholder="$t('common.creator')"
-                                    trailing
-                                    by="userId"
-                                >
-                                    <template #label>
-                                        <template v-if="query.creators.length">
-                                            {{ usersToLabel(query.creators) }}
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.creators"
+                                        multiple
+                                        nullable
+                                        block
+                                        :searchable="
+                                            async (query: string): Promise<UserShort[]> => {
+                                                usersLoading = true;
+                                                const users = await completorStore.completeCitizens({
+                                                    search: query,
+                                                });
+                                                usersLoading = false;
+                                                return users;
+                                            }
+                                        "
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        :placeholder="$t('common.creator')"
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #label>
+                                            <template v-if="query.creators.length">
+                                                {{ usersToLabel(query.creators) }}
+                                            </template>
                                         </template>
-                                    </template>
-                                    <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                </USelectMenu>
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
                         </div>
 
                         <div class="flex flex-row flex-wrap gap-2">
                             <UFormGroup name="closed" :label="$t('common.close', 2)" class="flex-1">
-                                <USelectMenu
-                                    v-model="query.closed"
-                                    :options="openclose"
-                                    value-attribute="closed"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                />
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="query.closed"
+                                        :options="openclose"
+                                        value-attribute="closed"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                    />
+                                </ClientOnly>
                             </UFormGroup>
 
                             <UFormGroup class="flex-1" name="from" :label="`${$t('common.time_range')} ${$t('common.from')}`">

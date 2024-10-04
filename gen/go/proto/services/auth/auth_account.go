@@ -44,6 +44,7 @@ func (s *Server) GetAccountInfo(ctx context.Context, req *GetAccountInfoRequest)
 			Name:     p.Name,
 			Label:    p.Label,
 			Homepage: p.Homepage,
+			Icon:     p.Icon,
 		}
 	}
 

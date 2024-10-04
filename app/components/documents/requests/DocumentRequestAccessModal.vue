@@ -91,27 +91,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     </UFormGroup>
 
                     <UFormGroup name="requestType" :label="$t('common.access')" class="flex-1">
-                        <USelectMenu
-                            v-model="state.accessLevel"
-                            :options="accessLevels"
-                            :placeholder="$t('common.access')"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #label>
-                                <span v-if="state.accessLevel" class="truncate">{{
-                                    $t(`enums.docstore.AccessLevel.${AccessLevel[state.accessLevel]}`)
-                                }}</span>
-                            </template>
-                            <template #option="{ option }">
-                                <span class="truncate">{{ $t(`enums.docstore.AccessLevel.${AccessLevel[option]}`) }}</span>
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
-                            </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.accessLevel"
+                                :options="accessLevels"
+                                :placeholder="$t('common.access')"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #label>
+                                    <span v-if="state.accessLevel" class="truncate">{{
+                                        $t(`enums.docstore.AccessLevel.${AccessLevel[state.accessLevel]}`)
+                                    }}</span>
+                                </template>
+                                <template #option="{ option }">
+                                    <span class="truncate">{{ $t(`enums.docstore.AccessLevel.${AccessLevel[option]}`) }}</span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
                 </div>
 

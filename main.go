@@ -55,6 +55,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/bot"
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/fivenet-app/fivenet/pkg/lang"
 )
 
 type Context struct{}
@@ -142,6 +143,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		manager.HousekeeperModule,
 		discord.BotModule,
 		storage.Module,
+		lang.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,

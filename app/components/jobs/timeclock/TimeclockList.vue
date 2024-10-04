@@ -176,43 +176,45 @@ const input = ref<{ input: HTMLInputElement }>();
 
                         <div class="flex flex-row gap-2">
                             <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.search')" class="flex-1">
-                                <USelectMenu
-                                    ref="input"
-                                    v-model="query.users"
-                                    multiple
-                                    :searchable="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const colleagues = await completorStore.listColleagues({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return colleagues;
-                                        }
-                                    "
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="$t('common.colleague', 2)"
-                                    trailing
-                                    by="userId"
-                                >
-                                    <template #label>
-                                        <span v-if="query.users?.length" class="truncate">
-                                            {{ usersToLabel(query.users) }}
-                                        </span>
-                                    </template>
-                                    <template #option="{ option: user }">
-                                        <span class="truncate">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </span>
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        ref="input"
+                                        v-model="query.users"
+                                        multiple
+                                        :searchable="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.listColleagues({
+                                                    search: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="$t('common.colleague', 2)"
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #label>
+                                            <span v-if="query.users?.length" class="truncate">
+                                                {{ usersToLabel(query.users) }}
+                                            </span>
+                                        </template>
+                                        <template #option="{ option: user }">
+                                            <span class="truncate">
+                                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                            </span>
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
 
                             <UFormGroup

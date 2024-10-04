@@ -6,6 +6,7 @@ import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import type { DocumentRelation } from '~~/gen/ts/resources/documents/documents';
 import { DocRelation } from '~~/gen/ts/resources/documents/documents';
+import DocumentCategoryBadge from '../partials/documents/DocumentCategoryBadge.vue';
 import { relationToBadge } from './helpers';
 
 const props = withDefaults(
@@ -102,12 +103,8 @@ const columns = computed(() =>
                                             }"
                                             class="inline-flex items-center gap-1 truncate"
                                         >
-                                            <UBadge v-if="relation.document?.category" class="inline-flex gap-1" size="md">
-                                                <UIcon name="i-mdi-shape" class="size-5" />
-                                                <span :title="relation.document?.category.description ?? $t('common.na')">
-                                                    {{ relation.document?.category.name }}
-                                                </span>
-                                            </UBadge>
+                                            <DocumentCategoryBadge :category="relation.document?.category" />
+
                                             <span>
                                                 {{ relation.document?.title }}
                                             </span>
@@ -157,12 +154,7 @@ const columns = computed(() =>
                                         }"
                                         class="inline-flex items-center gap-1 truncate"
                                     >
-                                        <UBadge v-if="relation.document?.category" class="inline-flex gap-1" size="md">
-                                            <UIcon name="i-mdi-shape" class="size-5" />
-                                            <span :title="relation.document?.category.description ?? $t('common.na')">
-                                                {{ relation.document?.category.name }}
-                                            </span>
-                                        </UBadge>
+                                        <DocumentCategoryBadge :category="relation.document?.category" />
 
                                         <span>
                                             {{ relation.document?.title }}

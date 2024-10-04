@@ -89,35 +89,37 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <div class="flex flex-1 flex-col justify-between gap-2">
                         <div class="divide-y divide-gray-100 px-2 sm:px-6 dark:divide-gray-800">
                             <UFormGroup name="users" :label="$t('common.colleague', 2)" class="flex-1">
-                                <USelectMenu
-                                    v-model="state.users"
-                                    multiple
-                                    :searchable="
-                                        async (query: string) => {
-                                            usersLoading = true;
-                                            const colleagues = await completorStore.completeCitizens({
-                                                search: query,
-                                            });
-                                            usersLoading = false;
-                                            return colleagues;
-                                        }
-                                    "
-                                    searchable-lazy
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    :search-attributes="['firstname', 'lastname']"
-                                    block
-                                    :placeholder="$t('common.owner')"
-                                    trailing
-                                    by="userId"
-                                >
-                                    <template #option="{ option: user }">
-                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.users"
+                                        multiple
+                                        :searchable="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.completeCitizens({
+                                                    search: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        block
+                                        :placeholder="$t('common.owner')"
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #option="{ option: user }">
+                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.creator', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
 
                             <div class="mt-2 overflow-hidden rounded-md bg-base-900">

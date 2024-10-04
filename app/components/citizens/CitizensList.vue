@@ -305,6 +305,7 @@ defineShortcuts({
         </template>
         <template #jobLabel-data="{ row: citizen }">
             {{ citizen.jobLabel.value }}
+            {{ citizen.props?.jobName || citizen.props?.jobGradeNumber ? '*' : '' }}
         </template>
         <template #sex-data="{ row: citizen }">
             {{ citizen.sex?.value.toUpperCase() ?? $t('common.na') }}

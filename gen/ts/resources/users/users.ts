@@ -269,6 +269,8 @@ export interface CitizenAttribute {
      */
     name: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string color = 4;
      */
     color: string;

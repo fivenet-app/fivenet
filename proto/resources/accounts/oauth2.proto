@@ -20,4 +20,5 @@ message OAuth2Provider {
   string name = 1;
   string label = 2;
   string homepage = 3;
+  optional string icon = 4;
 }

@@ -124,11 +124,11 @@ const isOpen = ref(false);
         >
             <UDashboardNavbar :title="$t('pages.citizens.id.title')">
                 <template #right>
-                    <UButtonGroup class="inline-flex lg:hidden">
-                        <UButton color="black" icon="i-mdi-arrow-back" to="/citizens">
-                            {{ $t('common.back') }}
-                        </UButton>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/citizens">
+                        {{ $t('common.back') }}
+                    </UButton>
 
+                    <UButtonGroup class="inline-flex lg:hidden">
                         <IDCopyBadge
                             :id="userId"
                             prefix="CIT"
@@ -174,6 +174,7 @@ const isOpen = ref(false);
                                     <template v-if="user.jobGrade > 0 && user.job !== game.unemployedJobName">
                                         ({{ $t('common.rank') }}: {{ user.jobGradeLabel }})
                                     </template>
+                                    {{ user.props?.jobName || user.props?.jobGradeNumber ? '*' : '' }}
                                 </UBadge>
 
                                 <UBadge v-if="user?.props?.wanted" color="red">
@@ -216,11 +217,11 @@ const isOpen = ref(false);
         <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right" class="max-w-72 flex-1">
             <UDashboardNavbar>
                 <template #right>
-                    <UButtonGroup class="hidden lg:inline-flex">
-                        <UButton color="black" icon="i-mdi-arrow-back" to="/citizens">
-                            {{ $t('common.back') }}
-                        </UButton>
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/citizens">
+                        {{ $t('common.back') }}
+                    </UButton>
 
+                    <UButtonGroup class="hidden lg:inline-flex">
                         <IDCopyBadge
                             :id="userId"
                             prefix="CIT"

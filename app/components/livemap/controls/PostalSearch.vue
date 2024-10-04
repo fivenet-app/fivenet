@@ -3,6 +3,10 @@ import { useLivemapStore } from '~/store/livemap';
 import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
+defineOptions({
+    inheritAttrs: false,
+});
+
 const notifications = useNotificatorStore();
 
 const livemapStore = useLivemapStore();
@@ -77,21 +81,24 @@ watchDebounced(postalQuery, () => findPostal(), {
 </script>
 
 <template>
-    <UInputMenu
-        v-model="selectedPostal"
-        v-model:query="postalQuery"
-        class="w-full max-w-40"
-        :options="filteredPostals"
-        nullable
-        :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
-        option-attribute="code"
-        :searchable-placeholder="$t('common.search_field')"
-        :popper="{ placement: 'top-start' }"
-        size="xs"
-    >
-        <template #option-empty="{ query: search }">
-            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-        </template>
-        <template #empty> {{ $t('common.not_found', [$t('common.postal', 2)]) }} </template>
-    </UInputMenu>
+    <ClientOnly>
+        <UInputMenu
+            v-bind="$attrs"
+            v-model="selectedPostal"
+            v-model:query="postalQuery"
+            class="w-full max-w-40"
+            :options="filteredPostals"
+            nullable
+            :placeholder="`${$t('common.postal')} ${$t('common.search')}`"
+            option-attribute="code"
+            :searchable-placeholder="$t('common.search_field')"
+            :popper="{ placement: 'top-start' }"
+            size="xs"
+        >
+            <template #option-empty="{ query: search }">
+                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+            </template>
+            <template #empty> {{ $t('common.not_found', [$t('common.postal', 2)]) }} </template>
+        </UInputMenu>
+    </ClientOnly>
 </template>

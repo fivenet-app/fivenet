@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
-import ColorPicker from '~/components/partials/ColorPicker.vue';
+import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
 
 const props = defineProps<{
@@ -132,25 +132,27 @@ onMounted(async () => updateUnitInForm());
                     </UFormGroup>
 
                     <UFormGroup name="attributes" :label="$t('common.attributes', 2)" class="flex-1">
-                        <USelectMenu
-                            v-model="state.attributes"
-                            multiple
-                            nullable
-                            :options="availableAttributes"
-                            :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
-                            </template>
-                        </USelectMenu>
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.attributes"
+                                multiple
+                                nullable
+                                :options="availableAttributes"
+                                :placeholder="selectedAttributes ? selectedAttributes.join(', ') : $t('common.na')"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.attributes', 2)]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
                     </UFormGroup>
 
                     <UFormGroup name="color" :label="$t('common.color')" class="flex-1">
-                        <ColorPicker v-model="state.color" />
+                        <ColorPickerClient v-model="state.color" />
                     </UFormGroup>
 
                     <UFormGroup

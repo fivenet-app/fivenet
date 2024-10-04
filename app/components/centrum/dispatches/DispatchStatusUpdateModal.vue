@@ -179,18 +179,20 @@ function updateReasonField(value: string): void {
                                 </label>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
-                                <USelectMenu
-                                    name="dispatchStatus"
-                                    :options="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
-                                    :searchable-placeholder="$t('common.search_field')"
-                                    @change="updateReasonField($event)"
-                                >
-                                    <template #option="{ option }">
-                                        <span class="truncate">
-                                            {{ option !== '' ? option : '&nbsp;' }}
-                                        </span>
-                                    </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        name="dispatchStatus"
+                                        :options="['&nbsp;', ...settings?.predefinedStatus.dispatchStatus]"
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        @change="updateReasonField($event)"
+                                    >
+                                        <template #option="{ option }">
+                                            <span class="truncate">
+                                                {{ option !== '' ? option : '&nbsp;' }}
+                                            </span>
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </dd>
                         </div>
                     </dl>

@@ -519,23 +519,25 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                                     </UFormGroup>
 
                                     <UFormGroup name="closed" :label="`${$t('common.close', 2)}?`" class="flex-initial">
-                                        <USelectMenu
-                                            v-model="state.closed"
-                                            :disabled="!canDo.edit"
-                                            :options="[
-                                                { label: $t('common.open', 2), closed: false },
-                                                { label: $t('common.close', 2), closed: true },
-                                            ]"
-                                            value-attribute="closed"
-                                            :searchable-placeholder="$t('common.search_field')"
-                                        >
-                                            <template #option-empty="{ query: search }">
-                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                            </template>
-                                            <template #empty>
-                                                {{ $t('common.not_found', [$t('common.close', 1)]) }}
-                                            </template>
-                                        </USelectMenu>
+                                        <ClientOnly>
+                                            <USelectMenu
+                                                v-model="state.closed"
+                                                :disabled="!canDo.edit"
+                                                :options="[
+                                                    { label: $t('common.open', 2), closed: false },
+                                                    { label: $t('common.close', 2), closed: true },
+                                                ]"
+                                                value-attribute="closed"
+                                                :searchable-placeholder="$t('common.search_field')"
+                                            >
+                                                <template #option-empty="{ query: search }">
+                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                                </template>
+                                                <template #empty>
+                                                    {{ $t('common.not_found', [$t('common.close', 1)]) }}
+                                                </template>
+                                            </USelectMenu>
+                                        </ClientOnly>
                                     </UFormGroup>
                                 </div>
                             </div>
@@ -638,35 +640,37 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
                             </h2>
 
                             <UFormGroup name="examMode">
-                                <USelectMenu
-                                    v-model="state.examMode"
-                                    :options="examModes"
-                                    value-attribute="mode"
-                                    class="w-40 max-w-40"
-                                >
-                                    <template #label>
-                                        <span class="truncate">
-                                            {{
-                                                $t(
-                                                    `enums.qualifications.QualificationExamMode.${QualificationExamMode[state.examMode]}`,
-                                                )
-                                            }}
-                                        </span>
-                                    </template>
-                                    <template #option="{ option }">
-                                        <span class="truncate">
-                                            {{
-                                                $t(
-                                                    `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
-                                                )
-                                            }}
-                                        </span>
-                                    </template>
-                                    <template #option-empty="{ query: search }">
-                                        <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                    </template>
-                                    <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
-                                </USelectMenu>
+                                <ClientOnly>
+                                    <USelectMenu
+                                        v-model="state.examMode"
+                                        :options="examModes"
+                                        value-attribute="mode"
+                                        class="w-40 max-w-40"
+                                    >
+                                        <template #label>
+                                            <span class="truncate">
+                                                {{
+                                                    $t(
+                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[state.examMode]}`,
+                                                    )
+                                                }}
+                                            </span>
+                                        </template>
+                                        <template #option="{ option }">
+                                            <span class="truncate">
+                                                {{
+                                                    $t(
+                                                        `enums.qualifications.QualificationExamMode.${QualificationExamMode[option.mode]}`,
+                                                    )
+                                                }}
+                                            </span>
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
+                                    </USelectMenu>
+                                </ClientOnly>
                             </UFormGroup>
                         </div>
                     </div>

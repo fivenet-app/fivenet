@@ -125,11 +125,11 @@ const accordionItems = computed(() =>
 <template>
     <UDashboardNavbar :title="$t('pages.qualifications.single.title')">
         <template #right>
-            <UButtonGroup class="inline-flex">
-                <UButton color="black" icon="i-mdi-arrow-back" to="/qualifications">
-                    {{ $t('common.back') }}
-                </UButton>
+            <UButton color="black" icon="i-mdi-arrow-back" to="/qualifications">
+                {{ $t('common.back') }}
+            </UButton>
 
+            <UButtonGroup class="inline-flex">
                 <IDCopyBadge
                     :id="qualification?.id ?? 0"
                     prefix="QUAL"
@@ -211,6 +211,7 @@ const accordionItems = computed(() =>
                     <UButton
                         v-if="can('QualificationsService.DeleteQualification').value && canDo.edit"
                         icon="i-mdi-trash-can"
+                        color="red"
                         @click="
                             modal.open(ConfirmModal, {
                                 confirm: async () => deleteQualification(qualification!.id),

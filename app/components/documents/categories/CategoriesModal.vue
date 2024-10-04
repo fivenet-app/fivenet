@@ -1,6 +1,9 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
+import { ShapeIcon } from 'mdi-vue3';
 import { z } from 'zod';
+import ColorPickerTW from '~/components/partials/ColorPickerTW.vue';
+import IconSelectMenu from '~/components/partials/IconSelectMenu.vue';
 import { useNotificatorStore } from '~/store/notificator';
 import type { Category } from '~~/gen/ts/resources/documents/category';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
@@ -19,7 +22,9 @@ const { isOpen } = useModal();
 
 const schema = z.object({
     name: z.string().min(3).max(128),
-    description: z.string().min(0).max(255),
+    description: z.union([z.string().min(0).max(255), z.string().optional()]),
+    color: z.string().max(7),
+    icon: z.string().max(64).optional(),
 });
 
 type Schema = z.output<typeof schema>;
@@ -27,20 +32,18 @@ type Schema = z.output<typeof schema>;
 const state = reactive<Schema>({
     name: '',
     description: '',
+    color: 'primary',
 });
 
-interface FormData {
-    name: string;
-    description: string;
-}
-
-async function createCategory(values: FormData): Promise<void> {
+async function createCategory(values: Schema): Promise<void> {
     try {
         await getGRPCDocStoreClient().createCategory({
             category: {
                 id: '0',
                 name: values.name,
                 description: values.description,
+                color: values.color,
+                icon: values.icon,
             },
         });
 
@@ -57,13 +60,16 @@ async function createCategory(values: FormData): Promise<void> {
     }
 }
 
-async function updateCategory(values: FormData): Promise<void> {
-    props.category!.name = values.name;
-    props.category!.description = values.description;
-
+async function updateCategory(values: Schema): Promise<void> {
     try {
         await getGRPCDocStoreClient().updateCategory({
-            category: props.category!,
+            category: {
+                id: props.category!.id,
+                name: values.name,
+                description: values.description,
+                color: values.color,
+                icon: values.icon,
+            },
         });
 
         notifications.add({
@@ -109,6 +115,20 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         useTimeoutFn(() => (canSubmit.value = true), 400),
     );
 }, 1000);
+
+function setFromProps(): void {
+    if (!props.category) {
+        return;
+    }
+
+    state.name = props.category.name;
+    state.description = props.category.description;
+    state.color = props.category.color ?? 'primary';
+    state.icon = props.category.icon;
+}
+
+setFromProps();
+watch(props, () => setFromProps());
 </script>
 
 <template>
@@ -133,19 +153,32 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 
                 <div>
                     <div>
-                        <UFormGroup name="name" :label="$t('common.category', 1)" class="flex-1">
+                        <UFormGroup name="name" :label="$t('common.name')" class="flex-1">
                             <UInput
                                 v-model="state.name"
                                 type="text"
                                 name="name"
-                                :placeholder="$t('common.category', 1)"
-                                :label="$t('common.category', 1)"
-                                :value="category?.name"
+                                :placeholder="$t('common.name', 1)"
+                                :label="$t('common.name', 1)"
                             />
                         </UFormGroup>
 
                         <UFormGroup name="description" :label="$t('common.description')" class="flex-1">
                             <UTextarea v-model="state.description" name="description" :placeholder="$t('common.description')" />
+                        </UFormGroup>
+
+                        <UFormGroup name="color" :label="$t('common.color')" class="flex-1 flex-row">
+                            <div class="flex flex-1 gap-1">
+                                <ColorPickerTW v-model="state.color" class="flex-1" />
+                            </div>
+                        </UFormGroup>
+
+                        <UFormGroup name="icon" :label="$t('common.icon')" class="flex-1">
+                            <div class="flex flex-1 gap-1">
+                                <IconSelectMenu v-model="state.icon" class="flex-1" :fallback-icon="ShapeIcon" />
+
+                                <UButton icon="i-mdi-backspace" @click="state.icon = undefined" />
+                            </div>
                         </UFormGroup>
                     </div>
                 </div>
@@ -164,6 +197,8 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             v-if="category !== undefined && can('DocStoreService.DeleteCategory').value"
                             block
                             class="flex-1"
+                            icon="i-mdi-trash-can"
+                            color="red"
                             :disabled="!canSubmit"
                             :loading="!canSubmit"
                             @click="deleteCategory()"

@@ -68,16 +68,6 @@ func NewGuild(ctx context.Context, b *Bot, guild *discordgo.Guild, job string) (
 	}, nil
 }
 
-func (g *Guild) setup() error {
-	g.logger.Info("setting up guild")
-
-	if _, err := g.bot.discord.Guild(g.guild.ID); err != nil {
-		return fmt.Errorf("failed to retrieve guild info from discord api. %w", err)
-	}
-
-	return nil
-}
-
 func (g *Guild) Run() error {
 	g.mutex.Lock()
 	defer g.mutex.Unlock()
@@ -100,6 +90,10 @@ func (g *Guild) Run() error {
 	}
 	if planDiff == nil {
 		planDiff = &users.DiscordSyncChanges{}
+	}
+
+	if err := g.bot.discord.RequestGuildMembers(g.guild.ID, "", 0, "", false); err != nil {
+		g.logger.Error("failed to request guild members. %w", zap.Error(err))
 	}
 
 	errs := multierr.Combine()
@@ -199,7 +193,7 @@ func (g *Guild) sendStartStatusLog(channelId string) error {
 		Title:  "Starting sync...",
 		Author: embeds.EmbedAuthor,
 		Color:  embeds.ColorInfo,
-		Footer: embeds.EmbedFooter,
+		Footer: embeds.EmbedFooterVersion,
 	}); err != nil {
 		return fmt.Errorf("failed to send status log start embed. %w", err)
 	}
@@ -256,7 +250,7 @@ func (g *Guild) sendEndStatusLog(channelId string, duration time.Duration, errs 
 		Description: fmt.Sprintf("Completed in %s.", duration),
 		Author:      embeds.EmbedAuthor,
 		Color:       embeds.ColorSuccess,
-		Footer:      embeds.EmbedFooter,
+		Footer:      embeds.EmbedFooterVersion,
 	})
 
 	if _, err := g.bot.discord.ChannelMessageSendEmbeds(channel.ID, logs); err != nil {

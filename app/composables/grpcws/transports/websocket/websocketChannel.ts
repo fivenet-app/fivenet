@@ -36,6 +36,8 @@ interface GrpcStream extends Transport {
     readonly service: string;
     readonly method: string;
     readonly isStream: boolean;
+
+    closed: boolean;
 }
 
 interface WebsocketChannel {
@@ -109,6 +111,9 @@ class WebsocketChannelImpl implements WebsocketChannel {
                     stream[0].debug && this.logger.debug('Received complete for stream', streamId);
 
                     stream[0].onEnd();
+                    stream[1].closed = true;
+                    // Remove completed stream
+                    this.activeStreams.delete(streamId);
                     break;
                 }
 
@@ -172,6 +177,8 @@ class WebsocketChannelStream {
     service: string;
     method: string;
     isStream: boolean;
+
+    closed: boolean = false;
 
     constructor(wsChannel: WebsocketChannelImpl, logger: ILogger, streamId: number, opts: TransportOptions) {
         this.wsChannel = wsChannel;
@@ -249,6 +256,10 @@ class WebsocketChannelStream {
     }
 
     async cancel() {
+        if (this.closed) {
+            return;
+        }
+
         this.opts.debug && this.logger.debug('Stream cancel', this.streamId);
 
         this.opts.onEnd(errCancelled);

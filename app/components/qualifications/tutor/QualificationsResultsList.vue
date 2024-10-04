@@ -187,6 +187,7 @@ defineExpose({
                                 v-if="can('QualificationsService.DeleteQualificationResult').value"
                                 class="flex-initial"
                                 variant="link"
+                                color="red"
                                 icon="i-mdi-trash-can"
                                 @click="
                                     modal.open(ConfirmModal, {

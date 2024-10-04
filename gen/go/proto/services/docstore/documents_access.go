@@ -454,7 +454,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx qrm.DB, documentId
 		return nil
 	}
 
-	if access.Jobs != nil && len(access.Jobs) > 0 {
+	if len(access.Jobs) > 0 {
 		jobIds := []jet.Expression{}
 		for i := 0; i < len(access.Jobs); i++ {
 			if access.Jobs[i].Id == 0 {
@@ -479,7 +479,7 @@ func (s *Server) deleteDocumentAccess(ctx context.Context, tx qrm.DB, documentId
 		}
 	}
 
-	if access.Users != nil && len(access.Users) > 0 {
+	if len(access.Users) > 0 {
 		uaIds := []jet.Expression{}
 		for i := 0; i < len(access.Users); i++ {
 			if access.Users[i].Id == 0 {

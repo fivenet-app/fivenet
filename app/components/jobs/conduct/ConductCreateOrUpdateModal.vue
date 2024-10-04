@@ -144,23 +144,25 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="type">
-                                    <USelectMenu
-                                        v-model="state.type"
-                                        :options="cTypes"
-                                        value-attribute="status"
-                                        :searchable-placeholder="$t('common.search_field')"
-                                    >
-                                        <template #label>
-                                            <span class="truncate">{{
-                                                $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)
-                                            }}</span>
-                                        </template>
-                                        <template #option="{ option }">
-                                            <span class="truncate" :class="conductTypesToBGColor(option.status)">{{
-                                                $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
-                                            }}</span>
-                                        </template>
-                                    </USelectMenu>
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.type"
+                                            :options="cTypes"
+                                            value-attribute="status"
+                                            :searchable-placeholder="$t('common.search_field')"
+                                        >
+                                            <template #label>
+                                                <span class="truncate">{{
+                                                    $t(`enums.jobs.ConductType.${ConductType[state.type ?? 0]}`)
+                                                }}</span>
+                                            </template>
+                                            <template #option="{ option }">
+                                                <span class="truncate" :class="conductTypesToBGColor(option.status)">{{
+                                                    $t(`enums.jobs.ConductType.${ConductType[option.status ?? 0]}`)
+                                                }}</span>
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
                                 </UFormGroup>
                             </dd>
                         </div>
@@ -172,41 +174,43 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             </dt>
                             <dd class="mt-1 text-sm leading-6 sm:col-span-2 sm:mt-0">
                                 <UFormGroup name="targetUserId">
-                                    <USelectMenu
-                                        v-model="state.targetUser"
-                                        :searchable="
-                                            async (query: string) => {
-                                                usersLoading = true;
-                                                const colleagues = await completorStore.listColleagues({
-                                                    search: query,
-                                                });
-                                                usersLoading = false;
-                                                return colleagues;
-                                            }
-                                        "
-                                        searchable-lazy
-                                        :searchable-placeholder="$t('common.search_field')"
-                                        :search-attributes="['firstname', 'lastname']"
-                                        block
-                                        :placeholder="$t('common.colleague')"
-                                        trailing
-                                        by="userId"
-                                    >
-                                        <template #label>
-                                            <template v-if="state.targetUser">
-                                                {{ userToLabel(state.targetUser) }}
+                                    <ClientOnly>
+                                        <USelectMenu
+                                            v-model="state.targetUser"
+                                            :searchable="
+                                                async (query: string) => {
+                                                    usersLoading = true;
+                                                    const colleagues = await completorStore.listColleagues({
+                                                        search: query,
+                                                    });
+                                                    usersLoading = false;
+                                                    return colleagues;
+                                                }
+                                            "
+                                            searchable-lazy
+                                            :searchable-placeholder="$t('common.search_field')"
+                                            :search-attributes="['firstname', 'lastname']"
+                                            block
+                                            :placeholder="$t('common.colleague')"
+                                            trailing
+                                            by="userId"
+                                        >
+                                            <template #label>
+                                                <template v-if="state.targetUser">
+                                                    {{ userToLabel(state.targetUser) }}
+                                                </template>
                                             </template>
-                                        </template>
-                                        <template #option="{ option: user }">
-                                            {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                        </template>
-                                        <template #option-empty="{ query: search }">
-                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                        </template>
-                                        <template #empty>
-                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                        </template>
-                                    </USelectMenu>
+                                            <template #option="{ option: user }">
+                                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                            </template>
+                                            <template #option-empty="{ query: search }">
+                                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                            </template>
+                                            <template #empty>
+                                                {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                            </template>
+                                        </USelectMenu>
+                                    </ClientOnly>
                                 </UFormGroup>
                             </dd>
                         </div>

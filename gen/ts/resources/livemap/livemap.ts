@@ -64,10 +64,14 @@ export interface MarkerInfo {
      */
     postal?: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string color = 10;
      */
     color?: string;
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: optional string icon = 11;
      */
     icon?: string;
@@ -180,6 +184,8 @@ export interface Coords {
  */
 export interface IconMarker {
     /**
+     * @sanitize: method=StripTags
+     *
      * @generated from protobuf field: string icon = 1;
      */
     icon: string;
@@ -220,7 +226,7 @@ class MarkerInfo$Type extends MessageType<MarkerInfo> {
             { no: 8, name: "y", kind: "scalar", T: 1 /*ScalarType.DOUBLE*/ },
             { no: 9, name: "postal", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "48" } } } },
             { no: 10, name: "color", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { len: "7", pattern: "^#[A-Fa-f0-9]{6}$" } } } },
-            { no: 11, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 11, name: "icon", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<MarkerInfo>): MarkerInfo {
@@ -664,7 +670,7 @@ export const Coords = new Coords$Type();
 class IconMarker$Type extends MessageType<IconMarker> {
     constructor() {
         super("resources.livemap.IconMarker", [
-            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/ }
+            { no: 1, name: "icon", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<IconMarker>): IconMarker {
