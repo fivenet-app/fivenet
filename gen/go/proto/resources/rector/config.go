@@ -18,7 +18,7 @@ const (
 func (x *AppConfig) Default() {
 	if x.Auth == nil {
 		x.Auth = &Auth{
-			SignupEnabled: false,
+			SignupEnabled: true,
 			LastCharLock:  false,
 		}
 	}

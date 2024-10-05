@@ -14,9 +14,11 @@ definePageMeta({
 
 const { login } = useAppConfig();
 
-if (!login.signupEnabled) {
-    navigateTo({ name: 'auth-login' });
-}
+onBeforeMount(() => {
+    if (!login.signupEnabled) {
+        navigateTo({ name: 'auth-login' });
+    }
+});
 </script>
 
 <template>

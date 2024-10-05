@@ -63,12 +63,12 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
             {{ $t('common.login') }}
         </UButton>
 
-        <div v-if="!isNUIAvailable || login.providers.length > 0" class="space-y-2">
+        <div v-if="!isNUIAvailable" class="space-y-2">
             <p v-if="!socialLoginEnabled" class="text-sm text-error-400">
                 {{ $t('components.auth.LoginForm.social_login_disabled') }}
             </p>
 
-            <template v-else>
+            <template v-else-if="login.providers.length > 0">
                 <UDivider :label="$t('common.or')" orientation="horizontal" class="mt-2" />
 
                 <div v-for="provider in login.providers" :key="provider.name">

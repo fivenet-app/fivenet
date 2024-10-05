@@ -21,8 +21,10 @@ const schema = z.object({
 
 type Schema = z.output<typeof schema>;
 
+const registrationToken = useRouteQuery('registrationToken', '');
+
 const state = reactive<Schema>({
-    registrationToken: '',
+    registrationToken: registrationToken.value,
     username: '',
     password: '',
 });
