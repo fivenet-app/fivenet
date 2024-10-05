@@ -436,7 +436,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	if userInfo.UserId == req.UserId {
 		// If isn't superuser or doesn't have 'Own' activity feed access
-		if !userInfo.SuperUser || !slices.Contains(fields, "Own") {
+		if !userInfo.SuperUser && !slices.Contains(fields, "Own") {
 			return resp, nil
 		}
 	}
