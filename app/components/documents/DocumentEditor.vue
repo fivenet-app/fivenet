@@ -744,7 +744,7 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
         <DocumentRelationManager
             v-model="relationManagerData"
             :open="openRelationManager"
-            :document="documentId"
+            :document-id="documentId"
             @close="openRelationManager = false"
         />
         <DocumentReferenceManager
