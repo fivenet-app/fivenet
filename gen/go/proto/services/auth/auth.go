@@ -651,7 +651,7 @@ func (s *Server) ChooseCharacter(ctx context.Context, req *ChooseCharacterReques
 	}
 
 	// Make sure the user isn't sending us a different char ID than their own
-	if !strings.HasSuffix(*char.Identifier, ":"+claims.Subject) {
+	if !strings.HasSuffix(*char.Identifier, claims.Subject) {
 		s.logger.Error("user sent bad char!", zap.String("expected", *char.Identifier), zap.String("current", claims.Subject))
 		return nil, errorsauth.ErrUnableToChooseChar
 	}
