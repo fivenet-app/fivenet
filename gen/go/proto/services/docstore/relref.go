@@ -442,7 +442,7 @@ func (s *Server) AddDocumentRelation(ctx context.Context, req *AddDocumentRelati
 		// Only mention users when the relation has been created and not been "duplicated"
 		if err := s.addUserActivity(ctx, tx,
 			userInfo.UserId, req.Relation.TargetUserId, users.UserActivityType_USER_ACTIVITY_TYPE_MENTIONED, "DocStore.Relation", "",
-			strconv.Itoa(int(lastId)), req.Relation.Relation.String()); err != nil {
+			strconv.Itoa(int(req.Relation.DocumentId)), req.Relation.Relation.String()); err != nil {
 			return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 		}
 
