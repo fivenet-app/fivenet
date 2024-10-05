@@ -50,7 +50,12 @@ const dispatchesFiltered = computedAsync(async () =>
         key="all_dispatches"
         :name="$t('common.dispatch', 2)"
         layer-type="overlay"
-        :visible="showAllDispatches || dispatchQueryRaw.length > 0"
+        :visible="
+            showAllDispatches ||
+            livemap.activeLayers.length === 0 ||
+            livemap.activeLayers.includes($t('common.dispatch', 2)) ||
+            dispatchQuery.length > 0
+        "
     >
         <DispatchMarker
             v-for="dispatch in dispatchesFiltered"
