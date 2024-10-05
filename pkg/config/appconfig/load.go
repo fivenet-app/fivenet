@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
@@ -143,6 +144,27 @@ func (c *Config) updateConfigFromDB(ctx context.Context) (*Cfg, error) {
 	return cfg, nil
 }
 
+func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
+	stmt := tConfig.
+		INSERT(
+			tConfig.Key,
+			tConfig.AppConfig,
+		).
+		VALUES(
+			1,
+			cfg,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tConfig.AppConfig.SET(jet.RawString("VALUES(`app_config`)")),
+		)
+
+	if _, err := stmt.ExecContext(ctx, c.db); err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	stmt := tConfig.
 		SELECT(
@@ -156,13 +178,17 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	}{
 		AppConfig: &Cfg{},
 	}
+	dest.AppConfig.Default()
+
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
+		} else {
+			if err := c.updateConfigInDB(ctx, dest.AppConfig); err != nil {
+				return nil, err
+			}
 		}
 	}
-
-	dest.AppConfig.Default()
 
 	return dest.AppConfig, nil
 }

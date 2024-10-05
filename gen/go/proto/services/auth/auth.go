@@ -563,7 +563,7 @@ func (s *Server) GetCharacters(ctx context.Context, req *GetCharactersRequest) (
 }
 
 func buildCharSearchIdentifier(license string) string {
-	return "%:" + license
+	return "%" + license
 }
 
 func (s *Server) getCharacter(ctx context.Context, charId int32) (*users.User, *users.JobProps, string, error) {

@@ -238,6 +238,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 					tAccs.ID.EQ(tOauth2Accs.AccountID),
 				).
 				INNER_JOIN(tUsers,
+					// TODO not compatible with servers not using `char%:` for identifier column
 					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
 				).
 				LEFT_JOIN(tJobsUserProps,
@@ -390,39 +391,4 @@ func (g *UserInfo) getUserRoles(roles map[int32]*types.Role, job string, grade i
 func (g *UserInfo) isUserAbsent(beginDate *timestamp.Timestamp, endDate *timestamp.Timestamp) bool {
 	// Either the user has no dates set or the absence is over (due to dates we have to think end date + 24 hours)
 	return !((beginDate == nil || endDate == nil) || (time.Since(beginDate.AsTime()) < 0*time.Hour || time.Since(endDate.AsTime()) > 24*time.Hour))
-}
-
-func (g *UserInfo) lookupUsersByDiscordID(ctx context.Context, externalId string) ([]*userRoleMapping, error) {
-	stmt := tOauth2Accs.
-		SELECT(
-			tOauth2Accs.AccountID.AS("userrolemapping.account_id"),
-			tOauth2Accs.ExternalID.AS("userrolemapping.external_id"),
-			tUsers.JobGrade.AS("userrolemapping.job_grade"),
-			tUsers.Firstname.AS("userrolemapping.firstname"),
-			tUsers.Lastname.AS("userrolemapping.lastname"),
-			tUsers.Job.AS("userrolemapping.job"),
-		).
-		FROM(
-			tOauth2Accs.
-				INNER_JOIN(tAccs,
-					tAccs.ID.EQ(tOauth2Accs.AccountID),
-				).
-				INNER_JOIN(tUsers,
-					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
-				),
-		).
-		WHERE(jet.AND(
-			tOauth2Accs.Provider.EQ(jet.String("discord")),
-			tOauth2Accs.ExternalID.EQ(jet.String(externalId)),
-		)).
-		ORDER_BY(tUsers.ID.ASC())
-
-	var dest []*userRoleMapping
-	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, err
-		}
-	}
-
-	return dest, nil
 }
