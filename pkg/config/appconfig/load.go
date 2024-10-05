@@ -145,6 +145,7 @@ func (c *Config) updateConfigFromDB(ctx context.Context) (*Cfg, error) {
 }
 
 func (c *Config) updateConfigInDB(ctx context.Context, cfg *Cfg) error {
+	tConfig := table.FivenetConfig
 	stmt := tConfig.
 		INSERT(
 			tConfig.Key,
