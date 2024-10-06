@@ -265,8 +265,7 @@ func (s *Server) SubmitExam(ctx context.Context, req *SubmitExamRequest) (*Submi
 			return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)
 		}
 
-		// TODO handle duplicate submit
-		return nil, nil
+		return nil, errorsqualifications.ErrFailedQuery
 	}
 
 	tExamResponses := table.FivenetQualificationsExamResponses

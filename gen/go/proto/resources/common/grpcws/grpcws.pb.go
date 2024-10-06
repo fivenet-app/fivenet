@@ -420,10 +420,10 @@ type Failure struct {
 	sizeCache     protoimpl.SizeCache
 	unknownFields protoimpl.UnknownFields
 
-	// TODO use enum errors to properly define the protocol
-	ErrorMessage string                  `protobuf:"bytes,1,opt,name=errorMessage,proto3" json:"errorMessage,omitempty"`
-	ErrorStatus  string                  `protobuf:"bytes,2,opt,name=errorStatus,proto3" json:"errorStatus,omitempty"`
-	Headers      map[string]*HeaderValue `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
+	ErrorMessage string `protobuf:"bytes,1,opt,name=errorMessage,proto3" json:"errorMessage,omitempty"`
+	// TODO use enum errors to properly define the protocol errors
+	ErrorStatus string                  `protobuf:"bytes,2,opt,name=errorStatus,proto3" json:"errorStatus,omitempty"`
+	Headers     map[string]*HeaderValue `protobuf:"bytes,3,rep,name=headers,proto3" json:"headers,omitempty" protobuf_key:"bytes,1,opt,name=key,proto3" protobuf_val:"bytes,2,opt,name=value,proto3"`
 }
 
 func (x *Failure) Reset() {

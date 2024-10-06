@@ -121,12 +121,12 @@ export interface Complete {
  */
 export interface Failure {
     /**
-     * TODO use enum errors to properly define the protocol
-     *
      * @generated from protobuf field: string errorMessage = 1;
      */
     errorMessage: string;
     /**
+     * TODO use enum errors to properly define the protocol errors
+     *
      * @generated from protobuf field: string errorStatus = 2;
      */
     errorStatus: string;

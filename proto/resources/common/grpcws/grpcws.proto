@@ -38,8 +38,8 @@ message Body {
 message Complete {}
 
 message Failure {
-  // TODO use enum errors to properly define the protocol
   string errorMessage = 1;
+  // TODO use enum errors to properly define the protocol errors
   string errorStatus = 2;
   map<string, HeaderValue> headers = 3;
 }
