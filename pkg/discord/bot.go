@@ -5,14 +5,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"log"
 	"slices"
 	"strconv"
 	"sync"
 	"sync/atomic"
 	"time"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/diamondburned/arikawa/v3/state"
@@ -97,10 +95,9 @@ type Bot struct {
 
 	wg sync.WaitGroup
 
-	id              discord.UserID
-	disconnectCount atomic.Uint64
-	discord         *state.State
-	activeGuilds    *xsync.MapOf[discord.GuildID, *Guild]
+	id           discord.UserID
+	discord      *state.State
+	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
 }
 
 func NewBot(p BotParams) (*Bot, error) {
@@ -113,7 +110,7 @@ func NewBot(p BotParams) (*Bot, error) {
 	state.AddIntents(gateway.IntentGuilds | gateway.IntentGuildMembers | gateway.IntentGuildPresences | gateway.IntentGuildIntegrations)
 	state.AddHandler(func(*gateway.ReadyEvent) {
 		me, _ := state.Me()
-		log.Println("connected to the gateway as", me.Tag())
+		p.Logger.Info("connected to the gateway", zap.String("me", me.Tag()))
 	})
 
 	cmds, err := commands.New(p.Logger, state, p.Config, p.I18n)
@@ -122,9 +119,6 @@ func NewBot(p BotParams) (*Bot, error) {
 	}
 
 	ctx, cancel := context.WithCancel(context.Background())
-	if err := state.Connect(ctx); err != nil {
-		p.Logger.Fatal("failed to connect to discord gateway", zap.Error(err))
-	}
 
 	b := &Bot{
 		ctx:      ctx,
@@ -140,28 +134,23 @@ func NewBot(p BotParams) (*Bot, error) {
 
 		wg: sync.WaitGroup{},
 
-		disconnectCount: atomic.Uint64{},
-		discord:         state,
-		activeGuilds:    xsync.NewMapOf[discord.GuildID, *Guild](),
+		discord:      state,
+		activeGuilds: xsync.NewMapOf[discord.GuildID, *Guild](),
 	}
 
 	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		if err := b.start(ctx); err != nil {
-			return err
-		}
-
-		// Cause discord client disconnects to cause bot restart after so many tries
-		b.discord.AddHandler(func(discord *discordgo.Session, r *discordgo.Disconnect) {
-			b.logger.Warn("discord client disconnected")
-
-			b.disconnectCount.Add(1)
-
-			if b.disconnectCount.Load() > disconnectRestartCountThreshold {
+		go func() {
+			if err := state.Connect(ctx); err != nil {
+				p.Logger.Error("failed to connect to discord gateway", zap.Error(err))
 				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
 					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
 				}
 			}
-		})
+		}()
+
+		if err := b.start(ctx); err != nil {
+			return err
+		}
 
 		go func() {
 			b.logger.Info("sleeping 5 seconds before running first discord sync")
@@ -196,13 +185,13 @@ func NewBot(p BotParams) (*Bot, error) {
 
 func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
-	b.discord.AddHandler(func(discord *discordgo.Session, r *discordgo.Ready) {
+	b.discord.AddHandler(func(r *gateway.ReadyEvent) {
 		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(r.Guilds)))
 		ready.Store(true)
 	})
 
-	b.discord.AddHandler(func(s *discordgo.Session, g *discordgo.GuildCreate) {
-		b.logger.Info("discord server joined", zap.String("discord_guild_id", g.ID))
+	b.discord.AddHandler(func(g *gateway.GuildCreateEvent) {
+		b.logger.Info("discord server joined", zap.Uint64("discord_guild_id", uint64(g.ID)))
 	})
 
 	go func() {
@@ -391,7 +380,7 @@ func (b *Bot) getJobGuildsFromDB(ctx context.Context) (map[string]discord.GuildI
 	for _, g := range dest {
 		id, err := strconv.ParseUint(g.ID, 10, 64)
 		if err != nil {
-			return nil, fmt.Errorf("failed to parse guild id %s as uint64. %w", err)
+			return nil, fmt.Errorf("failed to parse guild id %s as uint64. %w", g.ID, err)
 		}
 
 		guilds[g.Job] = discord.GuildID(id)

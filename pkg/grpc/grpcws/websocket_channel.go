@@ -83,8 +83,7 @@ func newGrpcStream(streamId uint32, channel *WebsocketChannel, streamBufferSize 
 	return &GrpcStream{
 		mutex: sync.Mutex{},
 
-		id: streamId,
-		// how many frames should we allow to buffer to avoid blocking the websocket
+		id:              streamId,
 		inputFrames:     make(chan *grpcws.GrpcFrame, streamBufferSize),
 		channel:         channel,
 		ctx:             ctx,
@@ -205,13 +204,11 @@ func (ws *WebsocketChannel) poll() error {
 			ws.writeError(frame.StreamId, "stream already exists")
 		}
 
-		// TODO make this configurable how many frames should we allow to buffer to avoid blocking the websocket
-
 		if ws.maxStreamCount > 0 && len(ws.activeStreams) > ws.maxStreamCount {
 			return ws.writeError(frame.StreamId, "rejecting max number of streams reached for this channel")
 		}
 
-		stream := newGrpcStream(frame.StreamId, ws, 1000)
+		stream := newGrpcStream(frame.StreamId, ws, ws.maxStreamCount)
 		func() {
 			ws.mutex.Lock()
 			defer ws.mutex.Unlock()

@@ -132,7 +132,7 @@ func (s *GrpcWebWrapperTestSuite) SetupTest() {
 }
 
 func (s *GrpcWebWrapperTestSuite) ctxForTest() context.Context {
-	ctx, _ := context.WithTimeout(context.TODO(), 1*time.Second)
+	ctx, _ := context.WithTimeout(context.Background(), 1*time.Second)
 	return ctx
 }
 

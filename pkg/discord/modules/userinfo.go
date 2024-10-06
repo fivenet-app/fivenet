@@ -11,8 +11,8 @@ import (
 	"strings"
 	"time"
 
-	"github.com/bwmarrin/discordgo"
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/utils/httputil"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
@@ -239,8 +239,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 					tAccs.ID.EQ(tOauth2Accs.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					// TODO not compatible with servers not using `char%:` for identifier column
-					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
+					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
 				).
 				LEFT_JOIN(tJobsUserProps,
 					tJobsUserProps.UserID.EQ(tUsers.ID),
@@ -280,13 +279,12 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 
 		member, err := g.discord.Member(g.guild.ID, discord.UserID(externalId))
 		if err != nil {
-			if restErr, ok := err.(*discordgo.RESTError); ok {
-				if restErr.Response.StatusCode == http.StatusNotFound {
-
+			if restErr, ok := err.(*httputil.HTTPError); ok {
+				if restErr.Code == http.StatusNotFound {
 					// Add log about employee not being on discord
 					logs = append(logs, discord.Embed{
 						Title:       fmt.Sprintf("UserInfo: Employee not found on Discord: %s %s", u.Firstname, u.Lastname),
-						Description: fmt.Sprintf("Discord ID: %s, Rank: %d", externalId, u.JobGrade),
+						Description: fmt.Sprintf("Discord ID: %d, Rank: %d", externalId, u.JobGrade),
 						Author:      embeds.EmbedAuthor,
 						Color:       embeds.ColorWarn,
 					})

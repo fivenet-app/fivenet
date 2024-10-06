@@ -200,6 +200,7 @@ func (w *WrappedGrpcServer) HandleGrpcWebsocketChannelRequest(resp http.Response
 	if w.opts.websocketPingInterval >= time.Second {
 		websocketChannel.enablePing(w.opts.websocketPingInterval)
 	}
+
 	websocketChannel.Start()
 }
 

@@ -117,8 +117,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 					tAccs.ID.EQ(tOauth2Accs.AccountID),
 				).
 				INNER_JOIN(tUsers,
-					// TODO not compatible with servers not using `char%:` for identifier column
-					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("char%:"), tAccs.License)),
+					tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), tAccs.License)),
 				),
 		).
 		WHERE(jet.AND(
@@ -191,8 +190,7 @@ func (g *GroupSync) checkIfUserHasCharInJob(ctx context.Context, identifier stri
 		).
 		FROM(tUsers).
 		WHERE(jet.AND(
-			// TODO not compatible with servers not using `char%:` for identifier column
-			tUsers.Identifier.LIKE(jet.String("char%:"+identifier)),
+			tUsers.Identifier.LIKE(jet.CONCAT(jet.String("%"), jet.String(identifier))),
 			tUsers.Job.EQ(jet.String(job)),
 		))
 

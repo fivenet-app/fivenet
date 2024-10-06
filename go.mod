@@ -8,7 +8,6 @@ require (
 	github.com/XSAM/otelsql v0.34.0
 	github.com/alecthomas/kong v1.2.1
 	github.com/blevesearch/bleve/v2 v2.4.2
-	github.com/bwmarrin/discordgo v0.28.1
 	github.com/coder/websocket v1.8.12
 	github.com/creasty/defaults v1.8.0
 	github.com/desertbit/timer v1.0.1

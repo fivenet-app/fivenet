@@ -40,5 +40,7 @@ type I18n struct {
 }
 
 func (i *I18n) I18n(lang string) *i18n.Localizer {
+	tags := i.bundle.LanguageTags()
+	_ = tags
 	return i18n.NewLocalizer(i.bundle, lang)
 }

@@ -42,7 +42,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @antfu/install-pkg (0.4.0)
+The following software may be included in this product: @antfu/install-pkg (0.4.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -180,7 +180,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/generator (7.25.5)
+The following software may be included in this product: @babel/generator (7.25.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -404,7 +404,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/helpers (7.25.0)
+The following software may be included in this product: @babel/helpers (7.25.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -460,7 +460,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/parser (7.25.4)
+The following software may be included in this product: @babel/parser (7.25.6)
 This software contains the following license and notice below:
 
 Copyright (C) 2012-2014 by various contributors (see AUTHORS)
@@ -485,7 +485,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/runtime (7.25.4)
+The following software may be included in this product: @babel/runtime (7.25.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -513,7 +513,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/standalone (7.25.5)
+The following software may be included in this product: @babel/standalone (7.25.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -569,7 +569,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/traverse (7.25.4)
+The following software may be included in this product: @babel/traverse (7.25.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -597,7 +597,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @babel/types (7.25.4)
+The following software may be included in this product: @babel/types (7.25.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -814,7 +814,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @emotion/serialize (1.3.1)
+The following software may be included in this product: @emotion/serialize (1.3.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -895,7 +895,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @emotion/utils (1.4.0)
+The following software may be included in this product: @emotion/utils (1.4.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -964,7 +964,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @esbuild/linux-x64 (0.23.1)
+The following software may be included in this product: @esbuild/linux-x64 (0.24.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -1033,7 +1033,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @headlessui/vue (1.7.22)
+The following software may be included in this product: @headlessui/vue (1.7.23)
 This software contains the following license and notice below:
 
 MIT License
@@ -1063,7 +1063,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @iconify-json/heroicons (1.1.24)
+The following software may be included in this product: @iconify-json/heroicons (1.2.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -1078,7 +1078,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @iconify-json/vscode-icons (1.1.37)
+The following software may be included in this product: @iconify-json/vscode-icons (1.2.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -1093,7 +1093,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @iconify/collections (1.0.453)
+The following software may be included in this product: @iconify/collections (1.0.462)
 This software contains the following license and notice below:
 
 MIT License
@@ -1135,7 +1135,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @iconify/utils (2.1.32)
+The following software may be included in this product: @iconify/utils (2.1.33)
 This software contains the following license and notice below:
 
 MIT License
@@ -1395,7 +1395,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @koa/router (12.0.1)
+The following software may be included in this product: @koa/router (12.0.2)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -1503,7 +1503,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/devtools-kit (1.3.14)
+The following software may be included in this product: @nuxt/devtools-kit (1.5.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -1530,7 +1530,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/devtools-kit (1.4.1)
+The following software may be included in this product: @nuxt/devtools-kit (1.5.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -1557,7 +1557,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/fonts (0.7.2)
+The following software may be included in this product: @nuxt/fonts (0.9.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -1584,7 +1584,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/icon (1.4.10)
+The following software may be included in this product: @nuxt/icon (1.5.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -1638,6 +1638,33 @@ SOFTWARE.
 
 ---
 
+The following software may be included in this product: @nuxt/kit (3.13.2)
+This software contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2016-present - Nuxt Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: @nuxt/schema (3.13.0)
 This software contains the following license and notice below:
 
@@ -1665,7 +1692,34 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxt/ui (2.18.4)
+The following software may be included in this product: @nuxt/schema (3.13.2)
+This software contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2016-present - Nuxt Team
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
+The following software may be included in this product: @nuxt/ui (2.18.6)
 This software contains the following license and notice below:
 
 MIT License
@@ -1680,7 +1734,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @nuxtjs/color-mode (3.4.4)
+The following software may be included in this product: @nuxtjs/color-mode (3.5.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -1707,7 +1761,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @nuxtjs/robots (4.1.6)
+The following software may be included in this product: @nuxtjs/robots (4.1.7)
 This software contains the following license and notice below:
 
 MIT License
@@ -1845,7 +1899,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @pinia/nuxt (0.5.4)
+The following software may be included in this product: @pinia/nuxt (0.5.5)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -2079,7 +2133,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: @polka/url (1.0.0-next.25)
+The following software may be included in this product: @polka/url (1.0.0-next.28)
 This software contains the following license and notice below:
 
 MIT License
@@ -2147,7 +2201,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @rollup/rollup-linux-x64-gnu (4.21.0)
+The following software may be included in this product: @rollup/rollup-linux-x64-gnu (4.22.4)
 This software contains the following license and notice below:
 
 MIT License
@@ -2162,7 +2216,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @rollup/rollup-linux-x64-musl (4.21.0)
+The following software may be included in this product: @rollup/rollup-linux-x64-musl (4.22.4)
 This software contains the following license and notice below:
 
 MIT License
@@ -2222,7 +2276,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @tailwindcss/forms (0.5.7)
+The following software may be included in this product: @tailwindcss/forms (0.5.9)
 This software contains the following license and notice below:
 
 MIT License
@@ -2249,7 +2303,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tailwindcss/typography (0.5.14)
+The following software may be included in this product: @tailwindcss/typography (0.5.15)
 This software contains the following license and notice below:
 
 MIT License
@@ -2276,7 +2330,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tanstack/virtual-core (3.10.4)
+The following software may be included in this product: @tanstack/virtual-core (3.10.8)
 This software contains the following license and notice below:
 
 MIT License
@@ -2303,7 +2357,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @tanstack/vue-virtual (3.10.4)
+The following software may be included in this product: @tanstack/vue-virtual (3.10.8)
 This software contains the following license and notice below:
 
 MIT License
@@ -3329,6 +3383,33 @@ SOFTWARE
 
 ---
 
+The following software may be included in this product: @types/estree (1.0.6)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Microsoft Corporation.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE
+
+---
+
 The following software may be included in this product: @types/geojson (7946.0.14)
 This software contains the following license and notice below:
 
@@ -3491,7 +3572,7 @@ SOFTWARE
 
 ---
 
-The following software may be included in this product: @types/node (22.5.4)
+The following software may be included in this product: @types/node (22.7.4)
 This software contains the following license and notice below:
 
 MIT License
@@ -3734,7 +3815,7 @@ SOFTWARE
 
 ---
 
-The following software may be included in this product: @types/topojson-client (3.1.4)
+The following software may be included in this product: @types/topojson-client (3.1.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -3946,7 +4027,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/compiler-core (3.5.1)
+The following software may be included in this product: @vue/compiler-core (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -3973,7 +4054,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/compiler-dom (3.5.1)
+The following software may be included in this product: @vue/compiler-dom (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4000,7 +4081,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/compiler-sfc (3.5.1)
+The following software may be included in this product: @vue/compiler-sfc (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4027,7 +4108,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/compiler-ssr (3.5.1)
+The following software may be included in this product: @vue/compiler-ssr (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4054,7 +4135,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/devtools-api (6.6.3)
+The following software may be included in this product: @vue/devtools-api (6.6.4)
 This software contains the following license and notice below:
 
 MIT License
@@ -4069,7 +4150,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: @vue/reactivity (3.5.1)
+The following software may be included in this product: @vue/reactivity (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4096,7 +4177,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/runtime-core (3.5.1)
+The following software may be included in this product: @vue/runtime-core (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4123,7 +4204,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/runtime-dom (3.5.1)
+The following software may be included in this product: @vue/runtime-dom (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4150,7 +4231,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/server-renderer (3.5.1)
+The following software may be included in this product: @vue/server-renderer (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4177,7 +4258,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vue/shared (3.5.1)
+The following software may be included in this product: @vue/shared (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -4204,7 +4285,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vueuse/core (10.11.1)
+The following software may be included in this product: @vueuse/core (11.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -4231,7 +4312,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vueuse/core (11.0.3)
+The following software may be included in this product: @vueuse/integrations (11.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -4258,7 +4339,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vueuse/integrations (10.11.1)
+The following software may be included in this product: @vueuse/math (11.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -4285,7 +4366,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vueuse/math (10.11.1)
+The following software may be included in this product: @vueuse/metadata (11.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -4312,88 +4393,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @vueuse/metadata (10.11.1)
-This software contains the following license and notice below:
-
-MIT License
-
-Copyright (c) 2019-PRESENT Anthony Fu<https://github.com/antfu>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-The following software may be included in this product: @vueuse/metadata (11.0.3)
-This software contains the following license and notice below:
-
-MIT License
-
-Copyright (c) 2019-PRESENT Anthony Fu<https://github.com/antfu>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-The following software may be included in this product: @vueuse/shared (10.11.1)
-This software contains the following license and notice below:
-
-MIT License
-
-Copyright (c) 2019-PRESENT Anthony Fu<https://github.com/antfu>
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-The following software may be included in this product: @vueuse/shared (11.0.3)
+The following software may be included in this product: @vueuse/shared (11.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -4517,7 +4517,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: ansi-regex (6.0.1)
+The following software may be included in this product: ansi-regex (6.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -4978,7 +4978,22 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: c12 (1.11.1)
+The following software may be included in this product: bundle-name (4.1.0)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+The following software may be included in this product: c12 (1.11.2)
 This software contains the following license and notice below:
 
 MIT License
@@ -5107,7 +5122,61 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
+The following software may be included in this product: changelogen (0.5.7)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Pooya Parsa <pooya@pi0.io>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: chokidar (3.6.0)
+This software contains the following license and notice below:
+
+The MIT License (MIT)
+
+Copyright (c) 2012-2019 Paul Miller (https://paulmillr.com), Elan Shanker
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the “Software”), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+---
+
+The following software may be included in this product: chokidar (4.0.0)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -5319,6 +5388,19 @@ Permission is hereby granted, free of charge, to any person obtaining a copy of 
 The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 
 THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+The following software may be included in this product: colorette (2.0.20)
+This software contains the following license and notice below:
+
+Copyright © Jorge Bucaran <<https://jorgebucaran.com>>
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the 'Software'), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED 'AS IS', WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
@@ -5718,6 +5800,33 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
+The following software may be included in this product: convert-gitmoji (0.1.5)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2022 Conner Luka Bachmann
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: convert-source-map (1.9.0)
 This software contains the following license and notice below:
 
@@ -6021,10 +6130,10 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: css-tree (2.3.1)
+The following software may be included in this product: css-tree (3.0.0)
 This software contains the following license and notice below:
 
-Copyright (C) 2016-2022 by Roman Dvornov
+Copyright (C) 2016-2024 by Roman Dvornov
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -6139,7 +6248,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: date-fns (3.6.0)
+The following software may be included in this product: date-fns (4.1.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -6217,7 +6326,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: debug (4.3.6)
+The following software may be included in this product: debug (4.3.7)
 This software contains the following license and notice below:
 
 (The MIT License)
@@ -6242,6 +6351,33 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
+The following software may be included in this product: dedupe (4.0.3)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2013 Manuel Ernst
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: deep-equal (1.0.1)
 This software contains the following license and notice below:
 
@@ -6263,6 +6399,51 @@ FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
 COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
 IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
 CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+The following software may be included in this product: default-browser (5.2.1)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+The following software may be included in this product: default-browser-id (5.0.0)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+The following software may be included in this product: define-lazy-prop (3.0.0)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
@@ -6662,7 +6843,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: esbuild (0.23.1)
+The following software may be included in this product: esbuild (0.24.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -6689,7 +6870,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: escalade (3.1.2)
+The following software may be included in this product: escalade (3.2.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -9377,7 +9558,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: magicast (0.3.4)
+The following software may be included in this product: magicast (0.3.5)
 This software contains the following license and notice below:
 
 MIT License
@@ -9927,33 +10108,6 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: ms (2.1.2)
-This software contains the following license and notice below:
-
-The MIT License (MIT)
-
-Copyright (c) 2016 Zeit, Inc.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
 The following software may be included in this product: ms (2.1.3)
 This software contains the following license and notice below:
 
@@ -10337,7 +10491,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: nuxt-site-config (2.2.16)
+The following software may be included in this product: nuxt-site-config (2.2.18)
 This software contains the following license and notice below:
 
 MIT License
@@ -10352,7 +10506,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: nuxt-site-config-kit (2.2.16)
+The following software may be included in this product: nuxt-site-config-kit (2.2.18)
 This software contains the following license and notice below:
 
 MIT License
@@ -10367,7 +10521,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: nuxt-zod-i18n (1.9.0)
+The following software may be included in this product: nuxt-zod-i18n (1.10.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -10463,7 +10617,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: ofetch (1.3.4)
+The following software may be included in this product: ofetch (1.4.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -10490,7 +10644,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: ohash (1.1.3)
+The following software may be included in this product: ohash (1.1.4)
 This software contains the following license and notice below:
 
 MIT License
@@ -10576,7 +10730,22 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: package-manager-detector (0.1.2)
+The following software may be included in this product: open (10.1.0)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
+The following software may be included in this product: package-manager-detector (0.2.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -10880,7 +11049,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: path-to-regexp (6.2.2)
+The following software may be included in this product: path-to-regexp (6.3.0)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -11095,7 +11264,7 @@ THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: pinia (2.2.2)
+The following software may be included in this product: pinia (2.2.4)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -11227,7 +11396,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: postcss (8.4.45)
+The following software may be included in this product: postcss (8.4.47)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -11646,6 +11815,33 @@ SOFTWARE.
 
 ---
 
+The following software may be included in this product: readdirp (4.0.1)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) 2012-2019 Thorsten Lorenz, Paul Miller (https://paulmillr.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+---
+
 The following software may be included in this product: redis-errors (1.2.0)
 This software contains the following license and notice below:
 
@@ -11949,7 +12145,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: rollup (4.21.0)
+The following software may be included in this product: rollup (4.22.4)
 This software contains the following license and notice below:
 
 # Rollup core license
@@ -12608,6 +12804,21 @@ Repository: https://github.com/yargs/yargs-parser.git
 
 ---
 
+The following software may be included in this product: run-applescript (7.0.0)
+This software contains the following license and notice below:
+
+MIT License
+
+Copyright (c) Sindre Sorhus <sindresorhus@gmail.com> (https://sindresorhus.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+---
+
 The following software may be included in this product: run-parallel (1.2.0)
 This software contains the following license and notice below:
 
@@ -12688,7 +12899,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: sass (1.78.0)
+The following software may be included in this product: sass (1.79.4)
 This software contains the following license and notice below:
 
 Dart Sass license:
@@ -14492,7 +14703,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: site-config-stack (2.2.16)
+The following software may be included in this product: site-config-stack (2.2.18)
 This software contains the following license and notice below:
 
 MIT License
@@ -15038,7 +15249,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: tailwindcss (3.4.10)
+The following software may be included in this product: tailwindcss (3.4.13)
 This software contains the following license and notice below:
 
 MIT License
@@ -15249,7 +15460,7 @@ WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: tinyexec (0.2.0)
+The following software may be included in this product: tinyexec (0.3.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -15674,7 +15885,7 @@ THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 ---
 
-The following software may be included in this product: unimport (3.11.1)
+The following software may be included in this product: unimport (3.12.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -15727,7 +15938,7 @@ CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: unplugin (1.12.2)
+The following software may be included in this product: unplugin (1.14.1)
 This software contains the following license and notice below:
 
 MIT License
@@ -15754,7 +15965,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: unstorage (1.10.2)
+The following software may be included in this product: unstorage (1.12.0)
 This software contains the following license and notice below:
 
 MIT License
@@ -16030,7 +16241,7 @@ SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ---
 
-The following software may be included in this product: vite (5.4.3)
+The following software may be included in this product: vite (5.4.7)
 This software contains the following license and notice below:
 
 # Vite core license
@@ -19518,7 +19729,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-The following software may be included in this product: vue (3.5.1)
+The following software may be included in this product: vue (3.5.7)
 This software contains the following license and notice below:
 
 The MIT License (MIT)
@@ -19704,33 +19915,6 @@ This software contains the following license and notice below:
 The MIT License (MIT)
 
 Copyright (c) 2021, Gilbert Ndresaj
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
----
-
-The following software may be included in this product: webpack-sources (3.2.3)
-This software contains the following license and notice below:
-
-MIT License
-
-Copyright (c) 2017 JS Foundation and other contributors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -20774,7 +20958,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
 ---
 
-The following software may be included in this product: @swc/helpers (0.5.12)
+The following software may be included in this product: @swc/helpers (0.5.13)
 This software contains the following license and notice below:
 
 Apache License
@@ -20965,7 +21149,7 @@ APPENDIX: How to apply the Apache License to your work.
    same "printed page" as the copyright notice for easier
    identification within third-party archives.
 
-Copyright [yyyy] [name of copyright owner]
+Copyright 2024 SWC contributors.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -22426,7 +22610,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: fuse.js (6.6.2)
+The following software may be included in this product: fuse.js (7.0.0)
 This software contains the following license and notice below:
 
 Apache License
@@ -23335,7 +23519,7 @@ limitations under the License.
 
 ---
 
-The following software may be included in this product: typescript (5.5.4)
+The following software may be included in this product: typescript (5.6.2)
 This software contains the following license and notice below:
 
 Apache License
@@ -23468,7 +23652,7 @@ SOFTWARE.
 
 ---
 
-The following software may be included in this product: @iconify-json/simple-icons (1.2.1)
+The following software may be included in this product: @iconify-json/simple-icons (1.2.5)
 This software contains the following license and notice below:
 
 Creative Commons Legal Code
@@ -23595,7 +23779,7 @@ express Statement of Purpose.
 
 ---
 
-The following software may be included in this product: mdn-data (2.0.30)
+The following software may be included in this product: mdn-data (2.10.0)
 This software contains the following license and notice below:
 
 CC0 1.0 Universal
@@ -24562,7 +24746,7 @@ THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: electron-to-chromium (1.5.13)
+The following software may be included in this product: electron-to-chromium (1.5.27)
 This software contains the following license and notice below:
 
 Copyright 2018 Kilian Valkhof
@@ -25159,12 +25343,12 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: picocolors (1.0.1)
+The following software may be included in this product: picocolors (1.1.0)
 This software contains the following license and notice below:
 
 ISC License
 
-Copyright (c) 2021 Alexey Raspopov, Kostiantyn Denysov, Anton Verinov
+Copyright (c) 2021-2024 Oleksii Raspopov, Kostiantyn Denysov, Anton Verinov
 
 Permission to use, copy, modify, and/or distribute this software for any
 purpose with or without fee is hereby granted, provided that the above
@@ -25388,7 +25572,7 @@ IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: tinyglobby (0.2.5)
+The following software may be included in this product: tinyglobby (0.2.6)
 This software contains the following license and notice below:
 
 ISC License
@@ -25592,7 +25776,7 @@ THIS SOFTWARE.
 
 ---
 
-The following software may be included in this product: yaml (2.5.0)
+The following software may be included in this product: yaml (2.5.1)
 This software contains the following license and notice below:
 
 Copyright Eemeli Aro <eemeli@gmail.com>
@@ -26300,7 +26484,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-The following software may be included in this product: source-map-js (1.2.0)
+The following software may be included in this product: source-map-js (1.2.1)
 This software contains the following license and notice below:
 
 Copyright (c) 2009-2011, Mozilla Foundation and contributors
@@ -26489,7 +26673,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ---
 
-The following software may be included in this product: terser (5.31.6)
+The following software may be included in this product: terser (5.33.0)
 This software contains the following license and notice below:
 
 Copyright 2012-2018 (c) Mihai Bazon <mihai.bazon@gmail.com>
@@ -26720,7 +26904,7 @@ TERMS AND CONDITIONS FOR USE, REPRODUCTION, AND DISTRIBUTION
 
 ---
 
-The following software may be included in this product: caniuse-lite (1.0.30001653)
+The following software may be included in this product: caniuse-lite (1.0.30001662)
 This software contains the following license and notice below:
 
 Attribution 4.0 International
