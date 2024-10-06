@@ -2,12 +2,13 @@
 import PhoneNumberBlock from '~/components/partials/citizens/PhoneNumberBlock.vue';
 import { useCentrumStore } from '~/store/centrum';
 import type { DispatchAssignment } from '~~/gen/ts/resources/centrum/dispatches';
-import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { StatusUnit, type Unit } from '~~/gen/ts/resources/centrum/units';
+import { unitStatusToBGColor } from '../helpers';
 
 const centrumStore = useCentrumStore();
 const { timeCorrection } = storeToRefs(centrumStore);
 
-withDefaults(
+const props = withDefaults(
     defineProps<{
         unit: Unit | undefined;
         initialsOnly?: boolean;
@@ -18,6 +19,8 @@ withDefaults(
         assignment: undefined,
     },
 );
+
+const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.status));
 </script>
 
 <template>
@@ -44,8 +47,13 @@ withDefaults(
         </UButton>
 
         <template #panel>
-            <div class="p-4">
+            <div class="inline-flex min-w-48 flex-col gap-1 p-4">
                 <p class="text-base font-semibold leading-none">{{ unit.name }} ({{ unit.initials }})</p>
+
+                <UBadge class="rounded font-semibold" :class="unitStatusColor" size="xs">
+                    {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
+                </UBadge>
+
                 <p v-if="assignment?.expiresAt" class="inline-flex items-center justify-center text-sm font-normal">
                     {{
                         useLocaleTimeAgo(toDate(assignment.expiresAt, timeCorrection), {
@@ -54,13 +62,14 @@ withDefaults(
                         }).value
                     }}
                 </p>
+
                 <div class="text-gray-900 dark:text-white">
                     <p class="text-sm font-medium leading-none">
                         {{ $t('common.members') }}
                     </p>
                     <template v-if="unit.users.length === 0">
                         <p class="text-xs font-normal">
-                            {{ $t('common.units', 0) }}
+                            {{ $t('common.member', 0) }}
                         </p>
                     </template>
                     <ul v-else class="inline-flex flex-col text-xs font-normal">

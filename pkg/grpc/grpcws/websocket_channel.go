@@ -348,7 +348,16 @@ func (w *WebsocketChannel) ping() {
 			return
 		case <-w.timer.C:
 			w.timer.Reset(w.timeOutInterval)
-			w.activeStreams[0].channel.write(framePingResponse)
+			func() {
+				w.mutex.Lock()
+				defer w.mutex.Unlock()
+
+				stream, ok := w.activeStreams[0]
+				if !ok {
+					return
+				}
+				stream.channel.write(framePingResponse)
+			}()
 		}
 	}
 }

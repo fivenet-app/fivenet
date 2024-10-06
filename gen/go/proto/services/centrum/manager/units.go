@@ -255,7 +255,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					X:         x,
 					Y:         y,
 					Postal:    postal,
-				}); err != nil {
+				}, true); err != nil {
 					return nil, false, err
 				}
 
@@ -305,7 +305,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					X:         x,
 					Y:         y,
 					Postal:    postal,
-				}); err != nil {
+				}, true); err != nil {
 					return nil, false, err
 				}
 
@@ -326,7 +326,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				X:         x,
 				Y:         y,
 				Postal:    postal,
-			}); err != nil {
+			}, true); err != nil {
 				return nil, false, err
 			}
 		}
@@ -398,7 +398,7 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 		CreatedAt: timestamp.Now(),
 		UnitId:    uint64(lastId),
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
-	}); err != nil {
+	}, false); err != nil {
 		return nil, err
 	}
 
@@ -479,7 +479,7 @@ func (s *Manager) UpdateUnit(ctx context.Context, job string, unit *centrum.Unit
 	return unit, nil
 }
 
-func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus) (*centrum.UnitStatus, error) {
+func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, status *centrum.UnitStatus, publish bool) (*centrum.UnitStatus, error) {
 	tUnitStatus := table.FivenetCentrumUnitsStatus
 	stmt := tUnitStatus.
 		INSERT(
@@ -522,13 +522,15 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 		return nil, err
 	}
 
-	data, err := proto.Marshal(status)
-	if err != nil {
-		return nil, err
-	}
+	if publish {
+		data, err := proto.Marshal(status)
+		if err != nil {
+			return nil, err
+		}
 
-	if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
-		return nil, err
+		if _, err := s.js.Publish(ctx, eventscentrum.BuildSubject(eventscentrum.TopicUnit, eventscentrum.TypeUnitStatus, job), data); err != nil {
+			return nil, err
+		}
 	}
 
 	return newStatus, nil
