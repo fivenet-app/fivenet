@@ -8,7 +8,7 @@ useHead({
 });
 
 const props = defineProps<{
-    error: Error | object;
+    error: Error | object | undefined;
 }>();
 
 const router = useRouter();
@@ -57,15 +57,19 @@ const isDev = import.meta.dev;
                         <FiveNetLogo class="mx-auto mb-2 h-auto w-36" />
 
                         <h1 class="text-5xl font-bold">
-                            {{ $t ? $t('pages.error.title') : 'Error occured' }}
+                            {{ $t !== undefined ? $t('pages.error.title') : 'Error occured' }}
                         </h1>
                         <h2 class="text-xl">
-                            {{ $t ? $t('pages.error.subtitle') : 'A fatal error occured, please try again in a few seconds.' }}
+                            {{
+                                $t !== undefined
+                                    ? $t('pages.error.subtitle')
+                                    : 'A fatal error occured, please try again in a few seconds.'
+                            }}
                         </h2>
 
                         <div class="mb-4 py-2">
                             <p class="py-2 font-semibold">
-                                {{ $t ? $t('pages.error.error_message') : 'Error message:' }}
+                                {{ $t !== undefined ? $t('pages.error.error_message') : 'Error message:' }}
                             </p>
                             <span v-if="error">
                                 <!-- @vue-ignore -->
@@ -126,7 +130,7 @@ const isDev = import.meta.dev;
                                 color="amber"
                                 @click="copyError"
                             >
-                                {{ $t ? $t('pages.error.copy_error') : 'Copy Error message' }}
+                                {{ $t !== undefined ? $t('pages.error.copy_error') : 'Copy Error message' }}
                             </UButton>
                         </div>
 
