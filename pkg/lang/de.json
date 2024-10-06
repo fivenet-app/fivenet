@@ -6,15 +6,23 @@
                 "summary": "FiveNet auch im Browser nutzen! Link zur FiveNet Web App."
             },
             "help": {
+                "name": "hilfe",
                 "desc": "Hilfe-Themen rundum FiveNet.",
                 "empty": {
                     "title": "Kein Hilfe-Thema ausgewählt!",
                     "msg": "Verfügbare Themen:\n* `discord`"
                 },
                 "discord": {
+                    "name": "discord",
                     "desc": "Anleitung um Discord mit FiveNet zu verknüpfen.",
                     "title": "Discord Account verknüpfen",
-                    "msg": "1. Navigiere zu [deiner FiveNet Konto-Informationen Seite]({{.URL}}).\n 2. Sollte der \"Social Login-Verbindungen\" Tab noch nicht ausgewählt sein, so wählen sie diesen aus.\n3. Klicken sie auf den \"Verbinden\"-Knopf für Discord.\n4. Es kann sein dass sie sich bei Discord anmelden müssen, bevor sie bestätigen dass ihr Discord Account mit FiveNet verknüpft wird.\n5. Glückwunsch, damit sollte die Verbindung hergestellt sein! Sollten sie den richtigen Discord Account verknüpft haben, wird der FiveNet Discord Sync in wenigen Minuten ihre Rollen entsprechend setzen.\n\n(Sollten sie sich mit dem falschen Discord Account verknüpft haben, so nutzen sie den \"Trennen\"-Knopf, um die Verbindung zu trennen, und fangen bei Schritt 3 erneut an)"
+                    "msg": "1. Navigiere zu [deiner FiveNet Konto-Informationen Seite]({{.URL}}/auth/account-info?tab=oauth2Connections#).\n 2. Sollte der \"Social Login-Verbindungen\" Tab noch nicht ausgewählt sein, so wählen sie diesen aus.\n3. Klicken sie auf den \"Verbinden\"-Knopf für Discord.\n4. Es kann sein dass sie sich bei Discord anmelden müssen, bevor sie bestätigen dass ihr Discord Account mit FiveNet verknüpft wird.\n5. Glückwunsch, damit sollte die Verbindung hergestellt sein! Sollten sie den richtigen Discord Account verknüpft haben, wird der FiveNet Discord Sync in wenigen Minuten ihre Rollen entsprechend setzen.\n\n(Sollten sie sich mit dem falschen Discord Account verknüpft haben, so nutzen sie den \"Trennen\"-Knopf, um die Verbindung zu trennen, und fangen bei Schritt 3 erneut an)"
+                },
+                "registration": {
+                    "name": "registrierung",
+                    "desc": "Informationen rundum die FiveNet Account Registrierung.",
+                    "title": "FiveNet Account Registrierung",
+                    "msg": "1. Tritt dem Gameserver bei.\n2. Wenn du im Spiel bist, benutze den Befehl `/fivenet`, um Ihren **Registrierungs-Token** abzurufen.\n3. Klicke auf den Registrierungs-Token und Ihr Browser sollte automatisch die FiveNet-Registrierungsseite öffnen.\n4. Dort füllen Sie das Registrierungsformular aus, geben einen Benutzernamen und ein Passwort an, und schon können Sie den \"Konto erstellen\"-Knopf nutzen.\n5. Sie sollten nun in der Lage sein, sich mit dem gewählten Benutzernamen und Passwort anzumelden.\n\n(Falls Ihr Browser die FiveNet-Registrierungsseite nicht automatisch öffnet, [hier]({{.URL}}/auth/registration/) gelangen Sie zur FiveNet-Registrierungsseite)"
                 }
             }
         }
