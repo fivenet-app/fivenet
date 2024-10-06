@@ -106,7 +106,7 @@
         "vue-tsc": "2.1.6"
     },
     "overrides": {
-        "@nuxt/icon": "1.5.2"
+        "@nuxt/icon": "1.5.4"
     },
-    "packageManager": "pnpm@9.11.0"
+    "packageManager": "pnpm@9.12.0"
 }
