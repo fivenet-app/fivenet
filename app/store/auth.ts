@@ -24,7 +24,7 @@ export interface AuthState {
 export const useAuthStore = defineStore('auth', {
     state: () =>
         ({
-            // Persisted to Local Storage
+            // Persisted
             accessTokenExpiration: null,
             lastCharID: 0,
             username: null,
