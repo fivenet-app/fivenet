@@ -199,7 +199,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 			if !found {
 				continue
 			}
-			grade, err := strconv.Atoi(sGrade)
+			grade, err := strconv.ParseInt(sGrade, 10, 32)
 			if err != nil {
 				return nil, logs, err
 			}
