@@ -105,7 +105,7 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 	for _, entry := range qualifications {
 		if entry.DiscordSettings.RoleName == nil || *entry.DiscordSettings.RoleName == "" {
 			logs = append(logs, discord.Embed{
-				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification Discord settings %d", entry.ID),
+				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification's discord settings %d", entry.ID),
 				Description: fmt.Sprintf("Qualification ID: %d", entry.ID),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorWarn,
