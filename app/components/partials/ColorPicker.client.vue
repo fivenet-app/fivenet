@@ -66,17 +66,15 @@ const open = ref(false);
                 </template>
 
                 <div class="flex flex-1 items-center">
-                    <div class="mx-auto">
-                        <ColorPicker
-                            v-model:pure-color="color"
-                            is-widget
-                            format="hex"
-                            picker-type="chrome"
-                            disable-alpha
-                            disable-history
-                            :theme="theme"
-                        />
-                    </div>
+                    <ColorPicker
+                        v-model:pure-color="color"
+                        is-widget
+                        format="hex"
+                        picker-type="chrome"
+                        disable-alpha
+                        disable-history
+                        :theme="theme"
+                    />
                 </div>
 
                 <template #footer>
@@ -124,6 +122,7 @@ const open = ref(false);
 @media not all and screen(sm) {
     .vc-colorpicker {
         box-shadow: none !important;
+        flex: 1;
     }
 }
 </style>
