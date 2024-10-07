@@ -23,7 +23,7 @@
         "@galexrt/nuxt-update": "1.0.0",
         "@iconify-json/flagpack": "1.2.0",
         "@iconify-json/mdi": "1.2.0",
-        "@iconify-json/simple-icons": "1.2.5",
+        "@iconify-json/simple-icons": "1.2.6",
         "@nuxt/fonts": "0.9.2",
         "@nuxt/ui-pro": "1.4.3",
         "@nuxtjs/robots": "4.1.7",
@@ -108,5 +108,5 @@
     "overrides": {
         "@nuxt/icon": "1.5.4"
     },
-    "packageManager": "pnpm@9.12.0"
+    "packageManager": "pnpm@9.12.1"
 }
