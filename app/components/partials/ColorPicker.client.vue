@@ -31,6 +31,9 @@ const breakpoints = useBreakpoints(breakpointsTailwind);
 
 const smallerBreakpoint = breakpoints.smaller('sm');
 
+const colorMode = useColorMode();
+const theme = computed(() => (colorMode.value === 'dark' ? 'dark' : 'white'));
+
 const open = ref(false);
 </script>
 
@@ -71,6 +74,7 @@ const open = ref(false);
                             picker-type="chrome"
                             disable-alpha
                             disable-history
+                            :theme="theme"
                         />
                     </div>
                 </div>
@@ -99,7 +103,15 @@ const open = ref(false);
         />
 
         <template #panel>
-            <ColorPicker v-model:pure-color="color" is-widget format="hex" picker-type="chrome" disable-alpha disable-history />
+            <ColorPicker
+                v-model:pure-color="color"
+                is-widget
+                format="hex"
+                picker-type="chrome"
+                disable-alpha
+                disable-history
+                :theme="theme"
+            />
         </template>
     </UPopover>
 </template>
@@ -107,5 +119,11 @@ const open = ref(false);
 <style>
 .vc-input-toggle {
     display: none !important;
+}
+
+@media not all and screen(sm) {
+    .vc-colorpicker {
+        box-shadow: none !important;
+    }
 }
 </style>
