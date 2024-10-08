@@ -223,8 +223,9 @@ func (s *Server) CreateConductEntry(ctx context.Context, req *CreateConductEntry
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
+	req.Entry.Id = uint64(lastId)
 
-	entry, err := s.getConductEntry(ctx, uint64(lastId))
+	entry, err := s.getConductEntry(ctx, req.Entry.Id)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
