@@ -100,13 +100,13 @@
         "protoc-gen-js": "3.21.2",
         "sass": "1.79.4",
         "tailwindcss": "3.4.13",
-        "typescript": "5.6.2",
+        "typescript": "5.6.3",
         "vue": "3.5.11",
         "vue-i18n-routing": "1.2.0",
         "vue-tsc": "2.1.6"
     },
     "overrides": {
-        "@nuxt/icon": "1.5.4"
+        "@nuxt/icon": "1.5.5"
     },
     "packageManager": "pnpm@9.12.1"
 }
