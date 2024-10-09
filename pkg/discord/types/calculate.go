@@ -73,6 +73,8 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 		} else {
 			dcRole := roles[idx]
 
+			role.ID = roles[idx].ID
+
 			if botRole.ID != discord.NullRoleID && dcRole.Position > botRole.Position {
 				logs = append(logs, discord.Embed{
 					Title:       fmt.Sprintf("Roles: Role %s (%s) can't be updated", dcRole.Name, dcRole.ID),
@@ -82,8 +84,6 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 				})
 				continue
 			}
-
-			role.ID = roles[idx].ID
 
 			if role.Color == dcRole.Color && role.Permissions == dcRole.Permissions {
 				continue

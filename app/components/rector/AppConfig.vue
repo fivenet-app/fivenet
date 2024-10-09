@@ -149,6 +149,7 @@ async function updateAppConfig(values: Schema): Promise<void> {
         inviteUrl: values.discord.inviteUrl,
         syncInterval: toDuration(values.discord.syncInterval),
         ignoredJobs: values.discord.ignoredJobs,
+        botPresence: values.discord.botPresence,
     };
 
     try {
