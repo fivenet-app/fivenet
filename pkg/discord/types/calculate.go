@@ -90,6 +90,8 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 			if role.Color == dcRole.Color && role.Permissions == dcRole.Permissions {
 				continue
 			}
+			role.Color = dcRole.Color
+			role.Permissions = dcRole.Permissions
 
 			pr.ToUpdate = append(pr.ToUpdate, role)
 		}
