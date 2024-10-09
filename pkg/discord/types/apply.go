@@ -34,11 +34,19 @@ func (p *Plan) applyRoles(dc *state.State) error {
 	errs := multierr.Combine()
 
 	for _, role := range p.Roles.ToCreate {
-		res, err := dc.CreateRole(p.GuildID, api.CreateRoleData{
+		var ps discord.Permissions
+		if role.Permissions != nil {
+			ps = *role.Permissions
+		}
+
+		roleData := api.CreateRoleData{
 			Name:        role.Name,
-			Color:       role.Color,
-			Permissions: role.Permissions,
-		})
+			Permissions: ps,
+		}
+		if role.Color != nil {
+			roleData.Color = *role.Color
+		}
+		res, err := dc.CreateRole(p.GuildID, roleData)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to create role %s. %w", role.Name, err))
 			continue
@@ -50,8 +58,10 @@ func (p *Plan) applyRoles(dc *state.State) error {
 	for _, role := range p.Roles.ToUpdate {
 		roleData := api.ModifyRoleData{
 			Name:        option.NewNullableString(role.Name),
-			Color:       role.Color,
-			Permissions: &role.Permissions,
+			Permissions: role.Permissions,
+		}
+		if role.Color != nil {
+			roleData.Color = *role.Color
 		}
 
 		if _, err := dc.ModifyRole(p.GuildID, role.ID, roleData); err != nil {

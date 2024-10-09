@@ -102,10 +102,14 @@ func NewBot(p BotParams) (*Bot, error) {
 
 	// Create a new Discord session using the provided login information.
 	state := state.New("Bot " + p.Config.Discord.Token)
-	state.AddIntents(gateway.IntentGuilds | gateway.IntentGuildMembers | gateway.IntentGuildPresences | gateway.IntentGuildIntegrations)
+	state.AddIntents(gateway.IntentGuilds)
+	state.AddIntents(gateway.IntentGuildMembers)
+	state.AddIntents(gateway.IntentGuildPresences)
+	state.AddIntents(gateway.IntentGuildIntegrations)
+
 	state.AddHandler(func(*gateway.ReadyEvent) {
 		me, _ := state.Me()
-		p.Logger.Info("connected to the gateway", zap.String("me", me.Tag()))
+		p.Logger.Info("connected to gateway", zap.String("me", me.Tag()))
 	})
 
 	cmds, err := commands.New(p.Logger, state, p.Config, p.I18n)
@@ -199,6 +203,7 @@ func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
 
 func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
+
 	b.discord.AddHandler(func(r *gateway.ReadyEvent) {
 		b.logger.Info(fmt.Sprintf("ready with %d guilds", len(r.Guilds)))
 		ready.Store(true)

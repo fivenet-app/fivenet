@@ -18,11 +18,11 @@ func (r Roles) ToSlice() []*Role {
 }
 
 type Role struct {
-	ID          discord.RoleID      `yaml:"id"`
-	Name        string              `yaml:"name"`
-	Color       discord.Color       `yaml:"color,omitempty"`
-	Permissions discord.Permissions `yaml:"permissions,omitempty"`
-	Job         string              `yaml:"-"`
+	ID          discord.RoleID       `yaml:"id"`
+	Name        string               `yaml:"name"`
+	Color       *discord.Color       `yaml:"color,omitempty"`
+	Permissions *discord.Permissions `yaml:"permissions,omitempty"`
+	Job         string               `yaml:"-"`
 
 	Module string `yaml:"module,omitempty"`
 }

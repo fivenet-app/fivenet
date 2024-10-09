@@ -77,15 +77,17 @@ func (g *GroupSync) planRoles() []*types.Role {
 		n := new(big.Int)
 		n.SetString(color, 16)
 		colorDec := int32(n.Int64())
+		dcColor := discord.Color(colorDec)
 
 		r := &types.Role{
 			Name:  dcRole.RoleName,
-			Color: discord.Color(colorDec),
+			Color: &dcColor,
 
 			Module: "GroupSync",
 		}
 		if dcRole.Permissions != nil {
-			r.Permissions = discord.Permissions(*dcRole.Permissions)
+			ps := discord.Permissions(*dcRole.Permissions)
+			r.Permissions = &ps
 		}
 
 		roles = append(roles, r)

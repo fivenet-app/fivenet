@@ -74,11 +74,18 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 			dcRole := roles[idx]
 
 			role.ID = roles[idx].ID
+			// Set color and perms based on what the state in Discord is right now
+			if role.Color == nil {
+				role.Color = &dcRole.Color
+			}
+			if role.Permissions == nil {
+				role.Permissions = &dcRole.Permissions
+			}
 
 			if botRole.ID != discord.NullRoleID && dcRole.Position > botRole.Position {
 				// Set color and perms based on current Discord state
-				role.Color = roles[idx].Color
-				role.Permissions = roles[idx].Permissions
+				role.Color = &roles[idx].Color
+				role.Permissions = &roles[idx].Permissions
 
 				logs = append(logs, discord.Embed{
 					Title:       fmt.Sprintf("Roles: Role %s (%s; perms: %d) can't be updated", dcRole.Name, dcRole.ID, dcRole.Permissions),
@@ -89,7 +96,7 @@ func (s *State) calculateRoles(dc *state.State) (*PlanRoles, []discord.Embed, er
 				continue
 			}
 
-			if role.Color == dcRole.Color && role.Permissions == dcRole.Permissions {
+			if *role.Color == dcRole.Color && *role.Permissions == dcRole.Permissions {
 				continue
 			}
 

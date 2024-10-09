@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	"github.com/diamondburned/arikawa/v3/discord"
+	"github.com/diamondburned/arikawa/v3/gateway"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"go.uber.org/zap"
 )
@@ -27,8 +28,9 @@ func (b *Bot) setBotPresence(cfg *rector.DiscordBotPresence) error {
 		}
 	} else if cfg.Type == rector.DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_WATCH {
 		activity = &discord.Activity{
-			Type: discord.WatchingActivity,
-			Name: *cfg.Status,
+			Type:  discord.WatchingActivity,
+			Name:  *cfg.Status,
+			Flags: discord.JoinActivity,
 		}
 	}
 
@@ -37,9 +39,10 @@ func (b *Bot) setBotPresence(cfg *rector.DiscordBotPresence) error {
 			activity.URL = *cfg.Url
 		}
 
-		if err := b.discord.PresenceSet(discord.NullGuildID, &discord.Presence{
+		if err := b.discord.Gateway().Send(b.ctx, &gateway.UpdatePresenceCommand{
 			Activities: []discord.Activity{*activity},
-		}, true); err != nil {
+			Status:     discord.OnlineStatus,
+		}); err != nil {
 			return fmt.Errorf("failed to set bot presence. %w", err)
 		}
 	}
