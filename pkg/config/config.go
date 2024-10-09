@@ -184,7 +184,6 @@ type DispatchCenter struct {
 type Discord struct {
 	Enabled      bool                `default:"false" yaml:"enabled"`
 	Token        string              `yaml:"token"`
-	Presence     DiscordPresence     `yaml:"presence,omitempty"`
 	UserInfoSync DiscordUserInfoSync `yaml:"userInfoSync"`
 	GroupSync    DiscordGroupSync    `yaml:"groupSync"`
 	Commands     DiscordCommands     `yaml:"commands"`

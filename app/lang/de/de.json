@@ -2398,6 +2398,15 @@
                 "GIVE_ROLE": "Rolle vergeben",
                 "KICK": "Kick",
                 "UNSPECIFIED": "Unbestimmt"
+            },
+            "AppConfig": {
+                "DiscordBotPresenceType": {
+                    "GAME": "Game",
+                    "LISTENING": "Listening",
+                    "STREAMING": "Streaming",
+                    "WATCH": "Watch",
+                    "UNSPECIFIED": "Unspecified"
+                }
             }
         },
         "calendar": {

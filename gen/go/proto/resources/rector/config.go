@@ -93,6 +93,11 @@ func (x *AppConfig) Default() {
 	if x.Discord.SyncInterval == nil {
 		x.Discord.SyncInterval = durationpb.New(DefaultDiscordSyncInterval)
 	}
+	if x.Discord.BotPresence == nil {
+		x.Discord.BotPresence = &DiscordBotPresence{
+			Type: DiscordBotPresenceType_DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED,
+		}
+	}
 }
 
 // Scan implements driver.Valuer for protobuf AppConfig.

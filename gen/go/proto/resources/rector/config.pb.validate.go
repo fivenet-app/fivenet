@@ -57,6 +57,8 @@ func (m *AppConfig) validate(all bool) error {
 
 	var errors []error
 
+	// no validation rules for Version
+
 	if all {
 		switch v := interface{}(m.GetAuth()).(type) {
 		case interface{ ValidateAll() error }:
@@ -1497,6 +1499,39 @@ func (m *Discord) validate(all bool) error {
 
 	}
 
+	if m.BotPresence != nil {
+
+		if all {
+			switch v := interface{}(m.GetBotPresence()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, DiscordValidationError{
+						field:  "BotPresence",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, DiscordValidationError{
+						field:  "BotPresence",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetBotPresence()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return DiscordValidationError{
+					field:  "BotPresence",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if len(errors) > 0 {
 		return DiscordMultiError(errors)
 	}
@@ -1573,3 +1608,115 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = DiscordValidationError{}
+
+// Validate checks the field values on DiscordBotPresence with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *DiscordBotPresence) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on DiscordBotPresence with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// DiscordBotPresenceMultiError, or nil if none found.
+func (m *DiscordBotPresence) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *DiscordBotPresence) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Type
+
+	if m.Status != nil {
+		// no validation rules for Status
+	}
+
+	if m.Url != nil {
+		// no validation rules for Url
+	}
+
+	if len(errors) > 0 {
+		return DiscordBotPresenceMultiError(errors)
+	}
+
+	return nil
+}
+
+// DiscordBotPresenceMultiError is an error wrapping multiple validation errors
+// returned by DiscordBotPresence.ValidateAll() if the designated constraints
+// aren't met.
+type DiscordBotPresenceMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m DiscordBotPresenceMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m DiscordBotPresenceMultiError) AllErrors() []error { return m }
+
+// DiscordBotPresenceValidationError is the validation error returned by
+// DiscordBotPresence.Validate if the designated constraints aren't met.
+type DiscordBotPresenceValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e DiscordBotPresenceValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e DiscordBotPresenceValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e DiscordBotPresenceValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e DiscordBotPresenceValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e DiscordBotPresenceValidationError) ErrorName() string {
+	return "DiscordBotPresenceValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e DiscordBotPresenceValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sDiscordBotPresence.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = DiscordBotPresenceValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = DiscordBotPresenceValidationError{}

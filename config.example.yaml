@@ -100,12 +100,6 @@ dispatchCenter:
 discord:
   enabled: true
   token: "your_discord_bot_token"
-  presence:
-    gameStatus: "FiveNet"
-    #listeningStatus: ""
-    #streamingStatus: ""
-    #streamingStatusUrl: ""
-    #watchStatus: ""
   userInfoSync:
     enabled: false
     gradeRoleFormat: "[%grade%] %grade_label%"

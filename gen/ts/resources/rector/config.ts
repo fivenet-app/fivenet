@@ -16,27 +16,31 @@ import { Duration } from "../../google/protobuf/duration";
  */
 export interface AppConfig {
     /**
-     * @generated from protobuf field: resources.rector.Auth auth = 1;
+     * @generated from protobuf field: string version = 1;
+     */
+    version: string;
+    /**
+     * @generated from protobuf field: resources.rector.Auth auth = 2;
      */
     auth?: Auth;
     /**
-     * @generated from protobuf field: resources.rector.Perms perms = 2;
+     * @generated from protobuf field: resources.rector.Perms perms = 3;
      */
     perms?: Perms;
     /**
-     * @generated from protobuf field: resources.rector.Website website = 3;
+     * @generated from protobuf field: resources.rector.Website website = 4;
      */
     website?: Website;
     /**
-     * @generated from protobuf field: resources.rector.JobInfo job_info = 4;
+     * @generated from protobuf field: resources.rector.JobInfo job_info = 5;
      */
     jobInfo?: JobInfo;
     /**
-     * @generated from protobuf field: resources.rector.UserTracker user_tracker = 5;
+     * @generated from protobuf field: resources.rector.UserTracker user_tracker = 6;
      */
     userTracker?: UserTracker;
     /**
-     * @generated from protobuf field: resources.rector.Discord discord = 6;
+     * @generated from protobuf field: resources.rector.Discord discord = 7;
      */
     discord?: Discord;
 }
@@ -168,21 +172,69 @@ export interface Discord {
      * @generated from protobuf field: repeated string ignored_jobs = 4;
      */
     ignoredJobs: string[];
+    /**
+     * @generated from protobuf field: optional resources.rector.DiscordBotPresence bot_presence = 5;
+     */
+    botPresence?: DiscordBotPresence;
+}
+/**
+ * @generated from protobuf message resources.rector.DiscordBotPresence
+ */
+export interface DiscordBotPresence {
+    /**
+     * @generated from protobuf field: resources.rector.DiscordBotPresenceType type = 1;
+     */
+    type: DiscordBotPresenceType;
+    /**
+     * @generated from protobuf field: optional string status = 2;
+     */
+    status?: string;
+    /**
+     * @generated from protobuf field: optional string url = 3;
+     */
+    url?: string;
+}
+/**
+ * @generated from protobuf enum resources.rector.DiscordBotPresenceType
+ */
+export enum DiscordBotPresenceType {
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_PRESENCE_TYPE_GAME = 1;
+     */
+    GAME = 1,
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_PRESENCE_TYPE_LISTENING = 2;
+     */
+    LISTENING = 2,
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_PRESENCE_TYPE_STREAMING = 3;
+     */
+    STREAMING = 3,
+    /**
+     * @generated from protobuf enum value: DISCORD_BOT_PRESENCE_TYPE_WATCH = 4;
+     */
+    WATCH = 4
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.rector.AppConfig", [
-            { no: 1, name: "auth", kind: "message", T: () => Auth },
-            { no: 2, name: "perms", kind: "message", T: () => Perms },
-            { no: 3, name: "website", kind: "message", T: () => Website },
-            { no: 4, name: "job_info", kind: "message", T: () => JobInfo },
-            { no: 5, name: "user_tracker", kind: "message", T: () => UserTracker },
-            { no: 6, name: "discord", kind: "message", T: () => Discord }
+            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "auth", kind: "message", T: () => Auth },
+            { no: 3, name: "perms", kind: "message", T: () => Perms },
+            { no: 4, name: "website", kind: "message", T: () => Website },
+            { no: 5, name: "job_info", kind: "message", T: () => JobInfo },
+            { no: 6, name: "user_tracker", kind: "message", T: () => UserTracker },
+            { no: 7, name: "discord", kind: "message", T: () => Discord }
         ]);
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.version = "";
         if (value !== undefined)
             reflectionMergePartial<AppConfig>(this, message, value);
         return message;
@@ -192,22 +244,25 @@ class AppConfig$Type extends MessageType<AppConfig> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* resources.rector.Auth auth */ 1:
+                case /* string version */ 1:
+                    message.version = reader.string();
+                    break;
+                case /* resources.rector.Auth auth */ 2:
                     message.auth = Auth.internalBinaryRead(reader, reader.uint32(), options, message.auth);
                     break;
-                case /* resources.rector.Perms perms */ 2:
+                case /* resources.rector.Perms perms */ 3:
                     message.perms = Perms.internalBinaryRead(reader, reader.uint32(), options, message.perms);
                     break;
-                case /* resources.rector.Website website */ 3:
+                case /* resources.rector.Website website */ 4:
                     message.website = Website.internalBinaryRead(reader, reader.uint32(), options, message.website);
                     break;
-                case /* resources.rector.JobInfo job_info */ 4:
+                case /* resources.rector.JobInfo job_info */ 5:
                     message.jobInfo = JobInfo.internalBinaryRead(reader, reader.uint32(), options, message.jobInfo);
                     break;
-                case /* resources.rector.UserTracker user_tracker */ 5:
+                case /* resources.rector.UserTracker user_tracker */ 6:
                     message.userTracker = UserTracker.internalBinaryRead(reader, reader.uint32(), options, message.userTracker);
                     break;
-                case /* resources.rector.Discord discord */ 6:
+                case /* resources.rector.Discord discord */ 7:
                     message.discord = Discord.internalBinaryRead(reader, reader.uint32(), options, message.discord);
                     break;
                 default:
@@ -222,24 +277,27 @@ class AppConfig$Type extends MessageType<AppConfig> {
         return message;
     }
     internalBinaryWrite(message: AppConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* resources.rector.Auth auth = 1; */
+        /* string version = 1; */
+        if (message.version !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.version);
+        /* resources.rector.Auth auth = 2; */
         if (message.auth)
-            Auth.internalBinaryWrite(message.auth, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.Perms perms = 2; */
+            Auth.internalBinaryWrite(message.auth, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.Perms perms = 3; */
         if (message.perms)
-            Perms.internalBinaryWrite(message.perms, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.Website website = 3; */
+            Perms.internalBinaryWrite(message.perms, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.Website website = 4; */
         if (message.website)
-            Website.internalBinaryWrite(message.website, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.JobInfo job_info = 4; */
+            Website.internalBinaryWrite(message.website, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.JobInfo job_info = 5; */
         if (message.jobInfo)
-            JobInfo.internalBinaryWrite(message.jobInfo, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.UserTracker user_tracker = 5; */
+            JobInfo.internalBinaryWrite(message.jobInfo, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.UserTracker user_tracker = 6; */
         if (message.userTracker)
-            UserTracker.internalBinaryWrite(message.userTracker, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* resources.rector.Discord discord = 6; */
+            UserTracker.internalBinaryWrite(message.userTracker, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+        /* resources.rector.Discord discord = 7; */
         if (message.discord)
-            Discord.internalBinaryWrite(message.discord, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
+            Discord.internalBinaryWrite(message.discord, writer.tag(7, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -699,7 +757,8 @@ class Discord$Type extends MessageType<Discord> {
             { no: 1, name: "enabled", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
             { no: 2, name: "sync_interval", kind: "message", T: () => Duration, options: { "validate.rules": { duration: { required: true, lt: { seconds: "180000000" }, gte: { seconds: "60" } } } } },
             { no: 3, name: "invite_url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "255" } } } },
-            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } }
+            { no: 4, name: "ignored_jobs", kind: "scalar", repeat: 2 /*RepeatType.UNPACKED*/, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { repeated: { maxItems: "100" } } } },
+            { no: 5, name: "bot_presence", kind: "message", T: () => DiscordBotPresence }
         ]);
     }
     create(value?: PartialMessage<Discord>): Discord {
@@ -727,6 +786,9 @@ class Discord$Type extends MessageType<Discord> {
                 case /* repeated string ignored_jobs */ 4:
                     message.ignoredJobs.push(reader.string());
                     break;
+                case /* optional resources.rector.DiscordBotPresence bot_presence */ 5:
+                    message.botPresence = DiscordBotPresence.internalBinaryRead(reader, reader.uint32(), options, message.botPresence);
+                    break;
                 default:
                     let u = options.readUnknownField;
                     if (u === "throw")
@@ -751,6 +813,9 @@ class Discord$Type extends MessageType<Discord> {
         /* repeated string ignored_jobs = 4; */
         for (let i = 0; i < message.ignoredJobs.length; i++)
             writer.tag(4, WireType.LengthDelimited).string(message.ignoredJobs[i]);
+        /* optional resources.rector.DiscordBotPresence bot_presence = 5; */
+        if (message.botPresence)
+            DiscordBotPresence.internalBinaryWrite(message.botPresence, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -761,3 +826,64 @@ class Discord$Type extends MessageType<Discord> {
  * @generated MessageType for protobuf message resources.rector.Discord
  */
 export const Discord = new Discord$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DiscordBotPresence$Type extends MessageType<DiscordBotPresence> {
+    constructor() {
+        super("resources.rector.DiscordBotPresence", [
+            { no: 1, name: "type", kind: "enum", T: () => ["resources.rector.DiscordBotPresenceType", DiscordBotPresenceType, "DISCORD_BOT_PRESENCE_TYPE_"] },
+            { no: 2, name: "status", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "url", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+        ]);
+    }
+    create(value?: PartialMessage<DiscordBotPresence>): DiscordBotPresence {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.type = 0;
+        if (value !== undefined)
+            reflectionMergePartial<DiscordBotPresence>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DiscordBotPresence): DiscordBotPresence {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.rector.DiscordBotPresenceType type */ 1:
+                    message.type = reader.int32();
+                    break;
+                case /* optional string status */ 2:
+                    message.status = reader.string();
+                    break;
+                case /* optional string url */ 3:
+                    message.url = reader.string();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DiscordBotPresence, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.rector.DiscordBotPresenceType type = 1; */
+        if (message.type !== 0)
+            writer.tag(1, WireType.Varint).int32(message.type);
+        /* optional string status = 2; */
+        if (message.status !== undefined)
+            writer.tag(2, WireType.LengthDelimited).string(message.status);
+        /* optional string url = 3; */
+        if (message.url !== undefined)
+            writer.tag(3, WireType.LengthDelimited).string(message.url);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.rector.DiscordBotPresence
+ */
+export const DiscordBotPresence = new DiscordBotPresence$Type();

@@ -61,8 +61,8 @@ type Params struct {
 	LC fx.Lifecycle
 
 	Logger *zap.Logger
-	TP     *tracesdk.TracerProvider
 	JS     *events.JSWrapper
+	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
 }
 
@@ -179,17 +179,18 @@ func (c *Config) Reload(ctx context.Context) (*Cfg, error) {
 	}{
 		AppConfig: &Cfg{},
 	}
-	dest.AppConfig.Default()
 
 	if err := stmt.QueryContext(ctx, c.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, err
 		} else {
+			dest.AppConfig.Default()
 			if err := c.updateConfigInDB(ctx, dest.AppConfig); err != nil {
 				return nil, err
 			}
 		}
 	}
+	dest.AppConfig.Default()
 
 	return dest.AppConfig, nil
 }

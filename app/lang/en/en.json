@@ -691,7 +691,14 @@
                     "description": "FiveNet Discord Bot settings.",
                     "bot_invite_url": "Bot Invite URL",
                     "sync_interval": "Sync Interval",
-                    "ignored_jobs": "Ignored Jobs (e.g., Prisoner job)"
+                    "ignored_jobs": "Ignored Jobs (e.g., Prisoner job)",
+                    "bot_presence": {
+                        "title": "Bot Presence Status",
+                        "description": "Set the FiveNet Discord's bot status presence.",
+                        "type": "Type",
+                        "status": "Status",
+                        "url": "URL"
+                    }
                 },
                 "save": {
                     "description": "Make sure to double check any config options before saving the config."
@@ -2398,6 +2405,15 @@
                 "GIVE_ROLE": "Give Role",
                 "KICK": "Kick",
                 "UNSPECIFIED": "Unspecified"
+            },
+            "AppConfig": {
+                "DiscordBotPresenceType": {
+                    "GAME": "Game",
+                    "LISTENING": "Listening",
+                    "STREAMING": "Streaming",
+                    "WATCH": "Watch",
+                    "UNSPECIFIED": "Unspecified"
+                }
             }
         },
         "calendar": {

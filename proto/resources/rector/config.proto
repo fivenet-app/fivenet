@@ -8,12 +8,14 @@ import "validate/validate.proto";
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/rector;rector";
 
 message AppConfig {
-  Auth auth = 1;
-  Perms perms = 2;
-  Website website = 3;
-  JobInfo job_info = 4;
-  UserTracker user_tracker = 5;
-  Discord discord = 6;
+  optional string version = 1;
+
+  Auth auth = 2;
+  Perms perms = 3;
+  Website website = 4;
+  JobInfo job_info = 5;
+  UserTracker user_tracker = 6;
+  Discord discord = 7;
 }
 
 message Auth {
@@ -74,4 +76,19 @@ message Discord {
   }];
   optional string invite_url = 3 [(validate.rules).string.max_len = 255];
   repeated string ignored_jobs = 4 [(validate.rules).repeated.max_items = 100];
+  optional DiscordBotPresence bot_presence = 5;
+}
+
+enum DiscordBotPresenceType {
+  DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED = 0;
+  DISCORD_BOT_PRESENCE_TYPE_GAME = 1;
+  DISCORD_BOT_PRESENCE_TYPE_LISTENING = 2;
+  DISCORD_BOT_PRESENCE_TYPE_STREAMING = 3;
+  DISCORD_BOT_PRESENCE_TYPE_WATCH = 4;
+}
+
+message DiscordBotPresence {
+  DiscordBotPresenceType type = 1;
+  optional string status = 2;
+  optional string url = 3;
 }

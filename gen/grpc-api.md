@@ -224,6 +224,7 @@
     - [AppConfig](#resources-rector-AppConfig)
     - [Auth](#resources-rector-Auth)
     - [Discord](#resources-rector-Discord)
+    - [DiscordBotPresence](#resources-rector-DiscordBotPresence)
     - [JobInfo](#resources-rector-JobInfo)
     - [Links](#resources-rector-Links)
     - [Perm](#resources-rector-Perm)
@@ -231,6 +232,8 @@
     - [UnemployedJob](#resources-rector-UnemployedJob)
     - [UserTracker](#resources-rector-UserTracker)
     - [Website](#resources-rector-Website)
+  
+    - [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType)
   
 - [resources/timestamp/timestamp.proto](#resources_timestamp_timestamp-proto)
     - [Timestamp](#resources-timestamp-Timestamp)
@@ -3867,6 +3870,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
+| version | [string](#string) |  |  |
 | auth | [Auth](#resources-rector-Auth) |  |  |
 | perms | [Perms](#resources-rector-Perms) |  |  |
 | website | [Website](#resources-rector-Website) |  |  |
@@ -3907,6 +3911,24 @@
 | sync_interval | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
 | invite_url | [string](#string) | optional |  |
 | ignored_jobs | [string](#string) | repeated |  |
+| bot_presence | [DiscordBotPresence](#resources-rector-DiscordBotPresence) | optional |  |
+
+
+
+
+
+
+<a name="resources-rector-DiscordBotPresence"></a>
+
+### DiscordBotPresence
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| type | [DiscordBotPresenceType](#resources-rector-DiscordBotPresenceType) |  |  |
+| status | [string](#string) | optional |  |
+| url | [string](#string) | optional |  |
 
 
 
@@ -4026,6 +4048,21 @@
 
 
  
+
+
+<a name="resources-rector-DiscordBotPresenceType"></a>
+
+### DiscordBotPresenceType
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| DISCORD_BOT_PRESENCE_TYPE_UNSPECIFIED | 0 |  |
+| DISCORD_BOT_PRESENCE_TYPE_GAME | 1 |  |
+| DISCORD_BOT_PRESENCE_TYPE_LISTENING | 2 |  |
+| DISCORD_BOT_PRESENCE_TYPE_STREAMING | 3 |  |
+| DISCORD_BOT_PRESENCE_TYPE_WATCH | 4 |  |
+
 
  
 

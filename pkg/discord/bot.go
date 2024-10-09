@@ -33,10 +33,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const (
-	disconnectRestartCountThreshold = 5
-)
-
 var tJobProps = table.FivenetJobProps.AS("jobprops")
 
 func wrapLogger(log *zap.Logger) *zap.Logger {
@@ -152,11 +148,26 @@ func NewBot(p BotParams) (*Bot, error) {
 			return err
 		}
 
+		// Handle app config updates
+		go func() {
+			configUpdateCh := b.appCfg.Subscribe()
+			for {
+				select {
+				case <-ctx.Done():
+					b.appCfg.Unsubscribe(configUpdateCh)
+					return
+
+				case cfg := <-configUpdateCh:
+					b.handleAppConfigUpdate(cfg)
+				}
+			}
+		}()
+
 		go func() {
 			b.logger.Info("sleeping 5 seconds before running first discord sync")
 			time.Sleep(5 * time.Second)
 
-			if err := b.sync(); err != nil {
+			if err := b.syncLoop(); err != nil {
 				b.logger.Error("error from discord bot sync loop", zap.Error(err))
 				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
 					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
@@ -183,10 +194,14 @@ func NewBot(p BotParams) (*Bot, error) {
 	return b, nil
 }
 
+func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
+	b.setBotPresence(cfg.Discord.BotPresence)
+}
+
 func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
 	b.discord.AddHandler(func(r *gateway.ReadyEvent) {
-		b.logger.Info(fmt.Sprintf("Ready with %d guilds", len(r.Guilds)))
+		b.logger.Info(fmt.Sprintf("ready with %d guilds", len(r.Guilds)))
 		ready.Store(true)
 	})
 
@@ -202,8 +217,8 @@ func (b *Bot) start(ctx context.Context) error {
 
 	for {
 		if b.discord.Ready().Version > 0 && ready.Load() {
-			if err := b.refreshBotUserGuilds(); err != nil {
-				return fmt.Errorf("failed to refresh bot user guilds. %w", err)
+			if _, err := b.discord.Me(); err != nil {
+				return fmt.Errorf("failed to obtain bot account details: %w", err)
 			}
 
 			break
@@ -217,75 +232,18 @@ func (b *Bot) start(ctx context.Context) error {
 		}
 	}
 
-	if err := b.setBotPresence(); err != nil {
-		return fmt.Errorf("failed to set bot presence. %w", err)
-	}
-
 	if b.cfg.Commands.Enabled {
 		if err := b.cmds.RegisterCommands(); err != nil {
 			return fmt.Errorf("failed to register commands. %w", err)
 		}
 	}
 
-	return nil
-}
-
-func (b *Bot) setBotPresence() error {
-	var activity *discord.Activity
-	if b.cfg.Presence.GameStatus != nil {
-		activity = &discord.Activity{
-			Type: discord.GameActivity,
-			Name: *b.cfg.Presence.GameStatus,
-		}
-	} else if b.cfg.Presence.ListeningStatus != nil {
-		activity = &discord.Activity{
-			Type: discord.ListeningActivity,
-			Name: *b.cfg.Presence.ListeningStatus,
-		}
-	} else if b.cfg.Presence.StreamingStatus != nil {
-		activity = &discord.Activity{
-			Type: discord.StreamingActivity,
-			Name: *b.cfg.Presence.StreamingStatus,
-		}
-		if b.cfg.Presence.StreamingStatusUrl != nil {
-			activity.URL = *b.cfg.Presence.StreamingStatusUrl
-		}
-	} else if b.cfg.Presence.WatchStatus != nil {
-		activity = &discord.Activity{
-			Type: discord.WatchingActivity,
-			Name: *b.cfg.Presence.WatchStatus,
-		}
-	}
-
-	if activity != nil {
-		if err := b.discord.PresenceSet(discord.NullGuildID, &discord.Presence{
-			Activities: []discord.Activity{
-				{
-					Type: discord.GameActivity,
-					Name: *b.cfg.Presence.GameStatus,
-				},
-			},
-		}, true); err != nil {
-			return err
-		}
-	}
-
-	b.logger.Info("bot presence has been set")
+	b.handleAppConfigUpdate(b.appCfg.Get())
 
 	return nil
 }
 
-func (b *Bot) refreshBotUserGuilds() error {
-	usr, err := b.discord.Me()
-	if err != nil {
-		return fmt.Errorf("error obtaining account details: %w", err)
-	}
-	b.id = usr.ID
-
-	return nil
-}
-
-func (b *Bot) sync() error {
+func (b *Bot) syncLoop() error {
 	for {
 		b.logger.Info("running discord sync")
 		func() {

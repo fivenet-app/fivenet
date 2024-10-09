@@ -8,6 +8,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { useSettingsStore } from '~/store/settings';
 import { toDuration } from '~/utils/duration';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
+import { DiscordBotPresenceType } from '~~/gen/ts/resources/rector/config';
 import type { GetAppConfigResponse } from '~~/gen/ts/services/rector/config';
 
 const { t } = useI18n();
@@ -79,6 +80,13 @@ const schema = z.object({
             z.string().length(0).optional(),
         ]),
         ignoredJobs: z.string().array().max(99),
+        botPresence: z
+            .object({
+                type: z.nativeEnum(DiscordBotPresenceType),
+                status: z.string().max(255).optional(),
+                url: z.union([z.string().max(255).url(), z.string().length(0).optional()]),
+            })
+            .optional(),
     }),
 });
 
@@ -115,6 +123,9 @@ const state = reactive<Schema>({
         syncInterval: 9.0,
         inviteUrl: '',
         ignoredJobs: [],
+        botPresence: {
+            type: DiscordBotPresenceType.UNSPECIFIED,
+        },
     },
 });
 
@@ -202,6 +213,7 @@ function setSettingsValues(): void {
         }
         state.discord.inviteUrl = config.value.config.discord.inviteUrl;
         state.discord.ignoredJobs = config.value.config.discord.ignoredJobs;
+        state.discord.botPresence = config.value.config.discord.botPresence;
     }
 }
 
@@ -215,6 +227,14 @@ const items = [
     { slot: 'userTracker', label: t('components.rector.app_config.user_tracker.title'), icon: 'i-mdi-track-changes' },
     { slot: 'discord', label: t('common.discord'), icon: 'i-simple-icons-discord' },
 ];
+
+const botPresenceTypes = ref<{ mode: DiscordBotPresenceType }[]>([
+    { mode: DiscordBotPresenceType.UNSPECIFIED },
+    { mode: DiscordBotPresenceType.GAME },
+    { mode: DiscordBotPresenceType.LISTENING },
+    { mode: DiscordBotPresenceType.STREAMING },
+    { mode: DiscordBotPresenceType.WATCH },
+]);
 
 const route = useRoute();
 const router = useRouter();
@@ -481,7 +501,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         >
                                             <template #label>
                                                 <template v-if="state.jobInfo.publicJobs.length">
-                                                    <span class="truncate">{{ state.jobInfo.publicJobs.join(',') }}</span>
+                                                    <span class="truncate">{{ state.jobInfo.publicJobs.join(', ') }}</span>
                                                 </template>
                                                 <template v-else>
                                                     <span class="truncate">{{
@@ -512,7 +532,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         >
                                             <template #label>
                                                 <template v-if="state.jobInfo.hiddenJobs.length">
-                                                    <span class="truncate">{{ state.jobInfo.hiddenJobs.join(',') }}</span>
+                                                    <span class="truncate">{{ state.jobInfo.hiddenJobs.join(', ') }}</span>
                                                 </template>
                                                 <template v-else>
                                                     <span class="truncate">{{
@@ -592,7 +612,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                                 <template #label>
                                                     <template v-if="state.userTracker.livemapJobs.length">
                                                         <span class="truncate">{{
-                                                            state.userTracker.livemapJobs.join(',')
+                                                            state.userTracker.livemapJobs.join(', ')
                                                         }}</span>
                                                     </template>
                                                     <template v-else>
@@ -680,7 +700,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         >
                                             <template #label>
                                                 <template v-if="state.discord.ignoredJobs.length > 0">
-                                                    <span class="truncate">{{ state.discord.ignoredJobs.join(',') }}</span>
+                                                    <span class="truncate">{{ state.discord.ignoredJobs.join(', ') }}</span>
                                                 </template>
                                                 <template v-else>
                                                     <span class="truncate">{{
@@ -693,6 +713,67 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                             </template>
                                         </USelectMenu>
                                     </ClientOnly>
+                                </UFormGroup>
+                            </UDashboardSection>
+
+                            <UDashboardSection
+                                v-if="state.discord.botPresence"
+                                :title="$t('components.rector.app_config.discord.bot_presence.title')"
+                                :description="$t('components.rector.app_config.discord.bot_presence.description')"
+                            >
+                                <UFormGroup
+                                    name="discord.botPresence.type"
+                                    :label="$t('components.rector.app_config.discord.bot_presence.type')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <USelectMenu
+                                        v-model="state.discord.botPresence.type"
+                                        :options="botPresenceTypes"
+                                        value-attribute="mode"
+                                        :placeholder="$t('components.rector.app_config.discord.bot_presence.type')"
+                                    >
+                                        <template #label>
+                                            <span class="truncate text-gray-900 dark:text-white">{{
+                                                $t(
+                                                    `enums.rector.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[state.discord.botPresence.type ?? 0]}`,
+                                                )
+                                            }}</span>
+                                        </template>
+                                        <template #option="{ option }">
+                                            <span class="truncate">{{
+                                                $t(
+                                                    `enums.rector.AppConfig.DiscordBotPresenceType.${DiscordBotPresenceType[option.mode ?? 0]}`,
+                                                )
+                                            }}</span>
+                                        </template>
+                                    </USelectMenu>
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="discord.botPresence.status"
+                                    :label="$t('components.rector.app_config.discord.bot_presence.status')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.discord.botPresence.status"
+                                        type="text"
+                                        :placeholder="$t('common.status')"
+                                    />
+                                </UFormGroup>
+
+                                <UFormGroup
+                                    name="discord.botPresence.url"
+                                    :label="$t('components.rector.app_config.discord.bot_presence.url')"
+                                    class="grid grid-cols-2 items-center gap-2"
+                                    :ui="{ container: '' }"
+                                >
+                                    <UInput
+                                        v-model="state.discord.botPresence.url"
+                                        type="text"
+                                        :placeholder="$t('components.rector.app_config.discord.bot_presence.url')"
+                                    />
                                 </UFormGroup>
                             </UDashboardSection>
                         </UDashboardPanelContent>
