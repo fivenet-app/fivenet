@@ -254,7 +254,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 	var dest []*userRoleMapping
 	if err := stmt.QueryContext(ctx, g.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
-			return users, logs, err
+			return users, logs, fmt.Errorf("failed to get user info from database. %w", err)
 		}
 	}
 
@@ -280,7 +280,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 		member, err := g.discord.Member(g.guild.ID, discord.UserID(externalId))
 		if err != nil {
 			if restErr, ok := err.(*httputil.HTTPError); ok {
-				if restErr.Code == http.StatusNotFound {
+				if restErr.Status == http.StatusNotFound {
 					// Add log about employee not being on discord
 					logs = append(logs, discord.Embed{
 						Title:       fmt.Sprintf("UserInfo: Employee not found on Discord: %s %s", u.Firstname, u.Lastname),
@@ -292,7 +292,7 @@ func (g *UserInfo) planUsers(ctx context.Context, roles types.Roles) (types.User
 				}
 			}
 
-			errs = multierr.Append(errs, err)
+			errs = multierr.Append(errs, fmt.Errorf("discord API returned an error. %w", err))
 			continue
 		}
 

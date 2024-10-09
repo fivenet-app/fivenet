@@ -89,7 +89,7 @@ func (p *Plan) applyUsers(dc *state.State) error {
 
 		for _, role := range user.Roles.ToRemove {
 			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.ID, role.Name, err))
+				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.Name, role.ID, err))
 				continue
 			}
 		}
@@ -98,7 +98,7 @@ func (p *Plan) applyUsers(dc *state.State) error {
 			if err := dc.AddRole(p.GuildID, user.ID, role.ID, api.AddRoleData{
 				AuditLogReason: api.AuditLogReason(role.Module),
 			}); err != nil {
-				errs = multierr.Append(errs, fmt.Errorf("failed to add user %s to role %s (%s). %w", user.ID, role.ID, role.Name, err))
+				errs = multierr.Append(errs, fmt.Errorf("failed to add user %s to role %s (%s). %w", user.ID, role.Name, role.ID, err))
 				continue
 			}
 		}
