@@ -1,6 +1,8 @@
 package discord
 
 import (
+	"fmt"
+
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	"go.uber.org/zap"
@@ -38,7 +40,7 @@ func (b *Bot) setBotPresence(cfg *rector.DiscordBotPresence) error {
 		if err := b.discord.PresenceSet(discord.NullGuildID, &discord.Presence{
 			Activities: []discord.Activity{*activity},
 		}, true); err != nil {
-			return err
+			return fmt.Errorf("failed to set bot presence. %w", err)
 		}
 	}
 

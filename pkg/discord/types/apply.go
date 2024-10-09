@@ -48,12 +48,13 @@ func (p *Plan) applyRoles(dc *state.State) error {
 	}
 
 	for _, role := range p.Roles.ToUpdate {
-		_, err := dc.ModifyRole(p.GuildID, role.ID, api.ModifyRoleData{
+		roleData := api.ModifyRoleData{
 			Name:        option.NewNullableString(role.Name),
 			Color:       role.Color,
 			Permissions: &role.Permissions,
-		})
-		if err != nil {
+		}
+
+		if _, err := dc.ModifyRole(p.GuildID, role.ID, roleData); err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("failed to update role %s. %w", role.Name, err))
 			continue
 		}

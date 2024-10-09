@@ -91,7 +91,6 @@ type Bot struct {
 
 	wg sync.WaitGroup
 
-	id           discord.UserID
 	discord      *state.State
 	activeGuilds *xsync.MapOf[discord.GuildID, *Guild]
 }
@@ -275,6 +274,10 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 	if len(jobGuilds) == 0 {
 		b.logger.Debug("no job discord guild connections found")
 		return nil
+	}
+
+	if _, err := b.discord.Guilds(); err != nil {
+		return fmt.Errorf("failed to get guild info from discord. %w", err)
 	}
 
 	guilds, err := b.discord.GuildStore.Guilds()
