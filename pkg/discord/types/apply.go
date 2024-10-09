@@ -19,6 +19,7 @@ func (p *Plan) Apply(ctx context.Context, dc *state.State) ([]discord.Embed, err
 	}
 
 	dc = dc.WithContext(ctx)
+
 	if err := p.applyRoles(dc); err != nil {
 		return logs, err
 	}

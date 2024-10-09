@@ -74,7 +74,7 @@ func NewBaseModule(logger *zap.Logger, db *sql.DB, discord *state.State, guild d
 
 func (m *BaseModule) checkIfJobIgnored(job string) bool {
 	// Ignore certain jobs when syncing (e.g., "temporary" jobs), example:
-	// "ambulance" job Discord, and an user is currently in the ignored, e.g., "army", jobs.
+	// "ambulance" job Discord, and an user is currently in the ignored job, e.g., "army".
 	ignoredJobs := m.appCfg.Get().Discord.IgnoredJobs
 	if m.job != job && slices.Contains(ignoredJobs, job) {
 		return true

@@ -133,10 +133,6 @@ func (s *State) calculateUserUpdates(ctx context.Context, member discord.Member,
 			if !slices.ContainsFunc(user.Roles.Sum, func(r *Role) bool {
 				return r.ID == role
 			}) {
-				if s.Roles[idx].Job != "" && s.Roles[idx].Job == user.Job {
-					continue
-				}
-
 				user.Roles.ToRemove = append(user.Roles.ToRemove, s.Roles[idx])
 			}
 		}

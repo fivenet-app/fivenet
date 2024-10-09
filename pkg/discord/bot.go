@@ -107,11 +107,6 @@ func NewBot(p BotParams) (*Bot, error) {
 	state.AddIntents(gateway.IntentGuildPresences)
 	state.AddIntents(gateway.IntentGuildIntegrations)
 
-	state.AddHandler(func(*gateway.ReadyEvent) {
-		me, _ := state.Me()
-		p.Logger.Info("connected to gateway", zap.String("me", me.Tag()))
-	})
-
 	cmds, err := commands.New(p.Logger, state, p.Config, p.I18n)
 	if err != nil {
 		return nil, fmt.Errorf("error creating commands for discord bot. %w", err)
@@ -205,7 +200,7 @@ func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
 
 	b.discord.AddHandler(func(r *gateway.ReadyEvent) {
-		b.logger.Info(fmt.Sprintf("ready with %d guilds", len(r.Guilds)))
+		b.logger.Info(fmt.Sprintf("connected to gateway, ready with %d guilds", len(r.Guilds)), zap.String("me", r.User.Tag()))
 		ready.Store(true)
 	})
 
