@@ -86,7 +86,7 @@ func New(p Params) (IConfig, error) {
 			return err
 		}
 
-		return cfg.registerSubscriptions(c)
+		return cfg.registerSubscriptions(c, ctx)
 	}))
 
 	p.LC.Append(fx.StopHook(func(ctx context.Context) error {

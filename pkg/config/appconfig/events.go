@@ -18,7 +18,7 @@ const (
 	UpdateSubject events.Type = "update"
 )
 
-func (c *Config) registerSubscriptions(ctx context.Context) error {
+func (c *Config) registerSubscriptions(ctx context.Context, bc context.Context) error {
 	cfg := jetstream.StreamConfig{
 		Name:        "APPCONFIG",
 		Description: "AppConfig update events",
@@ -46,10 +46,10 @@ func (c *Config) registerSubscriptions(ctx context.Context) error {
 		c.jsCons = nil
 	}
 
-	c.jsCons, err = consumer.Consume(c.handleMessageFunc(ctx),
+	c.jsCons, err = consumer.Consume(c.handleMessageFunc(bc),
 		c.js.ConsumeErrHandlerWithRestart(context.Background(), c.logger,
 			func(_ context.Context, ctx context.Context) error {
-				return c.registerSubscriptions(ctx)
+				return c.registerSubscriptions(bc, bc)
 			}))
 	if err != nil {
 		return err
