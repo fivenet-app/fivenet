@@ -37,11 +37,11 @@ func NewHelpCommand(cfg *config.Config, l *lang.I18n) (api.CreateCommandData, cm
 	cmd := api.CreateCommandData{
 		Type: discord.ChatInputCommand,
 		Name: lEN.MustLocalize(&i18n.LocalizeConfig{
-			MessageID: "discord.command.help.name",
+			MessageID: "discord.commands.help.name",
 		}),
 		NameLocalizations: discord.StringLocales{
 			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: "discord.command.help.name",
+				MessageID: "discord.commands.help.name",
 			}),
 		},
 
