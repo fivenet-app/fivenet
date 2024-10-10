@@ -217,7 +217,7 @@ const isOpen = ref(false);
         <UDashboardPanel v-if="user" v-model="isOpen" collapsible side="right" class="max-w-72 flex-1">
             <UDashboardNavbar>
                 <template #right>
-                    <UButton color="black" icon="i-mdi-arrow-back" to="/citizens">
+                    <UButton color="black" icon="i-mdi-arrow-back" to="/citizens" class="md:hidden">
                         {{ $t('common.back') }}
                     </UButton>
 

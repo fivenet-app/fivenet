@@ -8,6 +8,7 @@
 // source: resources/centrum/settings.proto
 // source: resources/centrum/units.proto
 // source: resources/common/i18n.proto
+// source: resources/common/cron/cron.proto
 // source: resources/common/database/database.proto
 // source: resources/common/grpcws/grpcws.proto
 // source: resources/documents/access.proto

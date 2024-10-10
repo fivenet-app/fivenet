@@ -57,8 +57,6 @@ func (m *AppConfig) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for Version
-
 	if all {
 		switch v := interface{}(m.GetAuth()).(type) {
 		case interface{ ValidateAll() error }:
@@ -231,6 +229,10 @@ func (m *AppConfig) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.Version != nil {
+		// no validation rules for Version
 	}
 
 	if len(errors) > 0 {

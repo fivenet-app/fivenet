@@ -1,0 +1,7 @@
+syntax = "proto3";
+
+package resources.common.cron;
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron;cron";
+
+message Cronjob {}

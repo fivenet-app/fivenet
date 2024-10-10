@@ -14,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/perms/collections"
 	"github.com/fivenet-app/fivenet/query/fivenet/model"
+	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/trace"
@@ -441,6 +442,17 @@ func (s *Server) GetPermissions(ctx context.Context, req *GetPermissionsRequest)
 func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequest) (*UpdateRoleLimitsResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
 
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "UpdateRoleLimits",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
 	role, err := s.ps.GetRole(ctx, req.RoleId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrInvalidRequest)
@@ -467,16 +479,31 @@ func (s *Server) UpdateRoleLimits(ctx context.Context, req *UpdateRoleLimitsRequ
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
+
 	return &UpdateRoleLimitsResponse{}, nil
 }
 
 func (s *Server) DeleteFaction(ctx context.Context, req *DeleteFactionRequest) (*DeleteFactionResponse, error) {
 	trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.rector.role_id", int64(req.RoleId)))
 
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	auditEntry := &model.FivenetAuditLog{
+		Service: RectorService_ServiceDesc.ServiceName,
+		Method:  "DeleteFaction",
+		UserID:  userInfo.UserId,
+		UserJob: userInfo.Job,
+		State:   int16(rector.EventType_EVENT_TYPE_ERRORED),
+	}
+	defer s.aud.Log(auditEntry, req)
+
 	role, err := s.ps.GetRole(ctx, req.RoleId)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsrector.ErrFailedQuery)
 	}
+
+	trace.SpanFromContext(ctx).SetAttributes(attribute.String("fivenet.rector.job", role.Job))
 
 	roles, err := s.ps.GetJobRoles(ctx, role.Job)
 	if err != nil {
@@ -495,9 +522,31 @@ func (s *Server) DeleteFaction(ctx context.Context, req *DeleteFactionRequest) (
 		errs = multierr.Append(errs, err)
 	}
 
+	// Remove job props as last action to remove a faction from the data
+	if err := s.deleteJobProps(ctx, role.Job); err != nil {
+		errs = multierr.Append(errs, err)
+	}
+
 	if errs != nil {
 		return nil, errswrap.NewError(errs, errorsrector.ErrFailedQuery)
 	}
 
+	auditEntry.State = int16(rector.EventType_EVENT_TYPE_DELETED)
+
 	return &DeleteFactionResponse{}, nil
+}
+
+func (s *Server) deleteJobProps(ctx context.Context, job string) error {
+	stmt := tJobProps.
+		DELETE().
+		WHERE(
+			tJobProps.Job.EQ(jet.String(job)),
+		).
+		LIMIT(1)
+
+	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		return err
+	}
+
+	return nil
 }

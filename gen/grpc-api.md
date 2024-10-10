@@ -64,6 +64,9 @@
     - [HeaderValue](#resources-common-grpcws-HeaderValue)
     - [Ping](#resources-common-grpcws-Ping)
   
+- [resources/common/cron/cron.proto](#resources_common_cron_cron-proto)
+    - [Cronjob](#resources-common-cron-Cronjob)
+  
 - [resources/documents/access.proto](#resources_documents_access-proto)
     - [DocumentAccess](#resources-documents-DocumentAccess)
     - [DocumentJobAccess](#resources-documents-DocumentJobAccess)
@@ -1554,6 +1557,32 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pong | [bool](#bool) |  |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_common_cron_cron-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/cron/cron.proto
+
+
+
+<a name="resources-common-cron-Cronjob"></a>
+
+### Cronjob
+
 
 
 
@@ -3870,7 +3899,7 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| version | [string](#string) |  |  |
+| version | [string](#string) | optional |  |
 | auth | [Auth](#resources-rector-Auth) |  |  |
 | perms | [Perms](#resources-rector-Perms) |  |  |
 | website | [Website](#resources-rector-Website) |  |  |

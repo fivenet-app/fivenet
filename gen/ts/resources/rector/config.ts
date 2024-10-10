@@ -16,9 +16,9 @@ import { Duration } from "../../google/protobuf/duration";
  */
 export interface AppConfig {
     /**
-     * @generated from protobuf field: string version = 1;
+     * @generated from protobuf field: optional string version = 1;
      */
-    version: string;
+    version?: string;
     /**
      * @generated from protobuf field: resources.rector.Auth auth = 2;
      */
@@ -223,7 +223,7 @@ export enum DiscordBotPresenceType {
 class AppConfig$Type extends MessageType<AppConfig> {
     constructor() {
         super("resources.rector.AppConfig", [
-            { no: 1, name: "version", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "version", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ },
             { no: 2, name: "auth", kind: "message", T: () => Auth },
             { no: 3, name: "perms", kind: "message", T: () => Perms },
             { no: 4, name: "website", kind: "message", T: () => Website },
@@ -234,7 +234,6 @@ class AppConfig$Type extends MessageType<AppConfig> {
     }
     create(value?: PartialMessage<AppConfig>): AppConfig {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.version = "";
         if (value !== undefined)
             reflectionMergePartial<AppConfig>(this, message, value);
         return message;
@@ -244,7 +243,7 @@ class AppConfig$Type extends MessageType<AppConfig> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string version */ 1:
+                case /* optional string version */ 1:
                     message.version = reader.string();
                     break;
                 case /* resources.rector.Auth auth */ 2:
@@ -277,8 +276,8 @@ class AppConfig$Type extends MessageType<AppConfig> {
         return message;
     }
     internalBinaryWrite(message: AppConfig, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string version = 1; */
-        if (message.version !== "")
+        /* optional string version = 1; */
+        if (message.version !== undefined)
             writer.tag(1, WireType.LengthDelimited).string(message.version);
         /* resources.rector.Auth auth = 2; */
         if (message.auth)
