@@ -5,6 +5,7 @@ import type { LawBook } from '~~/gen/ts/resources/laws/laws';
 const props = defineProps<{
     lawBooks: LawBook[];
     selectedLaws: SelectedPenalty[];
+    reduction: number;
 }>();
 
 const { t } = useI18n();
@@ -39,14 +40,12 @@ const columns = [
         label: t('common.count'),
     },
 ];
+
+const leeway = computed(() => props.reduction / 100);
 </script>
 
 <template>
-    <UButton
-        v-if="selectedLaws.length === 0"
-        disabled
-        class="relative block w-full rounded-lg border border-dashed p-4 text-center"
-    >
+    <UButton v-if="selectedLaws.length === 0" disabled variant="outline" class="relative block w-full p-4 text-center">
         <UIcon name="i-mdi-calculator" class="mx-auto size-12" />
         <span class="mt-2 block text-sm font-semibold">
             {{ $t('common.none_selected', [`${$t('common.crime')}`]) }}
@@ -59,18 +58,34 @@ const columns = [
                 {{ getNameForLawBookId(law.law.lawbookId) }} - {{ law.law.name }}
             </p>
         </template>
-        <template #fine-data="{ row: law }"> ${{ law.law.fine ? law.law.fine * law.count : 0 }} </template>
+
+        <template #fine-data="{ row: law }">
+            ${{ law.law.fine ? law.law.fine * law.count : 0 }}
+            <span v-if="leeway > 0 && law.law.fine * law.count > 0">
+                ($-{{ (law.law.fine * law.count * leeway).toFixed(0) }})
+            </span>
+        </template>
+
         <template #detentionTime-data="{ row: law }">
             {{ law.law.detentionTime ? law.law.detentionTime * law.count : 0 }}
+            <span v-if="leeway > 0 && law.law.detentionTime * law.count > 0">
+                (-{{ (law.law.detentionTime * law.count * leeway).toFixed(0) }})
+            </span>
         </template>
+
         <template #trafficInfractionPoints-data="{ row: law }">
             {{ law.law.stvoPoints ? law.law.stvoPoints * law.count : 0 }}
+            <span v-if="leeway > 0 && law.law.stvoPoints * law.count > 0">
+                (-{{ (law.law.stvoPoints * law.count * leeway).toFixed(0) }})
+            </span>
         </template>
+
         <template #description-data="{ row: law }">
             <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-none">
                 {{ law.law.description }}
             </p>
         </template>
+
         <template #fine-count="{ row: law }">
             {{ law.count }}
         </template>

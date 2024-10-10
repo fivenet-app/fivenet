@@ -25,11 +25,11 @@ async function click() {
 
 <template>
     <UButton
-        variant="ghost"
+        variant="outline"
         :disabled="!focus"
         :icon="icon"
         block
-        class="block w-full rounded-lg border border-dashed border-base-800 text-center dark:border-base-400"
+        class="block w-full text-center"
         :class="padding"
         @click="click()"
     >

@@ -478,7 +478,8 @@
         "unpin": "Lösen",
         "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente",
         "or": "ODER",
-        "retrying": "Erneuter Versuch..."
+        "retrying": "Erneuter Versuch...",
+        "reduction": "Minderung"
     },
     "components": {
         "partials": {

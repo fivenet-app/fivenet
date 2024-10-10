@@ -70,6 +70,9 @@ const filteredLawBooks = computed(() =>
         }),
 );
 
+const reduction = ref<number>(0);
+const leeway = computed(() => reduction.value / 100);
+
 function getNameForLawBookId(id: string): string | undefined {
     return lawBooks.value?.filter((b) => b.id === id)[0]?.name;
 }
@@ -113,9 +116,20 @@ async function copyToClipboard(): Promise<void> {
         d(new Date(), 'long') +
         `)
 
-${t('common.fine')}: $${state.value.fine}
-${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime.toString())}
-${t('common.traffic_infraction_points', 2)}: ${state.value.stvoPoints}
+${t('common.fine')}: $${state.value.fine}${
+            leeway.value > 0 && state.value.fine > 0 ? ` ($-${(state.value.fine * leeway.value).toFixed(0)})` : ''
+        }
+${t('common.detention_time')}: ${state.value.detentionTime} ${t('common.time_ago.month', state.value.detentionTime)}${
+            leeway.value > 0 && state.value.detentionTime > 0
+                ? ` (-${(state.value.detentionTime * leeway.value).toFixed(0)} ${t('common.time_ago.month', parseInt((state.value.detentionTime * leeway.value).toFixed(0)))})`
+                : ''
+        }
+${t('common.traffic_infraction_points', 2)}: ${state.value.stvoPoints}${
+            leeway.value > 0 && state.value.stvoPoints > 0
+                ? ` (-${(state.value.stvoPoints * leeway.value).toFixed(0)} ${t('common.points', parseInt((state.value.stvoPoints * leeway.value).toFixed(0)))})`
+                : ''
+        }
+${t('common.reduction')}: ${reduction.value}%
 ${t('common.total_count')}: ${state.value.count}
 `;
 
@@ -242,13 +256,19 @@ const columns = [
             <div class="overflow-x-auto sm:-mx-6 lg:-mx-8">
                 <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
                     <div class="text-xl">
-                        <PenaltyStats :summary="state" />
+                        <PenaltyStats :summary="state" :reduction="reduction" />
 
-                        <div class="mt-4">
+                        <div class="my-2 flex flex-row items-center gap-2 text-lg">
+                            <URange v-model="reduction" :min="0" :max="25" :step="1" />
+                            <p class="w-12">{{ reduction }}%</p>
+                        </div>
+
+                        <div>
                             <PenaltySummaryTable
                                 v-if="lawBooks && lawBooks.length > 0"
                                 :law-books="lawBooks"
                                 :selected-laws="state.selectedPenalties"
+                                :reduction="reduction"
                             />
                         </div>
                     </div>
