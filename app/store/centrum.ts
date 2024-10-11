@@ -386,6 +386,13 @@ export const useCentrumStore = defineStore('centrum', {
                             this.calculateTimeCorrection(resp.change.latestState.serverTime);
                         }
 
+                        logger.info(
+                            'Latest state received. Dispatches:',
+                            resp.change.latestState.dispatches.length,
+                            'units',
+                            resp.change.latestState.units.length,
+                        );
+
                         if (resp.change.latestState.settings !== undefined) {
                             this.updateSettings(resp.change.latestState.settings);
                         }

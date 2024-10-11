@@ -156,7 +156,9 @@ func (s *Server) ListDispatches(ctx context.Context, req *ListDispatchesRequest)
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Dispatches); err != nil {
-		return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscentrum.ErrFailedQuery)
+		}
 	}
 
 	resp.Pagination.Update(len(resp.Dispatches))
