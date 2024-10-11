@@ -39,7 +39,9 @@ export const useNotificatorStore = defineStore('notifications', {
             this.notifications = this.notifications.filter((notification) => notification.id !== id);
         },
         add(notification: Notification): void {
-            notification.id = uuidv4();
+            if (notification.id === undefined) {
+                notification.id = uuidv4();
+            }
 
             if (notification.timeout === undefined) {
                 notification.timeout = useAppConfig().timeouts.notification;

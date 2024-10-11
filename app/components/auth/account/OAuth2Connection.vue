@@ -1,7 +1,9 @@
 <script lang="ts" setup>
 import OAuth2ConnectButton from '~/components/auth/account/OAuth2ConnectButton.vue';
 import ConfirmModal from '~/components/partials/ConfirmModal.vue';
+import { useNotificatorStore } from '~/store/notificator';
 import type { OAuth2Account, OAuth2Provider } from '~~/gen/ts/resources/accounts/oauth2';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 defineProps<{
     provider: OAuth2Provider;
@@ -12,10 +14,20 @@ const emit = defineEmits<{
     (e: 'disconnected', provider: string): void;
 }>();
 
+const notifications = useNotificatorStore();
+
 async function disconnectOAuth2Connection(provider: OAuth2Provider): Promise<void> {
     try {
         await getGRPCAuthClient().deleteOAuth2Connection({
             provider: provider.name,
+        });
+
+        notifications.add({
+            title: { key: 'notifications.auth.oauth2_connect.disconnected.title', parameters: {} },
+            description: {
+                key: 'notifications.auth.oauth2_connect.disconnected.content',
+            },
+            type: NotificationType.SUCCESS,
         });
 
         emit('disconnected', provider.name);

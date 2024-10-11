@@ -1319,7 +1319,14 @@
                 },
                 "failed": {
                     "title": "Failed to connect your account",
-                    "content": "Error while connecting your social login (Reason: {0}), please try again."
+                    "content": "Error while connecting your social login, please check the error message and try again.\n(Reason: {msg})",
+                    "reasons": {
+                        "already_in_use": "Social Login is already connected with a different FiveNet account!"
+                    }
+                },
+                "disconnected": {
+                    "title": "Successfully disconnected social login",
+                    "content": "Successfully disconnected from the social login provider."
                 }
             },
             "change_username": {

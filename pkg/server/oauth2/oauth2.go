@@ -259,10 +259,10 @@ func (o *OAuth2) Callback(c *gin.Context) {
 
 		if err := o.storeUserInfo(c, claims.AccID, provider.GetName(), userInfo); err != nil {
 			o.logger.Error("failed to store user info", zap.Error(err))
-			if !dbutils.IsDuplicateError(err) {
-				o.handleRedirect(c, connectOnly, false, ReasonInternalError)
-			} else {
+			if dbutils.IsDuplicateError(err) {
 				o.handleRedirect(c, connectOnly, false, "already_in_use")
+			} else {
+				o.handleRedirect(c, connectOnly, false, ReasonInternalError)
 			}
 			return
 		}

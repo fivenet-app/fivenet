@@ -1307,12 +1307,19 @@
             },
             "oauth2_connect": {
                 "success": {
-                    "title": "Erfolgreich mit Social Login verbunden",
+                    "title": "Social Login Verbindung hergestellt",
                     "content": "Verbindung mit Social Login erfolgreich hergestellt."
                 },
                 "failed": {
                     "title": "Fehler beim verbinden deines Kontos",
-                    "content": "Fehler beim Social Login ihres Kontos (Fehler: {0}), bitte versuchen Sie es erneut."
+                    "content": "Fehler beim Verbinden des Social Login mit ihrem Konto, bitte lösen sie den genannten Grund und versuchen es erneut.\n(Grund: {msg})",
+                    "reasons": {
+                        "already_in_use": "Social Login ist bereits mit einem anderen FiveNet Account verbunden!"
+                    }
+                },
+                "disconnected": {
+                    "title": "Social Login Verbindung getrennt",
+                    "content": "Verbindung mit Social Login erfolgreich getrennt."
                 }
             },
             "change_username": {
