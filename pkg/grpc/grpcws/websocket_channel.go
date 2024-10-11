@@ -225,10 +225,11 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 		req := &http.Request{
-			Method: http.MethodPost,
-			URL:    url,
-			Header: ws.req.Header.Clone(),
-			Body:   stream,
+			Method:     http.MethodPost,
+			URL:        url,
+			Header:     ws.req.Header.Clone(),
+			Body:       stream,
+			RemoteAddr: ws.req.RemoteAddr,
 		}
 		for key, element := range frame.GetHeader().Headers {
 			req.Header[key] = element.Value
