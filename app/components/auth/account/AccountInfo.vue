@@ -105,8 +105,8 @@ const selectedTab = computed({
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="inline-flex w-full justify-between">
-                                        <span>
+                                    <div class="inline-flex w-full justify-between gap-1">
+                                        <span class="truncate">
                                             {{ account.account?.username }}
                                         </span>
                                         <CopyToClipboardButton
@@ -122,8 +122,8 @@ const selectedTab = computed({
                                     class="grid grid-cols-2 items-center gap-2"
                                     :ui="{ container: '' }"
                                 >
-                                    <div class="inline-flex w-full justify-between">
-                                        <span>
+                                    <div class="inline-flex w-full justify-between gap-1">
+                                        <span class="truncate">
                                             {{ account.account?.license }}
                                         </span>
                                         <CopyToClipboardButton

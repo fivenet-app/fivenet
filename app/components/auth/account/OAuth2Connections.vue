@@ -22,13 +22,15 @@ function getProviderConnection(provider: string): undefined | OAuth2Account {
             :title="$t('components.auth.OAuth2Connections.title')"
             :description="$t('components.auth.OAuth2Connections.subtitle')"
         >
-            <OAuth2Connection
-                v-for="provider in providers"
-                :key="provider.name"
-                :provider="provider"
-                :account="getProviderConnection(provider.name)"
-                @disconnected="$emit('disconnected', $event)"
-            />
+            <UPageGrid :ui="{ wrapper: 'grid-cols-1' }">
+                <OAuth2Connection
+                    v-for="provider in providers"
+                    :key="provider.name"
+                    :provider="provider"
+                    :account="getProviderConnection(provider.name)"
+                    @disconnected="$emit('disconnected', $event)"
+                />
+            </UPageGrid>
         </UDashboardSection>
     </UDashboardPanelContent>
 </template>
