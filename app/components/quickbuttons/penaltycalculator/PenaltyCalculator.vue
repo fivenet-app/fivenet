@@ -258,8 +258,11 @@ const columns = [
                     <div class="text-xl">
                         <PenaltyStats :summary="state" :reduction="reduction" />
 
-                        <div class="my-2 flex flex-row items-center gap-2 text-lg">
-                            <URange v-model="reduction" :min="0" :max="25" :step="1" />
+                        <div class="my-2 flex flex-row items-center gap-2 text-sm">
+                            <p class="font-semibold">
+                                {{ $t('common.reduction') }}
+                            </p>
+                            <URange v-model="reduction" size="sm" :min="0" :max="25" :step="1" />
                             <p class="w-12">{{ reduction }}%</p>
                         </div>
 
