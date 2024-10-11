@@ -48,7 +48,7 @@ const xTicks = (i: number) => {
 };
 
 const template = (d: DataRecord) =>
-    `${formatDate(d.date)}<br />
+    `<span class="font-semibold">${formatDate(d.date)}</span><br />
 ${t('components.jobs.timeclock.Stats.sum')}: ${n(d.sum, 'decimal')} h<br />
 ${t('components.jobs.timeclock.Stats.avg')}: ${n(d.avg, 'decimal')} h<br />
 ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;

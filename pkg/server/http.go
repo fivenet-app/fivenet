@@ -3,6 +3,7 @@ package server
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"io"
 	"net"
 	"net/http"
@@ -107,14 +108,16 @@ type EngineParams struct {
 	GRPCSrv *grpc.Server
 }
 
-func NewEngine(p EngineParams) *gin.Engine {
+func NewEngine(p EngineParams) (*gin.Engine, error) {
 	// Gin HTTP Server
 	gin.SetMode(p.Config.Mode)
 	e := gin.New()
 
 	// Enable forwarded by client ip headers when one or more trusted proxies specified
 	e.ForwardedByClientIP = len(p.Config.HTTP.TrustedProxies) > 0
-	e.SetTrustedProxies(p.Config.HTTP.TrustedProxies)
+	if err := e.SetTrustedProxies(p.Config.HTTP.TrustedProxies); err != nil {
+		return nil, fmt.Errorf("failed to set trusted proxies list. %w", err)
+	}
 
 	// Add Zap logger and panic recovery to Gin
 	e.Use(ginzap.GinzapWithConfig(p.Logger, &ginzap.Config{
@@ -194,7 +197,10 @@ func NewEngine(p EngineParams) *gin.Engine {
 		grpcws.WithAllowNonRootResource(true),
 		grpcws.WithWebsocketPingInterval(40*time.Second),
 	)
-	ginWrappedGrpc := gin.WrapH(wrapperGrpc)
+	ginWrappedGrpc := func(c *gin.Context) {
+		c.Request.RemoteAddr = c.ClientIP()
+		wrapperGrpc.ServeHTTP(c.Writer, c.Request)
+	}
 	e.Any("/api/grpc", ginWrappedGrpc)
 	e.Any("/api/grpc/*path", ginWrappedGrpc)
 
@@ -234,5 +240,5 @@ func NewEngine(p EngineParams) *gin.Engine {
 		c.Abort()
 	})
 
-	return e
+	return e, nil
 }
