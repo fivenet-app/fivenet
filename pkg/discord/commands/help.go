@@ -19,7 +19,7 @@ func init() {
 	CommandsFactories["help"] = NewHelpCommand
 }
 
-var helpValidOptions = []string{
+var helpTopics = []string{
 	"discord",
 	"registration",
 }
@@ -30,7 +30,7 @@ type HelpCommand struct {
 	url string
 }
 
-func NewHelpCommand(cfg *config.Config, l *lang.I18n) (api.CreateCommandData, cmdroute.CommandHandler, error) {
+func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (api.CreateCommandData, error) {
 	lEN := l.I18n("en")
 	lDE := l.I18n("de")
 
@@ -57,29 +57,51 @@ func NewHelpCommand(cfg *config.Config, l *lang.I18n) (api.CreateCommandData, cm
 		Options: []discord.CommandOption{},
 	}
 
-	for _, option := range helpValidOptions {
-		cmd.Options = append(cmd.Options, &discord.SubcommandOption{
-			OptionName: option,
-			OptionNameLocalizations: discord.StringLocales{
+	choices := &discord.StringOption{
+		OptionName: lEN.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.help.topic.name",
+		}),
+		OptionNameLocalizations: discord.StringLocales{
+			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "discord.commands.help.topic.name",
+			}),
+		},
+
+		Description: lEN.MustLocalize(&i18n.LocalizeConfig{
+			MessageID: "discord.commands.help.topic.desc",
+		}),
+		DescriptionLocalizations: discord.StringLocales{
+			discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: "discord.commands.help.topic.desc",
+			}),
+		},
+
+		Choices: []discord.StringChoice{},
+
+		Required: true,
+	}
+	cmd.Options = append(cmd.Options, choices)
+
+	for _, option := range helpTopics {
+		choices.Choices = append(choices.Choices, discord.StringChoice{
+			Name: lEN.MustLocalize(&i18n.LocalizeConfig{
+				MessageID: fmt.Sprintf("discord.commands.help.%s.name", option),
+			}),
+			NameLocalizations: discord.StringLocales{
 				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
 					MessageID: fmt.Sprintf("discord.commands.help.%s.name", option),
 				}),
 			},
-
-			Description: lEN.MustLocalize(&i18n.LocalizeConfig{
-				MessageID: fmt.Sprintf("discord.commands.help.%s.desc", option),
-			}),
-			DescriptionLocalizations: discord.StringLocales{
-				discord.German: lDE.MustLocalize(&i18n.LocalizeConfig{
-					MessageID: fmt.Sprintf("discord.commands.help.%s.desc", option),
-				}),
-			},
+			Value: option,
 		})
 	}
 
-	return cmd, &HelpCommand{
+	router.Add("help", &HelpCommand{
+		l:   l,
 		url: cfg.HTTP.PublicURL,
-	}, nil
+	})
+
+	return cmd, nil
 }
 
 func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandData) *api.InteractionResponseData {
@@ -89,9 +111,9 @@ func (c *HelpCommand) HandleCommand(ctx context.Context, cmd cmdroute.CommandDat
 
 	options := cmd.CommandInteractionOption.Options
 	if len(options) > 0 {
-		option := strings.ToLower(options[0].Name)
+		option := strings.ReplaceAll(strings.ToLower(options[0].Value.String()), "\"", "")
 
-		if slices.Contains(helpValidOptions, option) {
+		if slices.Contains(helpTopics, option) {
 			messageId = "discord.commands.help." + option
 		}
 	}

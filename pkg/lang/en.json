@@ -8,9 +8,13 @@
             "help": {
                 "name": "help",
                 "desc": "Help topics for FiveNet.",
+                "topic": {
+                    "name": "help-topic",
+                    "desc": "List of available help topics."
+                },
                 "empty": {
                     "title": "No help topic chosen!",
-                    "msg": "Available topics:\n* `discord`"
+                    "msg": "Available topics:\n* discord\n* registration"
                 },
                 "discord": {
                     "name": "discord",

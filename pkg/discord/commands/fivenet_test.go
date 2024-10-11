@@ -22,11 +22,9 @@ func TestNewHandleFivenetCommand(t *testing.T) {
 	url := "https://example.fivenet.app/"
 	cfg.HTTP.PublicURL = url
 
-	_, handler, err := NewFivenetCommand(cfg, l)
-	require.NoError(t, err)
-
 	router := cmdroute.NewRouter()
-	router.Add("fivenet", handler)
+	_, err = NewFivenetCommand(router, cfg, l)
+	require.NoError(t, err)
 
 	interactionEvent := &discord.InteractionEvent{
 		ID: discord.NullInteractionID,

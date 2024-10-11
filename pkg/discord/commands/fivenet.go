@@ -22,11 +22,17 @@ type FiveNetCommand struct {
 	url string
 }
 
-func NewFivenetCommand(cfg *config.Config, l *lang.I18n) (api.CreateCommandData, cmdroute.CommandHandler, error) {
+func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (api.CreateCommandData, error) {
 	lEN := l.I18n("en")
 	lDE := l.I18n("de")
 
+	router.Add("fivenet", &FiveNetCommand{
+		l:   l,
+		url: cfg.HTTP.PublicURL,
+	})
+
 	return api.CreateCommandData{
+			Type: discord.ChatInputCommand,
 			Name: "fivenet",
 			Description: lEN.MustLocalize(&i18n.LocalizeConfig{
 				MessageID: "discord.commands.fivenet.desc",
@@ -36,11 +42,6 @@ func NewFivenetCommand(cfg *config.Config, l *lang.I18n) (api.CreateCommandData,
 					MessageID: "discord.commands.fivenet.desc",
 				}),
 			},
-			Type: discord.ChatInputCommand,
-		},
-		&FiveNetCommand{
-			l:   l,
-			url: cfg.HTTP.PublicURL,
 		},
 		nil
 }
