@@ -19,6 +19,8 @@ http:
   origins:
     - "https://fivenet.example.com"
     #- "http://localhost:3000" # Only for development
+  trustedProxies: []
+    #- "127.0.0.1" # Only for development
   sessions:
     cookieSecret: "your_generated_cookie_secret"
     domain: "fivenet.example.com"

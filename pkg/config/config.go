@@ -49,12 +49,13 @@ type Tracing struct {
 }
 
 type HTTP struct {
-	Listen      string   `default:":8080" yaml:"listen"`
-	AdminListen string   `default:":7070" yaml:"adminListen"`
-	Sessions    Sessions `yaml:"sessions"`
-	Links       Links    `yaml:"links"`
-	PublicURL   string   `yaml:"publicURL"`
-	Origins     []string `yaml:"origins"`
+	Listen         string   `default:":8080" yaml:"listen"`
+	AdminListen    string   `default:":7070" yaml:"adminListen"`
+	Sessions       Sessions `yaml:"sessions"`
+	Links          Links    `yaml:"links"`
+	PublicURL      string   `yaml:"publicURL"`
+	Origins        []string `yaml:"origins"`
+	TrustedProxies []string `yaml:"trustedProxies"`
 }
 
 type Sessions struct {

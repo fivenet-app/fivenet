@@ -112,18 +112,22 @@ func NewEngine(p EngineParams) *gin.Engine {
 	gin.SetMode(p.Config.Mode)
 	e := gin.New()
 
-	// Add Zap Logger to Gin
+	// Enable forwarded by client ip headers when one or more trusted proxies specified
+	e.ForwardedByClientIP = len(p.Config.HTTP.TrustedProxies) > 0
+	e.SetTrustedProxies(p.Config.HTTP.TrustedProxies)
+
+	// Add Zap logger and panic recovery to Gin
 	e.Use(ginzap.GinzapWithConfig(p.Logger, &ginzap.Config{
 		UTC:        true,
 		TimeFormat: time.RFC3339,
 		Context: ginzap.Fn(func(c *gin.Context) []zapcore.Field {
 			fields := []zapcore.Field{}
-			// log request ID
+			// Log request ID
 			if requestID := c.Writer.Header().Get("X-Request-Id"); requestID != "" {
 				fields = append(fields, zap.String("request_id", requestID))
 			}
 
-			// log trace and span ID
+			// Log trace and span ID
 			if trace.SpanFromContext(c.Request.Context()).SpanContext().IsValid() {
 				fields = append(fields, zap.String("traceId", trace.SpanFromContext(c.Request.Context()).SpanContext().TraceID().String()))
 				fields = append(fields, zap.String("spanId", trace.SpanFromContext(c.Request.Context()).SpanContext().SpanID().String()))
@@ -158,9 +162,9 @@ func NewEngine(p EngineParams) *gin.Engine {
 	e.Use(sessions.SessionsMany([]string{"fivenet_oauth2_state"}, sessStore))
 
 	// Tracing
-	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP), otelgin.WithFilter(func(r *http.Request) bool {
+	e.Use(otelgin.Middleware("fivenet", otelgin.WithTracerProvider(p.TP), otelgin.WithGinFilter(func(c *gin.Context) bool {
 		// Skip `/images/*` requests
-		return !strings.HasPrefix(r.URL.Path, "/images/")
+		return !strings.HasPrefix(c.FullPath(), "/images/")
 	})))
 	e.Use(InjectToHeaders(p.TP))
 
@@ -172,25 +176,13 @@ func NewEngine(p EngineParams) *gin.Engine {
 		service.RegisterHTTP(e)
 	}
 
-	// Setup nuxt generated files serving
+	// Setup Nuxt generated files serving
 	frontendFS := static.LocalFile(".output/public/", true)
 	fileServer := http.FileServer(frontendFS)
-
 	// Register output dir for assets and other static files
 	e.Use(static.Serve("/", frontendFS))
 
-	// Setup not found handler
-	notFoundPage := []byte("404 page not found")
-	notFoundPageFile, err := frontendFS.Open("404.html")
-	if err != nil {
-		p.Logger.Error("failed to open 404.html file, falling back to 404 text page", zap.Error(err))
-	} else {
-		notFoundPage, err = io.ReadAll(notFoundPageFile)
-		if err != nil {
-			p.Logger.Error("failed to read 404.html file contents", zap.Error(err))
-		}
-	}
-
+	// GRPC web + websocket handling
 	wrapperGrpc := grpcws.WrapServer(
 		p.GRPCSrv,
 		grpcws.WithAllowedRequestHeaders([]string{"Origin", "Content-Length", "Content-Type", "Cookie", "Keep-Alive"}), // Allow cookie header
@@ -206,6 +198,19 @@ func NewEngine(p EngineParams) *gin.Engine {
 	e.Any("/api/grpc", ginWrappedGrpc)
 	e.Any("/api/grpc/*path", ginWrappedGrpc)
 
+	// Setup not found handler
+	notFoundPage := []byte("404 page not found")
+	notFoundPageFile, err := frontendFS.Open("404.html")
+	if err != nil {
+		p.Logger.Error("failed to open 404.html file, falling back to 404 text page", zap.Error(err))
+	} else {
+		notFoundPage, err = io.ReadAll(notFoundPageFile)
+		if err != nil {
+			p.Logger.Error("failed to read 404.html file contents", zap.Error(err))
+		}
+	}
+
+	// 404 handling
 	e.NoRoute(func(c *gin.Context) {
 		requestPath := c.Request.URL.Path
 		if requestPath == "/" {
