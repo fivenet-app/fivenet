@@ -392,11 +392,12 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	if err != nil {
 		return nil, err
 	}
+	unit.Id = uint64(lastId)
 
 	// A new unit shouldn't have a status, so we make sure we add one
 	if unit.Status, err = s.AddUnitStatus(ctx, tx, job, &centrum.UnitStatus{
 		CreatedAt: timestamp.Now(),
-		UnitId:    uint64(lastId),
+		UnitId:    unit.Id,
 		Status:    centrum.StatusUnit_STATUS_UNIT_UNAVAILABLE,
 	}, false); err != nil {
 		return nil, err
@@ -408,11 +409,9 @@ func (s *Manager) CreateUnit(ctx context.Context, job string, unit *centrum.Unit
 	}
 
 	// Load new/updated unit from database
-	if err := s.LoadUnitsFromDB(ctx, uint64(lastId)); err != nil {
+	if err := s.LoadUnitsFromDB(ctx, unit.Id); err != nil {
 		return nil, err
 	}
-
-	unit.Id = uint64(lastId)
 
 	data, err := proto.Marshal(unit)
 	if err != nil {
@@ -570,7 +569,7 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 				),
 		).
 		WHERE(
-			tUnitStatus.UnitID.EQ(jet.Uint64(id)),
+			tUnitStatus.ID.EQ(jet.Uint64(id)),
 		).
 		ORDER_BY(tUnitStatus.ID.DESC()).
 		LIMIT(1)

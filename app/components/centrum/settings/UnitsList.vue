@@ -100,13 +100,13 @@ const columns = [
         </template>
     </UDashboardNavbar>
 
-    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit')])" :retry="refresh" />
+    <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.unit', 2)])" :retry="refresh" />
     <UTable
         v-else
         :loading="loading"
         :columns="columns"
         :rows="units?.units"
-        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.units', 2)]) }"
+        :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.unit', 2)]) }"
     >
         <template #name-data="{ row: unit }">
             <div class="text-gray-900 dark:text-white">
