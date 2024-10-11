@@ -11,7 +11,7 @@ const leeway = computed(() => props.reduction / 100);
 
 <template>
     <div class="mx-auto max-w-7xl">
-        <UPageGrid :ui="{ wrapper: 'grid-cols-1 sm:grid-cols-4' }">
+        <UPageGrid :ui="{ wrapper: 'grid-cols-1 md:grid-cols-4 xl:grid-cols-4' }">
             <UPageCard
                 :ui="{
                     body: {
@@ -22,9 +22,10 @@ const leeway = computed(() => props.reduction / 100);
                 icon="i-mdi-attach-money"
             >
                 <template #icon>
-                    <div class="flex gap-1">
+                    <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-attach-money" class="text-primary h-10 w-10" />
-                        <div class="flex items-center gap-1.5 truncate text-base font-semibold text-gray-900 dark:text-white">
+
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.fine') }}
                         </div>
                     </div>
@@ -53,9 +54,10 @@ const leeway = computed(() => props.reduction / 100);
                 }"
             >
                 <template #icon>
-                    <div class="flex gap-1">
+                    <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-clock" class="text-primary h-10 w-10" />
-                        <div class="flex items-center gap-1.5 truncate text-base font-semibold text-gray-900 dark:text-white">
+
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.detention_time') }}
                         </div>
                     </div>
@@ -89,9 +91,10 @@ const leeway = computed(() => props.reduction / 100);
                 }"
             >
                 <template #icon>
-                    <div class="flex gap-1">
+                    <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-car" class="text-primary h-10 w-10" />
-                        <div class="flex items-center gap-1.5 truncate text-base font-semibold text-gray-900 dark:text-white">
+
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.traffic_infraction_points', 2) }}
                         </div>
                     </div>
@@ -125,9 +128,10 @@ const leeway = computed(() => props.reduction / 100);
                 }"
             >
                 <template #icon>
-                    <div class="flex gap-1">
+                    <div class="flex gap-1 truncate">
                         <UIcon name="i-mdi-equal" class="text-primary h-10 w-10" />
-                        <div class="flex items-center gap-1.5 truncate text-base font-semibold text-gray-900 dark:text-white">
+
+                        <div class="flex items-center gap-1.5 text-base font-semibold text-gray-900 dark:text-white">
                             {{ $t('common.total_count') }}
                         </div>
                     </div>

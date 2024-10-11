@@ -211,7 +211,24 @@ const columns = [
 
                 <div v-else>
                     <UFormGroup name="search">
-                        <UInput v-model="querySearchRaw" type="text" name="search" :placeholder="$t('common.filter')" />
+                        <UInput
+                            v-model="querySearchRaw"
+                            type="text"
+                            name="search"
+                            :placeholder="$t('common.filter')"
+                            :ui="{ icon: { trailing: { pointer: '' } } }"
+                        >
+                            <template #trailing>
+                                <UButton
+                                    v-show="querySearchRaw !== ''"
+                                    color="gray"
+                                    variant="link"
+                                    icon="i-mdi-close"
+                                    :padded="false"
+                                    @click="querySearchRaw = ''"
+                                />
+                            </template>
+                        </UInput>
                     </UFormGroup>
 
                     <dl class="mt-4">
