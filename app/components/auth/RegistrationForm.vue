@@ -51,6 +51,12 @@ async function createAccount(values: Schema): Promise<void> {
     }
 }
 
+const passwordVisibility = ref(false);
+
+function togglePasswordVisibility() {
+    passwordVisibility.value = !passwordVisibility.value;
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -94,10 +100,21 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <UFormGroup name="password" :label="$t('common.password')">
                 <UInput
                     v-model="state.password"
-                    type="password"
+                    :type="passwordVisibility ? 'text' : 'password'"
                     autocomplete="new-password"
                     :placeholder="$t('common.password')"
-                />
+                    :ui="{ icon: { trailing: { pointer: '' } } }"
+                >
+                    <template #trailing>
+                        <UButton
+                            color="gray"
+                            variant="link"
+                            :icon="passwordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                            :padded="false"
+                            @click="togglePasswordVisibility"
+                        />
+                    </template>
+                </UInput>
                 <PasswordStrengthMeter :input="state.password" class="mt-2" />
             </UFormGroup>
 

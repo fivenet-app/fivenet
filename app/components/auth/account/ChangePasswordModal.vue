@@ -48,6 +48,16 @@ async function changePassword(values: Schema): Promise<void> {
     }
 }
 
+const currentPasswordVisibility = ref(false);
+function toggleCurrentPasswordVisibility() {
+    currentPasswordVisibility.value = !currentPasswordVisibility.value;
+}
+
+const newPasswordVisibility = ref(false);
+function toggleNewPasswordVisibility() {
+    newPasswordVisibility.value = !newPasswordVisibility.value;
+}
+
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) => {
     canSubmit.value = false;
@@ -73,20 +83,42 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                     <UInput
                         v-model="state.currentPassword"
                         name="currentPassword"
-                        type="password"
+                        :type="currentPasswordVisibility ? 'text' : 'password'"
                         autocomplete="current-password"
                         :placeholder="$t('components.auth.ChangePasswordModal.current_password')"
-                    />
+                        :ui="{ icon: { trailing: { pointer: '' } } }"
+                    >
+                        <template #trailing>
+                            <UButton
+                                color="gray"
+                                variant="link"
+                                :icon="currentPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                                :padded="false"
+                                @click="toggleCurrentPasswordVisibility"
+                            />
+                        </template>
+                    </UInput>
                 </UFormGroup>
 
                 <UFormGroup name="newPassword" :label="$t('components.auth.ChangePasswordModal.new_password')">
                     <UInput
                         v-model="state.newPassword"
                         name="newPassword"
-                        type="password"
+                        :type="newPasswordVisibility ? 'text' : 'password'"
                         autocomplete="new-password"
                         :placeholder="$t('components.auth.ChangePasswordModal.new_password')"
-                    />
+                        :ui="{ icon: { trailing: { pointer: '' } } }"
+                    >
+                        <template #trailing>
+                            <UButton
+                                color="gray"
+                                variant="link"
+                                :icon="newPasswordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                                :padded="false"
+                                @click="toggleNewPasswordVisibility"
+                            />
+                        </template>
+                    </UInput>
                     <PasswordStrengthMeter :input="state.newPassword" class="mt-2" />
                 </UFormGroup>
 

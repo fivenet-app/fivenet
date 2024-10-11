@@ -42,6 +42,12 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
 const socialLoginEnabled = ref(hasCookiesAccepted.value && !isNUIAvailable.value);
 
 watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.value && !isNUIAvailable.value));
+
+const passwordVisibility = ref(false);
+
+function togglePasswordVisibility() {
+    passwordVisibility.value = !passwordVisibility.value;
+}
 </script>
 
 <template>
@@ -53,10 +59,21 @@ watch(hasCookiesAccepted, () => (socialLoginEnabled.value = hasCookiesAccepted.v
         <UFormGroup name="password" :label="$t('common.password')">
             <UInput
                 v-model="state.password"
-                type="password"
+                :type="passwordVisibility ? 'text' : 'password'"
                 autocomplete="current-password"
                 :placeholder="$t('common.password')"
-            />
+                :ui="{ icon: { trailing: { pointer: '' } } }"
+            >
+                <template #trailing>
+                    <UButton
+                        color="gray"
+                        variant="link"
+                        :icon="passwordVisibility ? 'i-mdi-eye' : 'i-mdi-eye-closed'"
+                        :padded="false"
+                        @click="togglePasswordVisibility"
+                    />
+                </template>
+            </UInput>
         </UFormGroup>
 
         <UButton type="submit" block :disabled="!canSubmit" :loading="!canSubmit">
