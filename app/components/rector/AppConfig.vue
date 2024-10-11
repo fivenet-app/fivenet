@@ -273,10 +273,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
         </UDashboardNavbar>
 
         <UDashboardPanelContent class="pb-24">
-            <UDashboardSection
-                :title="$t('system.streamer_mode.title')"
-                :description="$t('system.streamer_mode.description')"
-            />
+            <StreamerModeAlert />
         </UDashboardPanelContent>
     </template>
     <template v-else>

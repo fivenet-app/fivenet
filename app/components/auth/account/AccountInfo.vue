@@ -4,6 +4,7 @@ import ChangeUsernameModal from '~/components/auth/account/ChangeUsernameModal.v
 import DebugInfo from '~/components/auth/account/DebugInfo.vue';
 import OAuth2Connections from '~/components/auth/account/OAuth2Connections.vue';
 import CopyToClipboardButton from '~/components/partials/CopyToClipboardButton.vue';
+import StreamerModeAlert from '~/components/partials/StreamerModeAlert.vue';
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
@@ -75,10 +76,7 @@ const selectedTab = computed({
     <div>
         <template v-if="streamerMode">
             <UDashboardPanelContent class="pb-24">
-                <UDashboardSection
-                    :title="$t('system.streamer_mode.title')"
-                    :description="$t('system.streamer_mode.description')"
-                />
+                <StreamerModeAlert />
             </UDashboardPanelContent>
         </template>
         <template v-else>
