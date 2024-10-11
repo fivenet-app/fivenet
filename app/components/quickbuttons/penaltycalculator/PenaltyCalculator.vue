@@ -241,6 +241,7 @@ const columns = [
                                                 {{ law.name }}
                                             </p>
                                         </template>
+
                                         <template #description-data="{ row: law }">
                                             <p
                                                 class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-none"
@@ -248,6 +249,7 @@ const columns = [
                                                 {{ law.description }}
                                             </p>
                                         </template>
+
                                         <template #count-data="{ row: law }">
                                             <USelect
                                                 name="count"

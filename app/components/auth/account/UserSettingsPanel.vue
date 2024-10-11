@@ -78,30 +78,6 @@ watch(design.value, () => {
             </UFormGroup>
 
             <UFormGroup
-                name="darkModeActive"
-                :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
-                class="grid grid-cols-2 items-center gap-2"
-            >
-                <UToggle v-model="darkModeActive">
-                    <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
-                </UToggle>
-            </UFormGroup>
-
-            <UFormGroup
-                name="designDocumentsListStyle"
-                :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
-                class="grid grid-cols-2 items-center gap-2"
-            >
-                <div class="inline-flex items-center gap-2">
-                    <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
-                    <UToggle v-model="designDocumentsListStyle">
-                        <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.documents_lists_style.title') }}</span>
-                    </UToggle>
-                    <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
-                </div>
-            </UFormGroup>
-
-            <UFormGroup
                 name="streamerMode"
                 :label="$t('components.auth.UserSettingsPanel.streamer_mode.title')"
                 :description="$t('components.auth.UserSettingsPanel.streamer_mode.description')"
@@ -110,6 +86,34 @@ watch(design.value, () => {
                 <UToggle v-model="streamerMode" name="streamerMode">
                     <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.streamer_mode.title') }}</span>
                 </UToggle>
+            </UFormGroup>
+
+            <UFormGroup
+                name="darkModeActive"
+                :label="$t('components.auth.UserSettingsPanel.editor_theme.title')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
+                <div class="flex items-center gap-2">
+                    <UToggle v-model="darkModeActive">
+                        <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.editor_theme.title') }}</span>
+                    </UToggle>
+
+                    <span>{{ $t('components.auth.UserSettingsPanel.editor_theme.dark_mode') }}</span>
+                </div>
+            </UFormGroup>
+
+            <UFormGroup
+                name="designDocumentsListStyle"
+                :label="$t('components.auth.UserSettingsPanel.documents_lists_style.title')"
+                class="grid grid-cols-2 items-center gap-2"
+            >
+                <div class="inline-flex items-center gap-2 text-sm">
+                    <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.single') }}</span>
+                    <UToggle v-model="designDocumentsListStyle">
+                        <span class="sr-only">{{ $t('components.auth.UserSettingsPanel.documents_lists_style.title') }}</span>
+                    </UToggle>
+                    <span>{{ $t('components.auth.UserSettingsPanel.documents_lists_style.double') }}</span>
+                </div>
             </UFormGroup>
 
             <UFormGroup
