@@ -2,7 +2,9 @@
 import type { FormSubmitEvent } from '#ui/types';
 import { z } from 'zod';
 import ColorPickerClient from '~/components/partials/ColorPicker.client.vue';
+import { useNotificatorStore } from '~/store/notificator';
 import type { Unit } from '~~/gen/ts/resources/centrum/units';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 
 const props = defineProps<{
     unit?: Unit;
@@ -14,6 +16,8 @@ const emit = defineEmits<{
 }>();
 
 const { isOpen } = useModal();
+
+const notifications = useNotificatorStore();
 
 const availableAttributes: string[] = ['static', 'no_dispatch_auto_assign'];
 
@@ -56,6 +60,12 @@ async function createOrUpdateUnit(values: Schema): Promise<void> {
             },
         });
         const { response } = await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
 
         if (props.unit?.id === undefined) {
             emit('created', response.unit!);
