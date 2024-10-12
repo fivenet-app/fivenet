@@ -65,8 +65,10 @@ const filteredUnits = computed(() =>
         >
             <template #header>
                 <div class="flex items-center justify-between">
-                    <h3 class="text-2xl font-semibold leading-6">
+                    <h3 class="inline-flex items-center gap-2 text-2xl font-semibold leading-6">
                         {{ $t('common.leave_unit') }}
+
+                        <UIcon v-if="!canSubmit" name="i-mdi-loading" class="size-6 animate-spin" />
                     </h3>
 
                     <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />

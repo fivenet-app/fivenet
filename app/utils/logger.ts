@@ -27,7 +27,7 @@ export class Logger {
             if (import.meta.dev) {
                 level = LogLevels.debug;
             } else {
-                level = LogLevels.info;
+                level = LogLevels.debug;
             }
         }
 
