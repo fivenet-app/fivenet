@@ -205,24 +205,11 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 			tLocs.UpdatedAt.GT_EQ(jet.CURRENT_TIMESTAMP().SUB(jet.INTERVAL(4, jet.HOUR))),
 		))
 
-	// Begin transaction
-	tx, err := m.db.BeginTx(ctx, nil)
-	if err != nil {
-		return err
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	var dest []*livemap.UserMarker
 	if err := stmt.QueryContext(ctx, m.db, &dest); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return err
 		}
-	}
-
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
-		return err
 	}
 
 	foundUserIds := map[int32]interface{}{}
