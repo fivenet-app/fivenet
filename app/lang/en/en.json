@@ -479,7 +479,8 @@
         "pinned_document": "Pinned document | Pinned documents",
         "or": "OR",
         "retrying": "Retrying...",
-        "reduction": "Reduction"
+        "reduction": "Reduction",
+        "feed": "Activity Feed"
     },
     "components": {
         "partials": {

@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	LockTimeout = 600 * time.Millisecond
+	LockTimeout = 30 * time.Second
 
 	keyPrefix = "LOCK."
 )

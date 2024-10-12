@@ -147,9 +147,7 @@ func (s *Manager) LoadDisponentsFromDB(ctx context.Context, job string) error {
 }
 
 func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
-	condition := tUnitStatus.ID.EQ(
-		jet.RawInt("SELECT MAX(`unitstatus`.`id`) FROM `fivenet_centrum_units_status` AS `unitstatus` WHERE `unitstatus`.`unit_id` = `unit`.`id`  AND `unitstatus`.`status` NOT IN (2, 3)"),
-	)
+	condition := jet.Bool(true)
 
 	if id > 0 {
 		condition = condition.AND(
@@ -169,24 +167,11 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 			tUnits.Description,
 			tUnits.Attributes,
 			tUnits.HomePostal,
-			tUnitStatus.ID,
-			tUnitStatus.CreatedAt,
-			tUnitStatus.UnitID,
-			tUnitStatus.Status,
-			tUnitStatus.Reason,
-			tUnitStatus.Code,
-			tUnitStatus.UserID,
-			tUnitStatus.X,
-			tUnitStatus.Y,
-			tUnitStatus.Postal,
 			tUnitUser.UnitID,
 			tUnitUser.UserID,
 		).
 		FROM(
 			tUnits.
-				LEFT_JOIN(tUnitStatus,
-					tUnitStatus.UnitID.EQ(tUnits.ID),
-				).
 				LEFT_JOIN(tUnitUser,
 					tUnitUser.UnitID.EQ(tUnits.ID),
 				),
@@ -195,7 +180,6 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 		ORDER_BY(
 			tUnits.Job.ASC(),
 			tUnits.Name.ASC(),
-			tUnitStatus.Status.ASC(),
 		)
 
 	units := []*centrum.Unit{}
@@ -206,6 +190,12 @@ func (s *Manager) LoadUnitsFromDB(ctx context.Context, id uint64) error {
 	}
 
 	for i := 0; i < len(units); i++ {
+		status, err := s.GetLastUnitStatus(ctx, s.db, units[i].Job, units[i].Id)
+		if err != nil {
+			return err
+		}
+		units[i].Status = status
+
 		if err := s.resolveUsersForUnit(ctx, &units[i].Users); err != nil {
 			return err
 		}

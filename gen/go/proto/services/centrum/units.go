@@ -3,6 +3,7 @@ package centrum
 import (
 	"context"
 	"errors"
+	"time"
 
 	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
@@ -193,6 +194,9 @@ func (s *Server) AssignUnit(ctx context.Context, req *AssignUnitRequest) (*Assig
 }
 
 func (s *Server) JoinUnit(ctx context.Context, req *JoinUnitRequest) (*JoinUnitResponse, error) {
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if req.UnitId != nil {
 		trace.SpanFromContext(ctx).SetAttributes(attribute.Int64("fivenet.centrum.unit_id", int64(*req.UnitId)))
 	}

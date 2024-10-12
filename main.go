@@ -191,6 +191,7 @@ func main() {
 	// https://github.com/DataDog/go-profiler-notes/blob/main/block.md#overhead
 	// Thanks, to the authors of this document!
 	runtime.SetBlockProfileRate(20000)
+	runtime.SetMutexProfileFraction(100)
 
 	ctx := kong.Parse(&cli)
 

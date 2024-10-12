@@ -479,7 +479,8 @@
         "pinned_document": "Angeheftetes Dokument | Angeheftete Dokumente",
         "or": "ODER",
         "retrying": "Erneuter Versuch...",
-        "reduction": "Minderung"
+        "reduction": "Minderung",
+        "feed": "Aktivitäts-Feed"
     },
     "components": {
         "partials": {

@@ -57,7 +57,7 @@ class WebsocketChannelImpl implements WebsocketChannel {
         watch(ws.data, async (val) => this.onMessage(val));
     }
 
-    async close() {
+    close() {
         this.ws.close();
     }
 

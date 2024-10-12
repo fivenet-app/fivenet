@@ -187,7 +187,7 @@ const unitStatusColors = computed(() => unitStatusToBGColor(props.unit.status?.s
                     </div>
                 </dl>
 
-                <UnitFeed :unit-id="unit.id" />
+                <UnitFeed v-if="isOpen" :unit-id="unit.id" />
             </div>
 
             <template #footer>

@@ -387,8 +387,12 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 		for {
 			select {
 			case <-ctx.Done():
-				if err := watcher.Stop(); err != nil && !errors.Is(err, jetstream.ErrConsumerNotFound) {
-					s.logger.Error("error while stopping watcher", zap.Error(err))
+				if err := watcher.Stop(); err != nil {
+					if !errors.Is(err, jetstream.ErrConsumerNotFound) {
+						s.logger.Error("error while stopping watcher", zap.Error(err))
+					}
+				} else {
+					s.logger.Info("store watcher done")
 				}
 				return
 
@@ -398,9 +402,10 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 					continue
 				}
 
-				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()))
+				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()), zap.Uint64("delta", entry.Delta()))
 
-				if entry.Operation() == jetstream.KeyValueDelete || entry.Operation() == jetstream.KeyValuePurge {
+				switch entry.Operation() {
+				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
 					func() {
 						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
 						mu.Lock()
@@ -415,7 +420,8 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 
 						s.mu.Delete(entry.Key())
 					}()
-				} else {
+
+				case jetstream.KeyValuePut:
 					func() {
 						mu, _ := s.mu.LoadOrCompute(entry.Key(), mutexCompute)
 						mu.Lock()
@@ -425,6 +431,9 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 							s.logger.Error("failed to run on update logic in store watcher", zap.Error(err))
 						}
 					}()
+
+				default:
+					s.logger.Error("unknown key operation received", zap.String("key", entry.Key()), zap.Uint8("op", uint8(entry.Operation())))
 				}
 			}
 		}

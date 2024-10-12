@@ -256,7 +256,7 @@ func (ws *WebsocketChannel) poll() error {
 		}
 
 	case *grpcws.GrpcFrame_Cancel:
-		// grpclog.Infof("received Cancel for stream %v", frame.StreamId)
+		// grpclog.Infof("received cancel for stream %v", frame.StreamId)
 		if stream == nil {
 			// If a stream is being cancelled and it's not there anymore, no error here
 			return nil
@@ -318,7 +318,7 @@ func (ws *WebsocketChannel) readFrame() (*grpcws.GrpcFrame, error) {
 
 	request := &grpcws.GrpcFrame{}
 	if err := proto.Unmarshal(bytesValue, request); err != nil {
-		return nil, fmt.Errorf("error %v", err)
+		return nil, fmt.Errorf("fram unmarshal error. %w", err)
 	}
 	return request, nil
 }
@@ -346,16 +346,23 @@ func (w *WebsocketChannel) ping() {
 			return
 		case <-w.timer.C:
 			w.timer.Reset(w.timeOutInterval)
-			func() {
+
+			stream := func() *GrpcStream {
 				w.mutex.Lock()
 				defer w.mutex.Unlock()
 
 				stream, ok := w.activeStreams[0]
 				if !ok {
-					return
+					return nil
 				}
-				stream.channel.write(framePingResponse)
+				return stream
 			}()
+
+			if stream == nil {
+				return
+			}
+
+			stream.channel.write(framePingResponse)
 		}
 	}
 }

@@ -331,7 +331,7 @@ watch(dispatch, () => {
                     </dl>
                 </div>
 
-                <DispatchFeed :dispatch-id="dispatch.id" />
+                <DispatchFeed v-if="isOpen" :dispatch-id="dispatch.id" />
             </div>
 
             <template #footer>

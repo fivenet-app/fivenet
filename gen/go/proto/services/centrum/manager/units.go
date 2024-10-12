@@ -170,7 +170,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 				tUnitUser.UserID.IN(removeIds...),
 			))
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err
 		}
 	}
@@ -211,7 +211,11 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 					)
 			}
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			stmt = stmt.ON_DUPLICATE_KEY_UPDATE(
+				tUnitUser.UnitID.SET(jet.IntExp(jet.Raw("VALUES(`unit_id`)"))),
+			)
+
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				if !dbutils.IsDuplicateError(err) {
 					return err
 				}
@@ -516,7 +520,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 		return nil, err
 	}
 
-	newStatus, err := s.GetUnitStatus(ctx, tx, job, uint64(lastId))
+	newStatus, err := s.GetUnitStatusByID(ctx, tx, job, uint64(lastId))
 	if err != nil {
 		return nil, err
 	}
@@ -535,7 +539,7 @@ func (s *Manager) AddUnitStatus(ctx context.Context, tx qrm.DB, job string, stat
 	return newStatus, nil
 }
 
-func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
+func (s *Manager) GetUnitStatusByID(ctx context.Context, tx qrm.DB, job string, id uint64) (*centrum.UnitStatus, error) {
 	stmt := tUnitStatus.
 		SELECT(
 			tUnitStatus.ID,
@@ -583,13 +587,55 @@ func (s *Manager) GetUnitStatus(ctx context.Context, tx qrm.DB, job string, id u
 		}
 	}
 
-	if dest.UnitId > 0 && dest.User != nil {
-		unit, err := s.GetUnit(ctx, job, dest.UnitId)
-		if err != nil {
-			return nil, err
-		}
+	return &dest, nil
+}
 
-		dest.Unit = unit
+func (s *Manager) GetLastUnitStatus(ctx context.Context, tx qrm.DB, job string, unitId uint64) (*centrum.UnitStatus, error) {
+	stmt := tUnitStatus.
+		SELECT(
+			tUnitStatus.ID,
+			tUnitStatus.CreatedAt,
+			tUnitStatus.UnitID,
+			tUnitStatus.Status,
+			tUnitStatus.Reason,
+			tUnitStatus.Code,
+			tUnitStatus.UserID,
+			tUnitStatus.CreatorID,
+			tUnitStatus.X,
+			tUnitStatus.Y,
+			tUnitStatus.Postal,
+			tUsers.ID,
+			tUsers.Firstname,
+			tUsers.Lastname,
+			tUsers.Job,
+			tUsers.JobGrade,
+			tUsers.Sex,
+			tUsers.Dateofbirth,
+			tUsers.PhoneNumber,
+			tUserProps.Avatar.AS("usershort.avatar"),
+		).
+		FROM(
+			tUnitStatus.
+				LEFT_JOIN(tUsers,
+					tUsers.ID.EQ(tUnitStatus.UserID),
+				).
+				LEFT_JOIN(tUserProps,
+					tUserProps.UserID.EQ(tUnitStatus.UserID),
+				),
+		).
+		WHERE(
+			tUnitStatus.UnitID.EQ(jet.Uint64(unitId)),
+		).
+		ORDER_BY(tUnitStatus.ID.DESC()).
+		LIMIT(1)
+
+	var dest centrum.UnitStatus
+	if err := stmt.QueryContext(ctx, tx, &dest); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		} else {
+			return nil, nil
+		}
 	}
 
 	return &dest, nil

@@ -121,6 +121,9 @@ func (m *Manager) refreshCache(ctx context.Context) {
 	ctx, span := m.tracer.Start(ctx, "tracker-refresh")
 	defer span.End()
 
+	ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
+	defer cancel()
+
 	if err := m.refreshUserLocations(ctx); err != nil {
 		m.logger.Error("failed to refresh user tracker cache", zap.Error(err))
 	}
@@ -275,6 +278,8 @@ func (m *Manager) refreshUserLocations(ctx context.Context) error {
 	if err := m.cleanupUserIDs(ctx, foundUserIds); err != nil {
 		return err
 	}
+
+	m.logger.Debug("completed user tracker cache refresh", zap.Int("added", len(event.Added)), zap.Int("removed", len(event.Removed)))
 
 	return nil
 }

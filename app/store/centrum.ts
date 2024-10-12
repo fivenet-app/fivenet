@@ -143,6 +143,10 @@ export const useCentrumStore = defineStore('centrum', {
                 return;
             }
 
+            if (status.unit === undefined) {
+                status.unit = u;
+            }
+
             if (u.status === undefined) {
                 u.status = status;
             } else {
