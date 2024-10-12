@@ -199,10 +199,15 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 	)
 	ginWrappedGrpc := func(c *gin.Context) {
 		if cip := c.ClientIP(); cip != "" {
+			_, port, err := net.SplitHostPort(strings.TrimSpace(c.Request.RemoteAddr))
+			if err != nil || port == "" {
+				port = "1"
+			}
+
 			if strings.Count(cip, ":") > 1 {
-				c.Request.RemoteAddr = "[" + cip + "]:80"
+				c.Request.RemoteAddr = "[" + cip + "]:" + port
 			} else {
-				c.Request.RemoteAddr = cip + ":80"
+				c.Request.RemoteAddr = cip + ":" + port
 			}
 		}
 

@@ -2,6 +2,7 @@ package tracker
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/pkg/events"
@@ -78,7 +79,7 @@ func New(p Params) (ITracker, error) {
 
 		go t.broker.Start(ctx)
 
-		userIDs, err := store.NewWithLocks(ctx, p.Logger, p.JS, "tracker", nil,
+		userIDs, err := store.NewWithLocks(c, p.Logger, p.JS, "tracker", nil,
 			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
 				s.OnUpdate = func(um *livemap.UserMarker) (*livemap.UserMarker, error) {
 					if um == nil || um.Info == nil {
@@ -106,6 +107,7 @@ func New(p Params) (ITracker, error) {
 
 					return nil
 				}
+
 				return nil
 			})
 		if err != nil {
@@ -118,7 +120,7 @@ func New(p Params) (ITracker, error) {
 		t.userStore = userIDs
 
 		if err := t.registerSubscriptions(c); err != nil {
-			return err
+			return fmt.Errorf("failed to register tracker nats subscriptions. %w", err)
 		}
 
 		return nil

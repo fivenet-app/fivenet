@@ -18,7 +18,11 @@ const { startStream, stopStream } = notificatorStore;
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
     if (username.value !== null && activeChar.value !== null) {
-        startStream();
+        try {
+            startStream();
+        } catch (e) {
+            logger.error('exception during notification stream', e);
+        }
     } else if (abort.value !== undefined) {
         await stopStream();
         notificatorStore.$reset();

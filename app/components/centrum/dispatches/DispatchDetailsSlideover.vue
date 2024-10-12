@@ -34,7 +34,7 @@ const { canDo } = centrumStore;
 
 const notifications = useNotificatorStore();
 
-const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)!));
+const dispatch = computed(() => (props.dispatch ? props.dispatch : dispatches.value.get(props.dispatchId)));
 
 async function selfAssign(id: string): Promise<void> {
     if (ownUnitId.value === undefined) {
@@ -69,12 +69,19 @@ async function deleteDispatch(id: string): Promise<void> {
     }
 }
 
-const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.value.status?.status));
+const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.value?.status?.status));
+
+watch(dispatch, () => {
+    if (dispatch.value === undefined) {
+        isOpen.value = false;
+    }
+});
 </script>
 
 <template>
     <USlideover :ui="{ width: 'w-screen max-w-xl' }" :overlay="false">
         <UCard
+            v-if="dispatch"
             :ui="{
                 body: {
                     base: 'flex-1 min-h-[calc(100dvh-(2*var(--header-height)))] max-h-[calc(100dvh-(2*var(--header-height)))] overflow-y-auto',
@@ -101,7 +108,7 @@ const dispatchStatusColors = computed(() => dispatchStatusToBGColor(dispatch.val
                             :title="$t('common.delete')"
                             @click="
                                 modal.open(ConfirmModal, {
-                                    confirm: async () => deleteDispatch(dispatch.id),
+                                    confirm: async () => dispatch && deleteDispatch(dispatch.id),
                                 })
                             "
                         />

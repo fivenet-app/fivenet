@@ -227,7 +227,13 @@ watchDebounced(getSortedOwnDispatches.value, () => ensureOwnDispatchSelected(), 
 onBeforeMount(async () => {
     if (canStream.value) {
         useIntervalFn(() => checkup(), 1 * 60 * 1000);
-        useTimeoutFn(async () => startStream(), 550);
+        useTimeoutFn(async () => {
+            try {
+                startStream();
+            } catch (e) {
+                logger.error('exception during centrum stream', e);
+            }
+        }, 550);
         toggleSidebarBasedOnUnit();
     }
 });
@@ -562,13 +568,17 @@ defineShortcuts({
                                                             </UButton>
                                                         </li>
 
-                                                        <OwnDispatchEntry
-                                                            v-for="id in getSortedOwnDispatches.slice().reverse()"
+                                                        <template
                                                             v-else
+                                                            v-for="id in getSortedOwnDispatches.slice().reverse()"
                                                             :key="id"
-                                                            v-model:selected-dispatch="selectedDispatch"
-                                                            :dispatch="dispatches.get(id)!"
-                                                        />
+                                                        >
+                                                            <OwnDispatchEntry
+                                                                v-if="dispatches.get(id) !== undefined"
+                                                                v-model:selected-dispatch="selectedDispatch"
+                                                                :dispatch="dispatches.get(id)!"
+                                                            />
+                                                        </template>
                                                     </ul>
                                                 </li>
 

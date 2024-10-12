@@ -122,9 +122,7 @@ func (m *Manager) refreshCache(ctx context.Context) {
 	defer span.End()
 
 	if err := m.refreshUserLocations(ctx); err != nil {
-		m.logger.Error("failed to refresh livemap users cache", zap.Error(err))
-		// Return here so we don't taint the user "on-duty" cache/list
-		return
+		m.logger.Error("failed to refresh user tracker cache", zap.Error(err))
 	}
 }
 
@@ -173,6 +171,8 @@ func (m *Manager) cleanupUserIDs(ctx context.Context, found map[int32]interface{
 }
 
 func (m *Manager) refreshUserLocations(ctx context.Context) error {
+	m.logger.Debug("refreshing user tracker cache")
+
 	tLocs := tLocs.AS("markerInfo")
 	stmt := tLocs.
 		SELECT(

@@ -31,7 +31,13 @@ const settingsStore = useSettingsStore();
 const { livemap } = storeToRefs(settingsStore);
 
 onBeforeMount(async () => {
-    useTimeoutFn(async () => startStream(), 50);
+    useTimeoutFn(async () => {
+        try {
+            startStream();
+        } catch (e) {
+            logger.error('exception during map users stream', e);
+        }
+    }, 50);
 });
 
 onBeforeUnmount(async () => stopStream());

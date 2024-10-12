@@ -14,7 +14,7 @@ const props = defineProps<{
     dispatchId: string;
 }>();
 
-const dispatch = computed(() => dispatches.value.get(props.dispatchId)!);
+const dispatch = computed(() => dispatches.value.get(props.dispatchId));
 
 const { isOpen } = useModal();
 
@@ -25,17 +25,21 @@ const schema = z.object({
 type Schema = z.output<typeof schema>;
 
 const state = reactive<Schema>({
-    units: [...dispatch.value.units.map((du) => du.unitId)],
+    units: [],
 });
 
 async function assignDispatch(): Promise<void> {
+    if (dispatch === undefined) {
+        return;
+    }
+
     try {
         const toAdd: string[] = [];
         const toRemove: string[] = [];
         state.units.forEach((u) => {
             toAdd.push(u);
         });
-        dispatch.value.units?.forEach((u) => {
+        dispatch.value?.units?.forEach((u) => {
             const idx = state.units.findIndex((su) => su === u.unitId);
             if (idx === -1) {
                 toRemove.push(u.unitId);
@@ -101,7 +105,12 @@ const grouped = computedAsync(async () => {
     return groups;
 });
 
-watch(dispatch.value, () => (state.units = [...dispatch.value.units.map((du) => du.unitId)]));
+function updateDispatchUnits(): void {
+    state.units = [...(dispatch.value?.units?.map((du) => du.unitId) ?? [])];
+}
+
+watch(dispatch, () => updateDispatchUnits);
+updateDispatchUnits();
 
 const canSubmit = ref(true);
 const onSubmitThrottle = useThrottleFn(async () => {
@@ -128,7 +137,7 @@ const onSubmitThrottle = useThrottleFn(async () => {
                     <div class="flex items-center justify-between">
                         <h3 class="inline-flex items-center text-2xl font-semibold leading-6">
                             {{ $t('components.centrum.assign_dispatch.title') }}:
-                            <IDCopyBadge :id="dispatch.id" class="ml-2" prefix="DSP" />
+                            <IDCopyBadge :id="dispatch?.id ?? dispatchId" class="ml-2" prefix="DSP" />
                         </h3>
 
                         <UButton color="gray" variant="ghost" icon="i-mdi-window-close" class="-my-1" @click="isOpen = false" />
