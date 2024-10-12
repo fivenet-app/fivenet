@@ -43,6 +43,7 @@ export class GrpcWSTransport implements RpcTransport {
                 delay: 1150,
             },
             protocols: ['grpc-websocket-channel'],
+
             onConnected(ws) {
                 ws.binaryType = 'arraybuffer';
                 wsInitiated.value = true;

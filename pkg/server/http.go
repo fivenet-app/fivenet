@@ -198,7 +198,14 @@ func NewEngine(p EngineParams) (*gin.Engine, error) {
 		grpcws.WithWebsocketPingInterval(40*time.Second),
 	)
 	ginWrappedGrpc := func(c *gin.Context) {
-		c.Request.RemoteAddr = c.ClientIP()
+		if cip := c.ClientIP(); cip != "" {
+			if strings.Count(cip, ":") > 1 {
+				c.Request.RemoteAddr = "[" + cip + "]:80"
+			} else {
+				c.Request.RemoteAddr = cip + ":80"
+			}
+		}
+
 		wrapperGrpc.ServeHTTP(c.Writer, c.Request)
 	}
 	e.Any("/api/grpc", ginWrappedGrpc)
