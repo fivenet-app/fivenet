@@ -44,7 +44,9 @@ const schema = z.object({
     unitStatus: z.string().array().max(10),
     dispatchStatus: z.string().array().max(10),
     timings: z.object({
-        dispatchMaxWait: z.coerce.number().min(60).max(6000),
+        dispatchMaxWait: z.coerce.number().min(30).max(6000),
+        requireUnit: z.boolean(),
+        requireUnitReminderSeconds: z.coerce.number().min(60).max(6000),
     }),
 });
 
@@ -58,6 +60,8 @@ const state = reactive<Schema>({
     dispatchStatus: [],
     timings: {
         dispatchMaxWait: 900,
+        requireUnit: false,
+        requireUnitReminderSeconds: 180,
     },
 });
 
@@ -349,6 +353,29 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             >
                                 <UInput
                                     v-model="state.timings.dispatchMaxWait"
+                                    type="number"
+                                    :placeholder="$t('common.time_ago.second', 2)"
+                                    trailing-icon="i-mdi-access-time"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="timings.requireUnit"
+                                :label="$t('components.centrum.settings.timings.require_unit')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UToggle v-model="state.timings.requireUnit" />
+                            </UFormGroup>
+
+                            <UFormGroup
+                                name="timings.requireUnitReminderSeconds"
+                                :label="$t('components.centrum.settings.timings.require_unit_reminder_seconds')"
+                                class="grid grid-cols-2 items-center gap-2"
+                                :ui="{ container: '' }"
+                            >
+                                <UInput
+                                    v-model="state.timings.requireUnitReminderSeconds"
                                     type="number"
                                     :placeholder="$t('common.time_ago.second', 2)"
                                     trailing-icon="i-mdi-access-time"

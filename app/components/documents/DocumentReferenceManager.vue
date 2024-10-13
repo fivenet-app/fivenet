@@ -158,16 +158,16 @@ function removeReference(id: string): void {
                                                     >
                                                         {{ reference.targetDocument?.title }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ reference.targetDocument?.state }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <CitizenInfoPopover
                                                             :user="reference.targetDocument?.creator"
                                                             :trailing="false"
                                                         />
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{
                                                             $t(
                                                                 `enums.docstore.DocReference.${
@@ -176,7 +176,7 @@ function removeReference(id: string): void {
                                                             )
                                                         }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
                                                             <UButton
                                                                 :to="{
@@ -251,20 +251,20 @@ function removeReference(id: string): void {
                                                     >
                                                         {{ document.title }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ document.state }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <CitizenInfoPopover
                                                             :user="getUser(document.creator)"
                                                             :trailing="false"
                                                         />
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ $t('common.created') }}
                                                         <GenericTime :value="new Date(Date.parse(document.createdAt ?? ''))" />
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
                                                             <UButton
                                                                 :title="$t('components.documents.document_managers.links')"
@@ -360,16 +360,16 @@ function removeReference(id: string): void {
                                                     >
                                                         {{ document.title }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ document.state }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <CitizenInfoPopover :user="document.creator" :trailing="false" />
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <GenericTime :value="document.createdAt" :ago="true" />
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
                                                             <UButton
                                                                 :title="$t('components.documents.document_managers.links')"

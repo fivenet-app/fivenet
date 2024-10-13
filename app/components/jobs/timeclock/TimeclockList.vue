@@ -14,6 +14,16 @@ import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { TimeclockEntry } from '~~/gen/ts/resources/jobs/timeclock';
 import type { ListTimeclockRequest, ListTimeclockResponse } from '~~/gen/ts/services/jobs/timeclock';
 
+const props = withDefaults(
+    defineProps<{
+        userId?: number;
+        showStats?: boolean;
+    }>(),
+    {
+        showStats: true,
+    },
+);
+
 const { t } = useI18n();
 
 const completorStore = useCompletorStore();
@@ -35,6 +45,23 @@ const query = reactive<Schema>({
     to: subDays(new Date(), 1),
     perDay: true,
 });
+
+function setFromProps(): void {
+    if (!props.userId) {
+        return;
+    }
+
+    query.users?.push({
+        userId: props.userId,
+        firstname: '',
+        lastname: '',
+        dateofbirth: '',
+        job: '',
+        jobGrade: 0,
+    });
+}
+
+watch(props, setFromProps);
 
 const futureDay = computed(() => addDays(query.from, 1));
 const previousDay = computed(() => subDays(query.from, 1));
@@ -166,7 +193,7 @@ const input = ref<{ input: HTMLInputElement }>();
                 <div class="flex w-full flex-col gap-2">
                     <div class="flex w-full flex-col">
                         <UButton
-                            v-if="can('JobsTimeclockService.ListInactiveEmployees').value"
+                            v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
                             :to="{ name: 'jobs-timeclock-inactive' }"
                             class="mb-2 place-self-end"
                             trailing-icon="i-mdi-arrow-right"
@@ -175,7 +202,12 @@ const input = ref<{ input: HTMLInputElement }>();
                         </UButton>
 
                         <div class="flex flex-row gap-2">
-                            <UFormGroup v-if="canAccessAll" name="users" :label="$t('common.search')" class="flex-1">
+                            <UFormGroup
+                                v-if="canAccessAll && userId === undefined"
+                                name="users"
+                                :label="$t('common.search')"
+                                class="flex-1"
+                            >
                                 <ClientOnly>
                                     <USelectMenu
                                         ref="input"
@@ -324,7 +356,11 @@ const input = ref<{ input: HTMLInputElement }>();
 
     <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 
-    <UAccordion v-if="data && data.stats" :items="[{ slot: 'stats', label: $t('common.stats') }]" class="px-3 py-0.5">
+    <UAccordion
+        v-if="showStats && data && data.stats"
+        :items="[{ slot: 'stats', label: $t('common.stats') }]"
+        class="px-3 py-0.5"
+    >
         <template #stats>
             <TimeclockStatsBlock
                 :stats="data.stats"

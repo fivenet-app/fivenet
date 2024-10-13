@@ -46,7 +46,7 @@ watch(offset, async () => refresh());
 
 <template>
     <UAlert
-        v-if="userId === activeChar?.userId && attr('CitizenStoreService.ListUserActivity', 'Fields', 'Own')"
+        v-if="userId === activeChar?.userId && !attr('CitizenStoreService.ListUserActivity', 'Fields', 'Own').value"
         variant="subtle"
         color="red"
         icon="i-mdi-denied"

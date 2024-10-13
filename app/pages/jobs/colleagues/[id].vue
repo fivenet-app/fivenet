@@ -6,6 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import type { Perms } from '~~/gen/ts/perms';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 import type { GetColleagueResponse } from '~~/gen/ts/services/jobs/jobs';
 
 useHead({
@@ -49,6 +50,22 @@ async function getColleague(userId: number): Promise<GetColleagueResponse> {
         handleGRPCError(e as RpcError);
         throw e;
     }
+}
+
+function updateColleageAbsence(value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void {
+    if (colleague.value?.colleague === undefined) {
+        return;
+    }
+
+    if (colleague.value.colleague?.props === undefined) {
+        colleague.value.colleague.props = {
+            userId: colleague.value.colleague.userId,
+            job: colleague.value.colleague.job,
+        };
+    }
+
+    colleague.value.colleague.props.absenceBegin = value.absenceBegin;
+    colleague.value.colleague.props.absenceEnd = value.absenceEnd;
 }
 
 const links = [
@@ -99,7 +116,7 @@ const links = [
                 <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
 
                 <template v-else>
-                    <ColleagueInfo :colleague="colleague.colleague" />
+                    <ColleagueInfo :colleague="colleague.colleague" @update:absenceDates="updateColleageAbsence($event)" />
 
                     <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
                         <UHorizontalNavigation :links="links" />

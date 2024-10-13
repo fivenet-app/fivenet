@@ -17,7 +17,7 @@ const props = defineProps<{
 }>();
 
 const openclose: OpenClose[] = [
-    { id: 0, label: t('common.not_selected') },
+    { id: 0, label: t('common.not_selected'), closed: undefined },
     { id: 1, label: t('common.open', 2), closed: false },
     { id: 2, label: t('common.close', 2), closed: true },
 ];
@@ -96,7 +96,15 @@ const columns = [
                         :options="openclose"
                         value-attribute="closed"
                         :searchable-placeholder="$t('common.search_field')"
-                    />
+                    >
+                        <template #label>
+                            {{
+                                query.closed === undefined
+                                    ? openclose[0]!.label
+                                    : (openclose.findLast((o) => o.closed === query.closed)?.label ?? $t('common.na'))
+                            }}
+                        </template>
+                    </USelectMenu>
                 </ClientOnly>
             </UFormGroup>
         </div>

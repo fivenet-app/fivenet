@@ -29,5 +29,7 @@ message PredefinedStatus {
 }
 
 message Timings {
-  int64 dispatch_max_wait = 1;
+  int64 dispatch_max_wait = 1 [(validate.rules).int64 = { gt: 30, lt: 6000}];
+  bool require_unit = 2;
+  int64 require_unit_reminder_seconds = 3 [(validate.rules).int64 = { gt: 30, lt: 6000}];
 }

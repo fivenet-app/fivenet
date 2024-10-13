@@ -70,6 +70,7 @@ export const useCalendarStore = defineStore('calendar', {
                 // Only "register" calendars in list when they are accessible by the user
                 if (!req.onlyPublic) {
                     if (response.calendars.length > 0) {
+                        const foundCalendars: string[] = [];
                         response.calendars.forEach((calendar) => {
                             const idx = this.calendars.findIndex((c) => c.id === calendar!.id);
                             if (idx > -1) {
@@ -77,6 +78,22 @@ export const useCalendarStore = defineStore('calendar', {
                             } else {
                                 this.calendars.push(calendar);
                             }
+                            foundCalendars.push(calendar.id);
+                        });
+
+                        // Remove non-accessible calendars (ignore public ones) and their entries from our list
+                        this.calendars = this.calendars.filter((calendar): boolean => {
+                            if (!calendar.public) {
+                                return true;
+                            }
+
+                            if (foundCalendars.find((c) => c === calendar.id)) {
+                                return true;
+                            }
+
+                            this.entries = this.entries.filter((entry) => entry.calendarId === calendar.id);
+
+                            return false;
                         });
                     } else {
                         this.calendars.length = 0;
@@ -156,6 +173,11 @@ export const useCalendarStore = defineStore('calendar', {
 
                 if (response.entries.length > 0) {
                     response.entries.forEach((entry) => {
+                        // Make sure that we have the calendar in our list before adding it
+                        if (!this.calendars.find((c) => c.id === entry.calendarId)) {
+                            return;
+                        }
+
                         const idx = this.entries.findIndex((c) => c.id === entry!.id);
                         if (idx > -1) {
                             this.entries[idx] = entry;

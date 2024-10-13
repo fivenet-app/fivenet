@@ -376,6 +376,10 @@ func (m *Timings) validate(all bool) error {
 
 	// no validation rules for DispatchMaxWait
 
+	// no validation rules for RequireUnit
+
+	// no validation rules for RequireUnitReminderSeconds
+
 	if len(errors) > 0 {
 		return TimingsMultiError(errors)
 	}

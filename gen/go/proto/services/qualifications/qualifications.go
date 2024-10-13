@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"errors"
 	"strings"
+	"time"
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
@@ -27,9 +28,10 @@ import (
 	"go.uber.org/fx"
 	"go.uber.org/zap"
 	"google.golang.org/grpc"
+	"google.golang.org/protobuf/types/known/durationpb"
 )
 
-const QualificationsPageSize = 6
+const QualificationsPageSize = 10
 
 var tQuali = table.FivenetQualifications.AS("qualification")
 
@@ -183,6 +185,17 @@ func (s *Server) GetQualification(ctx context.Context, req *GetQualificationRequ
 
 	if resp.Qualification == nil || resp.Qualification.Id <= 0 {
 		return nil, errorsqualifications.ErrFailedQuery
+	}
+
+	if resp.Qualification.Exam == nil {
+		resp.Qualification.Exam = &qualifications.ExamQuestions{
+			Questions: []*qualifications.ExamQuestion{},
+		}
+	}
+	if resp.Qualification.ExamSettings == nil {
+		resp.Qualification.ExamSettings = &qualifications.QualificationExamSettings{
+			Time: durationpb.New(10 * time.Minute),
+		}
 	}
 
 	if resp.Qualification.Creator != nil {

@@ -7,12 +7,18 @@ defineOptions({
     inheritAttrs: false,
 });
 
-const props = defineProps<{
-    modelValue?: Date | undefined;
-    popover?: object;
-    button?: object;
-    datePicker?: object;
-}>();
+const props = withDefaults(
+    defineProps<{
+        modelValue?: Date | undefined;
+        popover?: object;
+        button?: object;
+        datePicker?: object;
+        dateFormat?: string;
+    }>(),
+    {
+        dateFormat: 'dd.MM.yyyy',
+    },
+);
 
 const emit = defineEmits<{
     (e: 'update:modelValue', modelValue: Date | undefined): void;
@@ -35,7 +41,7 @@ const open = ref(false);
             color="gray"
             block
             icon="i-mdi-calendar-month"
-            :label="modelValue ? format(modelValue, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+            :label="modelValue ? format(modelValue, dateFormat) : dateFormat"
             @click="open = true"
             @touchstart="open = true"
         />
@@ -72,7 +78,7 @@ const open = ref(false);
             color="gray"
             block
             icon="i-mdi-calendar-month"
-            :label="modelValue ? format(modelValue, 'dd.MM.yyyy') : 'dd.mm.yyyy'"
+            :label="modelValue ? format(modelValue, dateFormat) : dateFormat"
             @touchstart="open = true"
         />
 

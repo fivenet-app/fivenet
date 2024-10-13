@@ -809,7 +809,9 @@
                 "timings": {
                     "title": "Timings",
                     "description": "Timings for dispatch and unit status updates/pings.",
-                    "dispatch_max_wait": "Dispatch: Max Wait (in seconds)"
+                    "dispatch_max_wait": "Dispatch: Max Wait (in seconds)",
+                    "require_unit": "Require colleagues to be in an unit",
+                    "require_unit_reminder_seconds":"Reminder interval (in seconds) to ping colleagues to be in an unit"
                 }
             }
         },

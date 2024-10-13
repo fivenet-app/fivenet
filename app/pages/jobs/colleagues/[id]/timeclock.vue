@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { TypedRouteFromName } from '@typed-router';
-import TimeclockOverviewBlock from '~/components/jobs/timeclock/TimeclockOverviewBlock.vue';
+import TimeclockList from '~/components/jobs/timeclock/TimeclockList.vue';
 
 useHead({
     title: 'pages.jobs.colleagues.single.timeclock',
@@ -23,5 +23,7 @@ const route = useRoute('jobs-colleagues-id-timeclock');
 </script>
 
 <template>
-    <TimeclockOverviewBlock :user-id="parseInt(route.params.id as string)" />
+    <div class="flex flex-1 flex-col">
+        <TimeclockList :user-id="parseInt(route.params.id as string)" :show-stats="false" />
+    </div>
 </template>

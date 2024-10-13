@@ -301,6 +301,7 @@ func (s *Server) GetSelf(ctx context.Context, req *GetSelfRequest) (*GetSelfResp
 }
 
 func (s *Server) getJobsUserProps(ctx context.Context, userId int32, job string, fields []string) (*jobs.JobsUserProps, error) {
+	tJobsUserProps := table.FivenetJobsUserProps.AS("jobsuserprops")
 	columns := []jet.Projection{
 		tJobsUserProps.Job,
 		tJobsUserProps.AbsenceBegin,
@@ -388,11 +389,11 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 	if typesAttr != nil {
 		types = typesAttr.([]string)
 	}
-	if len(types) == 0 && userInfo.SuperUser {
-		types = append(types, "AbsenceDate", "Note")
+	if userInfo.SuperUser {
+		types = []string{"AbsenceDate", "Note"}
 	}
 
-	props, err := s.getJobsUserProps(ctx, req.Props.UserId, targetUser.Job, types)
+	props, err := s.getJobsUserProps(ctx, targetUser.UserId, targetUser.Job, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -454,8 +455,8 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 			tJobsUserProps.Note,
 		).
 		VALUES(
-			req.Props.UserId,
-			userInfo.Job,
+			targetUser.UserId,
+			targetUser.Job,
 			absenceBegin,
 			absenceEnd,
 			req.Props.Note,
@@ -474,7 +475,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
-			TargetUserId: req.Props.UserId,
+			TargetUserId: targetUser.UserId,
 			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_ABSENCE_DATE,
 			Reason:       req.Reason,
 			Data: &jobs.JobsUserActivityData{
@@ -495,7 +496,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 		if err := s.addJobsUserActivity(ctx, tx, &jobs.JobsUserActivity{
 			Job:          userInfo.Job,
 			SourceUserId: userInfo.UserId,
-			TargetUserId: req.Props.UserId,
+			TargetUserId: targetUser.UserId,
 			ActivityType: jobs.JobsUserActivityType_JOBS_USER_ACTIVITY_TYPE_NOTE,
 			Reason:       req.Reason,
 		}); err != nil {
@@ -510,7 +511,7 @@ func (s *Server) SetJobsUserProps(ctx context.Context, req *SetJobsUserPropsRequ
 
 	auditEntry.State = int16(rector.EventType_EVENT_TYPE_UPDATED)
 
-	props, err = s.getJobsUserProps(ctx, req.Props.UserId, targetUser.Job, types)
+	props, err = s.getJobsUserProps(ctx, targetUser.UserId, targetUser.Job, types)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}

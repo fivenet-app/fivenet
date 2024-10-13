@@ -53,11 +53,15 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
 
     const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'UNKNOWN';
 
-    const code = err.code?.toLowerCase();
+    const code = err.code?.toUpperCase();
     if (code !== undefined) {
         const route = useRoute();
         switch (code) {
             case 'internal':
+                break;
+
+            case 'deadline_exceeded':
+                // TODO handle timeouts, how about one generic message?
                 break;
 
             case 'cancelled':

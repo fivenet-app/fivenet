@@ -6,9 +6,14 @@ import ProfilePictureImg from '~/components/partials/citizens/ProfilePictureImg.
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { useAuthStore } from '~/store/auth';
 import type { Colleague } from '~~/gen/ts/resources/jobs/colleagues';
+import type { Timestamp } from '~~/gen/ts/resources/timestamp/timestamp';
 
 defineProps<{
     colleague: Colleague;
+}>();
+
+defineEmits<{
+    (e: 'update:absenceDates', value: { userId: number; absenceBegin?: Timestamp; absenceEnd?: Timestamp }): void;
 }>();
 
 const modal = useModal();
@@ -33,7 +38,7 @@ const { activeChar } = storeToRefs(authStore);
                 </h1>
             </div>
 
-            <div class="inline-flex gap-2">
+            <div class="inline-flex flex-col gap-2 lg:flex-row">
                 <UBadge>
                     {{ colleague.jobLabel }}
                     <span v-if="colleague.jobGrade > 0" class="ml-1 truncate">
@@ -43,7 +48,7 @@ const { activeChar } = storeToRefs(authStore);
 
                 <UBadge
                     v-if="colleague.props?.absenceEnd && isFuture(toDate(colleague.props?.absenceEnd))"
-                    class="inline-flex items-center gap-1 rounded-full bg-base-100 px-2.5 py-0.5 text-sm font-medium text-base-800"
+                    class="inline-flex items-center gap-1"
                 >
                     <UIcon name="i-mdi-island" class="size-5" />
                     <GenericTime :value="colleague.props?.absenceBegin" type="date" />
@@ -71,6 +76,7 @@ const { activeChar } = storeToRefs(authStore);
                     modal.open(SelfServicePropsAbsenceDateModal, {
                         userId: colleague.userId,
                         userProps: colleague.props,
+                        'onUpdate:absenceDates': ($event) => $emit('update:absenceDates', $event),
                     })
                 "
             >

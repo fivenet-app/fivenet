@@ -56,7 +56,7 @@ type Server struct {
 	CitizenStoreServiceServer
 
 	db       *sql.DB
-	p        perms.Permissions
+	ps       perms.Permissions
 	enricher *mstlystcdata.UserAwareEnricher
 	aud      audit.IAuditer
 	st       storage.IStorage
@@ -80,7 +80,7 @@ type Params struct {
 func NewServer(p Params) *Server {
 	return &Server{
 		db:       p.DB,
-		p:        p.P,
+		ps:       p.P,
 		enricher: p.Enricher,
 		aud:      p.Aud,
 		st:       p.Storage,
@@ -111,7 +111,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 
 	condition := s.customDB.Conditions.User.GetFilter(tUser.Alias())
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -281,7 +281,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	infoOnly := req.InfoOnly != nil && *req.InfoOnly
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListCitizensPerm, permscitizenstore.CitizenStoreServiceListCitizensFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -339,7 +339,7 @@ func (s *Server) GetUser(ctx context.Context, req *GetUserRequest) (*GetUserResp
 	if slices.Contains(s.appCfg.Get().JobInfo.PublicJobs, resp.User.Job) ||
 		slices.Contains(s.appCfg.Get().JobInfo.HiddenJobs, resp.User.Job) {
 		// Make sure user has permission to see that grade
-		jobGradesAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
+		jobGradesAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceGetUserPerm, permscitizenstore.CitizenStoreServiceGetUserJobsPermField)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 		}
@@ -425,7 +425,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 	}
 
 	// User can't see their own activities, unless they have "Own" perm attribute, or are a superuser
-	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceListUserActivityPerm, permscitizenstore.CitizenStoreServiceListUserActivityFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -591,7 +591,7 @@ func (s *Server) SetUserProps(ctx context.Context, req *SetUserPropsRequest) (*S
 	}
 
 	// Field Permission Check
-	fieldsAttr, err := s.p.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceSetUserPropsPerm, permscitizenstore.CitizenStoreServiceSetUserPropsFieldsPermField)
+	fieldsAttr, err := s.ps.Attr(userInfo, permscitizenstore.CitizenStoreServicePerm, permscitizenstore.CitizenStoreServiceSetUserPropsPerm, permscitizenstore.CitizenStoreServiceSetUserPropsFieldsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}

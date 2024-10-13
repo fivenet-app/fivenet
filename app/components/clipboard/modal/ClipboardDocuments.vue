@@ -167,7 +167,9 @@ watch(props, async (newVal) => {
                 <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium sm:pl-1">
                     {{ item.title }}
                 </td>
-                <td class="whitespace-nowrap px-3 py-4 text-sm">{{ item.creator.firstname }} {{ item.creator.lastname }}</td>
+                <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
+                    {{ item.creator.firstname }} {{ item.creator.lastname }}
+                </td>
                 <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
                     <UButton variant="link" icon="i-mdi-trash-can" @click="remove(item, true)" />
                 </td>

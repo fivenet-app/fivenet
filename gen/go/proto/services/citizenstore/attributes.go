@@ -119,7 +119,7 @@ func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userin
 		return true, nil
 	}
 
-	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
 	if err != nil {
 		return false, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}
@@ -167,7 +167,7 @@ func (s *Server) validateCitizenAttributes(ctx context.Context, userInfo *userin
 }
 
 func (s *Server) getUserAttributes(ctx context.Context, userInfo *userinfo.UserInfo, userId int32) (*users.CitizenAttributes, error) {
-	jobsAttr, err := s.p.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
+	jobsAttr, err := s.ps.Attr(userInfo, permscompletor.CompletorServicePerm, permscompletor.CompletorServiceCompleteCitizenAttributesPerm, permscompletor.CompletorServiceCompleteCitizenAttributesJobsPermField)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorscitizenstore.ErrFailedQuery)
 	}

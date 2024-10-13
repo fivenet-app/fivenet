@@ -60,6 +60,14 @@ export interface Timings {
      * @generated from protobuf field: int64 dispatch_max_wait = 1;
      */
     dispatchMaxWait: number;
+    /**
+     * @generated from protobuf field: bool require_unit = 2;
+     */
+    requireUnit: boolean;
+    /**
+     * @generated from protobuf field: int64 require_unit_reminder_seconds = 3;
+     */
+    requireUnitReminderSeconds: number;
 }
 /**
  * @generated from protobuf enum resources.centrum.CentrumMode
@@ -230,12 +238,16 @@ export const PredefinedStatus = new PredefinedStatus$Type();
 class Timings$Type extends MessageType<Timings> {
     constructor() {
         super("resources.centrum.Timings", [
-            { no: 1, name: "dispatch_max_wait", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 1, name: "dispatch_max_wait", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 2, name: "require_unit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 3, name: "require_unit_reminder_seconds", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<Timings>): Timings {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.dispatchMaxWait = 0;
+        message.requireUnit = false;
+        message.requireUnitReminderSeconds = 0;
         if (value !== undefined)
             reflectionMergePartial<Timings>(this, message, value);
         return message;
@@ -247,6 +259,12 @@ class Timings$Type extends MessageType<Timings> {
             switch (fieldNo) {
                 case /* int64 dispatch_max_wait */ 1:
                     message.dispatchMaxWait = reader.int64().toNumber();
+                    break;
+                case /* bool require_unit */ 2:
+                    message.requireUnit = reader.bool();
+                    break;
+                case /* int64 require_unit_reminder_seconds */ 3:
+                    message.requireUnitReminderSeconds = reader.int64().toNumber();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -263,6 +281,12 @@ class Timings$Type extends MessageType<Timings> {
         /* int64 dispatch_max_wait = 1; */
         if (message.dispatchMaxWait !== 0)
             writer.tag(1, WireType.Varint).int64(message.dispatchMaxWait);
+        /* bool require_unit = 2; */
+        if (message.requireUnit !== false)
+            writer.tag(2, WireType.Varint).bool(message.requireUnit);
+        /* int64 require_unit_reminder_seconds = 3; */
+        if (message.requireUnitReminderSeconds !== 0)
+            writer.tag(3, WireType.Varint).int64(message.requireUnitReminderSeconds);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

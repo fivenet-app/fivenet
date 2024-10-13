@@ -11,6 +11,7 @@ import type { ListCalendarsResponse, SubscribeToCalendarResponse } from '~~/gen/
 const { isOpen } = useModal();
 
 const calendarStore = useCalendarStore();
+const { currentDate } = storeToRefs(calendarStore);
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
@@ -43,6 +44,17 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
     const calendar = data.value?.calendars.find((c) => c.id === calendarId);
     if (calendar) {
         calendar.subscription = response.sub;
+
+        // Update calendar list and entries if necessary after (un-)subscribing
+        await calendarStore.listCalendars({
+            onlyPublic: false,
+        });
+
+        calendarStore.listCalendarEntries({
+            calendarIds: [calendarId],
+            year: currentDate.value.year,
+            month: currentDate.value.month,
+        });
     }
 
     return response;

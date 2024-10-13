@@ -16,7 +16,7 @@ import {
 import type { UseWebSocketReturn } from '@vueuse/core';
 import { Metadata } from '~/composables/grpcws/metadata';
 import type { GrpcWSOptions } from '../../grpcws/bridge/options';
-import { errCancelled, errInternal } from '../errors';
+import { errInternal, errTimeout } from '../errors';
 import type { Transport, TransportFactory } from '../transports/transport';
 import { WebsocketChannelTransport } from '../transports/websocket/websocketChannel';
 import { createGrpcStatus, createGrpcTrailers } from './utils';
@@ -102,7 +102,7 @@ export class GrpcWSTransport implements RpcTransport {
             onEnd(err) {
                 if (err instanceof Error) {
                     if (err.name === 'AbortError') {
-                        err = errCancelled;
+                        err = errTimeout;
                     }
                 } else {
                     err = errInternal;
@@ -149,7 +149,7 @@ export class GrpcWSTransport implements RpcTransport {
                 onEnd(err) {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError') {
-                            err = errCancelled;
+                            err = errTimeout;
                         }
                     } else {
                         err = errInternal;
@@ -217,7 +217,7 @@ export class GrpcWSTransport implements RpcTransport {
                 onEnd(err) {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError') {
-                            err = errCancelled;
+                            err = errTimeout;
                         }
                     } else {
                         err = errInternal;
@@ -278,7 +278,7 @@ export class GrpcWSTransport implements RpcTransport {
                 onEnd(err) {
                     if (err instanceof Error) {
                         if (err.name === 'AbortError') {
-                            err = errCancelled;
+                            err = errTimeout;
                         }
                     } else {
                         err = errInternal;

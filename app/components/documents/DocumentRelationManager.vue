@@ -153,13 +153,13 @@ function removeRelation(id: string): void {
                                                             ({{ relation.targetUser?.dateofbirth }})
                                                         </span>
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <CitizenInfoPopover :user="relation.sourceUser" :trailing="false" />
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ $t(`enums.docstore.DocRelation.${DocRelation[relation.relation]}`) }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
                                                             <UButton
                                                                 :to="{
@@ -230,10 +230,10 @@ function removeRelation(id: string): void {
                                                             ({{ user.dateofbirth }})
                                                         </span>
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ user.jobLabel }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
                                                             <UButton
                                                                 :title="$t('components.documents.document_managers.mentioned')"
@@ -319,10 +319,10 @@ function removeRelation(id: string): void {
                                                             ({{ user.dateofbirth }})
                                                         </span>
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         {{ user.jobLabel }}
                                                     </td>
-                                                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                                                    <td class="whitespace-nowrap px-2 py-2 text-sm sm:px-4">
                                                         <div class="flex flex-row gap-2">
                                                             <UButton
                                                                 :title="$t('components.documents.document_managers.mentioned')"

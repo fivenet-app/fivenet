@@ -1137,6 +1137,8 @@
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | dispatch_max_wait | [int64](#int64) |  |  |
+| require_unit | [bool](#bool) |  |  |
+| require_unit_reminder_seconds | [int64](#int64) |  |  |
 
 
 
