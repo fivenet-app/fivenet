@@ -18,9 +18,13 @@ const props = withDefaults(
     defineProps<{
         userId?: number;
         showStats?: boolean;
+        historicSubDays?: number;
+        forceHistoricView?: boolean;
     }>(),
     {
         showStats: true,
+        historicSubDays: 7,
+        forceHistoricView: undefined,
     },
 );
 
@@ -51,17 +55,20 @@ function setFromProps(): void {
         return;
     }
 
-    query.users?.push({
-        userId: props.userId,
-        firstname: '',
-        lastname: '',
-        dateofbirth: '',
-        job: '',
-        jobGrade: 0,
-    });
+    query.users = [
+        {
+            userId: props.userId,
+            firstname: '',
+            lastname: '',
+            dateofbirth: '',
+            job: '',
+            jobGrade: 0,
+        },
+    ];
 }
 
 watch(props, setFromProps);
+setFromProps();
 
 const futureDay = computed(() => addDays(query.from, 1));
 const previousDay = computed(() => subDays(query.from, 1));
@@ -81,9 +88,17 @@ const {
     () => listTimeclockEntries(),
 );
 
-const perDayView = computed(() => !canAccessAll.value || !(query.users !== undefined && query.users.length > 0));
+const perDayView = computed(() => {
+    if (props.forceHistoricView !== undefined) {
+        return !props.forceHistoricView;
+    }
+
+    return !canAccessAll.value || !(query.users !== undefined && query.users.length > 0);
+});
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
+    console.log('query', perDayView.value, query.users, query.from, query.to);
+
     try {
         const req: ListTimeclockRequest = {
             pagination: {
@@ -155,14 +170,16 @@ function dayBackwards(): void {
 }
 
 // Update date to something reasonable when per day view is actived
-watch(perDayView, () => {
-    if (canAccessAll && !perDayView.value) {
+function setPerDayView(): void {
+    if (canAccessAll.value && !perDayView.value) {
         const from = query.from;
-        const to = subDays(query.to ?? new Date(), 7);
+        const to = subDays(query.to ?? new Date(), props.historicSubDays);
         query.from = to;
         query.to = from;
     }
-});
+}
+watch(perDayView, setPerDayView);
+setPerDayView();
 
 const columns = computed(() =>
     [

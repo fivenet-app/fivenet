@@ -24,6 +24,11 @@ const route = useRoute('jobs-colleagues-id-timeclock');
 
 <template>
     <div class="flex flex-1 flex-col">
-        <TimeclockList :user-id="parseInt(route.params.id as string)" :show-stats="false" />
+        <TimeclockList
+            :user-id="parseInt(route.params.id as string)"
+            :show-stats="false"
+            force-historic-view
+            :historic-sub-days="14"
+        />
     </div>
 </template>

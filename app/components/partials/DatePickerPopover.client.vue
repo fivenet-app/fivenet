@@ -38,7 +38,7 @@ const open = ref(false);
         <UButton
             v-bind="button"
             variant="outline"
-            color="gray"
+            color="black"
             block
             icon="i-mdi-calendar-month"
             :label="modelValue ? format(modelValue, dateFormat) : dateFormat"
@@ -75,7 +75,7 @@ const open = ref(false);
         <UButton
             v-bind="button"
             variant="outline"
-            color="gray"
+            color="black"
             block
             icon="i-mdi-calendar-month"
             :label="modelValue ? format(modelValue, dateFormat) : dateFormat"
