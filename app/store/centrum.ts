@@ -95,6 +95,7 @@ export const useCentrumStore = defineStore('centrum', {
                 this.settings.job = settings.job;
                 this.settings.mode = settings.mode;
                 this.settings.fallbackMode = settings.fallbackMode;
+                this.settings.timings = settings.timings;
             } else {
                 this.settings = settings;
             }

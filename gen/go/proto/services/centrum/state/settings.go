@@ -16,7 +16,9 @@ func (s *State) GetSettings(ctx context.Context, job string) *centrum.Settings {
 			FallbackMode:     centrum.CentrumMode_CENTRUM_MODE_MANUAL,
 			PredefinedStatus: &centrum.PredefinedStatus{},
 			Timings: &centrum.Timings{
-				DispatchMaxWait: 900,
+				DispatchMaxWait:            900,
+				RequireUnit:                false,
+				RequireUnitReminderSeconds: 180,
 			},
 		}
 	})

@@ -72,8 +72,8 @@ importers:
         specifier: 2.2.4
         version: 2.2.4
       jodit:
-        specifier: 4.2.27
-        version: 4.2.27
+        specifier: 4.2.32
+        version: 4.2.32
       jodit-vue:
         specifier: 3.1.0
         version: 3.1.0
@@ -4149,8 +4149,8 @@ packages:
   jodit@3.24.9:
     resolution: {integrity: sha512-t2d73v7GFbGI08ZzdCTwrzi8ZtoOG4icGzD6IIN2e+ghlpUKYxcHZ/Rmy6/mc6055172z+tv7QSr9BcOz6IOFQ==}
 
-  jodit@4.2.27:
-    resolution: {integrity: sha512-cqqeunB3HMElnocVhs5Qq2bhgpMIT2vKQPBpKcOTWKvX6GJ0GYAIneMEf43lphJuo+119CvBE8YgljD5iTfsAQ==}
+  jodit@4.2.32:
+    resolution: {integrity: sha512-tBz6hoPDKEOKPRZn9iqIFr7pEz2HRoXShvVKILp8o9LCCl7WeSCdHusqTyrSfNcpNBY5tDdRiJRywgeV6eu8cQ==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -11015,7 +11015,7 @@ snapshots:
       autobind-decorator: 2.4.0
       core-js: 3.38.1
 
-  jodit@4.2.27:
+  jodit@4.2.32:
     dependencies:
       autobind-decorator: 2.4.0
 
