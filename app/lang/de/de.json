@@ -693,7 +693,14 @@
                     "description": "FiveNet Discord-Bot-Einstellungen.",
                     "bot_invite_url": "Bot-Einladungs-URL",
                     "sync_interval": "Synchronisierungsinterval",
-                    "ignored_jobs": "Ignorierte Berufe (e.g., Insassen-Beruf)"
+                    "ignored_jobs": "Ignorierte Berufe (e.g., Insassen-Beruf)",
+                    "bot_presence": {
+                        "title": "Bot-Präsenz-Status",
+                        "description": "Konfiguriere den Bot-Präsenz-Status.",
+                        "type": "Art",
+                        "status": "Status",
+                        "url": "URL"
+                    }
                 },
                 "save": {
                     "description": "Stellen Sie sicher, dass Sie alle Konfigurationsoptionen vor dem Speichern der Konfiguration überprüfen."
@@ -802,7 +809,9 @@
                 "timings": {
                     "title": "Zeitangaben",
                     "description": "Zeitangaben für Einsatz- und Einheit-Status-Pings.",
-                    "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)"
+                    "dispatch_max_wait": "Einsatz: Wartezeit (in Sekunden)",
+                    "require_unit": "Kollegen müssen in einer Einheit sein",
+                    "require_unit_reminder_seconds": "Erinnerungsintervall (in Sekunden), um Kollegen anzupingen, die nicht in einer Einheit sind"
                 }
             }
         },
@@ -1027,6 +1036,14 @@
                     "title": "Dokumenten-Listen-Stil",
                     "single": "Einzelspalte",
                     "double": "Doppelspalte (Großansicht)"
+                },
+                "calendar_notifications": {
+                    "title": "Kalendar Benachrichtigungen",
+                    "subtitle": "Legen Sie die Erinnerungszeiten für Kalenderereignisse fest, auf die Sie mit \"Ja\" und \"Vielleicht\" geantwortet haben.",
+                    "reminder_times": {
+                        "name": "Vor dem Termin zu versendende Erinnerungen",
+                        "start": "Beginn des Termines"
+                    }
                 }
             },
             "ChangeUsernameModal": {
