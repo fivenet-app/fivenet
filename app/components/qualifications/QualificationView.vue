@@ -16,6 +16,8 @@ import {
     resultStatusToBadgeColor,
     resultStatusToTextColor,
 } from '~/components/qualifications/helpers';
+import { useNotificatorStore } from '~/store/notificator';
+import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { AccessLevel } from '~~/gen/ts/resources/qualifications/access';
 import { QualificationExamMode, RequestStatus, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { DeleteQualificationResponse, GetQualificationResponse } from '~~/gen/ts/services/qualifications/qualifications';
@@ -28,6 +30,8 @@ const props = defineProps<{
 const { t } = useI18n();
 
 const modal = useModal();
+
+const notifications = useNotificatorStore();
 
 const {
     data,
@@ -56,6 +60,20 @@ async function deleteQualification(qualificationId: string): Promise<DeleteQuali
             qualificationId: qualificationId,
         });
         const { response } = await call;
+
+        notifications.add({
+            title: { key: 'notifications.action_successfull.title', parameters: {} },
+            description: { key: 'notifications.action_successfull.content', parameters: {} },
+            type: NotificationType.SUCCESS,
+        });
+
+        navigateTo({
+            name: 'qualifications',
+            query: {
+                tab: 'tab=all',
+            },
+            hash: '',
+        });
 
         return response;
     } catch (e) {

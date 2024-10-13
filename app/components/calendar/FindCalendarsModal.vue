@@ -47,6 +47,9 @@ async function subscribeToCalendar(calendarId: string, subscribe: boolean): Prom
 
         // Update calendar list and entries if necessary after (un-)subscribing
         await calendarStore.listCalendars({
+            pagination: {
+                offset: 0,
+            },
             onlyPublic: false,
         });
 

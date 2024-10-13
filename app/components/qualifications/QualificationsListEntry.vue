@@ -17,9 +17,20 @@ defineProps<{
         <div class="flex min-w-0 gap-x-2">
             <div class="min-w-0 flex-auto">
                 <p class="text-sm font-semibold leading-6 text-gray-100">
-                    <ULink :to="{ name: 'qualifications-id', params: { id: qualification.id } }">
+                    <ULink
+                        :to="{ name: 'qualifications-id', params: { id: qualification.id } }"
+                        class="inline-flex items-center gap-2"
+                    >
                         <span class="absolute inset-x-0 -top-px bottom-0" />
-                        {{ qualification.abbreviation }}: {{ qualification.title }}
+                        <span>{{ qualification.abbreviation }}: {{ qualification.title }}</span>
+
+                        <UBadge v-if="qualification?.deletedAt" color="amber" class="inline-flex gap-1" size="xs">
+                            <UIcon name="i-mdi-calendar-remove" class="size-5" />
+                            <span>
+                                {{ $t('common.deleted') }}
+                                <GenericTime :value="qualification?.deletedAt" type="long" />
+                            </span>
+                        </UBadge>
                     </ULink>
                 </p>
                 <p class="mt-1 flex gap-1 text-xs leading-5">

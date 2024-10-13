@@ -440,31 +440,27 @@ const { data: jobs } = useAsyncData('completor-jobs', () => completorStore.listJ
     <UForm :schema="schema" :state="state" class="pb-24" @submit="onSubmitThrottle">
         <UDashboardNavbar :title="$t('pages.qualifications.edit.title')">
             <template #right>
-                <UButtonGroup class="inline-flex">
-                    <UButton
-                        color="black"
-                        icon="i-mdi-arrow-back"
-                        :to="
-                            qualificationId ? { name: 'qualifications-id', params: { id: qualificationId } } : '/qualifications'
-                        "
-                    >
-                        {{ $t('common.back') }}
-                    </UButton>
+                <UButton
+                    color="black"
+                    icon="i-mdi-arrow-back"
+                    :to="qualificationId ? { name: 'qualifications-id', params: { id: qualificationId } } : '/qualifications'"
+                >
+                    {{ $t('common.back') }}
+                </UButton>
 
-                    <UButton
-                        type="submit"
-                        trailing-icon="i-mdi-content-save"
-                        :disabled="!canDo.edit || !canSubmit"
-                        :loading="!canSubmit"
-                    >
-                        <template v-if="!qualificationId">
-                            {{ $t('common.create') }}
-                        </template>
-                        <template v-else>
-                            {{ $t('common.save') }}
-                        </template>
-                    </UButton>
-                </UButtonGroup>
+                <UButton
+                    type="submit"
+                    trailing-icon="i-mdi-content-save"
+                    :disabled="!canDo.edit || !canSubmit"
+                    :loading="!canSubmit"
+                >
+                    <template v-if="!qualificationId">
+                        {{ $t('common.create') }}
+                    </template>
+                    <template v-else>
+                        {{ $t('common.save') }}
+                    </template>
+                </UButton>
             </template>
         </UDashboardNavbar>
 

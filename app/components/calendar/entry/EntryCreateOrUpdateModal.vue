@@ -282,7 +282,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                     by="userId"
                                 >
                                     <template #option="{ option: user }">
-                                        {{ `${user?.lastname} (${user?.dateofbirth})` }}
+                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
                                     </template>
                                     <template #option-empty="{ query: search }">
                                         <q>{{ search }}</q> {{ $t('common.query_not_found') }}

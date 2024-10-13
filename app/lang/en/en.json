@@ -1036,6 +1036,14 @@
                     "title": "Document List Style",
                     "single": "Single Column",
                     "double": "Double Column (Big Screens)"
+                },
+                "calendar_notifications": {
+                    "title": "Calendar Notifications",
+                    "subtitle": "Set the reminder times for calendar events to which you have responded with \"Yes\" and \"Maybe\".",
+                    "reminder_times": {
+                        "name": "Reminders to send before the event",
+                        "start": "Start of Event"
+                    }
                 }
             },
             "ChangeUsernameModal": {

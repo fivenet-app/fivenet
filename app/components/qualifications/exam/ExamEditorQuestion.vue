@@ -174,8 +174,8 @@ function changeQuestionType(qt: string): void {
                 <template v-else-if="question.data!.data.oneofKind === 'yesno'">
                     <div class="flex flex-col gap-2">
                         <UButtonGroup>
-                            <UButton color="green" :label="$t('common.yes')" />
-                            <UButton color="red" :label="$t('common.no')" />
+                            <UButton color="green" :label="$t('common.yes')" disabled />
+                            <UButton color="red" :label="$t('common.no')" disabled />
                         </UButtonGroup>
                     </div>
                 </template>

@@ -16,9 +16,8 @@ import (
 )
 
 var (
-	tCalendar      = table.FivenetCalendar.AS("calendar")
-	tCalendarShort = tCalendar.AS("calendar_short")
-	tCalendarSubs  = table.FivenetCalendarSubs.AS("calendar_sub")
+	tCalendar     = table.FivenetCalendar.AS("calendar")
+	tCalendarSubs = table.FivenetCalendarSubs.AS("calendar_sub")
 
 	tCalendarEntry = table.FivenetCalendarEntries.AS("calendar_entry")
 	tCalendarRSVP  = table.FivenetCalendarRsvp.AS("calendar_entry_rsvp")

@@ -106,20 +106,21 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 			tCalendarRSVP.UserID.IN(userIds...),
 		))
 
-	var rsvps []*calendar.CalendarEntryRSVP
-	if err := stmt.QueryContext(ctx, tx, &rsvps); err != nil {
+	var currentRSVPs []*calendar.CalendarEntryRSVP
+	if err := stmt.QueryContext(ctx, tx, &currentRSVPs); err != nil {
 		if !errors.Is(err, qrm.ErrNoRows) {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 	}
 
 	newUsers := []int32{}
-	if len(rsvps) == 0 {
+	if len(currentRSVPs) == 0 {
 		newUsers = append(newUsers, inUserIds...)
-	}
-	for _, rsvp := range rsvps {
-		if !slices.Contains(inUserIds, rsvp.UserId) {
-			newUsers = append(newUsers, rsvp.UserId)
+	} else {
+		for _, rsvp := range currentRSVPs {
+			if !slices.Contains(inUserIds, rsvp.UserId) {
+				newUsers = append(newUsers, rsvp.UserId)
+			}
 		}
 	}
 
@@ -139,7 +140,7 @@ func (s *Server) shareCalendarEntry(ctx context.Context, tx qrm.DB, entryId uint
 		)
 	}
 
-	if _, err := insertStmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := insertStmt.ExecContext(ctx, tx); err != nil {
 		if !dbutils.IsDuplicateError(err) {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}

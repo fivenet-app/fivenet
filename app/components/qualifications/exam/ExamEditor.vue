@@ -29,6 +29,13 @@ const schema = z.object({
     }),
     questions: z.custom<ExamQuestion>().array().max(50),
 });
+
+if (!settings.value.time) {
+    settings.value.time = {
+        seconds: 600,
+        nanos: 0,
+    };
+}
 </script>
 
 <template>
@@ -39,12 +46,7 @@ const schema = z.object({
             </h2>
 
             <UFormGroup name="settings.time" :label="$t('common.duration')">
-                <UInput
-                    type="number"
-                    :placeholder="$t('common.duration')"
-                    :value="settings.time ? fromDuration(settings.time) : 600"
-                    @update:model-value="settings.time = toDuration($event)"
-                >
+                <UInput v-model="settings.time!.seconds" type="number" :min="1" :step="1" :placeholder="$t('common.duration')">
                     <template #trailing>
                         <span class="text-xs text-gray-500 dark:text-gray-400">s</span>
                     </template>

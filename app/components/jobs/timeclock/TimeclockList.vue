@@ -193,6 +193,12 @@ const columns = computed(() =>
             key: 'name',
             label: t('common.name'),
         },
+        canAccessAll.value && query.users !== undefined && query.users?.length > 1
+            ? {
+                  key: 'jobGrade',
+                  label: t('common.rank'),
+              }
+            : undefined,
         {
             key: 'time',
             label: t('common.time'),

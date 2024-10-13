@@ -29,6 +29,9 @@ export interface SettingsState {
     audio: {
         notificationsVolume: number;
     };
+    calendar: {
+        reminderTimes: number[];
+    };
     streamerMode: boolean;
 }
 
@@ -63,6 +66,9 @@ export const useSettingsStore = defineStore('settings', {
             },
             audio: {
                 notificationsVolume: 0.15,
+            },
+            calendar: {
+                reminderTimes: [900, 0],
             },
             streamerMode: false,
         }) as SettingsState,

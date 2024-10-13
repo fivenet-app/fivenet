@@ -50,29 +50,27 @@ onMounted(() => {
         </template>
 
         <div class="flex flex-initial flex-col items-center gap-1 md:flex-row">
-            <UButtonGroup class="inline-flex w-full">
-                <UButton
-                    v-if="
-                        colleagueSelf?.colleague &&
-                        can('JobsService.SetJobsUserProps').value &&
-                        activeChar?.userId === colleagueSelf.colleague?.userId
-                    "
-                    block
-                    class="flex-1"
-                    icon="i-mdi-island"
-                    @click="
-                        modal.open(SelfServicePropsAbsenceDateModal, {
-                            userId: colleagueSelf.colleague.userId,
-                            userProps: colleagueSelf.colleague.props,
-                        })
-                    "
-                >
-                    <span>{{ $t('components.jobs.self_service.set_absence_date') }}</span>
-                </UButton>
-                <UButton block class="flex-1" icon="i-mdi-camera" @click="modal.open(SelfServicePropsProfilePictureModal, {})">
-                    <span>{{ $t('components.jobs.self_service.set_profile_picture') }}</span>
-                </UButton>
-            </UButtonGroup>
+            <UButton
+                v-if="
+                    colleagueSelf?.colleague &&
+                    can('JobsService.SetJobsUserProps').value &&
+                    activeChar?.userId === colleagueSelf.colleague?.userId
+                "
+                block
+                class="flex-1"
+                icon="i-mdi-island"
+                @click="
+                    modal.open(SelfServicePropsAbsenceDateModal, {
+                        userId: colleagueSelf.colleague.userId,
+                        userProps: colleagueSelf.colleague.props,
+                    })
+                "
+            >
+                <span>{{ $t('components.jobs.self_service.set_absence_date') }}</span>
+            </UButton>
+            <UButton block class="flex-1" icon="i-mdi-camera" @click="modal.open(SelfServicePropsProfilePictureModal, {})">
+                <span>{{ $t('components.jobs.self_service.set_profile_picture') }}</span>
+            </UButton>
         </div>
     </UCard>
 </template>
