@@ -215,6 +215,21 @@ const selectedTab = computed({
                                 :options="calendarReminderTimes"
                                 value-attribute="value"
                             >
+                                <template #label>
+                                    {{
+                                        calendar.reminderTimes.length > 0
+                                            ? [...calendar.reminderTimes]
+                                                  .sort()
+                                                  .map((n) =>
+                                                      $t(
+                                                          calendarReminderTimes.find((rt) => rt.value === n)?.label ??
+                                                              'common.na',
+                                                      ),
+                                                  )
+                                                  .join(', ')
+                                            : $t('common.none')
+                                    }}
+                                </template>
                             </USelectMenu>
                         </UFormGroup>
                     </UDashboardSection>

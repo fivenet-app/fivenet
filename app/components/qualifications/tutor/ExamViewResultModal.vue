@@ -3,11 +3,18 @@ import ExamViewQuestions from '~/components/qualifications/exam/ExamViewQuestion
 import QualificationResultTutorForm from '~/components/qualifications/tutor/QualificationResultTutorForm.vue';
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
-const props = defineProps<{
-    qualificationId: string;
-    userId: number;
-    resultId?: string;
-}>();
+const props = withDefaults(
+    defineProps<{
+        qualificationId: string;
+        userId: number;
+        resultId?: string;
+        viewOnly?: boolean;
+    }>(),
+    {
+        resultId: undefined,
+        viewOnly: false,
+    },
+);
 
 defineEmits<{
     (e: 'refresh'): void;
@@ -51,6 +58,7 @@ function updateCount(add: boolean): void {
             :user-id="userId"
             :result-id="resultId"
             :score="score"
+            :view-only="viewOnly"
             @refresh="$emit('refresh')"
             @close="isOpen = false"
         >
@@ -71,7 +79,7 @@ function updateCount(add: boolean): void {
                     </template>
                 </ExamViewQuestions>
 
-                <div class="flex flex-1 justify-end p-2">
+                <div v-if="!viewOnly" class="flex flex-1 justify-end p-2">
                     <p class="text-sm">
                         <span class="font-semibold">{{ $t('components.qualifications.correct_question') }}</span
                         >: {{ correctCount }} / {{ totalQuestions }} {{ $t('common.question', 2) }}

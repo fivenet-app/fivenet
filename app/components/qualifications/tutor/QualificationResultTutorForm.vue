@@ -8,12 +8,21 @@ import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications'
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
-const props = defineProps<{
-    qualificationId: string;
-    userId?: number;
-    resultId?: string;
-    score?: number;
-}>();
+const props = withDefaults(
+    defineProps<{
+        qualificationId: string;
+        userId?: number;
+        resultId?: string;
+        score?: number;
+        viewOnly?: boolean;
+    }>(),
+    {
+        userId: undefined,
+        resultId: undefined,
+        score: undefined,
+        viewOnly: false,
+    },
+);
 
 const emits = defineEmits<{
     (e: 'close'): void;
@@ -112,88 +121,90 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
             <div>
                 <slot />
 
-                <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.citizen')" class="flex-1">
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="selectedUser"
-                            :searchable="
-                                async (query: string) => {
-                                    usersLoading = true;
-                                    const users = await completorStore.completeCitizens({
-                                        search: query,
-                                    });
-                                    usersLoading = false;
-                                    return users;
-                                }
-                            "
-                            searchable-lazy
-                            :searchable-placeholder="$t('common.search_field')"
-                            :search-attributes="['firstname', 'lastname']"
-                            class="flex-1"
-                            :placeholder="$t('common.citizen', 1)"
-                            trailing
-                            by="userId"
-                        >
-                            <template #label>
-                                <template v-if="selectedUser">
-                                    {{ usersToLabel([selectedUser]) }}
+                <template v-if="!viewOnly">
+                    <UFormGroup v-if="userId === undefined" name="selectedUser" :label="$t('common.citizen')" class="flex-1">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="selectedUser"
+                                :searchable="
+                                    async (query: string) => {
+                                        usersLoading = true;
+                                        const users = await completorStore.completeCitizens({
+                                            search: query,
+                                        });
+                                        usersLoading = false;
+                                        return users;
+                                    }
+                                "
+                                searchable-lazy
+                                :searchable-placeholder="$t('common.search_field')"
+                                :search-attributes="['firstname', 'lastname']"
+                                class="flex-1"
+                                :placeholder="$t('common.citizen', 1)"
+                                trailing
+                                by="userId"
+                            >
+                                <template #label>
+                                    <template v-if="selectedUser">
+                                        {{ usersToLabel([selectedUser]) }}
+                                    </template>
                                 </template>
-                            </template>
-                            <template #option="{ option: user }">
-                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
-                        </USelectMenu>
-                    </ClientOnly>
-                </UFormGroup>
+                                <template #option="{ option: user }">
+                                    {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty> {{ $t('common.not_found', [$t('common.citizen', 2)]) }} </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
 
-                <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
-                    <ClientOnly>
-                        <USelectMenu
-                            v-model="state.status"
-                            :options="availableStatus"
-                            value-attribute="status"
-                            :placeholder="$t('common.status')"
-                            :searchable-placeholder="$t('common.search_field')"
-                        >
-                            <template #label>
-                                <span v-if="state.status" class="truncate">
-                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
-                                </span>
-                            </template>
-                            <template #option="{ option }">
-                                <span class="truncate">
-                                    {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
-                                </span>
-                            </template>
-                            <template #option-empty="{ query: search }">
-                                <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                            </template>
-                            <template #empty>
-                                {{ $t('common.not_found', [$t('common.status')]) }}
-                            </template>
-                        </USelectMenu>
-                    </ClientOnly>
-                </UFormGroup>
+                    <UFormGroup name="status" :label="$t('common.status')" class="flex-1">
+                        <ClientOnly>
+                            <USelectMenu
+                                v-model="state.status"
+                                :options="availableStatus"
+                                value-attribute="status"
+                                :placeholder="$t('common.status')"
+                                :searchable-placeholder="$t('common.search_field')"
+                            >
+                                <template #label>
+                                    <span v-if="state.status" class="truncate">
+                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
+                                    </span>
+                                </template>
+                                <template #option="{ option }">
+                                    <span class="truncate">
+                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
+                                    </span>
+                                </template>
+                                <template #option-empty="{ query: search }">
+                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                </template>
+                                <template #empty>
+                                    {{ $t('common.not_found', [$t('common.status')]) }}
+                                </template>
+                            </USelectMenu>
+                        </ClientOnly>
+                    </UFormGroup>
 
-                <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
-                    <UInput
-                        v-model="state.score"
-                        name="score"
-                        type="number"
-                        :min="0"
-                        :max="100"
-                        :placeholder="$t('common.score')"
-                        :label="$t('common.score')"
-                    />
-                </UFormGroup>
+                    <UFormGroup name="score" :label="$t('common.score')" class="flex-1">
+                        <UInput
+                            v-model="state.score"
+                            name="score"
+                            type="number"
+                            :min="0"
+                            :max="100"
+                            :placeholder="$t('common.score')"
+                            :label="$t('common.score')"
+                        />
+                    </UFormGroup>
 
-                <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
-                    <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
-                </UFormGroup>
+                    <UFormGroup name="summary" :label="$t('common.summary')" class="flex-1">
+                        <UTextarea v-model="state.summary" name="summary" :rows="3" :placeholder="$t('common.summary')" />
+                    </UFormGroup>
+                </template>
             </div>
 
             <template #footer>
@@ -202,7 +213,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         {{ $t('common.close', 1) }}
                     </UButton>
 
-                    <UButton type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
+                    <UButton v-if="!viewOnly" type="submit" block class="flex-1" :disabled="!canSubmit" :loading="!canSubmit">
                         {{ $t('common.submit') }}
                     </UButton>
                 </UButtonGroup>

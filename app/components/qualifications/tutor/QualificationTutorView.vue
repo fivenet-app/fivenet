@@ -105,6 +105,7 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
             <QualificationsResultsList
                 ref="results"
                 :qualification-id="qualification.id"
+                :exam-mode="qualification.examMode"
                 @refresh="async () => requests?.refresh()"
             />
         </div>

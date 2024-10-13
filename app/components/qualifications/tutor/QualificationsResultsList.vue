@@ -6,7 +6,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { resultStatusToTextColor } from '~/components/qualifications/helpers';
 import ExamViewResultModal from '~/components/qualifications/tutor/ExamViewResultModal.vue';
-import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode, ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationResultResponse,
     ListQualificationsResultsResponse,
@@ -16,10 +16,12 @@ const props = withDefaults(
     defineProps<{
         qualificationId?: string;
         status?: ResultStatus[];
+        examMode?: QualificationExamMode;
     }>(),
     {
         qualificationId: undefined,
         status: () => [],
+        examMode: QualificationExamMode.UNSPECIFIED,
     },
 );
 
@@ -178,6 +180,22 @@ defineExpose({
                                         qualificationId: result.qualificationId,
                                         userId: result.userId,
                                         resultId: result.id,
+                                        onRefresh: onRefresh,
+                                    })
+                                "
+                            />
+
+                            <UButton
+                                v-if="examMode > QualificationExamMode.DISABLED"
+                                variant="link"
+                                icon="i-mdi-star"
+                                color="amber"
+                                @click="
+                                    modal.open(ExamViewResultModal, {
+                                        qualificationId: result.qualificationId,
+                                        userId: result.userId,
+                                        resultId: result.id,
+                                        viewOnly: true,
                                         onRefresh: onRefresh,
                                     })
                                 "
