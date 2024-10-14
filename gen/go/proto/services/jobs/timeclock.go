@@ -356,11 +356,12 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 		}
 	}
 
-	resp.Pagination.Update(len(resp.Colleagues))
-
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Colleagues); i++ {
-		s.enricher.EnrichJobInfo(resp.Colleagues[i])
+		jobInfoFn(resp.Colleagues[i])
 	}
+
+	resp.Pagination.Update(len(resp.Colleagues))
 
 	return resp, nil
 }

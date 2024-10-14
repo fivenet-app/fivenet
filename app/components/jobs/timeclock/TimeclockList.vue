@@ -371,9 +371,8 @@ const input = ref<{ input: HTMLInputElement }>();
         </template>
 
         <template #rank-data="{ row: entry }">
-            <div class="text-gray-900 dark:text-white">
-                {{ entry.jobGradeLabel }}<span v-if="entry.jobGrade > 0"> ({{ entry.jobGrade }})</span>
-            </div>
+            {{ entry.entry.user.jobGradeLabel
+            }}<span v-if="entry.entry.user.jobGrade > 0"> ({{ entry.entry.user.jobGrade }})</span>
         </template>
 
         <template #time-data="{ row: entry }">
