@@ -4,6 +4,7 @@ import ColleagueActivityFeedEntry from '~/components/jobs/colleagues/info/Collea
 import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SortButton from '~/components/partials/SortButton.vue';
 import { useCompletorStore } from '~/store/completor';
 import { JobsUserActivityType, type Colleague } from '~~/gen/ts/resources/jobs/colleagues';
 import type { ListColleagueActivityResponse } from '~~/gen/ts/services/jobs/jobs';
@@ -72,7 +73,7 @@ async function listColleagueActivity(
     try {
         const call = getGRPCJobsClient().listColleagueActivity({
             pagination: {
-                offset: offset.value
+                offset: offset.value,
             },
             sort: sort.value,
             userIds: userIds,
@@ -168,6 +169,10 @@ watchDebounced(query, async () => refresh(), {
                         <template #empty> {{ $t('common.not_found', [$t('common.type', 2)]) }} </template>
                     </USelectMenu>
                 </ClientOnly>
+            </UFormGroup>
+
+            <UFormGroup label="&nbsp;">
+                <SortButton v-model="sort" :fields="[{ label: 'common.created_at', value: 'createdAt' }]" />
             </UFormGroup>
         </UForm>
     </UDashboardToolbar>

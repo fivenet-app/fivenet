@@ -1,0 +1,64 @@
+<script lang="ts" setup>
+const props = withDefaults(
+    defineProps<{
+        modelValue: TableSortable;
+        fields: { label: string; value: string }[];
+    }>(),
+    {},
+);
+
+const emits = defineEmits<{
+    (e: 'update:modelValue', v: TableSortable): void;
+}>();
+
+const sort = useVModel(props, 'modelValue', emits, {
+    deep: true,
+});
+
+const { ui } = useAppConfig();
+
+function toggleDirection(): void {
+    if (sort.value.direction === 'asc') {
+        sort.value = {
+            column: sort.value.column,
+            direction: 'desc',
+        };
+    } else {
+        sort.value = {
+            column: sort.value.column,
+            direction: 'asc',
+        };
+    }
+}
+</script>
+
+<template>
+    <div class="flex flex-1 gap-2">
+        <ClientOnly v-if="fields.length > 1">
+            <USelectMenu
+                v-model="sort.column"
+                :placeholder="$t('common.na')"
+                value-attribute="value"
+                :options="fields"
+                class="w-full"
+            >
+                <template #label>
+                    {{ $t(fields.find((f) => f.value === sort.column)?.label ?? 'common.na') }}
+                </template>
+                <template #option="{ option: field }">
+                    {{ $t(field.label) }}
+                </template>
+                <template #empty> {{ $t('common.not_found', [$t('common.field', 2)]) }} </template>
+            </USelectMenu>
+        </ClientOnly>
+
+        <UButton
+            square
+            trailing
+            :icon="sort.direction === 'asc' ? ui.table.default.sortAscIcon : ui.table.default.sortDescIcon"
+            color="gray"
+            variant="ghost"
+            @click="toggleDirection"
+        />
+    </div>
+</template>

@@ -480,7 +480,8 @@
         "or": "OR",
         "retrying": "Retrying...",
         "reduction": "Reduction",
-        "feed": "Activity Feed"
+        "feed": "Activity Feed",
+        "field": "Field | Fields"
     },
     "components": {
         "partials": {

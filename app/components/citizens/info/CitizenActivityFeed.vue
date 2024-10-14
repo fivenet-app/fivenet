@@ -4,6 +4,7 @@ import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
 import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import Pagination from '~/components/partials/Pagination.vue';
+import SortButton from '~/components/partials/SortButton.vue';
 import { useAuthStore } from '~/store/auth';
 import type { ListUserActivityResponse } from '~~/gen/ts/services/citizenstore/citizenstore';
 
@@ -17,12 +18,23 @@ const { activeChar } = storeToRefs(authStore);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'createdAt',
+    direction: 'desc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`citizeninfo-activity-${props.userId}-${page.value}`, () => listUserActivity());
+} = useLazyAsyncData(
+    `citizeninfo-activity-${sort.value.column}:${sort.value.direction}-${props.userId}-${page.value}`,
+    () => listUserActivity(),
+    {
+        watch: [sort],
+    },
+);
 
 async function listUserActivity(): Promise<ListUserActivityResponse> {
     try {
@@ -30,6 +42,7 @@ async function listUserActivity(): Promise<ListUserActivityResponse> {
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             userId: props.userId,
         });
         const { response } = await call;
@@ -70,16 +83,28 @@ watch(offset, async () => refresh());
             icon="i-mdi-pulse"
         />
 
-        <ul v-else role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
-            <li
-                v-for="activity in data?.activity"
-                :key="activity.id"
-                class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
-            >
-                <CitizenActivityFeedEntry :activity="activity" />
-            </li>
-        </ul>
+        <div v-else class="flex flex-1 flex-col gap-2">
+            <div class="flex flex-1">
+                <div class="flex-1 grow" />
 
-        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                <SortButton
+                    v-model="sort"
+                    :fields="[{ label: 'common.created_at', value: 'createdAt' }]"
+                    class="flex-initial"
+                />
+            </div>
+
+            <ul role="list" class="divide-y divide-gray-100 dark:divide-gray-800">
+                <li
+                    v-for="activity in data?.activity"
+                    :key="activity.id"
+                    class="hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white py-2 dark:border-gray-900"
+                >
+                    <CitizenActivityFeedEntry :activity="activity" />
+                </li>
+            </ul>
+
+            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        </div>
     </div>
 </template>

@@ -37,7 +37,8 @@ message GetUserResponse {
 
 message ListUserActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  int32 user_id = 2 [(validate.rules).int32.gt = 0];
+  optional resources.common.database.Sort sort = 2;
+  int32 user_id = 3 [(validate.rules).int32.gt = 0];
 }
 
 message ListUserActivityResponse {

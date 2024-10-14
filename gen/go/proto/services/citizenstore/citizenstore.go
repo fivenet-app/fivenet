@@ -492,6 +492,33 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 
 	tUTarget := tUser.AS("target_user")
 	tUSource := tUser.AS("source_user")
+
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "createdAt":
+			fallthrough
+		default:
+			column = tUserActivity.CreatedAt
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys,
+				column.ASC(),
+			)
+		} else {
+			orderBys = append(orderBys,
+				column.DESC(),
+			)
+		}
+	} else {
+		orderBys = append(orderBys,
+			tUserActivity.CreatedAt.DESC(),
+		)
+	}
+
 	stmt := tUserActivity.
 		SELECT(
 			tUserActivity.ID,
@@ -525,9 +552,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(
-			tUserActivity.CreatedAt.DESC(),
-		).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {

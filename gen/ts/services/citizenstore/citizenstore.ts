@@ -102,7 +102,11 @@ export interface ListUserActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: int32 user_id = 2;
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
+     * @generated from protobuf field: int32 user_id = 3;
      */
     userId: number;
 }
@@ -434,7 +438,8 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
     constructor() {
         super("services.citizenstore.ListUserActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gt: 0 } } } }
         ]);
     }
     create(value?: PartialMessage<ListUserActivityRequest>): ListUserActivityRequest {
@@ -452,7 +457,10 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* int32 user_id */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* int32 user_id */ 3:
                     message.userId = reader.int32();
                     break;
                 default:
@@ -470,9 +478,12 @@ class ListUserActivityRequest$Type extends MessageType<ListUserActivityRequest> 
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int32 user_id = 3; */
         if (message.userId !== 0)
-            writer.tag(2, WireType.Varint).int32(message.userId);
+            writer.tag(3, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

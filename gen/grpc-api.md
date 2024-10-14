@@ -6287,6 +6287,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | user_id | [int32](#int32) |  |  |
 
 

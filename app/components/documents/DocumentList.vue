@@ -14,6 +14,7 @@ import type { Category } from '~~/gen/ts/resources/documents/category';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { ListDocumentsRequest, ListDocumentsResponse } from '~~/gen/ts/services/docstore/docstore';
 import { markerFallbackIcon, markerIcons } from '../livemap/helpers';
+import SortButton from '../partials/SortButton.vue';
 
 const { t } = useI18n();
 
@@ -54,6 +55,8 @@ const sort = ref<TableSortable>({
     column: 'createdAt',
     direction: 'desc',
 });
+
+watch(sort, () => console.log('sort', sort.value));
 
 const {
     data,
@@ -289,6 +292,16 @@ defineShortcuts({
                                     v-model="query.to"
                                     :popover="{ popper: { placement: 'bottom-start' } }"
                                     :date-picker="{ mode: 'dateTime', is24hr: true, clearable: true }"
+                                />
+                            </UFormGroup>
+
+                            <UFormGroup label="&nbsp;" class="flex-1 grow-0 basis-40">
+                                <SortButton
+                                    v-model="sort"
+                                    :fields="[
+                                        { label: 'common.created_at', value: 'createdAt' },
+                                        { label: 'common.title', value: 'title' },
+                                    ]"
                                 />
                             </UFormGroup>
                         </div>
