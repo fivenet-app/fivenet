@@ -14,6 +14,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { AuditEntry } from "../../resources/rector/audit";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 import { Permission } from "../../resources/permissions/permissions";
 import { RoleAttribute } from "../../resources/permissions/permissions";
@@ -223,27 +224,33 @@ export interface ViewAuditLogRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 2;
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: repeated int32 user_ids = 3;
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 4;
      */
     from?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 5;
      */
     to?: Timestamp;
     /**
-     * @generated from protobuf field: optional string service = 5;
+     * @generated from protobuf field: optional string service = 6;
      */
     service?: string;
     /**
-     * @generated from protobuf field: optional string method = 6;
+     * @generated from protobuf field: optional string method = 7;
      */
     method?: string;
     /**
-     * @generated from protobuf field: optional string search = 7;
+     * @generated from protobuf field: optional string search = 8;
      */
     search?: string;
 }
@@ -1198,12 +1205,13 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
     constructor() {
         super("services.rector.ViewAuditLogRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "from", kind: "message", T: () => Timestamp },
-            { no: 4, name: "to", kind: "message", T: () => Timestamp },
-            { no: 5, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
-            { no: 6, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
-            { no: 7, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "from", kind: "message", T: () => Timestamp },
+            { no: 5, name: "to", kind: "message", T: () => Timestamp },
+            { no: 6, name: "service", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 7, name: "method", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "64" } } } },
+            { no: 8, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "128" } } } }
         ]);
     }
     create(value?: PartialMessage<ViewAuditLogRequest>): ViewAuditLogRequest {
@@ -1221,26 +1229,29 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated int32 user_ids */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* repeated int32 user_ids */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* optional resources.timestamp.Timestamp from */ 3:
+                case /* optional resources.timestamp.Timestamp from */ 4:
                     message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
                     break;
-                case /* optional resources.timestamp.Timestamp to */ 4:
+                case /* optional resources.timestamp.Timestamp to */ 5:
                     message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
                     break;
-                case /* optional string service */ 5:
+                case /* optional string service */ 6:
                     message.service = reader.string();
                     break;
-                case /* optional string method */ 6:
+                case /* optional string method */ 7:
                     message.method = reader.string();
                     break;
-                case /* optional string search */ 7:
+                case /* optional string search */ 8:
                     message.search = reader.string();
                     break;
                 default:
@@ -1258,28 +1269,31 @@ class ViewAuditLogRequest$Type extends MessageType<ViewAuditLogRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 user_ids = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 user_ids = 3; */
         if (message.userIds.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
+            writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* optional resources.timestamp.Timestamp from = 3; */
+        /* optional resources.timestamp.Timestamp from = 4; */
         if (message.from)
-            Timestamp.internalBinaryWrite(message.from, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp to = 4; */
+            Timestamp.internalBinaryWrite(message.from, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp to = 5; */
         if (message.to)
-            Timestamp.internalBinaryWrite(message.to, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional string service = 5; */
+            Timestamp.internalBinaryWrite(message.to, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional string service = 6; */
         if (message.service !== undefined)
-            writer.tag(5, WireType.LengthDelimited).string(message.service);
-        /* optional string method = 6; */
+            writer.tag(6, WireType.LengthDelimited).string(message.service);
+        /* optional string method = 7; */
         if (message.method !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.method);
-        /* optional string search = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.method);
+        /* optional string search = 8; */
         if (message.search !== undefined)
-            writer.tag(7, WireType.LengthDelimited).string(message.search);
+            writer.tag(8, WireType.LengthDelimited).string(message.search);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

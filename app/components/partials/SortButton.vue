@@ -40,7 +40,7 @@ function changeColumn(col: string): void {
 </script>
 
 <template>
-    <div class="flex flex-1 gap-2">
+    <div class="flex gap-2">
         <ClientOnly v-if="fields.length > 1">
             <USelectMenu
                 :model-value="sort.column"

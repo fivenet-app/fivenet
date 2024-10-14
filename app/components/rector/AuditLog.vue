@@ -43,14 +43,22 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'createdAt',
+    direction: 'desc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(
-    `rector-audit-${page.value}-${query.from}-${query.to}-${query.method}-${query.service}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
+    `rector-audit-${sort.value.column}:${sort.value.direction}-${page.value}-${query.from}-${query.to}-${query.method}-${query.service}-${query.search}-${query.users.map((v) => v.userId).join(':')}`,
     () => viewAuditLog(),
+    {
+        watch: [sort],
+    },
 );
 
 async function viewAuditLog(): Promise<ViewAuditLogResponse> {
@@ -58,6 +66,7 @@ async function viewAuditLog(): Promise<ViewAuditLogResponse> {
         pagination: {
             offset: offset.value,
         },
+        sort: sort.value,
         userIds: [],
     };
 
@@ -145,6 +154,7 @@ const columns = [
     {
         key: 'createdAt',
         label: t('common.created_at'),
+        sortable: true,
     },
     {
         key: 'user',
@@ -153,10 +163,12 @@ const columns = [
     {
         key: 'service',
         label: `${t('common.service')}/${t('common.method')}`,
+        sortable: true,
     },
     {
         key: 'state',
         label: t('common.state'),
+        sortable: true,
     },
     {
         key: 'data',

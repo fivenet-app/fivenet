@@ -98,6 +98,30 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "service":
+			column = tAuditLog.Service
+		case "state":
+			column = tAuditLog.State
+		case "createdAt":
+			fallthrough
+		default:
+			column = tAuditLog.CreatedAt
+		}
+
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys, tAuditLog.CreatedAt.DESC())
+	}
+
 	stmt := tAuditLog.
 		SELECT(
 			tAuditLog.ID,
@@ -123,9 +147,7 @@ func (s *Server) ViewAuditLog(ctx context.Context, req *ViewAuditLogRequest) (*V
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(
-			tAuditLog.CreatedAt.DESC(),
-		).
+		ORDER_BY(orderBys...).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)
 

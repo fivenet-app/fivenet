@@ -6,6 +6,7 @@ import Pagination from '~/components/partials/Pagination.vue';
 import QualificationsResultsListEntry from '~/components/qualifications/QualificationsResultsListEntry.vue';
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { ListQualificationsResultsResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import SortButton from '../partials/SortButton.vue';
 
 const props = withDefaults(
     defineProps<{
@@ -23,13 +24,22 @@ const props = withDefaults(
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'id',
+    direction: 'desc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`qualifications-results-${page.value}-${props.qualificationId}-${props.userId}`, () =>
-    listQualificationsResults(props.qualificationId, props.userId, props.status),
+} = useLazyAsyncData(
+    `qualifications-results-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}-${props.userId}`,
+    () => listQualificationsResults(props.qualificationId, props.userId, props.status),
+    {
+        watch: [sort],
+    },
 );
 
 async function listQualificationsResults(
@@ -42,6 +52,7 @@ async function listQualificationsResults(
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             qualificationId: qualificationId,
             userId,
             status: status ?? [],
@@ -69,6 +80,8 @@ watch(offset, async () => refresh());
                 <h3 class="text-2xl font-semibold leading-6">
                     {{ $t('common.qualification', 2) }}
                 </h3>
+
+                <SortButton v-model="sort" :fields="[{ label: 'common.id', value: 'id' }]" />
             </div>
         </template>
 

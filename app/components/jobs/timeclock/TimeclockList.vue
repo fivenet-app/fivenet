@@ -80,7 +80,7 @@ const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
 const sort = ref<TableSortable>({
-    column: 'time',
+    column: 'date',
     direction: 'desc',
 });
 
@@ -195,6 +195,7 @@ const columns = computed(() =>
             ? {
                   key: 'date',
                   label: t('common.date'),
+                  sortable: true,
               }
             : undefined,
         {
@@ -212,6 +213,7 @@ const columns = computed(() =>
         {
             key: 'time',
             label: t('common.time'),
+            sortable: true,
         },
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );

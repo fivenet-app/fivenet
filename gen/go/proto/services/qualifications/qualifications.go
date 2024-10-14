@@ -113,9 +113,30 @@ func (s *Server) ListQualifications(ctx context.Context, req *ListQualifications
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "id":
+			fallthrough
+		default:
+			column = tQualiResults.ID
+		}
+
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys, tQualiResults.ID.DESC())
+	}
+
 	stmt := s.listQualificationsQuery(condition, nil, userInfo).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tQuali.ID).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Qualifications); err != nil {

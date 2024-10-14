@@ -104,27 +104,38 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 
 	tUser := tUser.AS("colleague")
 	// Convert proto sort to db sorting
-	orderBys := []jet.OrderByClause{
-		tTimeClock.Date.DESC(),
-	}
+	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
-		var column jet.Column
+		var staticColumns []jet.OrderByClause
+		var columns []jet.Column
 		switch req.Sort.Column {
+		case "date":
+			columns = append(columns, tTimeClock.Date)
 		case "rank":
-			column = tUser.JobGrade
+			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
+			columns = append(columns, tUser.JobGrade)
 		case "name":
-			column = tUser.Firstname
+			staticColumns = append(staticColumns, tTimeClock.Date.DESC())
+			columns = append(columns, tUser.Firstname)
+		case "time":
+			fallthrough
 		default:
-			column = tTimeClock.SpentTime
+			columns = append(columns, tTimeClock.SpentTime)
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC(), tTimeClock.SpentTime.DESC())
-		} else {
-			orderBys = append(orderBys, column.DESC(), tTimeClock.SpentTime.DESC())
+		for _, column := range columns {
+			if req.Sort.Direction == database.AscSortDirection {
+				orderBys = append(orderBys, column.ASC(), tTimeClock.SpentTime.DESC())
+			} else {
+				orderBys = append(orderBys, column.DESC(), tTimeClock.SpentTime.DESC())
+			}
 		}
+		orderBys = append(staticColumns, orderBys...)
 	} else {
-		orderBys = append(orderBys, tTimeClock.SpentTime.DESC())
+		orderBys = append(orderBys,
+			tTimeClock.Date.DESC(),
+			tTimeClock.SpentTime.DESC(),
+		)
 	}
 
 	stmt := tTimeClock.

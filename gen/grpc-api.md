@@ -28,13 +28,6 @@
     - [Disponents](#resources-centrum-Disponents)
     - [UserUnitMapping](#resources-centrum-UserUnitMapping)
   
-- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
-    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
-    - [Settings](#resources-centrum-Settings)
-    - [Timings](#resources-centrum-Timings)
-  
-    - [CentrumMode](#resources-centrum-CentrumMode)
-  
 - [resources/centrum/units.proto](#resources_centrum_units-proto)
     - [Unit](#resources-centrum-Unit)
     - [UnitAssignment](#resources-centrum-UnitAssignment)
@@ -42,6 +35,13 @@
     - [UnitStatus](#resources-centrum-UnitStatus)
   
     - [StatusUnit](#resources-centrum-StatusUnit)
+  
+- [resources/centrum/settings.proto](#resources_centrum_settings-proto)
+    - [PredefinedStatus](#resources-centrum-PredefinedStatus)
+    - [Settings](#resources-centrum-Settings)
+    - [Timings](#resources-centrum-Timings)
+  
+    - [CentrumMode](#resources-centrum-CentrumMode)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
@@ -510,16 +510,6 @@
   
     - [JobsConductService](#services-jobs-JobsConductService)
   
-- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
-    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
-    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
-    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
-    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
-    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
-    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
-  
-    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
-  
 - [services/jobs/jobs.proto](#services_jobs_jobs-proto)
     - [GetColleagueRequest](#services-jobs-GetColleagueRequest)
     - [GetColleagueResponse](#services-jobs-GetColleagueResponse)
@@ -537,6 +527,16 @@
     - [SetMOTDResponse](#services-jobs-SetMOTDResponse)
   
     - [JobsService](#services-jobs-JobsService)
+  
+- [services/jobs/timeclock.proto](#services_jobs_timeclock-proto)
+    - [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest)
+    - [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse)
+    - [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest)
+    - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
+    - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
+    - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
+  
+    - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
   
 - [services/livemapper/livemap.proto](#services_livemapper_livemap-proto)
     - [CreateOrUpdateMarkerRequest](#services-livemapper-CreateOrUpdateMarkerRequest)
@@ -1085,90 +1085,6 @@
 
 
 
-<a name="resources_centrum_settings-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## resources/centrum/settings.proto
-
-
-
-<a name="resources-centrum-PredefinedStatus"></a>
-
-### PredefinedStatus
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| unit_status | [string](#string) | repeated |  |
-| dispatch_status | [string](#string) | repeated |  |
-
-
-
-
-
-
-<a name="resources-centrum-Settings"></a>
-
-### Settings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| enabled | [bool](#bool) |  |  |
-| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
-| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
-| timings | [Timings](#resources-centrum-Timings) |  |  |
-
-
-
-
-
-
-<a name="resources-centrum-Timings"></a>
-
-### Timings
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| dispatch_max_wait | [int64](#int64) |  |  |
-| require_unit | [bool](#bool) |  |  |
-| require_unit_reminder_seconds | [int64](#int64) |  |  |
-
-
-
-
-
- 
-
-
-<a name="resources-centrum-CentrumMode"></a>
-
-### CentrumMode
-
-
-| Name | Number | Description |
-| ---- | ------ | ----------- |
-| CENTRUM_MODE_UNSPECIFIED | 0 |  |
-| CENTRUM_MODE_MANUAL | 1 |  |
-| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
-| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
-| CENTRUM_MODE_SIMPLIFIED | 4 |  |
-
-
- 
-
- 
-
- 
-
-
-
 <a name="resources_centrum_units-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -1281,6 +1197,90 @@
 | STATUS_UNIT_AVAILABLE | 5 |  |
 | STATUS_UNIT_ON_BREAK | 6 |  |
 | STATUS_UNIT_BUSY | 7 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_centrum_settings-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/centrum/settings.proto
+
+
+
+<a name="resources-centrum-PredefinedStatus"></a>
+
+### PredefinedStatus
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| unit_status | [string](#string) | repeated |  |
+| dispatch_status | [string](#string) | repeated |  |
+
+
+
+
+
+
+<a name="resources-centrum-Settings"></a>
+
+### Settings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| job | [string](#string) |  |  |
+| enabled | [bool](#bool) |  |  |
+| mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| fallback_mode | [CentrumMode](#resources-centrum-CentrumMode) |  |  |
+| predefined_status | [PredefinedStatus](#resources-centrum-PredefinedStatus) | optional |  |
+| timings | [Timings](#resources-centrum-Timings) |  |  |
+
+
+
+
+
+
+<a name="resources-centrum-Timings"></a>
+
+### Timings
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| dispatch_max_wait | [int64](#int64) |  |  |
+| require_unit | [bool](#bool) |  |  |
+| require_unit_reminder_seconds | [int64](#int64) |  |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-centrum-CentrumMode"></a>
+
+### CentrumMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CENTRUM_MODE_UNSPECIFIED | 0 |  |
+| CENTRUM_MODE_MANUAL | 1 |  |
+| CENTRUM_MODE_CENTRAL_COMMAND | 2 |  |
+| CENTRUM_MODE_AUTO_ROUND_ROBIN | 3 |  |
+| CENTRUM_MODE_SIMPLIFIED | 4 |  |
 
 
  
@@ -7961,136 +7961,6 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
-<a name="services_jobs_timeclock-proto"></a>
-<p align="right"><a href="#top">Top</a></p>
-
-## services/jobs/timeclock.proto
-
-
-
-<a name="services-jobs-GetTimeclockStatsRequest"></a>
-
-### GetTimeclockStatsRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| user_id | [int32](#int32) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-GetTimeclockStatsResponse"></a>
-
-### GetTimeclockStatsResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesRequest"></a>
-
-### ListInactiveEmployeesRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| days | [int32](#int32) |  | Search params |
-
-
-
-
-
-
-<a name="services-jobs-ListInactiveEmployeesResponse"></a>
-
-### ListInactiveEmployeesResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockRequest"></a>
-
-### ListTimeclockRequest
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| user_ids | [int32](#int32) | repeated | Search params |
-| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| per_day | [bool](#bool) | optional |  |
-
-
-
-
-
-
-<a name="services-jobs-ListTimeclockResponse"></a>
-
-### ListTimeclockResponse
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
-| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
-
-
-
-
-
- 
-
- 
-
- 
-
-
-<a name="services-jobs-JobsTimeclockService"></a>
-
-### JobsTimeclockService
-
-
-| Method Name | Request Type | Response Type | Description |
-| ----------- | ------------ | ------------- | ------------|
-| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
-| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
-| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
-
- 
-
-
-
 <a name="services_jobs_jobs-proto"></a>
 <p align="right"><a href="#top">Top</a></p>
 
@@ -8329,6 +8199,136 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | SetJobsUserProps | [SetJobsUserPropsRequest](#services-jobs-SetJobsUserPropsRequest) | [SetJobsUserPropsResponse](#services-jobs-SetJobsUserPropsResponse) | @perm: Attrs=Access/StringList:[]string{&#34;Own&#34;, &#34;Lower_Rank&#34;, &#34;Same_Rank&#34;, &#34;Any&#34;}|Types/StringList:[]string{&#34;AbsenceDate&#34;,&#34;Note&#34;} |
 | GetMOTD | [GetMOTDRequest](#services-jobs-GetMOTDRequest) | [GetMOTDResponse](#services-jobs-GetMOTDResponse) | @perm: Name=Any |
 | SetMOTD | [SetMOTDRequest](#services-jobs-SetMOTDRequest) | [SetMOTDResponse](#services-jobs-SetMOTDResponse) | @perm |
+
+ 
+
+
+
+<a name="services_jobs_timeclock-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## services/jobs/timeclock.proto
+
+
+
+<a name="services-jobs-GetTimeclockStatsRequest"></a>
+
+### GetTimeclockStatsRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| user_id | [int32](#int32) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-GetTimeclockStatsResponse"></a>
+
+### GetTimeclockStatsResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesRequest"></a>
+
+### ListInactiveEmployeesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| days | [int32](#int32) |  | Search params |
+
+
+
+
+
+
+<a name="services-jobs-ListInactiveEmployeesResponse"></a>
+
+### ListInactiveEmployeesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| colleagues | [resources.jobs.Colleague](#resources-jobs-Colleague) | repeated |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockRequest"></a>
+
+### ListTimeclockRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| user_ids | [int32](#int32) | repeated | Search params |
+| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
+| per_day | [bool](#bool) | optional |  |
+
+
+
+
+
+
+<a name="services-jobs-ListTimeclockResponse"></a>
+
+### ListTimeclockResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
+| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+
+
+
+
+
+ 
+
+ 
+
+ 
+
+
+<a name="services-jobs-JobsTimeclockService"></a>
+
+### JobsTimeclockService
+
+
+| Method Name | Request Type | Response Type | Description |
+| ----------- | ------------ | ------------- | ------------|
+| ListTimeclock | [ListTimeclockRequest](#services-jobs-ListTimeclockRequest) | [ListTimeclockResponse](#services-jobs-ListTimeclockResponse) | @perm: Attrs=Access/StringList:[]string{&#34;All&#34;} |
+| GetTimeclockStats | [GetTimeclockStatsRequest](#services-jobs-GetTimeclockStatsRequest) | [GetTimeclockStatsResponse](#services-jobs-GetTimeclockStatsResponse) | @perm: Name=ListTimeclock |
+| ListInactiveEmployees | [ListInactiveEmployeesRequest](#services-jobs-ListInactiveEmployeesRequest) | [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse) | @perm |
 
  
 
@@ -9852,7 +9852,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| user_ids | [int32](#int32) | repeated |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| user_ids | [int32](#int32) | repeated | Search params |
 | from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | service | [string](#string) | optional |  |

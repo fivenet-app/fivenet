@@ -5,16 +5,24 @@ import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
 import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import QualificationsListEntry from '~/components/qualifications/QualificationsListEntry.vue';
 import type { ListQualificationsResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import SortButton from '../partials/SortButton.vue';
 
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
+
+const sort = ref<TableSortable>({
+    column: 'id',
+    direction: 'desc',
+});
 
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`qualifications-${page.value}`, () => listQualifications(), {});
+} = useLazyAsyncData(`qualifications-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listQualifications(), {
+    watch: [sort],
+});
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {
@@ -22,6 +30,7 @@ async function listQualifications(): Promise<ListQualificationsResponse> {
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
         });
         const { response } = await call;
 
@@ -43,9 +52,11 @@ watch(offset, async () => refresh());
     >
         <template #header>
             <div class="flex items-center justify-between">
-                <h3 class="text-2xl font-semibold leading-6">
+                <h3 class="flex-1 text-2xl font-semibold leading-6">
                     {{ $t('components.qualifications.all_qualifications') }}
                 </h3>
+
+                <SortButton v-model="sort" :fields="[{ label: 'common.id', value: 'id' }]" />
             </div>
         </template>
 
