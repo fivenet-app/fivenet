@@ -165,7 +165,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 			column = tDocumentShort.CreatedAt
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
+		if req.Sort.Direction == database.AscSortDirection {
 			orderBys = append(orderBys,
 				column.ASC(),
 				tDocumentShort.UpdatedAt.DESC(),

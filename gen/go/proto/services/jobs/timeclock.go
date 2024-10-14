@@ -304,10 +304,12 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 			column = tUser.JobGrade
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+		if column != nil {
+			if req.Sort.Direction == database.AscSortDirection {
+				orderBys = append(orderBys, column.ASC())
+			} else {
+				orderBys = append(orderBys, column.DESC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys,

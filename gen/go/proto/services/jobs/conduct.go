@@ -113,7 +113,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 			column = tConduct.ID
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
+		if req.Sort.Direction == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())

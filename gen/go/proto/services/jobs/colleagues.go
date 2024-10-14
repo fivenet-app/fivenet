@@ -105,10 +105,12 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 			column = tUser.JobGrade
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+		if column != nil {
+			if req.Sort.Direction == database.AscSortDirection {
+				orderBys = append(orderBys, column.ASC())
+			} else {
+				orderBys = append(orderBys, column.DESC())
+			}
 		}
 	} else {
 		orderBys = append(orderBys,
@@ -780,7 +782,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			column = tJobsUserActivity.CreatedAt
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
+		if req.Sort.Direction == database.AscSortDirection {
 			orderBys = append(orderBys, column.ASC())
 		} else {
 			orderBys = append(orderBys, column.DESC())

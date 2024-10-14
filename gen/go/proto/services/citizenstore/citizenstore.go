@@ -218,7 +218,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 			column = tUser.Firstname
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
+		if req.Sort.Direction == database.AscSortDirection {
 			orderBys = append(orderBys,
 				column.ASC(),
 				tUser.Lastname.ASC(),
@@ -504,14 +504,10 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 			column = tUserActivity.CreatedAt
 		}
 
-		if column != nil && req.Sort.Direction == database.AscSortDirection {
-			orderBys = append(orderBys,
-				column.ASC(),
-			)
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
 		} else {
-			orderBys = append(orderBys,
-				column.DESC(),
-			)
+			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
 		orderBys = append(orderBys,
