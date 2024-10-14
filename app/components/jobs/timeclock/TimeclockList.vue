@@ -22,6 +22,7 @@ const props = withDefaults(
         forceHistoricView?: boolean;
     }>(),
     {
+        userId: undefined,
         showStats: true,
         historicSubDays: 7,
         forceHistoricView: undefined,

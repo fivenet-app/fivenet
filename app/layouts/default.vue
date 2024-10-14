@@ -301,7 +301,6 @@ const groups = computed(() => [
                                 offset: 0,
                                 pageSize: 10,
                             },
-                            orderBy: [],
                             search: query,
                             categoryIds: [],
                             creatorIds: [],

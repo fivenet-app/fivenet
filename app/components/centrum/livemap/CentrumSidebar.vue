@@ -568,16 +568,17 @@ defineShortcuts({
                                                             </UButton>
                                                         </li>
 
-                                                        <template
-                                                            v-else
-                                                            v-for="id in getSortedOwnDispatches.slice().reverse()"
-                                                            :key="id"
-                                                        >
-                                                            <OwnDispatchEntry
-                                                                v-if="dispatches.get(id) !== undefined"
-                                                                v-model:selected-dispatch="selectedDispatch"
-                                                                :dispatch="dispatches.get(id)!"
-                                                            />
+                                                        <template v-else>
+                                                            <template
+                                                                v-for="id in getSortedOwnDispatches.slice().reverse()"
+                                                                :key="id"
+                                                            >
+                                                                <OwnDispatchEntry
+                                                                    v-if="dispatches.get(id) !== undefined"
+                                                                    v-model:selected-dispatch="selectedDispatch"
+                                                                    :dispatch="dispatches.get(id)!"
+                                                                />
+                                                            </template>
                                                         </template>
                                                     </ul>
                                                 </li>

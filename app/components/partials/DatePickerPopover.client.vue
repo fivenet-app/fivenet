@@ -16,6 +16,10 @@ const props = withDefaults(
         dateFormat?: string;
     }>(),
     {
+        modelValue: undefined,
+        popover: undefined,
+        button: undefined,
+        datePicker: undefined,
         dateFormat: 'dd.MM.yyyy',
     },
 );

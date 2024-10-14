@@ -116,7 +116,7 @@ const links = [
                 <DataNoDataBlock v-else-if="!colleague || !colleague.colleague" />
 
                 <template v-else>
-                    <ColleagueInfo :colleague="colleague.colleague" @update:absenceDates="updateColleageAbsence($event)" />
+                    <ColleagueInfo :colleague="colleague.colleague" @update:absence-dates="updateColleageAbsence($event)" />
 
                     <UDashboardToolbar class="overflow-x-auto px-1.5 py-0">
                         <UHorizontalNavigation :links="links" />

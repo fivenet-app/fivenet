@@ -63,7 +63,6 @@ async function listDocuments(): Promise<DocumentShort[]> {
                 offset: 0,
                 pageSize: 8,
             },
-            orderBy: [],
             search: queryDoc.value,
             categoryIds: [],
             creatorIds: [],

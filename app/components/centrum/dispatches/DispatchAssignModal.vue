@@ -29,7 +29,7 @@ const state = reactive<Schema>({
 });
 
 async function assignDispatch(): Promise<void> {
-    if (dispatch === undefined) {
+    if (dispatch.value === undefined) {
         return;
     }
 
