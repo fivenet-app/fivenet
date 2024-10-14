@@ -152,6 +152,36 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 		}
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "title":
+			column = tDocumentShort.Title
+		case "createdAt":
+			fallthrough
+		default:
+			column = tDocumentShort.CreatedAt
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys,
+				column.ASC(),
+				tDocumentShort.UpdatedAt.DESC(),
+			)
+		} else {
+			orderBys = append(orderBys,
+				column.DESC(),
+				tDocumentShort.UpdatedAt.DESC(),
+			)
+		}
+	} else {
+		orderBys = append(orderBys,
+			tDocumentShort.UpdatedAt.DESC(),
+		)
+	}
+
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageSize)
 	resp := &ListDocumentsResponse{
 		Pagination: pag,
@@ -161,6 +191,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 	}
 
 	stmt := s.listDocumentsQuery(condition, nil, userInfo).
+		ORDER_BY(orderBys...).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tDocumentShort.ID).
 		LIMIT(limit)

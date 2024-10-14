@@ -14,6 +14,7 @@ import { MessageType } from "@protobuf-ts/runtime";
 import { ConductEntry } from "../../resources/jobs/conduct";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { ConductType } from "../../resources/jobs/conduct";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Conduct Register
 
@@ -26,21 +27,25 @@ export interface ListConductEntriesRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
      * Search params
      *
-     * @generated from protobuf field: repeated resources.jobs.ConductType types = 2;
+     * @generated from protobuf field: repeated resources.jobs.ConductType types = 3;
      */
     types: ConductType[];
     /**
-     * @generated from protobuf field: optional bool show_expired = 3;
+     * @generated from protobuf field: optional bool show_expired = 4;
      */
     showExpired?: boolean;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 4;
+     * @generated from protobuf field: repeated int32 user_ids = 5;
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: repeated uint64 ids = 5 [jstype = JS_STRING];
+     * @generated from protobuf field: repeated uint64 ids = 6 [jstype = JS_STRING];
      */
     ids: string[];
 }
@@ -112,10 +117,11 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
     constructor() {
         super("services.jobs.ListConductEntriesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
-            { no: 3, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 5, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.ConductType", ConductType, "CONDUCT_TYPE_"] },
+            { no: 4, name: "show_expired", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 6, name: "ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 4 /*ScalarType.UINT64*/ }
         ]);
     }
     create(value?: PartialMessage<ListConductEntriesRequest>): ListConductEntriesRequest {
@@ -135,24 +141,27 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.ConductType types */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* repeated resources.jobs.ConductType types */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.types.push(reader.int32());
                     else
                         message.types.push(reader.int32());
                     break;
-                case /* optional bool show_expired */ 3:
+                case /* optional bool show_expired */ 4:
                     message.showExpired = reader.bool();
                     break;
-                case /* repeated int32 user_ids */ 4:
+                case /* repeated int32 user_ids */ 5:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* repeated uint64 ids = 5 [jstype = JS_STRING];*/ 5:
+                case /* repeated uint64 ids = 6 [jstype = JS_STRING];*/ 6:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.ids.push(reader.uint64().toString());
@@ -174,26 +183,29 @@ class ListConductEntriesRequest$Type extends MessageType<ListConductEntriesReque
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.ConductType types = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.ConductType types = 3; */
         if (message.types.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
+            writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.types.length; i++)
                 writer.int32(message.types[i]);
             writer.join();
         }
-        /* optional bool show_expired = 3; */
+        /* optional bool show_expired = 4; */
         if (message.showExpired !== undefined)
-            writer.tag(3, WireType.Varint).bool(message.showExpired);
-        /* repeated int32 user_ids = 4; */
+            writer.tag(4, WireType.Varint).bool(message.showExpired);
+        /* repeated int32 user_ids = 5; */
         if (message.userIds.length) {
-            writer.tag(4, WireType.LengthDelimited).fork();
+            writer.tag(5, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* repeated uint64 ids = 5 [jstype = JS_STRING]; */
+        /* repeated uint64 ids = 6 [jstype = JS_STRING]; */
         if (message.ids.length) {
-            writer.tag(5, WireType.LengthDelimited).fork();
+            writer.tag(6, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.ids.length; i++)
                 writer.uint64(message.ids[i]);
             writer.join();

@@ -101,6 +101,39 @@ func (m *ListConductEntriesRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListConductEntriesRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListConductEntriesRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListConductEntriesRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.ShowExpired != nil {
 		// no validation rules for ShowExpired
 	}

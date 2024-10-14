@@ -238,9 +238,9 @@ export const PredefinedStatus = new PredefinedStatus$Type();
 class Timings$Type extends MessageType<Timings> {
     constructor() {
         super("resources.centrum.Timings", [
-            { no: 1, name: "dispatch_max_wait", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ },
+            { no: 1, name: "dispatch_max_wait", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { int64: { lt: "6000", gt: "30" } } } },
             { no: 2, name: "require_unit", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
-            { no: 3, name: "require_unit_reminder_seconds", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 3, name: "require_unit_reminder_seconds", kind: "scalar", T: 3 /*ScalarType.INT64*/, L: 2 /*LongType.NUMBER*/, options: { "validate.rules": { int64: { lt: "6000", gt: "30" } } } }
         ]);
     }
     create(value?: PartialMessage<Timings>): Timings {

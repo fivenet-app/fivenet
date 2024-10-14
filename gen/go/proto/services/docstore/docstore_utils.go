@@ -132,11 +132,7 @@ func (s *Server) listDocumentsQuery(where jet.BoolExpression, onlyColumns jet.Pr
 		FROM(tables).
 		WHERE(jet.AND(
 			wheres...,
-		)).
-		ORDER_BY(
-			tDocumentShort.CreatedAt.DESC(),
-			tDocumentShort.UpdatedAt.DESC(),
-		)
+		))
 }
 
 func (s *Server) getDocumentQuery(where jet.BoolExpression, onlyColumns jet.ProjectionList, userInfo *userinfo.UserInfo, withContent bool) jet.SelectStatement {

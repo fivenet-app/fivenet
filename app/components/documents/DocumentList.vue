@@ -50,14 +50,26 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData(`documents-${page.value}`, () => listDocuments());
+const sort = ref<TableSortable>({
+    column: 'createdAt',
+    direction: 'desc',
+});
+
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`documents-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listDocuments(), {
+    watch: [sort],
+});
 
 async function listDocuments(): Promise<ListDocumentsResponse> {
     const req: ListDocumentsRequest = {
         pagination: {
             offset: offset.value,
         },
-        orderBy: [],
+        sort: sort.value,
         search: query.value.title ?? '',
         categoryIds: [],
         creatorIds: [],

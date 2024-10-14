@@ -13,7 +13,7 @@ import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Vehicle } from "../../resources/vehicles/vehicles";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { OrderBy } from "../../resources/common/database/database";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.dmv.ListVehiclesRequest
@@ -24,9 +24,9 @@ export interface ListVehiclesRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: repeated resources.common.database.OrderBy orderBy = 2;
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
      */
-    orderBy: OrderBy[];
+    sort?: Sort;
     /**
      * Search params
      *
@@ -60,7 +60,7 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
     constructor() {
         super("services.dmv.ListVehiclesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "orderBy", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => OrderBy, options: { "validate.rules": { repeated: { maxItems: "3" } } } },
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
             { no: 3, name: "license_plate", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 4, name: "model", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "32" } } } },
             { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
@@ -68,7 +68,6 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
     }
     create(value?: PartialMessage<ListVehiclesRequest>): ListVehiclesRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.orderBy = [];
         if (value !== undefined)
             reflectionMergePartial<ListVehiclesRequest>(this, message, value);
         return message;
@@ -81,8 +80,8 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.common.database.OrderBy orderBy */ 2:
-                    message.orderBy.push(OrderBy.internalBinaryRead(reader, reader.uint32(), options));
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
                 case /* optional string license_plate */ 3:
                     message.licensePlate = reader.string();
@@ -108,9 +107,9 @@ class ListVehiclesRequest$Type extends MessageType<ListVehiclesRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.common.database.OrderBy orderBy = 2; */
-        for (let i = 0; i < message.orderBy.length; i++)
-            OrderBy.internalBinaryWrite(message.orderBy[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
         /* optional string license_plate = 3; */
         if (message.licensePlate !== undefined)
             writer.tag(3, WireType.LengthDelimited).string(message.licensePlate);

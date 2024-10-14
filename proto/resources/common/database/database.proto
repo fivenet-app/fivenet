@@ -18,10 +18,10 @@ message PaginationResponse {
   int64 page_size = 4 [jstype = JS_NUMBER];
 }
 
-message OrderBy {
+message Sort {
   string column = 1 [(validate.rules).string = {
     min_len: 1,
     max_len: 64
   }];
-  bool desc = 2;
+  string direction = 2 [(validate.rules).string = { in: ["asc", "desc"] }];
 }

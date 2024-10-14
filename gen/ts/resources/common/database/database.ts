@@ -45,17 +45,17 @@ export interface PaginationResponse {
     pageSize: number;
 }
 /**
- * @generated from protobuf message resources.common.database.OrderBy
+ * @generated from protobuf message resources.common.database.Sort
  */
-export interface OrderBy {
+export interface Sort {
     /**
      * @generated from protobuf field: string column = 1;
      */
     column: string;
     /**
-     * @generated from protobuf field: bool desc = 2;
+     * @generated from protobuf field: string direction = 2;
      */
-    desc: boolean;
+    direction: string;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class PaginationRequest$Type extends MessageType<PaginationRequest> {
@@ -183,22 +183,22 @@ class PaginationResponse$Type extends MessageType<PaginationResponse> {
  */
 export const PaginationResponse = new PaginationResponse$Type();
 // @generated message type with reflection information, may provide speed optimized methods
-class OrderBy$Type extends MessageType<OrderBy> {
+class Sort$Type extends MessageType<Sort> {
     constructor() {
-        super("resources.common.database.OrderBy", [
+        super("resources.common.database.Sort", [
             { no: 1, name: "column", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { minLen: "1", maxLen: "64" } } } },
-            { no: 2, name: "desc", kind: "scalar", T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "direction", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { in: ["asc", "desc"] } } } }
         ]);
     }
-    create(value?: PartialMessage<OrderBy>): OrderBy {
+    create(value?: PartialMessage<Sort>): Sort {
         const message = globalThis.Object.create((this.messagePrototype!));
         message.column = "";
-        message.desc = false;
+        message.direction = "";
         if (value !== undefined)
-            reflectionMergePartial<OrderBy>(this, message, value);
+            reflectionMergePartial<Sort>(this, message, value);
         return message;
     }
-    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: OrderBy): OrderBy {
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Sort): Sort {
         let message = target ?? this.create(), end = reader.pos + length;
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
@@ -206,8 +206,8 @@ class OrderBy$Type extends MessageType<OrderBy> {
                 case /* string column */ 1:
                     message.column = reader.string();
                     break;
-                case /* bool desc */ 2:
-                    message.desc = reader.bool();
+                case /* string direction */ 2:
+                    message.direction = reader.string();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -220,13 +220,13 @@ class OrderBy$Type extends MessageType<OrderBy> {
         }
         return message;
     }
-    internalBinaryWrite(message: OrderBy, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+    internalBinaryWrite(message: Sort, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
         /* string column = 1; */
         if (message.column !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.column);
-        /* bool desc = 2; */
-        if (message.desc !== false)
-            writer.tag(2, WireType.Varint).bool(message.desc);
+        /* string direction = 2; */
+        if (message.direction !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.direction);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -234,6 +234,6 @@ class OrderBy$Type extends MessageType<OrderBy> {
     }
 }
 /**
- * @generated MessageType for protobuf message resources.common.database.OrderBy
+ * @generated MessageType for protobuf message resources.common.database.Sort
  */
-export const OrderBy = new OrderBy$Type();
+export const Sort = new Sort$Type();

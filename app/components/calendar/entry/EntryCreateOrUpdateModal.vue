@@ -185,7 +185,9 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                         async () =>
                                             (
                                                 await calendarStore.listCalendars({
-                                                    pagination: { offset: 0 },
+                                                    pagination: {
+                                                        offset: 0,
+                                                    },
                                                     onlyPublic: false,
                                                     minAccessLevel: AccessLevel.EDIT,
                                                 })

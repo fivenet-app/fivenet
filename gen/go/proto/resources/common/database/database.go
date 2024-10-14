@@ -5,6 +5,11 @@ const (
 	NoTotalCount       int64 = -1
 )
 
+const (
+	AscSortDirection  = "asc"
+	DescSortDirection = "desc"
+)
+
 type DataCount struct {
 	TotalCount int64 // alias:"total_count"
 }

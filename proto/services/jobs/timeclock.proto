@@ -14,11 +14,12 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs;j
 
 message ListTimeclockRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  // Search
-  repeated int32 user_ids = 2;
-  optional resources.timestamp.Timestamp from = 3;
-  optional resources.timestamp.Timestamp to = 4;
-  optional bool per_day = 5;
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  repeated int32 user_ids = 3;
+  optional resources.timestamp.Timestamp from = 4;
+  optional resources.timestamp.Timestamp to = 5;
+  optional bool per_day = 6;
 }
 
 message ListTimeclockResponse {
@@ -39,7 +40,9 @@ message GetTimeclockStatsResponse {
 
 message ListInactiveEmployeesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  int32 days = 2 [(validate.rules).int32.gte = 1];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  int32 days = 3 [(validate.rules).int32.gte = 1];
 }
 
 message ListInactiveEmployeesResponse {

@@ -207,6 +207,35 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "name":
+			fallthrough
+		default:
+			column = tUser.Firstname
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys,
+				column.ASC(),
+				tUser.Lastname.ASC(),
+			)
+		} else {
+			orderBys = append(orderBys,
+				column.DESC(),
+				tUser.Lastname.DESC(),
+			)
+		}
+	} else {
+		orderBys = append(orderBys,
+			tUser.Firstname.ASC(),
+			tUser.Lastname.ASC(),
+		)
+	}
+
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
@@ -220,10 +249,7 @@ func (s *Server) ListCitizens(ctx context.Context, req *ListCitizensRequest) (*L
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(
-			tUser.Firstname.ASC(),
-			tUser.Lastname.ASC(),
-		).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Users); err != nil {

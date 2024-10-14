@@ -11,13 +11,14 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/citize
 
 message ListCitizensRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
   // Search params
-  string search = 2 [(validate.rules).string.max_len = 50];
-  optional bool wanted = 3;
-  optional string phone_number = 4 [(validate.rules).string.max_len = 20];
-  optional uint32 traffic_infraction_points = 5;
-  optional string dateofbirth = 6 [(validate.rules).string.max_len = 10];
-  optional uint64 open_fines = 7;
+  string search = 3 [(validate.rules).string.max_len = 50];
+  optional bool wanted = 4;
+  optional string phone_number = 5 [(validate.rules).string.max_len = 20];
+  optional uint32 traffic_infraction_points = 6;
+  optional string dateofbirth = 7 [(validate.rules).string.max_len = 10];
+  optional uint64 open_fines = 8;
 }
 
 message ListCitizensResponse {

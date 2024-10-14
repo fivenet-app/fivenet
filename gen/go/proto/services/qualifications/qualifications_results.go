@@ -121,6 +121,30 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "status":
+			column = tQualiResults.Status
+		case "createdAt":
+			fallthrough
+		default:
+			column = tQualiResults.CreatedAt
+		}
+
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys,
+			tQualiResults.CreatedAt.DESC(),
+		)
+	}
+
 	stmt := tQualiResults.
 		SELECT(
 			tQualiResults.ID,
@@ -174,7 +198,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 				),
 		).
 		GROUP_BY(tQualiResults.Status, tQualiResults.CreatedAt).
-		ORDER_BY(tQualiResults.CreatedAt.DESC()).
+		ORDER_BY(orderBys...).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)

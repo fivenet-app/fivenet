@@ -92,6 +92,35 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "name":
+			column = nil
+		case "rank":
+			fallthrough
+		default:
+			column = tUser.JobGrade
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys,
+			tUser.JobGrade.ASC(),
+		)
+	}
+	// Always append firstname and lastname sorting
+	orderBys = append(orderBys,
+		tUser.Firstname.ASC(),
+		tUser.Lastname.ASC(),
+	)
+
 	stmt := tUser.
 		SELECT(
 			tUser.ID,
@@ -120,11 +149,7 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(
-			tUser.JobGrade.ASC(),
-			tUser.Firstname.ASC(),
-			tUser.Lastname.ASC(),
-		).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Colleagues); err != nil {
@@ -744,6 +769,28 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "createdAt":
+			fallthrough
+		default:
+			column = tJobsUserActivity.CreatedAt
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys,
+			tJobsUserActivity.CreatedAt.DESC(),
+		)
+	}
+
 	tTargetUserProps := tUserProps.AS("target_user_props")
 	tTargetJobsUserProps := tJobsUserProps.AS("fivenet_jobs_user_props")
 	tSourceUserProps := tUserProps.AS("source_user_props")
@@ -800,7 +847,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 		).
 		WHERE(condition).
 		OFFSET(pag.Offset).
-		ORDER_BY(tJobsUserActivity.CreatedAt.DESC(), tJobsUserActivity.ID.DESC()).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Activity); err != nil {

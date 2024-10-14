@@ -12,11 +12,12 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs;j
 
 message ListConductEntriesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
   // Search params
-  repeated resources.jobs.ConductType types = 2;
-  optional bool show_expired = 3;
-  repeated int32 user_ids = 4;
-  repeated uint64 ids = 5 [jstype = JS_STRING];
+  repeated resources.jobs.ConductType types = 3;
+  optional bool show_expired = 4;
+  repeated int32 user_ids = 5;
+  repeated uint64 ids = 6 [jstype = JS_STRING];
 }
 
 message ListConductEntriesResponse {

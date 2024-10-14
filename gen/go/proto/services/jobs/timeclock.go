@@ -103,6 +103,30 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 	}
 
 	tUser := tUser.AS("colleague")
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{
+		tTimeClock.Date.DESC(),
+	}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "rank":
+			column = tUser.JobGrade
+		case "name":
+			column = tUser.Firstname
+		default:
+			column = tTimeClock.SpentTime
+		}
+
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC(), tTimeClock.SpentTime.DESC())
+		} else {
+			orderBys = append(orderBys, column.DESC(), tTimeClock.SpentTime.DESC())
+		}
+	} else {
+		orderBys = append(orderBys, tTimeClock.SpentTime.DESC())
+	}
+
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.Job,
@@ -139,10 +163,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(
-			tTimeClock.Date.DESC(),
-			tTimeClock.SpentTime.DESC(),
-		).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
@@ -151,9 +172,10 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		}
 	}
 
+	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
 	for i := 0; i < len(resp.Entries); i++ {
 		if resp.Entries[i].User != nil {
-			s.enricher.EnrichJobInfo(resp.Entries[i].User)
+			jobInfoFn(resp.Entries[i].User)
 		}
 	}
 
@@ -269,6 +291,34 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "name":
+			column = nil
+		case "rank":
+			fallthrough
+		default:
+			column = tUser.JobGrade
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys,
+			tConduct.ID.DESC(),
+		)
+	}
+	orderBys = append(orderBys,
+		tUser.Firstname.ASC(),
+		tUser.Lastname.ASC(),
+	)
+
 	stmt := tTimeClock.
 		SELECT(
 			tTimeClock.UserID,
@@ -299,11 +349,7 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 				),
 		).
 		WHERE(condition).
-		ORDER_BY(
-			tUser.JobGrade.ASC(),
-			tUser.Firstname.ASC(),
-			tUser.Lastname.ASC(),
-		).
+		ORDER_BY(orderBys...).
 		GROUP_BY(tTimeClock.UserID).
 		OFFSET(req.Pagination.Offset).
 		LIMIT(limit)

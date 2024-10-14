@@ -16,6 +16,7 @@ import { JobsUserActivity } from "../../resources/jobs/colleagues";
 import { JobsUserActivityType } from "../../resources/jobs/colleagues";
 import { Colleague } from "../../resources/jobs/colleagues";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Colleagues
 
@@ -28,17 +29,21 @@ export interface ListColleaguesRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
      * Search params
      *
-     * @generated from protobuf field: string search = 2;
+     * @generated from protobuf field: string search = 3;
      */
     search: string;
     /**
-     * @generated from protobuf field: optional int32 user_id = 3;
+     * @generated from protobuf field: optional int32 user_id = 4;
      */
     userId?: number;
     /**
-     * @generated from protobuf field: optional bool absent = 4;
+     * @generated from protobuf field: optional bool absent = 5;
      */
     absent?: boolean;
 }
@@ -100,11 +105,17 @@ export interface ListColleagueActivityRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: repeated int32 user_ids = 2;
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: repeated int32 user_ids = 3;
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: repeated resources.jobs.JobsUserActivityType activity_types = 3;
+     * @generated from protobuf field: repeated resources.jobs.JobsUserActivityType activity_types = 4;
      */
     activityTypes: JobsUserActivityType[];
 }
@@ -186,9 +197,10 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
     constructor() {
         super("services.jobs.ListColleaguesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 3, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ },
+            { no: 5, name: "absent", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListColleaguesRequest>): ListColleaguesRequest {
@@ -206,13 +218,16 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* string search */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* string search */ 3:
                     message.search = reader.string();
                     break;
-                case /* optional int32 user_id */ 3:
+                case /* optional int32 user_id */ 4:
                     message.userId = reader.int32();
                     break;
-                case /* optional bool absent */ 4:
+                case /* optional bool absent */ 5:
                     message.absent = reader.bool();
                     break;
                 default:
@@ -230,15 +245,18 @@ class ListColleaguesRequest$Type extends MessageType<ListColleaguesRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string search = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string search = 3; */
         if (message.search !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.search);
-        /* optional int32 user_id = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.search);
+        /* optional int32 user_id = 4; */
         if (message.userId !== undefined)
-            writer.tag(3, WireType.Varint).int32(message.userId);
-        /* optional bool absent = 4; */
+            writer.tag(4, WireType.Varint).int32(message.userId);
+        /* optional bool absent = 5; */
         if (message.absent !== undefined)
-            writer.tag(4, WireType.Varint).bool(message.absent);
+            writer.tag(5, WireType.Varint).bool(message.absent);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -479,8 +497,9 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
     constructor() {
         super("services.jobs.ListColleagueActivityRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10" } } } }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "activity_types", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.jobs.JobsUserActivityType", JobsUserActivityType, "JOBS_USER_ACTIVITY_TYPE_"], options: { "validate.rules": { repeated: { maxItems: "10" } } } }
         ]);
     }
     create(value?: PartialMessage<ListColleagueActivityRequest>): ListColleagueActivityRequest {
@@ -499,14 +518,17 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated int32 user_ids */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* repeated int32 user_ids */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* repeated resources.jobs.JobsUserActivityType activity_types */ 3:
+                case /* repeated resources.jobs.JobsUserActivityType activity_types */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.activityTypes.push(reader.int32());
@@ -528,16 +550,19 @@ class ListColleagueActivityRequest$Type extends MessageType<ListColleagueActivit
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 user_ids = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 user_ids = 3; */
         if (message.userIds.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
+            writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* repeated resources.jobs.JobsUserActivityType activity_types = 3; */
+        /* repeated resources.jobs.JobsUserActivityType activity_types = 4; */
         if (message.activityTypes.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
+            writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.activityTypes.length; i++)
                 writer.int32(message.activityTypes[i]);
             writer.join();

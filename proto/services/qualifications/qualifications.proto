@@ -13,8 +13,9 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/qualif
 
 message ListQualificationsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
   // Search params
-  optional string search = 2;
+  optional string search = 3;
 }
 
 message ListQualificationsResponse {
@@ -75,10 +76,11 @@ message SetQualificationAccessResponse {}
 
 message ListQualificationRequestsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
   // Search params
-  optional uint64 qualification_id = 2 [jstype = JS_STRING];
-  repeated resources.qualifications.RequestStatus status = 3;
-  optional int32 user_id = 4;
+  optional uint64 qualification_id = 3 [jstype = JS_STRING];
+  repeated resources.qualifications.RequestStatus status = 4;
+  optional int32 user_id = 5;
 }
 
 message ListQualificationRequestsResponse {
@@ -105,10 +107,11 @@ message DeleteQualificationReqResponse {}
 
 message ListQualificationsResultsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
   // Search params
-  optional uint64 qualification_id = 2 [jstype = JS_STRING];
-  repeated resources.qualifications.ResultStatus status = 3;
-  optional int32 user_id = 4;
+  optional uint64 qualification_id = 3 [jstype = JS_STRING];
+  repeated resources.qualifications.ResultStatus status = 4;
+  optional int32 user_id = 5;
 }
 
 message ListQualificationsResultsResponse {

@@ -374,11 +374,29 @@ func (m *Timings) validate(all bool) error {
 
 	var errors []error
 
-	// no validation rules for DispatchMaxWait
+	if val := m.GetDispatchMaxWait(); val <= 30 || val >= 6000 {
+		err := TimingsValidationError{
+			field:  "DispatchMaxWait",
+			reason: "value must be inside range (30, 6000)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	// no validation rules for RequireUnit
 
-	// no validation rules for RequireUnitReminderSeconds
+	if val := m.GetRequireUnitReminderSeconds(); val <= 30 || val >= 6000 {
+		err := TimingsValidationError{
+			field:  "RequireUnitReminderSeconds",
+			reason: "value must be inside range (30, 6000)",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
 		return TimingsMultiError(errors)

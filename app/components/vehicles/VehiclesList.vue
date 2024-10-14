@@ -44,9 +44,21 @@ const query = ref<Schema>({
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'plate',
+    direction: 'asc',
+});
+
 const hideVehicleModell = ref(false);
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData(`vehicles-${page.value}`, () => listVehicles());
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`vehicles-${sort.value.column}:${sort.value.direction}-${page.value}`, () => listVehicles(), {
+    watch: [sort],
+});
 
 async function listVehicles(): Promise<ListVehiclesResponse> {
     try {
@@ -54,7 +66,7 @@ async function listVehicles(): Promise<ListVehiclesResponse> {
             pagination: {
                 offset: offset.value,
             },
-            orderBy: [],
+            sort: sort.value,
             licensePlate: query.value.licensePlate,
             model: query.value.model,
             userId: query.value.userId,
@@ -106,10 +118,12 @@ const columns = computed(() =>
         {
             key: 'plate',
             label: t('common.plate'),
+            sortable: true,
         },
         {
             key: 'model',
             label: t('common.model'),
+            sortable: true,
         },
         {
             key: 'type',
@@ -203,10 +217,12 @@ defineShortcuts({
 
     <UTable
         v-else
+        v-model:sort="sort"
         :loading="loading"
         :columns="columns"
         :rows="data?.vehicles"
         :empty-state="{ icon: 'i-mdi-car', label: $t('common.not_found', [$t('common.vehicle', 2)]) }"
+        sort-mode="manual"
         class="flex-1"
     >
         <template #plate-data="{ row: vehicle }">

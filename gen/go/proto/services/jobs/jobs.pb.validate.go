@@ -112,6 +112,39 @@ func (m *ListColleaguesRequest) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListColleaguesRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListColleaguesRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListColleaguesRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.UserId != nil {
 		// no validation rules for UserId
 	}
@@ -904,6 +937,39 @@ func (m *ListColleagueActivityRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListColleagueActivityRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListColleagueActivityRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListColleagueActivityRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

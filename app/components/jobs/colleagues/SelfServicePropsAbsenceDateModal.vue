@@ -67,7 +67,6 @@ async function setAbsenceDate(values: Schema): Promise<void> {
         });
         const { response } = await call;
 
-        console.log('AbsenceDate', userProps, response.props);
         emit('update:absenceDates', {
             userId: props.userId,
             absenceBegin: response.props?.absenceBegin,

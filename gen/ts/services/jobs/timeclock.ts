@@ -17,6 +17,7 @@ import { TimeclockStats } from "../../resources/jobs/timeclock";
 import { TimeclockEntry } from "../../resources/jobs/timeclock";
 import { PaginationResponse } from "../../resources/common/database/database";
 import { Timestamp } from "../../resources/timestamp/timestamp";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Time Clock
 
@@ -29,21 +30,25 @@ export interface ListTimeclockRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * Search
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
+     * Search params
      *
-     * @generated from protobuf field: repeated int32 user_ids = 2;
+     * @generated from protobuf field: repeated int32 user_ids = 3;
      */
     userIds: number[];
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 3;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 4;
      */
     from?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 4;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 5;
      */
     to?: Timestamp;
     /**
-     * @generated from protobuf field: optional bool per_day = 5;
+     * @generated from protobuf field: optional bool per_day = 6;
      */
     perDay?: boolean;
 }
@@ -99,7 +104,13 @@ export interface ListInactiveEmployeesRequest {
      */
     pagination?: PaginationRequest;
     /**
-     * @generated from protobuf field: int32 days = 2;
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
+     * Search params
+     *
+     * @generated from protobuf field: int32 days = 3;
      */
     days: number;
 }
@@ -121,10 +132,11 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
     constructor() {
         super("services.jobs.ListTimeclockRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "from", kind: "message", T: () => Timestamp },
-            { no: 4, name: "to", kind: "message", T: () => Timestamp },
-            { no: 5, name: "per_day", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
+            { no: 4, name: "from", kind: "message", T: () => Timestamp },
+            { no: 5, name: "to", kind: "message", T: () => Timestamp },
+            { no: 6, name: "per_day", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
         ]);
     }
     create(value?: PartialMessage<ListTimeclockRequest>): ListTimeclockRequest {
@@ -142,20 +154,23 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated int32 user_ids */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* repeated int32 user_ids */ 3:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
                     break;
-                case /* optional resources.timestamp.Timestamp from */ 3:
+                case /* optional resources.timestamp.Timestamp from */ 4:
                     message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
                     break;
-                case /* optional resources.timestamp.Timestamp to */ 4:
+                case /* optional resources.timestamp.Timestamp to */ 5:
                     message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
                     break;
-                case /* optional bool per_day */ 5:
+                case /* optional bool per_day */ 6:
                     message.perDay = reader.bool();
                     break;
                 default:
@@ -173,22 +188,25 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 user_ids = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated int32 user_ids = 3; */
         if (message.userIds.length) {
-            writer.tag(2, WireType.LengthDelimited).fork();
+            writer.tag(3, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* optional resources.timestamp.Timestamp from = 3; */
+        /* optional resources.timestamp.Timestamp from = 4; */
         if (message.from)
-            Timestamp.internalBinaryWrite(message.from, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp to = 4; */
+            Timestamp.internalBinaryWrite(message.from, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp to = 5; */
         if (message.to)
-            Timestamp.internalBinaryWrite(message.to, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool per_day = 5; */
+            Timestamp.internalBinaryWrite(message.to, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* optional bool per_day = 6; */
         if (message.perDay !== undefined)
-            writer.tag(5, WireType.Varint).bool(message.perDay);
+            writer.tag(6, WireType.Varint).bool(message.perDay);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -373,7 +391,8 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
     constructor() {
         super("services.jobs.ListInactiveEmployeesRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 1 } } } }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "days", kind: "scalar", T: 5 /*ScalarType.INT32*/, options: { "validate.rules": { int32: { gte: 1 } } } }
         ]);
     }
     create(value?: PartialMessage<ListInactiveEmployeesRequest>): ListInactiveEmployeesRequest {
@@ -391,7 +410,10 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* int32 days */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* int32 days */ 3:
                     message.days = reader.int32();
                     break;
                 default:
@@ -409,9 +431,12 @@ class ListInactiveEmployeesRequest$Type extends MessageType<ListInactiveEmployee
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* int32 days = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* int32 days = 3; */
         if (message.days !== 0)
-            writer.tag(2, WireType.Varint).int32(message.days);
+            writer.tag(3, WireType.Varint).int32(message.days);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

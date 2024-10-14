@@ -273,21 +273,21 @@ var _ interface {
 	ErrorName() string
 } = PaginationResponseValidationError{}
 
-// Validate checks the field values on OrderBy with the rules defined in the
-// proto definition for this message. If any rules are violated, the first
-// error encountered is returned, or nil if there are no violations.
-func (m *OrderBy) Validate() error {
+// Validate checks the field values on Sort with the rules defined in the proto
+// definition for this message. If any rules are violated, the first error
+// encountered is returned, or nil if there are no violations.
+func (m *Sort) Validate() error {
 	return m.validate(false)
 }
 
-// ValidateAll checks the field values on OrderBy with the rules defined in the
+// ValidateAll checks the field values on Sort with the rules defined in the
 // proto definition for this message. If any rules are violated, the result is
-// a list of violation errors wrapped in OrderByMultiError, or nil if none found.
-func (m *OrderBy) ValidateAll() error {
+// a list of violation errors wrapped in SortMultiError, or nil if none found.
+func (m *Sort) ValidateAll() error {
 	return m.validate(true)
 }
 
-func (m *OrderBy) validate(all bool) error {
+func (m *Sort) validate(all bool) error {
 	if m == nil {
 		return nil
 	}
@@ -295,7 +295,7 @@ func (m *OrderBy) validate(all bool) error {
 	var errors []error
 
 	if l := utf8.RuneCountInString(m.GetColumn()); l < 1 || l > 64 {
-		err := OrderByValidationError{
+		err := SortValidationError{
 			field:  "Column",
 			reason: "value length must be between 1 and 64 runes, inclusive",
 		}
@@ -305,21 +305,30 @@ func (m *OrderBy) validate(all bool) error {
 		errors = append(errors, err)
 	}
 
-	// no validation rules for Desc
+	if _, ok := _Sort_Direction_InLookup[m.GetDirection()]; !ok {
+		err := SortValidationError{
+			field:  "Direction",
+			reason: "value must be in list [asc desc]",
+		}
+		if !all {
+			return err
+		}
+		errors = append(errors, err)
+	}
 
 	if len(errors) > 0 {
-		return OrderByMultiError(errors)
+		return SortMultiError(errors)
 	}
 
 	return nil
 }
 
-// OrderByMultiError is an error wrapping multiple validation errors returned
-// by OrderBy.ValidateAll() if the designated constraints aren't met.
-type OrderByMultiError []error
+// SortMultiError is an error wrapping multiple validation errors returned by
+// Sort.ValidateAll() if the designated constraints aren't met.
+type SortMultiError []error
 
 // Error returns a concatenation of all the error messages it wraps.
-func (m OrderByMultiError) Error() string {
+func (m SortMultiError) Error() string {
 	var msgs []string
 	for _, err := range m {
 		msgs = append(msgs, err.Error())
@@ -328,11 +337,11 @@ func (m OrderByMultiError) Error() string {
 }
 
 // AllErrors returns a list of validation violation errors.
-func (m OrderByMultiError) AllErrors() []error { return m }
+func (m SortMultiError) AllErrors() []error { return m }
 
-// OrderByValidationError is the validation error returned by OrderBy.Validate
-// if the designated constraints aren't met.
-type OrderByValidationError struct {
+// SortValidationError is the validation error returned by Sort.Validate if the
+// designated constraints aren't met.
+type SortValidationError struct {
 	field  string
 	reason string
 	cause  error
@@ -340,22 +349,22 @@ type OrderByValidationError struct {
 }
 
 // Field function returns field value.
-func (e OrderByValidationError) Field() string { return e.field }
+func (e SortValidationError) Field() string { return e.field }
 
 // Reason function returns reason value.
-func (e OrderByValidationError) Reason() string { return e.reason }
+func (e SortValidationError) Reason() string { return e.reason }
 
 // Cause function returns cause value.
-func (e OrderByValidationError) Cause() error { return e.cause }
+func (e SortValidationError) Cause() error { return e.cause }
 
 // Key function returns key value.
-func (e OrderByValidationError) Key() bool { return e.key }
+func (e SortValidationError) Key() bool { return e.key }
 
 // ErrorName returns error name.
-func (e OrderByValidationError) ErrorName() string { return "OrderByValidationError" }
+func (e SortValidationError) ErrorName() string { return "SortValidationError" }
 
 // Error satisfies the builtin error interface
-func (e OrderByValidationError) Error() string {
+func (e SortValidationError) Error() string {
 	cause := ""
 	if e.cause != nil {
 		cause = fmt.Sprintf(" | caused by: %v", e.cause)
@@ -367,14 +376,14 @@ func (e OrderByValidationError) Error() string {
 	}
 
 	return fmt.Sprintf(
-		"invalid %sOrderBy.%s: %s%s",
+		"invalid %sSort.%s: %s%s",
 		key,
 		e.field,
 		e.reason,
 		cause)
 }
 
-var _ error = OrderByValidationError{}
+var _ error = SortValidationError{}
 
 var _ interface {
 	Field() string
@@ -382,4 +391,9 @@ var _ interface {
 	Key() bool
 	Cause() error
 	ErrorName() string
-} = OrderByValidationError{}
+} = SortValidationError{}
+
+var _Sort_Direction_InLookup = map[string]struct{}{
+	"asc":  {},
+	"desc": {},
+}

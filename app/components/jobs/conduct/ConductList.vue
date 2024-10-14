@@ -47,16 +47,22 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'id',
+    direction: 'desc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-conduct-${page.value}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
+    `jobs-conduct-${sort.value.column}:${sort.value.direction}-${page.value}-${query.types.join(',')}-${query.showExpired}-${query.id}`,
     () => listConductEntries(),
     {
         transform: (input) => ({ ...input, entries: wrapRows(input?.entries, columns) }),
+        watch: [sort],
     },
 );
 
@@ -75,6 +81,7 @@ async function listConductEntries(): Promise<ListConductEntriesResponse> {
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             types: query.types,
             userIds: userIds,
             showExpired: query.showExpired,
@@ -132,6 +139,7 @@ const columns = [
     {
         key: 'id',
         label: t('common.id'),
+        sortable: true,
     },
     {
         key: 'createdAt',
@@ -146,6 +154,7 @@ const columns = [
     {
         key: 'type',
         label: t('common.type'),
+        sortable: true,
     },
     {
         key: 'message',
@@ -287,10 +296,12 @@ defineShortcuts({
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.conduct_register')])" :retry="refresh" />
     <UTable
         v-else
+        v-model:sort="sort"
         :loading="loading"
         :columns="columns"
         :rows="data?.entries"
         :empty-state="{ icon: 'i-mdi-list-status', label: $t('common.not_found', [$t('common.entry', 2)]) }"
+        sort-mode="manual"
         class="flex-1"
     >
         <template #createdAt-data="{ row: conduct }">
@@ -305,22 +316,26 @@ defineShortcuts({
                 </dd>
             </dl>
         </template>
+
         <template #expiresAt-data="{ row: conduct }">
             <GenericTime v-if="conduct.expiresAt?.value" class="font-semibold" type="date" :value="conduct.expiresAt.value" />
             <span v-else>
                 {{ $t('components.jobs.conduct.List.no_expiration') }}
             </span>
         </template>
+
         <template #type-data="{ row: conduct }">
             <UBadge :color="conductTypesToBadgeColor(conduct.type)">
                 {{ $t(`enums.jobs.ConductType.${ConductType[conduct.type ?? 0]}`) }}
             </UBadge>
         </template>
+
         <template #message-data="{ row: conduct }">
             <p class="line-clamp-2 w-full max-w-sm whitespace-normal break-all hover:line-clamp-6">
                 {{ conduct.message }}
             </p>
         </template>
+
         <template #target-data="{ row: conduct }">
             <ColleagueInfoPopover :user="conduct.targetUser" />
             <dl class="font-normal lg:hidden">
@@ -330,9 +345,11 @@ defineShortcuts({
                 </dd>
             </dl>
         </template>
+
         <template #creator-data="{ row: conduct }">
             <ColleagueInfoPopover :user="conduct.creator.value" :hide-props="true" />
         </template>
+
         <template #actions-data="{ row: conduct }">
             <div :key="conduct.id">
                 <UButtonGroup class="inline-flex">

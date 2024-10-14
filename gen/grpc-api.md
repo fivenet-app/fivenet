@@ -44,9 +44,9 @@
     - [StatusUnit](#resources-centrum-StatusUnit)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
-    - [OrderBy](#resources-common-database-OrderBy)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
     - [PaginationResponse](#resources-common-database-PaginationResponse)
+    - [Sort](#resources-common-database-Sort)
   
 - [resources/common/i18n.proto](#resources_common_i18n-proto)
     - [TranslateItem](#resources-common-TranslateItem)
@@ -1298,22 +1298,6 @@
 
 
 
-<a name="resources-common-database-OrderBy"></a>
-
-### OrderBy
-
-
-
-| Field | Type | Label | Description |
-| ----- | ---- | ----- | ----------- |
-| column | [string](#string) |  |  |
-| desc | [bool](#bool) |  |  |
-
-
-
-
-
-
 <a name="resources-common-database-PaginationRequest"></a>
 
 ### PaginationRequest
@@ -1342,6 +1326,22 @@
 | offset | [int64](#int64) |  |  |
 | end | [int64](#int64) |  |  |
 | page_size | [int64](#int64) |  |  |
+
+
+
+
+
+
+<a name="resources-common-database-Sort"></a>
+
+### Sort
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| column | [string](#string) |  |  |
+| direction | [string](#string) |  |  |
 
 
 
@@ -6249,6 +6249,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | search | [string](#string) |  | Search params |
 | wanted | [bool](#bool) | optional |  |
 | phone_number | [string](#string) | optional |  |
@@ -6620,7 +6621,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| orderBy | [resources.common.database.OrderBy](#resources-common-database-OrderBy) | repeated |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | license_plate | [string](#string) | optional | Search params |
 | model | [string](#string) | optional |  |
 | user_id | [int32](#int32) | optional |  |
@@ -7368,7 +7369,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| orderBy | [resources.common.database.OrderBy](#resources-common-database-OrderBy) | repeated |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | search | [string](#string) | optional | Search params |
 | category_ids | [uint64](#uint64) | repeated |  |
 | creator_ids | [int32](#int32) | repeated |  |
@@ -7880,6 +7881,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | types | [resources.jobs.ConductType](#resources-jobs-ConductType) | repeated | Search params |
 | show_expired | [bool](#bool) | optional |  |
 | user_ids | [int32](#int32) | repeated |  |
@@ -8005,7 +8007,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| days | [int32](#int32) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| days | [int32](#int32) |  | Search params |
 
 
 
@@ -8037,7 +8040,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| user_ids | [int32](#int32) | repeated | Search |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| user_ids | [int32](#int32) | repeated | Search params |
 | from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | per_day | [bool](#bool) | optional |  |
@@ -8183,7 +8187,8 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
-| user_ids | [int32](#int32) | repeated |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
+| user_ids | [int32](#int32) | repeated | Search params |
 | activity_types | [resources.jobs.JobsUserActivityType](#resources-jobs-JobsUserActivityType) | repeated |  |
 
 
@@ -8216,6 +8221,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | search | [string](#string) |  | Search params |
 | user_id | [int32](#int32) | optional |  |
 | absent | [bool](#bool) | optional |  |
@@ -8913,6 +8919,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | qualification_id | [uint64](#uint64) | optional | Search params |
 | status | [resources.qualifications.RequestStatus](#resources-qualifications-RequestStatus) | repeated |  |
 | user_id | [int32](#int32) | optional |  |
@@ -8947,6 +8954,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | search | [string](#string) | optional | Search params |
 
 
@@ -8979,6 +8987,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
+| sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
 | qualification_id | [uint64](#uint64) | optional | Search params |
 | status | [resources.qualifications.ResultStatus](#resources-qualifications-ResultStatus) | repeated |  |
 | user_id | [int32](#int32) | optional |  |

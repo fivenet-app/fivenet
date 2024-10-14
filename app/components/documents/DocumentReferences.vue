@@ -138,6 +138,7 @@ const columns = computed(() =>
                                     icon: 'i-mdi-account',
                                     label: $t('common.not_found', [$t('common.reference', 2)]),
                                 }"
+                                sort-mode="auto"
                             >
                                 <template #targetDocument-data="{ row: reference }">
                                     <ULink

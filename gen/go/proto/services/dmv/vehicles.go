@@ -129,29 +129,28 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 		return resp, nil
 	}
 
-	// Convert our proto abstracted `common.OrderBy` to actual gorm order by instructions
-	orderBys := []jet.OrderByClause{}
-	if len(req.OrderBy) > 0 {
-		for _, orderBy := range req.OrderBy {
-			var column jet.Column
-			switch orderBy.Column {
-			case "model":
-				column = tVehicles.Model
-			case "plate":
-				fallthrough
-			default:
-				column = tVehicles.Plate
-			}
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{
+		tVehicles.Type.ASC(),
+	}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "model":
+			column = tVehicles.Model
+		case "plate":
+			fallthrough
+		default:
+			column = tVehicles.Plate
+		}
 
-			if orderBy.Desc {
-				orderBys = append(orderBys, column.DESC())
-			} else {
-				orderBys = append(orderBys, column.ASC())
-			}
+		if req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
 		orderBys = append(orderBys,
-			tVehicles.Type.ASC(),
 			tVehicles.Plate.ASC(),
 		)
 	}

@@ -143,6 +143,7 @@ const columns = computed(() =>
                                     icon: 'i-mdi-account',
                                     label: $t('common.not_found', [$t('common.relation', 2)]),
                                 }"
+                                sort-mode="auto"
                             >
                                 <template v-if="showDocument" #document-data="{ row: relation }">
                                     <ULink

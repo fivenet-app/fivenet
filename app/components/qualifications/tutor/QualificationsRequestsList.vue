@@ -36,13 +36,22 @@ const modal = useModal();
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'createdAt',
+    direction: 'desc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`qualifications-requests-${page.value}-${props.qualificationId}`, () =>
-    listQualificationsRequests(props.qualificationId),
+} = useLazyAsyncData(
+    `qualifications-requests-${sort.value.column}:${sort.value.direction}-${page.value}-${props.qualificationId}`,
+    () => listQualificationsRequests(props.qualificationId),
+    {
+        watch: [sort],
+    },
 );
 
 async function listQualificationsRequests(
@@ -54,6 +63,7 @@ async function listQualificationsRequests(
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             qualificationId: qualificationId,
             status: status ?? [],
         });
@@ -97,14 +107,17 @@ const columns = [
     {
         key: 'status',
         label: t('common.status'),
+        sortable: true,
     },
     {
         key: 'createdAt',
         label: t('common.created_at'),
+        sortable: true,
     },
     {
         key: 'approvedAt',
         label: t('common.approved_at'),
+        sortable: true,
     },
     {
         key: 'approver',
@@ -134,10 +147,12 @@ defineExpose({
 
             <template v-else>
                 <UTable
+                    v-model:sort="sort"
                     :loading="loading"
                     :columns="columns"
                     :rows="data?.requests"
                     :empty-state="{ icon: 'i-mdi-account-school', label: $t('common.not_found', [$t('common.request', 2)]) }"
+                    sort-mode="manual"
                 >
                     <template #citizen-data="{ row: request }">
                         <CitizenInfoPopover :user="request.user" />

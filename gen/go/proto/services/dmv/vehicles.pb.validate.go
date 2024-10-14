@@ -97,26 +97,14 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetOrderBy()) > 3 {
-		err := ListVehiclesRequestValidationError{
-			field:  "OrderBy",
-			reason: "value must contain no more than 3 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	for idx, item := range m.GetOrderBy() {
-		_, _ = idx, item
+	if m.Sort != nil {
 
 		if all {
-			switch v := interface{}(item).(type) {
+			switch v := interface{}(m.GetSort()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListVehiclesRequestValidationError{
-						field:  fmt.Sprintf("OrderBy[%v]", idx),
+						field:  "Sort",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -124,16 +112,16 @@ func (m *ListVehiclesRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListVehiclesRequestValidationError{
-						field:  fmt.Sprintf("OrderBy[%v]", idx),
+						field:  "Sort",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListVehiclesRequestValidationError{
-					field:  fmt.Sprintf("OrderBy[%v]", idx),
+					field:  "Sort",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}

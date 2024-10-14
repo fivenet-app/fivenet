@@ -1338,51 +1338,6 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 		}
 	}
 
-	if len(m.GetOrderBy()) > 3 {
-		err := ListDocumentsRequestValidationError{
-			field:  "OrderBy",
-			reason: "value must contain no more than 3 item(s)",
-		}
-		if !all {
-			return err
-		}
-		errors = append(errors, err)
-	}
-
-	for idx, item := range m.GetOrderBy() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListDocumentsRequestValidationError{
-						field:  fmt.Sprintf("OrderBy[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ListDocumentsRequestValidationError{
-						field:  fmt.Sprintf("OrderBy[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListDocumentsRequestValidationError{
-					field:  fmt.Sprintf("OrderBy[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if len(m.GetCategoryIds()) > 5 {
 		err := ListDocumentsRequestValidationError{
 			field:  "CategoryIds",
@@ -1403,6 +1358,39 @@ func (m *ListDocumentsRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListDocumentsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListDocumentsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListDocumentsRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.Search != nil {

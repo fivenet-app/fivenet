@@ -52,6 +52,10 @@ func (s *Server) ListDocumentPins(ctx context.Context, req *ListDocumentPinsRequ
 	}
 
 	stmt := s.listDocumentsQuery(condition, nil, userInfo).
+		ORDER_BY(
+			tDocumentShort.CreatedAt.DESC(),
+			tDocumentShort.UpdatedAt.DESC(),
+		).
 		OFFSET(req.Pagination.Offset).
 		GROUP_BY(tDocumentShort.ID).
 		LIMIT(limit)

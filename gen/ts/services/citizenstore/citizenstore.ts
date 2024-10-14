@@ -17,6 +17,7 @@ import { UserProps } from "../../resources/users/users";
 import { UserActivity } from "../../resources/users/users";
 import { User } from "../../resources/users/users";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.citizenstore.ListCitizensRequest
@@ -27,29 +28,33 @@ export interface ListCitizensRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
      * Search params
      *
-     * @generated from protobuf field: string search = 2;
+     * @generated from protobuf field: string search = 3;
      */
     search: string;
     /**
-     * @generated from protobuf field: optional bool wanted = 3;
+     * @generated from protobuf field: optional bool wanted = 4;
      */
     wanted?: boolean;
     /**
-     * @generated from protobuf field: optional string phone_number = 4;
+     * @generated from protobuf field: optional string phone_number = 5;
      */
     phoneNumber?: string;
     /**
-     * @generated from protobuf field: optional uint32 traffic_infraction_points = 5;
+     * @generated from protobuf field: optional uint32 traffic_infraction_points = 6;
      */
     trafficInfractionPoints?: number;
     /**
-     * @generated from protobuf field: optional string dateofbirth = 6;
+     * @generated from protobuf field: optional string dateofbirth = 7;
      */
     dateofbirth?: string;
     /**
-     * @generated from protobuf field: optional uint64 open_fines = 7;
+     * @generated from protobuf field: optional uint64 open_fines = 8;
      */
     openFines?: number;
 }
@@ -179,12 +184,13 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
     constructor() {
         super("services.citizenstore.ListCitizensRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
-            { no: 3, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
-            { no: 4, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
-            { no: 5, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
-            { no: 6, name: "dateofbirth", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "10" } } } },
-            { no: 7, name: "open_fines", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "search", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "50" } } } },
+            { no: 4, name: "wanted", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ },
+            { no: 5, name: "phone_number", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 6, name: "traffic_infraction_points", kind: "scalar", opt: true, T: 13 /*ScalarType.UINT32*/ },
+            { no: 7, name: "dateofbirth", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "10" } } } },
+            { no: 8, name: "open_fines", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/, L: 2 /*LongType.NUMBER*/ }
         ]);
     }
     create(value?: PartialMessage<ListCitizensRequest>): ListCitizensRequest {
@@ -202,22 +208,25 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* string search */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* string search */ 3:
                     message.search = reader.string();
                     break;
-                case /* optional bool wanted */ 3:
+                case /* optional bool wanted */ 4:
                     message.wanted = reader.bool();
                     break;
-                case /* optional string phone_number */ 4:
+                case /* optional string phone_number */ 5:
                     message.phoneNumber = reader.string();
                     break;
-                case /* optional uint32 traffic_infraction_points */ 5:
+                case /* optional uint32 traffic_infraction_points */ 6:
                     message.trafficInfractionPoints = reader.uint32();
                     break;
-                case /* optional string dateofbirth */ 6:
+                case /* optional string dateofbirth */ 7:
                     message.dateofbirth = reader.string();
                     break;
-                case /* optional uint64 open_fines */ 7:
+                case /* optional uint64 open_fines */ 8:
                     message.openFines = reader.uint64().toNumber();
                     break;
                 default:
@@ -235,24 +244,27 @@ class ListCitizensRequest$Type extends MessageType<ListCitizensRequest> {
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* string search = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* string search = 3; */
         if (message.search !== "")
-            writer.tag(2, WireType.LengthDelimited).string(message.search);
-        /* optional bool wanted = 3; */
+            writer.tag(3, WireType.LengthDelimited).string(message.search);
+        /* optional bool wanted = 4; */
         if (message.wanted !== undefined)
-            writer.tag(3, WireType.Varint).bool(message.wanted);
-        /* optional string phone_number = 4; */
+            writer.tag(4, WireType.Varint).bool(message.wanted);
+        /* optional string phone_number = 5; */
         if (message.phoneNumber !== undefined)
-            writer.tag(4, WireType.LengthDelimited).string(message.phoneNumber);
-        /* optional uint32 traffic_infraction_points = 5; */
+            writer.tag(5, WireType.LengthDelimited).string(message.phoneNumber);
+        /* optional uint32 traffic_infraction_points = 6; */
         if (message.trafficInfractionPoints !== undefined)
-            writer.tag(5, WireType.Varint).uint32(message.trafficInfractionPoints);
-        /* optional string dateofbirth = 6; */
+            writer.tag(6, WireType.Varint).uint32(message.trafficInfractionPoints);
+        /* optional string dateofbirth = 7; */
         if (message.dateofbirth !== undefined)
-            writer.tag(6, WireType.LengthDelimited).string(message.dateofbirth);
-        /* optional uint64 open_fines = 7; */
+            writer.tag(7, WireType.LengthDelimited).string(message.dateofbirth);
+        /* optional uint64 open_fines = 8; */
         if (message.openFines !== undefined)
-            writer.tag(7, WireType.Varint).uint64(message.openFines);
+            writer.tag(8, WireType.Varint).uint64(message.openFines);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

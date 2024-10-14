@@ -60,7 +60,7 @@ message DeleteTemplateResponse {}
 
 message ListDocumentsRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated resources.common.database.OrderBy orderBy = 2 [(validate.rules).repeated.max_items = 3];
+  optional resources.common.database.Sort sort = 2;
   // Search params
   optional string search = 3 [(validate.rules).string.max_len = 64];
   repeated uint64 category_ids = 4 [jstype = JS_STRING, (validate.rules).repeated.max_items = 5];

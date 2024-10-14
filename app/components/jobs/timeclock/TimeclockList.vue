@@ -78,14 +78,22 @@ const usersLoading = ref(false);
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'time',
+    direction: 'desc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
 } = useLazyAsyncData(
-    `jobs-timeclock-${query.from}-${query.to}-${query.perDay}-${query.users?.map((u) => u.userId)}-${page.value}`,
+    `jobs-timeclock-${sort.value.column}:${sort.value.direction}-${query.from}-${query.to}-${query.perDay}-${query.users?.map((u) => u.userId)}-${page.value}`,
     () => listTimeclockEntries(),
+    {
+        watch: [sort],
+    },
 );
 
 const perDayView = computed(() => {
@@ -97,13 +105,12 @@ const perDayView = computed(() => {
 });
 
 async function listTimeclockEntries(): Promise<ListTimeclockResponse> {
-    console.log('query', perDayView.value, query.users, query.from, query.to);
-
     try {
         const req: ListTimeclockRequest = {
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             userIds: query.users?.map((u) => u.userId) ?? [],
         };
 
@@ -192,11 +199,13 @@ const columns = computed(() =>
         {
             key: 'name',
             label: t('common.name'),
+            sortable: canAccessAll.value && query.users !== undefined && query.users?.length > 1,
         },
         canAccessAll.value && query.users !== undefined && query.users?.length > 1
             ? {
-                  key: 'jobGrade',
+                  key: 'rank',
                   label: t('common.rank'),
+                  sortable: true,
               }
             : undefined,
         {
@@ -332,6 +341,7 @@ const input = ref<{ input: HTMLInputElement }>();
 
     <UTable
         v-else
+        v-model:sort="sort"
         :loading="loading"
         :columns="columns"
         :rows="grouped"
@@ -339,6 +349,7 @@ const input = ref<{ input: HTMLInputElement }>();
             icon: 'i-mdi-timeline-clock',
             label: $t('common.not_found', [$t('common.entry', 2)]),
         }"
+        sort-mode="manual"
         class="flex-1"
     >
         <template #date-data="{ row: entry }">
@@ -356,6 +367,12 @@ const input = ref<{ input: HTMLInputElement }>();
                 />
 
                 <ColleagueInfoPopover :user="entry.entry.user" />
+            </div>
+        </template>
+
+        <template #rank-data="{ row: entry }">
+            <div class="text-gray-900 dark:text-white">
+                {{ entry.jobGradeLabel }}<span v-if="entry.jobGrade > 0"> ({{ entry.jobGrade }})</span>
             </div>
         </template>
 

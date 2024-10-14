@@ -24,6 +24,7 @@ import { AccessLevelUpdateMode } from "../../resources/qualifications/access";
 import { QualificationAccess } from "../../resources/qualifications/access";
 import { Qualification } from "../../resources/qualifications/qualifications";
 import { PaginationResponse } from "../../resources/common/database/database";
+import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 /**
  * @generated from protobuf message services.qualifications.ListQualificationsRequest
@@ -34,9 +35,13 @@ export interface ListQualificationsRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
      * Search params
      *
-     * @generated from protobuf field: optional string search = 2;
+     * @generated from protobuf field: optional string search = 3;
      */
     search?: string;
 }
@@ -178,17 +183,21 @@ export interface ListQualificationRequestsRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
      * Search params
      *
-     * @generated from protobuf field: optional uint64 qualification_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 qualification_id = 3 [jstype = JS_STRING];
      */
     qualificationId?: string;
     /**
-     * @generated from protobuf field: repeated resources.qualifications.RequestStatus status = 3;
+     * @generated from protobuf field: repeated resources.qualifications.RequestStatus status = 4;
      */
     status: RequestStatus[];
     /**
-     * @generated from protobuf field: optional int32 user_id = 4;
+     * @generated from protobuf field: optional int32 user_id = 5;
      */
     userId?: number;
 }
@@ -252,17 +261,21 @@ export interface ListQualificationsResultsRequest {
      */
     pagination?: PaginationRequest;
     /**
+     * @generated from protobuf field: optional resources.common.database.Sort sort = 2;
+     */
+    sort?: Sort;
+    /**
      * Search params
      *
-     * @generated from protobuf field: optional uint64 qualification_id = 2 [jstype = JS_STRING];
+     * @generated from protobuf field: optional uint64 qualification_id = 3 [jstype = JS_STRING];
      */
     qualificationId?: string;
     /**
-     * @generated from protobuf field: repeated resources.qualifications.ResultStatus status = 3;
+     * @generated from protobuf field: repeated resources.qualifications.ResultStatus status = 4;
      */
     status: ResultStatus[];
     /**
-     * @generated from protobuf field: optional int32 user_id = 4;
+     * @generated from protobuf field: optional int32 user_id = 5;
      */
     userId?: number;
 }
@@ -422,7 +435,8 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
     constructor() {
         super("services.qualifications.ListQualificationsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "search", kind: "scalar", opt: true, T: 9 /*ScalarType.STRING*/ }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsRequest>): ListQualificationsRequest {
@@ -439,7 +453,10 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* optional string search */ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* optional string search */ 3:
                     message.search = reader.string();
                     break;
                 default:
@@ -457,9 +474,12 @@ class ListQualificationsRequest$Type extends MessageType<ListQualificationsReque
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional string search = 2; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional string search = 3; */
         if (message.search !== undefined)
-            writer.tag(2, WireType.LengthDelimited).string(message.search);
+            writer.tag(3, WireType.LengthDelimited).string(message.search);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1067,9 +1087,10 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
     constructor() {
         super("services.qualifications.ListQualificationRequestsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] },
-            { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.RequestStatus", RequestStatus, "REQUEST_STATUS_"] },
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListQualificationRequestsRequest>): ListQualificationRequestsRequest {
@@ -1087,17 +1108,20 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* optional uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* optional uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* repeated resources.qualifications.RequestStatus status */ 3:
+                case /* repeated resources.qualifications.RequestStatus status */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.status.push(reader.int32());
                     else
                         message.status.push(reader.int32());
                     break;
-                case /* optional int32 user_id */ 4:
+                case /* optional int32 user_id */ 5:
                     message.userId = reader.int32();
                     break;
                 default:
@@ -1115,19 +1139,22 @@ class ListQualificationRequestsRequest$Type extends MessageType<ListQualificatio
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 qualification_id = 2 [jstype = JS_STRING]; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 qualification_id = 3 [jstype = JS_STRING]; */
         if (message.qualificationId !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
-        /* repeated resources.qualifications.RequestStatus status = 3; */
+            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
+        /* repeated resources.qualifications.RequestStatus status = 4; */
         if (message.status.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
+            writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.status.length; i++)
                 writer.int32(message.status[i]);
             writer.join();
         }
-        /* optional int32 user_id = 4; */
+        /* optional int32 user_id = 5; */
         if (message.userId !== undefined)
-            writer.tag(4, WireType.Varint).int32(message.userId);
+            writer.tag(5, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -1369,9 +1396,10 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
     constructor() {
         super("services.qualifications.ListQualificationsResultsRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
-            { no: 2, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
-            { no: 3, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"] },
-            { no: 4, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
+            { no: 2, name: "sort", kind: "message", T: () => Sort },
+            { no: 3, name: "qualification_id", kind: "scalar", opt: true, T: 4 /*ScalarType.UINT64*/ },
+            { no: 4, name: "status", kind: "enum", repeat: 1 /*RepeatType.PACKED*/, T: () => ["resources.qualifications.ResultStatus", ResultStatus, "RESULT_STATUS_"] },
+            { no: 5, name: "user_id", kind: "scalar", opt: true, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListQualificationsResultsRequest>): ListQualificationsResultsRequest {
@@ -1389,17 +1417,20 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
                 case /* resources.common.database.PaginationRequest pagination */ 1:
                     message.pagination = PaginationRequest.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* optional uint64 qualification_id = 2 [jstype = JS_STRING];*/ 2:
+                case /* optional resources.common.database.Sort sort */ 2:
+                    message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
+                    break;
+                case /* optional uint64 qualification_id = 3 [jstype = JS_STRING];*/ 3:
                     message.qualificationId = reader.uint64().toString();
                     break;
-                case /* repeated resources.qualifications.ResultStatus status */ 3:
+                case /* repeated resources.qualifications.ResultStatus status */ 4:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.status.push(reader.int32());
                     else
                         message.status.push(reader.int32());
                     break;
-                case /* optional int32 user_id */ 4:
+                case /* optional int32 user_id */ 5:
                     message.userId = reader.int32();
                     break;
                 default:
@@ -1417,19 +1448,22 @@ class ListQualificationsResultsRequest$Type extends MessageType<ListQualificatio
         /* resources.common.database.PaginationRequest pagination = 1; */
         if (message.pagination)
             PaginationRequest.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* optional uint64 qualification_id = 2 [jstype = JS_STRING]; */
+        /* optional resources.common.database.Sort sort = 2; */
+        if (message.sort)
+            Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* optional uint64 qualification_id = 3 [jstype = JS_STRING]; */
         if (message.qualificationId !== undefined)
-            writer.tag(2, WireType.Varint).uint64(message.qualificationId);
-        /* repeated resources.qualifications.ResultStatus status = 3; */
+            writer.tag(3, WireType.Varint).uint64(message.qualificationId);
+        /* repeated resources.qualifications.ResultStatus status = 4; */
         if (message.status.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
+            writer.tag(4, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.status.length; i++)
                 writer.int32(message.status[i]);
             writer.join();
         }
-        /* optional int32 user_id = 4; */
+        /* optional int32 user_id = 5; */
         if (message.userId !== undefined)
-            writer.tag(4, WireType.Varint).int32(message.userId);
+            writer.tag(5, WireType.Varint).int32(message.userId);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

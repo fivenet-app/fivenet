@@ -12,10 +12,11 @@ option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs;j
 
 message ListColleaguesRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
+  optional resources.common.database.Sort sort = 2;
   // Search params
-  string search = 2 [(validate.rules).string.max_len = 50];
-  optional int32 user_id = 3;
-  optional bool absent = 4;
+  string search = 3 [(validate.rules).string.max_len = 50];
+  optional int32 user_id = 4;
+  optional bool absent = 5;
 }
 
 message ListColleaguesResponse {
@@ -40,8 +41,10 @@ message GetColleagueResponse {
 
 message ListColleagueActivityRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
-  repeated int32 user_ids = 2;
-  repeated resources.jobs.JobsUserActivityType activity_types = 3 [(validate.rules).repeated.max_items = 10];
+  optional resources.common.database.Sort sort = 2;
+  // Search params
+  repeated int32 user_ids = 3;
+  repeated resources.jobs.JobsUserActivityType activity_types = 4 [(validate.rules).repeated.max_items = 10];
 }
 
 message ListColleagueActivityResponse {

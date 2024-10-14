@@ -18,12 +18,14 @@ const prefix = ref('');
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData('chars', () => listFiles(prefix.value));
+const { data, pending: loading, refresh, error } = useLazyAsyncData(`files-${page.value}`, () => listFiles(prefix.value));
 
 async function listFiles(prefix: string): Promise<ListFilesResponse> {
     try {
         const { response } = getGRPCRectorFilestoreClient().listFiles({
-            pagination: { offset: offset.value },
+            pagination: {
+                offset: offset.value,
+            },
             path: prefix,
         });
 

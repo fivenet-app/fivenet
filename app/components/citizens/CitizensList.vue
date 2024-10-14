@@ -30,14 +30,24 @@ const query = ref<Schema>({});
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'name',
+    direction: 'asc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`citizens-${page.value}-${JSON.stringify(query.value)}`, () => listCitizens(), {
-    transform: (input) => ({ ...input, users: wrapRows(input?.users, columns) }),
-});
+} = useLazyAsyncData(
+    `citizens-${sort.value.column}:${sort.value.direction}-${page.value}-${JSON.stringify(query.value)}`,
+    () => listCitizens(),
+    {
+        transform: (input) => ({ ...input, users: wrapRows(input?.users, columns) }),
+        watch: [sort],
+    },
+);
 
 async function listCitizens(): Promise<ListCitizensResponse> {
     try {
@@ -45,6 +55,7 @@ async function listCitizens(): Promise<ListCitizensResponse> {
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             search: query.value.name ?? '',
         };
         if (query.value.wanted) {
@@ -104,6 +115,7 @@ const columns = [
     {
         key: 'name',
         label: t('common.name'),
+        sortable: true,
     },
     {
         key: 'jobLabel',
@@ -271,10 +283,12 @@ defineShortcuts({
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.citizen', 2)])" :retry="refresh" />
     <UTable
         v-else
+        v-model:sort="sort"
         :loading="loading"
         :columns="columns"
         :rows="data?.users"
         :empty-state="{ icon: 'i-mdi-accounts', label: $t('common.not_found', [$t('common.citizen', 2)]) }"
+        sort-mode="manual"
         class="flex-1"
     >
         <template #name-data="{ row: citizen }">

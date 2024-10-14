@@ -9,7 +9,12 @@ import type { ListQualificationsResponse } from '~~/gen/ts/services/qualificatio
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
-const { data, pending: loading, refresh, error } = useLazyAsyncData(`qualifications-${page.value}`, () => listQualifications());
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualifications-${page.value}`, () => listQualifications(), {});
 
 async function listQualifications(): Promise<ListQualificationsResponse> {
     try {

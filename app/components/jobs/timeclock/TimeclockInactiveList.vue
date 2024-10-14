@@ -30,12 +30,23 @@ const state = reactive<Schema>({
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'rank',
+    direction: 'asc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-timeclock-inactive-${page.value}-${state.days}`, () => listInactiveEmployees(state));
+} = useLazyAsyncData(
+    `jobs-timeclock-inactive-${sort.value.column}:${sort.value.direction}-${page.value}-${state.days}`,
+    () => listInactiveEmployees(state),
+    {
+        watch: [sort],
+    },
+);
 
 async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmployeesResponse> {
     try {
@@ -43,6 +54,7 @@ async function listInactiveEmployees(values: Schema): Promise<ListInactiveEmploy
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             days: values.days,
         });
 
@@ -71,10 +83,12 @@ const columns = [
     {
         key: 'name',
         label: t('common.name'),
+        sortable: true,
     },
     {
         key: 'rank',
         label: t('common.rank', 1),
+        sortable: true,
     },
     {
         key: 'phoneNumber',
@@ -125,10 +139,12 @@ const columns = [
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
     <UTable
         v-else
+        v-model:sort="sort"
         :loading="loading"
         :columns="columns"
         :rows="data?.colleagues"
         :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+        sort-mode="manual"
         class="flex-1"
     >
         <template #name-data="{ row: colleague }">

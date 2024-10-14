@@ -97,6 +97,39 @@ func (m *ListTimeclockRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTimeclockRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTimeclockRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTimeclockRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.From != nil {
 
 		if all {
@@ -817,6 +850,39 @@ func (m *ListInactiveEmployeesRequest) validate(all bool) error {
 			return err
 		}
 		errors = append(errors, err)
+	}
+
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListInactiveEmployeesRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListInactiveEmployeesRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListInactiveEmployeesRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if len(errors) > 0 {

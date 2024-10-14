@@ -101,6 +101,39 @@ func (m *ListQualificationsRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListQualificationsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListQualificationsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListQualificationsRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.Search != nil {
 		// no validation rules for Search
 	}
@@ -1860,6 +1893,39 @@ func (m *ListQualificationRequestsRequest) validate(all bool) error {
 		}
 	}
 
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListQualificationRequestsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListQualificationRequestsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListQualificationRequestsRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
 	if m.QualificationId != nil {
 		// no validation rules for QualificationId
 	}
@@ -2670,6 +2736,39 @@ func (m *ListQualificationsResultsRequest) validate(all bool) error {
 				cause:  err,
 			}
 		}
+	}
+
+	if m.Sort != nil {
+
+		if all {
+			switch v := interface{}(m.GetSort()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListQualificationsResultsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListQualificationsResultsRequestValidationError{
+						field:  "Sort",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetSort()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListQualificationsResultsRequestValidationError{
+					field:  "Sort",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
 	}
 
 	if m.QualificationId != nil {

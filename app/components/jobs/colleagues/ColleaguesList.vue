@@ -34,14 +34,24 @@ const query = reactive<Schema>({
 const page = ref(1);
 const offset = computed(() => (data.value?.pagination?.pageSize ? data.value?.pagination?.pageSize * (page.value - 1) : 0));
 
+const sort = ref<TableSortable>({
+    column: 'rank',
+    direction: 'asc',
+});
+
 const {
     data,
     pending: loading,
     refresh,
     error,
-} = useLazyAsyncData(`jobs-colleagues-${page.value}-${query.name}-${query.absent}`, () => listColleagues(), {
-    transform: (input) => ({ ...input, entries: wrapRows(input?.colleagues, columns) }),
-});
+} = useLazyAsyncData(
+    `jobs-colleagues-${sort.value.column}:${sort.value.direction}-${page.value}-${query.name}-${query.absent}`,
+    () => listColleagues(),
+    {
+        transform: (input) => ({ ...input, entries: wrapRows(input?.colleagues, columns) }),
+        watch: [sort],
+    },
+);
 
 async function listColleagues(): Promise<ListColleaguesResponse> {
     try {
@@ -49,6 +59,7 @@ async function listColleagues(): Promise<ListColleaguesResponse> {
             pagination: {
                 offset: offset.value,
             },
+            sort: sort.value,
             search: query.name,
             absent: query.absent,
         });
@@ -87,12 +98,14 @@ const columns = [
     {
         key: 'name',
         label: t('common.name'),
+        sortable: true,
     },
     {
         key: 'rank',
         label: t('common.rank'),
         class: 'hidden lg:table-cell',
         rowClass: 'hidden lg:table-cell',
+        sortable: true,
     },
     {
         key: 'absence',
@@ -158,10 +171,12 @@ defineShortcuts({
     <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.colleague', 2)])" :retry="refresh" />
     <UTable
         v-else
+        v-model:sort="sort"
         :loading="loading"
         :columns="columns"
         :rows="data?.colleagues"
         :empty-state="{ icon: 'i-mdi-account', label: $t('common.not_found', [$t('common.colleague', 2)]) }"
+        sort-mode="manual"
         class="flex-1"
     >
         <template #name-data="{ row: colleague }">

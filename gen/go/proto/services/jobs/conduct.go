@@ -100,6 +100,30 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		return resp, nil
 	}
 
+	// Convert proto sort to db sorting
+	orderBys := []jet.OrderByClause{}
+	if req.Sort != nil {
+		var column jet.Column
+		switch req.Sort.Column {
+		case "type":
+			column = tConduct.Type
+		case "id":
+			fallthrough
+		default:
+			column = tConduct.ID
+		}
+
+		if column != nil && req.Sort.Direction == database.AscSortDirection {
+			orderBys = append(orderBys, column.ASC())
+		} else {
+			orderBys = append(orderBys, column.DESC())
+		}
+	} else {
+		orderBys = append(orderBys,
+			tConduct.ID.DESC(),
+		)
+	}
+
 	tUser := tUser.AS("target_user")
 	tUserUserProps := tUserProps.AS("target_user_props")
 	tCreator := tUser.AS("creator")
@@ -157,7 +181,7 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 		).
 		WHERE(condition).
 		OFFSET(req.Pagination.Offset).
-		ORDER_BY(tConduct.CreatedAt.DESC(), tConduct.ID.DESC()).
+		ORDER_BY(orderBys...).
 		LIMIT(limit)
 
 	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
