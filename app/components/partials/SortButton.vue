@@ -30,17 +30,25 @@ function toggleDirection(): void {
         };
     }
 }
+
+function changeColumn(col: string): void {
+    sort.value = {
+        column: col,
+        direction: sort.value.direction,
+    };
+}
 </script>
 
 <template>
     <div class="flex flex-1 gap-2">
         <ClientOnly v-if="fields.length > 1">
             <USelectMenu
-                v-model="sort.column"
+                :model-value="sort.column"
                 :placeholder="$t('common.na')"
                 value-attribute="value"
                 :options="fields"
                 class="w-full"
+                @update:model-value="changeColumn($event)"
             >
                 <template #label>
                     {{ $t(fields.find((f) => f.value === sort.column)?.label ?? 'common.na') }}
