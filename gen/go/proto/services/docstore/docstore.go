@@ -177,9 +177,7 @@ func (s *Server) ListDocuments(ctx context.Context, req *ListDocumentsRequest) (
 			)
 		}
 	} else {
-		orderBys = append(orderBys,
-			tDocumentShort.UpdatedAt.DESC(),
-		)
+		orderBys = append(orderBys, tDocumentShort.UpdatedAt.DESC())
 	}
 
 	pag, limit := req.Pagination.GetResponseWithPageSize(count.TotalCount, DocsDefaultPageSize)

@@ -294,17 +294,17 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
-		var column jet.Column
+		var columns []jet.Column
 		switch req.Sort.Column {
 		case "name":
-			column = nil
+			columns = append(columns, tUser.Firstname, tUser.Lastname)
 		case "rank":
 			fallthrough
 		default:
-			column = tUser.JobGrade
+			columns = append(columns, tUser.JobGrade)
 		}
 
-		if column != nil {
+		for _, column := range columns {
 			if req.Sort.Direction == database.AscSortDirection {
 				orderBys = append(orderBys, column.ASC())
 			} else {
@@ -312,14 +312,8 @@ func (s *Server) ListInactiveEmployees(ctx context.Context, req *ListInactiveEmp
 			}
 		}
 	} else {
-		orderBys = append(orderBys,
-			tConduct.ID.DESC(),
-		)
+		orderBys = append(orderBys, tUser.JobGrade.ASC())
 	}
-	orderBys = append(orderBys,
-		tUser.Firstname.ASC(),
-		tUser.Lastname.ASC(),
-	)
 
 	stmt := tTimeClock.
 		SELECT(

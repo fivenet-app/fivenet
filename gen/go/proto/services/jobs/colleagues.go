@@ -95,17 +95,17 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
-		var column jet.Column
+		var columns []jet.Column
 		switch req.Sort.Column {
 		case "name":
-			column = nil
+			columns = append(columns, tUser.Firstname, tUser.Lastname)
 		case "rank":
 			fallthrough
 		default:
-			column = tUser.JobGrade
+			columns = append(columns, tUser.JobGrade)
 		}
 
-		if column != nil {
+		for _, column := range columns {
 			if req.Sort.Direction == database.AscSortDirection {
 				orderBys = append(orderBys, column.ASC())
 			} else {
@@ -115,13 +115,10 @@ func (s *Server) ListColleagues(ctx context.Context, req *ListColleaguesRequest)
 	} else {
 		orderBys = append(orderBys,
 			tUser.JobGrade.ASC(),
+			tUser.Firstname.ASC(),
+			tUser.Lastname.ASC(),
 		)
 	}
-	// Always append firstname and lastname sorting
-	orderBys = append(orderBys,
-		tUser.Firstname.ASC(),
-		tUser.Lastname.ASC(),
-	)
 
 	stmt := tUser.
 		SELECT(
@@ -788,9 +785,7 @@ func (s *Server) ListColleagueActivity(ctx context.Context, req *ListColleagueAc
 			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
-		orderBys = append(orderBys,
-			tJobsUserActivity.CreatedAt.DESC(),
-		)
+		orderBys = append(orderBys, tJobsUserActivity.CreatedAt.DESC())
 	}
 
 	tTargetUserProps := tUserProps.AS("target_user_props")

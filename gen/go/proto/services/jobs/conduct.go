@@ -103,25 +103,25 @@ func (s *Server) ListConductEntries(ctx context.Context, req *ListConductEntries
 	// Convert proto sort to db sorting
 	orderBys := []jet.OrderByClause{}
 	if req.Sort != nil {
-		var column jet.Column
+		var columns []jet.Column
 		switch req.Sort.Column {
 		case "type":
-			column = tConduct.Type
+			columns = append(columns, tConduct.Type, tConduct.ID)
 		case "id":
 			fallthrough
 		default:
-			column = tConduct.ID
+			columns = append(columns, tConduct.ID)
 		}
 
-		if req.Sort.Direction == database.AscSortDirection {
-			orderBys = append(orderBys, column.ASC())
-		} else {
-			orderBys = append(orderBys, column.DESC())
+		for _, column := range columns {
+			if req.Sort.Direction == database.AscSortDirection {
+				orderBys = append(orderBys, column.ASC())
+			} else {
+				orderBys = append(orderBys, column.DESC())
+			}
 		}
 	} else {
-		orderBys = append(orderBys,
-			tConduct.ID.DESC(),
-		)
+		orderBys = append(orderBys, tConduct.ID.DESC())
 	}
 
 	tUser := tUser.AS("target_user")

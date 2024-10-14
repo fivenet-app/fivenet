@@ -150,9 +150,7 @@ func (s *Server) ListVehicles(ctx context.Context, req *ListVehiclesRequest) (*L
 			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
-		orderBys = append(orderBys,
-			tVehicles.Plate.ASC(),
-		)
+		orderBys = append(orderBys, tVehicles.Plate.ASC())
 	}
 
 	columns := dbutils.Columns{

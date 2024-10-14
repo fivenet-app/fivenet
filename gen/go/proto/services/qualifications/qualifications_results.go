@@ -140,9 +140,7 @@ func (s *Server) ListQualificationsResults(ctx context.Context, req *ListQualifi
 			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
-		orderBys = append(orderBys,
-			tQualiResults.CreatedAt.DESC(),
-		)
+		orderBys = append(orderBys, tQualiResults.CreatedAt.DESC())
 	}
 
 	stmt := tQualiResults.

@@ -510,9 +510,7 @@ func (s *Server) ListUserActivity(ctx context.Context, req *ListUserActivityRequ
 			orderBys = append(orderBys, column.DESC())
 		}
 	} else {
-		orderBys = append(orderBys,
-			tUserActivity.CreatedAt.DESC(),
-		)
+		orderBys = append(orderBys, tUserActivity.CreatedAt.DESC())
 	}
 
 	stmt := tUserActivity.
