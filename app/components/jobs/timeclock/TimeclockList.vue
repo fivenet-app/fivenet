@@ -266,7 +266,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                         mode="date"
                                         class="flex-1"
                                         :popover="{ class: 'flex-1' }"
-                                        disable-future
+                                        :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
                                     />
                                 </UFormGroup>
 
@@ -502,7 +502,9 @@ const input = ref<{ input: HTMLInputElement }>();
                                                 <DatePickerPopoverClient
                                                     v-model="query.date.end"
                                                     :popover="{ class: 'flex-1' }"
-                                                    disable-future
+                                                    :date-picker="{
+                                                        disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                                    }"
                                                 />
 
                                                 <UButton
@@ -529,7 +531,9 @@ const input = ref<{ input: HTMLInputElement }>();
                                                     v-model="query.date.end"
                                                     :popover="{ class: 'flex-1' }"
                                                     :date-format="`yyyy '${$t('common.calendar_week')}' w`"
-                                                    disable-future
+                                                    :date-picker="{
+                                                        disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                                    }"
                                                 />
 
                                                 <UButton
@@ -546,7 +550,7 @@ const input = ref<{ input: HTMLInputElement }>();
                                                 mode="date"
                                                 class="flex-1"
                                                 :popover="{ class: 'flex-1' }"
-                                                disable-future
+                                                :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
                                             />
                                         </UFormGroup>
 

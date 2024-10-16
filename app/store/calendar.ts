@@ -116,9 +116,7 @@ export const useCalendarStore = defineStore('calendar', {
 
                     useSound().play({ name: 'notification' });
                 });
-            } catch (e) {
-                handleGRPCError(e);
-            }
+            } catch (e) {}
         },
         // Calendars
         async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
-import { addDays, format } from 'date-fns';
+import { format } from 'date-fns';
 import DateRangePickerClient from './DateRangePicker.client.vue';
 
 defineOptions({
@@ -14,8 +14,7 @@ const props = withDefaults(
         dateFormat?: string;
         popover?: object;
         button?: object;
-        datePicker?: any;
-        disableFuture?: boolean;
+        datePicker?: unknown;
     }>(),
     {
         modelValue: undefined,
@@ -23,18 +22,13 @@ const props = withDefaults(
         dateFormat: 'dd.MM.yyyy',
         popover: undefined,
         button: undefined,
-        datePicker: {},
-        disableFuture: false,
+        datePicker: undefined,
     },
 );
 
 const emits = defineEmits<{
     (e: 'update:modelValue', modelValue: { start: Date; end: Date } | undefined): void;
 }>();
-
-if (props.disableFuture && props.datePicker !== undefined) {
-    props.datePicker.disabledDates = [{ start: addDays(new Date(), 1), end: null }];
-}
 
 const date = useVModel(props, 'modelValue', emits);
 

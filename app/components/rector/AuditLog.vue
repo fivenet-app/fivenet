@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { addDays } from 'date-fns';
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
 import type { JSONDataType } from 'vue-json-pretty/types/utils';
@@ -182,8 +183,7 @@ const columns = [
                         <DatePickerPopoverClient
                             v-model="query.from"
                             :popover="{ popper: { placement: 'bottom-start' } }"
-                            :date-picker="{ clearable: true }"
-                            disable-future
+                            :date-picker="{ clearable: true, disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
                         />
                     </UFormGroup>
 
@@ -191,8 +191,7 @@ const columns = [
                         <DatePickerPopoverClient
                             v-model="query.to"
                             :popover="{ popper: { placement: 'bottom-start' } }"
-                            :date-picker="{ clearable: true }"
-                            disable-future
+                            :date-picker="{ clearable: true, disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
                         />
                     </UFormGroup>
 
