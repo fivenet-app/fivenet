@@ -55,6 +55,8 @@ export const useNotificatorStore = defineStore('notifications', {
                 return;
             }
 
+            async () => useCalendarStore().listCalendarEntries();
+
             logger.debug('Starting Data Stream');
 
             this.abort = new AbortController();

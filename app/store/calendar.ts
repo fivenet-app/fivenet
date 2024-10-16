@@ -1,6 +1,8 @@
+import { format } from 'date-fns';
 import { defineStore } from 'pinia';
 import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
+import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type {
     CreateOrUpdateCalendarEntryResponse,
@@ -9,6 +11,8 @@ import type {
     GetCalendarEntryResponse,
     GetCalendarRequest,
     GetCalendarResponse,
+    GetUpcomingEntriesRequest,
+    GetUpcomingEntriesResponse,
     ListCalendarEntriesRequest,
     ListCalendarEntriesResponse,
     ListCalendarEntryRSVPRequest,
@@ -18,6 +22,8 @@ import type {
     RSVPCalendarEntryRequest,
     RSVPCalendarEntryResponse,
 } from '~~/gen/ts/services/calendar/calendar';
+import { useNotificatorStore } from './notificator';
+import { useSettingsStore } from './settings';
 
 export interface CalendarState {
     activeCalendarIds: string[];
@@ -28,7 +34,10 @@ export interface CalendarState {
     };
     calendars: Calendar[];
     entries: CalendarEntry[];
+    eventReminders: Map<string, number>;
 }
+
+// TODO use dexie to persist some state locally
 
 export const useCalendarStore = defineStore('calendar', {
     state: () =>
@@ -41,11 +50,76 @@ export const useCalendarStore = defineStore('calendar', {
             },
             calendars: [],
             entries: [],
+            eventReminders: new Map<string, number>(),
         }) as CalendarState,
     persist: {
         pick: ['activeCalendarIds', 'weeklyView'],
     },
     actions: {
+        async checkAppointments(): Promise<void> {
+            try {
+                const reminderTimes = useSettingsStore().calendar.reminderTimes;
+                const highestReminder = Math.max(...reminderTimes);
+
+                const response = await this.getUpcomingEntries({
+                    seconds: highestReminder + 10,
+                });
+
+                const now = new Date();
+                response.entries.forEach((entry) => {
+                    const startTime = toDate(entry.startTime);
+                    const time = startTime.getTime() - now.getTime();
+
+                    const closestTime = reminderTimes.reduce((prev, curr) =>
+                        Math.abs(curr - time) < Math.abs(prev - time) ? curr : prev,
+                    );
+
+                    if (this.eventReminders.get(entry.id) === closestTime) {
+                        return;
+                    }
+
+                    if (closestTime > time) {
+                        return;
+                    }
+
+                    if (time <= 0) {
+                        this.eventReminders.delete(entry.id);
+                    } else {
+                        this.eventReminders.set(entry.id, closestTime);
+                    }
+
+                    useNotificatorStore().add({
+                        title: {
+                            key: 'notifications.calendar.event_starting.title',
+                            parameters: {
+                                title: entry.title,
+                                name: entry.creator ? `${entry.creator.firstname} ${entry.creator.lastname}` : 'N/A',
+                            },
+                        },
+                        description: {
+                            key: 'notifications.calendar.event_starting.content',
+                            parameters: {
+                                time: format(startTime, 'HH:mm'),
+                                ago: useTimeAgo(startTime).value,
+                            },
+                        },
+                        type: NotificationType.INFO,
+                        category: NotificationCategory.CALENDAR,
+                        actions: [
+                            {
+                                label: { key: 'common.open' },
+                                icon: 'i-mdi-calendar',
+                                to: `/calendar?entry_id=${entry.id}`,
+                            },
+                        ],
+                    });
+
+                    useSound().play({ name: 'notification' });
+                });
+            } catch (e) {
+                handleGRPCError(e);
+            }
+        },
         // Calendars
         async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {
             const call = getGRPCCalendarClient().getCalendar(req);
@@ -188,6 +262,17 @@ export const useCalendarStore = defineStore('calendar', {
                 } else {
                     this.entries.length = 0;
                 }
+
+                return response;
+            } catch (e) {
+                handleGRPCError(e as RpcError);
+                throw e;
+            }
+        },
+        async getUpcomingEntries(req: GetUpcomingEntriesRequest): Promise<GetUpcomingEntriesResponse> {
+            try {
+                const call = getGRPCCalendarClient().getUpcomingEntries(req);
+                const { response } = await call;
 
                 return response;
             } catch (e) {

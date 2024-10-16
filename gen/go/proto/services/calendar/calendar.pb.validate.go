@@ -1399,6 +1399,246 @@ var _ interface {
 	ErrorName() string
 } = ListCalendarEntriesResponseValidationError{}
 
+// Validate checks the field values on GetUpcomingEntriesRequest with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUpcomingEntriesRequest) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUpcomingEntriesRequest with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUpcomingEntriesRequestMultiError, or nil if none found.
+func (m *GetUpcomingEntriesRequest) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUpcomingEntriesRequest) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Seconds
+
+	if len(errors) > 0 {
+		return GetUpcomingEntriesRequestMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUpcomingEntriesRequestMultiError is an error wrapping multiple validation
+// errors returned by GetUpcomingEntriesRequest.ValidateAll() if the
+// designated constraints aren't met.
+type GetUpcomingEntriesRequestMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUpcomingEntriesRequestMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUpcomingEntriesRequestMultiError) AllErrors() []error { return m }
+
+// GetUpcomingEntriesRequestValidationError is the validation error returned by
+// GetUpcomingEntriesRequest.Validate if the designated constraints aren't met.
+type GetUpcomingEntriesRequestValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUpcomingEntriesRequestValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUpcomingEntriesRequestValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUpcomingEntriesRequestValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUpcomingEntriesRequestValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUpcomingEntriesRequestValidationError) ErrorName() string {
+	return "GetUpcomingEntriesRequestValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUpcomingEntriesRequestValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUpcomingEntriesRequest.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUpcomingEntriesRequestValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUpcomingEntriesRequestValidationError{}
+
+// Validate checks the field values on GetUpcomingEntriesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *GetUpcomingEntriesResponse) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on GetUpcomingEntriesResponse with the
+// rules defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// GetUpcomingEntriesResponseMultiError, or nil if none found.
+func (m *GetUpcomingEntriesResponse) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *GetUpcomingEntriesResponse) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, GetUpcomingEntriesResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, GetUpcomingEntriesResponseValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return GetUpcomingEntriesResponseValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	if len(errors) > 0 {
+		return GetUpcomingEntriesResponseMultiError(errors)
+	}
+
+	return nil
+}
+
+// GetUpcomingEntriesResponseMultiError is an error wrapping multiple
+// validation errors returned by GetUpcomingEntriesResponse.ValidateAll() if
+// the designated constraints aren't met.
+type GetUpcomingEntriesResponseMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m GetUpcomingEntriesResponseMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m GetUpcomingEntriesResponseMultiError) AllErrors() []error { return m }
+
+// GetUpcomingEntriesResponseValidationError is the validation error returned
+// by GetUpcomingEntriesResponse.Validate if the designated constraints aren't met.
+type GetUpcomingEntriesResponseValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e GetUpcomingEntriesResponseValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e GetUpcomingEntriesResponseValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e GetUpcomingEntriesResponseValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e GetUpcomingEntriesResponseValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e GetUpcomingEntriesResponseValidationError) ErrorName() string {
+	return "GetUpcomingEntriesResponseValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e GetUpcomingEntriesResponseValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sGetUpcomingEntriesResponse.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = GetUpcomingEntriesResponseValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = GetUpcomingEntriesResponseValidationError{}
+
 // Validate checks the field values on GetCalendarEntryRequest with the rules
 // defined in the proto definition for this message. If any rules are
 // violated, the first error encountered is returned, or nil if there are no violations.

@@ -222,6 +222,10 @@ export const useMessengerStore = defineStore('messenger', {
     },
 });
 
+if (import.meta.hot) {
+    import.meta.hot.accept(acceptHMRUpdate(useMessengerStore, import.meta.hot));
+}
+
 class MessengerDexie extends Dexie {
     threads!: Table<Thread>;
     messages!: Table<Message>;

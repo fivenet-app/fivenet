@@ -14,6 +14,7 @@ var PermsRemap = map[string]string{
 	// Service: CalendarService
 	"CalendarService/GetCalendar":           "Any",
 	"CalendarService/GetCalendarEntry":      "Any",
+	"CalendarService/GetUpcomingEntries":    "Any",
 	"CalendarService/ListCalendarEntries":   "Any",
 	"CalendarService/ListCalendarEntryRSVP": "Any",
 	"CalendarService/ListCalendars":         "Any",

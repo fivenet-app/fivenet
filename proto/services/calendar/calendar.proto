@@ -63,6 +63,14 @@ message ListCalendarEntriesResponse {
   repeated resources.calendar.CalendarEntry entries = 1;
 }
 
+message GetUpcomingEntriesRequest {
+  int32 seconds = 1;
+}
+
+message GetUpcomingEntriesResponse {
+  repeated resources.calendar.CalendarEntry entries = 1;
+}
+
 message GetCalendarEntryRequest {
   uint64 entry_id = 1 [jstype = JS_STRING];
 }
@@ -147,6 +155,8 @@ service CalendarService {
 
   // @perm: Name=Any
   rpc ListCalendarEntries(ListCalendarEntriesRequest) returns (ListCalendarEntriesResponse);
+  // @perm: Name=Any
+  rpc GetUpcomingEntries(GetUpcomingEntriesRequest) returns (GetUpcomingEntriesResponse);
   // @perm: Name=Any
   rpc GetCalendarEntry(GetCalendarEntryRequest) returns (GetCalendarEntryResponse);
   // @perm

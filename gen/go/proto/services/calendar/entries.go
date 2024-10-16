@@ -85,69 +85,7 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 		condition = condition.AND(tCalendarEntry.CalendarID.IN(ids...))
 	}
 
-	stmt := tCalendarEntry.
-		SELECT(
-			tCalendarEntry.ID,
-			tCalendarEntry.CreatedAt,
-			tCalendarEntry.UpdatedAt,
-			tCalendarEntry.DeletedAt,
-			tCalendarEntry.CalendarID,
-			tCalendar.ID,
-			tCalendar.Name,
-			tCalendar.Color,
-			tCalendar.Description,
-			tCalendar.Public,
-			tCalendar.Closed,
-			tCalendar.Color,
-			tCalendarEntry.Job,
-			tCalendarEntry.StartTime,
-			tCalendarEntry.EndTime,
-			tCalendarEntry.Title,
-			tCalendarEntry.Closed,
-			tCalendarEntry.RsvpOpen,
-			tCalendarEntry.CreatorID,
-			tCreator.ID,
-			tCreator.Job,
-			tCreator.JobGrade,
-			tCreator.Firstname,
-			tCreator.Lastname,
-			tCreator.Dateofbirth,
-			tCreator.PhoneNumber,
-			tUserProps.Avatar.AS("creator.avatar"),
-			tCalendarEntry.Recurring,
-			tCalendarRSVP.EntryID,
-			tCalendarRSVP.CreatedAt,
-			tCalendarRSVP.UserID,
-			tCalendarRSVP.Response,
-		).
-		FROM(tCalendarEntry.
-			INNER_JOIN(tCalendar,
-				tCalendar.ID.EQ(tCalendarEntry.CalendarID).
-					AND(tCalendar.DeletedAt.IS_NULL()),
-			).
-			LEFT_JOIN(tCUserAccess,
-				tCUserAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
-					AND(tCUserAccess.UserID.EQ(jet.Int32(userInfo.UserId))),
-			).
-			LEFT_JOIN(tCJobAccess,
-				tCJobAccess.CalendarID.EQ(tCalendarEntry.CalendarID).
-					AND(tCJobAccess.Job.EQ(jet.String(userInfo.Job))).
-					AND(tCJobAccess.MinimumGrade.LT_EQ(jet.Int32(userInfo.JobGrade))),
-			).
-			LEFT_JOIN(tCreator,
-				tCalendarEntry.CreatorID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tUserProps,
-				tUserProps.UserID.EQ(tCreator.ID),
-			).
-			LEFT_JOIN(tCalendarRSVP,
-				tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)).
-					AND(tCalendarRSVP.EntryID.EQ(tCalendarEntry.ID)),
-			),
-		).
-		GROUP_BY(tCalendarEntry.ID).
-		WHERE(condition).
-		LIMIT(100)
+	stmt := s.listCalendarEntriesQuery(condition, userInfo, rsvpResponse)
 
 	if req.After != nil {
 		stmt.ORDER_BY(tCalendar.UpdatedAt.GT_EQ(jet.TimestampT(req.After.AsTime())))
@@ -163,6 +101,49 @@ func (s *Server) ListCalendarEntries(ctx context.Context, req *ListCalendarEntri
 	for i := 0; i < len(resp.Entries); i++ {
 		if resp.Entries[i].Creator != nil {
 			jobInfoFn(resp.Entries[i].Creator)
+		}
+	}
+
+	return resp, nil
+}
+
+func (s *Server) GetUpcomingEntries(ctx context.Context, req *GetUpcomingEntriesRequest) (*GetUpcomingEntriesResponse, error) {
+	userInfo := auth.MustGetUserInfoFromContext(ctx)
+
+	resp := &GetUpcomingEntriesResponse{
+		Entries: []*calendar.CalendarEntry{},
+	}
+
+	condition := jet.AND(
+		tCalendarEntry.DeletedAt.IS_NULL(),
+		jet.OR(
+			tCalendarEntry.ID.IN(
+				tCalendarRSVP.
+					SELECT(
+						tCalendarRSVP.EntryID,
+					).
+					FROM(tCalendarRSVP).
+					WHERE(jet.AND(
+						tCalendarRSVP.UserID.EQ(jet.Int32(userInfo.UserId)),
+						// RSVP responses: Maybe and Yes
+						tCalendarRSVP.Response.GT(jet.Int16(int16(calendar.RsvpResponses_RSVP_RESPONSES_NO))),
+					)),
+			),
+			tCalendarEntry.CreatorID.EQ(jet.Int32(userInfo.UserId)),
+		),
+		tCalendarEntry.StartTime.LT_EQ(
+			jet.CURRENT_TIMESTAMP().ADD(jet.INTERVALd(time.Duration(req.Seconds)*time.Second)),
+		),
+		tCalendarEntry.StartTime.GT_EQ(
+			jet.CURRENT_TIMESTAMP().SUB(jet.INTERVALd(1*time.Minute)),
+		),
+	)
+
+	stmt := s.listCalendarEntriesQuery(condition, userInfo, calendar.RsvpResponses_RSVP_RESPONSES_NO)
+
+	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 	}
 

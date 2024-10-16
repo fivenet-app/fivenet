@@ -24,6 +24,7 @@ const (
 	CalendarService_CreateOrUpdateCalendar_FullMethodName      = "/services.calendar.CalendarService/CreateOrUpdateCalendar"
 	CalendarService_DeleteCalendar_FullMethodName              = "/services.calendar.CalendarService/DeleteCalendar"
 	CalendarService_ListCalendarEntries_FullMethodName         = "/services.calendar.CalendarService/ListCalendarEntries"
+	CalendarService_GetUpcomingEntries_FullMethodName          = "/services.calendar.CalendarService/GetUpcomingEntries"
 	CalendarService_GetCalendarEntry_FullMethodName            = "/services.calendar.CalendarService/GetCalendarEntry"
 	CalendarService_CreateOrUpdateCalendarEntry_FullMethodName = "/services.calendar.CalendarService/CreateOrUpdateCalendarEntry"
 	CalendarService_DeleteCalendarEntry_FullMethodName         = "/services.calendar.CalendarService/DeleteCalendarEntry"
@@ -48,6 +49,8 @@ type CalendarServiceClient interface {
 	DeleteCalendar(ctx context.Context, in *DeleteCalendarRequest, opts ...grpc.CallOption) (*DeleteCalendarResponse, error)
 	// @perm: Name=Any
 	ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error)
+	// @perm: Name=Any
+	GetUpcomingEntries(ctx context.Context, in *GetUpcomingEntriesRequest, opts ...grpc.CallOption) (*GetUpcomingEntriesResponse, error)
 	// @perm: Name=Any
 	GetCalendarEntry(ctx context.Context, in *GetCalendarEntryRequest, opts ...grpc.CallOption) (*GetCalendarEntryResponse, error)
 	// @perm
@@ -113,6 +116,15 @@ func (c *calendarServiceClient) DeleteCalendar(ctx context.Context, in *DeleteCa
 func (c *calendarServiceClient) ListCalendarEntries(ctx context.Context, in *ListCalendarEntriesRequest, opts ...grpc.CallOption) (*ListCalendarEntriesResponse, error) {
 	out := new(ListCalendarEntriesResponse)
 	err := c.cc.Invoke(ctx, CalendarService_ListCalendarEntries_FullMethodName, in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *calendarServiceClient) GetUpcomingEntries(ctx context.Context, in *GetUpcomingEntriesRequest, opts ...grpc.CallOption) (*GetUpcomingEntriesResponse, error) {
+	out := new(GetUpcomingEntriesResponse)
+	err := c.cc.Invoke(ctx, CalendarService_GetUpcomingEntries_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -206,6 +218,8 @@ type CalendarServiceServer interface {
 	// @perm: Name=Any
 	ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error)
 	// @perm: Name=Any
+	GetUpcomingEntries(context.Context, *GetUpcomingEntriesRequest) (*GetUpcomingEntriesResponse, error)
+	// @perm: Name=Any
 	GetCalendarEntry(context.Context, *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error)
 	// @perm
 	CreateOrUpdateCalendarEntry(context.Context, *CreateOrUpdateCalendarEntryRequest) (*CreateOrUpdateCalendarEntryResponse, error)
@@ -242,6 +256,9 @@ func (UnimplementedCalendarServiceServer) DeleteCalendar(context.Context, *Delet
 }
 func (UnimplementedCalendarServiceServer) ListCalendarEntries(context.Context, *ListCalendarEntriesRequest) (*ListCalendarEntriesResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method ListCalendarEntries not implemented")
+}
+func (UnimplementedCalendarServiceServer) GetUpcomingEntries(context.Context, *GetUpcomingEntriesRequest) (*GetUpcomingEntriesResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUpcomingEntries not implemented")
 }
 func (UnimplementedCalendarServiceServer) GetCalendarEntry(context.Context, *GetCalendarEntryRequest) (*GetCalendarEntryResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetCalendarEntry not implemented")
@@ -366,6 +383,24 @@ func _CalendarService_ListCalendarEntries_Handler(srv interface{}, ctx context.C
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(CalendarServiceServer).ListCalendarEntries(ctx, req.(*ListCalendarEntriesRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _CalendarService_GetUpcomingEntries_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUpcomingEntriesRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(CalendarServiceServer).GetUpcomingEntries(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: CalendarService_GetUpcomingEntries_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(CalendarServiceServer).GetUpcomingEntries(ctx, req.(*GetUpcomingEntriesRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -540,6 +575,10 @@ var CalendarService_ServiceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "ListCalendarEntries",
 			Handler:    _CalendarService_ListCalendarEntries_Handler,
+		},
+		{
+			MethodName: "GetUpcomingEntries",
+			Handler:    _CalendarService_GetUpcomingEntries_Handler,
 		},
 		{
 			MethodName: "GetCalendarEntry",

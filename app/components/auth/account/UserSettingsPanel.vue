@@ -209,28 +209,29 @@ const selectedTab = computed({
                             :label="$t('components.auth.UserSettingsPanel.calendar_notifications.reminder_times.name')"
                             class="grid grid-cols-2 items-center gap-2"
                         >
-                            <USelectMenu
-                                v-model="calendar.reminderTimes"
-                                multiple
-                                :options="calendarReminderTimes"
-                                value-attribute="value"
-                            >
-                                <template #label>
-                                    {{
-                                        calendar.reminderTimes.length > 0
-                                            ? [...calendar.reminderTimes]
-                                                  .sort()
-                                                  .map((n) =>
-                                                      $t(
-                                                          calendarReminderTimes.find((rt) => rt.value === n)?.label ??
-                                                              'common.na',
-                                                      ),
-                                                  )
-                                                  .join(', ')
-                                            : $t('common.none')
-                                    }}
-                                </template>
-                            </USelectMenu>
+                            <ClientOnly>
+                                <USelectMenu
+                                    v-model="calendar.reminderTimes"
+                                    multiple
+                                    :options="calendarReminderTimes"
+                                    value-attribute="value"
+                                >
+                                    <template #label>
+                                        {{
+                                            calendar.reminderTimes.length > 0
+                                                ? [...calendar.reminderTimes]
+                                                      .sort()
+                                                      .map(
+                                                          (n) =>
+                                                              calendarReminderTimes.find((rt) => rt.value === n)?.label ??
+                                                              $t('common.na'),
+                                                      )
+                                                      .join(', ')
+                                                : $t('common.none')
+                                        }}
+                                    </template>
+                                </USelectMenu>
+                            </ClientOnly>
                         </UFormGroup>
                     </UDashboardSection>
                 </UDashboardPanelContent>

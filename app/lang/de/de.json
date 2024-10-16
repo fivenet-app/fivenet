@@ -1519,6 +1519,10 @@
             "entry_shared_with_you": {
                 "title": "Eingeladen zu \"{title}\" von {name}",
                 "content": "Sie wurden zu \"{title}\" eingeladen, schaue im Kalendar nach um zu Antworten."
+            },
+            "event_starting": {
+                "title": "Termin: \"{title}\" von {name}",
+                "content": "Startet {ago} ({time})."
             }
         },
         "document_relation_mentioned": {

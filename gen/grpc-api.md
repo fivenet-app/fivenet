@@ -678,6 +678,8 @@
     - [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse)
     - [GetCalendarRequest](#services-calendar-GetCalendarRequest)
     - [GetCalendarResponse](#services-calendar-GetCalendarResponse)
+    - [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest)
+    - [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse)
     - [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest)
     - [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse)
     - [ListCalendarEntryRSVPRequest](#services-calendar-ListCalendarEntryRSVPRequest)
@@ -10191,6 +10193,36 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 
 
 
+<a name="services-calendar-GetUpcomingEntriesRequest"></a>
+
+### GetUpcomingEntriesRequest
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| seconds | [int32](#int32) |  |  |
+
+
+
+
+
+
+<a name="services-calendar-GetUpcomingEntriesResponse"></a>
+
+### GetUpcomingEntriesResponse
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| entries | [resources.calendar.CalendarEntry](#resources-calendar-CalendarEntry) | repeated |  |
+
+
+
+
+
+
 <a name="services-calendar-ListCalendarEntriesRequest"></a>
 
 ### ListCalendarEntriesRequest
@@ -10429,6 +10461,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | CreateOrUpdateCalendar | [CreateOrUpdateCalendarRequest](#services-calendar-CreateOrUpdateCalendarRequest) | [CreateOrUpdateCalendarResponse](#services-calendar-CreateOrUpdateCalendarResponse) | @perm: Attrs=Fields/StringList:[]string{&#34;Job&#34;, &#34;Public&#34;} |
 | DeleteCalendar | [DeleteCalendarRequest](#services-calendar-DeleteCalendarRequest) | [DeleteCalendarResponse](#services-calendar-DeleteCalendarResponse) | @perm |
 | ListCalendarEntries | [ListCalendarEntriesRequest](#services-calendar-ListCalendarEntriesRequest) | [ListCalendarEntriesResponse](#services-calendar-ListCalendarEntriesResponse) | @perm: Name=Any |
+| GetUpcomingEntries | [GetUpcomingEntriesRequest](#services-calendar-GetUpcomingEntriesRequest) | [GetUpcomingEntriesResponse](#services-calendar-GetUpcomingEntriesResponse) | @perm: Name=Any |
 | GetCalendarEntry | [GetCalendarEntryRequest](#services-calendar-GetCalendarEntryRequest) | [GetCalendarEntryResponse](#services-calendar-GetCalendarEntryResponse) | @perm: Name=Any |
 | CreateOrUpdateCalendarEntry | [CreateOrUpdateCalendarEntryRequest](#services-calendar-CreateOrUpdateCalendarEntryRequest) | [CreateOrUpdateCalendarEntryResponse](#services-calendar-CreateOrUpdateCalendarEntryResponse) | @perm |
 | DeleteCalendarEntry | [DeleteCalendarEntryRequest](#services-calendar-DeleteCalendarEntryRequest) | [DeleteCalendarEntryResponse](#services-calendar-DeleteCalendarEntryResponse) | @perm |

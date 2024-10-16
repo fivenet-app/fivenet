@@ -68,7 +68,7 @@ export const useSettingsStore = defineStore('settings', {
                 notificationsVolume: 0.15,
             },
             calendar: {
-                reminderTimes: [900, 0],
+                reminderTimes: [0, 900],
             },
             streamerMode: false,
         }) as SettingsState,

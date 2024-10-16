@@ -2,7 +2,9 @@
 import { notificationTypeToColor, notificationTypeToIcon } from '~/components/partials/notification/helpers';
 import type { Notification } from '~/composables/notifications';
 import { useAuthStore } from '~/store/auth';
+import { useCalendarStore } from '~/store/calendar';
 import { useNotificatorStore } from '~/store/notificator';
+import { useSettingsStore } from '~/store/settings';
 
 const { t } = useI18n();
 
@@ -15,9 +17,37 @@ const notificatorStore = useNotificatorStore();
 const { abort, notifications } = storeToRefs(notificatorStore);
 const { startStream, stopStream } = notificatorStore;
 
+const settingsStore = useSettingsStore();
+const { calendar } = storeToRefs(settingsStore);
+
+const calendarStore = useCalendarStore();
+
+async function checkAppointments(): Promise<void> {
+    await calendarStore.checkAppointments();
+}
+const { pause, resume } = useIntervalFn(
+    async () => {
+        pause();
+        checkAppointments();
+        resume();
+    },
+    (60 + 2 * Math.random()) * 1000,
+    { immediate: false },
+);
+
 async function toggleStream(): Promise<void> {
     // Only stream notifications when a user is logged in and has a character selected
     if (username.value !== null && activeChar.value !== null) {
+        if (calendar.value.reminderTimes.length > 0) {
+            useTimeoutFn(
+                async () => {
+                    await checkAppointments();
+                    resume();
+                },
+                randomNumber(2, 7) * 1000,
+            );
+        }
+
         try {
             startStream();
         } catch (e) {
@@ -26,6 +56,7 @@ async function toggleStream(): Promise<void> {
     } else if (abort.value !== undefined) {
         await stopStream();
         notificatorStore.$reset();
+        pause();
     }
 }
 
