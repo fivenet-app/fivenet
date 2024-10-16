@@ -2322,7 +2322,7 @@ type ListDocumentActivityRequest struct {
 
 	Pagination *database.PaginationRequest `protobuf:"bytes,1,opt,name=pagination,proto3" json:"pagination,omitempty"`
 	DocumentId uint64                      `protobuf:"varint,2,opt,name=document_id,json=documentId,proto3" json:"document_id,omitempty"`
-	// Search
+	// Search params
 	ActivityTypes []documents.DocActivityType `protobuf:"varint,3,rep,packed,name=activity_types,json=activityTypes,proto3,enum=resources.documents.DocActivityType" json:"activity_types,omitempty"`
 }
 

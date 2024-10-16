@@ -12,11 +12,14 @@ import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
 import { Colleague } from "../../resources/jobs/colleagues";
+import { TimeclockEntry } from "../../resources/jobs/timeclock";
+import { Timestamp } from "../../resources/timestamp/timestamp";
 import { TimeclockWeeklyStats } from "../../resources/jobs/timeclock";
 import { TimeclockStats } from "../../resources/jobs/timeclock";
-import { TimeclockEntry } from "../../resources/jobs/timeclock";
 import { PaginationResponse } from "../../resources/common/database/database";
-import { Timestamp } from "../../resources/timestamp/timestamp";
+import { DateRange } from "../../resources/common/database/database";
+import { TimeclockMode } from "../../resources/jobs/timeclock";
+import { TimeclockUserMode } from "../../resources/jobs/timeclock";
 import { Sort } from "../../resources/common/database/database";
 import { PaginationRequest } from "../../resources/common/database/database";
 // Time Clock
@@ -36,21 +39,25 @@ export interface ListTimeclockRequest {
     /**
      * Search params
      *
-     * @generated from protobuf field: repeated int32 user_ids = 3;
+     * @generated from protobuf field: resources.jobs.TimeclockUserMode user_mode = 3;
+     */
+    userMode: TimeclockUserMode;
+    /**
+     * @generated from protobuf field: resources.jobs.TimeclockMode mode = 4;
+     */
+    mode: TimeclockMode;
+    /**
+     * @generated from protobuf field: optional resources.common.database.DateRange date = 5;
+     */
+    date?: DateRange;
+    /**
+     * @generated from protobuf field: bool per_day = 6;
+     */
+    perDay: boolean;
+    /**
+     * @generated from protobuf field: repeated int32 user_ids = 7;
      */
     userIds: number[];
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp from = 4;
-     */
-    from?: Timestamp;
-    /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp to = 5;
-     */
-    to?: Timestamp;
-    /**
-     * @generated from protobuf field: optional bool per_day = 6;
-     */
-    perDay?: boolean;
 }
 /**
  * @generated from protobuf message services.jobs.ListTimeclockResponse
@@ -61,17 +68,88 @@ export interface ListTimeclockResponse {
      */
     pagination?: PaginationResponse;
     /**
+     * @generated from protobuf field: resources.jobs.TimeclockStats stats = 2;
+     */
+    stats?: TimeclockStats;
+    /**
+     * @generated from protobuf field: repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3;
+     */
+    statsWeekly: TimeclockWeeklyStats[];
+    /**
+     * @generated from protobuf oneof: entries
+     */
+    entries: {
+        oneofKind: "daily";
+        /**
+         * @generated from protobuf field: services.jobs.TimeclockDay daily = 4;
+         */
+        daily: TimeclockDay;
+    } | {
+        oneofKind: "weekly";
+        /**
+         * @generated from protobuf field: services.jobs.TimeclockWeekly weekly = 5;
+         */
+        weekly: TimeclockWeekly;
+    } | {
+        oneofKind: "range";
+        /**
+         * @generated from protobuf field: services.jobs.TimeclockRange range = 6;
+         */
+        range: TimeclockRange;
+    } | {
+        oneofKind: undefined;
+    };
+}
+/**
+ * @generated from protobuf message services.jobs.TimeclockDay
+ */
+export interface TimeclockDay {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp date = 1;
+     */
+    date?: Timestamp;
+    /**
      * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2;
      */
     entries: TimeclockEntry[];
     /**
-     * @generated from protobuf field: resources.jobs.TimeclockStats stats = 3;
+     * @generated from protobuf field: float sum = 3;
      */
-    stats?: TimeclockStats;
+    sum: number;
+}
+/**
+ * @generated from protobuf message services.jobs.TimeclockWeekly
+ */
+export interface TimeclockWeekly {
     /**
-     * @generated from protobuf field: repeated resources.jobs.TimeclockWeeklyStats weekly = 4;
+     * @generated from protobuf field: resources.timestamp.Timestamp date = 1;
      */
-    weekly: TimeclockWeeklyStats[];
+    date?: Timestamp; // @gotags: sql:"primary_key"
+    /**
+     * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2;
+     */
+    entries: TimeclockEntry[];
+    /**
+     * @generated from protobuf field: float sum = 3;
+     */
+    sum: number;
+}
+/**
+ * @generated from protobuf message services.jobs.TimeclockRange
+ */
+export interface TimeclockRange {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp date = 1;
+     */
+    date?: Timestamp; // @gotags: sql:"primary_key"
+    /**
+     * @generated from protobuf field: repeated resources.jobs.TimeclockEntry entries = 2;
+     */
+    entries: TimeclockEntry[];
+    /**
+     * @generated from protobuf field: float sum = 3;
+     */
+    sum: number;
 }
 /**
  * @generated from protobuf message services.jobs.GetTimeclockStatsRequest
@@ -133,14 +211,18 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         super("services.jobs.ListTimeclockRequest", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationRequest, options: { "validate.rules": { message: { required: true } } } },
             { no: 2, name: "sort", kind: "message", T: () => Sort },
-            { no: 3, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "from", kind: "message", T: () => Timestamp },
-            { no: 5, name: "to", kind: "message", T: () => Timestamp },
-            { no: 6, name: "per_day", kind: "scalar", opt: true, T: 8 /*ScalarType.BOOL*/ }
+            { no: 3, name: "user_mode", kind: "enum", T: () => ["resources.jobs.TimeclockUserMode", TimeclockUserMode, "TIMECLOCK_USER_MODE_"] },
+            { no: 4, name: "mode", kind: "enum", T: () => ["resources.jobs.TimeclockMode", TimeclockMode, "TIMECLOCK_MODE_"] },
+            { no: 5, name: "date", kind: "message", T: () => DateRange },
+            { no: 6, name: "per_day", kind: "scalar", T: 8 /*ScalarType.BOOL*/ },
+            { no: 7, name: "user_ids", kind: "scalar", repeat: 1 /*RepeatType.PACKED*/, T: 5 /*ScalarType.INT32*/ }
         ]);
     }
     create(value?: PartialMessage<ListTimeclockRequest>): ListTimeclockRequest {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.userMode = 0;
+        message.mode = 0;
+        message.perDay = false;
         message.userIds = [];
         if (value !== undefined)
             reflectionMergePartial<ListTimeclockRequest>(this, message, value);
@@ -157,21 +239,24 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
                 case /* optional resources.common.database.Sort sort */ 2:
                     message.sort = Sort.internalBinaryRead(reader, reader.uint32(), options, message.sort);
                     break;
-                case /* repeated int32 user_ids */ 3:
+                case /* resources.jobs.TimeclockUserMode user_mode */ 3:
+                    message.userMode = reader.int32();
+                    break;
+                case /* resources.jobs.TimeclockMode mode */ 4:
+                    message.mode = reader.int32();
+                    break;
+                case /* optional resources.common.database.DateRange date */ 5:
+                    message.date = DateRange.internalBinaryRead(reader, reader.uint32(), options, message.date);
+                    break;
+                case /* bool per_day */ 6:
+                    message.perDay = reader.bool();
+                    break;
+                case /* repeated int32 user_ids */ 7:
                     if (wireType === WireType.LengthDelimited)
                         for (let e = reader.int32() + reader.pos; reader.pos < e;)
                             message.userIds.push(reader.int32());
                     else
                         message.userIds.push(reader.int32());
-                    break;
-                case /* optional resources.timestamp.Timestamp from */ 4:
-                    message.from = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.from);
-                    break;
-                case /* optional resources.timestamp.Timestamp to */ 5:
-                    message.to = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.to);
-                    break;
-                case /* optional bool per_day */ 6:
-                    message.perDay = reader.bool();
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -191,22 +276,25 @@ class ListTimeclockRequest$Type extends MessageType<ListTimeclockRequest> {
         /* optional resources.common.database.Sort sort = 2; */
         if (message.sort)
             Sort.internalBinaryWrite(message.sort, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* repeated int32 user_ids = 3; */
+        /* resources.jobs.TimeclockUserMode user_mode = 3; */
+        if (message.userMode !== 0)
+            writer.tag(3, WireType.Varint).int32(message.userMode);
+        /* resources.jobs.TimeclockMode mode = 4; */
+        if (message.mode !== 0)
+            writer.tag(4, WireType.Varint).int32(message.mode);
+        /* optional resources.common.database.DateRange date = 5; */
+        if (message.date)
+            DateRange.internalBinaryWrite(message.date, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* bool per_day = 6; */
+        if (message.perDay !== false)
+            writer.tag(6, WireType.Varint).bool(message.perDay);
+        /* repeated int32 user_ids = 7; */
         if (message.userIds.length) {
-            writer.tag(3, WireType.LengthDelimited).fork();
+            writer.tag(7, WireType.LengthDelimited).fork();
             for (let i = 0; i < message.userIds.length; i++)
                 writer.int32(message.userIds[i]);
             writer.join();
         }
-        /* optional resources.timestamp.Timestamp from = 4; */
-        if (message.from)
-            Timestamp.internalBinaryWrite(message.from, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp to = 5; */
-        if (message.to)
-            Timestamp.internalBinaryWrite(message.to, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional bool per_day = 6; */
-        if (message.perDay !== undefined)
-            writer.tag(6, WireType.Varint).bool(message.perDay);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -222,15 +310,17 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
     constructor() {
         super("services.jobs.ListTimeclockResponse", [
             { no: 1, name: "pagination", kind: "message", T: () => PaginationResponse },
-            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
-            { no: 3, name: "stats", kind: "message", T: () => TimeclockStats },
-            { no: 4, name: "weekly", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockWeeklyStats }
+            { no: 2, name: "stats", kind: "message", T: () => TimeclockStats },
+            { no: 3, name: "stats_weekly", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockWeeklyStats },
+            { no: 4, name: "daily", kind: "message", oneof: "entries", T: () => TimeclockDay },
+            { no: 5, name: "weekly", kind: "message", oneof: "entries", T: () => TimeclockWeekly },
+            { no: 6, name: "range", kind: "message", oneof: "entries", T: () => TimeclockRange }
         ]);
     }
     create(value?: PartialMessage<ListTimeclockResponse>): ListTimeclockResponse {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.entries = [];
-        message.weekly = [];
+        message.statsWeekly = [];
+        message.entries = { oneofKind: undefined };
         if (value !== undefined)
             reflectionMergePartial<ListTimeclockResponse>(this, message, value);
         return message;
@@ -243,14 +333,29 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
                 case /* resources.common.database.PaginationResponse pagination */ 1:
                     message.pagination = PaginationResponse.internalBinaryRead(reader, reader.uint32(), options, message.pagination);
                     break;
-                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
-                    message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
-                    break;
-                case /* resources.jobs.TimeclockStats stats */ 3:
+                case /* resources.jobs.TimeclockStats stats */ 2:
                     message.stats = TimeclockStats.internalBinaryRead(reader, reader.uint32(), options, message.stats);
                     break;
-                case /* repeated resources.jobs.TimeclockWeeklyStats weekly */ 4:
-                    message.weekly.push(TimeclockWeeklyStats.internalBinaryRead(reader, reader.uint32(), options));
+                case /* repeated resources.jobs.TimeclockWeeklyStats stats_weekly */ 3:
+                    message.statsWeekly.push(TimeclockWeeklyStats.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* services.jobs.TimeclockDay daily */ 4:
+                    message.entries = {
+                        oneofKind: "daily",
+                        daily: TimeclockDay.internalBinaryRead(reader, reader.uint32(), options, (message.entries as any).daily)
+                    };
+                    break;
+                case /* services.jobs.TimeclockWeekly weekly */ 5:
+                    message.entries = {
+                        oneofKind: "weekly",
+                        weekly: TimeclockWeekly.internalBinaryRead(reader, reader.uint32(), options, (message.entries as any).weekly)
+                    };
+                    break;
+                case /* services.jobs.TimeclockRange range */ 6:
+                    message.entries = {
+                        oneofKind: "range",
+                        range: TimeclockRange.internalBinaryRead(reader, reader.uint32(), options, (message.entries as any).range)
+                    };
                     break;
                 default:
                     let u = options.readUnknownField;
@@ -267,15 +372,21 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
         /* resources.common.database.PaginationResponse pagination = 1; */
         if (message.pagination)
             PaginationResponse.internalBinaryWrite(message.pagination, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockEntry entries = 2; */
-        for (let i = 0; i < message.entries.length; i++)
-            TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* resources.jobs.TimeclockStats stats = 3; */
+        /* resources.jobs.TimeclockStats stats = 2; */
         if (message.stats)
-            TimeclockStats.internalBinaryWrite(message.stats, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
-        /* repeated resources.jobs.TimeclockWeeklyStats weekly = 4; */
-        for (let i = 0; i < message.weekly.length; i++)
-            TimeclockWeeklyStats.internalBinaryWrite(message.weekly[i], writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+            TimeclockStats.internalBinaryWrite(message.stats, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3; */
+        for (let i = 0; i < message.statsWeekly.length; i++)
+            TimeclockWeeklyStats.internalBinaryWrite(message.statsWeekly[i], writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* services.jobs.TimeclockDay daily = 4; */
+        if (message.entries.oneofKind === "daily")
+            TimeclockDay.internalBinaryWrite(message.entries.daily, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* services.jobs.TimeclockWeekly weekly = 5; */
+        if (message.entries.oneofKind === "weekly")
+            TimeclockWeekly.internalBinaryWrite(message.entries.weekly, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* services.jobs.TimeclockRange range = 6; */
+        if (message.entries.oneofKind === "range")
+            TimeclockRange.internalBinaryWrite(message.entries.range, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -286,6 +397,192 @@ class ListTimeclockResponse$Type extends MessageType<ListTimeclockResponse> {
  * @generated MessageType for protobuf message services.jobs.ListTimeclockResponse
  */
 export const ListTimeclockResponse = new ListTimeclockResponse$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockDay$Type extends MessageType<TimeclockDay> {
+    constructor() {
+        super("services.jobs.TimeclockDay", [
+            { no: 1, name: "date", kind: "message", T: () => Timestamp },
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
+            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TimeclockDay>): TimeclockDay {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.entries = [];
+        message.sum = 0;
+        if (value !== undefined)
+            reflectionMergePartial<TimeclockDay>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TimeclockDay): TimeclockDay {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp date */ 1:
+                    message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
+                    break;
+                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
+                    message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* float sum */ 3:
+                    message.sum = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TimeclockDay, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp date = 1; */
+        if (message.date)
+            Timestamp.internalBinaryWrite(message.date, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.TimeclockEntry entries = 2; */
+        for (let i = 0; i < message.entries.length; i++)
+            TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* float sum = 3; */
+        if (message.sum !== 0)
+            writer.tag(3, WireType.Bit32).float(message.sum);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockDay
+ */
+export const TimeclockDay = new TimeclockDay$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockWeekly$Type extends MessageType<TimeclockWeekly> {
+    constructor() {
+        super("services.jobs.TimeclockWeekly", [
+            { no: 1, name: "date", kind: "message", T: () => Timestamp },
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
+            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TimeclockWeekly>): TimeclockWeekly {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.entries = [];
+        message.sum = 0;
+        if (value !== undefined)
+            reflectionMergePartial<TimeclockWeekly>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TimeclockWeekly): TimeclockWeekly {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp date */ 1:
+                    message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
+                    break;
+                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
+                    message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* float sum */ 3:
+                    message.sum = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TimeclockWeekly, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp date = 1; */
+        if (message.date)
+            Timestamp.internalBinaryWrite(message.date, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.TimeclockEntry entries = 2; */
+        for (let i = 0; i < message.entries.length; i++)
+            TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* float sum = 3; */
+        if (message.sum !== 0)
+            writer.tag(3, WireType.Bit32).float(message.sum);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockWeekly
+ */
+export const TimeclockWeekly = new TimeclockWeekly$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class TimeclockRange$Type extends MessageType<TimeclockRange> {
+    constructor() {
+        super("services.jobs.TimeclockRange", [
+            { no: 1, name: "date", kind: "message", T: () => Timestamp },
+            { no: 2, name: "entries", kind: "message", repeat: 1 /*RepeatType.PACKED*/, T: () => TimeclockEntry },
+            { no: 3, name: "sum", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+        ]);
+    }
+    create(value?: PartialMessage<TimeclockRange>): TimeclockRange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        message.entries = [];
+        message.sum = 0;
+        if (value !== undefined)
+            reflectionMergePartial<TimeclockRange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: TimeclockRange): TimeclockRange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp date */ 1:
+                    message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
+                    break;
+                case /* repeated resources.jobs.TimeclockEntry entries */ 2:
+                    message.entries.push(TimeclockEntry.internalBinaryRead(reader, reader.uint32(), options));
+                    break;
+                case /* float sum */ 3:
+                    message.sum = reader.float();
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: TimeclockRange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp date = 1; */
+        if (message.date)
+            Timestamp.internalBinaryWrite(message.date, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* repeated resources.jobs.TimeclockEntry entries = 2; */
+        for (let i = 0; i < message.entries.length; i++)
+            TimeclockEntry.internalBinaryWrite(message.entries[i], writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        /* float sum = 3; */
+        if (message.sum !== 0)
+            writer.tag(3, WireType.Bit32).float(message.sum);
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message services.jobs.TimeclockRange
+ */
+export const TimeclockRange = new TimeclockRange$Type();
 // @generated message type with reflection information, may provide speed optimized methods
 class GetTimeclockStatsRequest$Type extends MessageType<GetTimeclockStatsRequest> {
     constructor() {

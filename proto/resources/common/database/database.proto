@@ -2,6 +2,7 @@ syntax = "proto3";
 
 package resources.common.database;
 
+import "resources/timestamp/timestamp.proto";
 import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database;database";
@@ -24,4 +25,9 @@ message Sort {
     max_len: 64
   }];
   string direction = 2 [(validate.rules).string = { in: ["asc", "desc"] }];
+}
+
+message DateRange {
+  resources.timestamp.Timestamp start = 1;
+  resources.timestamp.Timestamp end = 2;
 }

@@ -1,9 +1,9 @@
 <script lang="ts" setup>
 import { VisArea, VisAxis, VisCrosshair, VisLine, VisTooltip, VisXYContainer } from '@unovis/vue';
-import { parse } from 'date-fns';
+import { format, parse } from 'date-fns';
 import type { TimeclockWeeklyStats } from '~~/gen/ts/resources/jobs/timeclock';
 
-const { d, n, t } = useI18n();
+const { n, t } = useI18n();
 
 const props = defineProps<{
     stats: TimeclockWeeklyStats[];
@@ -37,13 +37,9 @@ const y = (d: DataRecord) => d.sum;
 
 const total = computed(() => data.value.reduce((acc: number, { sum }) => acc + sum, 0));
 
-const formatDate = (date: Date): string => d(date, 'date');
+const formatDate = (date: Date): string => format(date, `yyyy '${t('common.calendar_week')}' w`);
 
 const xTicks = (i: number) => {
-    if (i === 0 || i === data.value.length - 1 || !data.value[i]) {
-        return '';
-    }
-
     return formatDate(data.value[i]?.date ?? new Date());
 };
 
@@ -68,7 +64,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
             </div>
         </template>
 
-        <VisXYContainer :key="width" :data="data" :padding="{ top: 10 }" class="h-96" :width="width">
+        <VisXYContainer :key="width" :data="data" :padding="{ top: 10, left: 2, right: 2 }" class="h-96" :width="width">
             <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
             <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
 
@@ -77,7 +73,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
 
             <VisAxis type="x" :x="x" :tick-format="xTicks" />
 
-            <VisCrosshair color="rgb(var(--color-primary-DEFAULT))" :template="template" />
+            <VisCrosshair color="rgb(var(--color-primary-600))" :template="template" />
 
             <VisTooltip />
         </VisXYContainer>

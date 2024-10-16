@@ -44,6 +44,7 @@
     - [CentrumMode](#resources-centrum-CentrumMode)
   
 - [resources/common/database/database.proto](#resources_common_database_database-proto)
+    - [DateRange](#resources-common-database-DateRange)
     - [PaginationRequest](#resources-common-database-PaginationRequest)
     - [PaginationResponse](#resources-common-database-PaginationResponse)
     - [Sort](#resources-common-database-Sort)
@@ -125,6 +126,9 @@
     - [TimeclockEntry](#resources-jobs-TimeclockEntry)
     - [TimeclockStats](#resources-jobs-TimeclockStats)
     - [TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats)
+  
+    - [TimeclockMode](#resources-jobs-TimeclockMode)
+    - [TimeclockUserMode](#resources-jobs-TimeclockUserMode)
   
 - [resources/jobs/colleagues.proto](#resources_jobs_colleagues-proto)
     - [Colleague](#resources-jobs-Colleague)
@@ -535,6 +539,9 @@
     - [ListInactiveEmployeesResponse](#services-jobs-ListInactiveEmployeesResponse)
     - [ListTimeclockRequest](#services-jobs-ListTimeclockRequest)
     - [ListTimeclockResponse](#services-jobs-ListTimeclockResponse)
+    - [TimeclockDay](#services-jobs-TimeclockDay)
+    - [TimeclockRange](#services-jobs-TimeclockRange)
+    - [TimeclockWeekly](#services-jobs-TimeclockWeekly)
   
     - [JobsTimeclockService](#services-jobs-JobsTimeclockService)
   
@@ -1295,6 +1302,22 @@
 <p align="right"><a href="#top">Top</a></p>
 
 ## resources/common/database/database.proto
+
+
+
+<a name="resources-common-database-DateRange"></a>
+
+### DateRange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| start | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| end | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
 
 
 
@@ -2412,9 +2435,8 @@
 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
-| job | [string](#string) |  |  |
-| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
-| user_id | [int32](#int32) |  |  |
+| user_id | [int32](#int32) |  | @gotags: sql:&#34;primary_key&#34; |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
 | user | [Colleague](#resources-jobs-Colleague) | optional |  |
 | start_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
 | end_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
@@ -2462,6 +2484,33 @@
 
 
  
+
+
+<a name="resources-jobs-TimeclockMode"></a>
+
+### TimeclockMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TIMECLOCK_MODE_UNSPECIFIED | 0 |  |
+| TIMECLOCK_MODE_DAILY | 1 |  |
+| TIMECLOCK_MODE_WEEKLY | 2 |  |
+| TIMECLOCK_MODE_RANGE | 3 |  |
+
+
+
+<a name="resources-jobs-TimeclockUserMode"></a>
+
+### TimeclockUserMode
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| TIMECLOCK_USER_MODE_UNSPECIFIED | 0 |  |
+| TIMECLOCK_USER_MODE_SELF | 1 |  |
+| TIMECLOCK_USER_MODE_ALL | 2 |  |
+
 
  
 
@@ -7275,7 +7324,7 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | document_id | [uint64](#uint64) |  |  |
-| activity_types | [resources.documents.DocActivityType](#resources-documents-DocActivityType) | repeated | Search |
+| activity_types | [resources.documents.DocActivityType](#resources-documents-DocActivityType) | repeated | Search params |
 
 
 
@@ -8285,10 +8334,11 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationRequest](#resources-common-database-PaginationRequest) |  |  |
 | sort | [resources.common.database.Sort](#resources-common-database-Sort) | optional |  |
-| user_ids | [int32](#int32) | repeated | Search params |
-| from | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| to | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) | optional |  |
-| per_day | [bool](#bool) | optional |  |
+| user_mode | [resources.jobs.TimeclockUserMode](#resources-jobs-TimeclockUserMode) |  | Search params |
+| mode | [resources.jobs.TimeclockMode](#resources-jobs-TimeclockMode) |  |  |
+| date | [resources.common.database.DateRange](#resources-common-database-DateRange) | optional |  |
+| per_day | [bool](#bool) |  |  |
+| user_ids | [int32](#int32) | repeated |  |
 
 
 
@@ -8304,9 +8354,62 @@ TODO add way to link to, e.g., internal &#34;objects&#34; (citizens, documents, 
 | Field | Type | Label | Description |
 | ----- | ---- | ----- | ----------- |
 | pagination | [resources.common.database.PaginationResponse](#resources-common-database-PaginationResponse) |  |  |
-| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
 | stats | [resources.jobs.TimeclockStats](#resources-jobs-TimeclockStats) |  |  |
-| weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+| stats_weekly | [resources.jobs.TimeclockWeeklyStats](#resources-jobs-TimeclockWeeklyStats) | repeated |  |
+| daily | [TimeclockDay](#services-jobs-TimeclockDay) |  |  |
+| weekly | [TimeclockWeekly](#services-jobs-TimeclockWeekly) |  |  |
+| range | [TimeclockRange](#services-jobs-TimeclockRange) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockDay"></a>
+
+### TimeclockDay
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| sum | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockRange"></a>
+
+### TimeclockRange
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| sum | [float](#float) |  |  |
+
+
+
+
+
+
+<a name="services-jobs-TimeclockWeekly"></a>
+
+### TimeclockWeekly
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| date | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  | @gotags: sql:&#34;primary_key&#34; |
+| entries | [resources.jobs.TimeclockEntry](#resources-jobs-TimeclockEntry) | repeated |  |
+| sum | [float](#float) |  |  |
 
 
 

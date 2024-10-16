@@ -81,6 +81,9 @@ export default defineAppConfig({
                 emptyState: {
                     icon: 'i-mdi-database',
                 },
+                expandButton: {
+                    icon: 'i-mdi-chevron-down',
+                },
             },
             tr: {
                 base: 'hover:border-primary-500/25 dark:hover:border-primary-400/25 hover:bg-primary-100/50 dark:hover:bg-primary-900/10 border-white dark:border-gray-900',

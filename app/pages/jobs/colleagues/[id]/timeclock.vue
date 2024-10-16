@@ -29,6 +29,7 @@ const route = useRoute('jobs-colleagues-id-timeclock');
             :show-stats="false"
             force-historic-view
             :historic-sub-days="14"
+            hide-daily
         />
     </div>
 </template>

@@ -170,10 +170,6 @@ const columns = [
         label: t('common.state'),
         sortable: true,
     },
-    {
-        key: 'data',
-        label: t('common.data'),
-    },
 ];
 </script>
 
@@ -187,6 +183,7 @@ const columns = [
                             v-model="query.from"
                             :popover="{ popper: { placement: 'bottom-start' } }"
                             :date-picker="{ clearable: true }"
+                            disable-future
                         />
                     </UFormGroup>
 
@@ -195,6 +192,7 @@ const columns = [
                             v-model="query.to"
                             :popover="{ popper: { placement: 'bottom-start' } }"
                             :date-picker="{ clearable: true }"
+                            disable-future
                         />
                     </UFormGroup>
 
@@ -277,17 +275,19 @@ const columns = [
             <template #state-data="{ row }">
                 {{ EventType[row.state] }}
             </template>
-            <template #data-data="{ row }">
-                <span v-if="!row.data">{{ $t('common.na') }}</span>
-                <span v-else>
-                    <VueJsonPretty
-                        :data="JSON.parse(row.data!) as JSONDataType"
-                        :show-icon="true"
-                        :show-length="true"
-                        :virtual="true"
-                        :height="160"
-                    />
-                </span>
+            <template #expand="{ row }">
+                <div class="px-2 py-1">
+                    <span v-if="!row.data">{{ $t('common.na') }}</span>
+                    <span v-else>
+                        <VueJsonPretty
+                            :data="JSON.parse(row.data!) as JSONDataType"
+                            :show-icon="true"
+                            :show-length="true"
+                            :virtual="true"
+                            :height="240"
+                        />
+                    </span>
+                </div>
             </template>
         </UTable>
 

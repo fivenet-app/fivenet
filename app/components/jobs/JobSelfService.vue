@@ -53,8 +53,8 @@ onMounted(() => {
             <UButton
                 v-if="
                     colleagueSelf?.colleague &&
-                    can('JobsService.SetJobsUserProps').value &&
-                    activeChar?.userId === colleagueSelf.colleague?.userId
+                    activeChar?.userId === colleagueSelf.colleague?.userId &&
+                    can('JobsService.SetJobsUserProps').value
                 "
                 block
                 class="flex-1"

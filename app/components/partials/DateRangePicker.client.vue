@@ -2,7 +2,6 @@
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { DatePicker as VCalendarDatePicker } from 'v-calendar';
 import 'v-calendar/dist/style.css';
-import type { DatePickerDate, DatePickerRangeObject } from 'v-calendar/dist/types/src/use/datePicker.js';
 
 defineOptions({
     inheritAttrs: false,
@@ -10,7 +9,7 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        modelValue: DatePickerDate | DatePickerRangeObject | undefined;
+        modelValue: { start: Date; end: Date } | undefined;
         clearable?: boolean;
     }>(),
     {
@@ -45,21 +44,13 @@ const attrs = {
 
 <template>
     <VCalendarDatePicker
-        v-if="date && (date as DatePickerRangeObject)?.start && (date as DatePickerRangeObject)?.end"
-        v-model="date"
+        v-model.range="date"
         :columns="smallerThanSm ? 1 : 2"
         :rows="smallerThanSm ? 2 : 1"
         v-bind="{ ...attrs, ...$attrs }"
+        @update:model-value="date = $event"
+        @close="$emit('close')"
     >
-        <template v-if="clearable" #footer>
-            <div class="w-full px-4 pb-3">
-                <UButton block @click="date = null">
-                    {{ $t('common.clear') }}
-                </UButton>
-            </div>
-        </template>
-    </VCalendarDatePicker>
-    <VCalendarDatePicker v-else v-model="date" v-bind="{ ...attrs, ...$attrs }">
         <template v-if="clearable" #footer>
             <div class="w-full px-4 pb-3">
                 <UButton block @click="date = null">

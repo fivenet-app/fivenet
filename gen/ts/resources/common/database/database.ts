@@ -10,6 +10,7 @@ import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.common.database.PaginationRequest
  */
@@ -56,6 +57,19 @@ export interface Sort {
      * @generated from protobuf field: string direction = 2;
      */
     direction: string;
+}
+/**
+ * @generated from protobuf message resources.common.database.DateRange
+ */
+export interface DateRange {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp start = 1;
+     */
+    start?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp end = 2;
+     */
+    end?: Timestamp;
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class PaginationRequest$Type extends MessageType<PaginationRequest> {
@@ -237,3 +251,56 @@ class Sort$Type extends MessageType<Sort> {
  * @generated MessageType for protobuf message resources.common.database.Sort
  */
 export const Sort = new Sort$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class DateRange$Type extends MessageType<DateRange> {
+    constructor() {
+        super("resources.common.database.DateRange", [
+            { no: 1, name: "start", kind: "message", T: () => Timestamp },
+            { no: 2, name: "end", kind: "message", T: () => Timestamp }
+        ]);
+    }
+    create(value?: PartialMessage<DateRange>): DateRange {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<DateRange>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: DateRange): DateRange {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp start */ 1:
+                    message.start = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.start);
+                    break;
+                case /* resources.timestamp.Timestamp end */ 2:
+                    message.end = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.end);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: DateRange, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp start = 1; */
+        if (message.start)
+            Timestamp.internalBinaryWrite(message.start, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp end = 2; */
+        if (message.end)
+            Timestamp.internalBinaryWrite(message.end, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.common.database.DateRange
+ */
+export const DateRange = new DateRange$Type();

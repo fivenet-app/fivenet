@@ -481,7 +481,10 @@
         "retrying": "Retrying...",
         "reduction": "Reduction",
         "feed": "Activity Feed",
-        "field": "Field | Fields"
+        "field": "Field | Fields",
+        "expiration": "Expiration",
+        "own": "Eigene",
+        "per_day": "Per Day"
     },
     "components": {
         "partials": {
@@ -832,9 +835,7 @@
                 }
             },
             "timeclock": {
-                "List": {
-                    "per_day": "Per Day"
-                },
+                "colleagues": "Colleagues",
                 "Stats": {
                     "7_days": "Last 7 days",
                     "weekly": "Weekly Summary",

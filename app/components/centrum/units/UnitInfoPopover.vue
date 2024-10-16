@@ -41,9 +41,7 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                 </template>
             </span>
 
-            <template v-if="assignment?.expiresAt">
-                <UIcon name="i-mdi-timer" class="size-4 text-amber-600" />
-            </template>
+            <UIcon v-if="assignment?.expiresAt" name="i-mdi-timer" class="size-4 text-amber-600" />
         </UButton>
 
         <template #panel>
@@ -54,9 +52,10 @@ const unitStatusColor = computed(() => unitStatusToBGColor(props.unit?.status?.s
                     {{ $t(`enums.centrum.StatusUnit.${StatusUnit[unit.status?.status ?? 0]}`) }}
                 </UBadge>
 
-                <p v-if="assignment?.expiresAt" class="inline-flex items-center justify-center text-sm font-normal">
+                <p v-if="assignment?.expiresAt" class="inline-flex items-center gap-1 text-sm font-normal">
+                    <UIcon name="i-mdi-timer" class="size-4 text-amber-600" />
                     {{
-                        useLocaleTimeAgo(toDate(assignment.expiresAt, timeCorrection), {
+                        useLocaleTimeAgo(toDate(assignment?.expiresAt, timeCorrection), {
                             showSecond: true,
                             updateInterval: 1_000,
                         }).value

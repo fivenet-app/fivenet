@@ -16,17 +16,41 @@ message ListTimeclockRequest {
   resources.common.database.PaginationRequest pagination = 1 [(validate.rules).message.required = true];
   optional resources.common.database.Sort sort = 2;
   // Search params
-  repeated int32 user_ids = 3;
-  optional resources.timestamp.Timestamp from = 4;
-  optional resources.timestamp.Timestamp to = 5;
-  optional bool per_day = 6;
+  resources.jobs.TimeclockUserMode user_mode = 3;
+  resources.jobs.TimeclockMode mode = 4;
+  optional resources.common.database.DateRange date = 5;
+  bool per_day = 6;
+  repeated int32 user_ids = 7;
 }
 
 message ListTimeclockResponse {
   resources.common.database.PaginationResponse pagination = 1;
+  resources.jobs.TimeclockStats stats = 2;
+  repeated resources.jobs.TimeclockWeeklyStats stats_weekly = 3;
+
+  oneof entries {
+    TimeclockDay daily = 4;
+    TimeclockWeekly weekly = 5;
+    TimeclockRange range = 6;
+  }
+}
+
+message TimeclockDay {
+  resources.timestamp.Timestamp date = 1;
   repeated resources.jobs.TimeclockEntry entries = 2;
-  resources.jobs.TimeclockStats stats = 3;
-  repeated resources.jobs.TimeclockWeeklyStats weekly = 4;
+  float sum = 3;
+}
+
+message TimeclockWeekly {
+  resources.timestamp.Timestamp date = 1; // @gotags: sql:"primary_key"
+  repeated resources.jobs.TimeclockEntry entries = 2;
+  float sum = 3;
+}
+
+message TimeclockRange {
+  resources.timestamp.Timestamp date = 1; // @gotags: sql:"primary_key"
+  repeated resources.jobs.TimeclockEntry entries = 2;
+  float sum = 3;
 }
 
 message GetTimeclockStatsRequest {

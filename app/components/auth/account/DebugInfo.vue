@@ -137,20 +137,20 @@ const version = APP_VERSION;
                 :ui="{ container: '' }"
             >
                 <UButtonGroup class="flex w-full break-words" orientation="vertical">
-                    <UButton @click="clipboardStore.clear()">
-                        {{ $t('components.debug_info.reset_clipboard') }}
+                    <UButton block @click="clipboardStore.clear()">
+                        <span>{{ $t('components.debug_info.reset_clipboard') }}</span>
                     </UButton>
-                    <UButton @click="resetLocalStorage()">
-                        {{ $t('components.debug_info.reset_local_storage') }}
+                    <UButton block @click="resetLocalStorage()">
+                        <span>{{ $t('components.debug_info.reset_local_storage') }}</span>
                     </UButton>
-                    <UButton color="red" :external="true" to="/api/clear-site-data">
-                        {{ $t('components.debug_info.factory_reset') }}
+                    <UButton block color="red" :external="true" to="/api/clear-site-data">
+                        <span>{{ $t('components.debug_info.factory_reset') }}</span>
                     </UButton>
-                    <UButton color="gray" @click="sendTestNotifications">
-                        {{ $t('components.debug_info.test_notifications') }}
+                    <UButton block color="gray" @click="sendTestNotifications">
+                        <span>{{ $t('components.debug_info.test_notifications') }}</span>
                     </UButton>
-                    <UButton color="gray" @click="triggerErrorPage">
-                        {{ $t('components.debug_info.trigger_error') }}
+                    <UButton block color="gray" @click="triggerErrorPage">
+                        <span>{{ $t('components.debug_info.trigger_error') }}</span>
                     </UButton>
                 </UButtonGroup>
             </UFormGroup>

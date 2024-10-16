@@ -8,14 +8,26 @@ import "validate/validate.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs;jobs";
 
+enum TimeclockMode {
+  TIMECLOCK_MODE_UNSPECIFIED = 0;
+  TIMECLOCK_MODE_DAILY = 1;
+  TIMECLOCK_MODE_WEEKLY = 2;
+  TIMECLOCK_MODE_RANGE = 3;
+}
+
+enum TimeclockUserMode {
+  TIMECLOCK_USER_MODE_UNSPECIFIED = 0;
+  TIMECLOCK_USER_MODE_SELF = 1;
+  TIMECLOCK_USER_MODE_ALL = 2;
+}
+
 message TimeclockEntry {
-  string job = 1 [(validate.rules).string.max_len = 20];
-  resources.timestamp.Timestamp date = 2;
-  int32 user_id = 3;
-  optional resources.jobs.Colleague user = 4;
-  optional resources.timestamp.Timestamp start_time = 5;
-  optional resources.timestamp.Timestamp end_time = 6;
-  float spent_time = 7;
+  int32 user_id = 1; // @gotags: sql:"primary_key"
+  resources.timestamp.Timestamp date = 2; // @gotags: sql:"primary_key"
+  optional resources.jobs.Colleague user = 3;
+  optional resources.timestamp.Timestamp start_time = 4;
+  optional resources.timestamp.Timestamp end_time = 5;
+  float spent_time = 6;
 }
 
 message TimeclockStats {

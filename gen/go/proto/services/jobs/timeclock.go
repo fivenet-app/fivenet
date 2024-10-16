@@ -7,13 +7,13 @@ import (
 
 	database "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/database"
 	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	errorsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/errors"
 	permsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/perms"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/perms"
 	"github.com/fivenet-app/fivenet/pkg/utils"
-	timeutils "github.com/fivenet-app/fivenet/pkg/utils/time"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -41,34 +41,57 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		fields = fieldsAttr.([]string)
 	}
 
-	if len(fields) == 0 || !slices.Contains(fields, "All") {
+	if !slices.Contains(fields, "All") {
+		req.UserMode = jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_SELF
+	}
+
+	if req.UserMode <= jobs.TimeclockUserMode_TIMECLOCK_USER_MODE_SELF {
 		condition = condition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
 		statsCondition = statsCondition.AND(tTimeClock.UserID.EQ(jet.Int32(userInfo.UserId)))
-	}
+	} else {
+		if len(req.UserIds) > 0 {
+			ids := make([]jet.Expression, len(req.UserIds))
+			for i := 0; i < len(req.UserIds); i++ {
+				ids[i] = jet.Int32(req.UserIds[i])
+			}
 
-	if len(req.UserIds) > 0 {
-		ids := make([]jet.Expression, len(req.UserIds))
-		for i := 0; i < len(req.UserIds); i++ {
-			ids[i] = jet.Int32(req.UserIds[i])
+			condition = condition.AND(
+				tTimeClock.UserID.IN(ids...),
+			)
+			statsCondition = statsCondition.AND(
+				tTimeClock.UserID.IN(ids...),
+			)
 		}
-
-		condition = condition.AND(
-			tTimeClock.UserID.IN(ids...),
-		)
-		statsCondition = statsCondition.AND(
-			tTimeClock.UserID.IN(ids...),
-		)
 	}
 
-	if req.From != nil {
-		condition = condition.AND(tTimeClock.Date.GT_EQ(
-			jet.DateT(timeutils.TruncateToDay(req.From.AsTime())),
-		))
-	}
-	if req.To != nil {
-		condition = condition.AND(tTimeClock.Date.LT_EQ(
-			jet.DateT(timeutils.TruncateToNight(req.To.AsTime())),
-		))
+	if req.Date != nil {
+		if req.Mode <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
+			if req.Date.End == nil {
+				req.Date.End = timestamp.Now()
+			}
+
+			condition = condition.AND(tTimeClock.Date.EQ(
+				jet.DateT(req.Date.End.AsTime()),
+			))
+		} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
+			if req.Date.End != nil {
+				condition = condition.AND(jet.BoolExp(jet.Raw("YEARWEEK(`timeclock_entry`.`date`, 1) = YEARWEEK($date, 1)",
+					jet.RawArgs{"$date": req.Date.End.AsTime()},
+				)),
+				)
+			}
+		} else {
+			if req.Date.Start != nil {
+				condition = condition.AND(tTimeClock.Date.GT_EQ(
+					jet.DateT(req.Date.Start.AsTime()),
+				))
+			}
+			if req.Date.End != nil {
+				condition = condition.AND(tTimeClock.Date.LT_EQ(
+					jet.DateT(req.Date.End.AsTime()),
+				))
+			}
+		}
 	}
 
 	countStmt := tTimeClock.
@@ -93,7 +116,7 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
 
-	resp.Weekly, err = s.getTimeclockWeeklyStats(ctx, statsCondition)
+	resp.StatsWeekly, err = s.getTimeclockWeeklyStats(ctx, statsCondition)
 	if err != nil {
 		return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
 	}
@@ -138,59 +161,190 @@ func (s *Server) ListTimeclock(ctx context.Context, req *ListTimeclockRequest) (
 		)
 	}
 
-	stmt := tTimeClock.
-		SELECT(
-			tTimeClock.Job,
-			tTimeClock.Date,
-			tTimeClock.UserID,
-			tTimeClock.StartTime,
-			tTimeClock.EndTime,
-			tTimeClock.SpentTime,
-			tUser.ID,
-			tUser.Job,
-			tUser.JobGrade,
-			tUser.Firstname,
-			tUser.Lastname,
-			tUser.Dateofbirth,
-			tUser.PhoneNumber,
-			tUserProps.Avatar.AS("colleague.avatar"),
-			tJobsUserProps.UserID,
-			tJobsUserProps.Job,
-			tJobsUserProps.AbsenceBegin,
-			tJobsUserProps.AbsenceEnd,
-		).
-		FROM(
-			tTimeClock.
-				INNER_JOIN(tUser,
-					tUser.ID.EQ(tTimeClock.UserID),
-				).
-				LEFT_JOIN(tUserProps,
-					tUserProps.UserID.EQ(tUser.ID),
-				).
-				LEFT_JOIN(tJobsUserProps,
-					tJobsUserProps.UserID.EQ(tUser.ID).
-						AND(tUser.Job.EQ(jet.String(userInfo.Job))),
-				),
-		).
-		WHERE(condition).
-		OFFSET(req.Pagination.Offset).
-		ORDER_BY(orderBys...).
-		LIMIT(limit)
-
-	if err := stmt.QueryContext(ctx, s.db, &resp.Entries); err != nil {
-		if !errors.Is(err, qrm.ErrNoRows) {
-			return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
-		}
+	groupBys := []jet.GroupByClause{}
+	if req.PerDay {
+		groupBys = append(groupBys, tTimeClock.Date, tTimeClock.UserID)
+	} else {
+		groupBys = append(groupBys, tTimeClock.UserID)
 	}
 
 	jobInfoFn := s.enricher.EnrichJobInfoSafeFunc(userInfo)
-	for i := 0; i < len(resp.Entries); i++ {
-		if resp.Entries[i].User != nil {
-			jobInfoFn(resp.Entries[i].User)
-		}
-	}
 
-	resp.Pagination.Update(len(resp.Entries))
+	if req.Mode <= jobs.TimeclockMode_TIMECLOCK_MODE_DAILY {
+		resp.Entries = &ListTimeclockResponse_Daily{
+			Daily: &TimeclockDay{},
+		}
+
+		stmt := tTimeClock.
+			SELECT(
+				tTimeClock.UserID,
+				tTimeClock.StartTime,
+				tTimeClock.EndTime,
+				tTimeClock.SpentTime,
+				tUser.ID,
+				tUser.Job,
+				tUser.JobGrade,
+				tUser.Firstname,
+				tUser.Lastname,
+				tUser.Dateofbirth,
+				tUser.PhoneNumber,
+				tUserProps.Avatar.AS("colleague.avatar"),
+				tJobsUserProps.UserID,
+				tJobsUserProps.Job,
+				tJobsUserProps.AbsenceBegin,
+				tJobsUserProps.AbsenceEnd,
+			).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tUser,
+						tUser.ID.EQ(tTimeClock.UserID),
+					).
+					LEFT_JOIN(tUserProps,
+						tUserProps.UserID.EQ(tUser.ID),
+					).
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+					),
+			).
+			WHERE(condition).
+			OFFSET(req.Pagination.Offset).
+			ORDER_BY(orderBys...).
+			LIMIT(limit)
+
+		data := resp.GetDaily()
+		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+			}
+		}
+
+		data.Date = req.Date.End
+		for i := 0; i < len(data.Entries); i++ {
+			if data.Entries[i].User != nil {
+				jobInfoFn(data.Entries[i].User)
+			}
+			data.Sum += data.Entries[i].SpentTime
+		}
+
+		resp.Pagination.Update(len(data.Entries))
+	} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_WEEKLY {
+		resp.Entries = &ListTimeclockResponse_Weekly{
+			Weekly: &TimeclockWeekly{},
+		}
+
+		stmt := tTimeClock.
+			SELECT(
+				tTimeClock.UserID,
+				tTimeClock.Date,
+				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
+				tUser.ID,
+				tUser.Job,
+				tUser.JobGrade,
+				tUser.Firstname,
+				tUser.Lastname,
+				tUser.Dateofbirth,
+				tUser.PhoneNumber,
+				tUserProps.Avatar.AS("colleague.avatar"),
+				tJobsUserProps.UserID,
+				tJobsUserProps.Job,
+				tJobsUserProps.AbsenceBegin,
+				tJobsUserProps.AbsenceEnd,
+			).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tUser,
+						tUser.ID.EQ(tTimeClock.UserID),
+					).
+					LEFT_JOIN(tUserProps,
+						tUserProps.UserID.EQ(tUser.ID),
+					).
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+					),
+			).
+			WHERE(condition).
+			OFFSET(req.Pagination.Offset).
+			GROUP_BY(groupBys...).
+			ORDER_BY(orderBys...).
+			LIMIT(limit)
+
+		data := resp.GetWeekly()
+		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+			}
+		}
+
+		for i := 0; i < len(data.Entries); i++ {
+			if data.Entries[i].User != nil {
+				jobInfoFn(data.Entries[i].User)
+			}
+			data.Sum += data.Entries[i].SpentTime
+		}
+
+		resp.Pagination.Update(len(data.Entries))
+	} else if req.Mode == jobs.TimeclockMode_TIMECLOCK_MODE_RANGE {
+		resp.Entries = &ListTimeclockResponse_Range{
+			Range: &TimeclockRange{},
+		}
+
+		stmt := tTimeClock.
+			SELECT(
+				tTimeClock.UserID,
+				tTimeClock.Date,
+				jet.SUM(tTimeClock.SpentTime).AS("timeclock_entry.spent_time"),
+				tUser.ID,
+				tUser.Job,
+				tUser.JobGrade,
+				tUser.Firstname,
+				tUser.Lastname,
+				tUser.Dateofbirth,
+				tUser.PhoneNumber,
+				tUserProps.Avatar.AS("colleague.avatar"),
+				tJobsUserProps.UserID,
+				tJobsUserProps.Job,
+				tJobsUserProps.AbsenceBegin,
+				tJobsUserProps.AbsenceEnd,
+			).
+			FROM(
+				tTimeClock.
+					INNER_JOIN(tUser,
+						tUser.ID.EQ(tTimeClock.UserID),
+					).
+					LEFT_JOIN(tUserProps,
+						tUserProps.UserID.EQ(tUser.ID),
+					).
+					LEFT_JOIN(tJobsUserProps,
+						tJobsUserProps.UserID.EQ(tUser.ID).
+							AND(tUser.Job.EQ(jet.String(userInfo.Job))),
+					),
+			).
+			WHERE(condition).
+			OFFSET(req.Pagination.Offset).
+			GROUP_BY(groupBys...).
+			ORDER_BY(orderBys...).
+			LIMIT(limit)
+
+		data := resp.GetRange()
+		if err := stmt.QueryContext(ctx, s.db, &data.Entries); err != nil {
+			if !errors.Is(err, qrm.ErrNoRows) {
+				return nil, errswrap.NewError(err, errorsjobs.ErrFailedQuery)
+			}
+		}
+
+		data.Date = req.Date.End
+		for i := 0; i < len(data.Entries); i++ {
+			if data.Entries[i].User != nil {
+				jobInfoFn(data.Entries[i].User)
+			}
+
+			data.Sum += data.Entries[i].SpentTime
+		}
+
+		resp.Pagination.Update(len(data.Entries))
+	}
 
 	return resp, nil
 }

@@ -118,7 +118,9 @@ watch(updateAvailable, async () => {
         icon: 'i-mdi-update',
         color: 'primary',
         timeout: 20000,
-        closeButton: {},
+        closeButton: {
+            disabled: true,
+        },
     });
 });
 

@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 import type { FormSubmitEvent } from '#ui/types';
-import { addDays, isFuture } from 'date-fns';
+import { addDays, isFuture, subDays } from 'date-fns';
 import { z } from 'zod';
 import DatePickerPopoverClient from '~/components/partials/DatePickerPopover.client.vue';
 import { useNotificatorStore } from '~/store/notificator';
@@ -138,6 +138,7 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                             <DatePickerPopoverClient
                                 v-model="state.absenceEnd"
                                 :popover="{ popper: { placement: 'bottom-start' } }"
+                                :date-picker="{ disabledDates: [{ start: null, end: subDays(new Date(), 1) }] }"
                             />
                         </UFormGroup>
                     </div>

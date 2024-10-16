@@ -480,7 +480,11 @@
         "or": "ODER",
         "retrying": "Erneuter Versuch...",
         "reduction": "Minderung",
-        "feed": "Aktivitäts-Feed"
+        "feed": "Aktivitäts-Feed",
+        "field": "Field | Fields",
+        "expiration": "Ablauf",
+        "own": "Eigene",
+        "per_day": "Pro Tag"
     },
     "components": {
         "partials": {
@@ -831,9 +835,7 @@
                 }
             },
             "timeclock": {
-                "List": {
-                    "per_day": "Pro Tag"
-                },
+                "colleagues": "Kollegium",
                 "Stats": {
                     "7_days": "Letzten 7 Tage",
                     "weekly": "Wöchentliche Zusammenfassung",

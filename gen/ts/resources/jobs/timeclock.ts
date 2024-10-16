@@ -17,31 +17,27 @@ import { Timestamp } from "../timestamp/timestamp";
  */
 export interface TimeclockEntry {
     /**
-     * @generated from protobuf field: string job = 1;
+     * @generated from protobuf field: int32 user_id = 1;
      */
-    job: string;
+    userId: number; // @gotags: sql:"primary_key"
     /**
      * @generated from protobuf field: resources.timestamp.Timestamp date = 2;
      */
-    date?: Timestamp;
+    date?: Timestamp; // @gotags: sql:"primary_key"
     /**
-     * @generated from protobuf field: int32 user_id = 3;
-     */
-    userId: number;
-    /**
-     * @generated from protobuf field: optional resources.jobs.Colleague user = 4;
+     * @generated from protobuf field: optional resources.jobs.Colleague user = 3;
      */
     user?: Colleague;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 5;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp start_time = 4;
      */
     startTime?: Timestamp;
     /**
-     * @generated from protobuf field: optional resources.timestamp.Timestamp end_time = 6;
+     * @generated from protobuf field: optional resources.timestamp.Timestamp end_time = 5;
      */
     endTime?: Timestamp;
     /**
-     * @generated from protobuf field: float spent_time = 7;
+     * @generated from protobuf field: float spent_time = 6;
      */
     spentTime: number;
 }
@@ -91,22 +87,58 @@ export interface TimeclockWeeklyStats {
      */
     max: number;
 }
+/**
+ * @generated from protobuf enum resources.jobs.TimeclockMode
+ */
+export enum TimeclockMode {
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_MODE_DAILY = 1;
+     */
+    DAILY = 1,
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_MODE_WEEKLY = 2;
+     */
+    WEEKLY = 2,
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_MODE_RANGE = 3;
+     */
+    RANGE = 3
+}
+/**
+ * @generated from protobuf enum resources.jobs.TimeclockUserMode
+ */
+export enum TimeclockUserMode {
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_USER_MODE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_USER_MODE_SELF = 1;
+     */
+    SELF = 1,
+    /**
+     * @generated from protobuf enum value: TIMECLOCK_USER_MODE_ALL = 2;
+     */
+    ALL = 2
+}
 // @generated message type with reflection information, may provide speed optimized methods
 class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
     constructor() {
         super("resources.jobs.TimeclockEntry", [
-            { no: 1, name: "job", kind: "scalar", T: 9 /*ScalarType.STRING*/, options: { "validate.rules": { string: { maxLen: "20" } } } },
+            { no: 1, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
             { no: 2, name: "date", kind: "message", T: () => Timestamp },
-            { no: 3, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 4, name: "user", kind: "message", T: () => Colleague },
-            { no: 5, name: "start_time", kind: "message", T: () => Timestamp },
-            { no: 6, name: "end_time", kind: "message", T: () => Timestamp },
-            { no: 7, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
+            { no: 3, name: "user", kind: "message", T: () => Colleague },
+            { no: 4, name: "start_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "end_time", kind: "message", T: () => Timestamp },
+            { no: 6, name: "spent_time", kind: "scalar", T: 2 /*ScalarType.FLOAT*/ }
         ]);
     }
     create(value?: PartialMessage<TimeclockEntry>): TimeclockEntry {
         const message = globalThis.Object.create((this.messagePrototype!));
-        message.job = "";
         message.userId = 0;
         message.spentTime = 0;
         if (value !== undefined)
@@ -118,25 +150,22 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string job */ 1:
-                    message.job = reader.string();
+                case /* int32 user_id */ 1:
+                    message.userId = reader.int32();
                     break;
                 case /* resources.timestamp.Timestamp date */ 2:
                     message.date = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.date);
                     break;
-                case /* int32 user_id */ 3:
-                    message.userId = reader.int32();
-                    break;
-                case /* optional resources.jobs.Colleague user */ 4:
+                case /* optional resources.jobs.Colleague user */ 3:
                     message.user = Colleague.internalBinaryRead(reader, reader.uint32(), options, message.user);
                     break;
-                case /* optional resources.timestamp.Timestamp start_time */ 5:
+                case /* optional resources.timestamp.Timestamp start_time */ 4:
                     message.startTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.startTime);
                     break;
-                case /* optional resources.timestamp.Timestamp end_time */ 6:
+                case /* optional resources.timestamp.Timestamp end_time */ 5:
                     message.endTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.endTime);
                     break;
-                case /* float spent_time */ 7:
+                case /* float spent_time */ 6:
                     message.spentTime = reader.float();
                     break;
                 default:
@@ -151,27 +180,24 @@ class TimeclockEntry$Type extends MessageType<TimeclockEntry> {
         return message;
     }
     internalBinaryWrite(message: TimeclockEntry, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string job = 1; */
-        if (message.job !== "")
-            writer.tag(1, WireType.LengthDelimited).string(message.job);
+        /* int32 user_id = 1; */
+        if (message.userId !== 0)
+            writer.tag(1, WireType.Varint).int32(message.userId);
         /* resources.timestamp.Timestamp date = 2; */
         if (message.date)
             Timestamp.internalBinaryWrite(message.date, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
-        /* int32 user_id = 3; */
-        if (message.userId !== 0)
-            writer.tag(3, WireType.Varint).int32(message.userId);
-        /* optional resources.jobs.Colleague user = 4; */
+        /* optional resources.jobs.Colleague user = 3; */
         if (message.user)
-            Colleague.internalBinaryWrite(message.user, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp start_time = 5; */
+            Colleague.internalBinaryWrite(message.user, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp start_time = 4; */
         if (message.startTime)
-            Timestamp.internalBinaryWrite(message.startTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
-        /* optional resources.timestamp.Timestamp end_time = 6; */
+            Timestamp.internalBinaryWrite(message.startTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* optional resources.timestamp.Timestamp end_time = 5; */
         if (message.endTime)
-            Timestamp.internalBinaryWrite(message.endTime, writer.tag(6, WireType.LengthDelimited).fork(), options).join();
-        /* float spent_time = 7; */
+            Timestamp.internalBinaryWrite(message.endTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
+        /* float spent_time = 6; */
         if (message.spentTime !== 0)
-            writer.tag(7, WireType.Bit32).float(message.spentTime);
+            writer.tag(6, WireType.Bit32).float(message.spentTime);
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

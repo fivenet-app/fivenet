@@ -575,7 +575,7 @@ export interface ListDocumentActivityRequest {
      */
     documentId: string;
     /**
-     * Search
+     * Search params
      *
      * @generated from protobuf field: repeated resources.documents.DocActivityType activity_types = 3;
      */

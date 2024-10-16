@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"slices"
+	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -26,7 +27,9 @@ func (s *Server) getTimeclockStats(ctx context.Context, condition jet.BoolExpres
 
 	var dest jobs.TimeclockStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
-		return nil, err
+		if !errors.Is(err, qrm.ErrNoRows) {
+			return nil, err
+		}
 	}
 
 	return &dest, nil
@@ -53,7 +56,7 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 			jet.RawString("`timeclock_weekly_stats.year` DESC"),
 			jet.RawString("`timeclock_weekly_stats.calendar_week` DESC"),
 		).
-		LIMIT(12)
+		LIMIT(10)
 
 	var dest []*jobs.TimeclockWeeklyStats
 	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
@@ -63,6 +66,72 @@ func (s *Server) getTimeclockWeeklyStats(ctx context.Context, condition jet.Bool
 	}
 
 	slices.Reverse(dest)
+
+	// Add "null" values at the begin of the stats for better UX
+	if len(dest) > 0 {
+		last := dest[len(dest)-1]
+		lastCalendarWeek := last.CalendarWeek
+
+		for i, s := range slices.Backward(dest) {
+			if last.Year != s.Year {
+				continue
+			}
+
+			if len(dest) >= i {
+				if dest[i].CalendarWeek == lastCalendarWeek-1 {
+					lastCalendarWeek--
+					continue
+				}
+			}
+
+			for lastCalendarWeek-s.CalendarWeek > 1 {
+				lastCalendarWeek--
+				dest = append([]*jobs.TimeclockWeeklyStats{
+					{
+						Year:         last.Year,
+						CalendarWeek: lastCalendarWeek,
+						Sum:          0,
+						Avg:          0,
+						Max:          0,
+					},
+				}, dest...)
+			}
+		}
+
+		slices.SortFunc(dest, func(a, b *jobs.TimeclockWeeklyStats) int {
+			return int(a.Year - b.Year + a.CalendarWeek - b.CalendarWeek)
+		})
+
+		if dest[0].Year == last.Year && dest[0].CalendarWeek > 1 {
+			dest = append([]*jobs.TimeclockWeeklyStats{
+				{
+					Year:         last.Year,
+					CalendarWeek: dest[0].CalendarWeek - 1,
+					Sum:          0,
+					Avg:          0,
+					Max:          0,
+				},
+			}, dest...)
+		}
+	} else {
+		// No stats? Add two empty ones so the graph doesn't break
+		year, week := time.Now().ISOWeek()
+		dest = append(dest,
+			&jobs.TimeclockWeeklyStats{
+				Year:         int32(year),
+				CalendarWeek: int32(week),
+				Sum:          0,
+				Avg:          0,
+				Max:          0,
+			},
+			&jobs.TimeclockWeeklyStats{
+				Year:         int32(year),
+				CalendarWeek: int32(week + 1),
+				Sum:          0,
+				Avg:          0,
+				Max:          0,
+			})
+	}
 
 	return dest, nil
 }

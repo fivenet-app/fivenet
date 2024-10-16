@@ -17,6 +17,8 @@ import (
 	"unicode/utf8"
 
 	"google.golang.org/protobuf/types/known/anypb"
+
+	jobs "github.com/fivenet-app/fivenet/gen/go/proto/resources/jobs"
 )
 
 // ensure the imports are used
@@ -33,6 +35,8 @@ var (
 	_ = (*mail.Address)(nil)
 	_ = anypb.Any{}
 	_ = sort.Sort
+
+	_ = jobs.TimeclockUserMode(0)
 )
 
 // Validate checks the field values on ListTimeclockRequest with the rules
@@ -97,6 +101,12 @@ func (m *ListTimeclockRequest) validate(all bool) error {
 		}
 	}
 
+	// no validation rules for UserMode
+
+	// no validation rules for Mode
+
+	// no validation rules for PerDay
+
 	if m.Sort != nil {
 
 		if all {
@@ -130,14 +140,14 @@ func (m *ListTimeclockRequest) validate(all bool) error {
 
 	}
 
-	if m.From != nil {
+	if m.Date != nil {
 
 		if all {
-			switch v := interface{}(m.GetFrom()).(type) {
+			switch v := interface{}(m.GetDate()).(type) {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListTimeclockRequestValidationError{
-						field:  "From",
+						field:  "Date",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -145,59 +155,22 @@ func (m *ListTimeclockRequest) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListTimeclockRequestValidationError{
-						field:  "From",
+						field:  "Date",
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
 				}
 			}
-		} else if v, ok := interface{}(m.GetFrom()).(interface{ Validate() error }); ok {
+		} else if v, ok := interface{}(m.GetDate()).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListTimeclockRequestValidationError{
-					field:  "From",
+					field:  "Date",
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
-	}
-
-	if m.To != nil {
-
-		if all {
-			switch v := interface{}(m.GetTo()).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListTimeclockRequestValidationError{
-						field:  "To",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ListTimeclockRequestValidationError{
-						field:  "To",
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(m.GetTo()).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListTimeclockRequestValidationError{
-					field:  "To",
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
-	if m.PerDay != nil {
-		// no validation rules for PerDay
 	}
 
 	if len(errors) > 0 {
@@ -331,40 +304,6 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 		}
 	}
 
-	for idx, item := range m.GetEntries() {
-		_, _ = idx, item
-
-		if all {
-			switch v := interface{}(item).(type) {
-			case interface{ ValidateAll() error }:
-				if err := v.ValidateAll(); err != nil {
-					errors = append(errors, ListTimeclockResponseValidationError{
-						field:  fmt.Sprintf("Entries[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			case interface{ Validate() error }:
-				if err := v.Validate(); err != nil {
-					errors = append(errors, ListTimeclockResponseValidationError{
-						field:  fmt.Sprintf("Entries[%v]", idx),
-						reason: "embedded message failed validation",
-						cause:  err,
-					})
-				}
-			}
-		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
-			if err := v.Validate(); err != nil {
-				return ListTimeclockResponseValidationError{
-					field:  fmt.Sprintf("Entries[%v]", idx),
-					reason: "embedded message failed validation",
-					cause:  err,
-				}
-			}
-		}
-
-	}
-
 	if all {
 		switch v := interface{}(m.GetStats()).(type) {
 		case interface{ ValidateAll() error }:
@@ -394,7 +333,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 		}
 	}
 
-	for idx, item := range m.GetWeekly() {
+	for idx, item := range m.GetStatsWeekly() {
 		_, _ = idx, item
 
 		if all {
@@ -402,7 +341,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 			case interface{ ValidateAll() error }:
 				if err := v.ValidateAll(); err != nil {
 					errors = append(errors, ListTimeclockResponseValidationError{
-						field:  fmt.Sprintf("Weekly[%v]", idx),
+						field:  fmt.Sprintf("StatsWeekly[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -410,7 +349,7 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 			case interface{ Validate() error }:
 				if err := v.Validate(); err != nil {
 					errors = append(errors, ListTimeclockResponseValidationError{
-						field:  fmt.Sprintf("Weekly[%v]", idx),
+						field:  fmt.Sprintf("StatsWeekly[%v]", idx),
 						reason: "embedded message failed validation",
 						cause:  err,
 					})
@@ -419,13 +358,141 @@ func (m *ListTimeclockResponse) validate(all bool) error {
 		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
 			if err := v.Validate(); err != nil {
 				return ListTimeclockResponseValidationError{
-					field:  fmt.Sprintf("Weekly[%v]", idx),
+					field:  fmt.Sprintf("StatsWeekly[%v]", idx),
 					reason: "embedded message failed validation",
 					cause:  err,
 				}
 			}
 		}
 
+	}
+
+	switch v := m.Entries.(type) {
+	case *ListTimeclockResponse_Daily:
+		if v == nil {
+			err := ListTimeclockResponseValidationError{
+				field:  "Entries",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetDaily()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTimeclockResponseValidationError{
+						field:  "Daily",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTimeclockResponseValidationError{
+						field:  "Daily",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetDaily()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTimeclockResponseValidationError{
+					field:  "Daily",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ListTimeclockResponse_Weekly:
+		if v == nil {
+			err := ListTimeclockResponseValidationError{
+				field:  "Entries",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetWeekly()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTimeclockResponseValidationError{
+						field:  "Weekly",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTimeclockResponseValidationError{
+						field:  "Weekly",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetWeekly()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTimeclockResponseValidationError{
+					field:  "Weekly",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	case *ListTimeclockResponse_Range:
+		if v == nil {
+			err := ListTimeclockResponseValidationError{
+				field:  "Entries",
+				reason: "oneof value cannot be a typed-nil",
+			}
+			if !all {
+				return err
+			}
+			errors = append(errors, err)
+		}
+
+		if all {
+			switch v := interface{}(m.GetRange()).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, ListTimeclockResponseValidationError{
+						field:  "Range",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, ListTimeclockResponseValidationError{
+						field:  "Range",
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(m.GetRange()).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return ListTimeclockResponseValidationError{
+					field:  "Range",
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	default:
+		_ = v // ensures v is used
 	}
 
 	if len(errors) > 0 {
@@ -507,6 +574,500 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = ListTimeclockResponseValidationError{}
+
+// Validate checks the field values on TimeclockDay with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TimeclockDay) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TimeclockDay with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TimeclockDayMultiError, or
+// nil if none found.
+func (m *TimeclockDay) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TimeclockDay) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TimeclockDayValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TimeclockDayValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TimeclockDayValidationError{
+				field:  "Date",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TimeclockDayValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TimeclockDayValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TimeclockDayValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Sum
+
+	if len(errors) > 0 {
+		return TimeclockDayMultiError(errors)
+	}
+
+	return nil
+}
+
+// TimeclockDayMultiError is an error wrapping multiple validation errors
+// returned by TimeclockDay.ValidateAll() if the designated constraints aren't met.
+type TimeclockDayMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TimeclockDayMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TimeclockDayMultiError) AllErrors() []error { return m }
+
+// TimeclockDayValidationError is the validation error returned by
+// TimeclockDay.Validate if the designated constraints aren't met.
+type TimeclockDayValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TimeclockDayValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TimeclockDayValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TimeclockDayValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TimeclockDayValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TimeclockDayValidationError) ErrorName() string { return "TimeclockDayValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TimeclockDayValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTimeclockDay.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TimeclockDayValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TimeclockDayValidationError{}
+
+// Validate checks the field values on TimeclockWeekly with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// first error encountered is returned, or nil if there are no violations.
+func (m *TimeclockWeekly) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TimeclockWeekly with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// TimeclockWeeklyMultiError, or nil if none found.
+func (m *TimeclockWeekly) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TimeclockWeekly) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TimeclockWeeklyValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TimeclockWeeklyValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TimeclockWeeklyValidationError{
+				field:  "Date",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TimeclockWeeklyValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TimeclockWeeklyValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TimeclockWeeklyValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Sum
+
+	if len(errors) > 0 {
+		return TimeclockWeeklyMultiError(errors)
+	}
+
+	return nil
+}
+
+// TimeclockWeeklyMultiError is an error wrapping multiple validation errors
+// returned by TimeclockWeekly.ValidateAll() if the designated constraints
+// aren't met.
+type TimeclockWeeklyMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TimeclockWeeklyMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TimeclockWeeklyMultiError) AllErrors() []error { return m }
+
+// TimeclockWeeklyValidationError is the validation error returned by
+// TimeclockWeekly.Validate if the designated constraints aren't met.
+type TimeclockWeeklyValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TimeclockWeeklyValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TimeclockWeeklyValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TimeclockWeeklyValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TimeclockWeeklyValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TimeclockWeeklyValidationError) ErrorName() string { return "TimeclockWeeklyValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TimeclockWeeklyValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTimeclockWeekly.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TimeclockWeeklyValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TimeclockWeeklyValidationError{}
+
+// Validate checks the field values on TimeclockRange with the rules defined in
+// the proto definition for this message. If any rules are violated, the first
+// error encountered is returned, or nil if there are no violations.
+func (m *TimeclockRange) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on TimeclockRange with the rules defined
+// in the proto definition for this message. If any rules are violated, the
+// result is a list of violation errors wrapped in TimeclockRangeMultiError,
+// or nil if none found.
+func (m *TimeclockRange) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *TimeclockRange) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetDate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, TimeclockRangeValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, TimeclockRangeValidationError{
+					field:  "Date",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetDate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return TimeclockRangeValidationError{
+				field:  "Date",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	for idx, item := range m.GetEntries() {
+		_, _ = idx, item
+
+		if all {
+			switch v := interface{}(item).(type) {
+			case interface{ ValidateAll() error }:
+				if err := v.ValidateAll(); err != nil {
+					errors = append(errors, TimeclockRangeValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			case interface{ Validate() error }:
+				if err := v.Validate(); err != nil {
+					errors = append(errors, TimeclockRangeValidationError{
+						field:  fmt.Sprintf("Entries[%v]", idx),
+						reason: "embedded message failed validation",
+						cause:  err,
+					})
+				}
+			}
+		} else if v, ok := interface{}(item).(interface{ Validate() error }); ok {
+			if err := v.Validate(); err != nil {
+				return TimeclockRangeValidationError{
+					field:  fmt.Sprintf("Entries[%v]", idx),
+					reason: "embedded message failed validation",
+					cause:  err,
+				}
+			}
+		}
+
+	}
+
+	// no validation rules for Sum
+
+	if len(errors) > 0 {
+		return TimeclockRangeMultiError(errors)
+	}
+
+	return nil
+}
+
+// TimeclockRangeMultiError is an error wrapping multiple validation errors
+// returned by TimeclockRange.ValidateAll() if the designated constraints
+// aren't met.
+type TimeclockRangeMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m TimeclockRangeMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m TimeclockRangeMultiError) AllErrors() []error { return m }
+
+// TimeclockRangeValidationError is the validation error returned by
+// TimeclockRange.Validate if the designated constraints aren't met.
+type TimeclockRangeValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e TimeclockRangeValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e TimeclockRangeValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e TimeclockRangeValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e TimeclockRangeValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e TimeclockRangeValidationError) ErrorName() string { return "TimeclockRangeValidationError" }
+
+// Error satisfies the builtin error interface
+func (e TimeclockRangeValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sTimeclockRange.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = TimeclockRangeValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = TimeclockRangeValidationError{}
 
 // Validate checks the field values on GetTimeclockStatsRequest with the rules
 // defined in the proto definition for this message. If any rules are

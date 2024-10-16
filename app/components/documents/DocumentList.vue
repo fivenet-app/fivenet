@@ -56,8 +56,6 @@ const sort = ref<TableSortable>({
     direction: 'desc',
 });
 
-watch(sort, () => console.log('sort', sort.value));
-
 const {
     data,
     pending: loading,

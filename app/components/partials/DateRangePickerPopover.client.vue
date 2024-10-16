@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { breakpointsTailwind, useBreakpoints } from '@vueuse/core';
 import { addDays, format } from 'date-fns';
-import DatePickerClient from './DatePicker.client.vue';
+import DateRangePickerClient from './DateRangePicker.client.vue';
 
 defineOptions({
     inheritAttrs: false,
@@ -9,50 +9,56 @@ defineOptions({
 
 const props = withDefaults(
     defineProps<{
-        modelValue?: Date | undefined;
+        modelValue: { start: Date; end: Date } | undefined;
+        clearable?: boolean;
+        dateFormat?: string;
         popover?: object;
         button?: object;
         datePicker?: any;
-        dateFormat?: string;
         disableFuture?: boolean;
     }>(),
     {
         modelValue: undefined,
+        clearable: false,
+        dateFormat: 'dd.MM.yyyy',
         popover: undefined,
         button: undefined,
         datePicker: {},
-        dateFormat: 'dd.MM.yyyy',
         disableFuture: false,
     },
 );
 
-const emit = defineEmits<{
-    (e: 'update:modelValue', modelValue: Date | undefined): void;
+const emits = defineEmits<{
+    (e: 'update:modelValue', modelValue: { start: Date; end: Date } | undefined): void;
 }>();
 
 if (props.disableFuture && props.datePicker !== undefined) {
     props.datePicker.disabledDates = [{ start: addDays(new Date(), 1), end: null }];
 }
 
-const date = useVModel(props, 'modelValue', emit);
+const date = useVModel(props, 'modelValue', emits);
 
 const breakpoints = useBreakpoints(breakpointsTailwind);
 
-const smallerBreakpoint = breakpoints.smaller('sm');
+const smallerThanSm = breakpoints.smaller('sm');
 
 const open = ref(false);
 </script>
 
 <template>
     <ClientOnly>
-        <template v-if="smallerBreakpoint">
+        <template v-if="smallerThanSm">
             <UButton
                 v-bind="button"
                 variant="outline"
                 color="black"
                 block
                 icon="i-mdi-calendar-month"
-                :label="modelValue ? format(modelValue, dateFormat) : dateFormat"
+                :label="
+                    modelValue
+                        ? `${format(modelValue.start, dateFormat)} - ${format(modelValue.end, dateFormat)}`
+                        : `${dateFormat} - ${dateFormat}`
+                "
                 @click="open = true"
                 @touchstart="open = true"
             />
@@ -76,7 +82,7 @@ const open = ref(false);
                     </template>
 
                     <div class="flex flex-1 items-center">
-                        <DatePickerClient v-bind="datePicker" v-model="date" class="mx-auto" @close="open = false" />
+                        <DateRangePickerClient v-bind="datePicker" v-model="date" @close="open = false" />
                     </div>
 
                     <template #footer>
@@ -95,12 +101,16 @@ const open = ref(false);
                 color="black"
                 block
                 icon="i-mdi-calendar-month"
-                :label="modelValue ? format(modelValue, dateFormat) : dateFormat"
+                :label="
+                    modelValue
+                        ? `${format(modelValue.start, dateFormat)} - ${format(modelValue.end, dateFormat)}`
+                        : `${dateFormat} - ${dateFormat}`
+                "
                 @touchstart="open = true"
             />
 
             <template #panel="{ close }">
-                <DatePickerClient v-bind="datePicker" v-model="date" @close="close" />
+                <DateRangePickerClient v-bind="datePicker" v-model="date" @close="close" />
             </template>
         </UPopover>
     </ClientOnly>
