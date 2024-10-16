@@ -25,6 +25,8 @@ import type {
 import { useNotificatorStore } from './notificator';
 import { useSettingsStore } from './settings';
 
+const logger = useLogger('📅 Calendar');
+
 export interface CalendarState {
     activeCalendarIds: string[];
     weeklyView: boolean;
@@ -116,7 +118,9 @@ export const useCalendarStore = defineStore('calendar', {
 
                     useSound().play({ name: 'notification' });
                 });
-            } catch (e) {}
+            } catch (e) {
+                logger.error('error while getting upcoming events', e);
+            }
         },
         // Calendars
         async getCalendar(req: GetCalendarRequest): Promise<GetCalendarResponse> {
