@@ -25,6 +25,11 @@ func (cr *Cron) lockLoop() {
 		select {
 		case <-cr.ctx.Done():
 			wg.Wait()
+
+			if err := cr.ownerLock.Unlock(cr.ctx, "owner"); err != nil {
+				cr.logger.Error("failed to unlock owner lock on shutdown", zap.Error(err))
+			}
+
 			return
 
 		case <-time.After(2 * time.Second):
