@@ -167,8 +167,7 @@ const columns = computed(() =>
             : undefined,
         canAccessAll.value &&
         query.userMode === TimeclockUserMode.ALL &&
-        query.users !== undefined &&
-        query.users?.length > 0 &&
+        (query.users === undefined || query.users?.length === 0) &&
         props.userId === undefined
             ? {
                   key: 'rank',
