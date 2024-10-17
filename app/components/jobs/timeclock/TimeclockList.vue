@@ -354,13 +354,22 @@ const input = ref<{ input: HTMLInputElement }>();
 
         <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
 
-        <TimeclockStatsBlock
-            hide-header
-            :weekly="data?.statsWeekly"
-            :stats="data?.stats"
-            :loading="loading"
-            :ui="{ rounded: '' }"
-        />
+        <UAccordion
+            v-if="showStats && data && data.stats"
+            :items="[{ slot: 'stats', label: $t('common.stats') }]"
+            class="px-3 py-0.5"
+        >
+            <template #stats>
+                <TimeclockStatsBlock
+                    :weekly="data?.statsWeekly"
+                    :stats="data?.stats"
+                    :hide-header="true"
+                    :failed="!!error"
+                    :loading="loading"
+                    :ui="{ rounded: '' }"
+                />
+            </template>
+        </UAccordion>
     </template>
 
     <template v-else>
