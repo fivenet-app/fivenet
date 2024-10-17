@@ -61,7 +61,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                 break;
 
             case 'deadline_exceeded':
-                // TODO handle timeouts, how about one generic message?
+                // TODO handle timeouts, how about one generic error + message?
                 break;
 
             case 'cancelled':

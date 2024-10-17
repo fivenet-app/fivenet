@@ -111,12 +111,10 @@ func NewServer(p Params) *Server {
 				case <-ctx.Done():
 					return
 
-					/*
-						case <-time.After(30 * time.Second):
-							if err := s.refreshData(ctx); err != nil {
-								s.logger.Error("failed periodic livemap marker refresh", zap.Error(err))
-							}
-					*/
+				case <-time.After(30 * time.Second):
+					if err := s.refreshData(ctx); err != nil {
+						s.logger.Error("failed periodic livemap marker refresh", zap.Error(err))
+					}
 				}
 			}
 		}()

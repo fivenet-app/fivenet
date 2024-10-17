@@ -121,13 +121,11 @@ export interface Complete {
  */
 export interface Failure {
     /**
-     * @generated from protobuf field: string errorMessage = 1;
+     * @generated from protobuf field: string error_message = 1;
      */
     errorMessage: string;
     /**
-     * TODO use enum errors to properly define the protocol errors
-     *
-     * @generated from protobuf field: string errorStatus = 2;
+     * @generated from protobuf field: string error_status = 2;
      */
     errorStatus: string;
     /**
@@ -511,8 +509,8 @@ export const Complete = new Complete$Type();
 class Failure$Type extends MessageType<Failure> {
     constructor() {
         super("resources.common.grpcws.Failure", [
-            { no: 1, name: "errorMessage", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
-            { no: 2, name: "errorStatus", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 1, name: "error_message", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "error_status", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
             { no: 3, name: "headers", kind: "map", K: 9 /*ScalarType.STRING*/, V: { kind: "message", T: () => HeaderValue } }
         ]);
     }
@@ -530,10 +528,10 @@ class Failure$Type extends MessageType<Failure> {
         while (reader.pos < end) {
             let [fieldNo, wireType] = reader.tag();
             switch (fieldNo) {
-                case /* string errorMessage */ 1:
+                case /* string error_message */ 1:
                     message.errorMessage = reader.string();
                     break;
-                case /* string errorStatus */ 2:
+                case /* string error_status */ 2:
                     message.errorStatus = reader.string();
                     break;
                 case /* map<string, resources.common.grpcws.HeaderValue> headers */ 3:
@@ -567,10 +565,10 @@ class Failure$Type extends MessageType<Failure> {
         map[key ?? ""] = val ?? HeaderValue.create();
     }
     internalBinaryWrite(message: Failure, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
-        /* string errorMessage = 1; */
+        /* string error_message = 1; */
         if (message.errorMessage !== "")
             writer.tag(1, WireType.LengthDelimited).string(message.errorMessage);
-        /* string errorStatus = 2; */
+        /* string error_status = 2; */
         if (message.errorStatus !== "")
             writer.tag(2, WireType.LengthDelimited).string(message.errorStatus);
         /* map<string, resources.common.grpcws.HeaderValue> headers = 3; */
