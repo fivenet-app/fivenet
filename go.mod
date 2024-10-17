@@ -1,6 +1,6 @@
 module github.com/fivenet-app/fivenet
 
-go 1.23.1
+go 1.23.2
 
 require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
@@ -100,7 +100,7 @@ require (
 	github.com/blevesearch/zapx/v12 v12.3.10 // indirect
 	github.com/blevesearch/zapx/v13 v13.3.10 // indirect
 	github.com/blevesearch/zapx/v14 v14.3.10 // indirect
-	github.com/blevesearch/zapx/v15 v15.3.13 // indirect
+	github.com/blevesearch/zapx/v15 v15.3.15 // indirect
 	github.com/blevesearch/zapx/v16 v16.1.6 // indirect
 	github.com/bytedance/sonic v1.12.3 // indirect
 	github.com/bytedance/sonic/loader v0.2.0 // indirect
