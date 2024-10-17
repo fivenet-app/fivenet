@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
@@ -108,7 +109,7 @@ func (j *JSWrapper) ConsumeErrHandlerWithRestart(c context.Context, logger *zap.
 }
 
 func (j *JSWrapper) PublishProto(ctx context.Context, subject string, msg proto.Message, opts ...jetstream.PublishOpt) (*jetstream.PubAck, error) {
-	data, err := proto.Marshal(msg)
+	data, err := protoutils.Marshal(msg)
 	if err != nil {
 		return nil, err
 	}
@@ -117,7 +118,7 @@ func (j *JSWrapper) PublishProto(ctx context.Context, subject string, msg proto.
 }
 
 func (j *JSWrapper) PublishAsyncProto(ctx context.Context, subject string, msg proto.Message, opts ...jetstream.PublishOpt) (jetstream.PubAckFuture, error) {
-	data, err := proto.Marshal(msg)
+	data, err := protoutils.Marshal(msg)
 	if err != nil {
 		return nil, err
 	}

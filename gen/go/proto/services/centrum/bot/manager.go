@@ -25,9 +25,10 @@ var metricBotActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "If centrum bot is active or not.",
 }, []string{"job_name"})
 
-var Module = fx.Module("centrum_bot_manager", fx.Provide(
-	NewManager,
-))
+var Module = fx.Module("centrum_bot_manager",
+	fx.Provide(
+		NewManager,
+	))
 
 type Manager struct {
 	logger *zap.Logger

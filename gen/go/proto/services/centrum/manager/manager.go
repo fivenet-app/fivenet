@@ -17,9 +17,10 @@ import (
 	"go.uber.org/zap"
 )
 
-var Module = fx.Module("centrum_manager", fx.Provide(
-	New,
-))
+var Module = fx.Module("centrum_manager",
+	fx.Provide(
+		New,
+	))
 
 type Manager struct {
 	logger *zap.Logger

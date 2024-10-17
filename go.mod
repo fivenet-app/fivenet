@@ -6,6 +6,7 @@ require (
 	github.com/Code-Hex/go-generics-cache v1.5.1
 	github.com/Masterminds/sprig/v3 v3.3.0
 	github.com/XSAM/otelsql v0.35.0
+	github.com/adhocore/gronx v1.19.1
 	github.com/alecthomas/kong v1.2.1
 	github.com/blevesearch/bleve/v2 v2.4.2
 	github.com/coder/websocket v1.8.12

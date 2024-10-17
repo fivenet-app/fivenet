@@ -351,7 +351,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		if dsp.Status != nil && !centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
 			if _, err := s.UpdateDispatchStatus(ctx, job, dspId, &centrum.DispatchStatus{
 				CreatedAt:  timestamp.Now(),
-				DispatchId: dsp.Id,
+				DispatchId: dspId,
 				Status:     centrum.StatusDispatch_STATUS_DISPATCH_UNASSIGNED,
 				UserId:     userId,
 				X:          x,

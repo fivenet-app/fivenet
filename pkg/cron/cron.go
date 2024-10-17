@@ -2,12 +2,29 @@ package cron
 
 import (
 	"context"
+	"errors"
+	"fmt"
+	"net"
+	"os"
+	"strings"
+	"time"
 
+	"github.com/adhocore/gronx"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
+	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/nats/store"
+	"github.com/fivenet-app/fivenet/pkg/nats/locks"
+	"github.com/nats-io/nats.go/jetstream"
 	"go.uber.org/fx"
 	"go.uber.org/zap"
+)
+
+var ErrInvalidCronSyntax = errors.New("invalid cron syntax")
+
+var Module = fx.Module("cron",
+	fx.Provide(
+		New,
+	),
 )
 
 type Params struct {
@@ -15,37 +32,89 @@ type Params struct {
 
 	LC fx.Lifecycle
 
-	Logger *zap.Logger
-	JS     *events.JSWrapper
+	Logger    *zap.Logger
+	Cfg       *config.Config
+	JS        *events.JSWrapper
+	Scheduler *Scheduler
 }
 
 type Cron struct {
-	js *events.JSWrapper
-	cs *store.Store[cron.Cronjob, *cron.Cronjob]
+	name string
+
+	ctx       context.Context
+	logger    *zap.Logger
+	js        *events.JSWrapper
+	ownerKv   jetstream.KeyValue
+	ownerLock *locks.Locks
+	scheduler *Scheduler
 }
 
 func New(p Params) (*Cron, error) {
-	c := &Cron{
-		js: p.JS,
+	hostname, err := os.Hostname()
+	if err != nil {
+		return nil, err
+	}
+	_, port, err := net.SplitHostPort(p.Cfg.HTTP.AdminListen)
+	if err != nil {
+		return nil, err
+	}
+
+	ctx, cancel := context.WithCancel(context.Background())
+
+	cr := &Cron{
+		name: fmt.Sprintf("%s-%s", hostname, port),
+
+		ctx:       ctx,
+		logger:    p.Logger.Named("cron"),
+		js:        p.JS,
+		scheduler: p.Scheduler,
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := c.registerSubscriptions(ctx); err != nil {
+		if err := cr.registerStreams(ctx); err != nil {
 			return err
 		}
 
-		cron, err := store.New[cron.Cronjob, *cron.Cronjob](ctx, p.Logger, p.JS, "cron", nil)
+		kv, err := p.JS.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+			Bucket:  "cron_locks",
+			Storage: jetstream.MemoryStorage,
+			History: 5,
+		})
 		if err != nil {
 			return err
 		}
-		c.cs = cron
+		cr.ownerKv = kv
 
-		if err := cron.Start(ctx); err != nil {
+		ownerLock, err := locks.New(p.Logger, kv, kv.Bucket(), 20*time.Second)
+		if err != nil {
 			return err
 		}
+		cr.ownerLock = ownerLock
+
+		go cr.lockLoop()
 
 		return nil
 	}))
 
-	return c, nil
+	p.LC.Append(fx.StopHook(func(ctx context.Context) error {
+		cancel()
+
+		return nil
+	}))
+
+	return cr, nil
+}
+
+func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
+	if !gronx.IsValid(job.Schedule) {
+		return ErrInvalidCronSyntax
+	}
+
+	c.logger.Debug("registering cronjob", zap.String("job_name", job.Name))
+	return c.scheduler.store.Put(ctx, strings.ToLower(job.Name), job)
+}
+
+func (c *Cron) UnregisterCronjob(ctx context.Context, name string) error {
+	c.logger.Debug("unregistering cronjob", zap.String("job_name", name))
+	return c.scheduler.store.Delete(ctx, name)
 }

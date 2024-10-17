@@ -12,8 +12,6 @@ import (
 	"go.uber.org/zap"
 )
 
-const GlobalCommandGuildID = "-1"
-
 type CommandFactory = func(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (api.CreateCommandData, error)
 
 var CommandsFactories = map[string]CommandFactory{}

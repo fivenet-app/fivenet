@@ -16,7 +16,7 @@ import (
 )
 
 const (
-	LockTimeout = 30 * time.Second
+	LockTimeout = 750 * time.Millisecond
 
 	keyPrefix = "LOCK."
 )
@@ -63,7 +63,7 @@ func New(logger *zap.Logger, kv jetstream.KeyValue, bucket string, maxLockAge ti
 // case Unlock is unable to be called due to some sort of network
 // failure or system crash.
 func (l *Locks) Lock(ctx context.Context, key string) error {
-	l.logger.Info("lock", zap.String("key", key))
+	l.logger.Debug("lock", zap.String("key", key))
 	lockKey := keyPrefix + key
 
 loop:
@@ -143,7 +143,7 @@ func (l *Locks) IsLocked(ctx context.Context, key string) (bool, error) {
 // critical section is finished, even if it errored or timed
 // out. Unlock cleans up any resources allocated during Lock.
 func (l *Locks) Unlock(ctx context.Context, key string) error {
-	l.logger.Info("unlock", zap.String("key", key))
+	l.logger.Debug("unlock", zap.String("key", key))
 	lockKey := keyPrefix + key
 	return l.kv.Delete(ctx, lockKey, jetstream.LastRevision(l.getRev(lockKey)))
 }

@@ -120,6 +120,35 @@ func (m *Cronjob) validate(all bool) error {
 		}
 	}
 
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CronjobValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CronjobValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CronjobValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
 	if len(errors) > 0 {
 		return CronjobMultiError(errors)
 	}
@@ -357,3 +386,460 @@ var _ interface {
 	Cause() error
 	ErrorName() string
 } = CronjobDataValidationError{}
+
+// Validate checks the field values on CronjobLockOwnerState with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CronjobLockOwnerState) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CronjobLockOwnerState with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CronjobLockOwnerStateMultiError, or nil if none found.
+func (m *CronjobLockOwnerState) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CronjobLockOwnerState) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Hostname
+
+	if all {
+		switch v := interface{}(m.GetUpdatedAt()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CronjobLockOwnerStateValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CronjobLockOwnerStateValidationError{
+					field:  "UpdatedAt",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetUpdatedAt()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CronjobLockOwnerStateValidationError{
+				field:  "UpdatedAt",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CronjobLockOwnerStateMultiError(errors)
+	}
+
+	return nil
+}
+
+// CronjobLockOwnerStateMultiError is an error wrapping multiple validation
+// errors returned by CronjobLockOwnerState.ValidateAll() if the designated
+// constraints aren't met.
+type CronjobLockOwnerStateMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CronjobLockOwnerStateMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CronjobLockOwnerStateMultiError) AllErrors() []error { return m }
+
+// CronjobLockOwnerStateValidationError is the validation error returned by
+// CronjobLockOwnerState.Validate if the designated constraints aren't met.
+type CronjobLockOwnerStateValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CronjobLockOwnerStateValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CronjobLockOwnerStateValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CronjobLockOwnerStateValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CronjobLockOwnerStateValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CronjobLockOwnerStateValidationError) ErrorName() string {
+	return "CronjobLockOwnerStateValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CronjobLockOwnerStateValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCronjobLockOwnerState.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CronjobLockOwnerStateValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CronjobLockOwnerStateValidationError{}
+
+// Validate checks the field values on CronjobSchedulerEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CronjobSchedulerEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CronjobSchedulerEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CronjobSchedulerEventMultiError, or nil if none found.
+func (m *CronjobSchedulerEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CronjobSchedulerEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	if all {
+		switch v := interface{}(m.GetCronjob()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CronjobSchedulerEventValidationError{
+					field:  "Cronjob",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CronjobSchedulerEventValidationError{
+					field:  "Cronjob",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetCronjob()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CronjobSchedulerEventValidationError{
+				field:  "Cronjob",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CronjobSchedulerEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// CronjobSchedulerEventMultiError is an error wrapping multiple validation
+// errors returned by CronjobSchedulerEvent.ValidateAll() if the designated
+// constraints aren't met.
+type CronjobSchedulerEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CronjobSchedulerEventMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CronjobSchedulerEventMultiError) AllErrors() []error { return m }
+
+// CronjobSchedulerEventValidationError is the validation error returned by
+// CronjobSchedulerEvent.Validate if the designated constraints aren't met.
+type CronjobSchedulerEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CronjobSchedulerEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CronjobSchedulerEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CronjobSchedulerEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CronjobSchedulerEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CronjobSchedulerEventValidationError) ErrorName() string {
+	return "CronjobSchedulerEventValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CronjobSchedulerEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCronjobSchedulerEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CronjobSchedulerEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CronjobSchedulerEventValidationError{}
+
+// Validate checks the field values on CronjobCompletedEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the first error encountered is returned, or nil if there are no violations.
+func (m *CronjobCompletedEvent) Validate() error {
+	return m.validate(false)
+}
+
+// ValidateAll checks the field values on CronjobCompletedEvent with the rules
+// defined in the proto definition for this message. If any rules are
+// violated, the result is a list of violation errors wrapped in
+// CronjobCompletedEventMultiError, or nil if none found.
+func (m *CronjobCompletedEvent) ValidateAll() error {
+	return m.validate(true)
+}
+
+func (m *CronjobCompletedEvent) validate(all bool) error {
+	if m == nil {
+		return nil
+	}
+
+	var errors []error
+
+	// no validation rules for Name
+
+	// no validation rules for Sucess
+
+	if all {
+		switch v := interface{}(m.GetEndDate()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CronjobCompletedEventValidationError{
+					field:  "EndDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CronjobCompletedEventValidationError{
+					field:  "EndDate",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetEndDate()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CronjobCompletedEventValidationError{
+				field:  "EndDate",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetElapsed()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CronjobCompletedEventValidationError{
+					field:  "Elapsed",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CronjobCompletedEventValidationError{
+					field:  "Elapsed",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetElapsed()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CronjobCompletedEventValidationError{
+				field:  "Elapsed",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if all {
+		switch v := interface{}(m.GetData()).(type) {
+		case interface{ ValidateAll() error }:
+			if err := v.ValidateAll(); err != nil {
+				errors = append(errors, CronjobCompletedEventValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		case interface{ Validate() error }:
+			if err := v.Validate(); err != nil {
+				errors = append(errors, CronjobCompletedEventValidationError{
+					field:  "Data",
+					reason: "embedded message failed validation",
+					cause:  err,
+				})
+			}
+		}
+	} else if v, ok := interface{}(m.GetData()).(interface{ Validate() error }); ok {
+		if err := v.Validate(); err != nil {
+			return CronjobCompletedEventValidationError{
+				field:  "Data",
+				reason: "embedded message failed validation",
+				cause:  err,
+			}
+		}
+	}
+
+	if len(errors) > 0 {
+		return CronjobCompletedEventMultiError(errors)
+	}
+
+	return nil
+}
+
+// CronjobCompletedEventMultiError is an error wrapping multiple validation
+// errors returned by CronjobCompletedEvent.ValidateAll() if the designated
+// constraints aren't met.
+type CronjobCompletedEventMultiError []error
+
+// Error returns a concatenation of all the error messages it wraps.
+func (m CronjobCompletedEventMultiError) Error() string {
+	var msgs []string
+	for _, err := range m {
+		msgs = append(msgs, err.Error())
+	}
+	return strings.Join(msgs, "; ")
+}
+
+// AllErrors returns a list of validation violation errors.
+func (m CronjobCompletedEventMultiError) AllErrors() []error { return m }
+
+// CronjobCompletedEventValidationError is the validation error returned by
+// CronjobCompletedEvent.Validate if the designated constraints aren't met.
+type CronjobCompletedEventValidationError struct {
+	field  string
+	reason string
+	cause  error
+	key    bool
+}
+
+// Field function returns field value.
+func (e CronjobCompletedEventValidationError) Field() string { return e.field }
+
+// Reason function returns reason value.
+func (e CronjobCompletedEventValidationError) Reason() string { return e.reason }
+
+// Cause function returns cause value.
+func (e CronjobCompletedEventValidationError) Cause() error { return e.cause }
+
+// Key function returns key value.
+func (e CronjobCompletedEventValidationError) Key() bool { return e.key }
+
+// ErrorName returns error name.
+func (e CronjobCompletedEventValidationError) ErrorName() string {
+	return "CronjobCompletedEventValidationError"
+}
+
+// Error satisfies the builtin error interface
+func (e CronjobCompletedEventValidationError) Error() string {
+	cause := ""
+	if e.cause != nil {
+		cause = fmt.Sprintf(" | caused by: %v", e.cause)
+	}
+
+	key := ""
+	if e.key {
+		key = "key for "
+	}
+
+	return fmt.Sprintf(
+		"invalid %sCronjobCompletedEvent.%s: %s%s",
+		key,
+		e.field,
+		e.reason,
+		cause)
+}
+
+var _ error = CronjobCompletedEventValidationError{}
+
+var _ interface {
+	Field() string
+	Reason() string
+	Key() bool
+	Cause() error
+	ErrorName() string
+} = CronjobCompletedEventValidationError{}

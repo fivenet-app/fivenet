@@ -3,6 +3,7 @@ syntax = "proto3";
 package resources.common.cron;
 
 import "google/protobuf/any.proto";
+import "google/protobuf/duration.proto";
 import "resources/timestamp/timestamp.proto";
 
 option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron;cron";
@@ -14,6 +15,8 @@ message Cronjob {
 
   resources.timestamp.Timestamp next_schedule_time = 4;
   resources.timestamp.Timestamp last_attempt_time = 5;
+
+  CronjobData data = 6;
 }
 
 enum CronjobState {
@@ -26,4 +29,22 @@ enum CronjobState {
 message CronjobData {
   resources.timestamp.Timestamp updated_at = 1;
   optional google.protobuf.Any data = 2;
+}
+
+message CronjobLockOwnerState {
+  string hostname = 1;
+  resources.timestamp.Timestamp updated_at = 2;
+}
+
+message CronjobSchedulerEvent {
+  Cronjob cronjob = 1;
+}
+
+message CronjobCompletedEvent {
+  string name = 1;
+  bool sucess = 2;
+  resources.timestamp.Timestamp endDate = 3;
+  google.protobuf.Duration elapsed = 4;
+
+  CronjobData data = 5;
 }

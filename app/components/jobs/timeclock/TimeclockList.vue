@@ -242,26 +242,301 @@ const input = ref<{ input: HTMLInputElement }>();
 </script>
 
 <template>
-    <div class="flex flex-1">
-        <UTabs
-            v-model="selectedTab"
-            :items="items"
-            class="flex-1"
-            :unmount="true"
-            :ui="{
-                list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined, rounded: '' },
-                wrapper: 'flex-1 flex flex-col',
-                container: 'relative w-full flex-1 flex',
-                base: 'flex-1 flex flex-col',
+    <UTabs
+        v-model="selectedTab"
+        :items="items"
+        :unmount="true"
+        :ui="{
+            list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined, rounded: '' },
+        }"
+    >
+    </UTabs>
+
+    <template v-if="query.userMode === TimeclockUserMode.SELF">
+        <UDashboardToolbar>
+            <template #default>
+                <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
+                    <div class="flex flex-1 justify-between gap-2">
+                        <UFormGroup name="end" :label="$t('common.time_range')" class="flex-1">
+                            <DateRangePickerPopoverClient
+                                v-model="query.date"
+                                mode="date"
+                                class="flex-1"
+                                :popover="{ class: 'flex-1' }"
+                                :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
+                            />
+                        </UFormGroup>
+
+                        <UFormGroup name="day" :label="$t('common.per_day')">
+                            <UToggle v-model="query.perDay" class="mt-2" />
+                        </UFormGroup>
+                    </div>
+                </UForm>
+            </template>
+        </UDashboardToolbar>
+
+        <UCard v-if="!query.perDay">
+            <p
+                class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
+            >
+                {{
+                    selfPerDaySum === 0
+                        ? $t('common.not_found', [$t('common.entry', 2)])
+                        : fromSecondsToFormattedDuration(selfPerDaySum, {
+                              seconds: false,
+                          })
+                }}
+            </p>
+        </UCard>
+
+        <UTable
+            v-else
+            v-model:sort="sort"
+            :loading="loading"
+            :columns="columns"
+            :rows="data?.entries.oneofKind === 'range' ? data.entries.range.entries : []"
+            :empty-state="{
+                icon: 'i-mdi-timeline-clock',
+                label: $t('common.not_found', [$t('common.entry', 2)]),
             }"
+            sort-mode="manual"
+            class="flex-1"
+            :ui="{ caption: '' }"
         >
-            <template #self>
-                <UDashboardToolbar>
-                    <template #default>
-                        <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
-                            <div class="flex flex-1 justify-between gap-2">
-                                <UFormGroup name="end" :label="$t('common.time_range')" class="flex-1">
+            <template #caption>
+                <caption>
+                    <p class="text-right">
+                        <span class="font-semibold">{{ $t('common.sum') }}:</span>
+
+                        {{
+                            fromSecondsToFormattedDuration(
+                                parseFloat(
+                                    (
+                                        (Math.round((data?.entries.oneofKind === 'range' ? data?.entries.range.sum : 0) * 100) /
+                                            100) *
+                                        60 *
+                                        60
+                                    ).toPrecision(2),
+                                ),
+                                { seconds: false },
+                            )
+                        }}
+                    </p>
+                </caption>
+            </template>
+
+            <template #date-data="{ row: item }">
+                <div class="text-gray-900 dark:text-white">
+                    {{ $d(toDate(item.date), 'date') }}
+                </div>
+            </template>
+
+            <template #rank-data="{ row: entry }">
+                {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+            </template>
+
+            <template #time-data="{ row: entry }">
+                <div class="text-right">
+                    {{
+                        entry.spentTime > 0
+                            ? fromSecondsToFormattedDuration(
+                                  parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                  { seconds: false },
+                              )
+                            : ''
+                    }}
+
+                    <UBadge v-if="entry.startTime !== undefined" color="green">
+                        {{ $t('common.active') }}
+                    </UBadge>
+                </div>
+            </template>
+        </UTable>
+
+        <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+
+        <TimeclockStatsBlock
+            hide-header
+            :weekly="data?.statsWeekly"
+            :stats="data?.stats"
+            :loading="loading"
+            :ui="{ rounded: '' }"
+        />
+    </template>
+
+    <template v-else>
+        <UDashboardToolbar>
+            <template #default>
+                <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
+                    <div class="flex flex-1 justify-between gap-2">
+                        <UButtonGroup class="inline-flex w-full">
+                            <UButton
+                                color="gray"
+                                block
+                                class="flex-1"
+                                :disabled="query.mode === TimeclockMode.WEEKLY"
+                                trailing-icon="i-mdi-view-week"
+                                @click="query.mode = TimeclockMode.WEEKLY"
+                            >
+                                {{ $t('common.time_ago.week') }}
+                            </UButton>
+
+                            <UButton
+                                v-if="!hideDaily"
+                                color="gray"
+                                block
+                                class="flex-1"
+                                :disabled="query.mode === TimeclockMode.DAILY"
+                                icon="i-mdi-view-day"
+                                @click="query.mode = TimeclockMode.DAILY"
+                            >
+                                {{ $t('common.time_ago.day') }}
+                            </UButton>
+
+                            <UButton
+                                color="gray"
+                                block
+                                class="flex-1"
+                                :disabled="query.mode === TimeclockMode.RANGE"
+                                trailing-icon="i-mdi-calendar-range"
+                                @click="query.mode = TimeclockMode.RANGE"
+                            >
+                                {{ $t('common.time_range') }}
+                            </UButton>
+                        </UButtonGroup>
+
+                        <UButton
+                            v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
+                            :to="{ name: 'jobs-timeclock-inactive' }"
+                            color="black"
+                            trailing-icon="i-mdi-arrow-right"
+                        >
+                            {{ $t('common.inactive_colleagues') }}
+                        </UButton>
+                    </div>
+
+                    <div class="flex w-full flex-row">
+                        <div
+                            class="grid flex-1 gap-2"
+                            :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
+                        >
+                            <UFormGroup v-if="canAccessAll && userId === undefined" name="users" :label="$t('common.search')">
+                                <ClientOnly>
+                                    <USelectMenu
+                                        ref="input"
+                                        v-model="query.users"
+                                        multiple
+                                        :searchable="
+                                            async (query: string) => {
+                                                usersLoading = true;
+                                                const colleagues = await completorStore.listColleagues({
+                                                    search: query,
+                                                });
+                                                usersLoading = false;
+                                                return colleagues;
+                                            }
+                                        "
+                                        searchable-lazy
+                                        :searchable-placeholder="$t('common.search_field')"
+                                        :search-attributes="['firstname', 'lastname']"
+                                        :placeholder="$t('common.colleague', 2)"
+                                        block
+                                        trailing
+                                        by="userId"
+                                    >
+                                        <template #label>
+                                            <span v-if="query.users?.length" class="truncate">
+                                                {{ usersToLabel(query.users) }}
+                                            </span>
+                                        </template>
+                                        <template #option="{ option: user }">
+                                            <span class="truncate">
+                                                {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
+                                            </span>
+                                        </template>
+                                        <template #option-empty="{ query: search }">
+                                            <q>{{ search }}</q> {{ $t('common.query_not_found') }}
+                                        </template>
+                                        <template #empty>
+                                            {{ $t('common.not_found', [$t('common.creator', 2)]) }}
+                                        </template>
+                                    </USelectMenu>
+                                </ClientOnly>
+                            </UFormGroup>
+
+                            <div class="flex flex-1 flex-row gap-1">
+                                <UFormGroup
+                                    name="end"
+                                    :label="
+                                        query.mode === TimeclockMode.WEEKLY
+                                            ? $t('common.time_ago.week')
+                                            : query.mode === TimeclockMode.DAILY
+                                              ? $t('common.time_ago.day')
+                                              : query.mode === TimeclockMode.RANGE
+                                                ? $t('common.time_range')
+                                                : ''
+                                    "
+                                    class="flex-1"
+                                >
+                                    <div
+                                        v-if="query.mode === TimeclockMode.DAILY"
+                                        class="flex flex-1 flex-col gap-1 sm:flex-row"
+                                    >
+                                        <UButton
+                                            square
+                                            icon="i-mdi-chevron-left"
+                                            class="flex-initial"
+                                            :disabled="isBefore(query.date.end, dateLowerLimit)"
+                                            @click="query.date.end = subDays(query.date.end, 1)"
+                                        />
+
+                                        <DatePickerPopoverClient
+                                            v-model="query.date.end"
+                                            :popover="{ class: 'flex-1' }"
+                                            :date-picker="{
+                                                disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                            }"
+                                        />
+
+                                        <UButton
+                                            square
+                                            icon="i-mdi-chevron-right"
+                                            class="flex-initial"
+                                            :disabled="isFuture(addDays(query.date.end, 1))"
+                                            @click="query.date.end = addDays(query.date.end, 1)"
+                                        />
+                                    </div>
+                                    <div
+                                        v-else-if="query.mode === TimeclockMode.WEEKLY"
+                                        class="flex flex-1 flex-col gap-1 sm:flex-row"
+                                    >
+                                        <UButton
+                                            square
+                                            icon="i-mdi-chevron-left"
+                                            class="flex-initial"
+                                            :disabled="isBefore(query.date.end, dateLowerLimit)"
+                                            @click="query.date.end = subWeeks(query.date.end, 1)"
+                                        />
+
+                                        <DatePickerPopoverClient
+                                            v-model="query.date.end"
+                                            :popover="{ class: 'flex-1' }"
+                                            :date-format="`yyyy '${$t('common.calendar_week')}' w`"
+                                            :date-picker="{
+                                                disabledDates: [{ start: addDays(new Date(), 1), end: null }],
+                                            }"
+                                        />
+
+                                        <UButton
+                                            square
+                                            icon="i-mdi-chevron-right"
+                                            class="flex-initial"
+                                            :disabled="isFuture(addWeeks(query.date.end, 1))"
+                                            @click="query.date.end = addWeeks(query.date.end, 1)"
+                                        />
+                                    </div>
                                     <DateRangePickerPopoverClient
+                                        v-else
                                         v-model="query.date"
                                         mode="date"
                                         class="flex-1"
@@ -270,477 +545,184 @@ const input = ref<{ input: HTMLInputElement }>();
                                     />
                                 </UFormGroup>
 
-                                <UFormGroup name="day" :label="$t('common.per_day')">
+                                <UFormGroup v-if="query.mode !== TimeclockMode.DAILY" name="day" :label="$t('common.per_day')">
                                     <UToggle v-model="query.perDay" class="mt-2" />
                                 </UFormGroup>
                             </div>
-                        </UForm>
-                    </template>
-                </UDashboardToolbar>
-
-                <UCard v-if="!query.perDay">
-                    <p
-                        class="mt-2 flex w-full items-center gap-x-2 text-2xl font-semibold tracking-tight text-gray-900 dark:text-white"
-                    >
-                        {{
-                            selfPerDaySum === 0
-                                ? $t('common.not_found', [$t('common.entry', 2)])
-                                : fromSecondsToFormattedDuration(selfPerDaySum, {
-                                      seconds: false,
-                                  })
-                        }}
-                    </p>
-                </UCard>
-
-                <UTable
-                    v-else
-                    v-model:sort="sort"
-                    :loading="loading"
-                    :columns="columns"
-                    :rows="data?.entries.oneofKind === 'range' ? data.entries.range.entries : []"
-                    :empty-state="{
-                        icon: 'i-mdi-timeline-clock',
-                        label: $t('common.not_found', [$t('common.entry', 2)]),
-                    }"
-                    sort-mode="manual"
-                    class="flex-1"
-                    :ui="{ caption: '' }"
-                >
-                    <template #caption>
-                        <caption>
-                            <p class="text-right">
-                                <span class="font-semibold">{{ $t('common.sum') }}:</span>
-
-                                {{
-                                    fromSecondsToFormattedDuration(
-                                        parseFloat(
-                                            (
-                                                (Math.round(
-                                                    (data?.entries.oneofKind === 'range' ? data?.entries.range.sum : 0) * 100,
-                                                ) /
-                                                    100) *
-                                                60 *
-                                                60
-                                            ).toPrecision(2),
-                                        ),
-                                        { seconds: false },
-                                    )
-                                }}
-                            </p>
-                        </caption>
-                    </template>
-
-                    <template #date-data="{ row: item }">
-                        <div class="text-gray-900 dark:text-white">
-                            {{ $d(toDate(item.date), 'date') }}
                         </div>
-                    </template>
+                    </div>
+                </UForm>
+            </template>
+        </UDashboardToolbar>
 
-                    <template #rank-data="{ row: entry }">
-                        {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
-                    </template>
+        <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
 
-                    <template #time-data="{ row: entry }">
-                        <div class="text-right">
+        <template v-else>
+            <UTable
+                v-if="query.mode === TimeclockMode.WEEKLY"
+                v-model:sort="sort"
+                :loading="loading"
+                :columns="columns"
+                :rows="data?.entries.oneofKind === 'weekly' ? data.entries.weekly.entries : []"
+                :empty-state="{
+                    icon: 'i-mdi-timeline-clock',
+                    label: $t('common.not_found', [$t('common.entry', 2)]),
+                }"
+                sort-mode="manual"
+                class="flex-1"
+            >
+                <template #caption>
+                    <caption>
+                        <p class="text-right">
+                            <span class="font-semibold">{{ $t('common.sum') }}:</span>
+
                             {{
-                                entry.spentTime > 0
-                                    ? fromSecondsToFormattedDuration(
-                                          parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                          { seconds: false },
-                                      )
-                                    : ''
+                                fromSecondsToFormattedDuration(
+                                    parseFloat(
+                                        (
+                                            (Math.round(
+                                                (data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) * 100,
+                                            ) /
+                                                100) *
+                                            60 *
+                                            60
+                                        ).toPrecision(2),
+                                    ),
+                                    { seconds: false },
+                                )
                             }}
-
-                            <UBadge v-if="entry.startTime !== undefined" color="green">
-                                {{ $t('common.active') }}
-                            </UBadge>
-                        </div>
-                    </template>
-                </UTable>
-
-                <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
-
-                <TimeclockStatsBlock
-                    hide-header
-                    :weekly="data?.statsWeekly"
-                    :stats="data?.stats"
-                    :loading="loading"
-                    :ui="{ rounded: '' }"
-                />
-            </template>
-
-            <template #colleagues>
-                <UDashboardToolbar>
-                    <template #default>
-                        <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
-                            <div class="flex flex-1 justify-between gap-2">
-                                <UButtonGroup class="inline-flex w-full">
-                                    <UButton
-                                        color="gray"
-                                        block
-                                        class="flex-1"
-                                        :disabled="query.mode === TimeclockMode.WEEKLY"
-                                        trailing-icon="i-mdi-view-week"
-                                        @click="query.mode = TimeclockMode.WEEKLY"
-                                    >
-                                        {{ $t('common.time_ago.week') }}
-                                    </UButton>
-
-                                    <UButton
-                                        v-if="!hideDaily"
-                                        color="gray"
-                                        block
-                                        class="flex-1"
-                                        :disabled="query.mode === TimeclockMode.DAILY"
-                                        icon="i-mdi-view-day"
-                                        @click="query.mode = TimeclockMode.DAILY"
-                                    >
-                                        {{ $t('common.time_ago.day') }}
-                                    </UButton>
-
-                                    <UButton
-                                        color="gray"
-                                        block
-                                        class="flex-1"
-                                        :disabled="query.mode === TimeclockMode.RANGE"
-                                        trailing-icon="i-mdi-calendar-range"
-                                        @click="query.mode = TimeclockMode.RANGE"
-                                    >
-                                        {{ $t('common.time_range') }}
-                                    </UButton>
-                                </UButtonGroup>
-
-                                <UButton
-                                    v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
-                                    :to="{ name: 'jobs-timeclock-inactive' }"
-                                    color="black"
-                                    trailing-icon="i-mdi-arrow-right"
-                                >
-                                    {{ $t('common.inactive_colleagues') }}
-                                </UButton>
-                            </div>
-
-                            <div class="flex w-full flex-row">
-                                <div
-                                    class="grid flex-1 gap-2"
-                                    :class="canAccessAll && userId === undefined ? 'grid-cols-2' : 'grid-cols-1'"
-                                >
-                                    <UFormGroup
-                                        v-if="canAccessAll && userId === undefined"
-                                        name="users"
-                                        :label="$t('common.search')"
-                                    >
-                                        <ClientOnly>
-                                            <USelectMenu
-                                                ref="input"
-                                                v-model="query.users"
-                                                multiple
-                                                :searchable="
-                                                    async (query: string) => {
-                                                        usersLoading = true;
-                                                        const colleagues = await completorStore.listColleagues({
-                                                            search: query,
-                                                        });
-                                                        usersLoading = false;
-                                                        return colleagues;
-                                                    }
-                                                "
-                                                searchable-lazy
-                                                :searchable-placeholder="$t('common.search_field')"
-                                                :search-attributes="['firstname', 'lastname']"
-                                                :placeholder="$t('common.colleague', 2)"
-                                                block
-                                                trailing
-                                                by="userId"
-                                            >
-                                                <template #label>
-                                                    <span v-if="query.users?.length" class="truncate">
-                                                        {{ usersToLabel(query.users) }}
-                                                    </span>
-                                                </template>
-                                                <template #option="{ option: user }">
-                                                    <span class="truncate">
-                                                        {{ `${user?.firstname} ${user?.lastname} (${user?.dateofbirth})` }}
-                                                    </span>
-                                                </template>
-                                                <template #option-empty="{ query: search }">
-                                                    <q>{{ search }}</q> {{ $t('common.query_not_found') }}
-                                                </template>
-                                                <template #empty>
-                                                    {{ $t('common.not_found', [$t('common.creator', 2)]) }}
-                                                </template>
-                                            </USelectMenu>
-                                        </ClientOnly>
-                                    </UFormGroup>
-
-                                    <div class="flex flex-1 flex-row gap-1">
-                                        <UFormGroup
-                                            name="end"
-                                            :label="
-                                                query.mode === TimeclockMode.WEEKLY
-                                                    ? $t('common.time_ago.week')
-                                                    : query.mode === TimeclockMode.DAILY
-                                                      ? $t('common.time_ago.day')
-                                                      : query.mode === TimeclockMode.RANGE
-                                                        ? $t('common.time_range')
-                                                        : ''
-                                            "
-                                            class="flex-1"
-                                        >
-                                            <div
-                                                v-if="query.mode === TimeclockMode.DAILY"
-                                                class="flex flex-1 flex-col gap-1 sm:flex-row"
-                                            >
-                                                <UButton
-                                                    square
-                                                    icon="i-mdi-chevron-left"
-                                                    class="flex-initial"
-                                                    :disabled="isBefore(query.date.end, dateLowerLimit)"
-                                                    @click="query.date.end = subDays(query.date.end, 1)"
-                                                />
-
-                                                <DatePickerPopoverClient
-                                                    v-model="query.date.end"
-                                                    :popover="{ class: 'flex-1' }"
-                                                    :date-picker="{
-                                                        disabledDates: [{ start: addDays(new Date(), 1), end: null }],
-                                                    }"
-                                                />
-
-                                                <UButton
-                                                    square
-                                                    icon="i-mdi-chevron-right"
-                                                    class="flex-initial"
-                                                    :disabled="isFuture(addDays(query.date.end, 1))"
-                                                    @click="query.date.end = addDays(query.date.end, 1)"
-                                                />
-                                            </div>
-                                            <div
-                                                v-else-if="query.mode === TimeclockMode.WEEKLY"
-                                                class="flex flex-1 flex-col gap-1 sm:flex-row"
-                                            >
-                                                <UButton
-                                                    square
-                                                    icon="i-mdi-chevron-left"
-                                                    class="flex-initial"
-                                                    :disabled="isBefore(query.date.end, dateLowerLimit)"
-                                                    @click="query.date.end = subWeeks(query.date.end, 1)"
-                                                />
-
-                                                <DatePickerPopoverClient
-                                                    v-model="query.date.end"
-                                                    :popover="{ class: 'flex-1' }"
-                                                    :date-format="`yyyy '${$t('common.calendar_week')}' w`"
-                                                    :date-picker="{
-                                                        disabledDates: [{ start: addDays(new Date(), 1), end: null }],
-                                                    }"
-                                                />
-
-                                                <UButton
-                                                    square
-                                                    icon="i-mdi-chevron-right"
-                                                    class="flex-initial"
-                                                    :disabled="isFuture(addWeeks(query.date.end, 1))"
-                                                    @click="query.date.end = addWeeks(query.date.end, 1)"
-                                                />
-                                            </div>
-                                            <DateRangePickerPopoverClient
-                                                v-else
-                                                v-model="query.date"
-                                                mode="date"
-                                                class="flex-1"
-                                                :popover="{ class: 'flex-1' }"
-                                                :date-picker="{ disabledDates: [{ start: addDays(new Date(), 1), end: null }] }"
-                                            />
-                                        </UFormGroup>
-
-                                        <UFormGroup
-                                            v-if="query.mode !== TimeclockMode.DAILY"
-                                            name="day"
-                                            :label="$t('common.per_day')"
-                                        >
-                                            <UToggle v-model="query.perDay" class="mt-2" />
-                                        </UFormGroup>
-                                    </div>
-                                </div>
-                            </div>
-                        </UForm>
-                    </template>
-                </UDashboardToolbar>
-
-                <DataErrorBlock v-if="error" :title="$t('common.unable_to_load', [$t('common.entry', 2)])" :retry="refresh" />
-
-                <template v-else>
-                    <UTable
-                        v-if="query.mode === TimeclockMode.WEEKLY"
-                        v-model:sort="sort"
-                        :loading="loading"
-                        :columns="columns"
-                        :rows="data?.entries.oneofKind === 'weekly' ? data.entries.weekly.entries : []"
-                        :empty-state="{
-                            icon: 'i-mdi-timeline-clock',
-                            label: $t('common.not_found', [$t('common.entry', 2)]),
-                        }"
-                        sort-mode="manual"
-                        class="flex-1"
-                    >
-                        <template #caption>
-                            <caption>
-                                <p class="text-right">
-                                    <span class="font-semibold">{{ $t('common.sum') }}:</span>
-
-                                    {{
-                                        fromSecondsToFormattedDuration(
-                                            parseFloat(
-                                                (
-                                                    (Math.round(
-                                                        (data?.entries.oneofKind === 'weekly' ? data?.entries.weekly.sum : 0) *
-                                                            100,
-                                                    ) /
-                                                        100) *
-                                                    60 *
-                                                    60
-                                                ).toPrecision(2),
-                                            ),
-                                            { seconds: false },
-                                        )
-                                    }}
-                                </p>
-                            </caption>
-                        </template>
-
-                        <template #date-data="{ row: item }">
-                            <div class="text-gray-900 dark:text-white">
-                                {{ $d(toDate(item.date), 'date') }}
-                            </div>
-                        </template>
-
-                        <template #name-data="{ row: item }">
-                            <div class="inline-flex items-center gap-1">
-                                <ProfilePictureImg
-                                    :src="item.user?.avatar?.url"
-                                    :name="`${item.user?.firstname} ${item.user?.lastname}`"
-                                    size="xs"
-                                />
-
-                                <ColleagueInfoPopover :user="item.user" />
-                            </div>
-                        </template>
-
-                        <template #rank-data="{ row: entry }">
-                            {{ entry.user.jobGradeLabel
-                            }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
-                        </template>
-
-                        <template #time-data="{ row: entry }">
-                            <div class="text-right">
-                                {{
-                                    entry.spentTime > 0
-                                        ? fromSecondsToFormattedDuration(
-                                              parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                              { seconds: false },
-                                          )
-                                        : ''
-                                }}
-
-                                <UBadge v-if="entry.startTime !== undefined" color="green">
-                                    {{ $t('common.active') }}
-                                </UBadge>
-                            </div>
-                        </template>
-                    </UTable>
-
-                    <UTable
-                        v-else
-                        v-model:sort="sort"
-                        :loading="loading"
-                        :columns="columns"
-                        :rows="
-                            data?.entries.oneofKind === 'daily'
-                                ? data.entries.daily.entries
-                                : data?.entries.oneofKind === 'range'
-                                  ? data.entries.range.entries
-                                  : []
-                        "
-                        :empty-state="{
-                            icon: 'i-mdi-timeline-clock',
-                            label: $t('common.not_found', [$t('common.entry', 2)]),
-                        }"
-                        sort-mode="manual"
-                        class="flex-1"
-                    >
-                        <template #caption>
-                            <caption>
-                                <p class="text-right">
-                                    <span class="font-semibold">{{ $t('common.sum') }}:</span>
-
-                                    {{
-                                        fromSecondsToFormattedDuration(
-                                            parseFloat(
-                                                (
-                                                    (Math.round(
-                                                        (data?.entries.oneofKind === 'daily'
-                                                            ? data?.entries.daily.sum
-                                                            : data?.entries.oneofKind === 'range'
-                                                              ? data?.entries.range.sum
-                                                              : 0) * 100,
-                                                    ) /
-                                                        100) *
-                                                    60 *
-                                                    60
-                                                ).toPrecision(2),
-                                            ),
-                                            { seconds: false },
-                                        )
-                                    }}
-                                </p>
-                            </caption>
-                        </template>
-
-                        <template #date-data="{ row: item }">
-                            <div class="text-gray-900 dark:text-white">
-                                {{ $d(toDate(item.date), 'date') }}
-                            </div>
-                        </template>
-
-                        <template #name-data="{ row: entry }">
-                            <div class="inline-flex items-center gap-1">
-                                <ProfilePictureImg
-                                    :src="entry.user?.avatar?.url"
-                                    :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
-                                    size="xs"
-                                />
-
-                                <ColleagueInfoPopover :user="entry.user" />
-                            </div>
-                        </template>
-
-                        <template #rank-data="{ row: entry }">
-                            {{ entry.user.jobGradeLabel
-                            }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
-                        </template>
-
-                        <template #time-data="{ row: entry }">
-                            <div class="text-right">
-                                {{
-                                    entry.spentTime > 0
-                                        ? fromSecondsToFormattedDuration(
-                                              parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
-                                              { seconds: false },
-                                          )
-                                        : ''
-                                }}
-
-                                <UBadge v-if="entry.startTime !== undefined" color="green">
-                                    {{ $t('common.active') }}
-                                </UBadge>
-                            </div>
-                        </template>
-                    </UTable>
-
-                    <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+                        </p>
+                    </caption>
                 </template>
-            </template>
-        </UTabs>
-    </div>
+
+                <template #date-data="{ row: item }">
+                    <div class="text-gray-900 dark:text-white">
+                        {{ $d(toDate(item.date), 'date') }}
+                    </div>
+                </template>
+
+                <template #name-data="{ row: item }">
+                    <div class="inline-flex items-center gap-1">
+                        <ProfilePictureImg
+                            :src="item.user?.avatar?.url"
+                            :name="`${item.user?.firstname} ${item.user?.lastname}`"
+                            size="xs"
+                        />
+
+                        <ColleagueInfoPopover :user="item.user" />
+                    </div>
+                </template>
+
+                <template #rank-data="{ row: entry }">
+                    {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+                </template>
+
+                <template #time-data="{ row: entry }">
+                    <div class="text-right">
+                        {{
+                            entry.spentTime > 0
+                                ? fromSecondsToFormattedDuration(
+                                      parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                      { seconds: false },
+                                  )
+                                : ''
+                        }}
+
+                        <UBadge v-if="entry.startTime !== undefined" color="green">
+                            {{ $t('common.active') }}
+                        </UBadge>
+                    </div>
+                </template>
+            </UTable>
+
+            <UTable
+                v-else
+                v-model:sort="sort"
+                :loading="loading"
+                :columns="columns"
+                :rows="
+                    data?.entries.oneofKind === 'daily'
+                        ? data.entries.daily.entries
+                        : data?.entries.oneofKind === 'range'
+                          ? data.entries.range.entries
+                          : []
+                "
+                :empty-state="{
+                    icon: 'i-mdi-timeline-clock',
+                    label: $t('common.not_found', [$t('common.entry', 2)]),
+                }"
+                sort-mode="manual"
+                class="flex-1"
+            >
+                <template #caption>
+                    <caption>
+                        <p class="text-right">
+                            <span class="font-semibold">{{ $t('common.sum') }}:</span>
+
+                            {{
+                                fromSecondsToFormattedDuration(
+                                    parseFloat(
+                                        (
+                                            (Math.round(
+                                                (data?.entries.oneofKind === 'daily'
+                                                    ? data?.entries.daily.sum
+                                                    : data?.entries.oneofKind === 'range'
+                                                      ? data?.entries.range.sum
+                                                      : 0) * 100,
+                                            ) /
+                                                100) *
+                                            60 *
+                                            60
+                                        ).toPrecision(2),
+                                    ),
+                                    { seconds: false },
+                                )
+                            }}
+                        </p>
+                    </caption>
+                </template>
+
+                <template #date-data="{ row: item }">
+                    <div class="text-gray-900 dark:text-white">
+                        {{ $d(toDate(item.date), 'date') }}
+                    </div>
+                </template>
+
+                <template #name-data="{ row: entry }">
+                    <div class="inline-flex items-center gap-1">
+                        <ProfilePictureImg
+                            :src="entry.user?.avatar?.url"
+                            :name="`${entry.user?.firstname} ${entry.user?.lastname}`"
+                            size="xs"
+                        />
+
+                        <ColleagueInfoPopover :user="entry.user" />
+                    </div>
+                </template>
+
+                <template #rank-data="{ row: entry }">
+                    {{ entry.user.jobGradeLabel }}<span v-if="entry.user.jobGrade > 0"> ({{ entry.user.jobGrade }})</span>
+                </template>
+
+                <template #time-data="{ row: entry }">
+                    <div class="text-right">
+                        {{
+                            entry.spentTime > 0
+                                ? fromSecondsToFormattedDuration(
+                                      parseFloat(((Math.round(entry.spentTime * 100) / 100) * 60 * 60).toPrecision(2)),
+                                      { seconds: false },
+                                  )
+                                : ''
+                        }}
+
+                        <UBadge v-if="entry.startTime !== undefined" color="green">
+                            {{ $t('common.active') }}
+                        </UBadge>
+                    </div>
+                </template>
+            </UTable>
+
+            <Pagination v-model="page" :pagination="data?.pagination" :loading="loading" :refresh="refresh" />
+        </template>
+    </template>
 </template>

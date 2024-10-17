@@ -67,7 +67,10 @@
   
 - [resources/common/cron/cron.proto](#resources_common_cron_cron-proto)
     - [Cronjob](#resources-common-cron-Cronjob)
+    - [CronjobCompletedEvent](#resources-common-cron-CronjobCompletedEvent)
     - [CronjobData](#resources-common-cron-CronjobData)
+    - [CronjobLockOwnerState](#resources-common-cron-CronjobLockOwnerState)
+    - [CronjobSchedulerEvent](#resources-common-cron-CronjobSchedulerEvent)
   
     - [CronjobState](#resources-common-cron-CronjobState)
   
@@ -1625,6 +1628,26 @@
 | state | [CronjobState](#resources-common-cron-CronjobState) |  |  |
 | next_schedule_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | last_attempt_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| data | [CronjobData](#resources-common-cron-CronjobData) |  |  |
+
+
+
+
+
+
+<a name="resources-common-cron-CronjobCompletedEvent"></a>
+
+### CronjobCompletedEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| sucess | [bool](#bool) |  |  |
+| endDate | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| elapsed | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
+| data | [CronjobData](#resources-common-cron-CronjobData) |  |  |
 
 
 
@@ -1641,6 +1664,37 @@
 | ----- | ---- | ----- | ----------- |
 | updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | data | [google.protobuf.Any](#google-protobuf-Any) | optional |  |
+
+
+
+
+
+
+<a name="resources-common-cron-CronjobLockOwnerState"></a>
+
+### CronjobLockOwnerState
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| hostname | [string](#string) |  |  |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="resources-common-cron-CronjobSchedulerEvent"></a>
+
+### CronjobSchedulerEvent
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| cronjob | [Cronjob](#resources-common-cron-Cronjob) |  |  |
 
 
 

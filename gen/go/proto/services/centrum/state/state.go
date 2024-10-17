@@ -17,9 +17,10 @@ import (
 	"go.uber.org/zap"
 )
 
-var StateModule = fx.Module("centrum_state", fx.Provide(
-	New,
-))
+var StateModule = fx.Module("centrum_state",
+	fx.Provide(
+		New,
+	))
 
 type State struct {
 	js *events.JSWrapper

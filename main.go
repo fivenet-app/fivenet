@@ -55,6 +55,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/bot"
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/fivenet-app/fivenet/pkg/cron"
 	"github.com/fivenet-app/fivenet/pkg/lang"
 )
 
@@ -143,6 +144,9 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		manager.HousekeeperModule,
 		discord.BotModule,
 		storage.Module,
+		cron.Module,
+		cron.SchedulerModule,
+		cron.AgentModule,
 		lang.Module,
 
 		fx.Provide(
@@ -184,6 +188,8 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 
 		fx.Invoke(func(*bluemonday.Policy) {}),
 		fx.Invoke(func(admin.AdminServer) {}),
+		fx.Invoke(func(*cron.Cron) {}),
+		fx.Invoke(func(*cron.Agent) {}),
 	}
 }
 

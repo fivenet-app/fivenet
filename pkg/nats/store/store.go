@@ -97,15 +97,15 @@ func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *
 	locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      lockBucket,
 		Description: fmt.Sprintf("%s Store Locks", bucket),
-		History:     3,
+		History:     2,
 		Storage:     jetstream.MemoryStorage,
-		TTL:         6 * locks.LockTimeout,
+		TTL:         5 * locks.LockTimeout,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	l, err := locks.New(logger, locksKV, lockBucket, 5*locks.LockTimeout)
+	l, err := locks.New(logger, locksKV, lockBucket, 4*locks.LockTimeout)
 	if err != nil {
 		return nil, err
 	}
@@ -392,7 +392,7 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 						s.logger.Error("error while stopping watcher", zap.Error(err))
 					}
 				} else {
-					s.logger.Info("store watcher done")
+					s.logger.Debug("store watcher done")
 				}
 				return
 

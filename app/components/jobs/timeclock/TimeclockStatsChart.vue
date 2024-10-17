@@ -64,7 +64,7 @@ ${t('components.jobs.timeclock.Stats.max')}: ${n(d.max, 'decimal')} h`;
             </div>
         </template>
 
-        <VisXYContainer :key="width" :data="data" :padding="{ top: 10, left: 2, right: 2 }" class="h-96" :width="width">
+        <VisXYContainer :key="width" :data="data" :padding="{ top: 10, left: 2, right: 2 }" class="h-80" :width="width">
             <VisLine :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" />
             <VisArea :x="x" :y="y" color="rgb(var(--color-primary-DEFAULT))" :opacity="0.1" />
 

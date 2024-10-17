@@ -27,9 +27,10 @@ const (
 	DeleteDispatchDays = 14
 )
 
-var HousekeeperModule = fx.Module("centrum_manager_housekeeper", fx.Provide(
-	NewHousekeeper,
-))
+var HousekeeperModule = fx.Module("centrum_manager_housekeeper",
+	fx.Provide(
+		NewHousekeeper,
+	))
 
 type Housekeeper struct {
 	ctx    context.Context
