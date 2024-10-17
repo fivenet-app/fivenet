@@ -3,7 +3,6 @@ import Dexie, { type Table } from 'dexie';
 import 'dexie-observable';
 import 'dexie-syncable';
 import { defineStore } from 'pinia';
-import '~/utils/dexie.ts';
 import type { Calendar, CalendarEntry } from '~~/gen/ts/resources/calendar/calendar';
 import { RsvpResponses } from '~~/gen/ts/resources/calendar/calendar';
 import { NotificationCategory, NotificationType } from '~~/gen/ts/resources/notifications/notifications';

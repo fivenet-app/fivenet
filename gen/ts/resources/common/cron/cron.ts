@@ -3,32 +3,141 @@
 // @ts-nocheck
 import type { BinaryWriteOptions } from "@protobuf-ts/runtime";
 import type { IBinaryWriter } from "@protobuf-ts/runtime";
-import { UnknownFieldHandler } from "@protobuf-ts/runtime";
+import { WireType } from "@protobuf-ts/runtime";
 import type { BinaryReadOptions } from "@protobuf-ts/runtime";
 import type { IBinaryReader } from "@protobuf-ts/runtime";
+import { UnknownFieldHandler } from "@protobuf-ts/runtime";
 import type { PartialMessage } from "@protobuf-ts/runtime";
 import { reflectionMergePartial } from "@protobuf-ts/runtime";
 import { MessageType } from "@protobuf-ts/runtime";
+import { Any } from "../../../google/protobuf/any";
+import { Timestamp } from "../../timestamp/timestamp";
 /**
  * @generated from protobuf message resources.common.cron.Cronjob
  */
 export interface Cronjob {
+    /**
+     * @generated from protobuf field: string name = 1;
+     */
+    name: string;
+    /**
+     * @generated from protobuf field: string schedule = 2;
+     */
+    schedule: string;
+    /**
+     * @generated from protobuf field: resources.common.cron.CronjobState state = 3;
+     */
+    state: CronjobState;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp next_schedule_time = 4;
+     */
+    nextScheduleTime?: Timestamp;
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp last_attempt_time = 5;
+     */
+    lastAttemptTime?: Timestamp;
+}
+/**
+ * @generated from protobuf message resources.common.cron.CronjobData
+ */
+export interface CronjobData {
+    /**
+     * @generated from protobuf field: resources.timestamp.Timestamp updated_at = 1;
+     */
+    updatedAt?: Timestamp;
+    /**
+     * @generated from protobuf field: optional google.protobuf.Any data = 2;
+     */
+    data?: Any;
+}
+/**
+ * @generated from protobuf enum resources.common.cron.CronjobState
+ */
+export enum CronjobState {
+    /**
+     * @generated from protobuf enum value: CRONJOB_STATE_UNSPECIFIED = 0;
+     */
+    UNSPECIFIED = 0,
+    /**
+     * @generated from protobuf enum value: CRONJOB_STATE_WAITING = 1;
+     */
+    WAITING = 1,
+    /**
+     * @generated from protobuf enum value: CRONJOB_STATE_PENDING = 2;
+     */
+    PENDING = 2,
+    /**
+     * @generated from protobuf enum value: CRONJOB_STATE_RUNNING = 3;
+     */
+    RUNNING = 3
 }
 // @generated message type with reflection information, may provide speed optimized methods
 class Cronjob$Type extends MessageType<Cronjob> {
     constructor() {
-        super("resources.common.cron.Cronjob", []);
+        super("resources.common.cron.Cronjob", [
+            { no: 1, name: "name", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 2, name: "schedule", kind: "scalar", T: 9 /*ScalarType.STRING*/ },
+            { no: 3, name: "state", kind: "enum", T: () => ["resources.common.cron.CronjobState", CronjobState, "CRONJOB_STATE_"] },
+            { no: 4, name: "next_schedule_time", kind: "message", T: () => Timestamp },
+            { no: 5, name: "last_attempt_time", kind: "message", T: () => Timestamp }
+        ]);
     }
     create(value?: PartialMessage<Cronjob>): Cronjob {
         const message = globalThis.Object.create((this.messagePrototype!));
+        message.name = "";
+        message.schedule = "";
+        message.state = 0;
         if (value !== undefined)
             reflectionMergePartial<Cronjob>(this, message, value);
         return message;
     }
     internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: Cronjob): Cronjob {
-        return target ?? this.create();
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* string name */ 1:
+                    message.name = reader.string();
+                    break;
+                case /* string schedule */ 2:
+                    message.schedule = reader.string();
+                    break;
+                case /* resources.common.cron.CronjobState state */ 3:
+                    message.state = reader.int32();
+                    break;
+                case /* resources.timestamp.Timestamp next_schedule_time */ 4:
+                    message.nextScheduleTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.nextScheduleTime);
+                    break;
+                case /* resources.timestamp.Timestamp last_attempt_time */ 5:
+                    message.lastAttemptTime = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.lastAttemptTime);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
     }
     internalBinaryWrite(message: Cronjob, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* string name = 1; */
+        if (message.name !== "")
+            writer.tag(1, WireType.LengthDelimited).string(message.name);
+        /* string schedule = 2; */
+        if (message.schedule !== "")
+            writer.tag(2, WireType.LengthDelimited).string(message.schedule);
+        /* resources.common.cron.CronjobState state = 3; */
+        if (message.state !== 0)
+            writer.tag(3, WireType.Varint).int32(message.state);
+        /* resources.timestamp.Timestamp next_schedule_time = 4; */
+        if (message.nextScheduleTime)
+            Timestamp.internalBinaryWrite(message.nextScheduleTime, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
+        /* resources.timestamp.Timestamp last_attempt_time = 5; */
+        if (message.lastAttemptTime)
+            Timestamp.internalBinaryWrite(message.lastAttemptTime, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
@@ -39,3 +148,56 @@ class Cronjob$Type extends MessageType<Cronjob> {
  * @generated MessageType for protobuf message resources.common.cron.Cronjob
  */
 export const Cronjob = new Cronjob$Type();
+// @generated message type with reflection information, may provide speed optimized methods
+class CronjobData$Type extends MessageType<CronjobData> {
+    constructor() {
+        super("resources.common.cron.CronjobData", [
+            { no: 1, name: "updated_at", kind: "message", T: () => Timestamp },
+            { no: 2, name: "data", kind: "message", T: () => Any }
+        ]);
+    }
+    create(value?: PartialMessage<CronjobData>): CronjobData {
+        const message = globalThis.Object.create((this.messagePrototype!));
+        if (value !== undefined)
+            reflectionMergePartial<CronjobData>(this, message, value);
+        return message;
+    }
+    internalBinaryRead(reader: IBinaryReader, length: number, options: BinaryReadOptions, target?: CronjobData): CronjobData {
+        let message = target ?? this.create(), end = reader.pos + length;
+        while (reader.pos < end) {
+            let [fieldNo, wireType] = reader.tag();
+            switch (fieldNo) {
+                case /* resources.timestamp.Timestamp updated_at */ 1:
+                    message.updatedAt = Timestamp.internalBinaryRead(reader, reader.uint32(), options, message.updatedAt);
+                    break;
+                case /* optional google.protobuf.Any data */ 2:
+                    message.data = Any.internalBinaryRead(reader, reader.uint32(), options, message.data);
+                    break;
+                default:
+                    let u = options.readUnknownField;
+                    if (u === "throw")
+                        throw new globalThis.Error(`Unknown field ${fieldNo} (wire type ${wireType}) for ${this.typeName}`);
+                    let d = reader.skip(wireType);
+                    if (u !== false)
+                        (u === true ? UnknownFieldHandler.onRead : u)(this.typeName, message, fieldNo, wireType, d);
+            }
+        }
+        return message;
+    }
+    internalBinaryWrite(message: CronjobData, writer: IBinaryWriter, options: BinaryWriteOptions): IBinaryWriter {
+        /* resources.timestamp.Timestamp updated_at = 1; */
+        if (message.updatedAt)
+            Timestamp.internalBinaryWrite(message.updatedAt, writer.tag(1, WireType.LengthDelimited).fork(), options).join();
+        /* optional google.protobuf.Any data = 2; */
+        if (message.data)
+            Any.internalBinaryWrite(message.data, writer.tag(2, WireType.LengthDelimited).fork(), options).join();
+        let u = options.writeUnknownFields;
+        if (u !== false)
+            (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);
+        return writer;
+    }
+}
+/**
+ * @generated MessageType for protobuf message resources.common.cron.CronjobData
+ */
+export const CronjobData = new CronjobData$Type();

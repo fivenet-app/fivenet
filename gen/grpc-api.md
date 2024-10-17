@@ -67,6 +67,12 @@
   
 - [resources/common/cron/cron.proto](#resources_common_cron_cron-proto)
     - [Cronjob](#resources-common-cron-Cronjob)
+    - [CronjobData](#resources-common-cron-CronjobData)
+  
+    - [CronjobState](#resources-common-cron-CronjobState)
+  
+- [resources/common/uuid.proto](#resources_common_uuid-proto)
+    - [UUID](#resources-common-UUID)
   
 - [resources/documents/access.proto](#resources_documents_access-proto)
     - [DocumentAccess](#resources-documents-DocumentAccess)
@@ -1610,6 +1616,76 @@
 
 ### Cronjob
 
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| name | [string](#string) |  |  |
+| schedule | [string](#string) |  |  |
+| state | [CronjobState](#resources-common-cron-CronjobState) |  |  |
+| next_schedule_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| last_attempt_time | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+
+
+
+
+
+
+<a name="resources-common-cron-CronjobData"></a>
+
+### CronjobData
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| updated_at | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
+| data | [google.protobuf.Any](#google-protobuf-Any) | optional |  |
+
+
+
+
+
+ 
+
+
+<a name="resources-common-cron-CronjobState"></a>
+
+### CronjobState
+
+
+| Name | Number | Description |
+| ---- | ------ | ----------- |
+| CRONJOB_STATE_UNSPECIFIED | 0 |  |
+| CRONJOB_STATE_WAITING | 1 |  |
+| CRONJOB_STATE_PENDING | 2 |  |
+| CRONJOB_STATE_RUNNING | 3 |  |
+
+
+ 
+
+ 
+
+ 
+
+
+
+<a name="resources_common_uuid-proto"></a>
+<p align="right"><a href="#top">Top</a></p>
+
+## resources/common/uuid.proto
+
+
+
+<a name="resources-common-UUID"></a>
+
+### UUID
+
+
+
+| Field | Type | Label | Description |
+| ----- | ---- | ----- | ----------- |
+| uuid | [string](#string) |  |  |
 
 
 

@@ -1,0 +1,11 @@
+syntax = "proto3";
+
+package resources.common;
+
+import "validate/validate.proto";
+
+option go_package = "github.com/fivenet-app/fivenet/gen/go/proto/resources/common;common";
+
+message UUID {
+  string uuid = 1 [(validate.rules).string.uuid = true];
+}
