@@ -46,6 +46,10 @@ func NewAgent(p AgentParams) (*Agent, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		if err := registerCronStreams(ctx, ag.js); err != nil {
+			return err
+		}
+
 		return ag.registerSubscriptions(ctx, p.JS)
 	}))
 

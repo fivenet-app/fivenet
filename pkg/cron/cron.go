@@ -71,7 +71,7 @@ func New(p Params) (*Cron, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
-		if err := cr.registerStreams(ctx); err != nil {
+		if err := registerCronStreams(ctx, cr.js); err != nil {
 			return err
 		}
 

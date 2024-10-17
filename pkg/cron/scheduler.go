@@ -64,6 +64,10 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		if err := registerCronStreams(ctx, s.js); err != nil {
+			return err
+		}
+
 		store, err := store.New[cron.Cronjob, *cron.Cronjob](ctx, p.Logger, p.JS, "cron", func(st *store.Store[cron.Cronjob, *cron.Cronjob]) error {
 			st.OnUpdate = func(cj *cron.Cronjob) (*cron.Cronjob, error) {
 				if cj == nil {

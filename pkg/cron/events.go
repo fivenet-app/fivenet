@@ -17,8 +17,8 @@ const (
 	CronCompleteTopic   events.Topic   = "complete"
 )
 
-func (c *Cron) registerStreams(ctx context.Context) error {
-	if _, err := c.js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
+func registerCronStreams(ctx context.Context, js *events.JSWrapper) error {
+	if _, err := js.CreateOrUpdateStream(ctx, jetstream.StreamConfig{
 		Name:      CronScheduleStreamName,
 		Storage:   jetstream.MemoryStorage,
 		Retention: jetstream.InterestPolicy,
