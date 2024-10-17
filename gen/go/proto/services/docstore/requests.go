@@ -191,7 +191,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 
 	// If no request of that type exists yet, create one, otherwise udpate the existing with the new requestors info
 	if request == nil {
-		request, err = s.addAndGetDocumentReq(ctx, s.db, &documents.DocRequest{
+		request, err = s.addAndGetDocumentReq(ctx, tx, &documents.DocRequest{
 			DocumentId:  doc.Id,
 			CreatorId:   &userInfo.UserId,
 			CreatorJob:  userInfo.Job,
@@ -204,7 +204,7 @@ func (s *Server) CreateDocumentReq(ctx context.Context, req *CreateDocumentReqRe
 		}
 	} else {
 		accepted := false
-		if err := s.updateDocumentReq(ctx, s.db, request.Id, &documents.DocRequest{
+		if err := s.updateDocumentReq(ctx, tx, request.Id, &documents.DocRequest{
 			Id:          request.Id,
 			CreatedAt:   timestamp.Now(),
 			UpdatedAt:   nil,

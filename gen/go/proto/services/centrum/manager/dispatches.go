@@ -166,7 +166,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				tDispatchUnit.UnitID.IN(removeIds...),
 			))
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return err
 		}
 	}
@@ -229,7 +229,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 				tDispatchUnit.ExpiresAt.SET(jet.RawTimestamp("VALUES(`expires_at`)")),
 			)
 
-			if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+			if _, err := stmt.ExecContext(ctx, tx); err != nil {
 				if !dbutils.IsDuplicateError(err) {
 					return err
 				}
@@ -320,7 +320,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 
 			for _, unitId := range units {
-				if _, err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
+				if _, err := s.AddDispatchStatus(ctx, tx, job, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,

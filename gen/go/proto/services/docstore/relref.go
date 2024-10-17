@@ -250,14 +250,6 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	req.Reference.CreatorId = &userInfo.UserId
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	docRef := table.FivenetDocumentsReferences
 	stmt := docRef.
 		INSERT(
@@ -280,11 +272,6 @@ func (s *Server) AddDocumentReference(ctx context.Context, req *AddDocumentRefer
 
 	lastId, err := result.LastInsertId()
 	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-
-	// Commit the transaction
-	if err := tx.Commit(); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 
@@ -523,7 +510,7 @@ func (s *Server) RemoveDocumentRelation(ctx context.Context, req *RemoveDocument
 			tDocRel.ID.EQ(jet.Uint64(req.Id)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 

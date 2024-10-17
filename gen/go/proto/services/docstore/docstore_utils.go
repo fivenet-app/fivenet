@@ -400,7 +400,7 @@ func (s *Server) updateDocumentOwner(ctx context.Context, tx qrm.DB, documentId 
 			tDocument.ID.EQ(jet.Uint64(documentId)),
 		)
 
-	if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+	if _, err := stmt.ExecContext(ctx, tx); err != nil {
 		return errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
 	}
 

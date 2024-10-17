@@ -308,7 +308,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				tCalendar.ID.EQ(jet.Uint64(req.Calendar.Id)),
 			))
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}
 
@@ -356,7 +356,7 @@ func (s *Server) CreateOrUpdateCalendar(ctx context.Context, req *CreateOrUpdate
 				tCalendar.Closed.SET(jet.Bool(req.Calendar.Closed)),
 				tCalendar.Color.SET(jet.String(req.Calendar.Color)),
 			)
-		res, err := stmt.ExecContext(ctx, s.db)
+		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return nil, errswrap.NewError(err, errorscalendar.ErrFailedQuery)
 		}

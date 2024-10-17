@@ -305,7 +305,7 @@ func (s *Server) CreateOrUpdateThread(ctx context.Context, req *CreateOrUpdateTh
 				userInfo.Job,
 			)
 
-		res, err := stmt.ExecContext(ctx, s.db)
+		res, err := stmt.ExecContext(ctx, tx)
 		if err != nil {
 			return nil, errorsmessenger.ErrFailedQuery
 		}
@@ -341,7 +341,7 @@ func (s *Server) CreateOrUpdateThread(ctx context.Context, req *CreateOrUpdateTh
 			).
 			WHERE(tThreads.ID.EQ(jet.Uint64(req.Thread.Id)))
 
-		if _, err := stmt.ExecContext(ctx, s.db); err != nil {
+		if _, err := stmt.ExecContext(ctx, tx); err != nil {
 			return nil, errorsmessenger.ErrFailedQuery
 		}
 

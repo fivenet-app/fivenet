@@ -230,14 +230,6 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 		return nil, errorsdocstore.ErrTemplateAccessDuplicate
 	}
 
-	// Begin transaction
-	tx, err := s.db.BeginTx(ctx, nil)
-	if err != nil {
-		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
-	}
-	// Defer a rollback in case anything fails
-	defer tx.Rollback()
-
 	categoryId := jet.NULL
 	if req.Template.Category != nil {
 		cat, err := s.getCategory(ctx, req.Template.Category.Id)
@@ -248,6 +240,14 @@ func (s *Server) CreateTemplate(ctx context.Context, req *CreateTemplateRequest)
 			categoryId = jet.Uint64(cat.Id)
 		}
 	}
+
+	// Begin transaction
+	tx, err := s.db.BeginTx(ctx, nil)
+	if err != nil {
+		return nil, errswrap.NewError(err, errorsdocstore.ErrFailedQuery)
+	}
+	// Defer a rollback in case anything fails
+	defer tx.Rollback()
 
 	tDTemplates := table.FivenetDocumentsTemplates
 	stmt := tDTemplates.
