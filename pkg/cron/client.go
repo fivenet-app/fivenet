@@ -94,17 +94,16 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		return
 	}
 
-	if err := msg.InProgress(); err != nil {
-		ag.logger.Error("failed to send in progress for cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
-	}
-
 	fn := getCronjobHandler(job.Cronjob.Name)
-
 	if fn == nil {
 		if err := msg.Nak(); err != nil {
 			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 		}
 		return
+	}
+
+	if err := msg.InProgress(); err != nil {
+		ag.logger.Error("failed to send in progress for cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
 	}
 
 	start := time.Now()
