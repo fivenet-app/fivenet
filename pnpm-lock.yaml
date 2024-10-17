@@ -59,6 +59,12 @@ importers:
       dexie:
         specifier: 4.0.8
         version: 4.0.8
+      dexie-observable:
+        specifier: 4.0.1-beta.13
+        version: 4.0.1-beta.13(dexie@4.0.8)
+      dexie-syncable:
+        specifier: 4.0.1-beta.13
+        version: 4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.8))(dexie@4.0.8)
       emoji-blast:
         specifier: 0.10.1
         version: 0.10.1
@@ -3217,6 +3223,17 @@ packages:
 
   devalue@5.1.1:
     resolution: {integrity: sha512-maua5KUiapvEwiEAe+XnlZ3Rh0GD+qI1J/nb9vrJc3muPXvcF/8gXYTWF76+5DAqHyDUtOIImEuo0YKE9mshVw==}
+
+  dexie-observable@4.0.1-beta.13:
+    resolution: {integrity: sha512-axmgPk7yjoPwj+0DdQIE5s1MBXi+6XcIFIjBKdQAmSGpsLQSth/LHvMOQ3q3Wj6pwIE5hqIxg2GL75sVqQbhEw==}
+    peerDependencies:
+      dexie: ^3.0.2 || ^4.0.1-alpha.5
+
+  dexie-syncable@4.0.1-beta.13:
+    resolution: {integrity: sha512-D9GPf8Uxs4cW0leAmL07oNQ5rq1wRlRpPp/XkMLHbJqOv2tq/s5FHPBagKv7F7vUKbSUf6zb4aFwV4+7vJQWZg==}
+    peerDependencies:
+      dexie: ^3.0.2 || ^4.0.1-alpha.5
+      dexie-observable: ^4.0.1-beta.13
 
   dexie@4.0.8:
     resolution: {integrity: sha512-1G6cJevS17KMDK847V3OHvK2zei899GwpDiqfEXHP1ASvme6eWJmAp9AU4s1son2TeGkWmC0g3y8ezOBPnalgQ==}
@@ -9924,6 +9941,15 @@ snapshots:
   detect-libc@2.0.3: {}
 
   devalue@5.1.1: {}
+
+  dexie-observable@4.0.1-beta.13(dexie@4.0.8):
+    dependencies:
+      dexie: 4.0.8
+
+  dexie-syncable@4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.8))(dexie@4.0.8):
+    dependencies:
+      dexie: 4.0.8
+      dexie-observable: 4.0.1-beta.13(dexie@4.0.8)
 
   dexie@4.0.8: {}
 
