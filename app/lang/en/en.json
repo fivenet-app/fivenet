@@ -1441,6 +1441,10 @@
                 "checkup": {
                     "title": "Status Check",
                     "content": "Please make sure your unit's status is up-to-date."
+                },
+                "require_unit": {
+                    "title": "You are not in any unit",
+                    "content": "Please join an unit!"
                 }
             }
         },

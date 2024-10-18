@@ -1440,6 +1440,10 @@
                 "checkup": {
                     "title": "Status Check",
                     "content": "Bitte stellen Sie sicher, dass ihr Einheiten Status aktuell ist."
+                },
+                "require_unit": {
+                    "title": "Sie sind in keiner Einheit",
+                    "content": "Bitte treten sie einer Einheit bei!"
                 }
             }
         },

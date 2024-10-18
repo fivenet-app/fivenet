@@ -27,6 +27,7 @@ export interface CentrumState {
     cleanupIntervalId: NodeJS.Timeout | undefined;
     reconnecting: boolean;
     reconnectBackoffTime: number;
+    timingsIntervalId: NodeJS.Timeout | undefined;
 
     timeCorrection: number;
 
@@ -98,6 +99,13 @@ export const useCentrumStore = defineStore('centrum', {
                 this.settings.timings = settings.timings;
             } else {
                 this.settings = settings;
+            }
+
+            if (this.timingsIntervalId !== undefined) {
+                clearInterval(this.timingsIntervalId);
+                this.timingsIntervalId = undefined;
+
+                this.handleOwnUnitForTimings();
             }
         },
 
@@ -171,11 +179,9 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         setOwnUnit(id: string | undefined): void {
-            if (id === undefined) {
-                this.ownUnitId = undefined;
-            } else {
-                this.ownUnitId = id;
-            }
+            this.ownUnitId = id;
+
+            this.handleOwnUnitForTimings();
         },
         removeUnit(id: string): void {
             // User's unit has been deleted, reset it
@@ -651,13 +657,7 @@ export const useCentrumStore = defineStore('centrum', {
             }, this.reconnectBackoffTime * 1000);
         },
 
-        // Utilities
-        addFeedItem(item: DispatchStatus | UnitStatus): void {
-            const idx = this.feed.findIndex((fi) => fi.id === item.id);
-            if (idx === -1) {
-                this.feed.unshift(item);
-            }
-        },
+        // Helpers
         calculateTimeCorrection(serverTime: Timestamp): void {
             const now = new Date().getTime();
             const st = toDate(serverTime).getTime();
@@ -674,6 +674,14 @@ export const useCentrumStore = defineStore('centrum', {
                 this.timeCorrection / 1000,
             );
         },
+
+        addFeedItem(item: DispatchStatus | UnitStatus): void {
+            const idx = this.feed.findIndex((fi) => fi.id === item.id);
+            if (idx === -1) {
+                this.feed.unshift(item);
+            }
+        },
+
         // Central "can user do that" method as we will take the dispatch center mode into account further
         canDo(action: canDoAction, dispatch?: Dispatch): boolean {
             switch (action) {
@@ -700,6 +708,7 @@ export const useCentrumStore = defineStore('centrum', {
                     return false;
             }
         },
+
         async cleanup(): Promise<void> {
             logger.debug('Running cleanup tasks');
             const now = new Date().getTime() - this.timeCorrection;
@@ -776,6 +785,32 @@ export const useCentrumStore = defineStore('centrum', {
                     dispatch.units.splice(idx, 1);
                 }
             });
+        },
+
+        handleOwnUnitForTimings(): void {
+            if (this.ownUnitId === undefined) {
+                if (this.settings?.timings !== undefined && this.settings.timings.requireUnit) {
+                    this.timingsIntervalId = setInterval(
+                        this.sendRequireUnitNotification,
+                        this.settings.timings.requireUnitReminderSeconds * 1000,
+                    );
+                }
+            } else {
+                if (this.timingsIntervalId !== undefined) {
+                    clearInterval(this.timingsIntervalId);
+                    this.timingsIntervalId = undefined;
+                }
+            }
+        },
+        sendRequireUnitNotification(): void {
+            useNotificatorStore().add({
+                title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
+                description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
+                type: NotificationType.INFO,
+                actions: getNotificationActions(),
+            });
+
+            useSound().play({ name: 'centrum/message-incoming' });
         },
     },
 });
