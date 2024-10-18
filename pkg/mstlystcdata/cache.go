@@ -89,6 +89,7 @@ func NewCache(p Params) (*Cache, error) {
 
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
+
 		return nil
 	}))
 

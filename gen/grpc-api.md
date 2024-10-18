@@ -1922,7 +1922,7 @@
 | sucess | [bool](#bool) |  |  |
 | endDate | [resources.timestamp.Timestamp](#resources-timestamp-Timestamp) |  |  |
 | elapsed | [google.protobuf.Duration](#google-protobuf-Duration) |  |  |
-| data | [CronjobData](#resources-common-cron-CronjobData) |  |  |
+| data | [CronjobData](#resources-common-cron-CronjobData) | optional |  |
 
 
 

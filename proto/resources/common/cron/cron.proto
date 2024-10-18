@@ -46,5 +46,5 @@ message CronjobCompletedEvent {
   resources.timestamp.Timestamp endDate = 3;
   google.protobuf.Duration elapsed = 4;
 
-  CronjobData data = 5;
+  optional CronjobData data = 5;
 }

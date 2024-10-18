@@ -98,7 +98,7 @@ export interface CronjobCompletedEvent {
      */
     elapsed?: Duration;
     /**
-     * @generated from protobuf field: resources.common.cron.CronjobData data = 5;
+     * @generated from protobuf field: optional resources.common.cron.CronjobData data = 5;
      */
     data?: CronjobData;
 }
@@ -396,7 +396,7 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
                 case /* google.protobuf.Duration elapsed */ 4:
                     message.elapsed = Duration.internalBinaryRead(reader, reader.uint32(), options, message.elapsed);
                     break;
-                case /* resources.common.cron.CronjobData data */ 5:
+                case /* optional resources.common.cron.CronjobData data */ 5:
                     message.data = CronjobData.internalBinaryRead(reader, reader.uint32(), options, message.data);
                     break;
                 default:
@@ -423,7 +423,7 @@ class CronjobCompletedEvent$Type extends MessageType<CronjobCompletedEvent> {
         /* google.protobuf.Duration elapsed = 4; */
         if (message.elapsed)
             Duration.internalBinaryWrite(message.elapsed, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
-        /* resources.common.cron.CronjobData data = 5; */
+        /* optional resources.common.cron.CronjobData data = 5; */
         if (message.data)
             CronjobData.internalBinaryWrite(message.data, writer.tag(5, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
