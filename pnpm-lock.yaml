@@ -43,7 +43,7 @@ importers:
         version: 1.4.4(@unovis/ts@1.4.4)(vue@3.5.12(typescript@5.6.3))
       '@vue-leaflet/vue-leaflet':
         specifier: 0.10.1
-        version: 0.10.1(@types/leaflet@1.9.12)(leaflet@1.9.4)(typescript@5.6.3)
+        version: 0.10.1(@types/leaflet@1.9.13)(leaflet@1.9.4)(typescript@5.6.3)
       '@zxcvbn-ts/core':
         specifier: 3.0.4
         version: 3.0.4
@@ -157,8 +157,8 @@ importers:
         specifier: 2.2.12
         version: 2.2.12
       '@types/leaflet':
-        specifier: 1.9.12
-        version: 1.9.12
+        specifier: 1.9.13
+        version: 1.9.13
       '@types/leaflet-contextmenu':
         specifier: 1.4.3
         version: 1.4.3
@@ -1975,8 +1975,8 @@ packages:
   '@types/leaflet@1.7.6':
     resolution: {integrity: sha512-Emkz3V08QnlelSbpT46OEAx+TBZYTOX2r1yM7W+hWg5+djHtQ1GbEXBDRLaqQDOYcDI51Ss0ayoqoKD4CtLUDA==}
 
-  '@types/leaflet@1.9.12':
-    resolution: {integrity: sha512-BK7XS+NyRI291HIo0HCfE18Lp8oA30H1gpi1tf0mF3TgiCEzanQjOqNZ4x126SXzzi2oNSZhZ5axJp1k0iM6jg==}
+  '@types/leaflet@1.9.13':
+    resolution: {integrity: sha512-wwLL4VKKwYlLmhMQRc/8HT5/8HgkzZyETG0hG3nbsSiHKSdxBWZnHqEkRIOOtpyUks3gbc81dk9WgQMC6bicDw==}
 
   '@types/lodash@4.17.10':
     resolution: {integrity: sha512-YpS0zzoduEhuOWjAotS6A5AVCva7X4lVlYLF0FYHAY9sdraBfnatttHItlWeZdGhuEkf+OzMNg2ZYAx8t+52uQ==}
@@ -8501,13 +8501,13 @@ snapshots:
 
   '@types/leaflet-contextmenu@1.4.3':
     dependencies:
-      '@types/leaflet': 1.9.12
+      '@types/leaflet': 1.9.13
 
   '@types/leaflet@1.7.6':
     dependencies:
       '@types/geojson': 7946.0.14
 
-  '@types/leaflet@1.9.12':
+  '@types/leaflet@1.9.13':
     dependencies:
       '@types/geojson': 7946.0.14
 
@@ -8796,12 +8796,12 @@ snapshots:
       '@eslint/config-array': 0.17.1
       '@nodelib/fs.walk': 2.0.0
 
-  '@vue-leaflet/vue-leaflet@0.10.1(@types/leaflet@1.9.12)(leaflet@1.9.4)(typescript@5.6.3)':
+  '@vue-leaflet/vue-leaflet@0.10.1(@types/leaflet@1.9.13)(leaflet@1.9.4)(typescript@5.6.3)':
     dependencies:
       leaflet: 1.9.4
       vue: 3.5.12(typescript@5.6.3)
     optionalDependencies:
-      '@types/leaflet': 1.9.12
+      '@types/leaflet': 1.9.13
     transitivePeerDependencies:
       - typescript
 
