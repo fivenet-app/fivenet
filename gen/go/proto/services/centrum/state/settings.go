@@ -23,7 +23,7 @@ func (s *State) GetSettings(ctx context.Context, job string) *centrum.Settings {
 		}
 	})
 
-	return settings
+	return proto.Clone(settings).(*centrum.Settings)
 }
 
 func (s *State) UpdateSettings(ctx context.Context, job string, in *centrum.Settings) error {

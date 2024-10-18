@@ -338,7 +338,7 @@ export const useCentrumStore = defineStore('centrum', {
                     title: { key: 'notifications.centrum.store.assigned_dispatch.title', parameters: {} },
                     description: { key: 'notifications.centrum.store.assigned_dispatch.content', parameters: {} },
                     type: NotificationType.INFO,
-                    actions: getNotificationActions(),
+                    actions: this.getNotificationActions(),
                 });
 
                 useSound().play({ name: 'centrum/message-incoming' });
@@ -477,7 +477,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: NotificationType.SUCCESS,
-                                actions: getNotificationActions(),
+                                actions: this.getNotificationActions(),
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
@@ -490,7 +490,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: NotificationType.WARNING,
-                                actions: getNotificationActions(),
+                                actions: this.getNotificationActions(),
                             });
 
                             // User has been removed from the unit
@@ -528,7 +528,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.joined.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.joined.content', parameters: {} },
                                 type: NotificationType.SUCCESS,
-                                actions: getNotificationActions(),
+                                actions: this.getNotificationActions(),
                             });
 
                             this.dispatches.forEach((d) => this.handleDispatchAssignment(d));
@@ -541,7 +541,7 @@ export const useCentrumStore = defineStore('centrum', {
                                 title: { key: 'notifications.centrum.unitUpdated.removed.title', parameters: {} },
                                 description: { key: 'notifications.centrum.unitUpdated.removed.content', parameters: {} },
                                 type: NotificationType.WARNING,
-                                actions: getNotificationActions(),
+                                actions: this.getNotificationActions(),
                             });
 
                             // User has been removed from the unit
@@ -788,6 +788,7 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         handleOwnUnitForTimings(): void {
+            console.log('handleOwnUnitForTimings', this.ownUnitId, this.settings?.timings);
             if (this.ownUnitId === undefined) {
                 if (this.settings?.timings !== undefined && this.settings.timings.requireUnit) {
                     this.timingsIntervalId = setInterval(
@@ -803,29 +804,32 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         sendRequireUnitNotification(): void {
+            console.log('sendRequireUnitNotification');
+
             useNotificatorStore().add({
                 title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
                 description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
-                type: NotificationType.INFO,
-                actions: getNotificationActions(),
+                type: NotificationType.WARNING,
+                timeout: 12500,
+                actions: this.getNotificationActions(),
             });
 
-            useSound().play({ name: 'centrum/message-incoming' });
+            useSound().play({ name: 'centrum/attention', rate: 1.85 });
+        },
+
+        getNotificationActions(): NotificationActionI18n[] {
+            return useRoute().name !== 'centrum' || useRoute().name !== 'livemap'
+                ? [
+                      {
+                          label: { key: 'common.click_here' },
+                          to: '/livemap',
+                      },
+                  ]
+                : [];
         },
     },
 });
 
 if (import.meta.hot) {
     import.meta.hot.accept(acceptHMRUpdate(useCentrumStore, import.meta.hot));
-}
-
-function getNotificationActions(): NotificationActionI18n[] {
-    return useRoute().name === 'centrum'
-        ? [
-              {
-                  label: { key: 'common.click_here' },
-                  to: '/centrum',
-              },
-          ]
-        : [];
 }
