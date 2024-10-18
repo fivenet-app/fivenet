@@ -788,7 +788,6 @@ export const useCentrumStore = defineStore('centrum', {
         },
 
         handleOwnUnitForTimings(): void {
-            console.log('handleOwnUnitForTimings', this.ownUnitId, this.settings?.timings);
             if (this.ownUnitId === undefined) {
                 if (this.settings?.timings !== undefined && this.settings.timings.requireUnit) {
                     this.timingsIntervalId = setInterval(
@@ -804,8 +803,6 @@ export const useCentrumStore = defineStore('centrum', {
             }
         },
         sendRequireUnitNotification(): void {
-            console.log('sendRequireUnitNotification');
-
             useNotificatorStore().add({
                 title: { key: 'notifications.centrum.unitUpdated.require_unit.title', parameters: {} },
                 description: { key: 'notifications.centrum.unitUpdated.require_unit.content', parameters: {} },
