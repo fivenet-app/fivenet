@@ -251,7 +251,7 @@ defineShortcuts({
 </script>
 
 <template>
-    <UDashboardNavbar :title="$t('pages.documents.id.title')">
+    <UDashboardNavbar :title="$t('pages.documents.id.title')" class="print:hidden">
         <template #right>
             <UButton color="black" icon="i-mdi-arrow-back" to="/documents">
                 {{ $t('common.back') }}
@@ -278,7 +278,7 @@ defineShortcuts({
     <DataNoDataBlock v-else-if="!doc" icon="i-mdi-file-search" :message="$t('common.not_found', [$t('common.document', 2)])" />
 
     <template v-else>
-        <UDashboardToolbar>
+        <UDashboardToolbar class="print:hidden">
             <template #default>
                 <div class="flex flex-1 snap-x flex-row flex-wrap justify-between gap-2 overflow-x-auto">
                     <UTooltip
@@ -290,13 +290,16 @@ defineShortcuts({
                         :text="`${$t('common.open', 1)}/ ${$t('common.close')}`"
                         :shortcuts="['D', 'T']"
                     >
-                        <UButton block @click="toggleDocument(documentId, !doc.closed)">
+                        <UButton
+                            block
+                            :icon="doc.closed ? 'i-mdi-lock-open-variant' : 'i-mdi-lock'"
+                            :ui="{ icon: { base: doc.closed ? 'text-success-500' : 'text-success-500' } }"
+                            @click="toggleDocument(documentId, !doc.closed)"
+                        >
                             <template v-if="doc.closed">
-                                <UIcon name="i-mdi-lock-open-variant" class="size-5 text-success-500" />
                                 {{ $t('common.open', 1) }}
                             </template>
                             <template v-else>
-                                <UIcon name="i-mdi-lock" class="size-5 text-error-400" />
                                 {{ $t('common.close', 1) }}
                             </template>
                         </UButton>
@@ -407,7 +410,7 @@ defineShortcuts({
                 <div class="mb-2 flex gap-2">
                     <DocumentCategoryBadge :category="doc.category" />
 
-                    <OpenClosedBadge :closed="doc.closed" />
+                    <OpenClosedBadge :closed="doc.closed" size="md" />
 
                     <UBadge v-if="doc.state" class="inline-flex gap-1" size="md">
                         <UIcon name="i-mdi-note-check" class="size-5" />
@@ -474,7 +477,7 @@ defineShortcuts({
             </div>
 
             <template #footer>
-                <UAccordion multiple :items="accordionItems" :unmount="true">
+                <UAccordion multiple :items="accordionItems" :unmount="true" class="print:hidden">
                     <template #relations>
                         <UContainer>
                             <DocumentRelations :document-id="documentId" :show-document="false" />

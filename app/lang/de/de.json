@@ -1262,6 +1262,14 @@
             "available": {
                 "title": "Verbindung wiederhergestellt",
                 "content": "FiveNet Server Verbindung wiederhergestellt."
+            },
+            "deadline_exceeded": {
+                "title": "Anfrage hat zu lange gedauert",
+                "content": "Das Zeitlimit für die Anfrage wurde erreicht. Bitte warten Sie einen Moment und versuchen Sie es erneut."
+            },
+            "cancelled": {
+                "title": "Anfrage wurde abgebrochen",
+                "content": "Bitte warten Sie einen Moment und versuchen Sie es erneut."
             }
         },
         "rector": {

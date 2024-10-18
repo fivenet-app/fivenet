@@ -37,6 +37,26 @@ const grpcWebTransport = new GrpcWebFetchTransport({
 
 const grpcWebsocketTransport = useGRPCWebsocketTransport();
 
+const throttledErrorCodes = ['internal', 'deadline_exceeded', 'cancelled', 'permission_denied', 'unauthenticated'];
+
+const lastError: { receivedAt: undefined | Date; code: undefined | string } = {
+    receivedAt: undefined,
+    code: undefined,
+};
+
+function addCopyActionToNotification(notification: Notification, err: RpcError, traceId: string): void {
+    notification.actions?.push({
+        label: { key: 'pages.error.copy_error' },
+        click: async () =>
+            copyToClipboardWrapper(
+                `## Error occured at ${new Date().toLocaleDateString()}:
+**Service/Method**: ${err.serviceName}/${err.methodName} => ${err.code}
+**Message**: ${err.message}
+**TraceID**: ${traceId}`,
+            ),
+    });
+}
+
 // Handle GRPC errors
 export async function handleGRPCError(err: RpcError | undefined): Promise<boolean> {
     if (err === undefined) {
@@ -47,21 +67,39 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
         id: '',
         type: NotificationType.ERROR,
         title: { key: 'notifications.grpc_errors.internal.title', parameters: {} },
-        description: { key: err?.message ?? 'Unknown error', parameters: {} },
+        description: {
+            key: 'notifications.grpc_errors.internal.content',
+            parameters: { msg: err?.message ?? 'Unknown error' },
+        },
         actions: [],
     } as Notification;
 
-    const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'UNKNOWN';
+    const traceId = (err?.meta && (err?.meta['trailer+x-trace-id'] as string)) ?? 'N/A';
 
     const code = err.code?.toUpperCase();
     if (code !== undefined) {
         const route = useRoute();
+
+        // If the error code has already been "handled", skip "handling" them for now
+        // Only do this for internal, deadline_exceeded, cancelled, permission_denied, unauthenticated codes
+        if (throttledErrorCodes.includes(code)) {
+            if (lastError.code === code) {
+                if (lastError.receivedAt !== undefined && lastError.receivedAt.getTime() - new Date().getTime() < 10) {
+                    return true;
+                }
+            }
+            lastError.code = code;
+            lastError.receivedAt = new Date();
+        }
+
         switch (code) {
             case 'internal':
                 break;
 
             case 'deadline_exceeded':
-                // TODO handle timeouts, how about one generic error + message?
+                notification.title = { key: 'notifications.grpc_errors.deadline_exceeded.title', parameters: {} };
+                notification.description = { key: 'notifications.grpc_errors.deadline_exceeded.content', parameters: {} };
+                addCopyActionToNotification(notification, err, traceId);
                 break;
 
             case 'cancelled':
@@ -112,16 +150,7 @@ export async function handleGRPCError(err: RpcError | undefined): Promise<boolea
                     key: 'notifications.grpc_errors.default.content',
                     parameters: { msg: err.message, code: err.code.valueOf() },
                 };
-                notification.actions?.push({
-                    label: { key: 'pages.error.copy_error' },
-                    click: async () =>
-                        copyToClipboardWrapper(
-                            `## Error occured at ${new Date().toLocaleDateString()}:
-    **Service/Method**: ${err.serviceName}/${err.methodName} => ${err.code}
-    **Message**: ${err.message}
-    **TraceID**: ${traceId}`,
-                        ),
-                });
+                addCopyActionToNotification(notification, err, traceId);
                 break;
         }
     }

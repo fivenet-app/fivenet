@@ -1245,7 +1245,8 @@
                 "title": "Permission denied"
             },
             "internal": {
-                "title": "Internal server error occured"
+                "title": "Internal server error occured",
+                "content": "Server error occured: {msg}"
             },
             "unavailable": {
                 "title": "Unable to reach server",
@@ -1262,6 +1263,14 @@
             "available": {
                 "title": "Connection restored",
                 "content": "FiveNet server connection has been restored."
+            },
+            "deadline_exceeded": {
+                "title": "Request took too long",
+                "content": "Request timeout was reached. Please wait a moment and try again."
+            },
+            "cancelled": {
+                "title": "Request was cancelled",
+                "content": "Please wait a moment and try again."
             }
         },
         "rector": {
