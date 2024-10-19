@@ -1,4 +1,4 @@
-package cron
+package croner
 
 import (
 	"context"
@@ -28,12 +28,16 @@ type AgentParams struct {
 
 	Logger *zap.Logger
 	JS     *events.JSWrapper
+
+	Handlers *Handlers
 }
 
 type Agent struct {
 	logger *zap.Logger
 	ctx    context.Context
 	js     *events.JSWrapper
+
+	handlers *Handlers
 }
 
 func NewAgent(p AgentParams) (*Agent, error) {
@@ -43,6 +47,8 @@ func NewAgent(p AgentParams) (*Agent, error) {
 		logger: p.Logger.Named("cron_agent"),
 		ctx:    ctx,
 		js:     p.JS,
+
+		handlers: p.Handlers,
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
@@ -94,7 +100,7 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 		return
 	}
 
-	fn := getCronjobHandler(job.Cronjob.Name)
+	fn := ag.handlers.getCronjobHandler(job.Cronjob.Name)
 	if fn == nil {
 		if err := msg.Nak(); err != nil {
 			ag.logger.Error("failed to nack unmarshal cron schedule msg", zap.String("subject", msg.Subject()), zap.Error(err))
@@ -107,7 +113,7 @@ func (ag *Agent) watchForEvents(msg jetstream.Msg) {
 	}
 
 	start := time.Now()
-	err := fn(job.Cronjob.Data)
+	err := fn(ag.ctx, job.Cronjob.Data)
 	elapsed := time.Since(start)
 
 	// Update timestamp

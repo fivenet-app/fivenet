@@ -35,7 +35,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/pkg/cron"
+	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/pkg/discord"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc"
@@ -130,9 +130,10 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		auth.TokenMgrModule,
 		centrumbot.Module,
 		config.Module,
-		cron.AgentModule,
-		cron.Module,
-		cron.SchedulerModule,
+		croner.AgentModule,
+		croner.HandlerModule,
+		croner.Module,
+		croner.SchedulerModule,
 		discord.BotModule,
 		events.Module,
 		grpc.ServerModule,
@@ -188,8 +189,8 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 
 		fx.Invoke(func(*bluemonday.Policy) {}),
 		fx.Invoke(func(admin.AdminServer) {}),
-		fx.Invoke(func(*cron.Cron) {}),
-		fx.Invoke(func(*cron.Agent) {}),
+		fx.Invoke(func(*croner.Cron) {}),
+		fx.Invoke(func(*croner.Agent) {}),
 	}
 }
 

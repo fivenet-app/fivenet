@@ -8,9 +8,11 @@ import (
 	"time"
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	centrumutils "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/paulmach/orb"
@@ -55,6 +57,9 @@ type HousekeeperParams struct {
 	DB      *sql.DB
 	Manager *Manager
 	Config  *config.Config
+
+	Cron         *croner.Cron
+	CronHandlers *croner.Handlers
 }
 
 func NewHousekeeper(p HousekeeperParams) *Housekeeper {
@@ -70,25 +75,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		Manager:     p.Manager,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.runHandleDispatchAssignmentExpiration()
-		}()
-
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.runDispatchDeduplication()
-		}()
-
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			s.runCleanupUnits()
-		}()
-
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
@@ -104,14 +91,34 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.runCancelOldDispatches()
+			// TODO use cronjob
+			s.runHandleDispatchAssignmentExpiration()
 		}()
 
 		s.wg.Add(1)
 		go func() {
 			defer s.wg.Done()
-			s.runDeleteOldDispatches()
+			// TODO use cronjob
+			s.runDispatchDeduplication()
 		}()
+
+		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.cleanup_units",
+			Schedule: "*/5 * * * * *", // Every 5 seconds
+		})
+		p.CronHandlers.Add("centrum.manager_housekeeper.cleanup_units", s.runCleanupUnits)
+
+		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.delete_old_dispatches",
+			Schedule: "*/4 * * * *", // Every 4 minutes
+		})
+		p.CronHandlers.Add("centrum.manager_housekeeper.delete_old_dispatches", s.runDeleteOldDispatches)
+
+		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
+			Schedule: "*/15 * * * * *",
+		})
+		p.CronHandlers.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 
 		s.wg.Add(1)
 		go func() {
@@ -125,10 +132,8 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 				case <-time.After(1 * time.Second):
 				}
 
-				// Load dispatches with null postal field
-				if err := s.LoadDispatchesFromDB(s.ctx, jet.AND(
-					tDispatch.Postal.IS_NULL(),
-				)); err != nil {
+				// Load dispatches with null postal field (they are considered "new")
+				if err := s.LoadDispatchesFromDB(s.ctx, tDispatch.Postal.IS_NULL()); err != nil {
 					s.logger.Error("failed loading new dispatches from DB", zap.Error(err))
 					continue
 				}
@@ -220,23 +225,15 @@ func (s *Housekeeper) handleDispatchAssignmentExpiration(ctx context.Context) er
 	return nil
 }
 
-func (s *Housekeeper) runCancelOldDispatches() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
+func (s *Housekeeper) runCancelOldDispatches(ctx context.Context, data *cron.CronjobData) error {
+	ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-cancel")
+	defer span.End()
 
-		case <-time.After(10 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-cancel")
-				defer span.End()
-
-				if err := s.cancelOldDispatches(ctx); err != nil {
-					s.logger.Error("failed to archive dispatches", zap.Error(err))
-				}
-			}()
-		}
+	if err := s.cancelOldDispatches(ctx); err != nil {
+		s.logger.Error("failed to archive dispatches", zap.Error(err))
 	}
+
+	return nil
 }
 
 // Cancel dispatches that haven't been worked on for some time
@@ -317,31 +314,28 @@ func (s *Housekeeper) cancelOldDispatches(ctx context.Context) error {
 	return nil
 }
 
-func (s *Housekeeper) runDeleteOldDispatches() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
+func (s *Housekeeper) runDeleteOldDispatches(ctx context.Context, data *cron.CronjobData) error {
+	ctx, span := s.tracer.Start(ctx, "centrum-dispatch-old-delete")
+	defer span.End()
 
-		case <-time.After(2*time.Minute + 30*time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-old-delete")
-				defer span.End()
+	errs := multierr.Combine()
 
-				if err := s.deleteOldDispatches(ctx); err != nil {
-					s.logger.Error("failed to remove old dispatches", zap.Error(err))
-				}
-
-				if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
-					s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
-				}
-
-				if err := s.deleteOldUnitStatus(ctx); err != nil {
-					s.logger.Error("failed to remove old unit status", zap.Error(err))
-				}
-			}()
-		}
+	if err := s.deleteOldDispatches(ctx); err != nil {
+		s.logger.Error("failed to remove old dispatches", zap.Error(err))
+		errs = multierr.Append(errs, err)
 	}
+
+	if err := s.deleteOldDispatchesFromKV(ctx); err != nil {
+		s.logger.Error("failed to remove old dispatches from kv", zap.Error(err))
+		errs = multierr.Append(errs, err)
+	}
+
+	if err := s.deleteOldUnitStatus(ctx); err != nil {
+		s.logger.Error("failed to remove old unit status", zap.Error(err))
+		errs = multierr.Append(errs, err)
+	}
+
+	return errs
 }
 
 func (s *Housekeeper) deleteOldDispatches(ctx context.Context) error {
@@ -591,31 +585,23 @@ func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {
 	return nil
 }
 
-func (s *Housekeeper) runCleanupUnits() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
+func (s *Housekeeper) runCleanupUnits(ctx context.Context, data *cron.CronjobData) error {
+	ctx, span := s.tracer.Start(ctx, "centrum-units-cleanup")
+	defer span.End()
 
-		case <-time.After(5 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-units-empty")
-				defer span.End()
-
-				if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
-					s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
-				}
-
-				if err := s.cleanupUnitStatus(ctx); err != nil {
-					s.logger.Error("failed to clean up unit status", zap.Error(err))
-				}
-
-				if err := s.checkUnitUsers(ctx); err != nil {
-					s.logger.Error("failed to check duty state of unit users", zap.Error(err))
-				}
-			}()
-		}
+	if err := s.removeDispatchesFromEmptyUnits(ctx); err != nil {
+		s.logger.Error("failed to clean empty units from dispatches", zap.Error(err))
 	}
+
+	if err := s.cleanupUnitStatus(ctx); err != nil {
+		s.logger.Error("failed to clean up unit status", zap.Error(err))
+	}
+
+	if err := s.checkUnitUsers(ctx); err != nil {
+		s.logger.Error("failed to check duty state of unit users", zap.Error(err))
+	}
+
+	return nil
 }
 
 // Remove empty units from dispatches (if no other unit is assigned to dispatch update status to UNASSIGNED) by

@@ -5,7 +5,9 @@ import (
 	"database/sql"
 	"time"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/croner"
 	jet "github.com/go-jet/jet/v2/mysql"
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
@@ -36,11 +38,12 @@ type RetentionParams struct {
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
 	Config *config.Config
+
+	Cron         *croner.Cron
+	CronHandlers *croner.Handlers
 }
 
 func NewRetention(p RetentionParams) *Retention {
-	ctx, cancel := context.WithCancel(context.Background())
-
 	r := &Retention{
 		logger: p.Logger.Named("audit_retention"),
 		tracer: p.TP.Tracer("audit-retention"),
@@ -49,32 +52,23 @@ func NewRetention(p RetentionParams) *Retention {
 		auditRetentionDays: p.Config.Audit.RetentionDays,
 	}
 
-	p.LC.Append(fx.StartHook(func(_ context.Context) error {
-		go func() {
-			for {
-				select {
-				case <-ctx.Done():
-					return
+	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		p.CronHandlers.Add("auditlog-retention", func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := r.tracer.Start(ctx, "audit-retention")
+			defer span.End()
 
-				case <-time.After(30 * time.Minute):
-				}
-
-				func() {
-					ctx, span := r.tracer.Start(ctx, "audit-retention")
-					defer span.End()
-
-					if err := r.run(ctx); err != nil {
-						r.logger.Error("error during audit store cleanup", zap.Error(err))
-					}
-				}()
+			if err := r.Run(ctx); err != nil {
+				r.logger.Error("error during audit store cleanup", zap.Error(err))
+				return err
 			}
-		}()
 
-		return nil
-	}))
+			return nil
+		})
 
-	p.LC.Append(fx.StopHook(func(_ context.Context) error {
-		cancel()
+		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "auditlog-retention",
+			Schedule: "@30minutes",
+		})
 
 		return nil
 	}))
@@ -82,11 +76,12 @@ func NewRetention(p RetentionParams) *Retention {
 	return r
 }
 
-func (r *Retention) run(ctx context.Context) error {
+func (r *Retention) Run(ctx context.Context) error {
 	if r.auditRetentionDays != nil {
-		// Now minus retention days
+		// Now minus retention days count
 		t := time.Now().AddDate(0, 0, -*r.auditRetentionDays)
-		if err := r.Cleanup(ctx, t); err != nil {
+
+		if err := r.cleanup(ctx, t); err != nil {
 			return err
 		}
 	}
@@ -94,7 +89,7 @@ func (r *Retention) run(ctx context.Context) error {
 	return nil
 }
 
-func (r *Retention) Cleanup(ctx context.Context, before time.Time) error {
+func (r *Retention) cleanup(ctx context.Context, before time.Time) error {
 	r.logger.Debug("starting audit store cleanup", zap.Time("before_time", before))
 
 	stmt := tAudit.

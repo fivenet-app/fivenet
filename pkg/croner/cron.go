@@ -1,4 +1,4 @@
-package cron
+package croner
 
 import (
 	"context"
@@ -106,12 +106,25 @@ func New(p Params) (*Cron, error) {
 }
 
 func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
+	// Validate the cron schedule
 	if !gronx.IsValid(job.Schedule) {
 		return ErrInvalidCronSyntax
 	}
 
 	c.logger.Debug("registering cronjob", zap.String("job_name", job.Name))
-	return c.scheduler.store.Put(ctx, strings.ToLower(job.Name), job)
+	cj, err := c.scheduler.store.GetOrLoad(ctx, job.Name)
+	if err != nil && !errors.Is(err, jetstream.ErrKeyNotFound) {
+		return err
+	}
+
+	if cj != nil {
+		// Merge with existing cronjob data
+		cj.Merge(job)
+	} else {
+		cj = job
+	}
+
+	return c.scheduler.store.Put(ctx, strings.ToLower(job.Name), cj)
 }
 
 func (c *Cron) UnregisterCronjob(ctx context.Context, name string) error {
