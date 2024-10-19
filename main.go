@@ -6,30 +6,6 @@ import (
 	"time"
 
 	"github.com/alecthomas/kong"
-	"github.com/fivenet-app/fivenet/internal/modules"
-	"github.com/fivenet-app/fivenet/pkg/config"
-	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
-	"github.com/fivenet-app/fivenet/pkg/coords/postals"
-	"github.com/fivenet-app/fivenet/pkg/discord"
-	"github.com/fivenet-app/fivenet/pkg/events"
-	"github.com/fivenet-app/fivenet/pkg/grpc"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
-	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
-	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
-	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
-	"github.com/fivenet-app/fivenet/pkg/notifi"
-	"github.com/fivenet-app/fivenet/pkg/perms"
-	"github.com/fivenet-app/fivenet/pkg/server"
-	"github.com/fivenet-app/fivenet/pkg/server/admin"
-	"github.com/fivenet-app/fivenet/pkg/server/api"
-	"github.com/fivenet-app/fivenet/pkg/server/audit"
-	"github.com/fivenet-app/fivenet/pkg/server/filestore"
-	"github.com/fivenet-app/fivenet/pkg/server/images"
-	"github.com/fivenet-app/fivenet/pkg/server/oauth2"
-	"github.com/fivenet-app/fivenet/pkg/server/wk"
-	"github.com/fivenet-app/fivenet/pkg/storage"
-	"github.com/fivenet-app/fivenet/pkg/tracker"
-	"github.com/fivenet-app/fivenet/query"
 	"github.com/microcosm-cc/bluemonday"
 	"go.uber.org/fx"
 	"go.uber.org/fx/fxevent"
@@ -52,11 +28,35 @@ import (
 	pbstats "github.com/fivenet-app/fivenet/gen/go/proto/services/stats"
 
 	// Modules
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/bot"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumbot"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrummanager"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
+	"github.com/fivenet-app/fivenet/internal/modules"
+	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
+	"github.com/fivenet-app/fivenet/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/pkg/cron"
+	"github.com/fivenet-app/fivenet/pkg/discord"
+	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/grpc"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
+	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
+	"github.com/fivenet-app/fivenet/pkg/htmlsanitizer"
 	"github.com/fivenet-app/fivenet/pkg/lang"
+	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/notifi"
+	"github.com/fivenet-app/fivenet/pkg/perms"
+	"github.com/fivenet-app/fivenet/pkg/server"
+	"github.com/fivenet-app/fivenet/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/pkg/server/api"
+	"github.com/fivenet-app/fivenet/pkg/server/audit"
+	"github.com/fivenet-app/fivenet/pkg/server/filestore"
+	"github.com/fivenet-app/fivenet/pkg/server/images"
+	"github.com/fivenet-app/fivenet/pkg/server/oauth2"
+	"github.com/fivenet-app/fivenet/pkg/server/wk"
+	"github.com/fivenet-app/fivenet/pkg/storage"
+	"github.com/fivenet-app/fivenet/pkg/tracker"
+	"github.com/fivenet-app/fivenet/query"
 )
 
 type Context struct{}
@@ -88,10 +88,10 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*audit.Retention) {}))
 	}
 	if c.ModuleCentrumBot {
-		fxOpts = append(fxOpts, fx.Invoke(func(*bot.Manager) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*centrumbot.Manager) {}))
 	}
 	if c.ModuleCentrumHousekeeper {
-		fxOpts = append(fxOpts, fx.Invoke(func(*manager.Housekeeper) {}))
+		fxOpts = append(fxOpts, fx.Invoke(func(*centrummanager.Housekeeper) {}))
 	}
 	if c.ModuleDiscordBot {
 		fxOpts = append(fxOpts, fx.Invoke(func(*discord.Bot) {}))
@@ -121,50 +121,50 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		}),
 		fx.StartTimeout(startTimeout),
 
-		modules.LoggerModule,
-		htmlsanitizer.Module,
-		config.Module,
-		appconfig.Module,
-		modules.TracerProviderModule,
 		admin.Module,
-		server.HTTPEngineModule,
-		server.HTTPServerModule,
-		grpc.ServerModule,
-		auth.AuthModule,
-		auth.TokenMgrModule,
-		auth.PermsModule,
-		query.Module,
-		perms.Module,
-		events.Module,
+		appconfig.Module,
 		audit.Module,
 		audit.RetentionModule,
-		state.StateModule,
-		bot.Module,
-		manager.Module,
-		manager.HousekeeperModule,
-		discord.BotModule,
-		storage.Module,
+		auth.AuthModule,
+		auth.PermsModule,
+		auth.TokenMgrModule,
+		centrumbot.Module,
+		config.Module,
+		cron.AgentModule,
 		cron.Module,
 		cron.SchedulerModule,
-		cron.AgentModule,
+		discord.BotModule,
+		events.Module,
+		grpc.ServerModule,
+		htmlsanitizer.Module,
 		lang.Module,
+		centrummanager.HousekeeperModule,
+		centrummanager.Module,
+		modules.LoggerModule,
+		modules.TracerProviderModule,
+		perms.Module,
+		query.Module,
+		server.HTTPEngineModule,
+		server.HTTPServerModule,
+		centrumstate.StateModule,
+		storage.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,
 			mstlystcdata.NewEnricher,
-			mstlystcdata.NewUserAwareEnricher,
 			mstlystcdata.NewSearcher,
+			mstlystcdata.NewUserAwareEnricher,
 			notifi.New,
-			tracker.NewManager,
-			tracker.New,
-			userinfo.NewUIRetriever,
 			postals.New,
+			tracker.New,
+			tracker.NewManager,
+			userinfo.NewUIRetriever,
 
 			// HTTP Services
 			server.AsService(api.New),
-			server.AsService(oauth2.New),
-			server.AsService(images.New),
 			server.AsService(filestore.New),
+			server.AsService(images.New),
+			server.AsService(oauth2.New),
 			server.AsService(wk.New),
 		),
 

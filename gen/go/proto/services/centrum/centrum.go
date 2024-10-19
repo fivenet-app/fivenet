@@ -8,8 +8,8 @@ import (
 	"time"
 
 	centrum "github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrummanager"
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
@@ -48,7 +48,7 @@ type Server struct {
 	brokersMutex sync.RWMutex
 	brokers      map[string]*broker.Broker[*StreamResponse]
 
-	state *manager.Manager
+	state *centrummanager.Manager
 }
 
 type Params struct {
@@ -66,7 +66,7 @@ type Params struct {
 	AppConfig appconfig.IConfig
 	Tracker   tracker.ITracker
 	Postals   postals.Postals
-	Manager   *manager.Manager
+	Manager   *centrummanager.Manager
 	Enricher  *mstlystcdata.UserAwareEnricher
 }
 

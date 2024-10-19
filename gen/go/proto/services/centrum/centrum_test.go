@@ -6,8 +6,8 @@ import (
 	"os"
 	"testing"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrummanager"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
 	"github.com/fivenet-app/fivenet/internal/modules"
 	"github.com/fivenet-app/fivenet/internal/tests/servers"
 	grpcserver "github.com/fivenet-app/fivenet/pkg/grpc"
@@ -50,8 +50,8 @@ func TestBasicCentrumFlow(t *testing.T) {
 	app := fxtest.New(t,
 		modules.GetFxTestOpts(
 			fx.Provide(tracker.NewForTests),
-			state.StateModule,
-			manager.Module,
+			centrumstate.StateModule,
+			centrummanager.Module,
 			fx.Provide(grpcSrvModule),
 			fx.Provide(grpcserver.AsService(func(p Params) (*Server, error) {
 				srv, err = NewServer(p)

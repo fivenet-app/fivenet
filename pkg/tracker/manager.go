@@ -9,7 +9,7 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/livemap"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
@@ -35,7 +35,7 @@ type Manager struct {
 	db       *sql.DB
 	enricher *mstlystcdata.Enricher
 	postals  postals.Postals
-	state    *state.State
+	state    *centrumstate.State
 	appCfg   appconfig.IConfig
 
 	userStore *store.Store[livemap.UserMarker, *livemap.UserMarker]
@@ -53,7 +53,7 @@ type ManagerParams struct {
 	Enricher  *mstlystcdata.Enricher
 	Postals   postals.Postals
 	Config    *config.Config
-	State     *state.State
+	State     *centrumstate.State
 	AppConfig appconfig.IConfig
 }
 

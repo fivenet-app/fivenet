@@ -1,4 +1,4 @@
-package manager
+package centrummanager
 
 import (
 	"context"
@@ -10,9 +10,9 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
 	users "github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
 	centrumutils "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/utils"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
@@ -242,7 +242,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 		return err
 	}
 
-	key := state.JobIdKey(job, dspId)
+	key := centrumstate.JobIdKey(job, dspId)
 	if err := s.State.DispatchesStore().ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 		if dsp == nil {
 			s.logger.Error("nil dispatch in computing dispatch assignment logic", zap.String("key", key), zap.Any("dsp", dsp))
@@ -753,7 +753,7 @@ func (s *Manager) TakeDispatch(ctx context.Context, job string, userId int32, un
 			}
 		}
 
-		key := state.JobIdKey(job, dspId)
+		key := centrumstate.JobIdKey(job, dspId)
 		if err := store.ComputeUpdate(ctx, key, true, func(key string, dsp *centrum.Dispatch) (*centrum.Dispatch, bool, error) {
 			// If dispatch is nil or completed, disallow to accept the dispatch
 			if dsp == nil || (dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status)) {

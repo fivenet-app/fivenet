@@ -1,4 +1,4 @@
-package manager
+package centrummanager
 
 import (
 	"context"
@@ -9,9 +9,9 @@ import (
 
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/centrum"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/timestamp"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
 	errorscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/errors"
 	eventscentrum "github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/events"
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
 	"github.com/fivenet-app/fivenet/pkg/utils/dbutils"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
@@ -230,7 +230,7 @@ func (s *Manager) UpdateUnitAssignments(ctx context.Context, job string, userId 
 
 	store := s.State.UnitsStore()
 
-	key := state.JobIdKey(job, unitId)
+	key := centrumstate.JobIdKey(job, unitId)
 	if err := store.ComputeUpdate(ctx, key, true, func(key string, unit *centrum.Unit) (*centrum.Unit, bool, error) {
 		if len(toRemove) > 0 {
 			toAnnounce := []int32{}

@@ -1,10 +1,10 @@
-package manager
+package centrummanager
 
 import (
 	"context"
 	"database/sql"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/state"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrumstate"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
 	"github.com/fivenet-app/fivenet/pkg/events"
@@ -35,7 +35,7 @@ type Manager struct {
 
 	appCfg appconfig.IConfig
 
-	*state.State
+	*centrumstate.State
 }
 
 type Params struct {
@@ -52,7 +52,7 @@ type Params struct {
 	Tracker   tracker.ITracker
 	AppConfig appconfig.IConfig
 
-	State *state.State
+	State *centrumstate.State
 }
 
 func New(p Params) *Manager {

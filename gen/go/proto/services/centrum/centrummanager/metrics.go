@@ -1,4 +1,4 @@
-package manager
+package centrummanager
 
 import (
 	"github.com/fivenet-app/fivenet/pkg/server/admin"

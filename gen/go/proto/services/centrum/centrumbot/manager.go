@@ -1,11 +1,11 @@
-package bot
+package centrumbot
 
 import (
 	"context"
 	"sync"
 	"time"
 
-	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/manager"
+	"github.com/fivenet-app/fivenet/gen/go/proto/services/centrum/centrummanager"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
 	"github.com/fivenet-app/fivenet/pkg/tracker"
@@ -40,7 +40,7 @@ type Manager struct {
 	bots *xsync.MapOf[string, *Bot]
 	js   *events.JSWrapper
 
-	state   *manager.Manager
+	state   *centrummanager.Manager
 	tracker tracker.ITracker
 }
 
@@ -51,7 +51,7 @@ type Params struct {
 
 	Logger  *zap.Logger
 	TP      *tracesdk.TracerProvider
-	State   *manager.Manager
+	State   *centrummanager.Manager
 	JS      *events.JSWrapper
 	Tracker tracker.ITracker
 }

@@ -1,4 +1,4 @@
-package manager
+package centrummanager
 
 import "github.com/fivenet-app/fivenet/query/fivenet/table"
 
