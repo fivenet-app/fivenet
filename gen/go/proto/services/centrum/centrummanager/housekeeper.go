@@ -88,19 +88,17 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 			s.ConvertPhoneJobMsgToDispatch()
 		}()
 
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			// TODO use cronjob
-			s.runHandleDispatchAssignmentExpiration()
-		}()
+		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.dispatch_assignment_expiration",
+			Schedule: "@everysecond", // Every second
+		})
+		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_assignment_expiration", s.runHandleDispatchAssignmentExpiration)
 
-		s.wg.Add(1)
-		go func() {
-			defer s.wg.Done()
-			// TODO use cronjob
-			s.runDispatchDeduplication()
-		}()
+		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "centrum.manager_housekeeper.dispatch_deduplication",
+			Schedule: "*/2 * * * * *", // Every 2 seconds
+		})
+		p.CronHandlers.Add("centrum.manager_housekeeper.dispatch_deduplication", s.runDispatchDeduplication)
 
 		p.Cron.RegisterCronjob(c, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cleanup_units",
@@ -116,7 +114,7 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 
 		p.Cron.RegisterCronjob(c, &cron.Cronjob{
 			Name:     "centrum.manager_housekeeper.cancel_old_dispatches",
-			Schedule: "*/15 * * * * *",
+			Schedule: "*/15 * * * * *", // Every 15 seconds
 		})
 		p.CronHandlers.Add("centrum.manager_housekeeper.cancel_old_dispatches", s.runCancelOldDispatches)
 
@@ -154,23 +152,15 @@ func NewHousekeeper(p HousekeeperParams) *Housekeeper {
 	return s
 }
 
-func (s *Housekeeper) runHandleDispatchAssignmentExpiration() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
+func (s *Housekeeper) runHandleDispatchAssignmentExpiration(ctx context.Context, data *cron.CronjobData) error {
+	ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-assignment-expiration")
+	defer span.End()
 
-		case <-time.After(1 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-assignment-expiration")
-				defer span.End()
-
-				if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
-					s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
-				}
-			}()
-		}
+	if err := s.handleDispatchAssignmentExpiration(ctx); err != nil {
+		s.logger.Error("failed to handle expired dispatch assignments", zap.Error(err))
 	}
+
+	return nil
 }
 
 // Handle expired dispatch unit assignments
@@ -414,23 +404,15 @@ func (s *Housekeeper) deleteOldUnitStatus(ctx context.Context) error {
 	return nil
 }
 
-func (s *Housekeeper) runDispatchDeduplication() {
-	for {
-		select {
-		case <-s.ctx.Done():
-			return
+func (s *Housekeeper) runDispatchDeduplication(ctx context.Context, data *cron.CronjobData) error {
+	ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-deduplicatation")
+	defer span.End()
 
-		case <-time.After(2 * time.Second):
-			func() {
-				ctx, span := s.tracer.Start(s.ctx, "centrum-dispatch-deduplicatation")
-				defer span.End()
-
-				if err := s.deduplicateDispatches(ctx); err != nil {
-					s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
-				}
-			}()
-		}
+	if err := s.deduplicateDispatches(ctx); err != nil {
+		s.logger.Error("failed to deduplicate dispatches", zap.Error(err))
 	}
+
+	return nil
 }
 
 func (s *Housekeeper) deduplicateDispatches(ctx context.Context) error {

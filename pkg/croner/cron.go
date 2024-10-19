@@ -124,6 +124,10 @@ func (c *Cron) RegisterCronjob(ctx context.Context, job *cron.Cronjob) error {
 		cj = job
 	}
 
+	if cj.Data == nil {
+		cj.Data = &cron.CronjobData{}
+	}
+
 	return c.scheduler.store.Put(ctx, strings.ToLower(job.Name), cj)
 }
 
