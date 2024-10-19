@@ -181,11 +181,12 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 
 	if len(toAdd) > 0 {
 		units := []uint64{}
+		dsp, err := s.GetDispatch(ctx, job, dspId)
+		if err != nil {
+			return err
+		}
+
 		for i := 0; i < len(toAdd); i++ {
-			dsp, err := s.GetDispatch(ctx, job, dspId)
-			if err != nil {
-				continue
-			}
 
 			// Skip already added units
 			if slices.ContainsFunc(dsp.Units, func(in *centrum.DispatchAssignment) bool {
@@ -320,7 +321,7 @@ func (s *Manager) UpdateDispatchAssignments(ctx context.Context, job string, use
 			}
 
 			for _, unitId := range units {
-				if _, err := s.AddDispatchStatus(ctx, tx, job, &centrum.DispatchStatus{
+				if _, err := s.AddDispatchStatus(ctx, s.db, job, &centrum.DispatchStatus{
 					CreatedAt:  timestamp.Now(),
 					DispatchId: dsp.Id,
 					UnitId:     &unitId,
@@ -608,17 +609,17 @@ func (s *Manager) AddDispatchStatus(ctx context.Context, tx qrm.DB, job string, 
 
 	res, err := stmt.ExecContext(ctx, tx)
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, err
 	}
 
 	lastId, err := res.LastInsertId()
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, err
 	}
 
 	newStatus, err := s.GetDispatchStatus(ctx, tx, job, uint64(lastId))
 	if err != nil {
-		return nil, errorscentrum.ErrFailedQuery
+		return nil, err
 	}
 
 	if publish {
