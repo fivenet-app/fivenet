@@ -104,7 +104,11 @@ func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
 		}
 
 		if len(user.Roles.ToRemove) > 0 {
-			log.Printf("removing roles from user %d - roles: %+v", user.ID, *user.Roles)
+			out := ""
+			for _, role := range user.Roles.ToRemove.ToSlice() {
+				out += "Role Name: " + role.Name + " (ID: " + role.ID.String() + ", " + role.Module + "); "
+			}
+			log.Printf("removing roles from user %d - roles, toRemove: %s", user.ID, out)
 		}
 
 		for _, role := range user.Roles.ToRemove {

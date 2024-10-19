@@ -55,6 +55,7 @@ func NewRetention(p RetentionParams) *Retention {
 				select {
 				case <-ctx.Done():
 					return
+
 				case <-time.After(30 * time.Minute):
 				}
 
