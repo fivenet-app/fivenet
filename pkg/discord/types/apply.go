@@ -25,9 +25,11 @@ func (p *Plan) Apply(ctx context.Context, dc *state.State) ([]discord.Embed, err
 		return logs, err
 	}
 
-	if err := p.applyUsers(dc); err != nil {
+	uLogs, err := p.applyUsers(dc)
+	if err != nil {
 		return logs, err
 	}
+	logs = append(logs, uLogs...)
 
 	return logs, nil
 }
@@ -75,7 +77,8 @@ func (p *Plan) applyRoles(dc *state.State) error {
 	return errs
 }
 
-func (p *Plan) applyUsers(dc *state.State) error {
+func (p *Plan) applyUsers(dc *state.State) ([]discord.Embed, error) {
+	logs := []discord.Embed{}
 	errs := multierr.Combine()
 
 	for _, user := range p.Users {
@@ -100,8 +103,11 @@ func (p *Plan) applyUsers(dc *state.State) error {
 			}
 		}
 
+		if len(user.Roles.ToRemove) > 0 {
+			log.Printf("removing roles from user %d - roles: %+v", user.ID, *user.Roles)
+		}
+
 		for _, role := range user.Roles.ToRemove {
-			log.Printf("removing role from user %q, role %q (%d; reason: %q) - list: %+v", user.ID, role.Name, role.ID, role.Module, user.Roles.Sum)
 			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.Name, role.ID, err))
 				continue
@@ -118,5 +124,5 @@ func (p *Plan) applyUsers(dc *state.State) error {
 		}
 	}
 
-	return errs
+	return logs, errs
 }
