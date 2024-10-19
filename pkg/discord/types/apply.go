@@ -3,6 +3,7 @@ package types
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -80,7 +81,7 @@ func (p *Plan) applyUsers(dc *state.State) error {
 	for _, user := range p.Users {
 		if user.Kick != nil && *user.Kick {
 			if user.KickReason == "" {
-				user.KickReason = "FiveNet Bot - Auto Kick (No reason given)"
+				user.KickReason = "FiveNet Bot - Kick (No reason given)"
 			}
 
 			if err := dc.Kick(p.GuildID, user.ID, api.AuditLogReason(user.KickReason)); err != nil {
@@ -100,6 +101,7 @@ func (p *Plan) applyUsers(dc *state.State) error {
 		}
 
 		for _, role := range user.Roles.ToRemove {
+			log.Printf("removing role from user %q, role %q (%d; reason: %q) - list: %+v", user.ID, role.Name, role.ID, role.Module, user.Roles.Sum)
 			if err := dc.RemoveRole(p.GuildID, user.ID, role.ID, api.AuditLogReason(role.Module)); err != nil {
 				errs = multierr.Append(errs, fmt.Errorf("failed to remove user %s from role %s (%s). %w", user.ID, role.Name, role.ID, err))
 				continue

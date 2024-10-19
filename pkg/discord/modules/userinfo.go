@@ -23,6 +23,14 @@ import (
 	"go.uber.org/zap"
 )
 
+const (
+	userInfoRoleModuleEmployee           = "UserInfo-Employees"
+	userInfoRoleModuleUnemployed         = "UserInfo-Unemployed"
+	userInfoRoleModuleAbsence            = "UserInfo-Absence"
+	userInfoRoleModuleJobGradePrefix     = "UserInfo-Grade-"
+	userInfoRoleModuleGroupMappingPrefix = "UserInfo-GroupMapping-"
+)
+
 type UserInfo struct {
 	*BaseModule
 
@@ -76,30 +84,28 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 	}); idx > -1 {
 		role := roles[idx]
 
-		if role.Module == userInfoRoleModuleUnemployed {
-			handlers = append(handlers, func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *types.User) (*types.User, []discord.Embed, error) {
-				if user.Job == g.job {
-					return user, nil, nil
-				}
-
-				if g.checkIfJobIgnored(user.Job) {
-					user.Job = g.job
-					return user, nil, nil
-				}
-
-				switch g.settings.UserInfoSyncSettings.UnemployedMode {
-				case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
-					user.Roles.Sum = append(user.Roles.Sum, role)
-
-				case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
-					kick := true
-					user.Kick = &kick
-					user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
-				}
-
+		handlers = append(handlers, func(ctx context.Context, guildId discord.GuildID, member discord.Member, user *types.User) (*types.User, []discord.Embed, error) {
+			if user.Job == g.job {
 				return user, nil, nil
-			})
-		}
+			}
+
+			if g.checkIfJobIgnored(user.Job) {
+				user.Job = g.job
+				return user, nil, nil
+			}
+
+			switch g.settings.UserInfoSyncSettings.UnemployedMode {
+			case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_GIVE_ROLE:
+				user.Roles.Sum = append(user.Roles.Sum, role)
+
+			case users.UserInfoSyncUnemployedMode_USER_INFO_SYNC_UNEMPLOYED_MODE_KICK:
+				kick := true
+				user.Kick = &kick
+				user.KickReason = fmt.Sprintf("no longer an employee of %s job (unemployed mode: kick)", g.job)
+			}
+
+			return user, nil, nil
+		})
 	}
 
 	users, logs, err := g.planUsers(ctx, roles)
@@ -114,14 +120,6 @@ func (g *UserInfo) Plan(ctx context.Context) (*types.State, []discord.Embed, err
 		UserProcessors: handlers,
 	}, logs, err
 }
-
-const (
-	userInfoRoleModuleEmployee           = "UserInfo-Employees"
-	userInfoRoleModuleUnemployed         = "UserInfo-Unemployed"
-	userInfoRoleModuleAbsence            = "UserInfo-Absence"
-	userInfoRoleModuleJobGradePrefix     = "UserInfo-Grade-"
-	userInfoRoleModuleGroupMappingPrefix = "UserInfo-GroupMapping-"
-)
 
 func (g *UserInfo) planRoles(job *users.Job) (types.Roles, error) {
 	roles := types.Roles{}

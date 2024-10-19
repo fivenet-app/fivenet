@@ -29,7 +29,8 @@ func (s *State) Calculate(ctx context.Context, dc *state.State, dryRun bool) (*P
 	}
 
 	for _, member := range members {
-		if member.User.Bot {
+		// Ignore bots and system users
+		if member.User.Bot || member.User.DiscordSystem {
 			continue
 		}
 
