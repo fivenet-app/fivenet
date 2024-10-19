@@ -39,7 +39,7 @@ func NewBot(ctx context.Context, logger *zap.Logger, job string, state *centrumm
 	return &Bot{
 		ctx:               ctx,
 		cancel:            cancel,
-		logger:            logger.Named("bot"),
+		logger:            logger.Named("bot").With(zap.String("job", job)),
 		job:               job,
 		state:             state,
 		tracker:           tracker,

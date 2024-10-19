@@ -28,7 +28,8 @@ var metricBotActive = promauto.NewGaugeVec(prometheus.GaugeOpts{
 var Module = fx.Module("centrum_bot_manager",
 	fx.Provide(
 		NewManager,
-	))
+	),
+)
 
 type Manager struct {
 	logger *zap.Logger
@@ -94,6 +95,7 @@ func NewManager(p Params) *Manager {
 }
 
 func (s *Manager) Run(ctx context.Context) {
+	s.logger.Info("started centrum bot manager")
 	for {
 		select {
 		case <-ctx.Done():
@@ -112,7 +114,7 @@ func (s *Manager) Run(ctx context.Context) {
 	}
 }
 
-func (b *Manager) Start(ctx context.Context, job string) error {
+func (b *Manager) startBot(ctx context.Context, job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
@@ -136,7 +138,7 @@ func (b *Manager) Start(ctx context.Context, job string) error {
 	return nil
 }
 
-func (b *Manager) Stop(job string) error {
+func (b *Manager) stopBot(job string) error {
 	b.mutex.Lock()
 	defer b.mutex.Unlock()
 
@@ -159,11 +161,11 @@ func (b *Manager) Stop(job string) error {
 func (s *Manager) checkIfBotsAreNeeded(ctx context.Context) error {
 	for _, settings := range s.state.ListSettings(ctx) {
 		if s.state.CheckIfBotNeeded(ctx, settings.Job) {
-			if err := s.Start(ctx, settings.Job); err != nil {
+			if err := s.startBot(ctx, settings.Job); err != nil {
 				s.logger.Error("failed to start dispatch center bot for job", zap.String("job", settings.Job))
 			}
 		} else {
-			if err := s.Stop(settings.Job); err != nil {
+			if err := s.stopBot(settings.Job); err != nil {
 				s.logger.Error("failed to stop dispatch center bot for job", zap.String("job", settings.Job))
 			}
 		}

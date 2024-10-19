@@ -31,6 +31,8 @@ func (s *State) UpdateSettings(ctx context.Context, job string, in *centrum.Sett
 	// Simply use protobuf merge to update existing settings with incoming settings
 	proto.Merge(current, in)
 
+	s.settings.Store(job, current)
+
 	return nil
 }
 

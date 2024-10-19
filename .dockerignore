@@ -26,9 +26,11 @@ target/
 *.sln
 *.sw?
 
+.direnv/
+
 # Golang relevant files
 vendor/
-__debug_bin
+__debug_bin*
 /fivenet
 
 /config.yaml
