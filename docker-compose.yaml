@@ -1,5 +1,5 @@
 services:
-  # Used for testing only
+  # Database - Used for testing only
   mysql:
     container_name: mysql
     image: docker.io/library/mysql:9.1.0
@@ -41,6 +41,9 @@ services:
   #fivenet_server:
   #  container_name: fivenet-server
   #  image: ghcr.io/fivenet-app/fivenet:main
+  #  environment:
+  #    #VIRTUAL_HOST: "example.com"
+  #    VIRTUAL_PATH: "/"
   #  command:
   #    - server
   #  ports:
@@ -50,6 +53,7 @@ services:
   #  restart: unless-stopped
   #  volumes:
   #    - ./config.yaml:/config/config.yaml
+
   # FiveNet Worker
   #fivenet_worker:
   #  container_name: fivenet-worker
@@ -61,6 +65,7 @@ services:
   #  restart: unless-stopped
   #  volumes:
   #    - ./config.yaml:/config/config.yaml
+
   # FiveNet Discord
   #fivenet_discord:
   #  container_name: fivenet-discord
@@ -73,11 +78,13 @@ services:
   #  volumes:
   #    - ./config.yaml:/config/config.yaml
 
-  # Iconify - Requires an ingress like Traefik that makes iconify available under `/api/icons`
+  # Iconify - Requires an ingress controller (e.g., jwilder/nginx-proxy), like Traefik, that makes iconify available under `/api/icons`
   #iconify:
   #  container_name: iconify
   #  image: docker.io/iconify/api:latest
   #  environment:
+  #    #VIRTUAL_HOST: "example.com"
+  #    VIRTUAL_PATH: "/api/icons"
   #    ICONIFY_SOURCE: "full"
   #    REDIRECT_INDEX: "/about"
   #    ALLOW_UPDATE: "false"

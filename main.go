@@ -108,7 +108,7 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 
 var cli struct {
 	Config       string        `help:"Alternative config file (env var: FIVENET_CONFIG_FILE)"`
-	StartTimeout time.Duration `help:"App start timeout duration"`
+	StartTimeout time.Duration `help:"App start timeout duration" default:"180s"`
 
 	Server ServerCmd `cmd:"" help:"Run FiveNet server."`
 	Worker WorkerCmd `cmd:"" help:"Run FiveNet worker."`
