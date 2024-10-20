@@ -296,6 +296,7 @@ func (s *Server) sendChunkedUserMarkers(srv LivemapperService_StreamServer, user
 		select {
 		case <-srv.Context().Done():
 			return true, nil
+
 		case <-time.After(125 * time.Millisecond):
 		}
 	}
