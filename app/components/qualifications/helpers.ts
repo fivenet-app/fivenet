@@ -99,6 +99,18 @@ export function requestStatusToTextColor(status: RequestStatus): string {
     }
 }
 
+export function requestStatusToBgColor(status: RequestStatus): string {
+    switch (status) {
+        case RequestStatus.ACCEPTED:
+        case RequestStatus.COMPLETED:
+            return 'bg-success-400';
+        case RequestStatus.DENIED:
+            return 'bg-error-400';
+        default:
+            return 'bg-info-400';
+    }
+}
+
 export function resultStatusToBadgeColor(status: ResultStatus): BadgeColor {
     switch (status) {
         case ResultStatus.FAILED:
@@ -118,6 +130,17 @@ export function resultStatusToTextColor(status: ResultStatus): string {
             return 'text-success-400';
         default:
             return 'text-info-400';
+    }
+}
+
+export function resultStatusToBgColor(status: ResultStatus): string {
+    switch (status) {
+        case ResultStatus.FAILED:
+            return 'bg-error-400';
+        case ResultStatus.SUCCESSFUL:
+            return 'bg-success-400';
+        default:
+            return 'bg-info-400';
     }
 }
 

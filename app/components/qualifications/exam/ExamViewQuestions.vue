@@ -76,6 +76,7 @@ onBeforeMount(() =>
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
+                    question: q,
                     response: {
                         response: {
                             oneofKind: 'separator',
@@ -89,6 +90,7 @@ onBeforeMount(() =>
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
+                    question: q,
                     response: {
                         response: {
                             oneofKind: 'yesno',
@@ -104,6 +106,7 @@ onBeforeMount(() =>
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
+                    question: q,
                     response: {
                         response: {
                             oneofKind: 'freeText',
@@ -119,6 +122,7 @@ onBeforeMount(() =>
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
+                    question: q,
                     response: {
                         response: {
                             oneofKind: 'singleChoice',
@@ -134,6 +138,7 @@ onBeforeMount(() =>
                 state.value.responses.push({
                     questionId: q.id,
                     userId: 0,
+                    question: q,
                     response: {
                         response: {
                             oneofKind: 'multipleChoice',
@@ -247,7 +252,6 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                         v-for="(question, idx) in exam.questions"
                         :key="question.id"
                         v-model="state.responses[idx]"
-                        :question="question"
                         :disabled="disabled"
                     >
                         <template #question-after>

@@ -80,7 +80,8 @@ message ExamResponse {
   uint64 question_id = 1 [jstype = JS_STRING];
   int32 user_id = 2;
 
-  ExamResponseData response = 3;
+  ExamQuestion question = 3;
+  ExamResponseData response = 4;
 }
 
 message ExamResponseData {

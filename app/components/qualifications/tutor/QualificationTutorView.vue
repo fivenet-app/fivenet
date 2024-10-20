@@ -82,6 +82,7 @@ const results = ref<InstanceType<typeof QualificationsResultsList> | null>(null)
             <QualificationsRequestsList
                 ref="requests"
                 :qualification-id="qualification.id"
+                :exam-mode="qualification.examMode"
                 @refresh="async () => results?.refresh()"
             />
         </div>

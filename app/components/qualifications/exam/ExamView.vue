@@ -117,9 +117,11 @@ watch(data, async () => {
         </UDashboardToolbar>
 
         <UCard>
-            <h3 v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))" class="text-lg">
-                {{ $t('components.qualifications.exam_view.times_up') }}
-            </h3>
+            <UAlert v-if="data?.examUser?.endedAt || isPast(toDate(data?.examUser?.endsAt))">
+                <h3 class="text-lg">
+                    {{ $t('components.qualifications.exam_view.times_up') }}
+                </h3>
+            </UAlert>
             <UButton
                 v-else-if="!data?.examUser?.endedAt"
                 size="xl"

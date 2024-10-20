@@ -144,31 +144,34 @@ func (s *Server) handleExamQuestionsChanges(ctx context.Context, tx qrm.DB, qual
 	return nil
 }
 
+type examResponses struct {
+	ExamResponses *qualifications.ExamResponses `alias:"responses"`
+}
+
 func (s *Server) getExamResponses(ctx context.Context, qualificationId uint64, userId int32) (*qualifications.ExamResponses, error) {
+	tExamResponses := tExamResponses.AS("examresponses")
 	stmt := tExamResponses.
 		SELECT(
-			tExamResponses.QuestionID,
+			tExamResponses.QualificationID,
 			tExamResponses.UserID,
-			tExamResponses.Response,
+			tExamResponses.Responses,
 		).
-		FROM(
-			tExamResponses.
-				INNER_JOIN(tExamQuestions,
-					tExamQuestions.ID.EQ(tExamResponses.QuestionID),
-				),
-		).
+		FROM(tExamResponses).
 		WHERE(jet.AND(
-			tExamQuestions.QualificationID.EQ(jet.Uint64(qualificationId)),
+			tExamResponses.QualificationID.EQ(jet.Uint64(qualificationId)),
 			tExamResponses.UserID.EQ(jet.Int32(userId)),
-		))
+		)).
+		LIMIT(1)
 
-	var dest qualifications.ExamResponses
-	if err := stmt.QueryContext(ctx, s.db, &dest.Responses); err != nil {
+	dest := examResponses{
+		ExamResponses: &qualifications.ExamResponses{},
+	}
+	if err := stmt.QueryContext(ctx, s.db, &dest); err != nil {
 		return nil, err
 	}
 
-	dest.QualificationId = qualificationId
-	dest.UserId = userId
+	dest.ExamResponses.QualificationId = qualificationId
+	dest.ExamResponses.UserId = userId
 
-	return &dest, nil
+	return dest.ExamResponses, nil
 }

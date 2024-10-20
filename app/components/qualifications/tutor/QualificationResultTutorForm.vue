@@ -7,6 +7,7 @@ import { NotificationType } from '~~/gen/ts/resources/notifications/notification
 import { ResultStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { UserShort } from '~~/gen/ts/resources/users/users';
 import type { CreateOrUpdateQualificationResultResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { resultStatusToBgColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -170,15 +171,19 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :searchable-placeholder="$t('common.search_field')"
                             >
                                 <template #label>
-                                    <span v-if="state.status" class="truncate">
-                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`) }}
-                                    </span>
+                                    <span class="size-2 rounded-full" :class="resultStatusToBgColor(state.status)" />
+                                    <span class="truncate">{{
+                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[state.status]}`)
+                                    }}</span>
                                 </template>
+
                                 <template #option="{ option }">
-                                    <span class="truncate">
-                                        {{ $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`) }}
-                                    </span>
+                                    <span class="size-2 rounded-full" :class="resultStatusToBgColor(option.status)" />
+                                    <span class="truncate">{{
+                                        $t(`enums.qualifications.ResultStatus.${ResultStatus[option.status]}`)
+                                    }}</span>
                                 </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>

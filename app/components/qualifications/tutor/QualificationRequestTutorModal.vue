@@ -5,6 +5,7 @@ import { useNotificatorStore } from '~/store/notificator';
 import { NotificationType } from '~~/gen/ts/resources/notifications/notifications';
 import { RequestStatus, type QualificationRequest } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { CreateOrUpdateQualificationRequestResponse } from '~~/gen/ts/services/qualifications/qualifications';
+import { requestStatusToBgColor } from '../helpers';
 
 const props = withDefaults(
     defineProps<{
@@ -110,15 +111,18 @@ const onSubmitThrottle = useThrottleFn(async (event: FormSubmitEvent<Schema>) =>
                                 :searchable-placeholder="$t('common.search_field')"
                             >
                                 <template #label>
-                                    <span v-if="state.status" class="truncate">{{
+                                    <span class="size-2 rounded-full" :class="requestStatusToBgColor(state.status)" />
+                                    <span class="truncate">{{
                                         $t(`enums.qualifications.RequestStatus.${RequestStatus[state.status]}`)
                                     }}</span>
                                 </template>
                                 <template #option="{ option }">
+                                    <span class="size-2 rounded-full" :class="requestStatusToBgColor(option.status)" />
                                     <span class="truncate">{{
                                         $t(`enums.qualifications.RequestStatus.${RequestStatus[option.status]}`)
                                     }}</span>
                                 </template>
+
                                 <template #option-empty="{ query: search }">
                                     <q>{{ search }}</q> {{ $t('common.query_not_found') }}
                                 </template>

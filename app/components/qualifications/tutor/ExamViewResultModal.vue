@@ -1,6 +1,10 @@
 <script lang="ts" setup>
+import DataErrorBlock from '~/components/partials/data/DataErrorBlock.vue';
+import DataNoDataBlock from '~/components/partials/data/DataNoDataBlock.vue';
+import DataPendingBlock from '~/components/partials/data/DataPendingBlock.vue';
 import ExamViewQuestions from '~/components/qualifications/exam/ExamViewQuestions.vue';
 import QualificationResultTutorForm from '~/components/qualifications/tutor/QualificationResultTutorForm.vue';
+import { QualificationExamMode } from '~~/gen/ts/resources/qualifications/qualifications';
 import type { GetUserExamResponse } from '~~/gen/ts/services/qualifications/qualifications';
 
 const props = withDefaults(
@@ -9,10 +13,12 @@ const props = withDefaults(
         userId: number;
         resultId?: string;
         viewOnly?: boolean;
+        examMode?: QualificationExamMode;
     }>(),
     {
         resultId: undefined,
         viewOnly: false,
+        examMode: QualificationExamMode.DISABLED,
     },
 );
 
@@ -22,9 +28,12 @@ defineEmits<{
 
 const { isOpen } = useModal();
 
-const { data } = useLazyAsyncData(`qualification-${props.qualificationId}-result-examinfo-${props.userId}`, () =>
-    getUserExam(),
-);
+const {
+    data,
+    pending: loading,
+    refresh,
+    error,
+} = useLazyAsyncData(`qualification-${props.qualificationId}-result-examinfo-${props.userId}`, () => getUserExam());
 
 async function getUserExam(): Promise<GetUserExamResponse> {
     const call = getGRPCQualificationsClient().getUserExam({
@@ -62,9 +71,13 @@ function updateCount(add: boolean): void {
             @refresh="$emit('refresh')"
             @close="isOpen = false"
         >
-            <template v-if="data" #default>
+            <template v-if="examMode >= QualificationExamMode.REQUEST_NEEDED" #default>
+                <DataPendingBlock v-if="loading" :message="$t('common.loading', [$t('common.exam')])" />
+                <DataErrorBlock v-else-if="error" :title="$t('common.unable_to_load', [$t('common.exam')])" :retry="refresh" />
+                <DataNoDataBlock v-else-if="!data" :type="$t('common.exam')" icon="i-mdi-sigma" />
+
                 <ExamViewQuestions
-                    v-if="data?.exam && data?.examUser && data?.responses"
+                    v-else-if="data?.exam && data?.examUser && data?.responses"
                     :qualification-id="qualificationId"
                     :exam="data.exam"
                     :exam-user="data.examUser"

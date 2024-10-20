@@ -215,7 +215,11 @@ export interface ExamResponse {
      */
     userId: number;
     /**
-     * @generated from protobuf field: resources.qualifications.ExamResponseData response = 3;
+     * @generated from protobuf field: resources.qualifications.ExamQuestion question = 3;
+     */
+    question?: ExamQuestion;
+    /**
+     * @generated from protobuf field: resources.qualifications.ExamResponseData response = 4;
      */
     response?: ExamResponseData;
 }
@@ -925,7 +929,8 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         super("resources.qualifications.ExamResponse", [
             { no: 1, name: "question_id", kind: "scalar", T: 4 /*ScalarType.UINT64*/ },
             { no: 2, name: "user_id", kind: "scalar", T: 5 /*ScalarType.INT32*/ },
-            { no: 3, name: "response", kind: "message", T: () => ExamResponseData }
+            { no: 3, name: "question", kind: "message", T: () => ExamQuestion },
+            { no: 4, name: "response", kind: "message", T: () => ExamResponseData }
         ]);
     }
     create(value?: PartialMessage<ExamResponse>): ExamResponse {
@@ -947,7 +952,10 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
                 case /* int32 user_id */ 2:
                     message.userId = reader.int32();
                     break;
-                case /* resources.qualifications.ExamResponseData response */ 3:
+                case /* resources.qualifications.ExamQuestion question */ 3:
+                    message.question = ExamQuestion.internalBinaryRead(reader, reader.uint32(), options, message.question);
+                    break;
+                case /* resources.qualifications.ExamResponseData response */ 4:
                     message.response = ExamResponseData.internalBinaryRead(reader, reader.uint32(), options, message.response);
                     break;
                 default:
@@ -968,9 +976,12 @@ class ExamResponse$Type extends MessageType<ExamResponse> {
         /* int32 user_id = 2; */
         if (message.userId !== 0)
             writer.tag(2, WireType.Varint).int32(message.userId);
-        /* resources.qualifications.ExamResponseData response = 3; */
+        /* resources.qualifications.ExamQuestion question = 3; */
+        if (message.question)
+            ExamQuestion.internalBinaryWrite(message.question, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+        /* resources.qualifications.ExamResponseData response = 4; */
         if (message.response)
-            ExamResponseData.internalBinaryWrite(message.response, writer.tag(3, WireType.LengthDelimited).fork(), options).join();
+            ExamResponseData.internalBinaryWrite(message.response, writer.tag(4, WireType.LengthDelimited).fork(), options).join();
         let u = options.writeUnknownFields;
         if (u !== false)
             (u == true ? UnknownFieldHandler.onWrite : u)(this.typeName, message, writer);

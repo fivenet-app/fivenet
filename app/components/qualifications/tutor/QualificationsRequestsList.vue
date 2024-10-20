@@ -7,7 +7,7 @@ import GenericTime from '~/components/partials/elements/GenericTime.vue';
 import { requestStatusToTextColor } from '~/components/qualifications/helpers';
 import QualificationRequestTutorModal from '~/components/qualifications/tutor/QualificationRequestTutorModal.vue';
 import QualificationResultTutorModal from '~/components/qualifications/tutor/QualificationResultTutorModal.vue';
-import { RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
+import { QualificationExamMode, RequestStatus } from '~~/gen/ts/resources/qualifications/qualifications';
 import type {
     DeleteQualificationReqResponse,
     ListQualificationRequestsResponse,
@@ -18,10 +18,12 @@ const props = withDefaults(
     defineProps<{
         qualificationId?: string;
         status?: RequestStatus[];
+        examMode?: QualificationExamMode;
     }>(),
     {
         qualificationId: undefined,
         status: () => [],
+        examMode: QualificationExamMode.DISABLED,
     },
 );
 
@@ -221,6 +223,7 @@ defineExpose({
                                             : QualificationResultTutorModal,
                                         {
                                             qualificationId: request.qualificationId,
+                                            examMode: examMode,
                                             userId: request.userId,
                                             onRefresh: onRefresh,
                                         },

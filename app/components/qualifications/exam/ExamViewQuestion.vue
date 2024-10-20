@@ -1,10 +1,9 @@
 <script lang="ts" setup>
-import type { ExamQuestion, ExamResponse } from '~~/gen/ts/resources/qualifications/exam';
+import type { ExamResponse } from '~~/gen/ts/resources/qualifications/exam';
 
 const props = withDefaults(
     defineProps<{
         modelValue: ExamResponse | undefined;
-        question: ExamQuestion;
         disabled?: boolean;
     }>(),
     {
@@ -20,21 +19,25 @@ const response = useVModel(props, 'modelValue', emits);
 </script>
 
 <template>
-    <div v-if="question" class="flex flex-1 justify-between py-4">
-        <div v-if="question.data!.data.oneofKind === 'separator'">
+    <div v-if="modelValue?.question" class="flex flex-1 justify-between py-4">
+        <div v-if="modelValue?.question.data!.data.oneofKind === 'separator'">
             <UDivider class="mb-2 mt-2 text-xl">
-                <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                    {{ modelValue?.question.title }}
+                </h4>
             </UDivider>
 
-            <p>{{ question.description }}</p>
+            <p>{{ modelValue?.question.description }}</p>
         </div>
 
         <div
-            v-else-if="question.data!.data.oneofKind === 'yesno' && response?.response?.response.oneofKind === 'yesno'"
+            v-else-if="
+                modelValue?.question.data!.data.oneofKind === 'yesno' && response?.response?.response.oneofKind === 'yesno'
+            "
             class="flex flex-col gap-2"
         >
-            <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
-            <p>{{ question.description }}</p>
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+            <p>{{ modelValue?.question.description }}</p>
 
             <UButtonGroup>
                 <UButton
@@ -67,21 +70,26 @@ const response = useVModel(props, 'modelValue', emits);
         </div>
 
         <div
-            v-else-if="question.data!.data.oneofKind === 'freeText' && response?.response?.response.oneofKind === 'freeText'"
+            v-else-if="
+                modelValue?.question.data!.data.oneofKind === 'freeText' &&
+                response?.response?.response.oneofKind === 'freeText'
+            "
             class="flex flex-col gap-2"
         >
             <div class="flex flex-col gap-2">
-                <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
-                <p>{{ question.description }}</p>
+                <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">
+                    {{ modelValue?.question.title }}
+                </h4>
+                <p>{{ modelValue?.question.description }}</p>
 
                 <div>
-                    <UBadge v-if="question.data!.data.freeText.minLength > 0">
-                        {{ $t('common.min') }}: {{ question.data!.data.freeText.minLength }}
-                        {{ $t('common.chars', question.data!.data.freeText.minLength) }}
+                    <UBadge v-if="modelValue?.question.data!.data.freeText.minLength > 0">
+                        {{ $t('common.min') }}: {{ modelValue?.question.data!.data.freeText.minLength }}
+                        {{ $t('common.chars', modelValue?.question.data!.data.freeText.minLength) }}
                     </UBadge>
-                    <UBadge v-if="question.data!.data.freeText.maxLength > 0">
-                        {{ $t('common.max') }}: {{ question.data!.data.freeText.maxLength }}
-                        {{ $t('common.chars', question.data!.data.freeText.maxLength) }}
+                    <UBadge v-if="modelValue?.question.data!.data.freeText.maxLength > 0">
+                        {{ $t('common.max') }}: {{ modelValue?.question.data!.data.freeText.maxLength }}
+                        {{ $t('common.chars', modelValue?.question.data!.data.freeText.maxLength) }}
                     </UBadge>
                 </div>
             </div>
@@ -91,17 +99,18 @@ const response = useVModel(props, 'modelValue', emits);
 
         <div
             v-else-if="
-                question.data!.data.oneofKind === 'singleChoice' && response?.response?.response.oneofKind === 'singleChoice'
+                modelValue?.question.data!.data.oneofKind === 'singleChoice' &&
+                response?.response?.response.oneofKind === 'singleChoice'
             "
             class="flex flex-col gap-2"
         >
-            <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
-            <p>{{ question.description }}</p>
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+            <p>{{ modelValue?.question.description }}</p>
 
             <UFormGroup name="data.data.singleChoices.choices" :label="$t('common.option', 2)" required class="flex-1">
                 <URadioGroup
                     v-model="response.response.response.singleChoice.choice"
-                    :options="question.data!.data.singleChoice?.choices"
+                    :options="modelValue?.question.data!.data.singleChoice?.choices"
                     :disabled="disabled"
                 />
             </UFormGroup>
@@ -109,25 +118,30 @@ const response = useVModel(props, 'modelValue', emits);
 
         <div
             v-else-if="
-                question.data?.data.oneofKind === 'multipleChoice' &&
+                modelValue?.question.data?.data.oneofKind === 'multipleChoice' &&
                 response?.response?.response.oneofKind === 'multipleChoice'
             "
             class="flex flex-col gap-2"
         >
-            <h4 class="text-xl" :title="`${$t('common.id')}: ${question.id}`">{{ question.title }}</h4>
-            <p>{{ question.description }}</p>
+            <h4 class="text-xl" :title="`${$t('common.id')}: ${modelValue?.question.id}`">{{ modelValue?.question.title }}</h4>
+            <p>{{ modelValue?.question.description }}</p>
 
             <div>
-                <UBadge v-if="question.data!.data.multipleChoice.limit && question.data!.data.multipleChoice.limit > 0">
-                    {{ $t('common.max') }}: {{ question.data!.data.multipleChoice.limit }}
-                    {{ $t('common.option', question.data!.data.multipleChoice.limit) }}
+                <UBadge
+                    v-if="
+                        modelValue?.question.data!.data.multipleChoice.limit &&
+                        modelValue?.question.data!.data.multipleChoice.limit > 0
+                    "
+                >
+                    {{ $t('common.max') }}: {{ modelValue?.question.data!.data.multipleChoice.limit }}
+                    {{ $t('common.option', modelValue?.question.data!.data.multipleChoice.limit) }}
                 </UBadge>
             </div>
 
             <UFormGroup :label="$t('common.option', 2)" required class="flex-1"> </UFormGroup>
             <div class="flex flex-col gap-2">
                 <UCheckbox
-                    v-for="choice in question.data.data.multipleChoice.choices"
+                    v-for="choice in modelValue?.question.data.data.multipleChoice.choices"
                     :key="choice"
                     v-model="response.response.response.multipleChoice.choices"
                     :label="choice"
@@ -137,6 +151,6 @@ const response = useVModel(props, 'modelValue', emits);
             </div>
         </div>
 
-        <slot name="question-after" :question="question"></slot>
+        <slot name="question-after" :question="modelValue?.question"></slot>
     </div>
 </template>

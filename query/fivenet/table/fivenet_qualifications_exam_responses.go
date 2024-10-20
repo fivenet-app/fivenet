@@ -17,9 +17,9 @@ type fivenetQualificationsExamResponsesTable struct {
 	mysql.Table
 
 	// Columns
-	QuestionID mysql.ColumnInteger
-	UserID     mysql.ColumnInteger
-	Response   mysql.ColumnString
+	QualificationID mysql.ColumnInteger
+	UserID          mysql.ColumnInteger
+	Responses       mysql.ColumnString
 
 	AllColumns     mysql.ColumnList
 	MutableColumns mysql.ColumnList
@@ -60,20 +60,20 @@ func newFivenetQualificationsExamResponsesTable(schemaName, tableName, alias str
 
 func newFivenetQualificationsExamResponsesTableImpl(schemaName, tableName, alias string) fivenetQualificationsExamResponsesTable {
 	var (
-		QuestionIDColumn = mysql.IntegerColumn("question_id")
-		UserIDColumn     = mysql.IntegerColumn("user_id")
-		ResponseColumn   = mysql.StringColumn("response")
-		allColumns       = mysql.ColumnList{QuestionIDColumn, UserIDColumn, ResponseColumn}
-		mutableColumns   = mysql.ColumnList{ResponseColumn}
+		QualificationIDColumn = mysql.IntegerColumn("qualification_id")
+		UserIDColumn          = mysql.IntegerColumn("user_id")
+		ResponsesColumn       = mysql.StringColumn("responses")
+		allColumns            = mysql.ColumnList{QualificationIDColumn, UserIDColumn, ResponsesColumn}
+		mutableColumns        = mysql.ColumnList{ResponsesColumn}
 	)
 
 	return fivenetQualificationsExamResponsesTable{
 		Table: mysql.NewTable(schemaName, tableName, alias, allColumns...),
 
 		//Columns
-		QuestionID: QuestionIDColumn,
-		UserID:     UserIDColumn,
-		Response:   ResponseColumn,
+		QualificationID: QualificationIDColumn,
+		UserID:          UserIDColumn,
+		Responses:       ResponsesColumn,
 
 		AllColumns:     allColumns,
 		MutableColumns: mutableColumns,

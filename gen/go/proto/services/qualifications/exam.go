@@ -271,22 +271,18 @@ func (s *Server) SubmitExam(ctx context.Context, req *SubmitExamRequest) (*Submi
 	tExamResponses := table.FivenetQualificationsExamResponses
 	respStmt := tExamResponses.
 		INSERT(
-			tExamResponses.QuestionID,
+			tExamResponses.QualificationID,
 			tExamResponses.UserID,
-			tExamResponses.Response,
-		)
-
-	for _, resp := range req.Responses.Responses {
-		respStmt = respStmt.VALUES(
-			resp.QuestionId,
+			tExamResponses.Responses,
+		).
+		VALUES(
+			req.QualificationId,
 			userInfo.UserId,
-			resp.Response,
+			req.Responses,
+		).
+		ON_DUPLICATE_KEY_UPDATE(
+			tExamResponses.Responses.SET(jet.RawString("VALUES(`responses`)")),
 		)
-	}
-
-	respStmt = respStmt.ON_DUPLICATE_KEY_UPDATE(
-		tExamResponses.Response.SET(jet.RawString("VALUES(`response`)")),
-	)
 
 	if _, err := respStmt.ExecContext(ctx, s.db); err != nil {
 		return nil, errswrap.NewError(err, errorsqualifications.ErrFailedQuery)

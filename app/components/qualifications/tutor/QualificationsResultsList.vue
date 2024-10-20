@@ -194,6 +194,7 @@ defineExpose({
                                         qualificationId: result.qualificationId,
                                         userId: result.userId,
                                         resultId: result.id,
+                                        examMode: examMode,
                                         onRefresh: onRefresh,
                                     })
                                 "
@@ -209,6 +210,7 @@ defineExpose({
                                         qualificationId: result.qualificationId,
                                         userId: result.userId,
                                         resultId: result.id,
+                                        examMode: examMode,
                                         viewOnly: true,
                                         onRefresh: onRefresh,
                                     })
