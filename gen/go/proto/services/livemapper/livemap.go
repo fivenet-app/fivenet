@@ -121,6 +121,7 @@ func NewServer(p Params) *Server {
 
 		return nil
 	}))
+
 	p.LC.Append(fx.StopHook(func(_ context.Context) error {
 		cancel()
 

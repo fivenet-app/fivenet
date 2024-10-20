@@ -16,7 +16,6 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
 	"github.com/fivenet-app/fivenet/pkg/nats/store"
-	"github.com/gin-gonic/gin"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"github.com/nats-io/nats.go/jetstream"
@@ -87,11 +86,6 @@ func NewManager(p ManagerParams) (*Manager, error) {
 		}
 
 		go m.start(ctx)
-
-		// Only run the tracker random user marker generator in debug mode
-		if p.Config.Mode == gin.DebugMode {
-			go m.randomizeUserMarkers(ctx)
-		}
 
 		return nil
 	}))

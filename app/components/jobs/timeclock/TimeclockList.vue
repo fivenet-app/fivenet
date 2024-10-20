@@ -60,7 +60,7 @@ const query = reactive<Schema>({
         TimeclockUserMode.SELF,
     mode:
         TimeclockMode[(route.query?.view as string | undefined)?.toUpperCase() as keyof typeof TimeclockMode] ??
-        TimeclockMode.WEEKLY,
+        (props.hideDaily ? TimeclockMode.WEEKLY : TimeclockMode.DAILY),
     users: [],
     date: {
         start: subDays(new Date(), 7),
@@ -379,17 +379,6 @@ const input = ref<{ input: HTMLInputElement }>();
                     <div class="flex flex-1 justify-between gap-2">
                         <UButtonGroup class="inline-flex w-full">
                             <UButton
-                                color="gray"
-                                block
-                                class="flex-1"
-                                :disabled="query.mode === TimeclockMode.WEEKLY"
-                                trailing-icon="i-mdi-view-week"
-                                @click="query.mode = TimeclockMode.WEEKLY"
-                            >
-                                {{ $t('common.time_ago.week') }}
-                            </UButton>
-
-                            <UButton
                                 v-if="!hideDaily"
                                 color="gray"
                                 block
@@ -399,6 +388,17 @@ const input = ref<{ input: HTMLInputElement }>();
                                 @click="query.mode = TimeclockMode.DAILY"
                             >
                                 {{ $t('common.time_ago.day') }}
+                            </UButton>
+
+                            <UButton
+                                color="gray"
+                                block
+                                class="flex-1"
+                                :disabled="query.mode === TimeclockMode.WEEKLY"
+                                trailing-icon="i-mdi-view-week"
+                                @click="query.mode = TimeclockMode.WEEKLY"
+                            >
+                                {{ $t('common.time_ago.week') }}
                             </UButton>
 
                             <UButton
