@@ -21,6 +21,7 @@ import (
 	tracesdk "go.opentelemetry.io/otel/sdk/trace"
 	"go.opentelemetry.io/otel/trace"
 	"go.uber.org/fx"
+	"go.uber.org/multierr"
 	"go.uber.org/zap"
 )
 
@@ -118,23 +119,25 @@ func (c *Cache) refreshCache(ctx context.Context) error {
 	ctx, span := c.tracer.Start(ctx, "mstlystcdata-refresh-cache")
 	defer span.End()
 
+	errs := multierr.Combine()
+
 	if err := c.refreshCategories(ctx); err != nil {
-		return err
+		errs = multierr.Append(errs, err)
 	}
 
 	if err := c.refreshJobs(ctx); err != nil {
-		return err
+		errs = multierr.Append(errs, err)
 	}
 
 	if err := c.RefreshLaws(ctx, 0); err != nil {
-		return err
+		errs = multierr.Append(errs, err)
 	}
 
 	if c.searcher != nil {
 		c.searcher.addDataToIndex()
 	}
 
-	return nil
+	return errs
 }
 
 func (c *Cache) refreshCategories(ctx context.Context) error {

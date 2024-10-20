@@ -11,6 +11,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/nats/locks"
 	"github.com/fivenet-app/fivenet/pkg/server/admin"
+	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
 	"github.com/prometheus/client_golang/prometheus"
 	"github.com/prometheus/client_golang/prometheus/promauto"
@@ -28,14 +29,7 @@ var metricDataMapCount = promauto.NewGaugeVec(prometheus.GaugeOpts{
 	Help:      "Count of data map entries.",
 }, []string{"bucket"})
 
-type protoMessage[T any] interface {
-	*T
-	proto.Message
-
-	Merge(in *T) *T
-}
-
-type Store[T any, U protoMessage[T]] struct {
+type Store[T any, U protoutils.ProtoMessage[T]] struct {
 	logger *zap.Logger
 	bucket string
 	kv     jetstream.KeyValue
@@ -49,19 +43,19 @@ type Store[T any, U protoMessage[T]] struct {
 	OnNotFound OnNotFoundFn[T, U]
 }
 
-type Option[T any, U protoMessage[T]] func(s *Store[T, U]) error
+type Option[T any, U protoutils.ProtoMessage[T]] func(s *Store[T, U]) error
 
 type (
-	OnUpdateFn[T any, U protoMessage[T]]   func(U) (U, error)
-	OnDeleteFn[T any, U protoMessage[T]]   func(jetstream.KeyValueEntry, U) error
-	OnNotFoundFn[T any, U protoMessage[T]] func(ctx context.Context, key string) (U, error)
+	OnUpdateFn[T any, U protoutils.ProtoMessage[T]]   func(U) (U, error)
+	OnDeleteFn[T any, U protoutils.ProtoMessage[T]]   func(jetstream.KeyValueEntry, U) error
+	OnNotFoundFn[T any, U protoutils.ProtoMessage[T]] func(ctx context.Context, key string) (U, error)
 )
 
 func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}
 }
 
-func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
+func NewWithLocks[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
 	storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
 		Bucket:      bucket,
 		Description: fmt.Sprintf("%s Store", bucket),
@@ -91,7 +85,7 @@ func NewWithLocks[T any, U protoMessage[T]](ctx context.Context, logger *zap.Log
 	return s, nil
 }
 
-func New[T any, U protoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
+func New[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
 	lockBucket := fmt.Sprintf("%s_locks", bucket)
 
 	locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{

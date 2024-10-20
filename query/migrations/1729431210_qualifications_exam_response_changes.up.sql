@@ -1,5 +1,6 @@
 BEGIN;
 
+TRUNCATE `fivenet_qualifications_exam_responses`;
 ALTER TABLE `fivenet_qualifications_exam_responses` DROP FOREIGN KEY `fk_fivenet_qualifications_exam_responses_question_id`;
 ALTER TABLE `fivenet_qualifications_exam_responses` DROP INDEX `PRIMARY`;
 ALTER TABLE `fivenet_qualifications_exam_responses` DROP `question_id`;
