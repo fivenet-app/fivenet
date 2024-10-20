@@ -2,6 +2,7 @@ package commands
 
 import (
 	"context"
+	"fmt"
 
 	"github.com/diamondburned/arikawa/v3/api"
 	"github.com/diamondburned/arikawa/v3/api/cmdroute"
@@ -55,7 +56,7 @@ func (c *Cmds) RegisterCommands() error {
 	}
 
 	if err := cmdroute.OverwriteCommands(c.discord, commands); err != nil {
-		c.logger.Fatal("cannot update discord bot commands", zap.Error(err))
+		return fmt.Errorf("cannot update discord bot commands. %w", err)
 	}
 
 	c.discord.AddInteractionHandler(c.router)
@@ -70,6 +71,7 @@ func Logger(logger *zap.Logger) cmdroute.Middleware {
 			case *discord.CommandInteraction:
 				logger.Info("received interaction event", zap.Uint64("sender_id", uint64(ev.SenderID())), zap.String("command", data.Name))
 			}
+
 			return next.HandleInteraction(ctx, ev)
 		})
 	}

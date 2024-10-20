@@ -54,7 +54,8 @@ func NewHelpCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n) (
 			}),
 		},
 
-		Options: []discord.CommandOption{},
+		Options:                  []discord.CommandOption{},
+		DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 	}
 
 	choices := &discord.StringOption{

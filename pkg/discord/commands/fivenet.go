@@ -42,6 +42,7 @@ func NewFivenetCommand(router *cmdroute.Router, cfg *config.Config, l *lang.I18n
 					MessageID: "discord.commands.fivenet.desc",
 				}),
 			},
+			DefaultMemberPermissions: discord.NewPermissions(discord.PermissionSendMessages),
 		},
 		nil
 }
