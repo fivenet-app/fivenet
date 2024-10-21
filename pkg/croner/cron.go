@@ -27,6 +27,11 @@ var Module = fx.Module("cron",
 	),
 )
 
+type ICron interface {
+	RegisterCronjob(ctx context.Context, job *cron.Cronjob) error
+	UnregisterCronjob(ctx context.Context, name string) error
+}
+
 type Params struct {
 	fx.In
 

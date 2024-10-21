@@ -58,7 +58,7 @@ type HousekeeperParams struct {
 	Manager *Manager
 	Config  *config.Config
 
-	Cron         *croner.Cron
+	Cron         croner.ICron
 	CronHandlers *croner.Handlers
 }
 

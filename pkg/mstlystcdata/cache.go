@@ -63,7 +63,7 @@ type Params struct {
 	JS     *events.JSWrapper
 	Config *config.Config
 
-	Cron         *croner.Cron
+	Cron         croner.ICron
 	CronHandlers *croner.Handlers
 }
 

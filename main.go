@@ -189,7 +189,7 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 
 		fx.Invoke(func(*bluemonday.Policy) {}),
 		fx.Invoke(func(admin.AdminServer) {}),
-		fx.Invoke(func(*croner.Cron) {}),
+		fx.Invoke(func(croner.ICron) {}),
 		fx.Invoke(func(*croner.Agent) {}),
 	}
 }

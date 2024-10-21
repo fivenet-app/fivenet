@@ -39,7 +39,7 @@ type RetentionParams struct {
 	DB     *sql.DB
 	Config *config.Config
 
-	Cron         *croner.Cron
+	Cron         croner.ICron
 	CronHandlers *croner.Handlers
 }
 
