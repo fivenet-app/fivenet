@@ -54,7 +54,7 @@ type Cron struct {
 	scheduler *Scheduler
 }
 
-func New(p Params) (*Cron, error) {
+func New(p Params) (ICron, error) {
 	hostname, err := os.Hostname()
 	if err != nil {
 		return nil, err
