@@ -237,6 +237,29 @@ const items = computed(() =>
     ].flatMap((item) => (item !== undefined ? [item] : [])),
 );
 
+const selectedMode = computed({
+    get() {
+        const index = itemsAll.value.findIndex((item) => item.mode === query.mode);
+        if (index === -1) {
+            return 0;
+        }
+
+        return index;
+    },
+    set(value) {
+        // Hash is specified here to prevent the page from scrolling to the top
+        query.mode = itemsAll.value[value]?.mode ?? TimeclockMode.DAILY;
+    },
+});
+
+const itemsAll = computed(() =>
+    [
+        { label: t('common.time_ago.day'), icon: 'i-mdi-view-day', mode: TimeclockMode.DAILY },
+        { label: t('common.time_ago.week'), icon: 'i-mdi-view-week', mode: TimeclockMode.WEEKLY },
+        { label: t('common.time_range'), icon: 'i-mdi-calendar-range', mode: TimeclockMode.RANGE },
+    ].flatMap((item) => (item !== undefined ? [item] : [])),
+);
+
 const input = ref<{ input: HTMLInputElement }>();
 </script>
 
@@ -248,8 +271,7 @@ const input = ref<{ input: HTMLInputElement }>();
         :ui="{
             list: { base: props.userId !== undefined || items.length === 1 ? 'hidden' : undefined, rounded: '' },
         }"
-    >
-    </UTabs>
+    />
 
     <template v-if="query.userMode === TimeclockUserMode.SELF">
         <UDashboardToolbar>
@@ -376,51 +398,24 @@ const input = ref<{ input: HTMLInputElement }>();
         <UDashboardToolbar>
             <template #default>
                 <UForm :schema="schema" :state="query" class="flex w-full flex-col gap-2" @submit="refresh()">
-                    <div class="flex flex-1 justify-between gap-2">
-                        <UButtonGroup class="inline-flex w-full">
-                            <UButton
-                                v-if="!hideDaily"
-                                color="gray"
-                                block
-                                class="flex-1"
-                                :disabled="query.mode === TimeclockMode.DAILY"
-                                icon="i-mdi-view-day"
-                                @click="query.mode = TimeclockMode.DAILY"
-                            >
-                                {{ $t('common.time_ago.day') }}
-                            </UButton>
+                    <div class="flex flex-1 flex-col justify-between gap-2 sm:flex-row">
+                        <UTabs
+                            v-model="selectedMode"
+                            :items="itemsAll"
+                            :unmount="true"
+                            :ui="{ wrapper: 'relative space-y-0 flex-1', container: '' }"
+                        />
 
+                        <div class="flex items-center">
                             <UButton
-                                color="gray"
-                                block
-                                class="flex-1"
-                                :disabled="query.mode === TimeclockMode.WEEKLY"
-                                trailing-icon="i-mdi-view-week"
-                                @click="query.mode = TimeclockMode.WEEKLY"
+                                v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
+                                :to="{ name: 'jobs-timeclock-inactive' }"
+                                color="black"
+                                trailing-icon="i-mdi-arrow-right"
                             >
-                                {{ $t('common.time_ago.week') }}
+                                {{ $t('common.inactive_colleagues') }}
                             </UButton>
-
-                            <UButton
-                                color="gray"
-                                block
-                                class="flex-1"
-                                :disabled="query.mode === TimeclockMode.RANGE"
-                                trailing-icon="i-mdi-calendar-range"
-                                @click="query.mode = TimeclockMode.RANGE"
-                            >
-                                {{ $t('common.time_range') }}
-                            </UButton>
-                        </UButtonGroup>
-
-                        <UButton
-                            v-if="can('JobsTimeclockService.ListInactiveEmployees').value && userId === undefined"
-                            :to="{ name: 'jobs-timeclock-inactive' }"
-                            color="black"
-                            trailing-icon="i-mdi-arrow-right"
-                        >
-                            {{ $t('common.inactive_colleagues') }}
-                        </UButton>
+                        </div>
                     </div>
 
                     <div class="flex w-full flex-row">

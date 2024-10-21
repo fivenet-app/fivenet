@@ -68,8 +68,8 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 			return err
 		}
 
-		store, err := store.New[cron.Cronjob, *cron.Cronjob](ctx, p.Logger, p.JS, "cron", func(st *store.Store[cron.Cronjob, *cron.Cronjob]) error {
-			st.OnUpdate = func(cj *cron.Cronjob) (*cron.Cronjob, error) {
+		store, err := store.New(ctx, p.Logger, p.JS, "cron",
+			store.WithOnUpdateFn(func(_ *store.Store[cron.Cronjob, *cron.Cronjob], cj *cron.Cronjob) (*cron.Cronjob, error) {
 				if cj == nil {
 					return cj, nil
 				}
@@ -83,9 +83,9 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 				})
 
 				return cj, nil
-			}
+			}),
 
-			st.OnDelete = func(entry jetstream.KeyValueEntry, cj *cron.Cronjob) error {
+			store.WithOnDeleteFn(func(_ *store.Store[cron.Cronjob, *cron.Cronjob], entry jetstream.KeyValueEntry, cj *cron.Cronjob) error {
 				jw, ok := s.jobs.LoadAndDelete(entry.Key())
 				if !ok {
 					return nil
@@ -95,10 +95,8 @@ func NewScheduler(p SchedulerParams) (*Scheduler, error) {
 				jw = nil
 
 				return nil
-			}
-
-			return nil
-		})
+			}),
+		)
 		if err != nil {
 			return err
 		}

@@ -7,6 +7,7 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"go.uber.org/fx"
+	"go.uber.org/zap"
 )
 
 type CronjobHandlerFn func(ctx context.Context, data *cron.CronjobData) error
@@ -18,12 +19,16 @@ var HandlerModule = fx.Module("cron_handlers",
 )
 
 type Handlers struct {
+	logger *zap.Logger
+
 	mu       sync.Mutex
 	handlers map[string]CronjobHandlerFn
 }
 
-func NewHandlers() *Handlers {
+func NewHandlers(logger *zap.Logger) *Handlers {
 	return &Handlers{
+		logger: logger.Named("cron_handlers"),
+
 		mu:       sync.Mutex{},
 		handlers: map[string]CronjobHandlerFn{},
 	}
@@ -34,6 +39,11 @@ func (h *Handlers) Add(name string, fn CronjobHandlerFn) {
 	defer h.mu.Unlock()
 
 	name = events.SanitizeKey(name)
+
+	if _, ok := h.handlers[name]; ok {
+		// Getting the stacktrace is expensive but should help tracking down any duplicate cron handlers in no time
+		h.logger.Warn("duplicate cron handler override detected", zap.String("name", name), zap.Stack("trace"))
+	}
 
 	h.handlers[name] = fn
 }

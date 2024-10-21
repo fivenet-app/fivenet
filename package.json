@@ -36,7 +36,7 @@
         "browser-headers": "0.4.1",
         "consola": "3.2.3",
         "date-fns": "4.1.0",
-        "dexie": "4.0.8",
+        "dexie": "4.0.9",
         "dexie-observable": "4.0.1-beta.13",
         "dexie-syncable": "4.0.1-beta.13",
         "emoji-blast": "0.10.1",

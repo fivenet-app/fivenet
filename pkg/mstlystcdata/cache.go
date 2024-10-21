@@ -6,14 +6,18 @@ import (
 	"errors"
 	"slices"
 	"sort"
+	"strconv"
 	"strings"
 	"time"
 
-	cache "github.com/Code-Hex/go-generics-cache"
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/documents"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/croner"
+	"github.com/fivenet-app/fivenet/pkg/events"
+	"github.com/fivenet-app/fivenet/pkg/nats/store"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -40,9 +44,9 @@ type Cache struct {
 	refreshTime time.Duration
 
 	tracer             trace.Tracer
-	jobs               *cache.Cache[string, *users.Job]
-	docCategories      *cache.Cache[uint64, *documents.Category]
-	docCategoriesByJob *cache.Cache[string, []*documents.Category]
+	jobs               *store.Store[users.Job, *users.Job]
+	docCategories      *store.Store[documents.Category, *documents.Category]
+	docCategoriesByJob *xsync.MapOf[string, []*documents.Category]
 	lawBooks           *xsync.MapOf[uint64, *laws.LawBook]
 
 	searcher *Searcher
@@ -56,7 +60,11 @@ type Params struct {
 	Logger *zap.Logger
 	TP     *tracesdk.TracerProvider
 	DB     *sql.DB
+	JS     *events.JSWrapper
 	Config *config.Config
+
+	Cron         *croner.Cron
+	CronHandlers *croner.Handlers
 }
 
 func NewCache(p Params) (*Cache, error) {
@@ -69,22 +77,65 @@ func NewCache(p Params) (*Cache, error) {
 		refreshTime: p.Config.Cache.RefreshTime,
 
 		tracer:             p.TP.Tracer("mstlystcdata-cache"),
-		jobs:               cache.NewContext[string, *users.Job](ctx),
-		docCategories:      cache.NewContext[uint64, *documents.Category](ctx),
-		docCategoriesByJob: cache.NewContext[string, []*documents.Category](ctx),
+		docCategoriesByJob: xsync.NewMapOf[string, []*documents.Category](),
 		lawBooks:           xsync.NewMapOf[uint64, *laws.LawBook](),
 	}
 
-	var err error
-	cc.searcher, err = NewSearcher(cc)
-	cc.searcher.addDataToIndex()
-
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
+		jobs, err := store.New[users.Job, *users.Job](ctx, p.Logger, p.JS, "cache",
+			store.WithLocks[users.Job, *users.Job](nil),
+			store.WithKVPrefix[users.Job, *users.Job]("jobs"),
+		)
+		if err != nil {
+			return err
+		}
+		cc.jobs = jobs
+
+		docCategories, err := store.New[documents.Category, *documents.Category](ctx, p.Logger, p.JS, "cache",
+			store.WithLocks[documents.Category, *documents.Category](nil),
+			store.WithKVPrefix[documents.Category, *documents.Category]("doc_categories"),
+		)
+		if err != nil {
+			return err
+		}
+		cc.docCategories = docCategories
+
+		if err := jobs.Start(ctx); err != nil {
+			return err
+		}
+
+		if err := docCategories.Start(ctx); err != nil {
+			return err
+		}
+
 		if err := cc.refreshCache(c); err != nil {
 			return err
 		}
 
-		go cc.start(ctx)
+		cc.searcher, err = NewSearcher(cc)
+		if err != nil {
+			return err
+		}
+
+		p.CronHandlers.Add("mstlystcdata-cache", func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := cc.tracer.Start(ctx, "mstlystcdata-cache")
+			defer span.End()
+
+			if err := cc.refreshCache(ctx); err != nil {
+				cc.logger.Error("failed to refresh mostly static data cache", zap.Error(err))
+				return err
+			}
+
+			return nil
+		})
+
+		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
+			Name:     "mstlystcdata-cache",
+			Schedule: "@10minutes",
+		}); err != nil {
+			return err
+		}
+
 		return nil
 	}))
 
@@ -94,21 +145,7 @@ func NewCache(p Params) (*Cache, error) {
 		return nil
 	}))
 
-	return cc, err
-}
-
-func (c *Cache) start(ctx context.Context) {
-	for {
-		if err := c.refreshCache(ctx); err != nil {
-			c.logger.Error("failed to refresh mostly static data cache", zap.Error(err))
-		}
-
-		select {
-		case <-ctx.Done():
-			return
-		case <-time.After(c.refreshTime):
-		}
-	}
+	return cc, nil
 }
 
 func (c *Cache) GetSearcher() *Searcher {
@@ -116,9 +153,6 @@ func (c *Cache) GetSearcher() *Searcher {
 }
 
 func (c *Cache) refreshCache(ctx context.Context) error {
-	ctx, span := c.tracer.Start(ctx, "mstlystcdata-refresh-cache")
-	defer span.End()
-
 	errs := multierr.Combine()
 
 	if err := c.refreshCategories(ctx); err != nil {
@@ -134,7 +168,9 @@ func (c *Cache) refreshCache(ctx context.Context) error {
 	}
 
 	if c.searcher != nil {
-		c.searcher.addDataToIndex()
+		if err := c.searcher.addDataToIndex(ctx); err != nil {
+			errs = multierr.Append(errs, err)
+		}
 	}
 
 	return errs
@@ -161,9 +197,13 @@ func (c *Cache) refreshCategories(ctx context.Context) error {
 		return err
 	}
 
+	errs := multierr.Combine()
 	categoriesPerJob := map[string][]*documents.Category{}
 	for _, d := range dest {
-		c.docCategories.Set(d.Id, d)
+		key := strconv.FormatUint(d.Id, 10)
+		if err := c.docCategories.Put(ctx, key, d); err != nil {
+			errs = multierr.Append(errs, err)
+		}
 
 		if _, ok := categoriesPerJob[*d.Job]; !ok {
 			categoriesPerJob[*d.Job] = []*documents.Category{}
@@ -171,12 +211,12 @@ func (c *Cache) refreshCategories(ctx context.Context) error {
 		categoriesPerJob[*d.Job] = append(categoriesPerJob[*d.Job], d)
 	}
 
-	// Update cache
+	// Update per jobs cache
 	for job, cs := range categoriesPerJob {
-		c.docCategoriesByJob.Set(job, cs)
+		c.docCategoriesByJob.Store(job, cs)
 	}
 
-	return nil
+	return errs
 }
 
 func (c *Cache) refreshJobs(ctx context.Context) error {
@@ -204,11 +244,14 @@ func (c *Cache) refreshJobs(ctx context.Context) error {
 	}
 
 	// Update cache
+	errs := multierr.Combine()
 	for _, job := range dest {
-		c.jobs.Set(strings.ToLower(job.Name), job)
+		if err := c.jobs.Put(ctx, strings.ToLower(job.Name), job); err != nil {
+			errs = multierr.Append(errs, err)
+		}
 	}
 
-	return nil
+	return errs
 }
 
 func (c *Cache) RefreshLaws(ctx context.Context, lawBookId uint64) error {

@@ -65,10 +65,12 @@ func NewRetention(p RetentionParams) *Retention {
 			return nil
 		})
 
-		p.Cron.RegisterCronjob(c, &cron.Cronjob{
+		if err := p.Cron.RegisterCronjob(c, &cron.Cronjob{
 			Name:     "auditlog-retention",
 			Schedule: "@30minutes",
-		})
+		}); err != nil {
+			return err
+		}
 
 		return nil
 	}))

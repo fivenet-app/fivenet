@@ -20,6 +20,14 @@ const (
 	DefaultQualificationsRoleFormat = "%name% Qualification"
 )
 
+func (x *Job) Merge(in *Job) *Job {
+	if in != nil {
+		x = in
+	}
+
+	return x
+}
+
 func (x *Job) GetJob() string {
 	return x.Name
 }

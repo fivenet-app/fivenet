@@ -57,14 +57,14 @@ importers:
         specifier: 4.1.0
         version: 4.1.0
       dexie:
-        specifier: 4.0.8
-        version: 4.0.8
+        specifier: 4.0.9
+        version: 4.0.9
       dexie-observable:
         specifier: 4.0.1-beta.13
-        version: 4.0.1-beta.13(dexie@4.0.8)
+        version: 4.0.1-beta.13(dexie@4.0.9)
       dexie-syncable:
         specifier: 4.0.1-beta.13
-        version: 4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.8))(dexie@4.0.8)
+        version: 4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.9))(dexie@4.0.9)
       emoji-blast:
         specifier: 0.10.1
         version: 0.10.1
@@ -3239,8 +3239,8 @@ packages:
       dexie: ^3.0.2 || ^4.0.1-alpha.5
       dexie-observable: ^4.0.1-beta.13
 
-  dexie@4.0.8:
-    resolution: {integrity: sha512-1G6cJevS17KMDK847V3OHvK2zei899GwpDiqfEXHP1ASvme6eWJmAp9AU4s1son2TeGkWmC0g3y8ezOBPnalgQ==}
+  dexie@4.0.9:
+    resolution: {integrity: sha512-VQG1huEVSAdDZssb9Bb9mFy+d3jAE0PT4d1nIRYlT46ip1fzbs1tXi0SlUayRDgV3tTbJG8ZRqAo2um49gtynA==}
 
   dfa@1.2.0:
     resolution: {integrity: sha512-ED3jP8saaweFTjeGX8HQPjeC1YYyZs98jGNZx6IiBvxW7JG5v492kamAQB3m2wop07CvU/RQmzcKr6bgcC5D/Q==}
@@ -9948,16 +9948,16 @@ snapshots:
 
   devalue@5.1.1: {}
 
-  dexie-observable@4.0.1-beta.13(dexie@4.0.8):
+  dexie-observable@4.0.1-beta.13(dexie@4.0.9):
     dependencies:
-      dexie: 4.0.8
+      dexie: 4.0.9
 
-  dexie-syncable@4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.8))(dexie@4.0.8):
+  dexie-syncable@4.0.1-beta.13(dexie-observable@4.0.1-beta.13(dexie@4.0.9))(dexie@4.0.9):
     dependencies:
-      dexie: 4.0.8
-      dexie-observable: 4.0.1-beta.13(dexie@4.0.8)
+      dexie: 4.0.9
+      dexie-observable: 4.0.1-beta.13(dexie@4.0.9)
 
-  dexie@4.0.8: {}
+  dexie@4.0.9: {}
 
   dfa@1.2.0: {}
 

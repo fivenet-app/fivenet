@@ -34,82 +34,91 @@ type Store[T any, U protoutils.ProtoMessage[T]] struct {
 	bucket string
 	kv     jetstream.KeyValue
 	l      *locks.Locks
+	cl     bool
+
+	prefix string
 
 	mu   *xsync.MapOf[string, *sync.Mutex]
 	data *xsync.MapOf[string, U]
 
-	OnUpdate   OnUpdateFn[T, U]
-	OnDelete   OnDeleteFn[T, U]
-	OnNotFound OnNotFoundFn[T, U]
+	onUpdate   OnUpdateFn[T, U]
+	onDelete   OnDeleteFn[T, U]
+	onNotFound OnNotFoundFn[T, U]
 }
 
-type Option[T any, U protoutils.ProtoMessage[T]] func(s *Store[T, U]) error
+type Option[T any, U protoutils.ProtoMessage[T]] func(s *Store[T, U])
 
 type (
-	OnUpdateFn[T any, U protoutils.ProtoMessage[T]]   func(U) (U, error)
-	OnDeleteFn[T any, U protoutils.ProtoMessage[T]]   func(jetstream.KeyValueEntry, U) error
-	OnNotFoundFn[T any, U protoutils.ProtoMessage[T]] func(ctx context.Context, key string) (U, error)
+	OnUpdateFn[T any, U protoutils.ProtoMessage[T]]   func(s *Store[T, U], value U) (U, error)
+	OnDeleteFn[T any, U protoutils.ProtoMessage[T]]   func(s *Store[T, U], entry jetstream.KeyValueEntry, value U) error
+	OnNotFoundFn[T any, U protoutils.ProtoMessage[T]] func(s *Store[T, U], ctx context.Context, key string) (U, error)
 )
 
 func mutexCompute() *sync.Mutex {
 	return &sync.Mutex{}
 }
 
-func NewWithLocks[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, l *locks.Locks, opts ...Option[T, U]) (*Store[T, U], error) {
-	storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket:      bucket,
-		Description: fmt.Sprintf("%s Store", bucket),
-		History:     1,
-		Storage:     jetstream.MemoryStorage,
-	})
-	if err != nil {
-		return nil, err
-	}
-
+func New[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
 	s := &Store[T, U]{
 		logger: logger.Named("store").With(zap.String("bucket", bucket)),
 		bucket: bucket,
-		kv:     storeKV,
-		l:      l,
+
+		cl: true,
 
 		mu:   xsync.NewMapOf[string, *sync.Mutex](),
 		data: xsync.NewMapOf[string, U](),
 	}
 
 	for _, opt := range opts {
-		if err := opt(s); err != nil {
+		opt(s)
+	}
+
+	if s.kv == nil {
+		storeKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+			Bucket:      bucket,
+			Description: fmt.Sprintf("%s Store", bucket),
+			History:     1,
+			Storage:     jetstream.MemoryStorage,
+		})
+		if err != nil {
 			return nil, err
 		}
+
+		s.kv = storeKV
+	}
+
+	// Create locks only if not overriden by option
+	if s.cl && s.l == nil {
+		lockBucket := fmt.Sprintf("%s_locks", bucket)
+
+		locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
+			Bucket:      lockBucket,
+			Description: fmt.Sprintf("%s Store Locks", bucket),
+			History:     2,
+			Storage:     jetstream.MemoryStorage,
+			TTL:         5 * locks.LockTimeout,
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		l, err := locks.New(logger, locksKV, lockBucket, 4*locks.LockTimeout)
+		if err != nil {
+			return nil, err
+		}
+		s.l = l
+	}
+
+	if s.prefix != "" {
+		s.prefix = s.prefix + "."
 	}
 
 	return s, nil
 }
 
-func New[T any, U protoutils.ProtoMessage[T]](ctx context.Context, logger *zap.Logger, js *events.JSWrapper, bucket string, opts ...Option[T, U]) (*Store[T, U], error) {
-	lockBucket := fmt.Sprintf("%s_locks", bucket)
-
-	locksKV, err := js.CreateOrUpdateKeyValue(ctx, jetstream.KeyValueConfig{
-		Bucket:      lockBucket,
-		Description: fmt.Sprintf("%s Store Locks", bucket),
-		History:     2,
-		Storage:     jetstream.MemoryStorage,
-		TTL:         5 * locks.LockTimeout,
-	})
-	if err != nil {
-		return nil, err
-	}
-
-	l, err := locks.New(logger, locksKV, lockBucket, 4*locks.LockTimeout)
-	if err != nil {
-		return nil, err
-	}
-
-	return NewWithLocks(ctx, logger, js, bucket, l, opts...)
-}
-
 // Put upload the message to kv and local
 func (s *Store[T, U]) Put(ctx context.Context, key string, msg U) error {
-	key = events.SanitizeKey(key)
+	key = s.prefix + events.SanitizeKey(key)
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
 	defer mu.Unlock()
@@ -147,7 +156,7 @@ func (s *Store[T, U]) put(ctx context.Context, key string, msg U) error {
 }
 
 func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, fn func(key string, existing U) (U, bool, error)) error {
-	key = events.SanitizeKey(key)
+	key = s.prefix + events.SanitizeKey(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
@@ -171,9 +180,9 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 			// Return if it isn't a not found value
 			if !errors.Is(err, jetstream.ErrKeyNotFound) {
 				return err
-			} else if s.OnNotFound != nil {
+			} else if s.onNotFound != nil {
 				// Try to load value using not found method
-				existing, err = s.OnNotFound(ctx, key)
+				existing, err = s.onNotFound(s, ctx, key)
 				if err != nil && !errors.Is(err, ErrNotFound) {
 					return err
 				}
@@ -212,7 +221,7 @@ func (s *Store[T, U]) ComputeUpdate(ctx context.Context, key string, load bool, 
 
 // Get copy of data from local data
 func (s *Store[T, U]) Get(key string) (U, bool) {
-	key = events.SanitizeKey(key)
+	key = s.prefix + events.SanitizeKey(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
@@ -233,7 +242,7 @@ func (s *Store[T, U]) get(key string) (U, bool) {
 // Load data from kv store (this will add/update any existing local data entry)
 // If no key is found, the original nats error is returned.
 func (s *Store[T, U]) Load(ctx context.Context, key string) (U, error) {
-	key = events.SanitizeKey(key)
+	key = s.prefix + events.SanitizeKey(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
@@ -252,7 +261,7 @@ func (s *Store[T, U]) load(ctx context.Context, key string) (U, error) {
 }
 
 func (s *Store[T, U]) GetOrLoad(ctx context.Context, key string) (U, error) {
-	key = events.SanitizeKey(key)
+	key = s.prefix + events.SanitizeKey(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
@@ -280,8 +289,8 @@ func (s *Store[T, U]) update(entry jetstream.KeyValueEntry) (U, error) {
 
 	var err error
 	item := s.updateFromType(entry.Key(), data)
-	if s.OnUpdate != nil {
-		item, err = s.OnUpdate(item)
+	if s.onUpdate != nil {
+		item, err = s.onUpdate(s, item)
 	}
 
 	return proto.Clone(item).(U), err
@@ -302,7 +311,7 @@ func (s *Store[T, U]) updateFromType(key string, updated U) U {
 }
 
 func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
-	key = events.SanitizeKey(key)
+	key = s.prefix + events.SanitizeKey(key)
 
 	mu, _ := s.mu.LoadOrCompute(key, mutexCompute)
 	mu.Lock()
@@ -331,7 +340,7 @@ func (s *Store[T, U]) Delete(ctx context.Context, key string) error {
 func (s *Store[T, U]) Keys(ctx context.Context, prefix string) ([]string, error) {
 	hasPrefix := prefix != ""
 	if hasPrefix {
-		prefix = events.SanitizeKey(prefix)
+		prefix = s.prefix + events.SanitizeKey(prefix)
 	}
 
 	keys := []string{}
@@ -396,6 +405,11 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 					continue
 				}
 
+				// Ignore keys that don't have the specified prefix (if any is set)
+				if s.prefix != "" && !strings.HasPrefix(entry.Key(), s.prefix) {
+					continue
+				}
+
 				s.logger.Debug("key update received via watcher", zap.String("key", entry.Key()), zap.Uint64("delta", entry.Delta()))
 
 				switch entry.Operation() {
@@ -405,9 +419,9 @@ func (s *Store[T, U]) Start(ctx context.Context) error {
 						mu.Lock()
 						defer mu.Unlock()
 
-						if s.OnDelete != nil {
+						if s.onDelete != nil {
 							item, _ := s.data.LoadAndDelete(entry.Key())
-							if err := s.OnDelete(entry, item); err != nil {
+							if err := s.onDelete(s, entry, item); err != nil {
 								s.logger.Error("failed to run on delete logic in store watcher", zap.Error(err))
 							}
 						}

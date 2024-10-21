@@ -5,8 +5,10 @@ import (
 	"errors"
 	"sync/atomic"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/laws"
 	"github.com/fivenet-app/fivenet/pkg/utils/protoutils"
 	"github.com/nats-io/nats.go/jetstream"
+	"github.com/puzpuzpuz/xsync/v3"
 	"go.uber.org/zap"
 	"google.golang.org/protobuf/proto"
 )
@@ -14,20 +16,21 @@ import (
 type Cache[T any, U protoutils.ProtoMessage[T]] struct {
 	logger *zap.Logger
 
-	ap atomic.Pointer[U]
+	ap   atomic.Pointer[U]
+	data *xsync.MapOf[uint64, *laws.LawBook]
 
 	kv  jetstream.KeyValue
 	key string
 }
 
-func New[T any, U protoutils.ProtoMessage[T]](logger *zap.Logger, kv jetstream.KeyValue, key string) (*Cache[T, U], error) {
+func New[T any, U protoutils.ProtoMessage[T]](logger *zap.Logger, kv jetstream.KeyValue, prefix string) (*Cache[T, U], error) {
 	c := &Cache[T, U]{
-		logger: logger.Named("cache").With(zap.String("key", key)),
+		logger: logger.Named("cache").With(zap.String("prefix", prefix)),
 
 		ap: atomic.Pointer[U]{},
 
 		kv:  kv,
-		key: key,
+		key: prefix,
 	}
 
 	return c, nil
@@ -61,9 +64,11 @@ func (c *Cache[T, U]) Start(ctx context.Context) error {
 
 				switch entry.Operation() {
 				case jetstream.KeyValueDelete, jetstream.KeyValuePurge:
+					// Value is deleted
 					c.ap.Store(nil)
 
 				case jetstream.KeyValuePut:
+					// Parse and set value "locally"
 					data := U(new(T))
 					if err := proto.Unmarshal(entry.Value(), data); err != nil {
 						c.logger.Error("failed to unmarshal store watcher update", zap.Error(err))
@@ -72,7 +77,7 @@ func (c *Cache[T, U]) Start(ctx context.Context) error {
 					c.ap.Store(&data)
 
 				default:
-					c.logger.Error("unknown key operation received", zap.String("key", entry.Key()), zap.Uint8("op", uint8(entry.Operation())))
+					c.logger.Error("unknown key operation received", zap.Uint8("op", uint8(entry.Operation())))
 				}
 			}
 		}
@@ -83,4 +88,17 @@ func (c *Cache[T, U]) Start(ctx context.Context) error {
 
 func (c *Cache[T, U]) Get() *U {
 	return c.ap.Load()
+}
+
+func (c *Cache[T, U]) Set(ctx context.Context, val U) error {
+	out, err := protoutils.Marshal(val)
+	if err != nil {
+		return err
+	}
+
+	if _, err := c.kv.Put(ctx, c.key, out); err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -71,7 +71,9 @@ func NewManager(p ManagerParams) (*Manager, error) {
 	}
 
 	p.LC.Append(fx.StartHook(func(c context.Context) error {
-		userStore, err := store.NewWithLocks[livemap.UserMarker, *livemap.UserMarker](c, p.Logger, p.JS, "tracker", nil)
+		userStore, err := store.New[livemap.UserMarker, *livemap.UserMarker](c, p.Logger, p.JS, "tracker",
+			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+		)
 		if err != nil {
 			return err
 		}

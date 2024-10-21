@@ -8,6 +8,7 @@ import (
 	"github.com/blevesearch/bleve/v2"
 	"github.com/blevesearch/bleve/v2/search/query"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/users"
+	"go.uber.org/multierr"
 )
 
 type Searcher struct {
@@ -41,16 +42,27 @@ func (s *Searcher) newJobsIndex() (bleve.Index, error) {
 	return bleve.NewMemOnly(indexMapping)
 }
 
-func (s *Searcher) addDataToIndex() {
+func (s *Searcher) addDataToIndex(ctx context.Context) error {
 	// Fill jobs search from cache
-	for _, k := range s.cache.jobs.Keys() {
+	keys, err := s.cache.jobs.Keys(ctx, "")
+	if err != nil {
+		return err
+	}
+
+	errs := multierr.Combine()
+
+	for _, k := range keys {
 		job, ok := s.cache.jobs.Get(k)
 		if !ok {
 			continue
 		}
 
-		s.jobs.Index(k, job)
+		if err := s.jobs.Index(k, job); err != nil {
+			errs = multierr.Append(errs, err)
+		}
 	}
+
+	return errs
 }
 
 func (s *Searcher) SearchJobs(ctx context.Context, search string, exactMatch bool) ([]*users.Job, error) {

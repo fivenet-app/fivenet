@@ -72,7 +72,7 @@ func (e *Enricher) EnrichCategory(doc common.ICategory) {
 		return
 	}
 
-	dc, ok := e.cache.docCategories.Get(cId)
+	dc, ok := e.cache.docCategories.Get(strconv.FormatUint(cId, 10))
 	if !ok {
 		job := NotAvailablePlaceholder
 		doc.SetCategory(&documents.Category{

@@ -79,37 +79,35 @@ func New(p Params) (ITracker, error) {
 
 		go t.broker.Start(ctx)
 
-		userIDs, err := store.NewWithLocks(c, p.Logger, p.JS, "tracker", nil,
-			func(s *store.Store[livemap.UserMarker, *livemap.UserMarker]) error {
-				s.OnUpdate = func(um *livemap.UserMarker) (*livemap.UserMarker, error) {
-					if um == nil || um.Info == nil {
-						return um, nil
-					}
-
-					jobUsers, _ := t.usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
-						return xsync.NewMapOf[int32, *livemap.UserMarker]()
-					})
-					// Maybe we can be smarter about updating the user marker here, but
-					// without mutexes it will be problematic
-					jobUsers.Store(um.UserId, um)
-
+		userIDs, err := store.New(c, p.Logger, p.JS, "tracker",
+			store.WithLocks[livemap.UserMarker, *livemap.UserMarker](nil),
+			store.WithOnUpdateFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], um *livemap.UserMarker) (*livemap.UserMarker, error) {
+				if um == nil || um.Info == nil {
 					return um, nil
 				}
 
-				s.OnDelete = func(kve jetstream.KeyValueEntry, um *livemap.UserMarker) error {
-					if um == nil || um.Info == nil {
-						return nil
-					}
+				jobUsers, _ := t.usersByJob.LoadOrCompute(um.Info.Job, func() *xsync.MapOf[int32, *livemap.UserMarker] {
+					return xsync.NewMapOf[int32, *livemap.UserMarker]()
+				})
+				// Maybe we can be smarter about updating the user marker here, but
+				// without mutexes it will be problematic (data races and Co.)
+				jobUsers.Store(um.UserId, um)
 
-					if jobUsers, ok := t.usersByJob.Load(um.Info.Job); ok {
-						jobUsers.Delete(um.UserId)
-					}
+				return um, nil
+			}),
 
+			store.WithOnDeleteFn(func(s *store.Store[livemap.UserMarker, *livemap.UserMarker], entry jetstream.KeyValueEntry, um *livemap.UserMarker) error {
+				if um == nil || um.Info == nil {
 					return nil
 				}
 
+				if jobUsers, ok := t.usersByJob.Load(um.Info.Job); ok {
+					jobUsers.Delete(um.UserId)
+				}
+
 				return nil
-			})
+			}),
+		)
 		if err != nil {
 			return err
 		}

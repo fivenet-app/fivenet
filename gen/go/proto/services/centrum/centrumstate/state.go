@@ -83,49 +83,45 @@ func New(p Params) (*State, error) {
 		}
 
 		dispatches, err := store.New[centrum.Dispatch, *centrum.Dispatch](ctx, logger, p.JS, "centrum_dispatches",
-			func(st *store.Store[centrum.Dispatch, *centrum.Dispatch]) error {
-				st.OnUpdate = func(dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
-					if dsp == nil {
-						logger.Warn("unable to update dispatch location, got nil dispatch")
-						return dsp, nil
-					}
-
-					if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
-						if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
-							if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
-								locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
-							}
-						} else {
-							if err := locs.Replace(dsp, func(p orb.Pointer) bool {
-								return p.(*centrum.Dispatch).Id == dsp.Id
-							}, func(p1, p2 orb.Pointer) bool {
-								return p1.Point().Equal(p2.Point())
-							}); err != nil {
-								logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
-							}
-						}
-					}
-
+			store.WithOnUpdateFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], dsp *centrum.Dispatch) (*centrum.Dispatch, error) {
+				if dsp == nil {
+					logger.Warn("unable to update dispatch location, got nil dispatch")
 					return dsp, nil
 				}
 
-				st.OnDelete = func(entry jetstream.KeyValueEntry, dsp *centrum.Dispatch) error {
-					if dsp == nil {
-						logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
-						return nil
-					}
-
-					if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
+				if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
+					if dsp.Status != nil && centrumutils.IsStatusDispatchComplete(dsp.Status.Status) {
 						if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
 							locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
 						}
+					} else {
+						if err := locs.Replace(dsp, func(p orb.Pointer) bool {
+							return p.(*centrum.Dispatch).Id == dsp.Id
+						}, func(p1, p2 orb.Pointer) bool {
+							return p1.Point().Equal(p2.Point())
+						}); err != nil {
+							logger.Error("failed to add non-existant dispatch to locations", zap.Uint64("dispatch_id", dsp.Id))
+						}
 					}
+				}
 
+				return dsp, nil
+			}),
+			store.WithOnDeleteFn(func(_ *store.Store[centrum.Dispatch, *centrum.Dispatch], entry jetstream.KeyValueEntry, dsp *centrum.Dispatch) error {
+				if dsp == nil {
+					logger.Warn("unable to delete dispatch location, got nil dispatch item", zap.String("store_dispatch_key", entry.Key()))
 					return nil
 				}
 
+				if locs := s.GetDispatchLocations(dsp.Job); locs != nil {
+					if locs.Has(dsp, centrum.DispatchPointMatchFn(dsp.Id)) {
+						locs.Remove(dsp, centrum.DispatchPointMatchFn(dsp.Id))
+					}
+				}
+
 				return nil
-			})
+			}),
+		)
 		if err != nil {
 			return err
 		}
