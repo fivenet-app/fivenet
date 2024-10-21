@@ -8,6 +8,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/coords/postals"
+	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/pkg/events"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth/userinfo"
@@ -35,6 +36,8 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		fx.Provide(postals.NewForTests),
 		auth.AuthModule,
 		auth.PermsModule,
+		croner.HandlerModule,
+		croner.SchedulerModule,
 
 		fx.Provide(
 			mstlystcdata.NewCache,
