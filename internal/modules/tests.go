@@ -37,7 +37,7 @@ func GetFxTestOpts(opts ...fx.Option) []fx.Option {
 		auth.AuthModule,
 		auth.PermsModule,
 		croner.HandlerModule,
-		croner.SchedulerModule,
+		croner.Module,
 
 		fx.Provide(
 			mstlystcdata.NewCache,
