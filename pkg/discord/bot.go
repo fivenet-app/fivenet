@@ -161,17 +161,11 @@ func NewBot(p BotParams) (*Bot, error) {
 			}
 		}()
 
-		go func() {
-			b.logger.Info("sleeping 5 seconds before running first discord sync")
-			time.Sleep(5 * time.Second)
+		if err := b.getGuilds(ctx); err != nil {
+			return fmt.Errorf("failed to get guilds from db. %w", err)
+		}
 
-			if err := b.syncLoop(); err != nil {
-				b.logger.Error("error from discord bot sync loop", zap.Error(err))
-				if err := p.Shutdowner.Shutdown(fx.ExitCode(1)); err != nil {
-					b.logger.Fatal("failed to shutdown app via shutdowner", zap.Error(err))
-				}
-			}
-		}()
+		go b.syncLoop()
 
 		return nil
 	}))
@@ -199,13 +193,22 @@ func (b *Bot) handleAppConfigUpdate(cfg *appconfig.Cfg) {
 func (b *Bot) start(ctx context.Context) error {
 	var ready atomic.Bool
 
-	b.discord.AddHandler(func(r *gateway.ReadyEvent) {
-		b.logger.Info(fmt.Sprintf("connected to gateway, ready with %d guilds", len(r.Guilds)), zap.String("me", r.User.Tag()))
+	b.discord.AddHandler(func(ev *gateway.ReadyEvent) {
+		b.logger.Info(fmt.Sprintf("connected to gateway, ready with %d guilds", len(ev.Guilds)), zap.String("me", ev.User.Tag()))
 		ready.Store(true)
 	})
 
-	b.discord.AddHandler(func(g *gateway.GuildCreateEvent) {
-		b.logger.Info("discord server joined", zap.Uint64("discord_guild_id", uint64(g.ID)))
+	b.discord.AddHandler(func(ev *gateway.GuildCreateEvent) {
+		b.logger.Info("discord server joined", zap.Uint64("discord_guild_id", uint64(ev.ID)))
+	})
+
+	b.discord.AddHandler(func(ev *gateway.GuildMemberAddEvent) {
+		g, ok := b.activeGuilds.Load(ev.GuildID)
+		if !ok {
+			return
+		}
+
+		g.events.Publish(ev)
 	})
 
 	go func() {
@@ -242,7 +245,7 @@ func (b *Bot) start(ctx context.Context) error {
 	return nil
 }
 
-func (b *Bot) syncLoop() error {
+func (b *Bot) syncLoop() {
 	for {
 		b.logger.Info("running discord sync")
 		func() {
@@ -257,7 +260,7 @@ func (b *Bot) syncLoop() error {
 		syncInterval := b.appCfg.Get().Discord.SyncInterval.AsDuration()
 		select {
 		case <-b.ctx.Done():
-			return nil
+			return
 
 		case <-time.After(syncInterval):
 		}
@@ -291,8 +294,7 @@ func (b *Bot) getGuilds(ctx context.Context) error {
 		})
 		if idx == -1 {
 			// Make sure to stop any active stuff with the previously active guild
-			g, ok := b.activeGuilds.Load(guildID)
-			if ok {
+			if g, ok := b.activeGuilds.Load(guildID); ok {
 				g.Stop()
 
 				b.activeGuilds.Delete(guildID)

@@ -5,6 +5,7 @@ import (
 	"database/sql"
 	"fmt"
 	"slices"
+	"sync/atomic"
 
 	"github.com/diamondburned/arikawa/v3/discord"
 	"github.com/diamondburned/arikawa/v3/state"
@@ -13,6 +14,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config/appconfig"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	"go.uber.org/zap"
 )
@@ -26,13 +28,14 @@ var (
 
 var Modules = map[string]NewModuleFunc{}
 
-type NewModuleFunc func(*BaseModule) (Module, error)
+type NewModuleFunc func(*BaseModule, *broker.Broker[interface{}]) (Module, error)
 
 type Module interface {
+	GetName() string
 	Plan(ctx context.Context) (*types.State, []discord.Embed, error)
 }
 
-func GetModule(name string, base *BaseModule) (Module, error) {
+func GetModule(name string, base *BaseModule, events *broker.Broker[interface{}]) (Module, error) {
 	fn, ok := Modules[name]
 	if !ok {
 		return nil, fmt.Errorf("no module found by name %s", name)
@@ -41,10 +44,11 @@ func GetModule(name string, base *BaseModule) (Module, error) {
 	// "Wrap" logger with module name
 	base.logger = base.logger.Named(name)
 
-	return fn(base)
+	return fn(base, events)
 }
 
 type BaseModule struct {
+	ctx      context.Context
 	logger   *zap.Logger
 	db       *sql.DB
 	discord  *state.State
@@ -54,11 +58,12 @@ type BaseModule struct {
 	appCfg   appconfig.IConfig
 	enricher *mstlystcdata.Enricher
 
-	settings *users.DiscordSyncSettings
+	settings atomic.Pointer[users.DiscordSyncSettings]
 }
 
-func NewBaseModule(logger *zap.Logger, db *sql.DB, discord *state.State, guild discord.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *users.DiscordSyncSettings) *BaseModule {
-	return &BaseModule{
+func NewBaseModule(ctx context.Context, logger *zap.Logger, db *sql.DB, discord *state.State, guild discord.Guild, job string, cfg *config.Discord, appCfg appconfig.IConfig, enricher *mstlystcdata.Enricher, settings *users.DiscordSyncSettings) *BaseModule {
+	bm := &BaseModule{
+		ctx:      ctx,
 		logger:   logger,
 		db:       db,
 		discord:  discord,
@@ -68,8 +73,11 @@ func NewBaseModule(logger *zap.Logger, db *sql.DB, discord *state.State, guild d
 		appCfg:   appCfg,
 		enricher: enricher,
 
-		settings: settings,
+		settings: atomic.Pointer[users.DiscordSyncSettings]{},
 	}
+	bm.settings.Store(settings)
+
+	return bm
 }
 
 func (m *BaseModule) checkIfJobIgnored(job string) bool {
@@ -81,4 +89,8 @@ func (m *BaseModule) checkIfJobIgnored(job string) bool {
 	}
 
 	return false
+}
+
+func (m *BaseModule) SetSettings(settings *users.DiscordSyncSettings) {
+	m.settings.Store(settings)
 }

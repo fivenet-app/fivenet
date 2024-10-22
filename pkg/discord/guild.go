@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"strconv"
 	"sync"
+	"sync/atomic"
 	"time"
 
 	"github.com/diamondburned/arikawa/v3/discord"
@@ -15,6 +16,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/modules"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
@@ -37,24 +39,20 @@ type Guild struct {
 	bot    *Bot
 	guild  discord.Guild
 
-	lastVersion int
-	modules     []string
+	base    *modules.BaseModule
+	modules []modules.Module
+
+	settings *atomic.Pointer[users.DiscordSyncSettings]
+	events   *broker.Broker[interface{}]
 }
 
-func NewGuild(ctx context.Context, b *Bot, guild discord.Guild, job string) (*Guild, error) {
-	ctx, cancel := context.WithCancel(ctx)
+func NewGuild(c context.Context, b *Bot, guild discord.Guild, job string) (*Guild, error) {
+	ctx, cancel := context.WithCancel(c)
 
-	modules := []string{}
-	if b.cfg.GroupSync.Enabled {
-		modules = append(modules, "groupsync")
-	}
-	if b.cfg.UserInfoSync.Enabled {
-		modules = append(modules, "userinfo")
-	}
+	events := broker.New[interface{}]()
+	go events.Start(ctx)
 
-	modules = append(modules, "qualifications")
-
-	return &Guild{
+	g := &Guild{
 		mutex:  sync.Mutex{},
 		ctx:    ctx,
 		cancel: cancel,
@@ -65,8 +63,45 @@ func NewGuild(ctx context.Context, b *Bot, guild discord.Guild, job string) (*Gu
 		logger:  b.logger.Named("guild").With(zap.String("job", job), zap.Uint64("discord_guild_id", uint64(guild.ID))),
 		bot:     b,
 		guild:   guild,
-		modules: modules,
-	}, nil
+		modules: []modules.Module{},
+
+		settings: &atomic.Pointer[users.DiscordSyncSettings]{},
+		events:   events,
+	}
+
+	settings, _, err := g.getSyncSettings(c)
+	if err != nil {
+		return nil, err
+	}
+	g.settings.Store(settings)
+
+	g.base = modules.NewBaseModule(ctx, g.logger.Named("module"),
+		g.bot.db, g.bot.discord, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher,
+		settings,
+	)
+
+	ms := []string{"qualifications"}
+	if b.cfg.GroupSync.Enabled {
+		ms = append(ms, "groupsync")
+	}
+	if b.cfg.UserInfoSync.Enabled {
+		ms = append(ms, "userinfo")
+	}
+
+	errs := multierr.Combine()
+	for _, module := range ms {
+		g.logger.Debug("getting discord guild module", zap.String("dc_module", module))
+
+		m, err := modules.GetModule(module, g.base, g.events)
+		if err != nil {
+			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
+			continue
+		}
+
+		g.modules = append(g.modules, m)
+	}
+
+	return g, errs
 }
 
 func (g *Guild) Run() error {
@@ -75,15 +110,12 @@ func (g *Guild) Run() error {
 
 	start := time.Now()
 
-	if g.lastVersion == g.bot.discord.Ready().Version {
-		g.logger.Warn("discord state version is same", zap.Int("discord_state_last_version", g.lastVersion), zap.Int("discord_state_version", g.bot.discord.Ready().Version))
-	}
-	g.lastVersion = g.bot.discord.Ready().Version
-
-	settings, planDiff, err := g.getSyncSettings(g.ctx, g.job)
+	// Get sync settings on run start
+	settings, planDiff, err := g.getSyncSettings(g.ctx)
 	if err != nil {
 		return fmt.Errorf("failed to get guild sync settings")
 	}
+	g.base.SetSettings(settings)
 	if planDiff == nil {
 		planDiff = &users.DiscordSyncChanges{}
 	}
@@ -108,24 +140,16 @@ func (g *Guild) Run() error {
 		}
 	}
 
-	base := modules.NewBaseModule(g.logger.Named("module").With(zap.String("job", g.job), zap.Uint64("discord_guild_id", uint64(g.guild.ID))),
-		g.bot.db, g.bot.discord, g.guild, g.job, g.bot.cfg, g.bot.appCfg, g.bot.enricher, settings)
-
+	// Run modules
 	state := &types.State{
 		GuildID: g.guild.ID,
 		Users:   types.Users{},
 	}
 	logs := []discord.Embed{}
 	for _, module := range g.modules {
-		g.logger.Debug("running discord guild module", zap.String("dc_module", module))
+		g.logger.Debug("running discord guild module", zap.String("dc_module", module.GetName()))
 
-		m, err := modules.GetModule(module, base)
-		if err != nil {
-			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
-			continue
-		}
-
-		s, mLogs, err := m.Plan(g.ctx)
+		s, mLogs, err := module.Plan(g.ctx)
 		if err != nil {
 			errs = multierr.Append(errs, fmt.Errorf("%s: %w", module, err))
 			continue
@@ -263,7 +287,7 @@ func (g *Guild) sendEndStatusLog(channelId discord.ChannelID, duration time.Dura
 	return nil
 }
 
-func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.DiscordSyncSettings, *users.DiscordSyncChanges, error) {
+func (g *Guild) getSyncSettings(ctx context.Context) (*users.DiscordSyncSettings, *users.DiscordSyncChanges, error) {
 	stmt := tJobProps.
 		SELECT(
 			tJobProps.DiscordSyncSettings,
@@ -271,7 +295,7 @@ func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.Discord
 		).
 		FROM(tJobProps).
 		WHERE(
-			tJobProps.Job.EQ(jet.String(job)),
+			tJobProps.Job.EQ(jet.String(g.job)),
 		).
 		LIMIT(1)
 
@@ -283,7 +307,9 @@ func (g *Guild) getSyncSettings(ctx context.Context, job string) (*users.Discord
 	}
 
 	// Make sure the defaults are set
-	dest.Default(job)
+	dest.Default(g.job)
+
+	g.settings.Store(dest.DiscordSyncSettings)
 
 	return dest.DiscordSyncSettings, dest.DiscordSyncChanges, nil
 }

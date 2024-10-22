@@ -11,10 +11,15 @@ import (
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/qualifications"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	"github.com/fivenet-app/fivenet/query/fivenet/table"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
+)
+
+const (
+	qualificationsRoleModulePrefix = "Qualifications-"
 )
 
 var (
@@ -24,12 +29,12 @@ var (
 
 type QualificationsSync struct {
 	*BaseModule
-
-	ignoredJobs []string
 }
 
 type qualificationsEntry struct {
-	ID              uint64                                       `alias:"qualifications_entry.id"`
+	ID                 uint64 `alias:"qualifications_entry.id"`
+	QualificationTitle string `alias:"qualifications_entry.title"`
+
 	DiscordSettings *qualifications.QualificationDiscordSettings `alias:"qualifications_entry.discord_settings"`
 	RoleName        string
 }
@@ -44,11 +49,14 @@ func init() {
 	Modules["qualifications"] = NewQualifications
 }
 
-func NewQualifications(base *BaseModule) (Module, error) {
+func NewQualifications(base *BaseModule, _ *broker.Broker[interface{}]) (Module, error) {
 	return &QualificationsSync{
-		BaseModule:  base,
-		ignoredJobs: base.appCfg.Get().Discord.IgnoredJobs,
+		BaseModule: base,
 	}, nil
+}
+
+func (g *QualificationsSync) GetName() string {
+	return "qualifications"
 }
 
 func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
@@ -57,6 +65,7 @@ func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.
 	stmt := tQualifications.
 		SELECT(
 			tQualifications.ID.AS("qualificationsentry.id"),
+			tQualifications.Title.AS("qualificationsentry.title"),
 			tQualifications.DiscordSettings.AS("qualificationsentry.discord_settings"),
 		).
 		FROM(tQualifications).
@@ -92,10 +101,6 @@ func (g *QualificationsSync) Plan(ctx context.Context) (*types.State, []discord.
 	}, logs, nil
 }
 
-const (
-	qualificationsRoleModulePrefix = "Qualifications-"
-)
-
 func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([]*types.Role, []discord.Embed, error) {
 	logs := []discord.Embed{}
 	roles := types.Roles{}
@@ -105,7 +110,7 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 	for _, entry := range qualifications {
 		if entry.DiscordSettings.RoleName == nil || *entry.DiscordSettings.RoleName == "" {
 			logs = append(logs, discord.Embed{
-				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification's discord settings %d", entry.ID),
+				Title:       fmt.Sprintf("Qualifications: Empty role name in qualification's discord settings \"%s\" (ID: %d)", entry.QualificationTitle, entry.ID),
 				Description: fmt.Sprintf("Qualification ID: %d", entry.ID),
 				Author:      embeds.EmbedAuthor,
 				Color:       embeds.ColorWarn,
@@ -113,7 +118,7 @@ func (g *QualificationsSync) planRoles(qualifications []*qualificationsEntry) ([
 			continue
 		}
 
-		entry.RoleName = strings.ReplaceAll(g.settings.QualificationsRoleFormat, "%name%", *entry.DiscordSettings.RoleName)
+		entry.RoleName = strings.ReplaceAll(g.settings.Load().QualificationsRoleFormat, "%name%", *entry.DiscordSettings.RoleName)
 
 		roles = append(roles, &types.Role{
 			Name:   entry.RoleName,
@@ -146,7 +151,7 @@ func (g *QualificationsSync) planUsers(ctx context.Context, roles types.Roles) (
 	errs := multierr.Combine()
 
 	jobs := []jet.Expression{jet.String(g.job)}
-	for _, job := range g.ignoredJobs {
+	for _, job := range g.BaseModule.appCfg.Get().Discord.IgnoredJobs {
 		jobs = append(jobs, jet.String(job))
 	}
 

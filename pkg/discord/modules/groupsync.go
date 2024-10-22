@@ -13,6 +13,7 @@ import (
 	"github.com/fivenet-app/fivenet/pkg/config"
 	"github.com/fivenet-app/fivenet/pkg/discord/embeds"
 	"github.com/fivenet-app/fivenet/pkg/discord/types"
+	"github.com/fivenet-app/fivenet/pkg/utils/broker"
 	jet "github.com/go-jet/jet/v2/mysql"
 	"github.com/go-jet/jet/v2/qrm"
 	"go.uber.org/multierr"
@@ -36,10 +37,14 @@ func init() {
 	Modules["groupsync"] = NewGroupSync
 }
 
-func NewGroupSync(base *BaseModule) (Module, error) {
+func NewGroupSync(base *BaseModule, _ *broker.Broker[interface{}]) (Module, error) {
 	return &GroupSync{
 		BaseModule: base,
 	}, nil
+}
+
+func (g *GroupSync) GetName() string {
+	return "groupsync"
 }
 
 func (g *GroupSync) Plan(ctx context.Context) (*types.State, []discord.Embed, error) {
@@ -65,8 +70,6 @@ func (g *GroupSync) planRoles() []*types.Role {
 	}
 
 	roles := types.Roles{}
-
-	i := 0
 	for _, dcRole := range dcRoles {
 		color := defaultGroupSyncRoleColor
 		if dcRole.Color != "" {
@@ -91,8 +94,6 @@ func (g *GroupSync) planRoles() []*types.Role {
 		}
 
 		roles = append(roles, r)
-
-		i++
 	}
 
 	return roles
@@ -143,7 +144,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 		}
 
 		if groupCfg.NotSameJob {
-			has, err := g.checkIfUserHasCharInJob(ctx, user.License, g.job)
+			has, err := g.checkIfUserIsPartOfJob(ctx, user.License, g.job)
 			if err != nil {
 				g.logger.Error(fmt.Sprintf("failed to check if user has char in job %s", user.ExternalID), zap.Error(err))
 				continue
@@ -185,7 +186,7 @@ func (g *GroupSync) planUsers(ctx context.Context, roles types.Roles) (types.Use
 	return users, logs, errs
 }
 
-func (g *GroupSync) checkIfUserHasCharInJob(ctx context.Context, identifier string, job string) (bool, error) {
+func (g *GroupSync) checkIfUserIsPartOfJob(ctx context.Context, identifier string, job string) (bool, error) {
 	stmt := tUsers.
 		SELECT(
 			tUsers.ID.AS("id"),
