@@ -6,9 +6,11 @@ import (
 	"errors"
 	sync "sync"
 
+	"github.com/fivenet-app/fivenet/gen/go/proto/resources/common/cron"
 	"github.com/fivenet-app/fivenet/gen/go/proto/resources/rector"
 	errorsjobs "github.com/fivenet-app/fivenet/gen/go/proto/services/jobs/errors"
 	"github.com/fivenet-app/fivenet/pkg/config"
+	"github.com/fivenet-app/fivenet/pkg/croner"
 	"github.com/fivenet-app/fivenet/pkg/grpc/auth"
 	"github.com/fivenet-app/fivenet/pkg/grpc/errswrap"
 	"github.com/fivenet-app/fivenet/pkg/mstlystcdata"
@@ -60,6 +62,9 @@ type Params struct {
 	UserAwareEnricher *mstlystcdata.UserAwareEnricher
 	Audit             audit.IAuditer
 	Config            *config.Config
+
+	Cron         croner.ICron
+	CronHandlers *croner.Handlers
 }
 
 func NewServer(p Params) *Server {
@@ -76,6 +81,27 @@ func NewServer(p Params) *Server {
 
 		customDB: p.Config.Database.Custom,
 	}
+
+	p.LC.Append(fx.StartHook(func(ctx context.Context) error {
+		p.CronHandlers.Add("jobs-timeclock-cleanup", func(ctx context.Context, data *cron.CronjobData) error {
+			ctx, span := s.tracer.Start(ctx, "jobs-timeclock-cleanup")
+			defer span.End()
+
+			if err := s.timeclockCleanup(ctx); err != nil {
+				s.logger.Error("error during timeclock cleanup", zap.Error(err))
+				return err
+			}
+
+			return nil
+		})
+
+		p.Cron.RegisterCronjob(ctx, &cron.Cronjob{
+			Name:     "jobs-timeclock-cleanup",
+			Schedule: "@daily",
+		})
+
+		return nil
+	}))
 
 	return s
 }
