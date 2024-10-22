@@ -431,6 +431,6 @@ func (g *UserInfo) watchEvents(e interface{}) {
 		}()
 
 	default:
-		fmt.Println("TEST", ev)
+		g.logger.Warn("unknown event received", zap.Reflect("dc_event_type", e))
 	}
 }
