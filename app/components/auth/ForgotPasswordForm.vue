@@ -20,8 +20,8 @@ async function forgotPassword(values: Schema): Promise<void> {
         });
 
         notifications.add({
-            title: { key: 'notifications.auth.ForgotPassword.title', parameters: {} },
-            description: { key: 'notifications.auth.ForgotPassword.content', parameters: {} },
+            title: { key: 'notifications.auth.forgot_password.title', parameters: {} },
+            description: { key: 'notifications.auth.forgot_password.content', parameters: {} },
             type: NotificationType.SUCCESS,
         });
 
@@ -36,7 +36,7 @@ async function forgotPassword(values: Schema): Promise<void> {
 const accountError = ref('');
 
 const schema = z.object({
-    registrationToken: z.string().length(6),
+    registrationToken: z.string().length(6).trim(),
     password: z.string().min(6).max(70),
 });
 

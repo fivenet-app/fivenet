@@ -95,7 +95,7 @@ onMounted(async () => {
                     <LoginForm />
                 </template>
                 <template #forgotPassword>
-                    <ForgotPasswordForm />
+                    <ForgotPasswordForm @toggle="selectedTab = 0" />
                 </template>
             </UTabs>
 
