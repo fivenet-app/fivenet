@@ -100,6 +100,9 @@ func (c *WorkerCmd) Run(ctx *Context) error {
 		fxOpts = append(fxOpts, fx.Invoke(func(*tracker.Manager) {}))
 	}
 
+	// Only run cron agent in worker
+	fxOpts = append(fxOpts, fx.Invoke(func(*croner.Agent) {}))
+
 	app := fx.New(fxOpts...)
 	app.Run()
 
@@ -190,7 +193,6 @@ func getFxBaseOpts(startTimeout time.Duration) []fx.Option {
 		fx.Invoke(func(*bluemonday.Policy) {}),
 		fx.Invoke(func(admin.AdminServer) {}),
 		fx.Invoke(func(croner.ICron) {}),
-		fx.Invoke(func(*croner.Agent) {}),
 	}
 }
 
