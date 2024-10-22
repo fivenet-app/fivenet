@@ -266,12 +266,40 @@ defineShortcuts({
                                         :searchable-placeholder="$t('common.search_field')"
                                     >
                                         <template #label>
-                                            {{
-                                                query.closed === undefined
-                                                    ? openclose[0]!.label
-                                                    : (openclose.findLast((o) => o.closed === query.closed)?.label ??
-                                                      $t('common.na'))
-                                            }}
+                                            <div class="inline-flex items-center gap-1 truncate">
+                                                <template v-if="typeof query.closed === 'boolean'">
+                                                    <UIcon
+                                                        v-if="!query.closed"
+                                                        name="i-mdi-lock-open-variant"
+                                                        color="green"
+                                                        class="size-4"
+                                                    />
+                                                    <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                                </template>
+
+                                                {{
+                                                    query.closed === undefined
+                                                        ? openclose[0]!.label
+                                                        : (openclose.findLast((o) => o.closed === query.closed)?.label ??
+                                                          $t('common.na'))
+                                                }}
+                                            </div>
+                                        </template>
+
+                                        <template #option="{ option }">
+                                            <div class="inline-flex items-center gap-1 truncate">
+                                                <template v-if="typeof option.closed === 'boolean'">
+                                                    <UIcon
+                                                        v-if="!option.closed"
+                                                        name="i-mdi-lock-open-variant"
+                                                        color="green"
+                                                        class="size-4"
+                                                    />
+                                                    <UIcon v-else name="i-mdi-lock" color="red" class="size-4" />
+                                                </template>
+
+                                                {{ $t(option.label) }}
+                                            </div>
                                         </template>
                                     </USelectMenu>
                                 </ClientOnly>
